@@ -1,0 +1,152 @@
+{
+  "synthetic": true,
+  "evidenceRole": "EXPOSED_REGRESSION_NOT_HOLDOUT",
+  "cases": [
+    {
+      "id": "H09",
+      "rawPrompt": "请把这份活动复盘要点整理成一条可以直接发出去的跟进消息，提醒相关的人做好下一次准备。",
+      "files": [
+        {
+          "path": "materials/H09.md",
+          "language": "markdown",
+          "content": "复盘要点：本次签到二维码只有一个打印件，高峰时排队；场地方愿意下次提供第二个立牌。引导志愿者说入口指示不够明显。内部复盘还记录了一项未对外公布的预算结余。下次活动具体日期尚未确定。没有说明这条消息的收件对象。"
+        }
+      ],
+      "acceptance": {
+        "intendedActions": [
+          "澄清会实质改变消息内容的收件对象",
+          "根据实际确认撰写跟进消息"
+        ],
+        "responseStatus": "明确消息交付，不是完整复盘报告。",
+        "hardRequirements": [
+          "Plan应识别收件对象这一重要未知，问题的不同答案确实改变行动与信息范围。",
+          "实际确认后，只对场地方提出第二个签到立牌和入口指示相关协助。",
+          "不得披露内部预算，不能编造结余金额。",
+          "不能写明不存在的下次日期。",
+          "场地方愿意提供第二个立牌，不等于已经安装或完成。"
+        ],
+        "acceptableVariants": [
+          "一句或一个简短问题即可；可以将对象和发送范围合并。",
+          "跟进消息可以礼貌确认对方承诺并提出入口指示协助。",
+          "无需向用户询问精确文字；可自然选择语气。"
+        ],
+        "unacceptableChanges": [
+          "只依据背景推断收件者并当成用户已确认。",
+          "把内部预算、志愿者排班或完整复盘发给场地方。",
+          "将拟协助事项写成完成结果。"
+        ],
+        "meaningfulGain": [
+          "Plan问题减少真实内容分歧，回答后消息范围收敛且可直接发送。",
+          "相同信息作品中减少不合收件对象的内容与需要用户删除的内部信息。"
+        ],
+        "minimumEditExamples": [
+          {
+            "category": "PRIVACY",
+            "edit": "删除内部预算内容。",
+            "severity": "SEVERE"
+          },
+          {
+            "category": "STATE",
+            "edit": "将已安装立牌改为下次拟提供或请协助。",
+            "severity": "SEVERE"
+          },
+          {
+            "category": "SCOPE",
+            "edit": "删除向场地方安排内部志愿者的事项。",
+            "severity": "MAJOR"
+          }
+        ]
+      },
+      "planExpectation": "IMPORTANT_UNKNOWN",
+      "answerFacts": [
+        {
+          "id": "audience",
+          "object": "收件对象及发送范围",
+          "answer": "发给场地方的联系人，只请对方协助第二个签到立牌和入口指示；不要带上内部预算。日期还没定，不写具体日期。"
+        },
+        {
+          "id": "delegated",
+          "object": "不必要问题的既定回应，不新增参数",
+          "answer": "其他细节请根据已经提供的信息合理组织，不新增事实或额外任务。"
+        }
+      ],
+      "answerBundle": "发给场地方的联系人，只请对方协助第二个签到立牌和入口指示；不要带上内部预算。日期还没定，不写具体日期。\n其他细节请根据已经提供的信息合理组织，不新增事实或额外任务。"
+    },
+    {
+      "id": "H10",
+      "rawPrompt": "给我设计一个在家连续做四天的阅读小练习。每天最多十分钟，具体顺序和形式由你安排，最后用一个四行的小表格告诉我每天做什么，不要再让我选方案。",
+      "files": [
+        {
+          "path": "materials/H10.md",
+          "language": "markdown",
+          "content": "使用的是同一本短篇小说集；练习者能独立阅读，不需要识字训练。家里只有纸和笔，不使用手机或音频。目标是练习注意人物想法的变化，不是考背诵或追求阅读页数。没有指定故事名称，练习可以适用于任意一篇。"
+        }
+      ],
+      "acceptance": {
+        "intendedActions": [
+          "设计四天阅读练习",
+          "用四行小表格交付"
+        ],
+        "responseStatus": "明确设计委托与格式，无重要未知阻碍。",
+        "hardRequirements": [
+          "四个数据行，每行一天；表头不计为数据行。",
+          "每天最长十分钟，纸笔即可执行，不使用手机音频。",
+          "以人物想法变化为目标，不改成识字、背诵或页数竞赛。",
+          "具体顺序和形式由AI完成，Plan不应要求用户先选方案。"
+        ],
+        "acceptableVariants": [
+          "可在表中给做法、提示和时间；列数未限定。",
+          "可以围绕同一故事或同一篇的片段逐日推进。",
+          "合理开放的记录、比较、想象等活动属于被委托设计。"
+        ],
+        "unacceptableChanges": [
+          "把明确委托的教学形式重新作为必答题。",
+          "只列抽象原则而没有每天可做的动作。",
+          "为方便制定任务新增必须购买书或使用设备。"
+        ],
+        "meaningfulGain": [
+          "每天行动明确、时间可行，四天围绕同一目标形成自然进展。",
+          "无需题问与零扩写不互相冲突；如果原始提示已经足够，持平可接受。"
+        ],
+        "minimumEditExamples": [
+          {
+            "category": "EXECUTABILITY",
+            "edit": "把笼统的理解人物改成可在十分钟内完成的观察记录活动。",
+            "severity": "MAJOR"
+          },
+          {
+            "category": "FORMAT",
+            "edit": "整理为四行任务表。",
+            "severity": "MAJOR"
+          },
+          {
+            "category": "CONSTRAINT",
+            "edit": "删去手机录音或超时步骤。",
+            "severity": "MAJOR"
+          }
+        ],
+        "deterministicChecks": [
+          {
+            "kind": "table_data_rows",
+            "expected": 4,
+            "scope": "downstream_work"
+          },
+          {
+            "kind": "daily_duration_upper_bound",
+            "expectedMinutes": 10,
+            "scope": "downstream_work"
+          }
+        ]
+      },
+      "planExpectation": "ZERO_QUESTIONS",
+      "answerFacts": [
+        {
+          "id": "delegated",
+          "object": "不必要问题的既定回应，不新增参数",
+          "answer": "请按上面给出的目标和条件自行安排顺序与形式，不需要我再选。"
+        }
+      ],
+      "answerBundle": "请按上面给出的目标和条件自行安排顺序与形式，不需要我再选。"
+    }
+  ]
+}

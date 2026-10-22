@@ -1,0 +1,1668 @@
+[
+  {
+    "id": "H01_V29_GEN",
+    "caseId": "H01",
+    "version": "29",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "下一步我要和你讨论这套借用流程。请先把下面的规则和几种状态之间的关系吃透，后面我会逐项给你问题。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H01.md",
+            "language": "markdown",
+            "content": "社区工具柜规则：居民每次可借两件工具，借期为三天。登记表中的“已归还”只表示物品已交回；管理员检查通过后才改为“可借”。工具损坏时改为“停用”，不要求借用人自行维修。管理员可以延长借期，普通居民不能自行更改到期日。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H01_V29_GEN",
+      "data": {
+        "optimizedPrompt": "请先读懂并梳理下面这套社区工具柜借用规则，以及规则中几种状态之间的关系，为接下来逐项讨论做准备。\n\n规则原文：居民每次可借两件工具，借期为三天。登记表中的“已归还”只表示物品已交回；管理员检查通过后才改为“可借”。工具损坏时改为“停用”，不要求借用人自行维修。管理员可以延长借期，普通居民不能自行更改到期日。\n\n请围绕这些规则整理出一份清晰的理解说明，重点包括：\n1. 借用流程的关键环节：借出、归还、检查、恢复可借、损坏停用、延长借期，各自由谁操作、在什么条件下发生。\n2. 状态之间的关系：区分“已归还”与“可借”的不同含义，说明从借出到可借需要经过哪些状态变化，以及“停用”在流程中的位置。\n3. 权限边界：管理员与普通居民各自能做什么、不能做什么，特别是借期延长和到期日更改。\n4. 容易混淆或需要后续确认的点，例如“已归还”状态下物品是否还能被借出、检查未通过时如何处理、停用后如何恢复等，请明确标为待确认，不要自行补充规则。\n\n输出用自然、紧凑的中文说明，条理清楚，便于后续逐项提问时直接对照。不要编造规则中没有的内容，也不要提前替后续问题作答。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H01.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H01.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n社区工具柜规则：居民每次可借两件工具，借期为三天。登记表中的“已归还”只表示物品已交回；管理员检查通过后才改为“可借”。工具损坏时改为“停用”，不要求借用人自行维修。管理员可以延长借期，普通居民不能自行更改到期日。",
+              "summary": "Markdown 文档摘要：社区工具柜规则：居民每次可借两件工具，借期为三天。；登记表中的“已归还”只表示物品已交回；管理员检查通过后才改为“可借”。；工具损坏时改为“停用”，不要求借用人自行维修。；管理员可以延长借期，普通居民不能自行更改到期日。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 7263,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "29",
+        "framework": "APE",
+        "recordId": "6219a1a2-e93f-4421-aa11-0edcdcd9a279",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H01_V4_GEN",
+    "caseId": "H01",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "下一步我要和你讨论这套借用流程。请先把下面的规则和几种状态之间的关系吃透，后面我会逐项给你问题。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H01.md",
+            "language": "markdown",
+            "content": "社区工具柜规则：居民每次可借两件工具，借期为三天。登记表中的“已归还”只表示物品已交回；管理员检查通过后才改为“可借”。工具损坏时改为“停用”，不要求借用人自行维修。管理员可以延长借期，普通居民不能自行更改到期日。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H01_V4_GEN",
+      "data": {
+        "optimizedPrompt": "请先阅读并理解 materials/H01.md 中的社区工具柜规则，梳理规则与几种状态之间的关系，为接下来逐项讨论借用流程做好准备。\n\n需要吃透的规则包括：居民每次可借两件工具，借期为三天；登记表中的“已归还”只表示物品已交回，管理员检查通过后才改为“可借”；工具损坏时改为“停用”，不要求借用人自行维修；管理员可以延长借期，普通居民不能自行更改到期日。\n\n请交付一份简洁的规则与状态关系梳理，说明各状态（如借出、已归还、可借、停用）之间的流转条件、触发动作和操作权限，并指出其中容易混淆或需要进一步确认的衔接点。梳理以 H01.md 的规则为准，不要自行补充未写明的规则或参数；后续我会基于这份梳理逐项提问。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H01.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H01.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n社区工具柜规则：居民每次可借两件工具，借期为三天。登记表中的“已归还”只表示物品已交回；管理员检查通过后才改为“可借”。工具损坏时改为“停用”，不要求借用人自行维修。管理员可以延长借期，普通居民不能自行更改到期日。",
+              "summary": "Markdown 文档摘要：社区工具柜规则：居民每次可借两件工具，借期为三天。；登记表中的“已归还”只表示物品已交回；管理员检查通过后才改为“可借”。；工具损坏时改为“停用”，不要求借用人自行维修。；管理员可以延长借期，普通居民不能自行更改到期日。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4822,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "571b81ff-9ee4-4f3a-b5bd-4df10bcd0576",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H02_V29_GEN",
+    "caseId": "H02",
+    "version": "29",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "读完下面的预约规则后，用两句话告诉我你是否理解：第一句说明两个时段能否互换，第二句说明例外由谁批准。不要写办理指南。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H02.md",
+            "language": "markdown",
+            "content": "手工教室预约分上午场和下午场，正常情况下不能互换。只有授课老师确认有空位，并由场馆值班负责人批准后，才可以调整时段。授课老师单独同意不等于调整已获批准。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H02_V29_GEN",
+      "data": {
+        "optimizedPrompt": "请阅读 materials/H02.md 中的手工教室预约规则，然后用两句话告诉我你是否理解：第一句说明上午场和下午场这两个时段能否互换，第二句说明调整时段的例外由谁批准。不要写办理指南。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H02.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H02.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n手工教室预约分上午场和下午场，正常情况下不能互换。只有授课老师确认有空位，并由场馆值班负责人批准后，才可以调整时段。授课老师单独同意不等于调整已获批准。",
+              "summary": "Markdown 文档摘要：手工教室预约分上午场和下午场，正常情况下不能互换。；只有授课老师确认有空位，并由场馆值班负责人批准后，才可以调整时段。；授课老师单独同意不等于调整已获批准。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2986,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "29",
+        "framework": "APE",
+        "recordId": "4c4ff3bc-1a3c-4904-918c-a1a09c21e569",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H02_V4_GEN",
+    "caseId": "H02",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "读完下面的预约规则后，用两句话告诉我你是否理解：第一句说明两个时段能否互换，第二句说明例外由谁批准。不要写办理指南。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H02.md",
+            "language": "markdown",
+            "content": "手工教室预约分上午场和下午场，正常情况下不能互换。只有授课老师确认有空位，并由场馆值班负责人批准后，才可以调整时段。授课老师单独同意不等于调整已获批准。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H02_V4_GEN",
+      "data": {
+        "optimizedPrompt": "请先阅读 materials/H02.md 中的预约规则，然后用两句话说明你是否理解：第一句说明上午场和下午场这两个时段能否互换，第二句说明例外由谁批准。不要写办理指南。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H02.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H02.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n手工教室预约分上午场和下午场，正常情况下不能互换。只有授课老师确认有空位，并由场馆值班负责人批准后，才可以调整时段。授课老师单独同意不等于调整已获批准。",
+              "summary": "Markdown 文档摘要：手工教室预约分上午场和下午场，正常情况下不能互换。；只有授课老师确认有空位，并由场馆值班负责人批准后，才可以调整时段。；授课老师单独同意不等于调整已获批准。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2369,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "096c6836-1bc9-4b43-aaea-e700c2d52f22",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H03_V29_GEN",
+    "caseId": "H03",
+    "version": "29",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "先读懂这次物资分配的约定，再为新来的志愿者写一份值班交接卡。只列四个要点，每点一句，内容依次是领取、预留、代领和剩余物资处理。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H03.md",
+            "language": "markdown",
+            "content": "本次义卖为每位登记志愿者预留一份午餐，报到时按姓名领取。晚班志愿者的午餐保留到下午六点。代领须出示对方发来的确认消息。下午六点后仍无人领取的午餐交给现场负责人统一安排，不能由值班者自行分给路人。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H03_V29_GEN",
+      "data": {
+        "optimizedPrompt": "请先阅读 materials/H03.md 中本次义卖的物资分配约定，再据此为新来的志愿者写一份值班交接卡。交接卡只列四个要点，每点一句，内容依次为：领取、预留、代领、剩余物资处理。四个要点须准确对应约定中的规则：领取按报到时凭姓名进行；预留要写明晚班志愿者午餐保留到下午六点；代领须出示对方发来的确认消息；剩余物资处理要写明下午六点后仍无人领取的午餐交给现场负责人统一安排，值班者不能自行分给路人。直接给出交接卡正文，不要添加这四个要点之外的内容。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H03.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H03.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n本次义卖为每位登记志愿者预留一份午餐，报到时按姓名领取。晚班志愿者的午餐保留到下午六点。代领须出示对方发来的确认消息。下午六点后仍无人领取的午餐交给现场负责人统一安排，不能由值班者自行分给路人。",
+              "summary": "Markdown 文档摘要：本次义卖为每位登记志愿者预留一份午餐，报到时按姓名领取。；晚班志愿者的午餐保留到下午六点。；代领须出示对方发来的确认消息。；下午六点后仍无人领取的午餐交给现场负责人统一安排，不能由值班者自行分给路人。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5503,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "29",
+        "framework": "APE",
+        "recordId": "cccc9638-2b42-45a9-a8a7-713d1efe1311",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H03_V4_GEN",
+    "caseId": "H03",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "先读懂这次物资分配的约定，再为新来的志愿者写一份值班交接卡。只列四个要点，每点一句，内容依次是领取、预留、代领和剩余物资处理。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H03.md",
+            "language": "markdown",
+            "content": "本次义卖为每位登记志愿者预留一份午餐，报到时按姓名领取。晚班志愿者的午餐保留到下午六点。代领须出示对方发来的确认消息。下午六点后仍无人领取的午餐交给现场负责人统一安排，不能由值班者自行分给路人。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H03_V4_GEN",
+      "data": {
+        "optimizedPrompt": "请先阅读 materials/H03.md 中本次义卖的物资分配约定，再据此为新来的志愿者写一份值班交接卡。交接卡只列四个要点，每点一句，内容依次为：领取、预留、代领、剩余物资处理。四个要点须忠实反映约定中的具体规则，包括按姓名领取、晚班午餐保留到下午六点、代领须出示对方发来的确认消息，以及下午六点后无人领取的午餐交给现场负责人统一安排、值班者不得自行分给路人。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H03.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H03.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n本次义卖为每位登记志愿者预留一份午餐，报到时按姓名领取。晚班志愿者的午餐保留到下午六点。代领须出示对方发来的确认消息。下午六点后仍无人领取的午餐交给现场负责人统一安排，不能由值班者自行分给路人。",
+              "summary": "Markdown 文档摘要：本次义卖为每位登记志愿者预留一份午餐，报到时按姓名领取。；晚班志愿者的午餐保留到下午六点。；代领须出示对方发来的确认消息。；下午六点后仍无人领取的午餐交给现场负责人统一安排，不能由值班者自行分给路人。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3589,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "2d8cbf1e-2820-4409-852a-de26fa57f8ca",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H04_V29_GEN",
+    "caseId": "H04",
+    "version": "29",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "先看懂这份排班草案和我标出的顾虑。等我明天明确选定调整方案以后，再替我更新最终排班；今天先不要把任何建议当成决定。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H04.md",
+            "language": "markdown",
+            "content": "草案：周一由林值守，周二由周值守，周三由吴值守。顾虑：周二的访客可能较多，但目前只是预估；林是否能换到周二还没有确认。备选讨论包括交换周一和周二，以及在周二增加一名支援人员；这两种方案都未获同意。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H04_V29_GEN",
+      "data": {
+        "optimizedPrompt": "先看懂这份排班草案和我标出的顾虑。等我明天明确选定调整方案以后，再替我更新最终排班；今天先不要把任何建议当成决定。\n\n提供的材料：\nmaterials/H04.md\n[片段 1/1]\n草案：周一由林值守，周二由周值守，周三由吴值守。顾虑：周二的访客可能较多，但目前只是预估；林是否能换到周二还没有确认。备选讨论包括交换周一和周二，以及在周二增加一名支援人员；这两种方案都未获同意。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H04.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H04.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n草案：周一由林值守，周二由周值守，周三由吴值守。顾虑：周二的访客可能较多，但目前只是预估；林是否能换到周二还没有确认。备选讨论包括交换周一和周二，以及在周二增加一名支援人员；这两种方案都未获同意。",
+              "summary": "Markdown 文档摘要：草案：周一由林值守，周二由周值守，周三由吴值守。；顾虑：周二的访客可能较多，但目前只是预估；林是否能换到周二还没有确认。；备选讨论包括交换周一和周二，以及在周二增加一名支援人员；这两种方案都未获同意。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 1446,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "29",
+        "framework": "APE",
+        "recordId": "a659bb86-b62d-4b84-987f-0f8f34657dcc",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H04_V4_GEN",
+    "caseId": "H04",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "先看懂这份排班草案和我标出的顾虑。等我明天明确选定调整方案以后，再替我更新最终排班；今天先不要把任何建议当成决定。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H04.md",
+            "language": "markdown",
+            "content": "草案：周一由林值守，周二由周值守，周三由吴值守。顾虑：周二的访客可能较多，但目前只是预估；林是否能换到周二还没有确认。备选讨论包括交换周一和周二，以及在周二增加一名支援人员；这两种方案都未获同意。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H04_V4_GEN",
+      "data": {
+        "optimizedPrompt": "请先阅读并理解 materials/H04.md 中的排班草案及其中标出的顾虑，然后等待我明天明确选定调整方案后，再据此更新最终排班。今天只做理解与梳理，不要执行任何排班更新，也不要把草案中的备选讨论或任何建议当成已决定的事项。\n\n草案现状：周一由林值守，周二由周值守，周三由吴值守。需要保留的顾虑：周二的访客可能较多，但这目前只是预估；林是否能换到周二尚未确认。备选讨论包括交换周一和周二，以及在周二增加一名支援人员，这两种方案均未获同意。\n\n请区分并保留以下状态：已写入草案的现有安排、尚未确认的顾虑与预估、未获同意的备选讨论。明天我给出明确选择后，再按该选择更新最终排班；在此之前不要替我做取舍，也不要输出被当作最终决定的排班结果。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H04.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H04.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n草案：周一由林值守，周二由周值守，周三由吴值守。顾虑：周二的访客可能较多，但目前只是预估；林是否能换到周二还没有确认。备选讨论包括交换周一和周二，以及在周二增加一名支援人员；这两种方案都未获同意。",
+              "summary": "Markdown 文档摘要：草案：周一由林值守，周二由周值守，周三由吴值守。；顾虑：周二的访客可能较多，但目前只是预估；林是否能换到周二还没有确认。；备选讨论包括交换周一和周二，以及在周二增加一名支援人员；这两种方案都未获同意。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5247,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "586ce4e7-ffb1-48a1-afa3-2f0e2b57f56c",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H05_V29_GEN",
+    "caseId": "H05",
+    "version": "29",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "这段是我们展览讲解的来历：展板文字由策展人撰写，语音稿由志愿者改编，入口短片则是学生团队制作的。我想先让你摸清这三类材料分别服务谁，稍后再请你帮忙处理访客反馈。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H05.md",
+            "language": "markdown",
+            "content": "展板文字面向愿意驻足阅读的成年人，保留较多年代与出处。语音稿面向带孩子的家庭，每段约一分钟，语言更口语。入口短片面向刚进馆且还未决定参观路线的人，负责介绍路线和看点，不替代展板中的史料说明。本轮未提供访客反馈原文。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H05_V29_GEN",
+      "data": {
+        "optimizedPrompt": "请先帮我摸清展览讲解三类材料分别服务谁：展板文字、语音稿和入口短片。展板文字由策展人撰写，面向愿意驻足阅读的成年人，保留较多年代与出处；语音稿由志愿者改编，面向带孩子的家庭，每段约一分钟，语言更口语；入口短片由学生团队制作，面向刚进馆且还未决定参观路线的人，负责介绍路线和看点，不替代展板中的史料说明。请按这三类材料逐一说明各自的目标受众、内容侧重和呈现方式上的差异，并指出它们之间如何分工、哪些内容不宜互相替代。访客反馈本轮未提供原文，先不处理，等稍后我提出时再请你帮忙。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H05.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H05.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n展板文字面向愿意驻足阅读的成年人，保留较多年代与出处。语音稿面向带孩子的家庭，每段约一分钟，语言更口语。入口短片面向刚进馆且还未决定参观路线的人，负责介绍路线和看点，不替代展板中的史料说明。本轮未提供访客反馈原文。",
+              "summary": "Markdown 文档摘要：展板文字面向愿意驻足阅读的成年人，保留较多年代与出处。；语音稿面向带孩子的家庭，每段约一分钟，语言更口语。；入口短片面向刚进馆且还未决定参观路线的人，负责介绍路线和看点，不替代展板中的史料说明。；本轮未提供访客反馈原文。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5369,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "29",
+        "framework": "APE",
+        "recordId": "145c99c9-2eba-4999-b149-76a1e9b77284",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H05_V4_GEN",
+    "caseId": "H05",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "这段是我们展览讲解的来历：展板文字由策展人撰写，语音稿由志愿者改编，入口短片则是学生团队制作的。我想先让你摸清这三类材料分别服务谁，稍后再请你帮忙处理访客反馈。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H05.md",
+            "language": "markdown",
+            "content": "展板文字面向愿意驻足阅读的成年人，保留较多年代与出处。语音稿面向带孩子的家庭，每段约一分钟，语言更口语。入口短片面向刚进馆且还未决定参观路线的人，负责介绍路线和看点，不替代展板中的史料说明。本轮未提供访客反馈原文。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H05_V4_GEN",
+      "data": {
+        "optimizedPrompt": "请根据我提供的展览讲解材料来历，先梳理展板文字、语音稿、入口短片这三类材料各自服务谁。展板文字由策展人撰写，语音稿由志愿者改编，入口短片由学生团队制作。材料中已说明：展板文字面向愿意驻足阅读的成年人，保留较多年代与出处；语音稿面向带孩子的家庭，每段约一分钟，语言更口语；入口短片面向刚进馆且还未决定参观路线的人，负责介绍路线和看点，不替代展板中的史料说明。请据此分别说明每类材料的目标受众、内容侧重和制作分工，并指出三者在参观流程中的衔接关系与边界，尤其说明入口短片为何不替代展板史料说明。本轮未提供访客反馈原文，因此不要分析或推测访客反馈内容，也不要编造反馈数据；访客反馈的处理留待后续。请以清晰的分点或对照形式交付，篇幅紧凑，直接给出梳理结果。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H05.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H05.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n展板文字面向愿意驻足阅读的成年人，保留较多年代与出处。语音稿面向带孩子的家庭，每段约一分钟，语言更口语。入口短片面向刚进馆且还未决定参观路线的人，负责介绍路线和看点，不替代展板中的史料说明。本轮未提供访客反馈原文。",
+              "summary": "Markdown 文档摘要：展板文字面向愿意驻足阅读的成年人，保留较多年代与出处。；语音稿面向带孩子的家庭，每段约一分钟，语言更口语。；入口短片面向刚进馆且还未决定参观路线的人，负责介绍路线和看点，不替代展板中的史料说明。；本轮未提供访客反馈原文。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5068,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "3651c5d6-e28d-4e94-b7e0-4c545daa7ac7",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H06_V29_GEN",
+    "caseId": "H06",
+    "version": "29",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "帮我给社区读者写一则招募消息，让愿意参加旧书交换的人知道怎么报名，语气亲切一点。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H06.md",
+            "language": "markdown",
+            "content": "活动为周日十点到十二点，在社区阅读角举行。每人可带一至三本保存完好的旧书，教材和杂志不参加交换。报名请在本周五十八点前私信阅读角管理员，说明姓名和带书数量。现场只做交换，不收钱。不需要说明每本书的书名。阅读角没有提供名额上限或赠品信息。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H06_V29_GEN",
+      "data": {
+        "optimizedPrompt": "帮我给社区读者写一则旧书交换活动的招募消息，语气亲切一点，让愿意参加的人清楚知道怎么报名。\n\n消息里请写清这些信息：活动在周日十点到十二点、社区阅读角举行；每人可带一至三本保存完好的旧书，教材和杂志不参加交换；报名请在本周五十八点前私信阅读角管理员，说明姓名和带书数量；现场只做交换，不收钱；不需要说明每本书的书名。\n\n阅读角没有提供名额上限或赠品信息，消息里不要编造这类内容。写成一段或几段自然亲切的招募文字即可，直接面向社区读者。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H06.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H06.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n活动为周日十点到十二点，在社区阅读角举行。每人可带一至三本保存完好的旧书，教材和杂志不参加交换。报名请在本周五十八点前私信阅读角管理员，说明姓名和带书数量。现场只做交换，不收钱。不需要说明每本书的书名。阅读角没有提供名额上限或赠品信息。",
+              "summary": "Markdown 文档摘要：活动为周日十点到十二点，在社区阅读角举行。；每人可带一至三本保存完好的旧书，教材和杂志不参加交换。；现场只做交换，不收钱。；不需要说明每本书的书名。；阅读角没有提供名额上限或赠品信息。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5383,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "29",
+        "framework": "APE",
+        "recordId": "46a131a0-e594-40f9-ac15-68dbac69b89e",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H06_V4_GEN",
+    "caseId": "H06",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "帮我给社区读者写一则招募消息，让愿意参加旧书交换的人知道怎么报名，语气亲切一点。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H06.md",
+            "language": "markdown",
+            "content": "活动为周日十点到十二点，在社区阅读角举行。每人可带一至三本保存完好的旧书，教材和杂志不参加交换。报名请在本周五十八点前私信阅读角管理员，说明姓名和带书数量。现场只做交换，不收钱。不需要说明每本书的书名。阅读角没有提供名额上限或赠品信息。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H06_V4_GEN",
+      "data": {
+        "optimizedPrompt": "帮我给社区读者写一则旧书交换活动的招募消息，语气亲切一些，让愿意参加的人看后知道怎么报名。\n\n活动信息如下：活动在周日十点到十二点，地点是社区阅读角。每人可带一至三本保存完好的旧书，教材和杂志不参加交换。报名请在本周五十八点前私信阅读角管理员，说明姓名和带书数量，不需要说明每本书的书名。现场只做交换，不收钱。\n\n消息里请把活动时间、地点、可带书的数量和保存要求、不参加交换的书籍类型、报名方式与截止时间、报名时需说明的信息，以及现场不收费这几点写清楚。阅读角没有提供名额上限或赠品信息，消息中不要编造这类内容，也不要添加资料中没有的其他条件。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H06.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H06.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n活动为周日十点到十二点，在社区阅读角举行。每人可带一至三本保存完好的旧书，教材和杂志不参加交换。报名请在本周五十八点前私信阅读角管理员，说明姓名和带书数量。现场只做交换，不收钱。不需要说明每本书的书名。阅读角没有提供名额上限或赠品信息。",
+              "summary": "Markdown 文档摘要：活动为周日十点到十二点，在社区阅读角举行。；每人可带一至三本保存完好的旧书，教材和杂志不参加交换。；现场只做交换，不收钱。；不需要说明每本书的书名。；阅读角没有提供名额上限或赠品信息。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4491,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "f36705e7-40c5-497a-bb9d-778cdca8580e",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H07_V29_GEN",
+    "caseId": "H07",
+    "version": "29",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "帮我看看这次延长开放时间的试点有没有用，给负责排班的人一个简短结论和下一步建议。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H07.md",
+            "language": "markdown",
+            "content": "同一自习室在两个连续的周末分别观察了两个晚上。试点前每天开放三小时，两晚合计四十人次，工作人员合计投入六小时；试点后每天开放四小时，两晚合计五十二人次，工作人员合计投入八小时。座位数未变。没有收集满意度；试点后那个周末邻近一场考试。负责人关心晚间使用情况是否值得增加排班。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H07_V29_GEN",
+      "data": {
+        "optimizedPrompt": "请根据 materials/H07.md 中记录的自习室延长开放时间试点情况，判断这次试点有没有用，并给负责排班的人一份简短结论和下一步建议。\n\n结论要围绕负责人关心的“晚间使用情况是否值得增加排班”来回答，用资料中的实际数据做比较：试点前每天开放三小时、两晚合计四十人次、工作人员合计投入六小时；试点后每天开放四小时、两晚合计五十二人次、工作人员合计投入八小时；座位数未变。请把两晚合计人次折算成可比口径（如每小时人次、每晚人次）再比较，并同时看人次增量与工作人员投入增量的关系，说明延长一小时带来的使用增长是否足以支撑增加排班。\n\n资料中还有两点限制必须写进结论：没有收集满意度；试点后那个周末邻近一场考试，可能抬高使用量。因此结论要区分哪些是数据直接支持的、哪些只是可能受考试影响而无法确认的，不要把两晚观察说成稳定规律。\n\n下一步建议要具体可执行，例如在无考试干扰的普通周末再观察同样两晚、补一次简短的使用者满意度或现场反馈、按每小时人次和人力成本核算是否值得延长，并说明在补充数据前排班可以怎么处理。全文保持简短，直接给排班负责人看，不要写成完整研究报告。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H07.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H07.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n同一自习室在两个连续的周末分别观察了两个晚上。试点前每天开放三小时，两晚合计四十人次，工作人员合计投入六小时；试点后每天开放四小时，两晚合计五十二人次，工作人员合计投入八小时。座位数未变。没有收集满意度；试点后那个周末邻近一场考试。负责人关心晚间使用情况是否值得增加排班。",
+              "summary": "Markdown 文档摘要：同一自习室在两个连续的周末分别观察了两个晚上。；试点前每天开放三小时，两晚合计四十人次，工作人员合计投入六小时；试点后每天开放四小时，两晚合计五十二人次，工作人员合计投入八小时。；座位数未变。；没有收集满意度；试点后那个周末邻近一场考试。；负责人关心晚间使用情况是否值得增加排班。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 12841,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "29",
+        "framework": "APE",
+        "recordId": "1a4aed2e-5ef3-491b-94cd-506621b3fdf6",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H07_V4_GEN",
+    "caseId": "H07",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "帮我看看这次延长开放时间的试点有没有用，给负责排班的人一个简短结论和下一步建议。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H07.md",
+            "language": "markdown",
+            "content": "同一自习室在两个连续的周末分别观察了两个晚上。试点前每天开放三小时，两晚合计四十人次，工作人员合计投入六小时；试点后每天开放四小时，两晚合计五十二人次，工作人员合计投入八小时。座位数未变。没有收集满意度；试点后那个周末邻近一场考试。负责人关心晚间使用情况是否值得增加排班。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H07_V4_GEN",
+      "data": {
+        "optimizedPrompt": "请根据 materials/H07.md 中的观察记录，评估这次延长开放时间的试点是否有效，并给负责排班的人一份简短结论和下一步建议。\n\n结论要直接回答负责人关心的问题：晚间使用情况是否值得增加排班。请用记录中的数据做对比，至少说明：试点前后两晚的合计人次（40 对 52）、每天开放时长（3 小时对 4 小时）、两晚工作人员合计投入（6 小时对 8 小时），以及座位数未变这一条件。可以按人次总量、每小时人次、每工作人员小时对应人次等口径比较，并说明各口径下能得出什么、不能得出什么。\n\n同时要指出这次观察的局限：样本只有同一自习室两个连续周末各两晚，没有收集满意度，试点后那个周末邻近一场考试，可能影响人次。因此结论应区分数据直接支持的部分和需要谨慎推断的部分，不要把这些局限说成已排除的因素，也不要编造满意度、其他自习室或其他时段的数据。\n\n交付一份简短、可直接转给排班负责人的结论与建议，篇幅控制在几段以内，先给结论，再给依据和下一步建议。下一步建议要具体可执行，例如后续观察需要补充哪些信息、如何安排对照或延长观察周期，但不要替负责人做最终排班决定。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H07.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H07.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n同一自习室在两个连续的周末分别观察了两个晚上。试点前每天开放三小时，两晚合计四十人次，工作人员合计投入六小时；试点后每天开放四小时，两晚合计五十二人次，工作人员合计投入八小时。座位数未变。没有收集满意度；试点后那个周末邻近一场考试。负责人关心晚间使用情况是否值得增加排班。",
+              "summary": "Markdown 文档摘要：同一自习室在两个连续的周末分别观察了两个晚上。；试点前每天开放三小时，两晚合计四十人次，工作人员合计投入六小时；试点后每天开放四小时，两晚合计五十二人次，工作人员合计投入八小时。；座位数未变。；没有收集满意度；试点后那个周末邻近一场考试。；负责人关心晚间使用情况是否值得增加排班。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 6902,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "b69e39ee-eeba-408d-bdea-aed836b2cb8b",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H08_V29_GEN",
+    "caseId": "H08",
+    "version": "29",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请替我设计一次让新加入的志愿者快速互相认识的活动。具体形式你来定，我希望拿到后就能带着大家做。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H08.md",
+            "language": "markdown",
+            "content": "共有十二位成年人参加，时间二十五分钟，地点是普通会议室。现场只有纸、笔和白板，没有投影或音响，也不方便搬动桌子。不希望任何人被要求讲家庭情况、收入或其他私人经历。大家已经知道彼此姓名，本次重点是知道各自愿意帮忙的事情。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H08_V29_GEN",
+      "data": {
+        "optimizedPrompt": "请设计一次让新加入的志愿者快速互相认识的活动，并交付一份拿到后就能直接带着大家做的活动方案。具体形式由你决定。\n\n活动条件如下：共十二位成年人参加，时长二十五分钟，地点是普通会议室；现场只有纸、笔和白板，没有投影或音响，也不方便搬动桌子。大家已经知道彼此姓名，因此本次重点不是记名字，而是了解各自愿意帮忙的事情。不希望任何人被要求讲家庭情况、收入或其他私人经历。\n\n方案请写成主持人可直接照做的流程：按时间顺序给出每个环节的名称、大致用时、主持人要说的引导语或指令、参与者具体怎么做、需要用到纸笔或白板的哪些操作，以及二十五分钟内如何收尾。环节设计要让十二个人在不动桌子、不用电子设备的条件下都能参与，并确保每个人都有机会说出自己愿意帮忙的事情；可以用白板汇总或纸笔记录来呈现这些信息，方便大家会后查看。请说明如何开场、如何分组或轮换（如需要）、如何控制时间，以及遇到冷场或有人不愿多讲时主持人可以怎么处理。全程不要设置涉及家庭情况、收入或其他私人经历的分享要求。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H08.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H08.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n共有十二位成年人参加，时间二十五分钟，地点是普通会议室。现场只有纸、笔和白板，没有投影或音响，也不方便搬动桌子。不希望任何人被要求讲家庭情况、收入或其他私人经历。大家已经知道彼此姓名，本次重点是知道各自愿意帮忙的事情。",
+              "summary": "Markdown 文档摘要：共有十二位成年人参加，时间二十五分钟，地点是普通会议室。；现场只有纸、笔和白板，没有投影或音响，也不方便搬动桌子。；不希望任何人被要求讲家庭情况、收入或其他私人经历。；大家已经知道彼此姓名，本次重点是知道各自愿意帮忙的事情。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 7708,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "29",
+        "framework": "APE",
+        "recordId": "638b1358-cbaf-4b0e-baed-5506be1a5523",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H08_V4_GEN",
+    "caseId": "H08",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请替我设计一次让新加入的志愿者快速互相认识的活动。具体形式你来定，我希望拿到后就能带着大家做。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H08.md",
+            "language": "markdown",
+            "content": "共有十二位成年人参加，时间二十五分钟，地点是普通会议室。现场只有纸、笔和白板，没有投影或音响，也不方便搬动桌子。不希望任何人被要求讲家庭情况、收入或其他私人经历。大家已经知道彼此姓名，本次重点是知道各自愿意帮忙的事情。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H08_V4_GEN",
+      "data": {
+        "optimizedPrompt": "请设计一次让新加入的志愿者快速互相认识的活动，并交付一份可以当场照着带大家做的完整活动方案。具体形式由你决定，但方案要能直接落地执行。\n\n活动条件如下：共12位成年人参加，时长25分钟，地点是普通会议室；现场只有纸、笔和白板，没有投影或音响，也不方便搬动桌子。参与者已经知道彼此姓名，因此不必再安排自我介绍姓名的环节，本次重点是让大家了解各自愿意帮忙的事情。\n\n方案中不得要求任何人讲述家庭情况、收入或其他私人经历，所有环节都要避开这类内容。\n\n请交付一份紧凑、可直接执行的活动方案，包含：活动目标与整体流程；按时间分配的各环节说明（合计不超过25分钟，并留出简短开场和收尾）；每个环节的具体做法、主持人引导语或提问、参与者操作方式；白板和纸笔的具体用法；主持人控场与时间提醒要点；以及可能出现的冷场、个别人主导发言等情况的应对办法。环节设计要考虑12人在不搬动桌子的会议室里如何分组或互动，确保人人都有参与机会，并自然引导出“各自愿意帮忙的事情”这一信息。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H08.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H08.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n共有十二位成年人参加，时间二十五分钟，地点是普通会议室。现场只有纸、笔和白板，没有投影或音响，也不方便搬动桌子。不希望任何人被要求讲家庭情况、收入或其他私人经历。大家已经知道彼此姓名，本次重点是知道各自愿意帮忙的事情。",
+              "summary": "Markdown 文档摘要：共有十二位成年人参加，时间二十五分钟，地点是普通会议室。；现场只有纸、笔和白板，没有投影或音响，也不方便搬动桌子。；不希望任何人被要求讲家庭情况、收入或其他私人经历。；大家已经知道彼此姓名，本次重点是知道各自愿意帮忙的事情。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 6685,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "985a4805-2105-41d8-9df9-98d467f2dbd1",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H09_V29_PLAN",
+    "caseId": "H09",
+    "version": "29",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "请把这份活动复盘要点整理成一条可以直接发出去的跟进消息，提醒相关的人做好下一次准备。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "65cc37a2-ecb3-4a2f-bb71-091abfef893b",
+        "version": "sha256:26ce571c6205c25386ac73536b12ee2fa16d0f3cc290a44031c697547806298d"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H09_V29_PLAN",
+      "data": {
+        "summary": "用户要把活动复盘要点整理成一条可直接发出的跟进消息，提醒相关的人做好下一次准备。复盘材料已给出签到排队、入口指示、场地方愿提供第二个立牌、预算结余未公开、下次日期未定等要点，但未说明收件对象，也未说明内部预算结余是否可写入消息。这两点会实质改变消息的称呼、内容取舍和可公开程度，需向用户确认。",
+        "questions": [
+          {
+            "id": "q1",
+            "question": "这条跟进消息要发给谁？",
+            "hint": "收件对象决定称呼、语气和要点取舍，例如是否直接点名场地方或志愿者。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "a",
+                "label": "活动执行团队内部",
+                "description": "发给参与本次活动执行的工作人员",
+                "answer": "收件对象为活动执行团队内部成员",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "b",
+                "label": "场地方与志愿者等外部协作方",
+                "description": "发给场地方、引导志愿者等外部人员",
+                "answer": "收件对象为场地方与志愿者等外部协作方",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "c",
+                "label": "内部与外部一并发送",
+                "description": "同一消息发给内部团队和外部协作方",
+                "answer": "收件对象同时包含内部团队与外部协作方",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "q2",
+            "question": "未对外公布的预算结余是否要写进这条消息？",
+            "hint": "该信息标注为未对外公布，是否写入决定消息能否直接对外发送。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "a",
+                "label": "不写入",
+                "description": "消息中完全不提预算结余",
+                "answer": "消息中不提及预算结余",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "b",
+                "label": "写入",
+                "description": "在消息中提及预算结余",
+                "answer": "消息中提及预算结余",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 12594,
+        "planId": "c3a4dff9-6e2c-4b7b-8cef-a967c4461744",
+        "planningContext": {
+          "contextId": "65cc37a2-ecb3-4a2f-bb71-091abfef893b",
+          "version": "sha256:26ce571c6205c25386ac73536b12ee2fa16d0f3cc290a44031c697547806298d"
+        },
+        "expiresAt": "2026-10-22T18:25:49.527119500Z"
+      }
+    }
+  },
+  {
+    "id": "H09_V4_PLAN",
+    "caseId": "H09",
+    "version": "4",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "请把这份活动复盘要点整理成一条可以直接发出去的跟进消息，提醒相关的人做好下一次准备。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "65cc37a2-ecb3-4a2f-bb71-091abfef893b",
+        "version": "sha256:26ce571c6205c25386ac73536b12ee2fa16d0f3cc290a44031c697547806298d"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H09_V4_PLAN",
+      "data": {
+        "summary": "原任务是把复盘要点整理成一条可直接发送的跟进消息，提醒相关人做好下次准备。资料已给出复盘要点，但未说明收件对象，且含一项未对外公布的预算结余，这两点会实质改变消息内容与措辞，需向用户确认。",
+        "questions": [
+          {
+            "id": "q1",
+            "question": "这条跟进消息主要发给谁？",
+            "hint": "收件对象决定称呼、语气、提醒分工以及可披露的内容范围，不同对象会写出不同的消息。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "venue",
+                "label": "场地方",
+                "description": "面向提供场地的合作方，侧重立牌与入口指示的协调",
+                "answer": "消息发给场地方，侧重确认第二个立牌及入口指示改进的配合事项",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "volunteers",
+                "label": "引导志愿者",
+                "description": "面向现场引导人员，侧重入口指示与签到分流的分工提醒",
+                "answer": "消息发给引导志愿者，侧重入口指示改进与高峰签到分流的分工提醒",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "internal",
+                "label": "内部团队",
+                "description": "面向内部同事，可包含内部复盘信息",
+                "answer": "消息发给内部团队，可包含全部复盘要点及内部预算信息",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "all",
+                "label": "全体参与者",
+                "description": "面向所有参会人员，措辞需对外且不含内部信息",
+                "answer": "消息发给全体参与者，措辞对外，仅含签到与入场体验改进的提醒",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "q2",
+            "question": "未对外公布的预算结余，是否可以写进这条跟进消息？",
+            "hint": "该信息标注为未对外公布，是否披露属于你的授权决定，直接影响消息能否包含该条内容。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "include",
+                "label": "可以写入",
+                "description": "消息中包含预算结余及后续用途",
+                "answer": "允许在消息中写入预算结余相关内容",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "exclude",
+                "label": "不写入",
+                "description": "消息省略该条，仅保留签到与指示改进事项",
+                "answer": "消息不提及预算结余，仅保留签到与入口指示等公开事项",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "internal_only",
+                "label": "仅内部版本可写",
+                "description": "对外版本省略，内部版本保留",
+                "answer": "预算结余仅在内部版本消息中出现，对外版本省略",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5793,
+        "planId": "6e46fa89-0454-46bc-9f15-643ba768f888",
+        "planningContext": {
+          "contextId": "65cc37a2-ecb3-4a2f-bb71-091abfef893b",
+          "version": "sha256:26ce571c6205c25386ac73536b12ee2fa16d0f3cc290a44031c697547806298d"
+        },
+        "expiresAt": "2026-10-22T18:25:49.527119500Z"
+      }
+    }
+  },
+  {
+    "id": "H10_V29_PLAN",
+    "caseId": "H10",
+    "version": "29",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "给我设计一个在家连续做四天的阅读小练习。每天最多十分钟，具体顺序和形式由你安排，最后用一个四行的小表格告诉我每天做什么，不要再让我选方案。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "d1e80186-4298-469e-af8d-7b609265500d",
+        "version": "sha256:7f944fbba7b5d52474d2b48b6908cc693911ed512da26e44762a91d159bd0b8f"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H10_V29_PLAN",
+      "data": {
+        "summary": "用户委托设计一个在家连续四天、每天不超过十分钟的阅读小练习，练习对象为同一本短篇小说集中的任意一篇，目标是练习注意人物想法的变化，仅用纸笔，最后用四行小表格说明每天做什么，且不再让用户选方案。现有信息已足以直接完成设计，无需向用户追加提问。",
+        "questions": [],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3564,
+        "planId": "3ce071ed-563d-47e8-932a-90ab95f5eac3",
+        "planningContext": {
+          "contextId": "d1e80186-4298-469e-af8d-7b609265500d",
+          "version": "sha256:7f944fbba7b5d52474d2b48b6908cc693911ed512da26e44762a91d159bd0b8f"
+        },
+        "expiresAt": "2026-10-22T18:26:08.040866500Z"
+      }
+    }
+  },
+  {
+    "id": "H10_V4_PLAN",
+    "caseId": "H10",
+    "version": "4",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "给我设计一个在家连续做四天的阅读小练习。每天最多十分钟，具体顺序和形式由你安排，最后用一个四行的小表格告诉我每天做什么，不要再让我选方案。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "d1e80186-4298-469e-af8d-7b609265500d",
+        "version": "sha256:7f944fbba7b5d52474d2b48b6908cc693911ed512da26e44762a91d159bd0b8f"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H10_V4_PLAN",
+      "data": {
+        "summary": "用户已明确委托设计四天、每天十分钟内的阅读练习，主题为人物想法变化，材料与限制条件齐全，且明确要求由设计者安排顺序与形式、不提供选项。无需向用户提问，直接产出方案与四行表格即可。",
+        "questions": [],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3034,
+        "planId": "0cec87a0-e2b5-483d-8491-99e9148d974b",
+        "planningContext": {
+          "contextId": "d1e80186-4298-469e-af8d-7b609265500d",
+          "version": "sha256:7f944fbba7b5d52474d2b48b6908cc693911ed512da26e44762a91d159bd0b8f"
+        },
+        "expiresAt": "2026-10-22T18:26:08.040866500Z"
+      }
+    }
+  }
+]

@@ -64,7 +64,9 @@ public final class NaturalPromptInstructions {
             case NaturalPromptInformationStateInstructions.VERSION -> NaturalPromptInformationStateInstructions.ENHANCE;
             case NaturalPromptSourcePreservingInstructions.VERSION -> NaturalPromptSourcePreservingInstructions.ENHANCE;
             case NaturalPromptStageInstructions.VERSION, NaturalPromptStageInstructions.OPTIONAL_FRAMEWORK_VERSION,
-                    NaturalPromptStageInstructions.NO_FRAMEWORK_VERSION, NaturalPromptStageInstructions.DIAGNOSTIC_COMPATIBILITY_VERSION
+                    NaturalPromptStageInstructions.NO_FRAMEWORK_VERSION, NaturalPromptStageInstructions.DIAGNOSTIC_COMPATIBILITY_VERSION,
+                    NaturalPromptActionContractInstructions.VERSION, NaturalPromptScopedInstructions.VERSION, NaturalPromptScopedInstructions.PRESERVED_VERSION,
+                    NaturalPromptScopedInstructions.CONSERVATIVE_VERSION
                     -> NaturalPromptStageInstructions.enhancementInstruction(version);
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
@@ -95,7 +97,9 @@ public final class NaturalPromptInstructions {
             case NaturalPromptSourcePreservingInstructions.VERSION -> PLAN;
             // 阶段协议候选不增加提问阶段；21—24共用同一提问策略和完整实际题答保护。
             case NaturalPromptStageInstructions.VERSION, NaturalPromptStageInstructions.OPTIONAL_FRAMEWORK_VERSION,
-                    NaturalPromptStageInstructions.NO_FRAMEWORK_VERSION, NaturalPromptStageInstructions.DIAGNOSTIC_COMPATIBILITY_VERSION
+                    NaturalPromptStageInstructions.NO_FRAMEWORK_VERSION, NaturalPromptStageInstructions.DIAGNOSTIC_COMPATIBILITY_VERSION,
+                    NaturalPromptActionContractInstructions.VERSION, NaturalPromptScopedInstructions.VERSION, NaturalPromptScopedInstructions.PRESERVED_VERSION,
+                    NaturalPromptScopedInstructions.CONSERVATIVE_VERSION
                     -> NaturalPromptStageInstructions.planningInstruction(version);
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };

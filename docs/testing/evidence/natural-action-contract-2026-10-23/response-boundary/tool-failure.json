@@ -1,0 +1,8 @@
+{
+  "stageActualCalls": 4,
+  "confirmAdditionalCalls": 0,
+  "defect": "runner续跑只从V4_PLAN恢复上下文；单版本30回归会错误新建contextId，被冻结输入一致性保护阻断。",
+  "fix": "按阶段第一个实际版本恢复原引用，不重建Plan，不改变真实题答。",
+  "nextStage": "response-continuation",
+  "copiedRecords": "原件引用及哈希保存，模型调用不重计。"
+}

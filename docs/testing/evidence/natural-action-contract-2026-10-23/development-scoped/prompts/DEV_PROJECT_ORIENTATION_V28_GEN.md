@@ -1,0 +1,1 @@
+请熟悉这个使用 JeecgBoot 构建的业务系统的前后端项目：前端使用 Vue3 和 TypeScript 编写，后端使用 Spring Boot 3。后端 care 是新模块，legacycare 是旧模块；前端 care 是新模块，care-old 是旧模块。项目资料目前只有 README 摘要：前后端通过 /api/care 调用，前端 care 负责随访表单，后端 care 负责记录读写，legacycare 与 care-old 保留旧用户入口；资料不包含完整实现或运行结果。请基于现有资料梳理项目结构和模块职责，说明前后端调用关系及新旧模块的对应关系，并指出仅凭现有资料无法确认的部分。以后涉及随访功能修改时，新旧模块需要同步修改。

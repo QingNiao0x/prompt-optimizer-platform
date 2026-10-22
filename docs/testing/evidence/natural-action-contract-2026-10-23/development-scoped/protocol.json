@@ -1,0 +1,117 @@
+{
+  "batch": "natural-action-scope-development-2026-10-23",
+  "status": "FROZEN",
+  "authorizationQuote": "请执行自动化流程开发过程中自行进行真实评测；先修复任务动作与成果要求混用、下游组件重复推断；优化正文整体质量",
+  "taskMaximumActualCalls": 192,
+  "taskPreviouslyActual": 28,
+  "maximumNewActualCalls": 54,
+  "previousClosedActualCalls": 1363,
+  "oldClosedBalanceTransferred": 0,
+  "baselineCommit": "c1c4fc31",
+  "baselineVersion": "4",
+  "candidateVersions": [
+    "28"
+  ],
+  "versions": [
+    "4",
+    "28"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 16384,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 25,
+    "PLAN": 8,
+    "EXECUTION": 21,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 21,
+    "PLAN": 6,
+    "EXECUTION": 21,
+    "REVIEW": 0
+  },
+  "generation": [
+    "DEV_PROJECT_ORIENTATION",
+    "DEV_ASSIMILATE",
+    "DEV_EXPLICIT_REPORT",
+    "DEV_CONDITIONAL_ACTION",
+    "DEV_SUFFICIENT_MESSAGE",
+    "DEV_COMPARISON",
+    "DEV_DELEGATED_DESIGN"
+  ],
+  "plan": [
+    "DEV_ASSIMILATE",
+    "DEV_PLAN_RECIPIENT"
+  ],
+  "confirmedPlanGeneration": [],
+  "execution": [
+    "DEV_PROJECT_ORIENTATION",
+    "DEV_ASSIMILATE",
+    "DEV_EXPLICIT_REPORT",
+    "DEV_CONDITIONAL_ACTION",
+    "DEV_SUFFICIENT_MESSAGE",
+    "DEV_COMPARISON",
+    "DEV_DELEGATED_DESIGN"
+  ],
+  "executionRepeats": 1,
+  "confirmationMode": "PER_VERSION",
+  "allowedJobs": [
+    "DEV_PROJECT_ORIENTATION_V4_GEN",
+    "DEV_PROJECT_ORIENTATION_V28_GEN",
+    "DEV_ASSIMILATE_V4_GEN",
+    "DEV_ASSIMILATE_V28_GEN",
+    "DEV_EXPLICIT_REPORT_V4_GEN",
+    "DEV_EXPLICIT_REPORT_V28_GEN",
+    "DEV_CONDITIONAL_ACTION_V4_GEN",
+    "DEV_CONDITIONAL_ACTION_V28_GEN",
+    "DEV_SUFFICIENT_MESSAGE_V4_GEN",
+    "DEV_SUFFICIENT_MESSAGE_V28_GEN",
+    "DEV_COMPARISON_V4_GEN",
+    "DEV_COMPARISON_V28_GEN",
+    "DEV_DELEGATED_DESIGN_V4_GEN",
+    "DEV_DELEGATED_DESIGN_V28_GEN",
+    "DEV_ASSIMILATE_V4_PLAN",
+    "DEV_ASSIMILATE_V28_PLAN",
+    "DEV_PLAN_RECIPIENT_V4_PLAN",
+    "DEV_PLAN_RECIPIENT_V28_PLAN",
+    "DEV_PROJECT_ORIENTATION_RAW_EXEC_R1",
+    "DEV_PROJECT_ORIENTATION_V4_EXEC_R1",
+    "DEV_PROJECT_ORIENTATION_V28_EXEC_R1",
+    "DEV_ASSIMILATE_RAW_EXEC_R1",
+    "DEV_ASSIMILATE_V4_EXEC_R1",
+    "DEV_ASSIMILATE_V28_EXEC_R1",
+    "DEV_EXPLICIT_REPORT_RAW_EXEC_R1",
+    "DEV_EXPLICIT_REPORT_V4_EXEC_R1",
+    "DEV_EXPLICIT_REPORT_V28_EXEC_R1",
+    "DEV_CONDITIONAL_ACTION_RAW_EXEC_R1",
+    "DEV_CONDITIONAL_ACTION_V4_EXEC_R1",
+    "DEV_CONDITIONAL_ACTION_V28_EXEC_R1",
+    "DEV_SUFFICIENT_MESSAGE_RAW_EXEC_R1",
+    "DEV_SUFFICIENT_MESSAGE_V4_EXEC_R1",
+    "DEV_SUFFICIENT_MESSAGE_V28_EXEC_R1",
+    "DEV_COMPARISON_RAW_EXEC_R1",
+    "DEV_COMPARISON_V4_EXEC_R1",
+    "DEV_COMPARISON_V28_EXEC_R1",
+    "DEV_DELEGATED_DESIGN_RAW_EXEC_R1",
+    "DEV_DELEGATED_DESIGN_V4_EXEC_R1",
+    "DEV_DELEGATED_DESIGN_V28_EXEC_R1"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "order": "按题目下标轮换各臂；固定顺序非随机，所有结果保留。",
+  "criteria": [
+    "纯理解和既成背景不新增强制作品；明确作品、必要解释及受托设计不被删去。",
+    "候选正文无新增严重目标/事实/授权或硬要求错误；Plan不为填写成果栏目追问。",
+    "定向作品没有相对基线新增严重退步；协议可靠性单列。"
+  ],
+  "review": "对照冻结第四版与28独立范围准备；重复键拒绝修复适用于两臂，单列协议改进，不计为语义收益。先检查全部正文及Plan，严重失败时不继续浪费作品调用。",
+  "mechanism": "范围准备不找作品缺口，只识别动作时态、适用条件及原有回应；后续不重复填写goal/deliverable。每次准备也计入实际调用，不隐藏其成本。"
+}

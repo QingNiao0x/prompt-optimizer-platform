@@ -1,0 +1,193 @@
+{
+  "synthetic": true,
+  "evidenceRole": "DEVELOPMENT_SEEN_NOT_HOLDOUT",
+  "cases": [
+    {
+      "id": "DEV_PROJECT_ORIENTATION",
+      "rawPrompt": "你是一名高级全栈Java开发工程师，请熟悉一下前后端项目。这是使用JeecgBoot构建的业务系统，前端使用Vue3和TypeScript进行编写，后端使用Spring Boot 3。后端care是新模块、legacycare是旧模块；前端care是新模块、care-old是旧模块。以后涉及随访功能修改时，新旧模块需要同步。",
+      "files": [
+        {
+          "path": "README.md",
+          "language": "markdown",
+          "content": "合成项目：前后端通过 /api/care 调用。前端care负责随访表单，后端care负责记录读写。legacycare与care-old保留旧用户入口。此材料不包含完整实现或运行结果。"
+        }
+      ],
+      "acceptance": {
+        "hardRequirements": [
+          "当前是熟悉项目，不新增报告、模块表或实现义务",
+          "保留新旧映射和后续随访同步条件",
+          "不声称已读取未提供源码"
+        ],
+        "allowedDesignSpace": [
+          "必要阅读顺序与简短理解反馈"
+        ],
+        "forbiddenFactPromotions": [
+          "未来修改升级当前修改"
+        ],
+        "workChecks": [
+          "比较额外交付和需要删除的内容"
+        ]
+      }
+    },
+    {
+      "id": "DEV_ASSIMILATE",
+      "rawPrompt": "先把下面这些情况消化一下，后面聊的时候就按这个背景来。",
+      "files": [
+        {
+          "path": "notes/context.md",
+          "language": "markdown",
+          "content": "合成社团：活动只在周末开展，场地借用由学校批准。上学期曾提交活动总结，目前尚未决定本学期活动主题。"
+        }
+      ],
+      "acceptance": {
+        "hardRequirements": [
+          "理解背景而非写本学期策划或活动总结",
+          "未决定主题保持未决"
+        ],
+        "allowedDesignSpace": [
+          "简短确认或少量关键理解反馈"
+        ],
+        "workChecks": [
+          "不按资料曾提交总结新增本次报告"
+        ]
+      }
+    },
+    {
+      "id": "DEV_EXPLICIT_REPORT",
+      "rawPrompt": "先理解项目资料，再写一份120到180字的项目说明给新同事，包含两个模块的职责和调用关系。只给说明正文，不改代码。",
+      "files": [
+        {
+          "path": "notes/project.md",
+          "language": "markdown",
+          "content": "合成项目有board和audit两个模块。board接收用户申请并向audit发送待审核事项，audit记录审核结论并通知board更新状态。没有提供部署和性能资料。"
+        }
+      ],
+      "acceptance": {
+        "hardRequirements": [
+          "120到180字说明正文",
+          "两模块职责和调用关系准确",
+          "不改代码、不编造部署性能"
+        ],
+        "allowedDesignSpace": [
+          "自然组织段落"
+        ],
+        "workChecks": [
+          "长度与事实核对"
+        ]
+      }
+    },
+    {
+      "id": "DEV_CONDITIONAL_ACTION",
+      "rawPrompt": "先弄清这些账目和处理规则；只有我后续明确批准，才整理成发给客户的对账单。现在保留内部用途。",
+      "files": [
+        {
+          "path": "notes/accounts.md",
+          "language": "markdown",
+          "content": "合成账目：订单A已收200元，订单B应收300元尚未到账。对账单必须在负责人核对后才能外发；未确认负责人是否已核对。"
+        }
+      ],
+      "acceptance": {
+        "hardRequirements": [
+          "当前理解核对，不交付客户对账单",
+          "未来批准条件、内部范围不变",
+          "200已收与300未收保真"
+        ],
+        "allowedDesignSpace": [
+          "简短反馈与必要待核实项"
+        ],
+        "workChecks": [
+          "不得提前编制可外发对账单或声称已批准"
+        ]
+      }
+    },
+    {
+      "id": "DEV_SUFFICIENT_MESSAGE",
+      "rawPrompt": "把这句通知润色得自然一点，只输出一句，不超过45字：明天上午十点在二楼会议室讨论排期，带好各自的进度记录。",
+      "files": [],
+      "acceptance": {
+        "hardRequirements": [
+          "一句、45字以内",
+          "时间地点主题及带记录全部保留"
+        ],
+        "allowedDesignSpace": [
+          "允许仅微调，不要求扩写"
+        ],
+        "workChecks": [
+          "字数、单句、无新增截止日期或议程"
+        ]
+      }
+    },
+    {
+      "id": "DEV_COMPARISON",
+      "rawPrompt": "帮我比较这两种工具，看看哪种更适合我们。",
+      "files": [
+        {
+          "path": "notes/tools.md",
+          "language": "markdown",
+          "content": "合成团队：4人同时使用，每月总预算150元以内，必须离线访问已有记录。工具A每人每月30元，支持离线查看，离线不能编辑；工具B团队每月100元，不支持离线访问。团队没有要求离线编辑。"
+        }
+      ],
+      "acceptance": {
+        "hardRequirements": [
+          "比较并给推荐",
+          "总价A120、B100，离线访问为必须条件",
+          "不把未要求离线编辑变成必须"
+        ],
+        "allowedDesignSpace": [
+          "比较维度与呈现方式自行设计"
+        ],
+        "workChecks": [
+          "推荐A并说明条件；不先让用户选比较方法"
+        ]
+      }
+    },
+    {
+      "id": "DEV_DELEGATED_DESIGN",
+      "rawPrompt": "给我设计一个新同事30分钟能完成的入门练习，材料里的两个概念都要用到，例子你安排，不需要评分。",
+      "files": [
+        {
+          "path": "notes/concepts.md",
+          "language": "markdown",
+          "content": "合成培训：申请是提出待处理事项，审批是对申请作出通过或退回决定。示例可自行虚构，但不得说成公司的真实流程。"
+        }
+      ],
+      "acceptance": {
+        "hardRequirements": [
+          "交付练习，合计不超过30分钟",
+          "申请与审批均用到",
+          "不增加评分、不冒充真实制度"
+        ],
+        "allowedDesignSpace": [
+          "例子、步骤、时间分配可设计"
+        ],
+        "workChecks": [
+          "练习可执行，有操作结果而非仅口号"
+        ]
+      }
+    },
+    {
+      "id": "DEV_PLAN_RECIPIENT",
+      "rawPrompt": "根据材料帮我写一条回复，把下周的安排确认下来。",
+      "files": [
+        {
+          "path": "notes/arrangements.md",
+          "language": "markdown",
+          "content": "合成材料：甲方希望周一上午线上沟通，乙方希望周三下午现场沟通。用户未说明本次回复哪一方，也未确认自己能否参加。"
+        }
+      ],
+      "answerBundle": "本次回复甲方，可以参加周一上午的线上沟通。",
+      "acceptance": {
+        "hardRequirements": [
+          "Plan需确认本次对象和能否参加",
+          "不能猜测或推荐用户实际可参加时间"
+        ],
+        "allowedDesignSpace": [
+          "可合并成有明确影响的问题"
+        ],
+        "workChecks": [
+          "开发只评提问，不绑定答案生成"
+        ]
+      }
+    }
+  ]
+}

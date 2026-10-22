@@ -1,0 +1,155 @@
+[
+  {
+    "id": "H09_V30_PLAN",
+    "caseId": "H09",
+    "version": "30",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "请把这份活动复盘要点整理成一条可以直接发出去的跟进消息，提醒相关的人做好下一次准备。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "adfe67cf-4075-4b43-abea-c11d621d9628",
+        "version": "sha256:26ce571c6205c25386ac73536b12ee2fa16d0f3cc290a44031c697547806298d"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H09_V30_PLAN",
+      "data": {
+        "summary": "用户要求把活动复盘要点整理成一条可直接发出的跟进消息，提醒相关的人做好下一次准备。复盘材料包含签到排队、场地方愿提供第二个立牌、入口指示不明显、未对外公布的预算结余、下次日期未定，且未说明收件对象。需澄清收件对象与内部预算结余是否可写入消息，这两点会实质改变消息内容与可发送性。",
+        "questions": [
+          {
+            "id": "q1",
+            "question": "这条跟进消息要发给谁？",
+            "hint": "收件对象决定称呼、语气以及哪些信息适合写入，材料中未说明收件对象。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "volunteers",
+                "label": "引导志愿者",
+                "description": "面向现场引导志愿者，侧重入口指示与签到流程改进",
+                "answer": "收件对象为引导志愿者，消息侧重入口指示与签到流程改进",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "venue",
+                "label": "场地方",
+                "description": "面向场地方，侧重第二个立牌等场地配合事项",
+                "answer": "收件对象为场地方，消息侧重第二个立牌等场地配合事项",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "internal",
+                "label": "内部团队",
+                "description": "面向内部团队，可包含内部复盘信息",
+                "answer": "收件对象为内部团队，消息可包含内部复盘信息",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "all",
+                "label": "以上多方合并",
+                "description": "一条消息同时发给志愿者、场地方和内部团队",
+                "answer": "收件对象为志愿者、场地方和内部团队合并，消息需兼顾各方",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "q2",
+            "question": "未对外公布的预算结余是否可以写进这条消息？",
+            "hint": "该信息标注为未对外公布，是否披露会改变消息内容与可发送范围。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "exclude",
+                "label": "不写入",
+                "description": "消息中完全不提预算结余",
+                "answer": "消息中不提及预算结余",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "include",
+                "label": "可以写入",
+                "description": "消息中可包含预算结余相关内容",
+                "answer": "消息中可以包含预算结余相关内容",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "internal_only",
+                "label": "仅内部版本写入",
+                "description": "对外版本不提，内部版本可提",
+                "answer": "对外版本不提及预算结余，内部版本可提及",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 7453,
+        "planId": "4da27cf8-22ac-4554-aae1-7b47f7abaa8f",
+        "planningContext": {
+          "contextId": "adfe67cf-4075-4b43-abea-c11d621d9628",
+          "version": "sha256:26ce571c6205c25386ac73536b12ee2fa16d0f3cc290a44031c697547806298d"
+        },
+        "expiresAt": "2026-10-22T18:37:37.244598900Z"
+      }
+    }
+  },
+  {
+    "id": "H10_V30_PLAN",
+    "caseId": "H10",
+    "version": "30",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "给我设计一个在家连续做四天的阅读小练习。每天最多十分钟，具体顺序和形式由你安排，最后用一个四行的小表格告诉我每天做什么，不要再让我选方案。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "994a6c1b-29e3-41f8-9845-8e22a181e299",
+        "version": "sha256:7f944fbba7b5d52474d2b48b6908cc693911ed512da26e44762a91d159bd0b8f"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H10_V30_PLAN",
+      "data": {
+        "summary": "用户要求设计一个在家连续四天、每天不超过十分钟的阅读小练习，练习目标为注意人物想法的变化，材料为同一本短篇小说集中的任意一篇，仅用纸笔，最终用一个四行小表格说明每天做什么，且不提供多方案选择。现有信息已足以完成该设计，无需额外提问。",
+        "questions": [],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4369,
+        "planId": "ad918b85-1ff0-4b03-a4ef-a4c5b0773e7a",
+        "planningContext": {
+          "contextId": "994a6c1b-29e3-41f8-9845-8e22a181e299",
+          "version": "sha256:7f944fbba7b5d52474d2b48b6908cc693911ed512da26e44762a91d159bd0b8f"
+        },
+        "expiresAt": "2026-10-22T18:37:44.807707900Z"
+      }
+    }
+  }
+]

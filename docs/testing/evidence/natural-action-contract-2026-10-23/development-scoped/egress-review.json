@@ -1,0 +1,82 @@
+{
+  "review": "All 8 cases manually reviewed: synthetic task text and inline synthetic materials only",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "caseFile": "docs\\testing\\evidence\\natural-action-contract-2026-10-23\\development-live\\cases.json",
+  "caseSha256": "534b9d376b1996df13ea3cb7731499d389c1030cb8478553df19b35acbce1b8b",
+  "payloadSources": [
+    "Frozen synthetic rawPrompt",
+    "Frozen inline synthetic file content and background",
+    "Versioned enhancement instructions",
+    "Synthetic model output for downstream comparison"
+  ],
+  "notSent": [
+    "Workspace source files",
+    "Source manifest",
+    "Account identifier/password",
+    "Cookies",
+    "Environment variables",
+    "API key inside prompt payload"
+  ],
+  "credentialUse": "Existing API key only as authentication to configured DeepSeek endpoint; login password only to loopback9003",
+  "files": [
+    {
+      "materialPaths": [
+        "README.md"
+      ],
+      "id": "DEV_PROJECT_ORIENTATION",
+      "materialsAreInline": true
+    },
+    {
+      "materialPaths": [
+        "notes/context.md"
+      ],
+      "id": "DEV_ASSIMILATE",
+      "materialsAreInline": true
+    },
+    {
+      "materialPaths": [
+        "notes/project.md"
+      ],
+      "id": "DEV_EXPLICIT_REPORT",
+      "materialsAreInline": true
+    },
+    {
+      "materialPaths": [
+        "notes/accounts.md"
+      ],
+      "id": "DEV_CONDITIONAL_ACTION",
+      "materialsAreInline": true
+    },
+    {
+      "materialPaths": [],
+      "id": "DEV_SUFFICIENT_MESSAGE",
+      "materialsAreInline": true
+    },
+    {
+      "materialPaths": [
+        "notes/tools.md"
+      ],
+      "id": "DEV_COMPARISON",
+      "materialsAreInline": true
+    },
+    {
+      "materialPaths": [
+        "notes/concepts.md"
+      ],
+      "id": "DEV_DELEGATED_DESIGN",
+      "materialsAreInline": true
+    },
+    {
+      "materialPaths": [
+        "notes/arrangements.md"
+      ],
+      "id": "DEV_PLAN_RECIPIENT",
+      "materialsAreInline": true
+    }
+  ],
+  "authorization": "Current user explicitly requests autonomous development with real evaluation",
+  "actualModelCallsBeforeAudit": 0,
+  "stage": "development-scoped",
+  "mechanismPayload": "冻结合成输入与内部动作/回应范围；原文、合成材料及全部题答仍完整传递。范围不是额外源码或凭据。"
+}

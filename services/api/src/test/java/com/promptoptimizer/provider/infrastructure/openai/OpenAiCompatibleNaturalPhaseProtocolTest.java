@@ -60,7 +60,7 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"21", "22", "23", "24"})
+    @ValueSource(strings = {"21", "22", "23", "24", "27"})
     void validEnhancementUsesOneCallAndNormalizesAllOriginalEvidence(String version) throws Exception {
         expect(1, enhancement(), input(version));
         var observations = new ArrayList<ModelCallObservation>();
@@ -158,7 +158,7 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"21", "22", "23", "24"})
+    @ValueSource(strings = {"21", "22", "23", "24", "27"})
     void planGroupsMultipleReasonsUnderOneQuestionAndRetainsUnaskedUnknown(String version) throws Exception {
         expect(1, planning(true), input(version));
         var result = provider.plan(input(version), this::checkPlan);
@@ -438,6 +438,166 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
                 .isEqualTo(NaturalPromptInstructions.planningInstruction("21"));
     }
 
+    /** 无独立作品的理解动作与明确报告分别通过真实HTTP适配器；不是靠删除正文来规避新交付。 */
+    @ParameterizedTest
+    @ValueSource(strings = {"", "项目说明报告"})
+    void actionCandidatePreservesOptionalAndExplicitOutcomesWithoutAddingModelStages(String outcome) throws Exception {
+        String raw = outcome.isEmpty() ? "先理解这份材料，后续的操作等我说明。"
+                : "先理解这份材料，再撰写项目说明报告。";
+        var actualInput = new NaturalPromptInput(raw,
+                new ContextSnapshot("材料介绍已完成的改造。", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test"),
+                List.of(), List.of(), List.of(), null).withStrategyVersion("27");
+        var content = json.createObjectNode();
+        content.put("optimizedPrompt", raw).put("framework", "APE");
+        var task = content.putObject("task");
+        task.put("goal", raw).put("deliverable", outcome).put("inputReadiness", "SUFFICIENT");
+        var requirement = task.putArray("requirements").addObject();
+        requirement.put("text", raw).putArray("dimensions").add("GOAL").add("CONDITION");
+        requirement.putArray("evidence").addObject().put("sourceId", "rawPrompt").put("quote", raw);
+        requirement.putArray("bodyQuotes").add(raw);
+        task.putArray("additions"); task.putArray("openDecisions");
+        expect(1, content, actualInput);
+        var observations = new ArrayList<ModelCallObservation>();
+        try (var ignored = audit(observations)) {
+            var draft = provider.enhance(actualInput, this::checkDraft);
+            assertThat(draft.optimizedPrompt()).isEqualTo(raw);
+            assertThat(draft.taskUnderstanding().deliverable()).isEqualTo(outcome);
+            assertThat(draft.taskUnderstanding().additions()).isEmpty();
+        }
+        assertThat(observations).hasSize(1);
+        server.verify();
+    }
+
+    /** 候选的语义指导不能放松真实题答来源、正文覆盖或跨阶段字段约束。 */
+    @ParameterizedTest
+    @ValueSource(strings = {"missingAnswer", "foreignAnchor", "planField"})
+    void actionCandidateRetainsSourceCoverageAndStageBoundaries(String defect) throws Exception {
+        var bad = enhancement();
+        var task = (ObjectNode) bad.path("task");
+        var requirements = (ArrayNode) task.path("requirements");
+        switch (defect) {
+            case "missingAnswer" -> requirements.remove(3);
+            case "foreignAnchor" -> ((ObjectNode) requirements.get(0)).putArray("bodyQuotes").add("模型未写入正文的内容");
+            case "planField" -> task.putArray("planImpacts");
+            default -> throw new IllegalArgumentException(defect);
+        }
+        expect(2, bad, input("27"));
+        assertThatThrownBy(() -> provider.enhance(input("27"), this::checkDraft)).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"enhance,28", "plan,28", "enhance,29", "plan,29", "enhance,30", "plan,30"})
+    void scopeIsReadOnceAndReusedWithoutReplacingOriginalInput(String stage, String version) throws Exception {
+        var input = input(version);
+        expect(1, scope(), input);
+        var payload = "plan".equals(stage) ? planning(true) : enhancement();
+        ((ObjectNode) payload.path("task")).remove(List.of("goal", "deliverable"));
+        expect(1, payload, input);
+        var observations = new ArrayList<ModelCallObservation>();
+        NaturalTaskUnderstanding understood;
+        try (var ignored = audit(observations)) {
+            understood = "plan".equals(stage) ? provider.plan(input, this::checkPlan).taskUnderstanding()
+                    : provider.enhance(input, this::checkDraft).taskUnderstanding();
+        }
+        assertThat(understood.goal()).isEqualTo("写一条活动通知");
+        assertThat(understood.deliverable()).isEqualTo("50字以内的通知正文");
+        assertThat(understood.requirements()).hasSize(4);
+        assertThat(observations).hasSize(2);
+        server.verify();
+    }
+
+    @Test
+    void unspecifiedResponseStaysEmptyWithoutAnInventedArtifact() throws Exception {
+        String raw = "先熟悉材料，后续再按我提出的要求处理。";
+        var input = new NaturalPromptInput(raw, null, List.of(), List.of(), List.of(), null).withStrategyVersion("28");
+        var scope = json.readTree("""
+                {"actions":[{"text":"熟悉材料","timing":"CURRENT","condition":"","evidence":[{"sourceId":"rawPrompt","quote":"先熟悉材料"}]},
+                  {"text":"按后续要求处理","timing":"CONDITIONAL","condition":"用户提出后续要求","evidence":[{"sourceId":"rawPrompt","quote":"后续再按我提出的要求处理"}]}],
+                 "response":{"basis":"UNSPECIFIED","description":"","evidence":[]}}
+                """);
+        expect(1, (ObjectNode) scope, input);
+        var payload = (ObjectNode) json.readTree("""
+                {"optimizedPrompt":"先熟悉材料，后续再按我提出的要求处理。","framework":"APE","task":{"inputReadiness":"SUFFICIENT",
+                  "requirements":[{"text":"熟悉材料并保留后续条件","dimensions":["GOAL","CONDITION"],
+                  "evidence":[{"sourceId":"rawPrompt","quote":"先熟悉材料，后续再按我提出的要求处理。"}],
+                  "bodyQuotes":["先熟悉材料，后续再按我提出的要求处理。"]}],"additions":[],"openDecisions":[]}}
+                """);
+        expect(1, payload, input);
+        assertThat(provider.enhance(input, this::checkDraft).taskUnderstanding().deliverable()).isEmpty();
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"goal", "deliverable", "missingAnswer", "foreignAnchor", "planImpacts"})
+    void scopeReuseDoesNotAllowReinferenceOrWeakenFinalProtection(String defect) throws Exception {
+        var input = input("28");
+        expect(1, scope(), input);
+        var payload = enhancement();
+        var task = (ObjectNode) payload.path("task");
+        task.remove(List.of("goal", "deliverable"));
+        switch (defect) {
+            case "goal", "deliverable" -> task.put(defect, "另行推断的目标");
+            case "missingAnswer" -> ((ArrayNode) task.path("requirements")).remove(3);
+            case "foreignAnchor" -> ((ObjectNode) task.path("requirements").get(0)).putArray("bodyQuotes").add("另一份正文");
+            case "planImpacts" -> task.putArray("planImpacts");
+            default -> throw new IllegalArgumentException(defect);
+        }
+        expect(2, payload, input);
+        assertThatThrownBy(() -> provider.enhance(input, this::checkDraft)).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"duplicateRoot", "duplicateNested", "trailingObject"})
+    void ambiguousJsonCannotEraseQuestionsOrRequirementEvidence(String defect) throws Exception {
+        String content = json.writeValueAsString(planning(true));
+        content = switch (defect) {
+            case "duplicateRoot" -> content.substring(0, content.length() - 1) + ",\"questions\":[]}";
+            case "duplicateNested" -> content.replace("\"sourceId\":\"rawPrompt\"", "\"sourceId\":\"forged\",\"sourceId\":\"rawPrompt\"");
+            case "trailingObject" -> content + "{}";
+            default -> throw new IllegalArgumentException(defect);
+        };
+        expectRaw(2, content, input("24"), system -> { });
+        assertThatThrownBy(() -> provider.plan(input("24"), this::checkPlan)).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
+    private ObjectNode scope() throws Exception {
+        return (ObjectNode) json.readTree("""
+                {"actions":[{"text":"写一条活动通知","timing":"CURRENT","condition":"","evidence":[{"sourceId":"rawPrompt","quote":"请写一条活动通知"}]}],
+                 "response":{"basis":"EXPLICIT","description":"50字以内的通知正文","evidence":[{"sourceId":"rawPrompt","quote":"50字以内，只输出正文"}]}}
+                """);
+    }
+
+    @Test
+    void noIndependentResponseUsesOnlyTheScopeCallAndCopiesActualRequest() throws Exception {
+        String raw = "先理解这份材料，之后按我的具体要求处理。";
+        var input = new NaturalPromptInput(raw, null, List.of(), List.of(), List.of(), null).withStrategyVersion("29");
+        var response = (ObjectNode) json.readTree("""
+                {"actions":[{"text":"理解材料","timing":"CURRENT","condition":"","evidence":[{"sourceId":"rawPrompt","quote":"先理解这份材料"}]}],
+                 "response":{"basis":"UNSPECIFIED","description":"","evidence":[]}}
+                """);
+        expect(1, response, input);
+        assertThat(provider.enhance(input, this::checkDraft).optimizedPrompt()).isEqualTo(raw);
+        server.verify();
+    }
+
+    @Test
+    void inferredReadinessFeedbackCannotStartANewWritingStage() throws Exception {
+        String raw = "先吃透材料中各状态的关系，后面我会逐项给你问题。";
+        var input = new NaturalPromptInput(raw, null, List.of(), List.of(), List.of(), null).withStrategyVersion("30");
+        var response = (ObjectNode) json.readTree("""
+                {"actions":[{"text":"理解状态关系","timing":"CURRENT","condition":"","evidence":[{"sourceId":"rawPrompt","quote":"先吃透材料中各状态的关系"}]}],
+                 "response":{"basis":"INHERENT","description":"确认已理解并等待问题","evidence":[{"sourceId":"rawPrompt","quote":"后面我会逐项给你问题"}]}}
+                """);
+        expect(1, response, input);
+        var draft = provider.enhance(input, this::checkDraft);
+        assertThat(draft.optimizedPrompt()).isEqualTo(raw);
+        assertThat(draft.taskUnderstanding().deliverable()).isEmpty();
+        server.verify();
+    }
+
     /** 三份原响应按UTF-8内容哈希冻结，运行期不依赖本机tmp或评测目录。 */
     private JsonNode frozenResponse(String traceId) throws Exception {
         var expected = Map.of("022", "4528460670d70177e20d58de2e554feb18c1c273264047b4b1cdda21d014f1a6",
@@ -503,6 +663,12 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
             checkSystem.accept(sent.path("messages").get(0).path("content").asText());
             String user = sent.path("messages").get(1).path("content").asText();
             var payload = json.readTree(user.substring(user.indexOf('{')));
+            if (NaturalPromptScopedInstructions.supports(input.strategyVersion())) {
+                boolean preparing = sent.path("messages").get(0).path("content").asText()
+                        .startsWith(NaturalPromptScopedInstructions.PREPARE);
+                assertThat(payload.has("taskScope")).isEqualTo(!preparing);
+                if (!preparing) assertThat(payload.path("taskScope").has("actions")).isTrue();
+            }
             assertThat(payload.path("rawPrompt").asText()).isEqualTo(input.rawPrompt());
             assertThat(payload.path("context")).isEqualTo(json.valueToTree(input.context()));
             assertThat(payload.path("actualAnswers")).isEqualTo(json.valueToTree(input.actualAnswers()));

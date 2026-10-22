@@ -1,0 +1,2204 @@
+[
+  {
+    "id": "DEV_ASSIMILATE_V24_GEN",
+    "caseId": "DEV_ASSIMILATE",
+    "version": "24",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "先把下面这些情况消化一下，后面聊的时候就按这个背景来。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/context.md",
+            "language": "markdown",
+            "content": "合成社团：活动只在周末开展，场地借用由学校批准。上学期曾提交活动总结，目前尚未决定本学期活动主题。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_ASSIMILATE_V24_GEN",
+      "data": {
+        "optimizedPrompt": "请先消化并记住以下背景信息，作为后续对话的固定背景，后续交流都按此背景进行：合成社团的活动只在周末开展，场地借用需由学校批准；该社团上学期曾提交活动总结，目前尚未决定本学期活动主题。后续对话中如涉及这些信息，请以此为准；背景中未提及的内容不要自行编造或补充。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/context.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/context.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成社团：活动只在周末开展，场地借用由学校批准。上学期曾提交活动总结，目前尚未决定本学期活动主题。",
+              "summary": "Markdown 文档摘要：合成社团：活动只在周末开展，场地借用由学校批准。；上学期曾提交活动总结，目前尚未决定本学期活动主题。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2983,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "24",
+        "framework": "APE",
+        "recordId": "b98115ee-c764-40fe-a938-303e6a2eecf3",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_ASSIMILATE_V24_PLAN",
+    "caseId": "DEV_ASSIMILATE",
+    "version": "24",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "先把下面这些情况消化一下，后面聊的时候就按这个背景来。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "9e220628-9719-42e1-8dbe-5750b157dd58",
+        "version": "sha256:d01500a8dc179c9c911119d7bc76cc94b86cb78cf047bbeb2ea6d205be158fe8"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_ASSIMILATE_V24_PLAN",
+      "data": {
+        "summary": "用户希望先消化并记住一份合成社团背景资料，供后续对话使用；当前没有明确要求产出报告、方案或代码等具体交付物。资料已说明活动时间、场地审批、上学期总结和本学期主题未定。由于原提示词未指定后续要完成的任务类型，需澄清用户希望基于该背景开展什么工作，以及是否需将背景整理成可复用材料。",
+        "questions": [
+          {
+            "id": "q1",
+            "question": "你希望我基于这份合成社团背景，后续主要帮你完成哪类工作？",
+            "hint": "原提示词只说“后面聊的时候按这个背景来”，未说明后续任务类型；不同任务会决定交付物形态和需要保留的背景重点。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "a",
+                "label": "本学期活动主题策划",
+                "description": "围绕尚未决定的本学期活动主题，产出主题建议或策划方案",
+                "answer": "用户希望基于背景开展本学期活动主题策划",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "b",
+                "label": "活动总结或汇报材料",
+                "description": "基于上学期已提交总结和周末活动、场地审批情况，撰写总结或汇报",
+                "answer": "用户希望基于背景撰写活动总结或汇报材料",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "c",
+                "label": "仅确认背景，暂不产出具体材料",
+                "description": "先让我记住背景，后续再提出具体任务",
+                "answer": "用户当前仅要求确认并记住背景，暂不产出具体材料",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "d",
+                "label": "其他任务",
+                "description": "上述之外的具体任务，由用户补充说明",
+                "answer": "用户希望基于背景完成其他未列明的任务",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "q2",
+            "question": "是否需要我现在把这份背景整理成一份可复用的简要背景摘要？",
+            "hint": "这决定本次是否产出结构化背景材料，还是仅口头确认已消化；不影响后续任务本身。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "a",
+                "label": "需要，整理成简要摘要",
+                "description": "将活动时间、场地审批、上学期总结和主题未定等要点整理为简短摘要",
+                "answer": "用户需要将背景整理成可复用的简要摘要",
+                "recommended": true,
+                "recommendationReason": "整理成摘要便于后续对话持续引用，且不改变原背景事实"
+              },
+              {
+                "id": "b",
+                "label": "不需要，仅确认已消化",
+                "description": "不产出摘要，仅表示已理解背景",
+                "answer": "用户不需要摘要，仅要求确认已消化背景",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 13038,
+        "planId": "5156590b-ee5b-4bd2-8243-9073a7901384",
+        "planningContext": {
+          "contextId": "9e220628-9719-42e1-8dbe-5750b157dd58",
+          "version": "sha256:d01500a8dc179c9c911119d7bc76cc94b86cb78cf047bbeb2ea6d205be158fe8"
+        },
+        "expiresAt": "2026-10-22T17:41:21.287861900Z"
+      }
+    }
+  },
+  {
+    "id": "DEV_ASSIMILATE_V27_GEN",
+    "caseId": "DEV_ASSIMILATE",
+    "version": "27",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "先把下面这些情况消化一下，后面聊的时候就按这个背景来。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/context.md",
+            "language": "markdown",
+            "content": "合成社团：活动只在周末开展，场地借用由学校批准。上学期曾提交活动总结，目前尚未决定本学期活动主题。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_ASSIMILATE_V27_GEN",
+      "data": {
+        "optimizedPrompt": "请先阅读并记住 notes/context.md 中的背景信息：合成社团的活动只在周末开展，场地借用需由学校批准；上学期曾提交过活动总结，目前尚未决定本学期活动主题。后续对话请以这些情况为背景，不要另行编造未提供的社团信息。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/context.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/context.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成社团：活动只在周末开展，场地借用由学校批准。上学期曾提交活动总结，目前尚未决定本学期活动主题。",
+              "summary": "Markdown 文档摘要：合成社团：活动只在周末开展，场地借用由学校批准。；上学期曾提交活动总结，目前尚未决定本学期活动主题。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2626,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "27",
+        "framework": "APE",
+        "recordId": "db5bec93-2d4d-4af4-92fc-38d5cc2ec2d2",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_ASSIMILATE_V27_PLAN",
+    "caseId": "DEV_ASSIMILATE",
+    "version": "27",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "先把下面这些情况消化一下，后面聊的时候就按这个背景来。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "9e220628-9719-42e1-8dbe-5750b157dd58",
+        "version": "sha256:d01500a8dc179c9c911119d7bc76cc94b86cb78cf047bbeb2ea6d205be158fe8"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_ASSIMILATE_V27_PLAN",
+      "data": {
+        "summary": "用户要求先消化合成社团的背景资料（周末活动、场地需学校批准、上学期已交总结、本学期主题未定），以便后续对话沿用。当前没有指定具体交付物或后续任务，因此只需确认后续要围绕该背景完成什么，以及是否沿用资料中的事实边界。",
+        "questions": [
+          {
+            "id": "q1",
+            "question": "后续对话希望基于这份社团背景完成什么？",
+            "hint": "当前只要求消化背景，未说明后续要产出什么；不同目标会决定后续交付物类型和内容重点。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "策划本学期活动方案",
+              "撰写上学期活动总结",
+              "协助确定本学期活动主题",
+              "仅作为背景，暂不产出具体内容"
+            ],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3086,
+        "planId": "1d932ec5-9125-41ac-a647-21decce032cd",
+        "planningContext": {
+          "contextId": "9e220628-9719-42e1-8dbe-5750b157dd58",
+          "version": "sha256:d01500a8dc179c9c911119d7bc76cc94b86cb78cf047bbeb2ea6d205be158fe8"
+        },
+        "expiresAt": "2026-10-22T17:41:21.287861900Z"
+      }
+    }
+  },
+  {
+    "id": "DEV_ASSIMILATE_V4_GEN",
+    "caseId": "DEV_ASSIMILATE",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "先把下面这些情况消化一下，后面聊的时候就按这个背景来。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/context.md",
+            "language": "markdown",
+            "content": "合成社团：活动只在周末开展，场地借用由学校批准。上学期曾提交活动总结，目前尚未决定本学期活动主题。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_ASSIMILATE_V4_GEN",
+      "data": {
+        "optimizedPrompt": "请先消化并记住以下背景，后续对话都以此为准：这是一个合成社团，活动只在周末开展，场地借用需经学校批准；上学期曾提交过活动总结，本学期活动主题目前尚未决定。请基于这些信息理解后续讨论，不要自行补充或假定尚未确定的事项（如本学期活动主题）。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/context.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/context.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成社团：活动只在周末开展，场地借用由学校批准。上学期曾提交活动总结，目前尚未决定本学期活动主题。",
+              "summary": "Markdown 文档摘要：合成社团：活动只在周末开展，场地借用由学校批准。；上学期曾提交活动总结，目前尚未决定本学期活动主题。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2839,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "e8a3cd2f-10e3-49b7-aaee-51fe9dbcf835",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_ASSIMILATE_V4_PLAN",
+    "caseId": "DEV_ASSIMILATE",
+    "version": "4",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "先把下面这些情况消化一下，后面聊的时候就按这个背景来。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "9e220628-9719-42e1-8dbe-5750b157dd58",
+        "version": "sha256:d01500a8dc179c9c911119d7bc76cc94b86cb78cf047bbeb2ea6d205be158fe8"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_ASSIMILATE_V4_PLAN",
+      "data": {
+        "summary": "用户要求先消化所给社团背景资料，并在后续对话中沿用该背景。资料已明确社团活动时间、场地审批方式、上学期总结提交情况及本学期主题未定等事实，原定任务为背景确认与后续对话约定，无需额外澄清即可执行。",
+        "questions": [],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2475,
+        "planId": "068582bd-3ff9-426b-a116-e9cee89da68b",
+        "planningContext": {
+          "contextId": "9e220628-9719-42e1-8dbe-5750b157dd58",
+          "version": "sha256:d01500a8dc179c9c911119d7bc76cc94b86cb78cf047bbeb2ea6d205be158fe8"
+        },
+        "expiresAt": "2026-10-22T17:41:21.287861900Z"
+      }
+    }
+  },
+  {
+    "id": "DEV_COMPARISON_V24_GEN",
+    "caseId": "DEV_COMPARISON",
+    "version": "24",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "帮我比较这两种工具，看看哪种更适合我们。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/tools.md",
+            "language": "markdown",
+            "content": "合成团队：4人同时使用，每月总预算150元以内，必须离线访问已有记录。工具A每人每月30元，支持离线查看，离线不能编辑；工具B团队每月100元，不支持离线访问。团队没有要求离线编辑。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_COMPARISON_V24_GEN",
+      "data": {
+        "optimizedPrompt": "请帮我比较工具A和工具B，判断哪一种更适合我们团队使用，并给出明确推荐和理由。\n\n已知情况：团队共4人同时使用，每月总预算在150元以内，必须能离线访问已有记录。工具A每人每月30元，支持离线查看，但离线时不能编辑；工具B团队每月100元，不支持离线访问。团队没有要求离线编辑。\n\n请围绕这些条件进行比较，重点核算两种工具按4人使用时的月度总费用是否在预算内，并逐项对照离线访问这一硬性要求；同时说明离线编辑能力缺失是否构成影响，因为团队并未提出离线编辑需求。请给出结论：哪种工具更符合团队条件，以及关键取舍是什么。如果某项条件资料不足，请指出受影响的判断，其余部分照常完成。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/tools.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/tools.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成团队：4人同时使用，每月总预算150元以内，必须离线访问已有记录。工具A每人每月30元，支持离线查看，离线不能编辑；工具B团队每月100元，不支持离线访问。团队没有要求离线编辑。",
+              "summary": "Markdown 文档摘要：合成团队：4人同时使用，每月总预算150元以内，必须离线访问已有记录。；工具A每人每月30元，支持离线查看，离线不能编辑；工具B团队每月100元，不支持离线访问。；团队没有要求离线编辑。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4519,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "24",
+        "framework": "APE",
+        "recordId": "20bf1073-baac-4cb3-bece-677d68e363f5",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_COMPARISON_V27_GEN",
+    "caseId": "DEV_COMPARISON",
+    "version": "27",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "帮我比较这两种工具，看看哪种更适合我们。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/tools.md",
+            "language": "markdown",
+            "content": "合成团队：4人同时使用，每月总预算150元以内，必须离线访问已有记录。工具A每人每月30元，支持离线查看，离线不能编辑；工具B团队每月100元，不支持离线访问。团队没有要求离线编辑。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_COMPARISON_V27_GEN",
+      "data": {
+        "optimizedPrompt": "帮我比较工具A和工具B，看看哪种更适合我们团队。请依据 notes/tools.md 中的信息进行判断：团队4人同时使用，每月总预算150元以内，必须能离线访问已有记录；工具A每人每月30元，支持离线查看但不能离线编辑；工具B团队每月100元，不支持离线访问；团队没有要求离线编辑。请逐项对照预算、离线访问和离线编辑需求，说明两种工具各自是否满足、费用如何计算，并给出明确推荐及理由。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/tools.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/tools.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成团队：4人同时使用，每月总预算150元以内，必须离线访问已有记录。工具A每人每月30元，支持离线查看，离线不能编辑；工具B团队每月100元，不支持离线访问。团队没有要求离线编辑。",
+              "summary": "Markdown 文档摘要：合成团队：4人同时使用，每月总预算150元以内，必须离线访问已有记录。；工具A每人每月30元，支持离线查看，离线不能编辑；工具B团队每月100元，不支持离线访问。；团队没有要求离线编辑。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3230,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "27",
+        "framework": "APE",
+        "recordId": "4ea0822f-ab60-4296-b779-dfe16aafe91e",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_COMPARISON_V4_GEN",
+    "caseId": "DEV_COMPARISON",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "帮我比较这两种工具，看看哪种更适合我们。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/tools.md",
+            "language": "markdown",
+            "content": "合成团队：4人同时使用，每月总预算150元以内，必须离线访问已有记录。工具A每人每月30元，支持离线查看，离线不能编辑；工具B团队每月100元，不支持离线访问。团队没有要求离线编辑。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_COMPARISON_V4_GEN",
+      "data": {
+        "optimizedPrompt": "请帮我比较工具A和工具B，判断哪一种更适合我们团队使用，并给出明确的选型结论和理由。\n\n团队情况：4人同时使用，每月总预算在150元以内，必须能离线访问已有记录；团队没有离线编辑的要求。\n\n已知信息：工具A每人每月30元，支持离线查看，但离线状态下不能编辑；工具B团队每月100元，不支持离线访问。\n\n请围绕以下方面进行比较：4人同时使用时的月度总成本及是否在150元预算内、离线访问已有记录这一硬性要求是否满足、离线编辑需求的实际影响（团队并未要求离线编辑，因此工具A离线不能编辑不构成缺陷）、以及价格与功能匹配度。最后明确推荐其中一种工具，说明它满足哪些关键条件、另一种在哪些条件上不达标，并指出若预算或离线要求发生变化，结论会如何改变。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/tools.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/tools.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成团队：4人同时使用，每月总预算150元以内，必须离线访问已有记录。工具A每人每月30元，支持离线查看，离线不能编辑；工具B团队每月100元，不支持离线访问。团队没有要求离线编辑。",
+              "summary": "Markdown 文档摘要：合成团队：4人同时使用，每月总预算150元以内，必须离线访问已有记录。；工具A每人每月30元，支持离线查看，离线不能编辑；工具B团队每月100元，不支持离线访问。；团队没有要求离线编辑。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4581,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "4c5c21a0-714b-4fac-a051-be3a70073026",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_CONDITIONAL_ACTION_V24_GEN",
+    "caseId": "DEV_CONDITIONAL_ACTION",
+    "version": "24",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "先弄清这些账目和处理规则；只有我后续明确批准，才整理成发给客户的对账单。现在保留内部用途。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/accounts.md",
+            "language": "markdown",
+            "content": "合成账目：订单A已收200元，订单B应收300元尚未到账。对账单必须在负责人核对后才能外发；未确认负责人是否已核对。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_CONDITIONAL_ACTION_V24_GEN",
+      "data": {
+        "optimizedPrompt": "请先阅读 notes/accounts.md，弄清其中的账目和处理规则，并保留为内部用途。当前已知的合成账目为：订单A已收200元，订单B应收300元尚未到账；对账单必须在负责人核对后才能外发，但目前尚未确认负责人是否已核对。请据此整理一份内部使用的账目梳理与处理规则说明，清楚区分已收、应收未到账的金额与状态，并写明外发对账单前需负责人核对这一前置条件及当前核对状态未知。现在不要生成或整理发给客户的对账单；只有我后续明确批准后，才可整理成客户对账单。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/accounts.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/accounts.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成账目：订单A已收200元，订单B应收300元尚未到账。对账单必须在负责人核对后才能外发；未确认负责人是否已核对。",
+              "summary": "Markdown 文档摘要：合成账目：订单A已收200元，订单B应收300元尚未到账。；对账单必须在负责人核对后才能外发；未确认负责人是否已核对。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4339,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "24",
+        "framework": "APE",
+        "recordId": "51d19e1c-7df4-47b7-905d-019c016ddb4e",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_CONDITIONAL_ACTION_V27_GEN",
+    "caseId": "DEV_CONDITIONAL_ACTION",
+    "version": "27",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "先弄清这些账目和处理规则；只有我后续明确批准，才整理成发给客户的对账单。现在保留内部用途。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/accounts.md",
+            "language": "markdown",
+            "content": "合成账目：订单A已收200元，订单B应收300元尚未到账。对账单必须在负责人核对后才能外发；未确认负责人是否已核对。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_CONDITIONAL_ACTION_V27_GEN",
+      "data": {
+        "optimizedPrompt": "先弄清 notes/accounts.md 中的账目和处理规则，现在只保留内部用途。请读取并梳理该文件：订单A已收200元，订单B应收300元尚未到账；对账单必须在负责人核对后才能外发，目前尚未确认负责人是否已核对。请把账目现状、外发前必须满足的核对条件以及当前未确认的事项讲清楚，不要生成或整理成发给客户的对账单。只有我后续明确批准后，才整理成发给客户的对账单。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/accounts.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/accounts.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成账目：订单A已收200元，订单B应收300元尚未到账。对账单必须在负责人核对后才能外发；未确认负责人是否已核对。",
+              "summary": "Markdown 文档摘要：合成账目：订单A已收200元，订单B应收300元尚未到账。；对账单必须在负责人核对后才能外发；未确认负责人是否已核对。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3908,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "27",
+        "framework": "APE",
+        "recordId": "58e11484-ccd4-4af2-b145-137cf3803633",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_CONDITIONAL_ACTION_V4_GEN",
+    "caseId": "DEV_CONDITIONAL_ACTION",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "先弄清这些账目和处理规则；只有我后续明确批准，才整理成发给客户的对账单。现在保留内部用途。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/accounts.md",
+            "language": "markdown",
+            "content": "合成账目：订单A已收200元，订单B应收300元尚未到账。对账单必须在负责人核对后才能外发；未确认负责人是否已核对。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_CONDITIONAL_ACTION_V4_GEN",
+      "data": {
+        "optimizedPrompt": "请先阅读 notes/accounts.md，弄清其中的账目和处理规则，并整理成一份供内部使用的梳理结果。当前只保留内部用途，不要生成或整理成发给客户的对账单；只有我后续明确批准后，才可进行对外对账单的整理。\n\n梳理时请以文件中的实际记录为准：订单A已收200元，订单B应收300元尚未到账；对账单必须在负责人核对后才能外发，而目前尚未确认负责人是否已核对。请把已收、应收未到账、外发前须负责人核对以及核对状态未确认这些信息分别说明清楚，并注明哪些内容属于已记录事实、哪些仍待确认。不要补造金额、订单或核对结果，也不要将内部梳理结果表述为已获准外发。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/accounts.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/accounts.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成账目：订单A已收200元，订单B应收300元尚未到账。对账单必须在负责人核对后才能外发；未确认负责人是否已核对。",
+              "summary": "Markdown 文档摘要：合成账目：订单A已收200元，订单B应收300元尚未到账。；对账单必须在负责人核对后才能外发；未确认负责人是否已核对。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4728,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "626d2f42-311c-400e-b7b6-a2523516f058",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_DELEGATED_DESIGN_V24_GEN",
+    "caseId": "DEV_DELEGATED_DESIGN",
+    "version": "24",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "给我设计一个新同事30分钟能完成的入门练习，材料里的两个概念都要用到，例子你安排，不需要评分。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/concepts.md",
+            "language": "markdown",
+            "content": "合成培训：申请是提出待处理事项，审批是对申请作出通过或退回决定。示例可自行虚构，但不得说成公司的真实流程。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_DELEGATED_DESIGN_V24_GEN",
+      "data": {
+        "optimizedPrompt": "请设计一份新同事30分钟内可完成的入门练习，交付物是一份可直接发给新同事的练习说明。练习必须同时用到 notes/concepts.md 中的两个概念：申请是提出待处理事项，审批是对申请作出通过或退回决定。练习中的例子由你自行虚构安排，但不得说成公司的真实流程，需明确标注为虚构示例。不需要设计评分或评分标准。练习说明应让新同事在30分钟内独立完成，内容紧凑、步骤清晰，包含练习目标、所需材料或前置说明、具体操作步骤和虚构示例场景，使新同事能通过练习理解申请与审批的区别和先后关系。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/concepts.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/concepts.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成培训：申请是提出待处理事项，审批是对申请作出通过或退回决定。示例可自行虚构，但不得说成公司的真实流程。",
+              "summary": "Markdown 文档摘要：合成培训：申请是提出待处理事项，审批是对申请作出通过或退回决定。；示例可自行虚构，但不得说成公司的真实流程。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3566,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "24",
+        "framework": "APE",
+        "recordId": "6ece40a2-fecd-4e53-b5d1-3382b22edeff",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_DELEGATED_DESIGN_V27_GEN",
+    "caseId": "DEV_DELEGATED_DESIGN",
+    "version": "27",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "给我设计一个新同事30分钟能完成的入门练习，材料里的两个概念都要用到，例子你安排，不需要评分。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/concepts.md",
+            "language": "markdown",
+            "content": "合成培训：申请是提出待处理事项，审批是对申请作出通过或退回决定。示例可自行虚构，但不得说成公司的真实流程。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_DELEGATED_DESIGN_V27_GEN",
+      "data": {
+        "optimizedPrompt": "请设计一个面向新同事的入门练习，要求新同事能在30分钟内完成。练习必须同时用到 notes/concepts.md 中的两个概念：申请是提出待处理事项，审批是对申请作出通过或退回决定。练习中的例子由你自行安排，可以虚构，但不得说成公司的真实流程。不需要设计评分环节。请直接给出可执行的练习内容，包括练习任务和配套示例。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/concepts.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/concepts.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成培训：申请是提出待处理事项，审批是对申请作出通过或退回决定。示例可自行虚构，但不得说成公司的真实流程。",
+              "summary": "Markdown 文档摘要：合成培训：申请是提出待处理事项，审批是对申请作出通过或退回决定。；示例可自行虚构，但不得说成公司的真实流程。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2814,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "27",
+        "framework": "APE",
+        "recordId": "764cb192-00ab-4188-9e38-3fe2e41a06d3",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_DELEGATED_DESIGN_V4_GEN",
+    "caseId": "DEV_DELEGATED_DESIGN",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "给我设计一个新同事30分钟能完成的入门练习，材料里的两个概念都要用到，例子你安排，不需要评分。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/concepts.md",
+            "language": "markdown",
+            "content": "合成培训：申请是提出待处理事项，审批是对申请作出通过或退回决定。示例可自行虚构，但不得说成公司的真实流程。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_DELEGATED_DESIGN_V4_GEN",
+      "data": {
+        "optimizedPrompt": "请设计一份面向新同事的入门练习，要求新同事能在30分钟内完成，练习中必须同时用到 notes/concepts.md 里的两个概念：申请是提出待处理事项，审批是对申请作出通过或退回决定。练习所用的具体例子由你自行安排，可以虚构，但不得把示例说成公司的真实流程。不需要设计评分环节或评分标准。请直接交付一份完整、可执行的练习说明，包含练习目标、所需材料或场景、具体操作步骤和预期完成结果，让新同事拿到后即可按步骤完成。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/concepts.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/concepts.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成培训：申请是提出待处理事项，审批是对申请作出通过或退回决定。示例可自行虚构，但不得说成公司的真实流程。",
+              "summary": "Markdown 文档摘要：合成培训：申请是提出待处理事项，审批是对申请作出通过或退回决定。；示例可自行虚构，但不得说成公司的真实流程。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3716,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "a19685a4-ee8d-4e41-a449-fb3f86bf0af4",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_EXPLICIT_REPORT_V24_GEN",
+    "caseId": "DEV_EXPLICIT_REPORT",
+    "version": "24",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "先理解项目资料，再写一份120到180字的项目说明给新同事，包含两个模块的职责和调用关系。只给说明正文，不改代码。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/project.md",
+            "language": "markdown",
+            "content": "合成项目有board和audit两个模块。board接收用户申请并向audit发送待审核事项，audit记录审核结论并通知board更新状态。没有提供部署和性能资料。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_EXPLICIT_REPORT_V24_GEN",
+      "data": {
+        "optimizedPrompt": "请先阅读 notes/project.md 中的项目资料，再据此写一份面向新同事的项目说明。说明正文控制在120到180字，需讲清 board 和 audit 两个模块各自的职责及二者的调用关系：board 接收用户申请并向 audit 发送待审核事项，audit 记录审核结论并通知 board 更新状态。资料未提供部署和性能信息，说明中不要涉及这些内容，也不要编造其他模块、参数或结论。只输出说明正文，不要修改代码，也不要附加代码、标题或额外解释。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/project.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/project.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成项目有board和audit两个模块。board接收用户申请并向audit发送待审核事项，audit记录审核结论并通知board更新状态。没有提供部署和性能资料。",
+              "summary": "Markdown 文档摘要：合成项目有board和audit两个模块。；board接收用户申请并向audit发送待审核事项，audit记录审核结论并通知board更新状态。；没有提供部署和性能资料。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3356,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "24",
+        "framework": "APE",
+        "recordId": "6619c779-da65-4071-8d14-f7b588d106f6",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_EXPLICIT_REPORT_V27_GEN",
+    "caseId": "DEV_EXPLICIT_REPORT",
+    "version": "27",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "先理解项目资料，再写一份120到180字的项目说明给新同事，包含两个模块的职责和调用关系。只给说明正文，不改代码。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/project.md",
+            "language": "markdown",
+            "content": "合成项目有board和audit两个模块。board接收用户申请并向audit发送待审核事项，audit记录审核结论并通知board更新状态。没有提供部署和性能资料。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_EXPLICIT_REPORT_V27_GEN",
+      "data": {
+        "optimizedPrompt": "先阅读 notes/project.md 中的项目资料，再据此写一份 120 到 180 字的项目说明，供新同事阅读。说明中要包含 board 和 audit 两个模块的职责及调用关系：board 接收用户申请并向 audit 发送待审核事项，audit 记录审核结论并通知 board 更新状态。资料未提供部署和性能信息，说明中不要编造这些内容。只输出说明正文，不要修改代码。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/project.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/project.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成项目有board和audit两个模块。board接收用户申请并向audit发送待审核事项，audit记录审核结论并通知board更新状态。没有提供部署和性能资料。",
+              "summary": "Markdown 文档摘要：合成项目有board和audit两个模块。；board接收用户申请并向audit发送待审核事项，audit记录审核结论并通知board更新状态。；没有提供部署和性能资料。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2876,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "27",
+        "framework": "APE",
+        "recordId": "df1c0776-3ed5-4300-8917-492134bab63e",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_EXPLICIT_REPORT_V4_GEN",
+    "caseId": "DEV_EXPLICIT_REPORT",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "先理解项目资料，再写一份120到180字的项目说明给新同事，包含两个模块的职责和调用关系。只给说明正文，不改代码。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/project.md",
+            "language": "markdown",
+            "content": "合成项目有board和audit两个模块。board接收用户申请并向audit发送待审核事项，audit记录审核结论并通知board更新状态。没有提供部署和性能资料。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_EXPLICIT_REPORT_V4_GEN",
+      "data": {
+        "optimizedPrompt": "请先阅读 notes/project.md 中的项目资料，理解清楚后再写一份面向新同事的项目说明。说明正文控制在120到180字，需包含 board 和 audit 两个模块各自的职责，以及它们之间的调用关系：board 接收用户申请并向 audit 发送待审核事项，audit 记录审核结论并通知 board 更新状态。资料中没有部署和性能方面的信息，说明中不要涉及这些内容，也不要编造资料之外的事实。只输出说明正文，不要修改代码，也不要附加代码或其他内容。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/project.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/project.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成项目有board和audit两个模块。board接收用户申请并向audit发送待审核事项，audit记录审核结论并通知board更新状态。没有提供部署和性能资料。",
+              "summary": "Markdown 文档摘要：合成项目有board和audit两个模块。；board接收用户申请并向audit发送待审核事项，audit记录审核结论并通知board更新状态。；没有提供部署和性能资料。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3705,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "f64aee1a-505c-4f41-84d0-c065d4983cfc",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_PLAN_RECIPIENT_V24_PLAN",
+    "caseId": "DEV_PLAN_RECIPIENT",
+    "version": "24",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "根据材料帮我写一条回复，把下周的安排确认下来。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "076592e8-7768-4987-a3b0-b9eea203bde9",
+        "version": "sha256:41e46fad1e40863c4b4accf0100042f496b0f9953afdfc1e574248658b458e96"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_PLAN_RECIPIENT_V24_PLAN",
+      "data": {
+        "summary": "用户要求根据 notes/arrangements.md 写一条确认下周安排的回复。材料显示甲方希望周一上午线上沟通、乙方希望周三下午现场沟通，但未说明本次回复哪一方，也未确认用户能否参加。需澄清回复对象与用户可参加的时间/方式，才能确定回复内容与确认口径。",
+        "questions": [
+          {
+            "id": "q1",
+            "question": "这条回复是发给哪一方的？",
+            "hint": "材料中甲方希望周一上午线上、乙方希望周三下午现场，回复对象不同会决定确认哪项安排及措辞。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "party_a",
+                "label": "回复甲方",
+                "description": "面向甲方，确认周一上午线上沟通",
+                "answer": "回复甲方，确认周一上午线上沟通",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "party_b",
+                "label": "回复乙方",
+                "description": "面向乙方，确认周三下午现场沟通",
+                "answer": "回复乙方，确认周三下午现场沟通",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "both",
+                "label": "同时回复双方",
+                "description": "向双方说明安排并协调两种时间",
+                "answer": "同时回复双方，说明并协调周一上午线上与周三下午现场两种安排",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "q2",
+            "question": "你本人能否参加已提出的时间安排？",
+            "hint": "材料未确认用户能否参加，回复中能否直接确认取决于此。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "can_attend",
+                "label": "可以参加",
+                "description": "用户能参加所确认的安排",
+                "answer": "用户可以参加所确认的时间安排",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "cannot_attend",
+                "label": "不能参加",
+                "description": "用户无法参加，需要另约",
+                "answer": "用户不能参加已提出的安排，回复需另约时间",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "unknown",
+                "label": "暂不确定",
+                "description": "尚未确定能否参加",
+                "answer": "用户暂不确定能否参加，回复需保留待定表述",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4435,
+        "planId": "4e511d72-8e7e-47ed-a1b9-6b3eb125d8fd",
+        "planningContext": {
+          "contextId": "076592e8-7768-4987-a3b0-b9eea203bde9",
+          "version": "sha256:41e46fad1e40863c4b4accf0100042f496b0f9953afdfc1e574248658b458e96"
+        },
+        "expiresAt": "2026-10-22T17:41:40.065405500Z"
+      }
+    }
+  },
+  {
+    "id": "DEV_PLAN_RECIPIENT_V27_PLAN",
+    "caseId": "DEV_PLAN_RECIPIENT",
+    "version": "27",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "根据材料帮我写一条回复，把下周的安排确认下来。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "076592e8-7768-4987-a3b0-b9eea203bde9",
+        "version": "sha256:41e46fad1e40863c4b4accf0100042f496b0f9953afdfc1e574248658b458e96"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_PLAN_RECIPIENT_V27_PLAN",
+      "data": {
+        "summary": "用户要求根据 notes/arrangements.md 写一条回复，确认下周安排；材料显示甲方希望周一上午线上沟通、乙方希望周三下午现场沟通，但未说明回复哪一方，也未确认用户能否参加。需澄清回复对象与用户可参加的时间/方式，才能确定回复内容与确认口径。",
+        "questions": [],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4347,
+        "planId": "d7ffe158-80f1-49ae-a02d-8658b4836bda",
+        "planningContext": {
+          "contextId": "076592e8-7768-4987-a3b0-b9eea203bde9",
+          "version": "sha256:41e46fad1e40863c4b4accf0100042f496b0f9953afdfc1e574248658b458e96"
+        },
+        "expiresAt": "2026-10-22T17:41:40.065405500Z"
+      }
+    }
+  },
+  {
+    "id": "DEV_PLAN_RECIPIENT_V4_PLAN",
+    "caseId": "DEV_PLAN_RECIPIENT",
+    "version": "4",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "根据材料帮我写一条回复，把下周的安排确认下来。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "076592e8-7768-4987-a3b0-b9eea203bde9",
+        "version": "sha256:41e46fad1e40863c4b4accf0100042f496b0f9953afdfc1e574248658b458e96"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_PLAN_RECIPIENT_V4_PLAN",
+      "data": {
+        "summary": "原定任务是根据材料写一条回复确认下周安排；材料显示甲乙双方时间与方式不同，且用户未说明回复对象及自身能否参加，需先澄清这两点才能确定回复内容。",
+        "questions": [
+          {
+            "id": "reply_target",
+            "question": "这条回复是发给哪一方的？",
+            "hint": "决定回复中确认哪个时间与沟通方式，以及是否需要协调双方分歧。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "party_a",
+                "label": "回复甲方",
+                "description": "向甲方确认周一上午线上沟通。",
+                "answer": "回复对象为甲方，围绕周一上午线上沟通进行确认。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "party_b",
+                "label": "回复乙方",
+                "description": "向乙方确认周三下午现场沟通。",
+                "answer": "回复对象为乙方，围绕周三下午现场沟通进行确认。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "both",
+                "label": "回复双方",
+                "description": "同时向双方说明并协调两个时间。",
+                "answer": "回复对象为双方，需在回复中协调周一上午线上与周三下午现场两个安排。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "availability",
+            "question": "你本人能否参加材料中提到的沟通安排？",
+            "hint": "决定回复是直接确认安排，还是说明无法参加并提出替代时间。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "can_attend",
+                "label": "可以参加",
+                "description": "用户能参加对应沟通。",
+                "answer": "用户本人可以参加所确认的沟通安排。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "cannot_attend",
+                "label": "无法参加",
+                "description": "用户不能参加，需要提出替代时间或请求调整。",
+                "answer": "用户本人无法参加，回复需说明并提出替代时间或请求调整。",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "undecided",
+                "label": "尚未确定",
+                "description": "用户暂不能确认，回复中需说明待定。",
+                "answer": "用户本人能否参加尚未确定，回复中需说明待定并请求稍后确认。",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5745,
+        "planId": "7e9f325e-1f80-4567-884a-d7d23a1fc5d6",
+        "planningContext": {
+          "contextId": "076592e8-7768-4987-a3b0-b9eea203bde9",
+          "version": "sha256:41e46fad1e40863c4b4accf0100042f496b0f9953afdfc1e574248658b458e96"
+        },
+        "expiresAt": "2026-10-22T17:41:40.065405500Z"
+      }
+    }
+  },
+  {
+    "id": "DEV_PROJECT_ORIENTATION_V24_GEN",
+    "caseId": "DEV_PROJECT_ORIENTATION",
+    "version": "24",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "你是一名高级全栈Java开发工程师，请熟悉一下前后端项目。这是使用JeecgBoot构建的业务系统，前端使用Vue3和TypeScript进行编写，后端使用Spring Boot 3。后端care是新模块、legacycare是旧模块；前端care是新模块、care-old是旧模块。以后涉及随访功能修改时，新旧模块需要同步。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "README.md",
+            "language": "markdown",
+            "content": "合成项目：前后端通过 /api/care 调用。前端care负责随访表单，后端care负责记录读写。legacycare与care-old保留旧用户入口。此材料不包含完整实现或运行结果。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_PROJECT_ORIENTATION_V24_GEN",
+      "data": {
+        "optimizedPrompt": "请以高级全栈 Java 开发工程师的视角熟悉这个基于 JeecgBoot 的业务系统：前端使用 Vue3 和 TypeScript，后端使用 Spring Boot 3。后端中 care 是新模块、legacycare 是旧模块；前端中 care 是新模块、care-old 是旧模块。项目材料显示，前后端通过 /api/care 调用，前端 care 负责随访表单，后端 care 负责记录读写，legacycare 与 care-old 保留旧用户入口。请基于这些信息梳理并交付一份项目熟悉说明，覆盖前后端模块划分、新旧模块对应关系、/api/care 的调用链路，以及随访功能在新旧模块中的位置和同步关系。以后涉及随访功能修改时，新旧模块需要同步；请在说明中明确这一约束，并指出修改随访功能时需要同步检查的前后端新旧模块范围。现有材料不包含完整实现或运行结果，因此不要编造具体类名、接口参数、数据库结构或已执行结论；对材料未覆盖的实现细节，标注为待核实即可，其余内容照常完成。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "README.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "README.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成项目：前后端通过 /api/care 调用。前端care负责随访表单，后端care负责记录读写。legacycare与care-old保留旧用户入口。此材料不包含完整实现或运行结果。",
+              "summary": "Markdown 文档摘要：合成项目：前后端通过 /api/care 调用。；前端care负责随访表单，后端care负责记录读写。；legacycare与care-old保留旧用户入口。；此材料不包含完整实现或运行结果。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5329,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "24",
+        "framework": "APE",
+        "recordId": "19707def-65ba-42cd-9645-b9071356c957",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_PROJECT_ORIENTATION_V27_GEN",
+    "caseId": "DEV_PROJECT_ORIENTATION",
+    "version": "27",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "你是一名高级全栈Java开发工程师，请熟悉一下前后端项目。这是使用JeecgBoot构建的业务系统，前端使用Vue3和TypeScript进行编写，后端使用Spring Boot 3。后端care是新模块、legacycare是旧模块；前端care是新模块、care-old是旧模块。以后涉及随访功能修改时，新旧模块需要同步。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "README.md",
+            "language": "markdown",
+            "content": "合成项目：前后端通过 /api/care 调用。前端care负责随访表单，后端care负责记录读写。legacycare与care-old保留旧用户入口。此材料不包含完整实现或运行结果。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_PROJECT_ORIENTATION_V27_GEN",
+      "data": {
+        "optimizedPrompt": "你是一名高级全栈Java开发工程师。请先熟悉这个使用JeecgBoot构建的业务系统的前后端项目：前端使用Vue3和TypeScript编写，后端使用Spring Boot 3。后端中care是新模块、legacycare是旧模块；前端中care是新模块、care-old是旧模块。项目资料显示，前后端通过 /api/care 调用，前端care负责随访表单，后端care负责记录读写，legacycare与care-old保留旧用户入口；该资料不包含完整实现或运行结果。请基于现有资料梳理并说明这四个模块的职责、前后端调用关系以及随访功能在新旧模块中的对应关系，作为后续修改的基础。以后涉及随访功能修改时，新旧模块需要同步。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "README.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "README.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成项目：前后端通过 /api/care 调用。前端care负责随访表单，后端care负责记录读写。legacycare与care-old保留旧用户入口。此材料不包含完整实现或运行结果。",
+              "summary": "Markdown 文档摘要：合成项目：前后端通过 /api/care 调用。；前端care负责随访表单，后端care负责记录读写。；legacycare与care-old保留旧用户入口。；此材料不包含完整实现或运行结果。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4536,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "27",
+        "framework": "APE",
+        "recordId": "fc9efeb3-27f9-4df9-9261-18f16146ce4f",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_PROJECT_ORIENTATION_V4_GEN",
+    "caseId": "DEV_PROJECT_ORIENTATION",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "你是一名高级全栈Java开发工程师，请熟悉一下前后端项目。这是使用JeecgBoot构建的业务系统，前端使用Vue3和TypeScript进行编写，后端使用Spring Boot 3。后端care是新模块、legacycare是旧模块；前端care是新模块、care-old是旧模块。以后涉及随访功能修改时，新旧模块需要同步。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "README.md",
+            "language": "markdown",
+            "content": "合成项目：前后端通过 /api/care 调用。前端care负责随访表单，后端care负责记录读写。legacycare与care-old保留旧用户入口。此材料不包含完整实现或运行结果。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_PROJECT_ORIENTATION_V4_GEN",
+      "data": {
+        "optimizedPrompt": "你是一名高级全栈Java开发工程师。请先熟悉这个使用JeecgBoot构建的业务系统的前后端项目结构，并交付一份项目熟悉说明。已知信息：前端使用Vue3和TypeScript编写，后端使用Spring Boot 3；后端care是新模块、legacycare是旧模块，前端care是新模块、care-old是旧模块；前后端通过 /api/care 调用，前端care负责随访表单，后端care负责记录读写，legacycare与care-old保留旧用户入口。当前资料只有README.md，不包含完整实现或运行结果，因此请基于现有材料梳理项目结构，并明确标注哪些内容属于待核实项，不要编造代码细节、接口参数或运行结果。说明中请覆盖：前后端目录与模块划分、care与legacycare及care与care-old的对应关系、/api/care的调用链路、随访表单与记录读写的职责归属，以及新旧模块同步修改时需要关注的对应点。另外请记住并遵守后续约定：以后涉及随访功能修改时，新旧模块需要同步。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "README.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "README.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成项目：前后端通过 /api/care 调用。前端care负责随访表单，后端care负责记录读写。legacycare与care-old保留旧用户入口。此材料不包含完整实现或运行结果。",
+              "summary": "Markdown 文档摘要：合成项目：前后端通过 /api/care 调用。；前端care负责随访表单，后端care负责记录读写。；legacycare与care-old保留旧用户入口。；此材料不包含完整实现或运行结果。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5989,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "39fdbaa2-1cfa-4ed3-80d4-5ad5fa7e70b1",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_SUFFICIENT_MESSAGE_V24_GEN",
+    "caseId": "DEV_SUFFICIENT_MESSAGE",
+    "version": "24",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "把这句通知润色得自然一点，只输出一句，不超过45字：明天上午十点在二楼会议室讨论排期，带好各自的进度记录。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_SUFFICIENT_MESSAGE_V24_GEN",
+      "data": {
+        "optimizedPrompt": "把下面这句通知润色得更自然：明天上午十点在二楼会议室讨论排期，带好各自的进度记录。只输出润色后的一句通知，不超过45字，不要附加解释或其他内容。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2636,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "24",
+        "framework": "APE",
+        "recordId": "3967e59e-0a63-458a-b09c-06242ff34b9f",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_SUFFICIENT_MESSAGE_V27_GEN",
+    "caseId": "DEV_SUFFICIENT_MESSAGE",
+    "version": "27",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "把这句通知润色得自然一点，只输出一句，不超过45字：明天上午十点在二楼会议室讨论排期，带好各自的进度记录。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_SUFFICIENT_MESSAGE_V27_GEN",
+      "data": {
+        "optimizedPrompt": "把这句通知润色得自然一点，只输出一句，不超过45字：明天上午十点在二楼会议室讨论排期，带好各自的进度记录。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2070,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "27",
+        "framework": "APE",
+        "recordId": "c1c95fe6-0771-486e-ab1d-7ac9c83175fa",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_SUFFICIENT_MESSAGE_V4_GEN",
+    "caseId": "DEV_SUFFICIENT_MESSAGE",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "把这句通知润色得自然一点，只输出一句，不超过45字：明天上午十点在二楼会议室讨论排期，带好各自的进度记录。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_SUFFICIENT_MESSAGE_V4_GEN",
+      "data": {
+        "optimizedPrompt": "把下面这句通知润色得更自然通顺，只输出一句，不超过45字，不要附加解释或备选版本：明天上午十点在二楼会议室讨论排期，带好各自的进度记录。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2443,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "d97be3f3-29ec-4b5a-9850-418be5da2533",
+        "editRevision": 0
+      }
+    }
+  }
+]
