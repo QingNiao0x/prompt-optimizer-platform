@@ -1,0 +1,1398 @@
+{
+  "schemaVersion": 1,
+  "assessmentDate": "2026-10-22",
+  "source": "tmp/information-state-unseen-review-20261022/anonymous-works.json",
+  "sourceSha256": "E2B663C3D86AC56AF00640EE4E448582FF65219D50A1C0FA733A270EA9DA9080",
+  "reviewer": "内部协作AI审阅A",
+  "disclosure": {
+    "reviewerAuthoredTheseCases": true,
+    "versionMappingRead": false,
+    "privateHttpOrTransportRead": false,
+    "externalModelCalls": 0,
+    "method": "审阅者是本组留出题及验收卡的编写者，并参与同项目工程审查；候选冻结后本组题已正式开封。本次仅读取匿名作品包，作品版本映射不可见，但题目对审阅者并不陌生。因此不是独立外部专业评审，也不是完全盲评。",
+    "allowedDesignSpace": "按输入与验收卡容纳合理推荐、布局、等价措辞和操作表达，没有唯一范文；不要求逐字照抄出题者设想。充分改写持平可通过，不强行算增强收益。",
+    "visibilityLimit": "本包没有未交付版本的作品，不推算其缺失原因、不计其通过。包内只有两份回答后Plan作品，不能核验未提供的真实问题、题号或服务端绑定。",
+    "limits": "作品质量判定属于内部AI复核；字数和JSON结构作确定性核对，HTTP 200不当作语义通过。评分有解释空间，后续复核如有分歧应保留本原件，不改历史判断凑结论。"
+  },
+  "rubric": {
+    "severeErrors": "改变事实或信息状态、遗漏或违反影响交付的明确硬要求。核心内容部分正确不能抵消其余明确来源状态错误。",
+    "minorErrors": "未导致核心交付失效、但需局部修正的无依据补充、次要条件错误或无关必答问题。正常文风和允许设计变体不扣分。",
+    "minimumEdits": "修复独立事实或要求所需最少编辑项数；同一问题跨多处出现按共同修复计一项，不按字符或出现次数累加。",
+    "stateScope": "缺少发布、登记或输入记录不能提升为实际未发生；今天的状态不能作为其他日期的已知结果。",
+    "designBoundary": "允许低负担的操作表达和浇水收尾，不单纯因新增词句扣分；新增独立长期照料规则或取消已确认条件则分别按影响判断。",
+    "recommendationBoundary": "允许南园或西街作为有条件首选；不强制唯一理由内容。费用在未来实际使用条件下的复核可有意义，不自动算把已知改成未知；未要求且已知非必需的设备不应列为决定前必答。"
+  },
+  "summary": {
+    "caseCount": 6,
+    "workCount": 32,
+    "directWorkCount": 30,
+    "confirmedPlanWorkCount": 2,
+    "protocolFailuresObservedInPackage": 0,
+    "protocolStatusOutsidePackage": "NOT_ASSESSED",
+    "worksWithoutObservedErrors": 21,
+    "worksWithSevereErrors": 6,
+    "worksWithMinorErrors": 8,
+    "worksWithAnyErrors": 11,
+    "severeErrorCount": 6,
+    "minorErrorCount": 12,
+    "totalMinimumEdits": 18,
+    "missingDeliveriesCountedAsPass": false,
+    "conclusion": "本包32份作品中21份未发现需修改问题；11份有可定位缺陷，合计6项严重错误、12项轻微问题，最少18项独立修改。主要涉及固定未知日期、将未发布照片改成未拍摄、改动已有条件性照料规则，以及无关追问或新增日常任务。这里只评价实际收到的作品，不把漏交付版本算通过，不推断任何版本的胜负或泛化收益。"
+  },
+  "caseSummaries": [
+    {
+      "caseId": "HOLDOUT_STATE_LOAN_ITEMS_20261022",
+      "reviewedWorks": 6,
+      "worksWithoutObservedErrors": 6,
+      "severeErrorCount": 0,
+      "minorErrorCount": 0,
+      "totalMinimumEdits": 0
+    },
+    {
+      "caseId": "HOLDOUT_STATE_READING_VENUE_20261022",
+      "reviewedWorks": 6,
+      "worksWithoutObservedErrors": 2,
+      "severeErrorCount": 1,
+      "minorErrorCount": 8,
+      "totalMinimumEdits": 9
+    },
+    {
+      "caseId": "HOLDOUT_STATE_USED_BOOK_REPLY_20261022",
+      "reviewedWorks": 6,
+      "worksWithoutObservedErrors": 4,
+      "severeErrorCount": 2,
+      "minorErrorCount": 0,
+      "totalMinimumEdits": 2
+    },
+    {
+      "caseId": "HOLDOUT_STATE_BALCONY_CARD_20261022",
+      "reviewedWorks": 6,
+      "worksWithoutObservedErrors": 1,
+      "severeErrorCount": 3,
+      "minorErrorCount": 4,
+      "totalMinimumEdits": 7
+    },
+    {
+      "caseId": "HOLDOUT_STATE_LIBRARY_SENTENCE_20261022",
+      "reviewedWorks": 6,
+      "worksWithoutObservedErrors": 6,
+      "severeErrorCount": 0,
+      "minorErrorCount": 0,
+      "totalMinimumEdits": 0
+    },
+    {
+      "caseId": "HOLDOUT_STATE_PARCEL_HANDOVER_20261022",
+      "reviewedWorks": 2,
+      "worksWithoutObservedErrors": 2,
+      "severeErrorCount": 0,
+      "minorErrorCount": 0,
+      "totalMinimumEdits": 0
+    }
+  ],
+  "assessments": [
+    {
+      "caseId": "HOLDOUT_STATE_LOAN_ITEMS_20261022",
+      "id": "W-067f61e85a60",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "严格JSON与三件物品",
+          "quote": "折叠桌",
+          "reason": "全段解析为数组，恰含折叠桌、投影幕布、延长线；每项只有name、confirmed、pending三个字符串字段，无围栏或解释。合法空白和数组顺序不扣分。"
+        },
+        {
+          "requirement": "归还与未检查",
+          "quote": "两张均已归还",
+          "reason": "confirmed保留两张已归还；pending中的“桌面还没有检查”没有变成好坏结论。"
+        },
+        {
+          "requirement": "幕布位置与时间未知",
+          "quote": "登记表没有填写归还时间，实际归还时间还不清楚",
+          "reason": "同时保留登记缺项与实际时间未知；confirmed仍为已在活动室柜内。"
+        },
+        {
+          "requirement": "柜内清点与登记范围",
+          "quote": "借用登记表没有列出借用人，线去了哪里还不知道",
+          "reason": "与已清点柜内0条分开表达，未推导无人借用、丢失或其他地点无货。"
+        }
+      ],
+      "deterministicChecks": {
+        "parseableJsonArray": true,
+        "arrayLength": 3,
+        "exactThreeNames": true,
+        "exactKeys": true,
+        "stringValues": true,
+        "noOuterExplanation": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_LOAN_ITEMS_20261022_V26_EXEC_R1"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_LOAN_ITEMS_20261022",
+      "id": "W-6ef5fa9ddc4b",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "严格JSON与三件物品",
+          "quote": "折叠桌",
+          "reason": "全段解析为数组，恰含折叠桌、投影幕布、延长线；每项只有name、confirmed、pending三个字符串字段，无围栏或解释。合法空白和数组顺序不扣分。"
+        },
+        {
+          "requirement": "归还与未检查",
+          "quote": "两张均已归还",
+          "reason": "confirmed保留两张已归还；pending中的“桌面还没有检查”没有变成好坏结论。"
+        },
+        {
+          "requirement": "幕布位置与时间未知",
+          "quote": "登记表没有填写归还时间，实际归还时间还不清楚",
+          "reason": "同时保留登记缺项与实际时间未知；confirmed仍为已在活动室柜内。"
+        },
+        {
+          "requirement": "柜内清点与登记范围",
+          "quote": "借用登记表没有列出借用人，线去了哪里还不知道",
+          "reason": "与已清点柜内0条分开表达，未推导无人借用、丢失或其他地点无货。"
+        }
+      ],
+      "deterministicChecks": {
+        "parseableJsonArray": true,
+        "arrayLength": 3,
+        "exactThreeNames": true,
+        "exactKeys": true,
+        "stringValues": true,
+        "noOuterExplanation": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_LOAN_ITEMS_20261022_RAW_EXEC_R1"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_LOAN_ITEMS_20261022",
+      "id": "W-7fd8f0c8cb9b",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "严格JSON与三件物品",
+          "quote": "折叠桌",
+          "reason": "全段解析为数组，恰含折叠桌、投影幕布、延长线；每项只有name、confirmed、pending三个字符串字段，无围栏或解释。合法空白和数组顺序不扣分。"
+        },
+        {
+          "requirement": "归还与未检查",
+          "quote": "两张均已归还",
+          "reason": "confirmed保留两张已归还；pending中的“桌面还没有检查”没有变成好坏结论。"
+        },
+        {
+          "requirement": "幕布位置与时间未知",
+          "quote": "登记表没有填写归还时间，实际归还时间还不清楚",
+          "reason": "同时保留登记缺项与实际时间未知；confirmed仍为已在活动室柜内。"
+        },
+        {
+          "requirement": "柜内清点与登记范围",
+          "quote": "借用登记表没有列出借用人，线去了哪里还不知道",
+          "reason": "与已清点柜内0条分开表达，未推导无人借用、丢失或其他地点无货。"
+        }
+      ],
+      "deterministicChecks": {
+        "parseableJsonArray": true,
+        "arrayLength": 3,
+        "exactThreeNames": true,
+        "exactKeys": true,
+        "stringValues": true,
+        "noOuterExplanation": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_LOAN_ITEMS_20261022_RAW_EXEC_R2"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_LOAN_ITEMS_20261022",
+      "id": "W-df5dac8aa131",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "严格JSON与三件物品",
+          "quote": "折叠桌",
+          "reason": "全段解析为数组，恰含折叠桌、投影幕布、延长线；每项只有name、confirmed、pending三个字符串字段，无围栏或解释。合法空白和数组顺序不扣分。"
+        },
+        {
+          "requirement": "归还与未检查",
+          "quote": "两张均已归还",
+          "reason": "confirmed保留两张已归还；pending中的“桌面还没有检查”没有变成好坏结论。"
+        },
+        {
+          "requirement": "幕布位置与时间未知",
+          "quote": "登记表没有填写归还时间，实际归还时间还不清楚",
+          "reason": "同时保留登记缺项与实际时间未知；confirmed仍为已在活动室柜内。"
+        },
+        {
+          "requirement": "柜内清点与登记范围",
+          "quote": "借用登记表没有列出借用人，线去了哪里还不知道",
+          "reason": "与已清点柜内0条分开表达，未推导无人借用、丢失或其他地点无货。"
+        }
+      ],
+      "deterministicChecks": {
+        "parseableJsonArray": true,
+        "arrayLength": 3,
+        "exactThreeNames": true,
+        "exactKeys": true,
+        "stringValues": true,
+        "noOuterExplanation": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_LOAN_ITEMS_20261022_V4_EXEC_R2"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_LOAN_ITEMS_20261022",
+      "id": "W-e4b253d34e33",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "严格JSON与三件物品",
+          "quote": "折叠桌",
+          "reason": "全段解析为数组，恰含折叠桌、投影幕布、延长线；每项只有name、confirmed、pending三个字符串字段，无围栏或解释。合法空白和数组顺序不扣分。"
+        },
+        {
+          "requirement": "归还与未检查",
+          "quote": "两张均已归还",
+          "reason": "confirmed保留两张已归还；pending中的“桌面还没有检查”没有变成好坏结论。"
+        },
+        {
+          "requirement": "幕布位置与时间未知",
+          "quote": "登记表没有填写归还时间，实际归还时间还不清楚",
+          "reason": "同时保留登记缺项与实际时间未知；confirmed仍为已在活动室柜内。"
+        },
+        {
+          "requirement": "柜内清点与登记范围",
+          "quote": "借用登记表没有列出借用人，线去了哪里还不知道",
+          "reason": "与已清点柜内0条分开表达，未推导无人借用、丢失或其他地点无货。"
+        }
+      ],
+      "deterministicChecks": {
+        "parseableJsonArray": true,
+        "arrayLength": 3,
+        "exactThreeNames": true,
+        "exactKeys": true,
+        "stringValues": true,
+        "noOuterExplanation": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_LOAN_ITEMS_20261022_V4_EXEC_R1"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_LOAN_ITEMS_20261022",
+      "id": "W-fb7d5daae486",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "严格JSON与三件物品",
+          "quote": "折叠桌",
+          "reason": "全段解析为数组，恰含折叠桌、投影幕布、延长线；每项只有name、confirmed、pending三个字符串字段，无围栏或解释。合法空白和数组顺序不扣分。"
+        },
+        {
+          "requirement": "归还与未检查",
+          "quote": "两张均已归还",
+          "reason": "confirmed保留两张已归还；pending中的“桌面还没有检查”没有变成好坏结论。"
+        },
+        {
+          "requirement": "幕布位置与时间未知",
+          "quote": "登记表没有填写归还时间，实际归还时间还不清楚",
+          "reason": "同时保留登记缺项与实际时间未知；confirmed仍为已在活动室柜内。"
+        },
+        {
+          "requirement": "柜内清点与登记范围",
+          "quote": "借用登记表没有列出借用人，线去了哪里还不知道",
+          "reason": "与已清点柜内0条分开表达，未推导无人借用、丢失或其他地点无货。"
+        }
+      ],
+      "deterministicChecks": {
+        "parseableJsonArray": true,
+        "arrayLength": 3,
+        "exactThreeNames": true,
+        "exactKeys": true,
+        "stringValues": true,
+        "noOuterExplanation": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_LOAN_ITEMS_20261022_V26_EXEC_R2"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_READING_VENUE_20261022",
+      "id": "W-1fb6cc989826",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [
+        {
+          "category": "备选场地预约条件被压缩错误",
+          "quote": "西街需周四前预约且未确定",
+          "sourceQuote": "只有周四18:00前预约成功，周六14:00至17:00才可使用",
+          "reason": "“周四前”把仍可在周四18:00以前完成的预约缩成周四之前，改变了材料的明确截止条件。发生在备选说明且不直接推翻南园首选，因此列为轻微条件错误。",
+          "minimumEdit": "改回周四18:00前预约成功，或删除不需要的备选截止说明。",
+          "editUnits": 1
+        },
+        {
+          "category": "加入与已知需求无关的必答问题",
+          "quote": "南园有无投影？",
+          "sourceQuote": "本次读书会没有提出必须使用投影设备",
+          "reason": "在做决定前需补问的清单里追问投影设备，即使正文已承认非必需；现有需求没有显示它会改变场地选择，给用户增加一次不必要核查。",
+          "minimumEdit": "从必问项删除投影设备，确有新增需求时再核实；其他与实际使用条件相关的问题可保留。",
+          "editUnits": 1
+        }
+      ],
+      "minimumEdits": 2,
+      "evidence": [
+        {
+          "requirement": "推荐及32人容量",
+          "quote": "40座，容纳32人",
+          "reason": "首选南园，40座满足32人，没有把28座且不能加椅的北楼作为可容纳全部人员的方案。"
+        },
+        {
+          "requirement": "三条理由",
+          "quote": "当前未收费；投影未写明，但读书会未要求投影",
+          "reason": "容量、已知费用与适用条件构成可辨识的取舍理由；不要求唯一推荐或固定措辞，也不强制第三条必须采用出题者设想的“室内”。"
+        },
+        {
+          "requirement": "未确认使用条件",
+          "quote": "活动具体日期时段？南园开放时段能否确认？",
+          "reason": "仍将活动时间和南园对应时段是否可用作为待确认，没有声称已预约或无条件开放。"
+        },
+        {
+          "requirement": "资料范围",
+          "quote": "推荐南园活动室",
+          "reason": "正文长度符合300字符；未把南园未载投影写成没有设备。"
+        }
+      ],
+      "deterministicChecks": {
+        "characterCountIncludingWhitespace": 107,
+        "maxCharacters": 300,
+        "withinLimit": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_READING_VENUE_20261022_V4_EXEC_R1"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_READING_VENUE_20261022",
+      "id": "W-20638135d449",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [
+        {
+          "category": "备选场地预约条件被压缩错误",
+          "quote": "西街需周四前预约且未确定",
+          "sourceQuote": "只有周四18:00前预约成功，周六14:00至17:00才可使用",
+          "reason": "“周四前”把仍可在周四18:00以前完成的预约缩成周四之前，改变了材料的明确截止条件。发生在备选说明且不直接推翻南园首选，因此列为轻微条件错误。",
+          "minimumEdit": "改回周四18:00前预约成功，或删除不需要的备选截止说明。",
+          "editUnits": 1
+        },
+        {
+          "category": "加入与已知需求无关的必答问题",
+          "quote": "南园有无投影（虽非必需）",
+          "sourceQuote": "本次读书会没有提出必须使用投影设备",
+          "reason": "在做决定前需补问的清单里追问投影设备，即使正文已承认非必需；现有需求没有显示它会改变场地选择，给用户增加一次不必要核查。",
+          "minimumEdit": "从必问项删除投影设备，确有新增需求时再核实；其他与实际使用条件相关的问题可保留。",
+          "editUnits": 1
+        }
+      ],
+      "minimumEdits": 2,
+      "evidence": [
+        {
+          "requirement": "推荐及32人容量",
+          "quote": "40座可容32人",
+          "reason": "首选南园，40座满足32人，没有把28座且不能加椅的北楼作为可容纳全部人员的方案。"
+        },
+        {
+          "requirement": "三条理由",
+          "quote": "当前不收费，且读书会不要求投影",
+          "reason": "容量、已知费用与适用条件构成可辨识的取舍理由；不要求唯一推荐或固定措辞，也不强制第三条必须采用出题者设想的“室内”。"
+        },
+        {
+          "requirement": "未确认使用条件",
+          "quote": "具体日期和时段；南园开放时段能否覆盖",
+          "reason": "仍将活动时间和南园对应时段是否可用作为待确认，没有声称已预约或无条件开放。"
+        },
+        {
+          "requirement": "资料范围",
+          "quote": "推荐南园活动室",
+          "reason": "正文长度符合300字符；未把南园未载投影写成没有设备。"
+        }
+      ],
+      "deterministicChecks": {
+        "characterCountIncludingWhitespace": 128,
+        "maxCharacters": 300,
+        "withinLimit": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_READING_VENUE_20261022_RAW_EXEC_R2"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_READING_VENUE_20261022",
+      "id": "W-404668303339",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "推荐及32人容量",
+          "quote": "40座，容纳32人且有余量",
+          "reason": "首选南园，40座满足32人，没有把28座且不能加椅的北楼作为可容纳全部人员的方案。"
+        },
+        {
+          "requirement": "三条理由",
+          "quote": "1. 40座，容纳32人且有余量；2. 室内，当前无收费；3. 不要求投影，设备未载明不构成否决",
+          "reason": "容量、已知费用与适用条件构成可辨识的取舍理由；不要求唯一推荐或固定措辞，也不强制第三条必须采用出题者设想的“室内”。"
+        },
+        {
+          "requirement": "未确认使用条件",
+          "quote": "具体日期时段；南园开放时段及是否收费",
+          "reason": "仍将活动时间和南园对应时段是否可用作为待确认，没有声称已预约或无条件开放。"
+        },
+        {
+          "requirement": "资料范围",
+          "quote": "推荐南园活动室",
+          "reason": "正文长度符合300字符；未把南园未载投影写成没有设备。"
+        },
+        {
+          "requirement": "允许的最终条件复核",
+          "quote": "南园开放时段及是否收费；西街预约能否成功及收费",
+          "reason": "正文保留南园当前免费；鉴于实际活动日期尚未定，使用时费用核实可理解为最终条件复核，没有写成资料从未给费用。备选问题可用于首选不可用后的取舍，本轮不凭这些问题自动判错。"
+        }
+      ],
+      "deterministicChecks": {
+        "characterCountIncludingWhitespace": 112,
+        "maxCharacters": 300,
+        "withinLimit": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_READING_VENUE_20261022_V26_EXEC_R1"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_READING_VENUE_20261022",
+      "id": "W-4c5948d0fa8b",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "推荐及32人容量",
+          "quote": "40座容32人，余量合适",
+          "reason": "首选南园，40座满足32人，没有把28座且不能加椅的北楼作为可容纳全部人员的方案。"
+        },
+        {
+          "requirement": "三条理由",
+          "quote": "室内且当前无收费；不要求投影，设备未载不影响",
+          "reason": "容量、已知费用与适用条件构成可辨识的取舍理由；不要求唯一推荐或固定措辞，也不强制第三条必须采用出题者设想的“室内”。"
+        },
+        {
+          "requirement": "未确认使用条件",
+          "quote": "具体日期时段；南园开放时段及是否收费",
+          "reason": "仍将活动时间和南园对应时段是否可用作为待确认，没有声称已预约或无条件开放。"
+        },
+        {
+          "requirement": "资料范围",
+          "quote": "推荐南园活动室",
+          "reason": "正文长度符合300字符；未把南园未载投影写成没有设备。"
+        },
+        {
+          "requirement": "备选有条件可用",
+          "quote": "周六使用须周四18:00前预约成功，现未确定",
+          "reason": "完整保留截止条件和预约未知，没有默认活动必定周六举行。"
+        },
+        {
+          "requirement": "允许的最终条件复核",
+          "quote": "南园开放时段及是否收费",
+          "reason": "已陈述当前免费，随后核实实际使用条件不直接视为改变已知事实；不因措辞可以更紧凑扣分。"
+        }
+      ],
+      "deterministicChecks": {
+        "characterCountIncludingWhitespace": 127,
+        "maxCharacters": 300,
+        "withinLimit": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_READING_VENUE_20261022_V26_EXEC_R2"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_READING_VENUE_20261022",
+      "id": "W-4fd84dec71c8",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [
+        {
+          "category": "备选场地预约条件被压缩错误",
+          "quote": "西街需周四前预约且结果未定",
+          "sourceQuote": "只有周四18:00前预约成功，周六14:00至17:00才可使用",
+          "reason": "“周四前”把仍可在周四18:00以前完成的预约缩成周四之前，改变了材料的明确截止条件。发生在备选说明且不直接推翻南园首选，因此列为轻微条件错误。",
+          "minimumEdit": "改回周四18:00前预约成功，或删除不需要的备选截止说明。",
+          "editUnits": 1
+        },
+        {
+          "category": "加入与已知需求无关的必答问题",
+          "quote": "南园有无投影？",
+          "sourceQuote": "本次读书会没有提出必须使用投影设备",
+          "reason": "在做决定前需补问的清单里追问投影设备，即使正文已承认非必需；现有需求没有显示它会改变场地选择，给用户增加一次不必要核查。",
+          "minimumEdit": "从必问项删除投影设备，确有新增需求时再核实；其他与实际使用条件相关的问题可保留。",
+          "editUnits": 1
+        }
+      ],
+      "minimumEdits": 2,
+      "evidence": [
+        {
+          "requirement": "推荐及32人容量",
+          "quote": "40座，容纳32人",
+          "reason": "首选南园，40座满足32人，没有把28座且不能加椅的北楼作为可容纳全部人员的方案。"
+        },
+        {
+          "requirement": "三条理由",
+          "quote": "当前不收费；投影未写明，但活动未要求投影",
+          "reason": "容量、已知费用与适用条件构成可辨识的取舍理由；不要求唯一推荐或固定措辞，也不强制第三条必须采用出题者设想的“室内”。"
+        },
+        {
+          "requirement": "未确认使用条件",
+          "quote": "具体日期时段？南园开放时段能否覆盖？",
+          "reason": "仍将活动时间和南园对应时段是否可用作为待确认，没有声称已预约或无条件开放。"
+        },
+        {
+          "requirement": "资料范围",
+          "quote": "推荐南园活动室",
+          "reason": "正文长度符合300字符；未把南园未载投影写成没有设备。"
+        }
+      ],
+      "deterministicChecks": {
+        "characterCountIncludingWhitespace": 109,
+        "maxCharacters": 300,
+        "withinLimit": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_READING_VENUE_20261022_V4_EXEC_R2"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_READING_VENUE_20261022",
+      "id": "W-5e43804a9712",
+      "status": 200,
+      "severeErrors": [
+        {
+          "category": "未确认活动日期被固定为候选时段",
+          "quote": "周六14:00—17:00能否开放、由谁预约",
+          "sourceQuote": "本次读书会没有提出必须使用投影设备，也尚未确定具体日期和时段。",
+          "reason": "把其他候选的可用时段直接用于本次活动的场地核实，遗漏先确定活动日期时段的关键未知。用户可能照此只核实周六而错过实际需要的时段。",
+          "minimumEdit": "改为先确认活动日期和时段，再确认南园能否覆盖该时段；不能默认周六。",
+          "editUnits": 1
+        }
+      ],
+      "minorErrors": [
+        {
+          "category": "第三条理由缺少实质依据",
+          "quote": "且资料未显示硬性限制",
+          "sourceQuote": "南园活动室：室内，40个座位，当前没有收费；开放时段尚未向管理员确认。",
+          "reason": "“资料未显示硬性限制”没有给出独立的已知适配依据，且开放条件仍未核实；不能用未见限制替代用户要求的第三条具体理由。这不是对文风的扣分。",
+          "minimumEdit": "用资料已给出的独立理由，例如室内环境，替换该泛化理由，并保留使用时段待确认。",
+          "editUnits": 1
+        },
+        {
+          "category": "加入与已知需求无关的必答问题",
+          "quote": "有无投影、音响等设备",
+          "sourceQuote": "本次读书会没有提出必须使用投影设备",
+          "reason": "在做决定前需补问的清单里追问投影设备，即使正文已承认非必需；现有需求没有显示它会改变场地选择，给用户增加一次不必要核查。",
+          "minimumEdit": "从必问项删除投影设备，确有新增需求时再核实；其他与实际使用条件相关的问题可保留。",
+          "editUnits": 1
+        }
+      ],
+      "minimumEdits": 3,
+      "evidence": [
+        {
+          "requirement": "已正确给出的推荐",
+          "quote": "40座可容32人，当前不收费",
+          "reason": "首选与已知人数、费用相容，未拒绝交付。"
+        },
+        {
+          "requirement": "交付范围及长度",
+          "quote": "推荐南园活动室",
+          "reason": "仍是一份简短推荐与待确认项，没有变成调研方案；89字符在上限内。"
+        }
+      ],
+      "deterministicChecks": {
+        "characterCountIncludingWhitespace": 89,
+        "maxCharacters": 300,
+        "withinLimit": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_READING_VENUE_20261022_RAW_EXEC_R1"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_USED_BOOK_REPLY_20261022",
+      "id": "W-131d1b31a64d",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "齐全及外观",
+          "quote": "这套书共三册，已核对齐全",
+          "reason": "三册齐全事实保留。"
+        },
+        {
+          "requirement": "已知外观细节",
+          "quote": "书脊完整，第二册右上角有一处折角",
+          "reason": "没有改成全新无瑕疵或省略已知折角。"
+        },
+        {
+          "requirement": "明确不存在",
+          "quote": "书盒确认没有",
+          "reason": "已知无书盒未降级为未知。"
+        },
+        {
+          "requirement": "未知划线",
+          "quote": "还没逐页翻查",
+          "reason": "未逐页检查和划线不确定均保留；未承诺赠品、发货或未来补拍。"
+        }
+      ],
+      "deterministicChecks": {
+        "characterCountIncludingWhitespace": 78,
+        "maxCharacters": 120,
+        "withinLimit": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_USED_BOOK_REPLY_20261022_V4_EXEC_R1"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_USED_BOOK_REPLY_20261022",
+      "id": "W-305205196940",
+      "status": 200,
+      "severeErrors": [
+        {
+          "category": "未发布照片被提升为未拍摄事实",
+          "quote": "内页这次没拍照片",
+          "sourceQuote": "这次发布页没有放内页照片",
+          "reason": "未在发布页放照片不证明没有拍摄。虽然四个主要买家问题仍获回应，该额外句子仍将资料呈现范围改成实际行为状态，属于可定位的来源保真错误。",
+          "minimumEdit": "删除照片句，或改为发布页没有放内页照片；不能声称没有拍摄。",
+          "editUnits": 1
+        }
+      ],
+      "minorErrors": [],
+      "minimumEdits": 1,
+      "evidence": [
+        {
+          "requirement": "齐全及外观",
+          "quote": "这套书共三册，已核对齐全",
+          "reason": "三册齐全事实保留。"
+        },
+        {
+          "requirement": "已知外观细节",
+          "quote": "书脊完整，第二册右上角有一处折角",
+          "reason": "没有改成全新无瑕疵或省略已知折角。"
+        },
+        {
+          "requirement": "明确不存在",
+          "quote": "书盒确认没有",
+          "reason": "已知无书盒未降级为未知。"
+        },
+        {
+          "requirement": "未知划线",
+          "quote": "还没逐页翻查",
+          "reason": "未逐页检查和划线不确定均保留；未承诺赠品、发货或未来补拍。"
+        }
+      ],
+      "deterministicChecks": {
+        "characterCountIncludingWhitespace": 78,
+        "maxCharacters": 120,
+        "withinLimit": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_USED_BOOK_REPLY_20261022_RAW_EXEC_R2"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_USED_BOOK_REPLY_20261022",
+      "id": "W-521860ce1ad2",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "齐全及外观",
+          "quote": "这套书共三册，已核对齐全",
+          "reason": "三册齐全事实保留。"
+        },
+        {
+          "requirement": "已知外观细节",
+          "quote": "书脊完整，第二册右上角有一处折角",
+          "reason": "没有改成全新无瑕疵或省略已知折角。"
+        },
+        {
+          "requirement": "明确不存在",
+          "quote": "书盒确认没有",
+          "reason": "已知无书盒未降级为未知。"
+        },
+        {
+          "requirement": "未知划线",
+          "quote": "还没逐页翻查",
+          "reason": "未逐页检查和划线不确定均保留；未承诺赠品、发货或未来补拍。"
+        }
+      ],
+      "deterministicChecks": {
+        "characterCountIncludingWhitespace": 85,
+        "maxCharacters": 120,
+        "withinLimit": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_USED_BOOK_REPLY_20261022_V26_EXEC_R2"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_USED_BOOK_REPLY_20261022",
+      "id": "W-8e5d48d6ab3d",
+      "status": 200,
+      "severeErrors": [
+        {
+          "category": "未发布照片被提升为未拍摄事实",
+          "quote": "内页这次没拍照片",
+          "sourceQuote": "这次发布页没有放内页照片",
+          "reason": "未在发布页放照片不证明没有拍摄。虽然四个主要买家问题仍获回应，该额外句子仍将资料呈现范围改成实际行为状态，属于可定位的来源保真错误。",
+          "minimumEdit": "删除照片句，或改为发布页没有放内页照片；不能声称没有拍摄。",
+          "editUnits": 1
+        }
+      ],
+      "minorErrors": [],
+      "minimumEdits": 1,
+      "evidence": [
+        {
+          "requirement": "齐全及外观",
+          "quote": "这套书共三册，已核对齐全",
+          "reason": "三册齐全事实保留。"
+        },
+        {
+          "requirement": "已知外观细节",
+          "quote": "书脊完整，第二册右上角有一处折角",
+          "reason": "没有改成全新无瑕疵或省略已知折角。"
+        },
+        {
+          "requirement": "明确不存在",
+          "quote": "书盒确认没有",
+          "reason": "已知无书盒未降级为未知。"
+        },
+        {
+          "requirement": "未知划线",
+          "quote": "还没逐页翻查",
+          "reason": "未逐页检查和划线不确定均保留；未承诺赠品、发货或未来补拍。"
+        }
+      ],
+      "deterministicChecks": {
+        "characterCountIncludingWhitespace": 83,
+        "maxCharacters": 120,
+        "withinLimit": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_USED_BOOK_REPLY_20261022_RAW_EXEC_R1"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_USED_BOOK_REPLY_20261022",
+      "id": "W-c2237c15df34",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "齐全及外观",
+          "quote": "这套书共三册，已核对齐全",
+          "reason": "三册齐全事实保留。"
+        },
+        {
+          "requirement": "已知外观细节",
+          "quote": "书脊完整，第二册右上角有一处折角",
+          "reason": "没有改成全新无瑕疵或省略已知折角。"
+        },
+        {
+          "requirement": "明确不存在",
+          "quote": "书盒确认没有",
+          "reason": "已知无书盒未降级为未知。"
+        },
+        {
+          "requirement": "未知划线",
+          "quote": "还没逐页翻查",
+          "reason": "未逐页检查和划线不确定均保留；未承诺赠品、发货或未来补拍。"
+        }
+      ],
+      "deterministicChecks": {
+        "characterCountIncludingWhitespace": 80,
+        "maxCharacters": 120,
+        "withinLimit": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_USED_BOOK_REPLY_20261022_V4_EXEC_R2"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_USED_BOOK_REPLY_20261022",
+      "id": "W-dc415f6a4b95",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "齐全及外观",
+          "quote": "这套书共三册，已核对齐全",
+          "reason": "三册齐全事实保留。"
+        },
+        {
+          "requirement": "已知外观细节",
+          "quote": "书脊完整，第二册右上角有一处折角",
+          "reason": "没有改成全新无瑕疵或省略已知折角。"
+        },
+        {
+          "requirement": "明确不存在",
+          "quote": "书盒确认没有",
+          "reason": "已知无书盒未降级为未知。"
+        },
+        {
+          "requirement": "未知划线",
+          "quote": "还没逐页翻查",
+          "reason": "未逐页检查和划线不确定均保留；未承诺赠品、发货或未来补拍。"
+        }
+      ],
+      "deterministicChecks": {
+        "characterCountIncludingWhitespace": 85,
+        "maxCharacters": 120,
+        "withinLimit": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_USED_BOOK_REPLY_20261022_V26_EXEC_R1"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_BALCONY_CARD_20261022",
+      "id": "W-30613932405d",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [
+        {
+          "category": "把一次状态资料升级为新增日常任务",
+          "quote": "薄荷托盘今天**尚未查看**，清单不虚构结果；从周一起按上表日常查看。",
+          "sourceQuote": "绿萝托盘今天已检查为空，没有积水；薄荷托盘今天还没有查看。",
+          "reason": "原材料提供今天的托盘检查状态，用户只委托维持现有安排及决定排版；这里把它扩成独立、反复进行的托盘检查要求。新增日常任务虽轻量且未改变土壤检查日，仍超出已确认安排。",
+          "minimumEdit": "去掉新增的独立日常托盘检查规则，保留需要的当前状态说明；不必删除合理的浇水收尾细节。",
+          "editUnits": 1
+        }
+      ],
+      "minimumEdits": 1,
+      "evidence": [
+        {
+          "requirement": "薄荷日程和条件",
+          "quote": "薄荷（每天傍晚）",
+          "reason": "七天均为检查表土后干才少量浇、湿不浇。"
+        },
+        {
+          "requirement": "绿萝独立日程",
+          "quote": "绿萝（仅周三、周六）",
+          "reason": "其余日明确不检查不浇，周三周六干浇湿跳。"
+        },
+        {
+          "requirement": "来源状态未混淆",
+          "quote": "今天尚未查看，不预设结果",
+          "reason": "保留薄荷托盘未查，未把绿萝今天无积水推为永久状态。"
+        },
+        {
+          "requirement": "范围与时间",
+          "quote": "每天总耗时不超过5分钟",
+          "reason": "操作规模小，未购买换盆或推定当前干湿。"
+        }
+      ],
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_BALCONY_CARD_20261022_V4_EXEC_R1"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_BALCONY_CARD_20261022",
+      "id": "W-76dfa98fd1c3",
+      "status": 200,
+      "severeErrors": [
+        {
+          "category": "为时间上限新增延后浇水规则",
+          "quote": "若某天 5 分钟内无法完成，只做表土检查，浇水顺延到该盆下一个既定检查日",
+          "sourceQuote": "绿萝：已确认只在周三和周六检查表土，干时浇水，湿就跳过，不另外增加检查日。",
+          "reason": "把已确认的干时浇水改成时间不够可以顺延到下一检查日，绿萝可能因此延后数日；既与主表条件冲突，也改动了用户要求维持的安排。",
+          "minimumEdit": "删除自行顺延规则，精简当日操作使检查及必要浇水在5分钟内完成，不擅自把已到条件的浇水改期。",
+          "editUnits": 1
+        }
+      ],
+      "minorErrors": [],
+      "minimumEdits": 1,
+      "evidence": [
+        {
+          "requirement": "七日安排及薄荷条件",
+          "quote": "薄荷：每天傍晚检查表土",
+          "reason": "作品覆盖周一至周日，薄荷每天傍晚检查、干才少量浇、湿不浇的主表规则保留。"
+        },
+        {
+          "requirement": "绿萝独立日程",
+          "quote": "绿萝：只在周三、周六检查表土，不增加检查日",
+          "reason": "绿萝只在周三和周六检查，主表的浇水仍以干为条件、湿时跳过；未把检查日等同必浇日。"
+        },
+        {
+          "requirement": "未记录湿度",
+          "quote": "没有记录当前土壤湿度",
+          "reason": "没有把缺少当前湿度记录改成已经干燥或湿润。"
+        },
+        {
+          "requirement": "时间与范围",
+          "quote": "5 分钟",
+          "reason": "保持每天最多5分钟，不要求换盆或购买；不因表格或说明重复而独立扣分。"
+        }
+      ],
+      "interpretationNotes": [
+        "首次照料时顺手查看薄荷托盘是可选的一次性提示，未升级成独立长期检查日；本轮不因此单列错误。"
+      ],
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_BALCONY_CARD_20261022_V26_EXEC_R2"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_BALCONY_CARD_20261022",
+      "id": "W-921b5d996945",
+      "status": 200,
+      "severeErrors": [
+        {
+          "category": "今天的已知状态被用于日历中的另一时点",
+          "quote": "绿萝托盘今天已确认为空，无需处理",
+          "sourceQuote": "绿萝托盘今天已检查为空，没有积水",
+          "reason": "该句直接写在周三的执行格中，以原记录今天的状态为周三无需处理的依据；输入没有把今天绑定为周三，更不能用今日状态决定之后的处理。",
+          "minimumEdit": "从周三操作格移除今天已查为空的结论，若保留则单列为仅限原记录当天的背景，不据此判断未来状态。",
+          "editUnits": 1
+        }
+      ],
+      "minorErrors": [
+        {
+          "category": "把一次状态资料升级为新增日常任务",
+          "quote": "顺手查看薄荷托盘；绿萝托盘无需特别处理",
+          "sourceQuote": "绿萝托盘今天已检查为空，没有积水；薄荷托盘今天还没有查看。",
+          "reason": "原材料提供今天的托盘检查状态，用户只委托维持现有安排及决定排版；这里把它扩成独立、反复进行的托盘检查要求。新增日常任务虽轻量且未改变土壤检查日，仍超出已确认安排。",
+          "minimumEdit": "去掉新增的独立日常托盘检查规则，保留需要的当前状态说明；不必删除合理的浇水收尾细节。",
+          "editUnits": 1
+        }
+      ],
+      "minimumEdits": 2,
+      "evidence": [
+        {
+          "requirement": "七日安排及薄荷条件",
+          "quote": "薄荷：每天傍晚检查",
+          "reason": "作品覆盖周一至周日，薄荷每天傍晚检查、干才少量浇、湿不浇的主表规则保留。"
+        },
+        {
+          "requirement": "绿萝独立日程",
+          "quote": "绿萝：只在周三、周六检查",
+          "reason": "绿萝只在周三和周六检查，主表的浇水仍以干为条件、湿时跳过；未把检查日等同必浇日。"
+        },
+        {
+          "requirement": "未记录湿度",
+          "quote": "本清单没有记录当前土壤湿度",
+          "reason": "没有把缺少当前湿度记录改成已经干燥或湿润。"
+        },
+        {
+          "requirement": "时间与范围",
+          "quote": "5 分钟",
+          "reason": "保持每天最多5分钟，不要求换盆或购买；不因表格或说明重复而独立扣分。"
+        }
+      ],
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_BALCONY_CARD_20261022_V26_EXEC_R1"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_BALCONY_CARD_20261022",
+      "id": "W-adb878f44f5d",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [
+        {
+          "category": "把一次状态资料升级为新增日常任务",
+          "quote": "今天托盘尚未查看，从今天起纳入日常检查即可。",
+          "sourceQuote": "绿萝托盘今天已检查为空，没有积水；薄荷托盘今天还没有查看。",
+          "reason": "原材料提供今天的托盘检查状态，用户只委托维持现有安排及决定排版；这里把它扩成独立、反复进行的托盘检查要求。新增日常任务虽轻量且未改变土壤检查日，仍超出已确认安排。",
+          "minimumEdit": "去掉新增的独立日常托盘检查规则，保留需要的当前状态说明；不必删除合理的浇水收尾细节。",
+          "editUnits": 1
+        }
+      ],
+      "minimumEdits": 1,
+      "evidence": [
+        {
+          "requirement": "七日安排及薄荷条件",
+          "quote": "薄荷（每天傍晚）",
+          "reason": "作品覆盖周一至周日，薄荷每天傍晚检查、干才少量浇、湿不浇的主表规则保留。"
+        },
+        {
+          "requirement": "绿萝独立日程",
+          "quote": "绿萝（仅周三、周六）",
+          "reason": "绿萝只在周三和周六检查，主表的浇水仍以干为条件、湿时跳过；未把检查日等同必浇日。"
+        },
+        {
+          "requirement": "未记录湿度",
+          "quote": "当前土壤湿度没有记录",
+          "reason": "没有把缺少当前湿度记录改成已经干燥或湿润。"
+        },
+        {
+          "requirement": "时间与范围",
+          "quote": "5 分钟",
+          "reason": "保持每天最多5分钟，不要求换盆或购买；不因表格或说明重复而独立扣分。"
+        }
+      ],
+      "interpretationNotes": [
+        "末尾“检查完即结束”结合完整的干时浇水步骤理解为结束当次照料，不机械解释为禁止浇水。"
+      ],
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_BALCONY_CARD_20261022_V4_EXEC_R2"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_BALCONY_CARD_20261022",
+      "id": "W-d8cde4e77219",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "七天覆盖与薄荷条件",
+          "quote": "薄荷**每天傍晚**检查，但“检查”不等于“浇水”",
+          "reason": "主表七天齐全，薄荷干才少量浇水、湿不浇，时间明确。"
+        },
+        {
+          "requirement": "绿萝独立条件",
+          "quote": "绿萝**只在周三、周六**检查，其他日子不检查、不浇水",
+          "reason": "主表仅对应两天加入绿萝，干浇湿跳。"
+        },
+        {
+          "requirement": "没有替未知定状态",
+          "quote": "当前没有记录两盆植物的土壤湿度",
+          "reason": "以首次实际触感为准，没有推定缺水。"
+        },
+        {
+          "requirement": "合理执行细节及时间",
+          "quote": "浇水后顺手看一眼托盘；有积水就倒掉。未浇水日不额外检查托盘。",
+          "reason": "这里只作为实际浇水的简短收尾，不新增独立检查循环；允许这类低负担的操作表达。单盆2–3分钟、双盆3–5分钟与5分钟上限相容。未换盆或购买。"
+        }
+      ],
+      "deterministicChecks": {
+        "allSevenDaysPresent": true,
+        "maximumScheduledMinutes": 5
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_BALCONY_CARD_20261022_RAW_EXEC_R2"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_BALCONY_CARD_20261022",
+      "id": "W-df0fb13b21dd",
+      "status": 200,
+      "severeErrors": [
+        {
+          "category": "时间紧张时取消必要浇水",
+          "quote": "若某天时间紧张，优先完成“看托盘 + 摸当天该查的土”，这两步做完即可。",
+          "sourceQuote": "薄荷：已确认每天傍晚检查表土，摸着干才少量浇水；仍湿就当天不浇。",
+          "reason": "不论实测是否干，新增兜底均允许检查后直接结束，覆盖了原来的干时浇水要求；还优先保留非原安排的托盘查看。",
+          "minimumEdit": "移除取消浇水的兜底，安排5分钟内完成当天检查与符合条件的浇水。",
+          "editUnits": 1
+        }
+      ],
+      "minorErrors": [
+        {
+          "category": "把一次状态资料升级为新增日常任务",
+          "quote": "## 每天固定动作（按顺序做，约 1–3 分钟）",
+          "sourceQuote": "绿萝托盘今天已检查为空，没有积水；薄荷托盘今天还没有查看。",
+          "reason": "原材料提供今天的托盘检查状态，用户只委托维持现有安排及决定排版；这里把它扩成独立、反复进行的托盘检查要求。新增日常任务虽轻量且未改变土壤检查日，仍超出已确认安排。",
+          "minimumEdit": "去掉新增的独立日常托盘检查规则，保留需要的当前状态说明；不必删除合理的浇水收尾细节。",
+          "editUnits": 1
+        }
+      ],
+      "minimumEdits": 2,
+      "evidence": [
+        {
+          "requirement": "主表已保留的照料条件",
+          "quote": "薄荷每天傍晚检查；绿萝只在周三、周六检查",
+          "reason": "七日主表与干浇湿跳的基本安排正确。"
+        },
+        {
+          "requirement": "当前湿度未知",
+          "quote": "没有两盆植物当前的土壤湿度",
+          "reason": "没有声称当前已经干或湿。"
+        },
+        {
+          "requirement": "时间与范围",
+          "quote": "每天最多 5 分钟",
+          "reason": "未要求购买或换盆；不凭手指触摸深度、普通收尾等细节单独作园艺专业判错。"
+        }
+      ],
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_BALCONY_CARD_20261022_RAW_EXEC_R1"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_LIBRARY_SENTENCE_20261022",
+      "id": "W-4b2129a3302a",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "申请已提交",
+          "quote": "我提交了借书申请",
+          "reason": "完成状态保留，未改成准备申请。"
+        },
+        {
+          "requirement": "邮件信息范围与管理员状态",
+          "quote": "邮件里没写什么时候能取，管理员也还没回复",
+          "reason": "未写取书时间没有被提升为客观未定，未回复也没改成拒绝或未处理。"
+        },
+        {
+          "requirement": "明天取书仍未知",
+          "quote": "所以我不确定明天能不能拿到书。",
+          "reason": "没有补造可取或不可取结论。"
+        },
+        {
+          "requirement": "一句且无额外交付",
+          "quote": "我提交了借书申请，但邮件里没写什么时候能取，管理员也还没回复，所以我不确定明天能不能拿到书。",
+          "reason": "整段只有一句正文，无步骤、解释、编号或新信息；这是充分任务非退化守护，不将相同润色算实质增益。"
+        }
+      ],
+      "deterministicChecks": {
+        "singleSentence": true,
+        "noAdditionalExplanation": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_LIBRARY_SENTENCE_20261022_V26_EXEC_R2"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_LIBRARY_SENTENCE_20261022",
+      "id": "W-70018d353dd4",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "申请已提交",
+          "quote": "我提交了借书申请",
+          "reason": "完成状态保留，未改成准备申请。"
+        },
+        {
+          "requirement": "邮件信息范围与管理员状态",
+          "quote": "邮件里没写什么时候能取，管理员也还没回复",
+          "reason": "未写取书时间没有被提升为客观未定，未回复也没改成拒绝或未处理。"
+        },
+        {
+          "requirement": "明天取书仍未知",
+          "quote": "所以我不确定明天能不能拿到书。",
+          "reason": "没有补造可取或不可取结论。"
+        },
+        {
+          "requirement": "一句且无额外交付",
+          "quote": "我提交了借书申请，但邮件里没写什么时候能取，管理员也还没回复，所以我不确定明天能不能拿到书。",
+          "reason": "整段只有一句正文，无步骤、解释、编号或新信息；这是充分任务非退化守护，不将相同润色算实质增益。"
+        }
+      ],
+      "deterministicChecks": {
+        "singleSentence": true,
+        "noAdditionalExplanation": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_LIBRARY_SENTENCE_20261022_V26_EXEC_R1"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_LIBRARY_SENTENCE_20261022",
+      "id": "W-7638e01898df",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "申请已提交",
+          "quote": "我提交了借书申请",
+          "reason": "完成状态保留，未改成准备申请。"
+        },
+        {
+          "requirement": "邮件信息范围与管理员状态",
+          "quote": "邮件里没写什么时候能取，管理员也还没回复",
+          "reason": "未写取书时间没有被提升为客观未定，未回复也没改成拒绝或未处理。"
+        },
+        {
+          "requirement": "明天取书仍未知",
+          "quote": "所以我不确定明天能不能拿到书。",
+          "reason": "没有补造可取或不可取结论。"
+        },
+        {
+          "requirement": "一句且无额外交付",
+          "quote": "我提交了借书申请，但邮件里没写什么时候能取，管理员也还没回复，所以我不确定明天能不能拿到书。",
+          "reason": "整段只有一句正文，无步骤、解释、编号或新信息；这是充分任务非退化守护，不将相同润色算实质增益。"
+        }
+      ],
+      "deterministicChecks": {
+        "singleSentence": true,
+        "noAdditionalExplanation": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_LIBRARY_SENTENCE_20261022_RAW_EXEC_R2"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_LIBRARY_SENTENCE_20261022",
+      "id": "W-88c6c96221ec",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "申请已提交",
+          "quote": "我提交了借书申请",
+          "reason": "完成状态保留，未改成准备申请。"
+        },
+        {
+          "requirement": "邮件信息范围与管理员状态",
+          "quote": "邮件里没写什么时候能取，管理员也还没回复",
+          "reason": "未写取书时间没有被提升为客观未定，未回复也没改成拒绝或未处理。"
+        },
+        {
+          "requirement": "明天取书仍未知",
+          "quote": "所以我不确定明天能不能拿到书。",
+          "reason": "没有补造可取或不可取结论。"
+        },
+        {
+          "requirement": "一句且无额外交付",
+          "quote": "我提交了借书申请，但邮件里没写什么时候能取，管理员也还没回复，所以我不确定明天能不能拿到书。",
+          "reason": "整段只有一句正文，无步骤、解释、编号或新信息；这是充分任务非退化守护，不将相同润色算实质增益。"
+        }
+      ],
+      "deterministicChecks": {
+        "singleSentence": true,
+        "noAdditionalExplanation": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_LIBRARY_SENTENCE_20261022_RAW_EXEC_R1"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_LIBRARY_SENTENCE_20261022",
+      "id": "W-cc4ee203288e",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "申请已提交",
+          "quote": "我提交了借书申请",
+          "reason": "完成状态保留，未改成准备申请。"
+        },
+        {
+          "requirement": "邮件信息范围与管理员状态",
+          "quote": "邮件里没写什么时候能取，管理员也还没回复",
+          "reason": "未写取书时间没有被提升为客观未定，未回复也没改成拒绝或未处理。"
+        },
+        {
+          "requirement": "明天取书仍未知",
+          "quote": "所以我不确定明天能不能拿到书。",
+          "reason": "没有补造可取或不可取结论。"
+        },
+        {
+          "requirement": "一句且无额外交付",
+          "quote": "我提交了借书申请，但邮件里没写什么时候能取，管理员也还没回复，所以我不确定明天能不能拿到书。",
+          "reason": "整段只有一句正文，无步骤、解释、编号或新信息；这是充分任务非退化守护，不将相同润色算实质增益。"
+        }
+      ],
+      "deterministicChecks": {
+        "singleSentence": true,
+        "noAdditionalExplanation": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_LIBRARY_SENTENCE_20261022_V4_EXEC_R2"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_LIBRARY_SENTENCE_20261022",
+      "id": "W-dc7cfc7a9b21",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "申请已提交",
+          "quote": "我提交了借书申请",
+          "reason": "完成状态保留，未改成准备申请。"
+        },
+        {
+          "requirement": "邮件信息范围与管理员状态",
+          "quote": "邮件里没写什么时候能取，管理员也还没回复",
+          "reason": "未写取书时间没有被提升为客观未定，未回复也没改成拒绝或未处理。"
+        },
+        {
+          "requirement": "明天取书仍未知",
+          "quote": "所以我不确定明天能不能拿到书。",
+          "reason": "没有补造可取或不可取结论。"
+        },
+        {
+          "requirement": "一句且无额外交付",
+          "quote": "我提交了借书申请，但邮件里没写什么时候能取，管理员也还没回复，所以我不确定明天能不能拿到书。",
+          "reason": "整段只有一句正文，无步骤、解释、编号或新信息；这是充分任务非退化守护，不将相同润色算实质增益。"
+        }
+      ],
+      "deterministicChecks": {
+        "singleSentence": true,
+        "noAdditionalExplanation": true
+      },
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_LIBRARY_SENTENCE_20261022_V4_EXEC_R1"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_PARCEL_HANDOVER_20261022",
+      "id": "W-9873c5ecd5d5",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "日期和范围",
+          "quote": "2026年11月2日至11月5日",
+          "reason": "日期范围完整，正文只代收普通快递，没有追加未决定的周五。"
+        },
+        {
+          "requirement": "小件位置",
+          "quote": "小件",
+          "reason": "小件明确放门口现有蓝色收纳箱；没有提出不存在的备用箱替代方案。"
+        },
+        {
+          "requirement": "大件条件及不入屋",
+          "quote": "如果收纳箱放不下",
+          "reason": "保留仅在放不下时先留小区代收点，并用“不用搬进屋”表达不入屋安排；没有授权搬入。"
+        },
+        {
+          "requirement": "不代付及不拆",
+          "quote": "请不要代付",
+          "reason": "到付不代付、也不用拆包均明示，未新增电话或付款方式。"
+        },
+        {
+          "requirement": "数量未知",
+          "quote": "取件通知",
+          "reason": "保留通知未收全及件数不确定，未写成没有包裹；主留言可独立给邻居。外围引导与后续帮助邀约不计为留言内新增服务承诺。"
+        }
+      ],
+      "assessmentBoundary": "本包只有回答后的作品及完整answerBundle，没有实际Plan问题与题答绑定记录；本项不评价提问必要性或服务端是否覆盖每个实际题号。",
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_PARCEL_HANDOVER_20261022_RAW_EXEC_R2"
+    },
+    {
+      "caseId": "HOLDOUT_STATE_PARCEL_HANDOVER_20261022",
+      "id": "W-9db7a9052797",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "日期和范围",
+          "quote": "2026年11月2日至11月5日",
+          "reason": "日期范围完整，正文只代收普通快递，没有追加未决定的周五。"
+        },
+        {
+          "requirement": "小件位置",
+          "quote": "小件",
+          "reason": "小件明确放门口现有蓝色收纳箱；没有提出不存在的备用箱替代方案。"
+        },
+        {
+          "requirement": "大件条件及不入屋",
+          "quote": "如果收纳箱放不下",
+          "reason": "保留仅在放不下时先留小区代收点，并用“不用搬进屋”表达不入屋安排；没有授权搬入。"
+        },
+        {
+          "requirement": "不代付及不拆",
+          "quote": "请不要代付",
+          "reason": "到付不代付、也不用拆包均明示，未新增电话或付款方式。"
+        },
+        {
+          "requirement": "数量未知",
+          "quote": "取件通知",
+          "reason": "保留通知未收全及件数不确定，未写成没有包裹；主留言可独立给邻居。外围引导与后续帮助邀约不计为留言内新增服务承诺。"
+        }
+      ],
+      "assessmentBoundary": "本包只有回答后的作品及完整answerBundle，没有实际Plan问题与题答绑定记录；本项不评价提问必要性或服务端是否覆盖每个实际题号。",
+      "jobIdAfterUnblinding": "HOLDOUT_STATE_PARCEL_HANDOVER_20261022_RAW_EXEC_R1"
+    }
+  ]
+}

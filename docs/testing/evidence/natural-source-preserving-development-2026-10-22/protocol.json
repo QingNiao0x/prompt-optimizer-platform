@@ -1,0 +1,105 @@
+{
+  "batch": "natural-source-preserving-development-2026-10-22",
+  "status": "FROZEN",
+  "authorizationQuote": "在这过程中可以自定义使用真实评测次数",
+  "taskMaximumActualCalls": 160,
+  "taskPreviouslyActual": 30,
+  "maximumNewActualCalls": 48,
+  "previousClosedActualCalls": 1284,
+  "oldClosedBalanceTransferred": 0,
+  "baselineCommit": "385ba35a",
+  "baselineVersion": "4",
+  "candidateVersions": [
+    "26"
+  ],
+  "versions": [
+    "4",
+    "26"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 16384,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 24,
+    "PLAN": 0,
+    "EXECUTION": 18,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 12,
+    "PLAN": 0,
+    "EXECUTION": 18,
+    "REVIEW": 0
+  },
+  "generation": [
+    "DEV_STATE_GAP_PROGRESS",
+    "DEV_STATE_CONFIRMED_ABSENCE",
+    "DEV_STATE_NOT_STARTED",
+    "DEV_STATE_USER_UNCERTAIN",
+    "DEV_STATE_CONDITIONAL_FACTS",
+    "DEV_STATE_STRICT_JSON"
+  ],
+  "plan": [],
+  "confirmedPlanGeneration": [],
+  "execution": [
+    "DEV_STATE_GAP_PROGRESS",
+    "DEV_STATE_CONFIRMED_ABSENCE",
+    "DEV_STATE_NOT_STARTED",
+    "DEV_STATE_USER_UNCERTAIN",
+    "DEV_STATE_CONDITIONAL_FACTS",
+    "DEV_STATE_STRICT_JSON"
+  ],
+  "executionRepeats": 1,
+  "commonPlanAnchorVersion": "4",
+  "allowedJobs": [
+    "DEV_STATE_GAP_PROGRESS_V4_GEN",
+    "DEV_STATE_GAP_PROGRESS_V26_GEN",
+    "DEV_STATE_CONFIRMED_ABSENCE_V4_GEN",
+    "DEV_STATE_CONFIRMED_ABSENCE_V26_GEN",
+    "DEV_STATE_NOT_STARTED_V4_GEN",
+    "DEV_STATE_NOT_STARTED_V26_GEN",
+    "DEV_STATE_USER_UNCERTAIN_V4_GEN",
+    "DEV_STATE_USER_UNCERTAIN_V26_GEN",
+    "DEV_STATE_CONDITIONAL_FACTS_V4_GEN",
+    "DEV_STATE_CONDITIONAL_FACTS_V26_GEN",
+    "DEV_STATE_STRICT_JSON_V4_GEN",
+    "DEV_STATE_STRICT_JSON_V26_GEN",
+    "DEV_STATE_GAP_PROGRESS_RAW_EXEC_R1",
+    "DEV_STATE_GAP_PROGRESS_V4_EXEC_R1",
+    "DEV_STATE_GAP_PROGRESS_V26_EXEC_R1",
+    "DEV_STATE_CONFIRMED_ABSENCE_RAW_EXEC_R1",
+    "DEV_STATE_CONFIRMED_ABSENCE_V4_EXEC_R1",
+    "DEV_STATE_CONFIRMED_ABSENCE_V26_EXEC_R1",
+    "DEV_STATE_NOT_STARTED_RAW_EXEC_R1",
+    "DEV_STATE_NOT_STARTED_V4_EXEC_R1",
+    "DEV_STATE_NOT_STARTED_V26_EXEC_R1",
+    "DEV_STATE_USER_UNCERTAIN_RAW_EXEC_R1",
+    "DEV_STATE_USER_UNCERTAIN_V4_EXEC_R1",
+    "DEV_STATE_USER_UNCERTAIN_V26_EXEC_R1",
+    "DEV_STATE_CONDITIONAL_FACTS_RAW_EXEC_R1",
+    "DEV_STATE_CONDITIONAL_FACTS_V4_EXEC_R1",
+    "DEV_STATE_CONDITIONAL_FACTS_V26_EXEC_R1",
+    "DEV_STATE_STRICT_JSON_RAW_EXEC_R1",
+    "DEV_STATE_STRICT_JSON_V4_EXEC_R1",
+    "DEV_STATE_STRICT_JSON_V26_EXEC_R1"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "order": "按题目下标轮换各臂顺序；确定性顺序，不声称随机化。",
+  "taskProtocolSha256": "b6409929a9f32b344bb6605a6626d05c4ba32ae775df1c20c263b4c09f7b0661",
+  "criteria": [
+    "六份候选优化提示词保留全部用户硬要求，无信息状态提升、授权扩张或交付物改变。",
+    "明确不存在、明确未执行、用户未知及独立条件不被改成另一状态；严格输出不被额外展开。",
+    "同信息作品的严重错误不多于第四版；新增严重退步先定位，不能用别题优势抵消。"
+  ],
+  "review": "先按冻结事实和交付要求逐项核查，再比较必要修改量；不以长度、HTTP成功或内部自报通过代替质量。",
+  "previousCandidate": "25已因资料状态退步停止采用；相同开发题用于机制回归，不是未见题。",
+  "reserveUse": "动用原任务预留48次阶段额度；本任务总上限仍160，未见阶段64不变。"
+}

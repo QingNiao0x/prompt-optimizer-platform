@@ -1,0 +1,53 @@
+{
+  "checks": [
+    {
+      "jobId": "DEV_STATE_CONFIRMED_ABSENCE_RAW_EXEC_R1",
+      "kind": "length<=100",
+      "characters": 49,
+      "pass": true
+    },
+    {
+      "jobId": "DEV_STATE_CONFIRMED_ABSENCE_V25_EXEC_R1",
+      "kind": "length<=100",
+      "characters": 58,
+      "pass": true
+    },
+    {
+      "jobId": "DEV_STATE_CONFIRMED_ABSENCE_V4_EXEC_R1",
+      "kind": "length<=100",
+      "characters": 68,
+      "pass": true
+    },
+    {
+      "jobId": "DEV_STATE_GAP_PROGRESS_RAW_EXEC_R1",
+      "kind": "oneParagraph",
+      "pass": true
+    },
+    {
+      "jobId": "DEV_STATE_GAP_PROGRESS_V25_EXEC_R1",
+      "kind": "oneParagraph",
+      "pass": true
+    },
+    {
+      "jobId": "DEV_STATE_GAP_PROGRESS_V4_EXEC_R1",
+      "kind": "oneParagraph",
+      "pass": true
+    },
+    {
+      "jobId": "DEV_STATE_STRICT_JSON_RAW_EXEC_R1",
+      "kind": "exactJSON",
+      "pass": true
+    },
+    {
+      "jobId": "DEV_STATE_STRICT_JSON_V25_EXEC_R1",
+      "kind": "exactJSON",
+      "pass": true
+    },
+    {
+      "jobId": "DEV_STATE_STRICT_JSON_V4_EXEC_R1",
+      "kind": "exactJSON",
+      "pass": true
+    }
+  ],
+  "boundary": "仅核查格式和长度，语义问题见独立评审。"
+}

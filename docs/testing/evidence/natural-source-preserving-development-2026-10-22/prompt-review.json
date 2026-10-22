@@ -1,0 +1,999 @@
+{
+  "schemaVersion": 1,
+  "reviewType": "DEVELOPMENT_PROMPT_AND_INTERNAL_REQUIREMENTS_REVIEW",
+  "disclosure": {
+    "reviewer": "同开发团队AI辅助复核，版本可见；不是人工专家或独立盲评。",
+    "evidenceRole": "DEVELOPMENT_SEEN_MECHANISMS_NOT_HOLDOUT",
+    "scope": "只检查6题的V4/V26共12份优化提示词与同次内部任务记录；未读新留出，未评价下游作品，未修改产品或新增模型调用。"
+  },
+  "inputs": [
+    {
+      "path": "docs/testing/evidence/natural-source-preserving-development-2026-10-22/cases.json",
+      "sha256": "b170e961e9af4e211c8738e92a3218de64e52bbdf316c249edf8e4f2adeba715"
+    },
+    {
+      "path": "docs/testing/evidence/natural-source-preserving-development-2026-10-22/http-results.json",
+      "sha256": "ac111de17d02aa0632713c60209f046a812208f372e07800f18c4dbdfd4d3e3b"
+    },
+    {
+      "path": "docs/testing/evidence/natural-source-preserving-development-2026-10-22/transports.jsonl",
+      "sha256": "c4b2252d4491e30ad5b7b1bd39234365e0eea3e092d06b288b7a9f166779893c"
+    }
+  ],
+  "criteria": [
+    "正文按原始目标、对象、格式、篇幅、状态、来源范围、独立条件与执行边界核对。",
+    "内部requirements文字、原始evidence、Coverage锚点及additions.gap分开判断。",
+    "内部错误不自动等于正文错误；原文及全部材料仍是完整依据，不能把局部字段当成整个模型理解。",
+    "记录、正文与覆盖引用来自同次模型响应，不能推断内部生成先后或唯一因果。",
+    "已确认不存在、明确未执行和不知道是否发生必须分别保留；不以禁止否定句作为质量标准。",
+    "协议成功、字面引用存在、文本变长或additions非空均不构成实质补全质量保证。",
+    "未明确指定的信息不强制全部写进正文；严格转换可引用完整材料，不必重复抄入全部原值。",
+    "开口问题列表为空不代表未知变已知：本批未知已在要求/正文表达且不妨碍原定交付。",
+    "正常材料引用与被委托表达可存在；不因优化正文分段就认定最终作品段数改变，也不把每项新设计当成硬要求违约。"
+  ],
+  "reviews": [
+    {
+      "id": "DEV_STATE_GAP_PROGRESS_V4_GEN",
+      "caseId": "DEV_STATE_GAP_PROGRESS",
+      "version": "4",
+      "trace": {
+        "path": "docs/testing/evidence/natural-source-preserving-development-2026-10-22/transports.jsonl",
+        "line": 1,
+        "responseId": "ccacbc48-bcb1-4507-8aab-6e1b8c22992e"
+      },
+      "sourceAndTransport": {
+        "rawPromptUnchanged": true,
+        "providedFilesFullyTransmitted": true,
+        "modelBodyEqualsPlatformBody": true,
+        "literalSourceQuotesPresent": true,
+        "literalCoverageQuotesPresent": true,
+        "singleRootBraceCompatibility": false
+      },
+      "optimizedPrompt": {
+        "verdict": "FAIL_REQUIREMENT_FIDELITY",
+        "checks": [
+          "保留合作方进度说明、一段、时间拿不准及不把话说死。",
+          "资料未提供的证据范围丢失，被写进已知情况。"
+        ],
+        "evidence": [
+          {
+            "location": "optimizedPrompt",
+            "quote": "已知情况：请求格式已确认，接口联调仍在进行；目前没有压测记录或验收记录"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "接口联调什么时候完成我现在也拿不准"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "帮我写一段可以直接发给合作方的进度说明"
+          }
+        ],
+        "issues": [
+          {
+            "severity": "HIGH",
+            "dimension": "information_state",
+            "finding": "把本次资料没有提供记录改成目前没有记录，形成超出来源范围的现实断言。",
+            "sourceQuote": "本次资料没有提供压测记录或验收记录",
+            "outputQuote": "目前没有压测记录或验收记录",
+            "requiredCorrection": "保留本次资料未提供的范围，或不把与对外成稿无关的证据缺口写入正文。"
+          }
+        ],
+        "notes": [],
+        "hardRequirementsRetained": false,
+        "statusAndSourceScopeRetained": false,
+        "independentConditionsRetained": true,
+        "newAuthorization": false,
+        "deliverableChanged": false
+      },
+      "internalTaskUnderstanding": {
+        "verdict": "REQUIREMENT_AND_BODY_SCOPE_LOSS",
+        "checks": [
+          "requirements[4].text与正文均失去资料范围；原始evidence仍正确。",
+          "所有字面引用存在并没有阻止信息状态变化。"
+        ],
+        "evidence": [
+          {
+            "location": "taskUnderstanding.requirements[4].text",
+            "quote": "没有压测记录或验收记录，没有已确认的完成日期或其他对外承诺"
+          },
+          {
+            "location": "taskUnderstanding.requirements[4].evidence[0].quote",
+            "quote": "本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。"
+          },
+          {
+            "location": "taskUnderstanding.review.requirementCoverage[4].quotes[0]",
+            "quote": "目前没有压测记录或验收记录，也没有已确认的完成日期或其他对外承诺"
+          }
+        ],
+        "issues": [
+          {
+            "severity": "HIGH",
+            "dimension": "source_scope_in_summary_and_body",
+            "finding": "内部摘要和正文锚点都把资料未提供压缩为没有记录；完整来源被保留但未形成语义保护。"
+          }
+        ],
+        "notes": [
+          "同次模型响应包含记录、正文和Coverage，不能推断内部先后或唯一因果。"
+        ],
+        "requirementsSemanticsRetained": false
+      }
+    },
+    {
+      "id": "DEV_STATE_GAP_PROGRESS_V26_GEN",
+      "caseId": "DEV_STATE_GAP_PROGRESS",
+      "version": "26",
+      "trace": {
+        "path": "docs/testing/evidence/natural-source-preserving-development-2026-10-22/transports.jsonl",
+        "line": 2,
+        "responseId": "b7e1a560-da62-4b83-b479-c8ac8d1eeff0"
+      },
+      "sourceAndTransport": {
+        "rawPromptUnchanged": true,
+        "providedFilesFullyTransmitted": true,
+        "modelBodyEqualsPlatformBody": true,
+        "literalSourceQuotesPresent": true,
+        "literalCoverageQuotesPresent": true,
+        "singleRootBraceCompatibility": false
+      },
+      "optimizedPrompt": {
+        "verdict": "PASS_REQUIREMENT_FIDELITY",
+        "checks": [
+          "原定一段合作方进度说明、联调进行中、格式已确认、时间不确定均保留。",
+          "完整材料用可依据的进度材料引入，未把资料缺口改为业务记录不存在。",
+          "优化提示词分为三段不等于最终作品要求三段；明确交付仍是一段。"
+        ],
+        "evidence": [
+          {
+            "location": "optimizedPrompt",
+            "quote": "请帮我写一段可以直接发给合作方的进度说明"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "接口联调什么时候完成我现在也拿不准"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "可依据的进度材料是：合成进度记录：请求格式已确认，接口联调仍在进行。本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "对完成时间采用留有余地的表述，并说明后续进展会及时同步"
+          }
+        ],
+        "issues": [],
+        "notes": [
+          "后续进展会及时同步是新增沟通安排，不能当作用户已确认的现实承诺。原文已委托其他表述，本次按可接受的沟通设计处理，未判为硬要求违约；若评估此类额外承诺，需另标边界而非追认为已冻结禁令。",
+          "原句引用是材料依据，不要求最终消息照抄合成进度记录标签或逐条披露所有证据缺口。",
+          "完整引用修复了本题观察到的来源范围问题，不等于所有下游表达都会保真。"
+        ],
+        "hardRequirementsRetained": true,
+        "statusAndSourceScopeRetained": true,
+        "independentConditionsRetained": true,
+        "newAuthorization": false,
+        "deliverableChanged": false
+      },
+      "internalTaskUnderstanding": {
+        "verdict": "PRESERVED",
+        "checks": [
+          "requirements原句、evidence及正文Coverage保留完整来源范围。",
+          "三项补充中专业礼貌属于被委托表达，防止编造只是重申事实边界；不能按数量宣称实质收益。"
+        ],
+        "evidence": [
+          {
+            "location": "taskUnderstanding.requirements[3].text",
+            "quote": "合成进度记录：请求格式已确认，接口联调仍在进行。本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。"
+          },
+          {
+            "location": "taskUnderstanding.requirements[3].evidence[0].quote",
+            "quote": "合成进度记录：请求格式已确认，接口联调仍在进行。本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。"
+          },
+          {
+            "location": "taskUnderstanding.review.requirementCoverage[3].quotes[0]",
+            "quote": "合成进度记录：请求格式已确认，接口联调仍在进行。本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。"
+          },
+          {
+            "location": "taskUnderstanding.additions[2].text",
+            "quote": "对完成时间采用留有余地的表述，并说明后续进展会及时同步"
+          }
+        ],
+        "issues": [],
+        "notes": [
+          "goal有接口联推进度说明的字词问题，requirements和正文仍是接口联调；未据此认定任务改变。",
+          "后续同步归入additions而非requirements，未伪称为用户确认；其对外承诺语气仍是需要留意的设计边界。"
+        ],
+        "requirementsSemanticsRetained": true
+      }
+    },
+    {
+      "id": "DEV_STATE_CONFIRMED_ABSENCE_V4_GEN",
+      "caseId": "DEV_STATE_CONFIRMED_ABSENCE",
+      "version": "4",
+      "trace": {
+        "path": "docs/testing/evidence/natural-source-preserving-development-2026-10-22/transports.jsonl",
+        "line": 4,
+        "responseId": "4ce1e811-7426-4411-bf31-c20fc93dc178"
+      },
+      "sourceAndTransport": {
+        "rawPromptUnchanged": true,
+        "providedFilesFullyTransmitted": true,
+        "modelBodyEqualsPlatformBody": true,
+        "literalSourceQuotesPresent": true,
+        "literalCoverageQuotesPresent": true,
+        "singleRootBraceCompatibility": false
+      },
+      "optimizedPrompt": {
+        "verdict": "PASS_REQUIREMENT_FIDELITY",
+        "checks": [
+          "值班交接消息、100字以内、仅正文完整保留。",
+          "明确确认备用为0、现用正常、补货未决定和负责人未安排均保留。",
+          "没有把真实不存在退回成未知，也没有采购执行授权。"
+        ],
+        "evidence": [
+          {
+            "location": "optimizedPrompt",
+            "quote": "正文控制在100字以内，只给正文"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "确认当前没有备用适配器（数量为0）"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "正在使用的适配器工作正常"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "是否补货尚未决定，也未安排采购负责人"
+          }
+        ],
+        "issues": [],
+        "notes": [
+          "单列盘点检查范围为additions，是选用已有事实，没有新增事实；是否值得占用100字交接篇幅应看作品，不能自动记为收益。"
+        ],
+        "hardRequirementsRetained": true,
+        "statusAndSourceScopeRetained": true,
+        "independentConditionsRetained": true,
+        "newAuthorization": false,
+        "deliverableChanged": false
+      },
+      "internalTaskUnderstanding": {
+        "verdict": "PRESERVED",
+        "checks": [
+          "任务与全部材料状态均在requirements和对应Coverage保留。",
+          "否定句在有确认依据时继续合法，未因保护未知而改写事实。"
+        ],
+        "evidence": [
+          {
+            "location": "taskUnderstanding.requirements[3].text",
+            "quote": "盘点确认当前没有备用适配器，数量为0"
+          },
+          {
+            "location": "taskUnderstanding.requirements[5].text",
+            "quote": "是否补货尚未决定，未安排采购负责人"
+          },
+          {
+            "location": "taskUnderstanding.additions[0].text",
+            "quote": "消息需准确传达已逐个检查储物柜和登记册"
+          }
+        ],
+        "issues": [],
+        "notes": [
+          "单列盘点检查范围为additions，是选用已有事实，没有新增事实；是否值得占用100字交接篇幅应看作品，不能自动记为收益。"
+        ],
+        "requirementsSemanticsRetained": true
+      }
+    },
+    {
+      "id": "DEV_STATE_CONFIRMED_ABSENCE_V26_GEN",
+      "caseId": "DEV_STATE_CONFIRMED_ABSENCE",
+      "version": "26",
+      "trace": {
+        "path": "docs/testing/evidence/natural-source-preserving-development-2026-10-22/transports.jsonl",
+        "line": 3,
+        "responseId": "3a063bcd-544d-41dd-a098-44b6bdd024ee"
+      },
+      "sourceAndTransport": {
+        "rawPromptUnchanged": true,
+        "providedFilesFullyTransmitted": true,
+        "modelBodyEqualsPlatformBody": true,
+        "literalSourceQuotesPresent": true,
+        "literalCoverageQuotesPresent": true,
+        "singleRootBraceCompatibility": false
+      },
+      "optimizedPrompt": {
+        "verdict": "PASS_REQUIREMENT_FIDELITY",
+        "checks": [
+          "值班交接消息、100字以内、仅正文完整保留。",
+          "明确确认备用为0、现用正常、补货未决定和负责人未安排均保留。",
+          "没有把真实不存在退回成未知，也没有采购执行授权。"
+        ],
+        "evidence": [
+          {
+            "location": "optimizedPrompt",
+            "quote": "100字以内，只给正文"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "本次盘点已逐个检查储物柜和登记册，确认当前没有备用适配器，备用适配器数量为0。"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "正在使用的适配器工作正常。是否补货尚未决定，未安排采购负责人。"
+          }
+        ],
+        "issues": [],
+        "notes": [
+          "记录原句与摘要说明有重复，但未造成冲突或改变100字成稿要求；重申不编造不是新事实或独立质量收益。"
+        ],
+        "hardRequirementsRetained": true,
+        "statusAndSourceScopeRetained": true,
+        "independentConditionsRetained": true,
+        "newAuthorization": false,
+        "deliverableChanged": false
+      },
+      "internalTaskUnderstanding": {
+        "verdict": "PRESERVED",
+        "checks": [
+          "任务与全部材料状态均在requirements和对应Coverage保留。",
+          "否定句在有确认依据时继续合法，未因保护未知而改写事实。"
+        ],
+        "evidence": [
+          {
+            "location": "taskUnderstanding.requirements[1].text",
+            "quote": "本次盘点已逐个检查储物柜和登记册，确认当前没有备用适配器，备用适配器数量为0。"
+          },
+          {
+            "location": "taskUnderstanding.requirements[3].text",
+            "quote": "是否补货尚未决定，未安排采购负责人。"
+          },
+          {
+            "location": "taskUnderstanding.review.requirementCoverage[1].quotes[0]",
+            "quote": "本次盘点已逐个检查储物柜和登记册，确认当前没有备用适配器，备用适配器数量为0。"
+          }
+        ],
+        "issues": [],
+        "notes": [
+          "记录原句与摘要说明有重复，但未造成冲突或改变100字成稿要求；重申不编造不是新事实或独立质量收益。"
+        ],
+        "requirementsSemanticsRetained": true
+      }
+    },
+    {
+      "id": "DEV_STATE_NOT_STARTED_V4_GEN",
+      "caseId": "DEV_STATE_NOT_STARTED",
+      "version": "4",
+      "trace": {
+        "path": "docs/testing/evidence/natural-source-preserving-development-2026-10-22/transports.jsonl",
+        "line": 5,
+        "responseId": "f68866c1-1bc7-4fec-b19c-0fe89082b003"
+      },
+      "sourceAndTransport": {
+        "rawPromptUnchanged": true,
+        "providedFilesFullyTransmitted": true,
+        "modelBodyEqualsPlatformBody": true,
+        "literalSourceQuotesPresent": true,
+        "literalCoverageQuotesPresent": true,
+        "singleRootBraceCompatibility": true
+      },
+      "optimizedPrompt": {
+        "verdict": "PASS_REQUIREMENT_FIDELITY",
+        "checks": [
+          "简短协作组消息、只正文、不执行操作均保留。",
+          "方案确认、演练未开始、日期未批准及启动前确认时间/通知同事完整。"
+        ],
+        "evidence": [
+          {
+            "location": "optimizedPrompt",
+            "quote": "只输出消息正文，不要替我执行任何操作。"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "恢复演练方案已经确认；演练尚未开始，目前没有已批准的演练日期"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "启动前仍需负责人确认时间，并通知参与同事。"
+          }
+        ],
+        "issues": [],
+        "notes": [
+          "响应少一个末尾根括号；审阅仅在内存补齐后读取。平台最终正文与模型原始字符串完全一致，不能把该兼容处理算成正文改写或语义错误。"
+        ],
+        "hardRequirementsRetained": true,
+        "statusAndSourceScopeRetained": true,
+        "independentConditionsRetained": true,
+        "newAuthorization": false,
+        "deliverableChanged": false
+      },
+      "internalTaskUnderstanding": {
+        "verdict": "PRESERVED",
+        "checks": [
+          "4项requirements覆盖消息目标、格式及执行边界、明确状态、启动前独立条件。"
+        ],
+        "evidence": [
+          {
+            "location": "taskUnderstanding.requirements[2].text",
+            "quote": "现状须依据记录：方案已确认、演练尚未开始、没有已批准的演练日期"
+          },
+          {
+            "location": "taskUnderstanding.requirements[3].text",
+            "quote": "启动前仍需负责人确认时间，并通知参与同事"
+          },
+          {
+            "location": "taskUnderstanding.review.requirementCoverage[3].quotes[0]",
+            "quote": "启动前仍需负责人确认时间，并通知参与同事。"
+          }
+        ],
+        "issues": [],
+        "notes": [
+          "additions强调待办不能写成完成，属于防误述说明；没有新增真实执行权限。"
+        ],
+        "requirementsSemanticsRetained": true
+      }
+    },
+    {
+      "id": "DEV_STATE_NOT_STARTED_V26_GEN",
+      "caseId": "DEV_STATE_NOT_STARTED",
+      "version": "26",
+      "trace": {
+        "path": "docs/testing/evidence/natural-source-preserving-development-2026-10-22/transports.jsonl",
+        "line": 6,
+        "responseId": "bc959915-e156-4d40-ad2c-4473051c75ee"
+      },
+      "sourceAndTransport": {
+        "rawPromptUnchanged": true,
+        "providedFilesFullyTransmitted": true,
+        "modelBodyEqualsPlatformBody": true,
+        "literalSourceQuotesPresent": true,
+        "literalCoverageQuotesPresent": true,
+        "singleRootBraceCompatibility": false
+      },
+      "optimizedPrompt": {
+        "verdict": "PASS_REQUIREMENT_FIDELITY",
+        "checks": [
+          "简短协作组消息、只正文、不执行操作均保留。",
+          "正文如实区分方案已确认、演练尚未开始与日期未批准；启动前条件仍待完成。"
+        ],
+        "evidence": [
+          {
+            "location": "optimizedPrompt",
+            "quote": "只输出消息正文，不要替我们执行任何操作。"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "恢复演练方案已经确认；演练尚未开始，目前没有已批准的演练日期；启动前仍需负责人确认时间，并通知参与同事。"
+          }
+        ],
+        "issues": [],
+        "notes": [],
+        "hardRequirementsRetained": true,
+        "statusAndSourceScopeRetained": true,
+        "independentConditionsRetained": true,
+        "newAuthorization": false,
+        "deliverableChanged": false
+      },
+      "internalTaskUnderstanding": {
+        "verdict": "ISSUE_IN_ADDITION_RATIONALE_ONLY",
+        "checks": [
+          "requirements[2]采用完整记录，正文/Coverage保留真实未开始状态。",
+          "additions[0].gap却把日期和状态统称为未定，记录已明确演练未开始。"
+        ],
+        "evidence": [
+          {
+            "location": "taskUnderstanding.requirements[2].text",
+            "quote": "恢复演练方案已经确认。演练尚未开始，目前没有已批准的演练日期。启动前仍需负责人确认时间，并通知参与同事。"
+          },
+          {
+            "location": "taskUnderstanding.additions[0].gap",
+            "quote": "原提示词未明确禁止编造未记录事实，而记录中日期与状态均为未定，易被误写为已确定。"
+          },
+          {
+            "location": "taskUnderstanding.review.requirementCoverage[2].quotes[0]",
+            "quote": "恢复演练方案已经确认；演练尚未开始，目前没有已批准的演练日期；启动前仍需负责人确认时间，并通知参与同事。"
+          }
+        ],
+        "issues": [
+          {
+            "severity": "LOW",
+            "dimension": "gap_information_state",
+            "finding": "缺口理由写日期与状态均为未定，混淆明确未开始与未知状态；requirements和正文仍正确，不能自动判正文或作品失败。"
+          }
+        ],
+        "notes": [],
+        "requirementsSemanticsRetained": true
+      }
+    },
+    {
+      "id": "DEV_STATE_USER_UNCERTAIN_V4_GEN",
+      "caseId": "DEV_STATE_USER_UNCERTAIN",
+      "version": "4",
+      "trace": {
+        "path": "docs/testing/evidence/natural-source-preserving-development-2026-10-22/transports.jsonl",
+        "line": 8,
+        "responseId": "f6146e2a-db77-474e-9daf-7dbfb5da39c7"
+      },
+      "sourceAndTransport": {
+        "rawPromptUnchanged": true,
+        "providedFilesFullyTransmitted": true,
+        "modelBodyEqualsPlatformBody": true,
+        "literalSourceQuotesPresent": true,
+        "literalCoverageQuotesPresent": true,
+        "singleRootBraceCompatibility": false
+      },
+      "optimizedPrompt": {
+        "verdict": "PASS_REQUIREMENT_FIDELITY",
+        "checks": [
+          "两个备选时段已经发出仍明确，核对客户是否已回复保留未知。",
+          "仍请同事核对并同步结果，未写为客户尚未回复或已经核对。"
+        ],
+        "evidence": [
+          {
+            "location": "optimizedPrompt",
+            "quote": "请他核对客户是否已回复我此前发出的两个备选时段，并把核对结果同步给我"
+          }
+        ],
+        "issues": [],
+        "notes": [
+          "没有逐字复述我不清楚，仍通过是否问法保留未知；不按关键词缺席误判状态改变。"
+        ],
+        "hardRequirementsRetained": true,
+        "statusAndSourceScopeRetained": true,
+        "independentConditionsRetained": true,
+        "newAuthorization": false,
+        "deliverableChanged": false
+      },
+      "internalTaskUnderstanding": {
+        "verdict": "ISSUE_IN_ADDITION_RATIONALE_ONLY",
+        "checks": [
+          "4项requirements保留对象、核查与回传；goal/evidence包含是否回复及原未知。",
+          "additions对篇幅边界的缺口判断有夸大，原文已明确简短消息。"
+        ],
+        "evidence": [
+          {
+            "location": "taskUnderstanding.goal",
+            "quote": "写一条给同事的简短消息，请其核对客户是否回复了两个备选时段，并同步结果"
+          },
+          {
+            "location": "taskUnderstanding.requirements[3].evidence[0].quote",
+            "quote": "我已经把两个备选时段发给客户了，但现在不清楚客户回没回"
+          },
+          {
+            "location": "taskUnderstanding.additions[0].gap",
+            "quote": "原文只要求“简短消息”，未说明语气和篇幅边界，执行者可能写成正式邮件或过长说明"
+          }
+        ],
+        "issues": [
+          {
+            "severity": "LOW",
+            "dimension": "gap_overstatement",
+            "finding": "原文已经给出简短消息，称未说明篇幅边界不能证明存在实质补全缺口；正文仍符合要求。"
+          }
+        ],
+        "notes": [],
+        "requirementsSemanticsRetained": true
+      }
+    },
+    {
+      "id": "DEV_STATE_USER_UNCERTAIN_V26_GEN",
+      "caseId": "DEV_STATE_USER_UNCERTAIN",
+      "version": "26",
+      "trace": {
+        "path": "docs/testing/evidence/natural-source-preserving-development-2026-10-22/transports.jsonl",
+        "line": 7,
+        "responseId": "178e2984-a035-40dc-9416-ba930fb78702"
+      },
+      "sourceAndTransport": {
+        "rawPromptUnchanged": true,
+        "providedFilesFullyTransmitted": true,
+        "modelBodyEqualsPlatformBody": true,
+        "literalSourceQuotesPresent": true,
+        "literalCoverageQuotesPresent": true,
+        "singleRootBraceCompatibility": false
+      },
+      "optimizedPrompt": {
+        "verdict": "PASS_REQUIREMENT_FIDELITY",
+        "checks": [
+          "完整保留两个备选时段已发出与用户不清楚客户是否回复。",
+          "交付仍是同事核对并回传结果的简短消息，无需先补具体时段。"
+        ],
+        "evidence": [
+          {
+            "location": "optimizedPrompt",
+            "quote": "我已经把两个备选时段发给客户了，但现在不清楚客户回没回。"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "请帮我写一条给同事的简短消息，请他核对一下客户是否已回复，再把核对结果同步给我。"
+          }
+        ],
+        "issues": [],
+        "notes": [],
+        "hardRequirementsRetained": true,
+        "statusAndSourceScopeRetained": true,
+        "independentConditionsRetained": true,
+        "newAuthorization": false,
+        "deliverableChanged": false
+      },
+      "internalTaskUnderstanding": {
+        "verdict": "ISSUE_IN_ADDITION_RATIONALE_ONLY",
+        "checks": [
+          "2项requirements原句保留事实状态和消息任务，Coverage对应完整。",
+          "additions.gap称未点明核心信息，但原文已有核对客户回复和结果同步。"
+        ],
+        "evidence": [
+          {
+            "location": "taskUnderstanding.requirements[0].text",
+            "quote": "我已经把两个备选时段发给客户了，但现在不清楚客户回没回。"
+          },
+          {
+            "location": "taskUnderstanding.requirements[1].text",
+            "quote": "帮我写条给同事的简短消息，请他核对一下客户回复，再把结果同步给我。"
+          },
+          {
+            "location": "taskUnderstanding.additions[0].gap",
+            "quote": "原文已限定“简短消息”，但未点明消息应包含的核心信息，补充后可避免执行者写成冗长或信息不全的消息"
+          }
+        ],
+        "issues": [
+          {
+            "severity": "LOW",
+            "dimension": "gap_overstatement",
+            "finding": "把原文已有核查和回传两项内容判为未点明；这是重复强调，不应计为实质缺口补全收益。"
+          }
+        ],
+        "notes": [],
+        "requirementsSemanticsRetained": true
+      }
+    },
+    {
+      "id": "DEV_STATE_CONDITIONAL_FACTS_V4_GEN",
+      "caseId": "DEV_STATE_CONDITIONAL_FACTS",
+      "version": "4",
+      "trace": {
+        "path": "docs/testing/evidence/natural-source-preserving-development-2026-10-22/transports.jsonl",
+        "line": 9,
+        "responseId": "1dfa5bb5-a6c1-421b-ad84-a84e2f7f6d84"
+      },
+      "sourceAndTransport": {
+        "rawPromptUnchanged": true,
+        "providedFilesFullyTransmitted": true,
+        "modelBodyEqualsPlatformBody": true,
+        "literalSourceQuotesPresent": true,
+        "literalCoverageQuotesPresent": true,
+        "singleRootBraceCompatibility": false
+      },
+      "optimizedPrompt": {
+        "verdict": "PASS_REQUIREMENT_FIDELITY",
+        "checks": [
+          "线上资料已发给所有报名者保持已确认事实。",
+          "纸质/电子的回复条件、邮寄/现场的地址条件分别保留。",
+          "志愿者由负责人统一领取且免于领取方式确认截止的例外完整。",
+          "交付仍是一条群短消息、仅正文；没有给所有人套相同地址或截止要求。"
+        ],
+        "evidence": [
+          {
+            "location": "optimizedPrompt",
+            "quote": "线上资料已发给所有报名者"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "只有选了纸质资料的人需要在周四16点前确认领取方式，纯电子版的人不用回复"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "选邮寄的人还要确认收件地址，现场领取的人不用填地址"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "组内志愿者的纸质资料由负责人统一领取，不适用前面提到的领取方式确认截止时间"
+          }
+        ],
+        "issues": [],
+        "notes": [],
+        "hardRequirementsRetained": true,
+        "statusAndSourceScopeRetained": true,
+        "independentConditionsRetained": true,
+        "newAuthorization": false,
+        "deliverableChanged": false
+      },
+      "internalTaskUnderstanding": {
+        "verdict": "PRESERVED",
+        "checks": [
+          "7条requirements覆盖目标、完整性要求、正文格式、事实及独立条件。"
+        ],
+        "evidence": [
+          {
+            "location": "taskUnderstanding.requirements[1].text",
+            "quote": "保留每项适用条件"
+          },
+          {
+            "location": "taskUnderstanding.requirements[4].text",
+            "quote": "只有选了纸质资料的人需要周四16点前确认领取方式，纯电子版不用回复"
+          },
+          {
+            "location": "taskUnderstanding.requirements[6].text",
+            "quote": "组内志愿者的纸质资料由负责人统一领，不适用前面的领取方式确认截止时间"
+          },
+          {
+            "location": "taskUnderstanding.additions[1].gap",
+            "quote": "原文只要求只输出正文，未明确排除标题和解释"
+          }
+        ],
+        "issues": [],
+        "notes": [
+          "只输出正文本已排除解释，把不加标题解释归为补充主要是重申格式，不是独立收益证明。"
+        ],
+        "requirementsSemanticsRetained": true
+      }
+    },
+    {
+      "id": "DEV_STATE_CONDITIONAL_FACTS_V26_GEN",
+      "caseId": "DEV_STATE_CONDITIONAL_FACTS",
+      "version": "26",
+      "trace": {
+        "path": "docs/testing/evidence/natural-source-preserving-development-2026-10-22/transports.jsonl",
+        "line": 10,
+        "responseId": "29dba181-c0b3-4032-940e-77da1a138abe"
+      },
+      "sourceAndTransport": {
+        "rawPromptUnchanged": true,
+        "providedFilesFullyTransmitted": true,
+        "modelBodyEqualsPlatformBody": true,
+        "literalSourceQuotesPresent": true,
+        "literalCoverageQuotesPresent": true,
+        "singleRootBraceCompatibility": false
+      },
+      "optimizedPrompt": {
+        "verdict": "PASS_REQUIREMENT_FIDELITY",
+        "checks": [
+          "线上资料已发给所有报名者保持已确认事实。",
+          "纸质/电子的回复条件、邮寄/现场的地址条件分别保留。",
+          "志愿者由负责人统一领取且免于领取方式确认截止的例外完整。",
+          "交付仍是一条群短消息、仅正文；没有给所有人套相同地址或截止要求。"
+        ],
+        "evidence": [
+          {
+            "location": "optimizedPrompt",
+            "quote": "把下面已确认的安排整理成一条发到群里的短消息"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "只有选了纸质资料的人需要周四16点前确认领取方式，纯电子版不用回复"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "选邮寄的还要确认收件地址，但现场领取的人不用填地址"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "组内志愿者的纸质资料由负责人统一领，不适用前面的领取方式确认截止时间"
+          }
+        ],
+        "issues": [],
+        "notes": [
+          "原句保留没有强制最终消息逐字照抄；逐项保留限定与原始请求一致。"
+        ],
+        "hardRequirementsRetained": true,
+        "statusAndSourceScopeRetained": true,
+        "independentConditionsRetained": true,
+        "newAuthorization": false,
+        "deliverableChanged": false
+      },
+      "internalTaskUnderstanding": {
+        "verdict": "INCOMPLETE_REQUIREMENT_RECORD_AND_GAP_OVERSTATEMENT",
+        "checks": [
+          "5条requirements保留正文格式、事实及全部独立条件。",
+          "群短消息目标在goal和正文中仍明确，但未进入requirements/Coverage列表。",
+          "原文保留每项适用条件被误当作additions；gap称缺少完整性要求与原文不符。"
+        ],
+        "evidence": [
+          {
+            "location": "taskUnderstanding.goal",
+            "quote": "把已确认的资料发放安排整理成一条发群里的短消息"
+          },
+          {
+            "location": "taskUnderstanding.requirements[0].text",
+            "quote": "只输出正文"
+          },
+          {
+            "location": "taskUnderstanding.requirements[4].text",
+            "quote": "组内志愿者的纸质资料由负责人统一领，不适用前面的领取方式确认截止时间"
+          },
+          {
+            "location": "taskUnderstanding.additions[0].gap",
+            "quote": "原文条件较多且相互嵌套，缺少对条件完整性的明确要求，容易在压缩成短消息时丢失例外"
+          }
+        ],
+        "issues": [
+          {
+            "severity": "MEDIUM",
+            "dimension": "requirement_record_completeness",
+            "finding": "requirements未记录原定群短消息目标，原有保留条件要求被归为补充；goal和正文完整，当前未造成交付遗漏。"
+          },
+          {
+            "severity": "LOW",
+            "dimension": "gap_overstatement",
+            "finding": "原文明确保留每项适用条件，不能称缺少对条件完整性的明确要求。"
+          }
+        ],
+        "notes": [
+          "requirementsSemanticsRetained=false专指要求列表的记录完整性，不能解释为整个任务记录或正文失去原目标。"
+        ],
+        "requirementsSemanticsRetained": false
+      }
+    },
+    {
+      "id": "DEV_STATE_STRICT_JSON_V4_GEN",
+      "caseId": "DEV_STATE_STRICT_JSON",
+      "version": "4",
+      "trace": {
+        "path": "docs/testing/evidence/natural-source-preserving-development-2026-10-22/transports.jsonl",
+        "line": 12,
+        "responseId": "8ff2128b-8161-41c8-a2f2-7e639e03b4e3"
+      },
+      "sourceAndTransport": {
+        "rawPromptUnchanged": true,
+        "providedFilesFullyTransmitted": true,
+        "modelBodyEqualsPlatformBody": true,
+        "literalSourceQuotesPresent": true,
+        "literalCoverageQuotesPresent": true,
+        "singleRootBraceCompatibility": false
+      },
+      "optimizedPrompt": {
+        "verdict": "PASS_REQUIREMENT_FIDELITY",
+        "checks": [
+          "单一JSON对象、精确键集、原值字符串、无围栏/解释/新键完整。",
+          "全部输入材料实际已传入，提示词引用文件并要求使用原值，没有补时间或改直播状态。"
+        ],
+        "evidence": [
+          {
+            "location": "optimizedPrompt",
+            "quote": "只输出一个 JSON 对象，键必须恰好为 room、start、streaming"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "值都使用通知中的原文字符串，不要代码围栏或任何解释，也不要新增其他键"
+          }
+        ],
+        "issues": [],
+        "notes": [
+          "不要求优化提示词自身就是最终JSON，也不强制在正文重复三项材料原值。"
+        ],
+        "hardRequirementsRetained": true,
+        "statusAndSourceScopeRetained": true,
+        "independentConditionsRetained": true,
+        "newAuthorization": false,
+        "deliverableChanged": false
+      },
+      "internalTaskUnderstanding": {
+        "verdict": "PRESERVED_WITH_COVERAGE_LIMITATION",
+        "checks": [
+          "6条requirements保留全部格式约束及三项精确原值；additions为空。"
+        ],
+        "evidence": [
+          {
+            "location": "taskUnderstanding.requirements[5].text",
+            "quote": "通知内容位于 notes/session-notice.md：会议室已确认A302、开始时间尚待主持人确认、直播已确认不提供"
+          },
+          {
+            "location": "taskUnderstanding.review.requirementCoverage[5].quotes[0]",
+            "quote": "读取 notes/session-notice.md 中的通知内容"
+          }
+        ],
+        "issues": [],
+        "notes": [
+          "具体值的Coverage仅锚定文件引用，不能单靠锚点证明逐值语义正确；完整材料和原值约束存在，本次不据此判正文遗漏。"
+        ],
+        "requirementsSemanticsRetained": true
+      }
+    },
+    {
+      "id": "DEV_STATE_STRICT_JSON_V26_GEN",
+      "caseId": "DEV_STATE_STRICT_JSON",
+      "version": "26",
+      "trace": {
+        "path": "docs/testing/evidence/natural-source-preserving-development-2026-10-22/transports.jsonl",
+        "line": 11,
+        "responseId": "c6bcbf6a-f284-4aae-a7fd-7aa19c89128e"
+      },
+      "sourceAndTransport": {
+        "rawPromptUnchanged": true,
+        "providedFilesFullyTransmitted": true,
+        "modelBodyEqualsPlatformBody": true,
+        "literalSourceQuotesPresent": true,
+        "literalCoverageQuotesPresent": true,
+        "singleRootBraceCompatibility": false
+      },
+      "optimizedPrompt": {
+        "verdict": "PASS_REQUIREMENT_FIDELITY",
+        "checks": [
+          "单一JSON对象、精确键集、原值字符串、无围栏/解释/新键完整。",
+          "全部输入材料实际已传入，提示词引用文件并要求使用原值，没有补时间或改直播状态。"
+        ],
+        "evidence": [
+          {
+            "location": "optimizedPrompt",
+            "quote": "只输出一个 JSON 对象，不要代码围栏或任何解释"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "该对象的键必须恰好为 room、start、streaming，不得新增其他键"
+          },
+          {
+            "location": "optimizedPrompt",
+            "quote": "三个键的值都使用通知中的原文字符串"
+          }
+        ],
+        "issues": [],
+        "notes": [
+          "不要求优化提示词自身就是最终JSON，也不强制在正文重复三项材料原值。"
+        ],
+        "hardRequirementsRetained": true,
+        "statusAndSourceScopeRetained": true,
+        "independentConditionsRetained": true,
+        "newAuthorization": false,
+        "deliverableChanged": false
+      },
+      "internalTaskUnderstanding": {
+        "verdict": "PRESERVED_WITH_COVERAGE_LIMITATION",
+        "checks": [
+          "7条requirements保留输出约束，并逐项使用三项状态原句；additions为空。"
+        ],
+        "evidence": [
+          {
+            "location": "taskUnderstanding.requirements[4].text",
+            "quote": "会议室：已确认A302"
+          },
+          {
+            "location": "taskUnderstanding.requirements[5].text",
+            "quote": "开始时间：尚待主持人确认"
+          },
+          {
+            "location": "taskUnderstanding.requirements[6].text",
+            "quote": "直播：已确认不提供"
+          },
+          {
+            "location": "taskUnderstanding.review.requirementCoverage[4].quotes[0]",
+            "quote": "notes/session-notice.md"
+          }
+        ],
+        "issues": [],
+        "notes": [
+          "具体值的Coverage仅锚定文件引用，不能单靠锚点证明逐值语义正确；完整材料和原值约束存在，本次不据此判正文遗漏。"
+        ],
+        "requirementsSemanticsRetained": true
+      }
+    }
+  ],
+  "summary": {
+    "optimizedPromptVerdicts": {
+      "V4": {
+        "pass": 5,
+        "fail": 1
+      },
+      "V26": {
+        "pass": 6,
+        "fail": 0
+      }
+    },
+    "failure": "本批V4 GAP正文将资料未提供写成目前没有记录；26保留完整来源范围与一段要求。",
+    "internalOnlyFindings": [
+      "26 NOT_STARTED 的additions.gap将明确未开始错误概括成状态未定，requirements与正文仍正确。",
+      "26 CONDITIONAL_FACTS遗漏requirements中的原目标、误将已有条件完整性要求归为additions；goal、正文与实际条件完整。",
+      "USER_UNCERTAIN两版的gap仍夸大原文缺口，重复强调不能自动算实质收益。",
+      "严格JSON两版的具体值Coverage仅锚定文件引用，不能据此声称完成逐值语义检查。"
+    ],
+    "designBoundary": [
+      "26 GAP要求后续进展及时同步。原文委托其他表述，按正常沟通设计处理，未计硬要求失败；它不是既有事实或用户已确认安排，需保留这一解释边界。"
+    ],
+    "noObservedRegressionAreas": [
+      "26未出现一段放宽为几段。",
+      "明确不存在、明确未执行和用户不知道的状态均保留。",
+      "全部独立条件及例外、只正文和不执行边界、严格JSON约束均保留。",
+      "未发现新增实际操作授权或把原交付物改成另一类型。"
+    ],
+    "transportFindings": "12/12原始提示词与材料完整传入；12/12模型正文与平台正文逐字相同；全部字面来源和正文锚点存在。V4 NOT_STARTED少一个末尾根括号，仅在内存补齐后读取，正文内容未改变。",
+    "interpretation": "这是已见开发机制的12份样本；同一题V4在前批正文保留范围、本批丢范围，说明存在采样波动。该对照支持26本批局部保真改善，不证明总体质量、泛化或下游作品收益。"
+  }
+}

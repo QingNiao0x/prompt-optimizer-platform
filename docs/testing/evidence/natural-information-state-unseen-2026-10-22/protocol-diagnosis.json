@@ -1,0 +1,423 @@
+{
+  "reportVersion": 1,
+  "task": "未见阶段三组协议重试与最终失败的只读诊断",
+  "createdDate": "2026-10-22",
+  "evidenceBoundary": {
+    "inputs": {
+      "docs/testing/evidence/natural-information-state-unseen-2026-10-22/transports.jsonl": "a5afad79ec6ca00b22757929fe19b8447b13815bbb733796eb4bc1e63dc13c6b",
+      "docs/testing/evidence/natural-information-state-unseen-2026-10-22/http-results.json": "d82e6bc48183c15fcd58df8f74b5bdbd33825ef5aecd05026047b743ba9411ad",
+      "tmp/natural-information-state-unseen-20261022/server.out.log": "f31ff7027edf85a9f71d5efe6e483cccd07bcda8b520f126b9b67a31123c6f7b"
+    },
+    "inspection": "读取闭批原件及指定日志；按现有Java校验顺序做针对性字段比较。未启动服务、未运行模型、未修改产品或冻结原件。",
+    "notPerformed": [
+      "未做Java反射回放或全量响应合法性测试",
+      "未重评所有语义与下游作品",
+      "未运行候选24对这些输入的真实对照"
+    ]
+  },
+  "summary": {
+    "jobs": 3,
+    "upstreamResponsesInspected": 6,
+    "retries": 3,
+    "upstreamAllHttp200AndStop": true,
+    "finalApiStatuses": [
+      {
+        "jobId": "HOLDOUT_STATE_LOAN_ITEMS_20261022_V26_GEN",
+        "status": 200,
+        "error": null
+      },
+      {
+        "jobId": "HOLDOUT_STATE_PARCEL_HANDOVER_20261022_V26_PLAN_GEN",
+        "status": 502,
+        "error": {
+          "code": "RESULT_INVALID",
+          "message": "模型响应未通过结构、内容或安全校验，本次增强未完成。",
+          "retryable": false,
+          "details": {}
+        }
+      },
+      {
+        "jobId": "HOLDOUT_STATE_PARCEL_HANDOVER_20261022_V4_PLAN_GEN",
+        "status": 502,
+        "error": {
+          "code": "RESULT_INVALID",
+          "message": "模型响应未通过结构、内容或安全校验，本次增强未完成。",
+          "retryable": false,
+          "details": {}
+        }
+      }
+    ],
+    "primaryAttribution": "增强模型响应未满足既有来源、单行正文锚点或阶段协议；平台按现有规则拒绝。没有证据表明网络、模型传输或评测工具造成这三组拒绝。",
+    "causalLimit": "模型协议违约是可定位的直接触发点，不等于模型能力是唯一根因。重复题答来源和正文/Plan共用协议的负担可能参与，不能凭单次原件证实唯一因果。"
+  },
+  "attempts": [
+    {
+      "transportJsonlLine": 2,
+      "jobId": "HOLDOUT_STATE_LOAN_ITEMS_20261022_V26_GEN",
+      "attempt": 1,
+      "operation": "prompt.optimize",
+      "phase": "GENERATION",
+      "generationStage": "DIRECT",
+      "upstreamHttpStatus": 200,
+      "finishReason": "stop",
+      "modelResponseSha256": "e2d99b11cab9f1d81f324c86f2d7e408c537b73aeb01c0f86e495395a03f3dc2",
+      "singleMissingRootBraceRecoveredByExistingCompatibility": false,
+      "firstBlockingReason": "覆盖引用应使用单行片段",
+      "knownSourceQuotesInvalid": [],
+      "requiredSources": [
+        "rawPrompt"
+      ],
+      "referencedSources": [
+        "context.fileSnippets.0",
+        "rawPrompt"
+      ],
+      "missingSources": [],
+      "multilineBodyQuotes": [
+        {
+          "path": "taskUnderstanding.review.requirementCoverage[4].quotes[0]",
+          "quote": "活动物品登记\n1. 折叠桌：两张均已归还，桌面还没有检查。\n2. 投影幕布：已确认在活动室柜内；登记表没有填写归还时间，实际归还时间还不清楚。\n3. 延长线：已清点柜子，目前柜内为0条；借用登记表没有列出借用人，线去了哪里还不知道。",
+          "lineBreakCount": 3,
+          "existsInBody": true
+        }
+      ],
+      "bodyQuotesAbsentFromBody": [],
+      "coverageSizesAndUniqueIndicesValid": true,
+      "planImpacts": [],
+      "unknownDiagnosticFieldsInvolved": false
+    },
+    {
+      "transportJsonlLine": 3,
+      "jobId": "HOLDOUT_STATE_LOAN_ITEMS_20261022_V26_GEN",
+      "attempt": 2,
+      "operation": "prompt.optimize",
+      "phase": "GENERATION",
+      "generationStage": "DIRECT",
+      "upstreamHttpStatus": 200,
+      "finishReason": "stop",
+      "modelResponseSha256": "c26ec2e55fd5a542e49ade79c70f9e0e3dc38b71c798bddcf9b4397449f3a75c",
+      "singleMissingRootBraceRecoveredByExistingCompatibility": false,
+      "firstBlockingReason": "通过本次定向源码核对的来源、覆盖与阶段检查",
+      "knownSourceQuotesInvalid": [],
+      "requiredSources": [
+        "rawPrompt"
+      ],
+      "referencedSources": [
+        "context.fileSnippets.0",
+        "rawPrompt"
+      ],
+      "missingSources": [],
+      "multilineBodyQuotes": [],
+      "bodyQuotesAbsentFromBody": [],
+      "coverageSizesAndUniqueIndicesValid": true,
+      "planImpacts": [],
+      "unknownDiagnosticFieldsInvolved": false,
+      "repairInstructionAppended": "\n上次响应未满足协议或必要保护。请重新按完整输入生成合法JSON并保留全部要求；不添加额外内容。"
+    },
+    {
+      "transportJsonlLine": 14,
+      "jobId": "HOLDOUT_STATE_PARCEL_HANDOVER_20261022_V4_PLAN_GEN",
+      "attempt": 1,
+      "operation": "prompt.optimize",
+      "phase": "GENERATION",
+      "generationStage": "DIRECT",
+      "upstreamHttpStatus": 200,
+      "finishReason": "stop",
+      "modelResponseSha256": "3a2685d652be2fa9aef103b8412d13cc3b71b66a070eb043f38bbb642dd55f48",
+      "singleMissingRootBraceRecoveredByExistingCompatibility": false,
+      "firstBlockingReason": "NaturalTaskReview.MissingSources: 任务理解未关联全部实际题答来源",
+      "knownSourceQuotesInvalid": [],
+      "requiredSources": [
+        "actualAnswers.0",
+        "actualAnswers.1",
+        "actualAnswers.2",
+        "rawPrompt"
+      ],
+      "referencedSources": [
+        "actualAnswers.0",
+        "rawPrompt"
+      ],
+      "missingSources": [
+        "actualAnswers.1",
+        "actualAnswers.2"
+      ],
+      "multilineBodyQuotes": [],
+      "bodyQuotesAbsentFromBody": [],
+      "coverageSizesAndUniqueIndicesValid": true,
+      "planImpacts": [],
+      "unknownDiagnosticFieldsInvolved": false,
+      "actualAnswerShape": {
+        "count": 3,
+        "answerBodiesIdentical": true,
+        "questionsDifferent": true,
+        "questionIds": [
+          "q1",
+          "q2",
+          "q3"
+        ],
+        "exampleQuote": "小件放门口现有的蓝色收纳箱；大件如果收纳箱放不下，就先留在小区代收点，不搬进屋。"
+      }
+    },
+    {
+      "transportJsonlLine": 15,
+      "jobId": "HOLDOUT_STATE_PARCEL_HANDOVER_20261022_V4_PLAN_GEN",
+      "attempt": 2,
+      "operation": "prompt.optimize",
+      "phase": "GENERATION",
+      "generationStage": "DIRECT",
+      "upstreamHttpStatus": 200,
+      "finishReason": "stop",
+      "modelResponseSha256": "a41ab37ab4d45f23f4eb4158ca7a4e64018df68d36ed00edfdcb3bf2f33d6a7d",
+      "singleMissingRootBraceRecoveredByExistingCompatibility": false,
+      "firstBlockingReason": "NaturalTaskReview.MissingSources: 任务理解未关联全部实际题答来源",
+      "knownSourceQuotesInvalid": [],
+      "requiredSources": [
+        "actualAnswers.0",
+        "actualAnswers.1",
+        "actualAnswers.2",
+        "rawPrompt"
+      ],
+      "referencedSources": [
+        "actualAnswers.0",
+        "rawPrompt"
+      ],
+      "missingSources": [
+        "actualAnswers.1",
+        "actualAnswers.2"
+      ],
+      "multilineBodyQuotes": [],
+      "bodyQuotesAbsentFromBody": [],
+      "coverageSizesAndUniqueIndicesValid": true,
+      "planImpacts": [],
+      "unknownDiagnosticFieldsInvolved": false,
+      "repairInstructionAppended": "\n上次响应未满足协议或必要保护。请重新按完整输入生成合法JSON并保留全部要求；不添加额外内容。\n任务理解的evidence尚未关联这些现有来源编号：actualAnswers.1、actualAnswers.2。请核对这些原始题答并补齐出处及对应正文锚点；已有正文确实覆盖时保留有效表达，不新增事实或确认。",
+      "actualAnswerShape": {
+        "count": 3,
+        "answerBodiesIdentical": true,
+        "questionsDifferent": true,
+        "questionIds": [
+          "q1",
+          "q2",
+          "q3"
+        ],
+        "exampleQuote": "小件放门口现有的蓝色收纳箱；大件如果收纳箱放不下，就先留在小区代收点，不搬进屋。"
+      }
+    },
+    {
+      "transportJsonlLine": 16,
+      "jobId": "HOLDOUT_STATE_PARCEL_HANDOVER_20261022_V26_PLAN_GEN",
+      "attempt": 1,
+      "operation": "prompt.optimize",
+      "phase": "GENERATION",
+      "generationStage": "DIRECT",
+      "upstreamHttpStatus": 200,
+      "finishReason": "stop",
+      "modelResponseSha256": "913af365355f58254b1a1ce159a4bf45c64603dea8cc179d6f5d65c85d23940b",
+      "singleMissingRootBraceRecoveredByExistingCompatibility": false,
+      "firstBlockingReason": "NaturalTaskReview.MissingSources: 任务理解未关联全部实际题答来源",
+      "knownSourceQuotesInvalid": [],
+      "requiredSources": [
+        "actualAnswers.0",
+        "actualAnswers.1",
+        "actualAnswers.2",
+        "rawPrompt"
+      ],
+      "referencedSources": [
+        "actualAnswers.0",
+        "rawPrompt"
+      ],
+      "missingSources": [
+        "actualAnswers.1",
+        "actualAnswers.2"
+      ],
+      "multilineBodyQuotes": [],
+      "bodyQuotesAbsentFromBody": [],
+      "coverageSizesAndUniqueIndicesValid": true,
+      "planImpacts": [],
+      "unknownDiagnosticFieldsInvolved": false,
+      "actualAnswerShape": {
+        "count": 3,
+        "answerBodiesIdentical": true,
+        "questionsDifferent": true,
+        "questionIds": [
+          "q1",
+          "q2",
+          "q3"
+        ],
+        "exampleQuote": "小件放门口现有的蓝色收纳箱；大件如果收纳箱放不下，就先留在小区代收点，不搬进屋。"
+      }
+    },
+    {
+      "transportJsonlLine": 17,
+      "jobId": "HOLDOUT_STATE_PARCEL_HANDOVER_20261022_V26_PLAN_GEN",
+      "attempt": 2,
+      "operation": "prompt.optimize",
+      "phase": "GENERATION",
+      "generationStage": "DIRECT",
+      "upstreamHttpStatus": 200,
+      "finishReason": "stop",
+      "modelResponseSha256": "a886542a4cac351d1b55378cf5fdcaf86fa8be553170e125cbe5e4c335364097",
+      "singleMissingRootBraceRecoveredByExistingCompatibility": true,
+      "firstBlockingReason": "正文检查混入了新的Plan提问",
+      "knownSourceQuotesInvalid": [],
+      "requiredSources": [
+        "actualAnswers.0",
+        "actualAnswers.1",
+        "actualAnswers.2",
+        "rawPrompt"
+      ],
+      "referencedSources": [
+        "actualAnswers.0",
+        "actualAnswers.1",
+        "actualAnswers.2",
+        "rawPrompt"
+      ],
+      "missingSources": [],
+      "multilineBodyQuotes": [],
+      "bodyQuotesAbsentFromBody": [],
+      "coverageSizesAndUniqueIndicesValid": true,
+      "planImpacts": [
+        {
+          "questionId": "q1",
+          "whyAsk": "周五是否再请邻居帮忙属于用户尚未决定的事项，现有输入无法确定是否应写入说明。",
+          "answerDifference": "若决定包含周五，说明需增加周五的代收安排；若维持不写入，则说明只覆盖11月2日至11月5日。"
+        }
+      ],
+      "unknownDiagnosticFieldsInvolved": false,
+      "repairInstructionAppended": "\n上次响应未满足协议或必要保护。请重新按完整输入生成合法JSON并保留全部要求；不添加额外内容。\n任务理解的evidence尚未关联这些现有来源编号：actualAnswers.1、actualAnswers.2。请核对这些原始题答并补齐出处及对应正文锚点；已有正文确实覆盖时保留有效表达，不新增事实或确认。",
+      "actualAnswerShape": {
+        "count": 3,
+        "answerBodiesIdentical": true,
+        "questionsDifferent": true,
+        "questionIds": [
+          "q1",
+          "q2",
+          "q3"
+        ],
+        "exampleQuote": "小件放门口现有的蓝色收纳箱；大件如果收纳箱放不下，就先留在小区代收点，不搬进屋。"
+      },
+      "internalOpenDecisions": [
+        {
+          "issue": "周五是否再请邻居帮忙",
+          "impact": "决定说明是否包含周五的代收安排；用户已明确本次不写入。",
+          "questionId": "q1",
+          "kind": "USER_INFORMATION"
+        }
+      ],
+      "bodyPreservesExclusion": true
+    }
+  ],
+  "jobs": [
+    {
+      "case": "LOAN / V26",
+      "outcome": "首次拒绝，协议修复后API 200",
+      "decisiveField": "taskUnderstanding.review.requirementCoverage[4].quotes[0]",
+      "classification": {
+        "direct": "MODEL_PROTOCOL_NONCOMPLIANCE",
+        "platform": "按单行覆盖锚点契约拒绝；不是已证实的正文缺失或来源伪造",
+        "tool": "未见工具错误",
+        "interaction": "26强调完整材料原句与沿用单行Coverage之间存在模型组织负担；本次不足以证明指导必然导致跨行引用"
+      },
+      "explanation": "首次把整个材料登记作为一个requirement和一条跨行Coverage引用。该引用逐字属于来源也逐字存在于正文，唯一已定位的阻断是内部锚点含三个换行。第二次按物品拆分为单行引用，保留材料事实并通过。"
+    },
+    {
+      "case": "PARCEL / V4",
+      "outcome": "首次和修复均缺来源，API 502 RESULT_INVALID",
+      "decisiveFields": [
+        "taskUnderstanding.requirements[*].evidence[*].sourceId",
+        "actualAnswers.1",
+        "actualAnswers.2"
+      ],
+      "classification": {
+        "direct": "MODEL_PROTOCOL_NONCOMPLIANCE",
+        "platform": "按全部实际题答来源检查拒绝；不能把同文的一个来源号自动视为三个题答都已验证",
+        "tool": "三个不同问题使用相同完整回答是原件中的受控输入形态，未见传输丢失或错配",
+        "interaction": "正文包含回答内容与sourceId覆盖完整是不同条件。此处主要是重复回答的来源编号遗漏，不足以证明正文语义必然遗漏"
+      },
+      "explanation": "两次响应都从actualAnswers.0引用七组事实，而未引用.1和.2。第一次后的system明确列出这两个缺失来源，第二次仍然遗漏。源码首先在validateUnderstanding抛MissingSources，未进入最终正文Coverage校验。定向比较没有发现这两次现有bodyQuotes缺失或跨行。"
+    },
+    {
+      "case": "PARCEL / V26",
+      "outcome": "首次缺来源；修复补齐但混入Plan阶段字段，API 502 RESULT_INVALID",
+      "decisiveFields": [
+        "首次 taskUnderstanding.requirements[*].evidence[*].sourceId",
+        "修复 taskUnderstanding.review.planImpacts[0]"
+      ],
+      "classification": {
+        "direct": "MODEL_PROTOCOL_NONCOMPLIANCE",
+        "platform": "来源修复成功后按增强阶段禁止planImpacts拒绝；不能靠忽略该已知控制字段放行",
+        "tool": "未见工具错误",
+        "interaction": "第四版共用任务记录包含两个阶段字段，26沿用；这是阶段协议混淆的已观察实例，但并未对24进行同输入对照"
+      },
+      "explanation": "首次与V4相同漏.1和.2。第二次每组回答事实引用全部三个来源，正文Coverage匹配；模型又填了非空planImpacts，故validateEnhancement拒绝。响应末尾少一个根对象闭合符，已有readResponse兼容可恢复，不能将最终502归因为缺括号。",
+      "semanticBoundary": "内部planImpacts称需决定是否写周五，而用户已经明确本次不写；内部openDecisions也承认本次不写。最终候选正文仍明确排除周五，不能据此断言平台实际新增提问或最终正文改变了该条件。"
+    }
+  ],
+  "candidate24Assessment": {
+    "canFixByExistingUnknownDiagnosticHandler": false,
+    "reasons": [
+      "24仅忽略无权威的未知有界标量；本次没有相关未知诊断字段。",
+      "24规范化后仍调用NaturalTaskReview，跨行bodyQuotes和缺actualAnswers来源仍会拒绝。",
+      "24的增强DTO不接收旧taskUnderstanding/review/planImpacts；现成reader不能直接读取这些4/26原件，旧字段被明确列为协议字段而非可忽略诊断。",
+      "24独立阶段指导可能减少planImpacts混入的机会，但需要受控评测，不能由当前静态诊断声称已经解决。",
+      "少一个末尾根括号的兼容本来就由所有版本共享readResponse处理，与24未知字段兼容无关。"
+    ],
+    "implementationPerformed": false
+  },
+  "codeReferences": [
+    {
+      "file": "E:/MyProject/prompt-optimizer-platform/services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskSource.java",
+      "line": 40,
+      "finding": "每份实际题答独立来源；文本为问题加换行加回答。"
+    },
+    {
+      "file": "E:/MyProject/prompt-optimizer-platform/services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskUnderstanding.java",
+      "line": 81,
+      "finding": "先验证来源存在及原句归属，随后validateUnderstanding。"
+    },
+    {
+      "file": "E:/MyProject/prompt-optimizer-platform/services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java",
+      "line": 64,
+      "finding": "全部原始请求和绑定题答来源必须被引用，否则抛MissingSources。"
+    },
+    {
+      "file": "E:/MyProject/prompt-optimizer-platform/services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java",
+      "line": 115,
+      "finding": "覆盖引用单行要求，行122拒绝换行。"
+    },
+    {
+      "file": "E:/MyProject/prompt-optimizer-platform/services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java",
+      "line": 83,
+      "finding": "增强阶段planImpacts必须为空，之后检查正文Coverage。"
+    },
+    {
+      "file": "E:/MyProject/prompt-optimizer-platform/services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "line": 289,
+      "finding": "每次最多两次尝试，失败计数；MissingSources追加缺失编号修复指导。"
+    },
+    {
+      "file": "E:/MyProject/prompt-optimizer-platform/services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "line": 373,
+      "finding": "stop响应仅少一个末尾根括号时恢复，然后继续全部校验。"
+    },
+    {
+      "file": "E:/MyProject/prompt-optimizer-platform/services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/NaturalPromptDiagnosticFieldHandler.java",
+      "line": 22,
+      "finding": "24未知字段兼容排除旧协议/阶段字段；仅无权威标量可忽略。"
+    }
+  ],
+  "serverLogEvidence": {
+    "file": "E:/MyProject/prompt-optimizer-platform/tmp/natural-information-state-unseen-20261022/server.out.log",
+    "lineNumbers": [
+      60,
+      94,
+      95,
+      97,
+      98
+    ],
+    "finding": "日志对应一次LOAN和两组PARCEL的INVALID_RESPONSE；首次willRetry=true，PARCEL二次willRetry=false。validationReason/validationField均为-，因此具体字段归因来自响应原件和源码顺序，不冒称日志已记录精确错误。"
+  },
+  "limitations": [
+    "未把正文包含某个片段等同全部语义保真；本报告只定位协议阻断。",
+    "已有规则是否应调整需另行设计与对照；不因本诊断删除全部题答来源保护或忽略非法planImpacts。"
+  ]
+}

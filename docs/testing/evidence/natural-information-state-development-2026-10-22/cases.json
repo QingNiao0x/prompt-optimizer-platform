@@ -1,0 +1,156 @@
+{
+  "synthetic": true,
+  "evidenceRole": "DEVELOPMENT_SEEN_MECHANISMS_NOT_HOLDOUT",
+  "disclosure": "这6题用于开发与误伤回归，机制来自已见信息状态问题；即使换了对象或措辞，也不作为独立留出或泛化证据。未包含任何新留出题。",
+  "cases": [
+    {
+      "id": "DEV_STATE_GAP_PROGRESS",
+      "rawPrompt": "帮我写一段能发给合作方的进度说明：接口联调什么时候完成我现在也拿不准，其他表述你安排，别把话说死。",
+      "files": [
+        {
+          "path": "notes/integration-progress.md",
+          "language": "markdown",
+          "content": "合成进度记录：请求格式已确认，接口联调仍在进行。本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。"
+        }
+      ],
+      "acceptance": {
+        "hardRequirements": [
+          "直接交付可发送的进度说明，保留格式已确认、联调进行中及完成时间拿不准。",
+          "本次未提供记录不等于不存在记录，也不等于压测或验收尚未开展。"
+        ],
+        "allowedDesignSpace": [
+          "礼貌、简短措辞由AI安排；不影响对外进度说明的材料缺口可不写入成稿。"
+        ],
+        "forbiddenFactPromotions": [
+          "不确定完成时间不能改为已经确定、无法完成或从未承诺；不得编造业务执行状态。"
+        ],
+        "workChecks": [
+          "原件回归；分别核对生成任务记录、增强正文及下游作品的限定范围，不据协议通过宣称语义通过。"
+        ]
+      }
+    },
+    {
+      "id": "DEV_STATE_CONFIRMED_ABSENCE",
+      "rawPrompt": "根据这份盘点记录，替我写一条发给值班同事的交接消息，100字以内，只给正文。",
+      "files": [
+        {
+          "path": "notes/stock-check.md",
+          "language": "markdown",
+          "content": "本次盘点已逐个检查储物柜和登记册，确认当前没有备用适配器，备用适配器数量为0。正在使用的适配器工作正常。是否补货尚未决定，未安排采购负责人。"
+        }
+      ],
+      "acceptance": {
+        "hardRequirements": [
+          "明确保留已确认没有备用适配器以及现用适配器正常。",
+          "补货与负责人未定保持未定，正文不超过100字。"
+        ],
+        "allowedDesignSpace": [
+          "自然调整交接顺序，保留影响接班的内容。"
+        ],
+        "forbiddenFactPromotions": [
+          "不能把已确认数量为0退回为资料不足、数量未知或没有提供库存记录。",
+          "不把补货建议升级为已安排采购或已经补货。"
+        ],
+        "workChecks": [
+          "该题检查明确不存在的事实能正常表达；信息状态保护不能一律禁止否定事实。"
+        ]
+      }
+    },
+    {
+      "id": "DEV_STATE_NOT_STARTED",
+      "rawPrompt": "请按记录写一条简短的恢复演练进展消息，给协作组同步现状和接下来需要确认的事。只要消息正文，不替我们执行操作。",
+      "files": [
+        {
+          "path": "notes/recovery-drill.md",
+          "language": "markdown",
+          "content": "恢复演练方案已经确认。演练尚未开始，目前没有已批准的演练日期。启动前仍需负责人确认时间，并通知参与同事。"
+        }
+      ],
+      "acceptance": {
+        "hardRequirements": [
+          "保留方案已确认、演练尚未开始和日期未批准。",
+          "启动前确认时间及通知同事属于尚待完成的条件，不能写成已完成。"
+        ],
+        "allowedDesignSpace": [
+          "把既有待办压缩成简洁的下一步说明，不指定原材料未给出的日期或人员。"
+        ],
+        "forbiddenFactPromotions": [
+          "不能把明确尚未开始改写为不知道是否开始或未提供演练记录。",
+          "不得声称已启动、已通知或新增实际执行授权。"
+        ],
+        "workChecks": [
+          "区分明确未执行与未提供执行证据；正常负面状态不应被改成含糊免责声明。"
+        ]
+      }
+    },
+    {
+      "id": "DEV_STATE_USER_UNCERTAIN",
+      "rawPrompt": "我已经把两个备选时段发给客户了，但现在不清楚客户回没回。帮我写条给同事的简短消息，请他核对一下客户回复，再把结果同步给我。",
+      "files": [],
+      "acceptance": {
+        "hardRequirements": [
+          "保留备选时段已发送以及用户不知道客户是否回复。",
+          "交付给同事的核对与回告消息。"
+        ],
+        "allowedDesignSpace": [
+          "可以用自然口语表达，不需要要求用户先补两个时段的具体内容。"
+        ],
+        "forbiddenFactPromotions": [
+          "不清楚是否回复不能写成客户尚未回复、拒绝安排或已确认时段。",
+          "不能写成已经核对并知道结果。"
+        ],
+        "workChecks": [
+          "核查任务仍是核查；不能把状态未知变成已证实的否定事实。"
+        ]
+      }
+    },
+    {
+      "id": "DEV_STATE_CONDITIONAL_FACTS",
+      "rawPrompt": "把下面确认好的安排整理成一条发群里的短消息，保留每项适用条件，只输出正文：线上资料已发给所有报名者；只有选了纸质资料的人需要周四16点前确认领取方式，纯电子版不用回复；选邮寄的还要确认收件地址，但现场领取的人不用填地址；组内志愿者的纸质资料由负责人统一领，不适用前面的领取方式确认截止时间。",
+      "files": [],
+      "acceptance": {
+        "hardRequirements": [
+          "线上资料已发这一确认事实不降为待核实。",
+          "纸质/纯电子的回复条件、邮寄/现场的地址条件、志愿者截止时间例外分别保留。"
+        ],
+        "allowedDesignSpace": [
+          "顺序和措辞可压缩，不要求原句逐字照抄。"
+        ],
+        "forbiddenFactPromotions": [
+          "不合并独立条件导致所有人都确认地址，或给志愿者新增周四截止。",
+          "不把已有发放事实改成计划发放。"
+        ],
+        "workChecks": [
+          "检查覆盖记录和正文均保留作用对象与条件，不只匹配共同名词或一个引用。"
+        ]
+      }
+    },
+    {
+      "id": "DEV_STATE_STRICT_JSON",
+      "rawPrompt": "把通知中的三项状态转成JSON，只输出一个对象，键必须恰好为room、start、streaming，值都用原文字符串。不要代码围栏或解释，也不要新增其他键。",
+      "files": [
+        {
+          "path": "notes/session-notice.md",
+          "language": "markdown",
+          "content": "会议室：已确认A302\n开始时间：尚待主持人确认\n直播：已确认不提供"
+        }
+      ],
+      "acceptance": {
+        "hardRequirements": [
+          "仅一个可解析JSON对象，键恰好room、start、streaming，值均为原文字符串。",
+          "room=已确认A302；start=尚待主持人确认；streaming=已确认不提供。"
+        ],
+        "allowedDesignSpace": [
+          "JSON空格或缩进可自定。"
+        ],
+        "forbiddenFactPromotions": [
+          "不得新增缺口说明、核查条款、默认时间、直播链接或外层解释。",
+          "不能把明确不提供直播改为未知，也不能把开始时间未确认写成不举办会议。"
+        ],
+        "workChecks": [
+          "充分输入和严格输出不扩写；字符串原值与键集必须精确，除此之外不强求版式。"
+        ]
+      }
+    }
+  ]
+}

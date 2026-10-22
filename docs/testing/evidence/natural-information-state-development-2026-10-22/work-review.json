@@ -1,0 +1,546 @@
+{
+  "schemaVersion": 1,
+  "assessmentDate": "2026-10-22",
+  "source": "tmp/information-state-development-review-20261022/anonymous-works.json",
+  "sourceSha256": "9BC0D6C7C27535B7162DAFCF759684109EB799BD2A0C14126A2308BEB01ABF34",
+  "reviewer": "内部协作AI审阅A",
+  "disclosure": {
+    "versionMappingRead": false,
+    "privateHttpOrTransportRead": false,
+    "holdoutReadForThisAssessment": false,
+    "externalModelCalls": 0,
+    "method": "逐件依据同文件的原始要求、材料、真实答复与验收卡评审；版本映射不可见。审阅者参与过同项目工程审查并了解改进目标，本次只是作品版本匿名，不是外部专业评审或完全盲评。",
+    "limits": "样本为已见开发题，只记录这18份作品中的可观察缺陷，不能据此证明跨任务普遍收益；HTTP 200不等于质量通过。"
+  },
+  "rubric": {
+    "severeErrors": "改变事实或信息状态、遗漏或违反影响交付的明确硬要求。",
+    "minorErrors": "未导致核心交付失效但应局部修正的无依据补充；正常文风和允许设计变体不扣分。",
+    "minimumEdits": "修复独立事实或要求所需的最少编辑项数；同一错误的不同表述不重复计数，不按字符计算。",
+    "boundary": "普通礼貌、条件式沟通跟进、语义等价的简写不当作新增业务承诺；只有具体未经确认的业务行动安排列为问题。"
+  },
+  "summary": {
+    "caseCount": 6,
+    "workCount": 18,
+    "protocolFailures": 0,
+    "worksWithoutObservedErrors": 17,
+    "worksWithSevereErrors": 1,
+    "worksWithMinorErrors": 1,
+    "severeErrorCount": 1,
+    "minorErrorCount": 1,
+    "totalMinimumEdits": 2,
+    "conclusion": "观察到一份作品把资料未提供记录改成现实尚无记录，并加入未经确认的具体后续业务安排；其他17份在本轮要求下未发现需修改的问题。不按匿名作品差异推断版本优劣。"
+  },
+  "assessments": [
+    {
+      "caseId": "DEV_STATE_GAP_PROGRESS",
+      "id": "W-04e011143f1c",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "已确认内容与进展",
+          "quote": "请求格式已经确认，联调按现有节奏继续走。",
+          "reason": "保留请求格式已确认与联调持续进行；未声称新增执行结果。"
+        },
+        {
+          "requirement": "完成时间不确定",
+          "quote": "具体完成时间暂时没法给到确定日期",
+          "reason": "没有把未知时间改为既定日期或不可能完成。"
+        },
+        {
+          "requirement": "可直接发送及合理表达空间",
+          "quote": "后续有明确节点我再同步",
+          "reason": "条件式沟通表述未限定业务完成节点，不因普通礼貌性跟进措辞判错；省略无关材料缺口符合允许空间。"
+        }
+      ],
+      "jobIdAfterUnblinding": "DEV_STATE_GAP_PROGRESS_RAW_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_GAP_PROGRESS",
+      "id": "W-4ec6142a683a",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "已确认内容与进展",
+          "quote": "请求格式已经确认，接口联调仍在推进中",
+          "reason": "已确认事实与进行中状态均保留。"
+        },
+        {
+          "requirement": "资料范围与未知时间",
+          "quote": "目前资料中没有压测记录或验收记录，联调的具体完成时间也还需要进一步确认",
+          "reason": "否定限定在资料中，没有断言现实不存在记录或工作未开展。虽然加入了可省略的材料信息，用户未禁止，不能仅凭不够紧凑判缺陷。"
+        },
+        {
+          "requirement": "可直接发送",
+          "quote": "各位好，同步一下当前进度",
+          "reason": "已经交付正文，没有转成填空模板或要求先补齐资料。"
+        }
+      ],
+      "jobIdAfterUnblinding": "DEV_STATE_GAP_PROGRESS_V4_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_GAP_PROGRESS",
+      "id": "W-a001653aa0de",
+      "status": 200,
+      "severeErrors": [
+        {
+          "category": "资料可用性被提升为现实状态",
+          "quote": "目前尚无压测记录或验收记录",
+          "sourceQuote": "本次资料没有提供压测记录或验收记录",
+          "reason": "去掉“本次资料没有提供”的证据范围后，面向合作方的正文断言目前不存在记录。材料只能证明本次未提供，不能证明实际没有记录，违反该题明确的信息状态要求。",
+          "minimumEdit": "删除该记录状态断言；若确需保留，应改为仅限本次资料未提供的表述。",
+          "editUnits": 1
+        }
+      ],
+      "minorErrors": [
+        {
+          "category": "未经确认的后续业务安排",
+          "quote": "后续我们将根据联调情况推进压测和验收等相关工作",
+          "sourceQuote": "没有已确认的完成日期或其他对外承诺",
+          "reason": "材料没有给出后续压测与验收的工作安排。该句以发送方口吻加入具体业务行动承诺，超出一般的进展同步；但未给出保证日期，也未明确宣称已经执行，因此单列为局部不当补充，不再重复计算为第二项严重状态错误。",
+          "minimumEdit": "删除具体压测、验收安排，保留或改用有明确进展时同步的沟通表述。",
+          "editUnits": 1
+        }
+      ],
+      "minimumEdits": 2,
+      "evidence": [
+        {
+          "requirement": "正确保留的要求",
+          "quote": "请求格式已确认，接口联调仍在进行中",
+          "reason": "这两项事实正确；不能因其他错误否定全部内容。"
+        },
+        {
+          "requirement": "正确保留的未知",
+          "quote": "也暂未确认完成日期",
+          "reason": "未把完成时间编造成既定日期。"
+        }
+      ],
+      "jobIdAfterUnblinding": "DEV_STATE_GAP_PROGRESS_V25_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_CONFIRMED_ABSENCE",
+      "id": "W-30b3383c22c8",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "确认不存在与现用状态",
+          "quote": "当前没有备用适配器，备用适配器数量为0；正在使用的适配器工作正常",
+          "reason": "没有把已确认的零库存退回为未知，也未混淆备用与现用。"
+        },
+        {
+          "requirement": "待定事项",
+          "quote": "是否补货尚未决定，也未安排采购负责人",
+          "reason": "保留两个不同待定状态，没有新增采购安排。"
+        },
+        {
+          "requirement": "长度与正文",
+          "quote": "交接：已逐个检查储物柜和登记册",
+          "reason": "全文仅正文，共68个UTF-16字符（本作品无代理对字符），连标点计数仍小于100。"
+        }
+      ],
+      "deterministicChecks": {
+        "characterCountIncludingPunctuation": 68,
+        "maxCharacters": 100
+      },
+      "jobIdAfterUnblinding": "DEV_STATE_CONFIRMED_ABSENCE_V4_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_CONFIRMED_ABSENCE",
+      "id": "W-46f807685082",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "确认不存在与现用状态",
+          "quote": "备用适配器为0，在用的正常",
+          "reason": "简写仍保留原对象与确定状态。"
+        },
+        {
+          "requirement": "待定事项",
+          "quote": "补货未定、采购负责人未安排",
+          "reason": "待定补货和负责人未安排均保留。"
+        },
+        {
+          "requirement": "长度与正文",
+          "quote": "盘点完毕：储物柜和登记册均已核对",
+          "reason": "只有可发送正文，全文49字符。末尾“请留意”属于正常交接措辞。"
+        }
+      ],
+      "deterministicChecks": {
+        "characterCountIncludingPunctuation": 49,
+        "maxCharacters": 100
+      },
+      "jobIdAfterUnblinding": "DEV_STATE_CONFIRMED_ABSENCE_RAW_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_CONFIRMED_ABSENCE",
+      "id": "W-48e01c4b42f9",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "确认不存在与现用状态",
+          "quote": "确认无备用适配器，数量为0；在用适配器工作正常",
+          "reason": "确认状态、数量和对象均保留。"
+        },
+        {
+          "requirement": "待定事项",
+          "quote": "是否补货尚未决定，未安排采购负责人",
+          "reason": "没有把未决定升级为已安排。"
+        },
+        {
+          "requirement": "长度与正文",
+          "quote": "交接：已逐个检查储物柜和登记册",
+          "reason": "正文58字符，无额外解释。"
+        }
+      ],
+      "deterministicChecks": {
+        "characterCountIncludingPunctuation": 58,
+        "maxCharacters": 100
+      },
+      "jobIdAfterUnblinding": "DEV_STATE_CONFIRMED_ABSENCE_V25_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_NOT_STARTED",
+      "id": "W-b4f9d1bd86c8",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "三项实际状态",
+          "quote": "恢复演练方案已确认，演练尚未开始，目前没有已批准的演练日期",
+          "reason": "确认、未执行、未批准分别保留，没有统一退回未知。"
+        },
+        {
+          "requirement": "启动前待办",
+          "quote": "接下来需要负责人确认演练时间，并通知参与同事",
+          "reason": "保留确认时间与通知同事为下一步事项；没有声称已做或给出执行命令之外的实际执行结果。"
+        },
+        {
+          "requirement": "交付范围",
+          "quote": "恢复演练方案已确认",
+          "reason": "直接给简短消息正文，没有题外说明或新增具体日期、人员。"
+        }
+      ],
+      "jobIdAfterUnblinding": "DEV_STATE_NOT_STARTED_RAW_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_NOT_STARTED",
+      "id": "W-dc05930e137a",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "三项实际状态",
+          "quote": "恢复演练方案已确认，演练尚未开始，目前没有已批准的演练日期",
+          "reason": "各状态与记录一致。"
+        },
+        {
+          "requirement": "启动前待办",
+          "quote": "一是请负责人确认演练时间，二是在启动前通知参与同事",
+          "reason": "两项待办与启动条件清楚，不是已经完成的事实。"
+        },
+        {
+          "requirement": "交付范围",
+          "quote": "恢复演练进展同步",
+          "reason": "仅消息正文，无代为执行的声明。"
+        }
+      ],
+      "jobIdAfterUnblinding": "DEV_STATE_NOT_STARTED_V4_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_NOT_STARTED",
+      "id": "W-e6115b90646a",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "三项实际状态",
+          "quote": "恢复演练方案已经确认；演练尚未开始，目前没有已批准的演练日期",
+          "reason": "完整保留实际状态。"
+        },
+        {
+          "requirement": "启动前待办",
+          "quote": "接下来需要负责人确认演练时间，并通知参与同事",
+          "reason": "待办语态保持待办，没有新增日期或人员。"
+        },
+        {
+          "requirement": "交付范围",
+          "quote": "恢复演练进展同步",
+          "reason": "正文可直接发送，没有执行结果或额外解释。"
+        }
+      ],
+      "jobIdAfterUnblinding": "DEV_STATE_NOT_STARTED_V25_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_USER_UNCERTAIN",
+      "id": "W-57b499311cde",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "已发送与未知是否回复",
+          "quote": "核对一下客户有没有回复我之前发的两个备选时段",
+          "reason": "“之前发的”保留发送完成，“有没有回复”保持未知；无需机械重复“我不清楚”才算保真。"
+        },
+        {
+          "requirement": "核对与回告",
+          "quote": "核对完同步我一下",
+          "reason": "明确要求同事核对后回告，没有声称客户未回复或已经核对。"
+        },
+        {
+          "requirement": "交付范围",
+          "quote": "帮我核对一下",
+          "reason": "已交付简短可发送消息，不索取时段具体内容。"
+        }
+      ],
+      "jobIdAfterUnblinding": "DEV_STATE_USER_UNCERTAIN_V4_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_USER_UNCERTAIN",
+      "id": "W-750b8d3b7e85",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "已发送与未知是否回复",
+          "quote": "我发了两个备选时段，但还不确定有没有回复",
+          "reason": "两种状态明示且正确。"
+        },
+        {
+          "requirement": "核对与回告",
+          "quote": "麻烦你帮忙核对一下客户对这两个备选时段的回复情况，有结果同步我一下",
+          "reason": "核查任务与结果回告均保留，没有推定结果。"
+        },
+        {
+          "requirement": "交付范围",
+          "quote": "客户那边我发了两个备选时段",
+          "reason": "直接输出消息，没有额外提问或模板空位。"
+        }
+      ],
+      "jobIdAfterUnblinding": "DEV_STATE_USER_UNCERTAIN_V25_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_USER_UNCERTAIN",
+      "id": "W-7bce53981f67",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "已发送与未知是否回复",
+          "quote": "客户是否已回复我发的两个备选时段",
+          "reason": "“我发的”保留完成发送；疑问式核对保持未知，未将其改成客户尚未回复。"
+        },
+        {
+          "requirement": "核对与回告",
+          "quote": "请帮我核对一下",
+          "reason": "仍是请求同事核查。"
+        },
+        {
+          "requirement": "回告与正文",
+          "quote": "确认后把结果同步给我。谢谢。",
+          "reason": "回告要求明确，全文为可发送短消息。"
+        }
+      ],
+      "jobIdAfterUnblinding": "DEV_STATE_USER_UNCERTAIN_RAW_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_CONDITIONAL_FACTS",
+      "id": "W-177c3d8a938e",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "已确认发放",
+          "quote": "线上资料已发给所有报名者",
+          "reason": "没有降为计划发放。"
+        },
+        {
+          "requirement": "纸质与电子条件",
+          "quote": "选纸质资料的请于周四16点前确认领取方式，纯电子版不用回复",
+          "reason": "适用对象、截止时间和电子版豁免完整。"
+        },
+        {
+          "requirement": "地址条件",
+          "quote": "选邮寄的还需确认收件地址，现场领取不用填地址",
+          "reason": "两个独立对象范围没有混合。"
+        },
+        {
+          "requirement": "志愿者例外",
+          "quote": "组内志愿者纸质资料由负责人统一领取，不适用上述确认截止时间",
+          "reason": "负责人统一领与截止时间例外均保留。"
+        }
+      ],
+      "jobIdAfterUnblinding": "DEV_STATE_CONDITIONAL_FACTS_V4_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_CONDITIONAL_FACTS",
+      "id": "W-4ca6b9fc1937",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "已确认发放",
+          "quote": "线上资料已发给所有报名者",
+          "reason": "既定发放状态保留。"
+        },
+        {
+          "requirement": "纸质与电子条件",
+          "quote": "只有选了纸质资料的人需在周四16点前确认领取方式，纯电子版不用回复",
+          "reason": "截止时间仅作用于相应纸质领取确认。"
+        },
+        {
+          "requirement": "地址条件",
+          "quote": "选邮寄的还需确认收件地址，现场领取的人不用填地址",
+          "reason": "地址只对邮寄者适用。"
+        },
+        {
+          "requirement": "志愿者例外",
+          "quote": "组内志愿者的纸质资料由负责人统一领，不适用前面的领取方式确认截止时间",
+          "reason": "例外对象与作用范围清楚。"
+        }
+      ],
+      "jobIdAfterUnblinding": "DEV_STATE_CONDITIONAL_FACTS_RAW_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_CONDITIONAL_FACTS",
+      "id": "W-7b5813de9827",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "已确认发放",
+          "quote": "线上资料已发给所有报名者",
+          "reason": "保留已经完成的事实。"
+        },
+        {
+          "requirement": "纸质与电子条件",
+          "quote": "选纸质资料的请于周四16点前确认领取方式，纯电子版不用回复",
+          "reason": "时间及不需回复的对象范围未改变。"
+        },
+        {
+          "requirement": "地址条件",
+          "quote": "选邮寄的还需确认收件地址，现场领取不用填地址",
+          "reason": "独立条件完整。"
+        },
+        {
+          "requirement": "志愿者例外",
+          "quote": "组内志愿者的纸质资料由负责人统一领取，不适用上述截止时间",
+          "reason": "该正文只有一个截止时间，指代明确，不因未逐字重复条件名称判错。"
+        }
+      ],
+      "jobIdAfterUnblinding": "DEV_STATE_CONDITIONAL_FACTS_V25_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_STRICT_JSON",
+      "id": "W-254a7169d550",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "严格JSON与键集",
+          "quote": "{\"room\":\"已确认A302\",\"start\":\"尚待主持人确认\",\"streaming\":\"已确认不提供\"}",
+          "reason": "整段仅一个可解析对象，键恰为room、start、streaming，没有围栏、外层解释或新增键。"
+        },
+        {
+          "requirement": "原文值及信息状态",
+          "quote": "\"room\":\"已确认A302\",\"start\":\"尚待主持人确认\",\"streaming\":\"已确认不提供\"",
+          "reason": "三个值均精确等于原文字符串，确认、尚待确认、明确不提供未混淆。"
+        }
+      ],
+      "deterministicChecks": {
+        "parseableSingleJsonObject": true,
+        "exactKeySet": true,
+        "exactOriginalStringValues": true,
+        "noWrapperOrExplanation": true
+      },
+      "jobIdAfterUnblinding": "DEV_STATE_STRICT_JSON_RAW_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_STRICT_JSON",
+      "id": "W-ee38701bcd59",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "严格JSON与键集",
+          "quote": "{\"room\":\"已确认A302\",\"start\":\"尚待主持人确认\",\"streaming\":\"已确认不提供\"}",
+          "reason": "整段仅一个可解析对象，键恰为room、start、streaming，没有围栏、外层解释或新增键。"
+        },
+        {
+          "requirement": "原文值及信息状态",
+          "quote": "\"room\":\"已确认A302\",\"start\":\"尚待主持人确认\",\"streaming\":\"已确认不提供\"",
+          "reason": "三个值均精确等于原文字符串，确认、尚待确认、明确不提供未混淆。"
+        }
+      ],
+      "deterministicChecks": {
+        "parseableSingleJsonObject": true,
+        "exactKeySet": true,
+        "exactOriginalStringValues": true,
+        "noWrapperOrExplanation": true
+      },
+      "jobIdAfterUnblinding": "DEV_STATE_STRICT_JSON_V25_EXEC_R1"
+    },
+    {
+      "caseId": "DEV_STATE_STRICT_JSON",
+      "id": "W-fd673dba5b09",
+      "status": 200,
+      "severeErrors": [],
+      "minorErrors": [],
+      "minimumEdits": 0,
+      "evidence": [
+        {
+          "requirement": "严格JSON与键集",
+          "quote": "{\"room\":\"已确认A302\",\"start\":\"尚待主持人确认\",\"streaming\":\"已确认不提供\"}",
+          "reason": "整段仅一个可解析对象，键恰为room、start、streaming，没有围栏、外层解释或新增键。"
+        },
+        {
+          "requirement": "原文值及信息状态",
+          "quote": "\"room\":\"已确认A302\",\"start\":\"尚待主持人确认\",\"streaming\":\"已确认不提供\"",
+          "reason": "三个值均精确等于原文字符串，确认、尚待确认、明确不提供未混淆。"
+        }
+      ],
+      "deterministicChecks": {
+        "parseableSingleJsonObject": true,
+        "exactKeySet": true,
+        "exactOriginalStringValues": true,
+        "noWrapperOrExplanation": true
+      },
+      "jobIdAfterUnblinding": "DEV_STATE_STRICT_JSON_V4_EXEC_R1"
+    }
+  ]
+}

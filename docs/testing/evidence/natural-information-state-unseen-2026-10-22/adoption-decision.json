@@ -1,0 +1,107 @@
+{
+  "candidate": "26",
+  "baseline": "4",
+  "decision": "NOT_ADOPTED",
+  "defaultAfter": "4",
+  "reviewBoundary": "内部AI版本匿名评审，A参与出题；不声称外部专业独立。比较汇总只取三臂均完成的五道直接题，各10件作品；Plan漏交付另列，不混入不等分母。",
+  "perCase": [
+    {
+      "case": "物品JSON",
+      "result": "TIE"
+    },
+    {
+      "case": "场地推荐",
+      "result": "IMPROVED_BOTH_REPEATS",
+      "basis": "避免第四版压缩预约截止条件和不必要投影追问"
+    },
+    {
+      "case": "二手书回复",
+      "result": "TIE_VS4",
+      "basis": "两版均避免原始作品的未发布照片→未拍照片变化"
+    },
+    {
+      "case": "阳台照料",
+      "result": "REGRESSION",
+      "basis": "一次当前状态进入其他时点，另一次新增时间不足就延后浇水"
+    },
+    {
+      "case": "充分句子润色",
+      "result": "TIE",
+      "basis": "两版优化提示词相同，六份作品相同"
+    },
+    {
+      "case": "Plan确认后",
+      "result": "NO_DELIVERY_BOTH",
+      "basis": "两版最终协议失败，四份增强作品缺失"
+    }
+  ],
+  "sustainedImprovedCases": 1,
+  "requiredSustainedImprovedCases": 2,
+  "newSevereErrors": true,
+  "completeDelivery": false,
+  "aggregates": [
+    {
+      "reviewer": "review-a.json",
+      "comparableDirectWorks": {
+        "V26": {
+          "works": 10,
+          "severe": 2,
+          "minor": 1,
+          "minimumEdits": 3
+        },
+        "RAW": {
+          "works": 10,
+          "severe": 4,
+          "minor": 5,
+          "minimumEdits": 9
+        },
+        "V4": {
+          "works": 10,
+          "severe": 0,
+          "minor": 6,
+          "minimumEdits": 6
+        }
+      }
+    },
+    {
+      "reviewer": "review-b.json",
+      "comparableDirectWorks": {
+        "V26": {
+          "works": 10,
+          "severe": 1,
+          "minor": 2,
+          "minimumEdits": 3
+        },
+        "RAW": {
+          "works": 10,
+          "severe": 4,
+          "minor": 5,
+          "minimumEdits": 9
+        },
+        "V4": {
+          "works": 10,
+          "severe": 0,
+          "minor": 6,
+          "minimumEdits": 6
+        }
+      }
+    }
+  ],
+  "disagreements": [
+    {
+      "issue": "今天托盘状态写入周三栏",
+      "reviewA": "严重",
+      "reviewB": "轻微",
+      "resolution": "保留分歧；两者均要求修改，不影响另一个一致认定严重的延后浇水错误"
+    },
+    {
+      "issue": "原始代收作品包装文字",
+      "reviewA": "可用",
+      "reviewB": "各需一次轻微删除",
+      "resolution": "不纳入三臂共同完成的直接题汇总，不能据此判断候选胜出"
+    }
+  ],
+  "conclusion": "候选有局部改进且可比直接作品的最少编辑总量下降，但未达两题重复收益，出现新增严重错误且Plan未交付，不能以总分抵消。",
+  "semanticGuarantee": false,
+  "productionDeployment": false
+}

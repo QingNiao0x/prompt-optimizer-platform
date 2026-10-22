@@ -1,0 +1,1740 @@
+[
+  {
+    "id": "DEV_STATE_CONDITIONAL_FACTS_RAW_EXEC_R1",
+    "caseId": "DEV_STATE_CONDITIONAL_FACTS",
+    "version": "RAW",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "把下面确认好的安排整理成一条发群里的短消息，保留每项适用条件，只输出正文：线上资料已发给所有报名者；只有选了纸质资料的人需要周四16点前确认领取方式，纯电子版不用回复；选邮寄的还要确认收件地址，但现场领取的人不用填地址；组内志愿者的纸质资料由负责人统一领，不适用前面的领取方式确认截止时间。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_CONDITIONAL_FACTS_RAW_EXEC_R1",
+      "data": {
+        "content": "线上资料已发给所有报名者。只有选了纸质资料的人需在周四16点前确认领取方式，纯电子版不用回复；选邮寄的还需确认收件地址，现场领取的人不用填地址。组内志愿者的纸质资料由负责人统一领，不适用前面的领取方式确认截止时间。",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 122,
+          "completion_tokens": 65,
+          "total_tokens": 187,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 122
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_CONDITIONAL_FACTS_V25_EXEC_R1",
+    "caseId": "DEV_STATE_CONDITIONAL_FACTS",
+    "version": "V25",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "把下面已经确认好的安排整理成一条发到群里的短消息，只输出消息正文，不要加标题、说明或额外解释。正文要简短自然，并保留每项适用条件：线上资料已发给所有报名者；只有选了纸质资料的人需要在周四16点前确认领取方式，纯电子版的人不用回复；选邮寄的人还要确认收件地址，但现场领取的人不用填地址；组内志愿者的纸质资料由负责人统一领取，不适用前面提到的领取方式确认截止时间。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_CONDITIONAL_FACTS_V25_EXEC_R1",
+      "data": {
+        "content": "线上资料已发给所有报名者。选纸质资料的请于周四16点前确认领取方式，纯电子版不用回复；选邮寄的还需确认收件地址，现场领取不用填地址。组内志愿者的纸质资料由负责人统一领取，不适用上述截止时间。",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 142,
+          "completion_tokens": 59,
+          "total_tokens": 201,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 142
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_CONDITIONAL_FACTS_V25_GEN",
+    "caseId": "DEV_STATE_CONDITIONAL_FACTS",
+    "version": "25",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "把下面确认好的安排整理成一条发群里的短消息，保留每项适用条件，只输出正文：线上资料已发给所有报名者；只有选了纸质资料的人需要周四16点前确认领取方式，纯电子版不用回复；选邮寄的还要确认收件地址，但现场领取的人不用填地址；组内志愿者的纸质资料由负责人统一领，不适用前面的领取方式确认截止时间。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_CONDITIONAL_FACTS_V25_GEN",
+      "data": {
+        "optimizedPrompt": "把下面已经确认好的安排整理成一条发到群里的短消息，只输出消息正文，不要加标题、说明或额外解释。正文要简短自然，并保留每项适用条件：线上资料已发给所有报名者；只有选了纸质资料的人需要在周四16点前确认领取方式，纯电子版的人不用回复；选邮寄的人还要确认收件地址，但现场领取的人不用填地址；组内志愿者的纸质资料由负责人统一领取，不适用前面提到的领取方式确认截止时间。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2818,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "25",
+        "framework": "APE",
+        "recordId": "0ca9fb5e-b729-4e85-8c13-23683263ba47",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_CONDITIONAL_FACTS_V4_EXEC_R1",
+    "caseId": "DEV_STATE_CONDITIONAL_FACTS",
+    "version": "V4",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "把下面已确认的安排整理成一条发到群里的短消息，只输出消息正文，不要加标题、说明或额外解释。消息要简短清楚，并保留每项适用条件：线上资料已发给所有报名者；只有选了纸质资料的人需要在周四16点前确认领取方式，纯电子版的人不用回复；选邮寄的人还要确认收件地址，现场领取的人不用填地址；组内志愿者的纸质资料由负责人统一领取，不适用前面提到的领取方式确认截止时间。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_CONDITIONAL_FACTS_V4_EXEC_R1",
+      "data": {
+        "content": "线上资料已发给所有报名者。选纸质资料的请于周四16点前确认领取方式，纯电子版不用回复；选邮寄的还需确认收件地址，现场领取不用填地址。组内志愿者纸质资料由负责人统一领取，不适用上述确认截止时间。",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 140,
+          "completion_tokens": 59,
+          "total_tokens": 199,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 140
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_CONDITIONAL_FACTS_V4_GEN",
+    "caseId": "DEV_STATE_CONDITIONAL_FACTS",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "把下面确认好的安排整理成一条发群里的短消息，保留每项适用条件，只输出正文：线上资料已发给所有报名者；只有选了纸质资料的人需要周四16点前确认领取方式，纯电子版不用回复；选邮寄的还要确认收件地址，但现场领取的人不用填地址；组内志愿者的纸质资料由负责人统一领，不适用前面的领取方式确认截止时间。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_CONDITIONAL_FACTS_V4_GEN",
+      "data": {
+        "optimizedPrompt": "把下面已确认的安排整理成一条发到群里的短消息，只输出消息正文，不要加标题、说明或额外解释。消息要简短清楚，并保留每项适用条件：线上资料已发给所有报名者；只有选了纸质资料的人需要在周四16点前确认领取方式，纯电子版的人不用回复；选邮寄的人还要确认收件地址，现场领取的人不用填地址；组内志愿者的纸质资料由负责人统一领取，不适用前面提到的领取方式确认截止时间。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3189,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "392e568a-8f72-4367-8c16-24ffa04be7a2",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_CONFIRMED_ABSENCE_RAW_EXEC_R1",
+    "caseId": "DEV_STATE_CONFIRMED_ABSENCE",
+    "version": "RAW",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "根据这份盘点记录，替我写一条发给值班同事的交接消息，100字以内，只给正文。\n\n用户同时提供的材料：\n[{\"path\":\"notes/stock-check.md\",\"language\":\"markdown\",\"content\":\"本次盘点已逐个检查储物柜和登记册，确认当前没有备用适配器，备用适配器数量为0。正在使用的适配器工作正常。是否补货尚未决定，未安排采购负责人。\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_CONFIRMED_ABSENCE_RAW_EXEC_R1",
+      "data": {
+        "content": "盘点完毕：储物柜和登记册均已核对，备用适配器为0，在用的正常。补货未定、采购负责人未安排，请留意。",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 122,
+          "completion_tokens": 34,
+          "total_tokens": 156,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 122
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_CONFIRMED_ABSENCE_V25_EXEC_R1",
+    "caseId": "DEV_STATE_CONFIRMED_ABSENCE",
+    "version": "V25",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "根据 notes/stock-check.md 中的盘点记录，替我写一条发给值班同事的交接消息。消息只给正文，100字以内。内容需准确反映记录：已逐个检查储物柜和登记册，确认当前没有备用适配器，备用适配器数量为0；正在使用的适配器工作正常；是否补货尚未决定，未安排采购负责人。不要写成已决定补货或已安排采购。\n\n用户同时提供的材料：\n[{\"path\":\"notes/stock-check.md\",\"language\":\"markdown\",\"content\":\"本次盘点已逐个检查储物柜和登记册，确认当前没有备用适配器，备用适配器数量为0。正在使用的适配器工作正常。是否补货尚未决定，未安排采购负责人。\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_CONFIRMED_ABSENCE_V25_EXEC_R1",
+      "data": {
+        "content": "交接：已逐个检查储物柜和登记册，确认无备用适配器，数量为0；在用适配器工作正常。是否补货尚未决定，未安排采购负责人。",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 187,
+          "completion_tokens": 38,
+          "total_tokens": 225,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 187
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_CONFIRMED_ABSENCE_V25_GEN",
+    "caseId": "DEV_STATE_CONFIRMED_ABSENCE",
+    "version": "25",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "根据这份盘点记录，替我写一条发给值班同事的交接消息，100字以内，只给正文。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/stock-check.md",
+            "language": "markdown",
+            "content": "本次盘点已逐个检查储物柜和登记册，确认当前没有备用适配器，备用适配器数量为0。正在使用的适配器工作正常。是否补货尚未决定，未安排采购负责人。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_CONFIRMED_ABSENCE_V25_GEN",
+      "data": {
+        "optimizedPrompt": "根据 notes/stock-check.md 中的盘点记录，替我写一条发给值班同事的交接消息。消息只给正文，100字以内。内容需准确反映记录：已逐个检查储物柜和登记册，确认当前没有备用适配器，备用适配器数量为0；正在使用的适配器工作正常；是否补货尚未决定，未安排采购负责人。不要写成已决定补货或已安排采购。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/stock-check.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/stock-check.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n本次盘点已逐个检查储物柜和登记册，确认当前没有备用适配器，备用适配器数量为0。正在使用的适配器工作正常。是否补货尚未决定，未安排采购负责人。",
+              "summary": "Markdown 文档摘要：本次盘点已逐个检查储物柜和登记册，确认当前没有备用适配器，备用适配器数量为0。；正在使用的适配器工作正常。；是否补货尚未决定，未安排采购负责人。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2671,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "25",
+        "framework": "APE",
+        "recordId": "0ff9e72f-65cb-4ba8-b1a3-357401d6bb97",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_CONFIRMED_ABSENCE_V4_EXEC_R1",
+    "caseId": "DEV_STATE_CONFIRMED_ABSENCE",
+    "version": "V4",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "根据 notes/stock-check.md 中的盘点记录，替我写一条发给值班同事的交接消息，100字以内，只给正文。消息要如实说明：已逐个检查储物柜和登记册，当前没有备用适配器，备用适配器数量为0；正在使用的适配器工作正常；是否补货尚未决定，也未安排采购负责人。不要写成已决定补货或已有采购安排。\n\n用户同时提供的材料：\n[{\"path\":\"notes/stock-check.md\",\"language\":\"markdown\",\"content\":\"本次盘点已逐个检查储物柜和登记册，确认当前没有备用适配器，备用适配器数量为0。正在使用的适配器工作正常。是否补货尚未决定，未安排采购负责人。\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_CONFIRMED_ABSENCE_V4_EXEC_R1",
+      "data": {
+        "content": "交接：已逐个检查储物柜和登记册，当前没有备用适配器，备用适配器数量为0；正在使用的适配器工作正常。是否补货尚未决定，也未安排采购负责人。",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 184,
+          "completion_tokens": 42,
+          "total_tokens": 226,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 184
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_CONFIRMED_ABSENCE_V4_GEN",
+    "caseId": "DEV_STATE_CONFIRMED_ABSENCE",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "根据这份盘点记录，替我写一条发给值班同事的交接消息，100字以内，只给正文。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/stock-check.md",
+            "language": "markdown",
+            "content": "本次盘点已逐个检查储物柜和登记册，确认当前没有备用适配器，备用适配器数量为0。正在使用的适配器工作正常。是否补货尚未决定，未安排采购负责人。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_CONFIRMED_ABSENCE_V4_GEN",
+      "data": {
+        "optimizedPrompt": "根据 notes/stock-check.md 中的盘点记录，替我写一条发给值班同事的交接消息，100字以内，只给正文。消息要如实说明：已逐个检查储物柜和登记册，当前没有备用适配器，备用适配器数量为0；正在使用的适配器工作正常；是否补货尚未决定，也未安排采购负责人。不要写成已决定补货或已有采购安排。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/stock-check.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/stock-check.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n本次盘点已逐个检查储物柜和登记册，确认当前没有备用适配器，备用适配器数量为0。正在使用的适配器工作正常。是否补货尚未决定，未安排采购负责人。",
+              "summary": "Markdown 文档摘要：本次盘点已逐个检查储物柜和登记册，确认当前没有备用适配器，备用适配器数量为0。；正在使用的适配器工作正常。；是否补货尚未决定，未安排采购负责人。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2557,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "5f321a93-f0ab-4ec2-952e-178a55fbbd36",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_GAP_PROGRESS_RAW_EXEC_R1",
+    "caseId": "DEV_STATE_GAP_PROGRESS",
+    "version": "RAW",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "帮我写一段能发给合作方的进度说明：接口联调什么时候完成我现在也拿不准，其他表述你安排，别把话说死。\n\n用户同时提供的材料：\n[{\"path\":\"notes/integration-progress.md\",\"language\":\"markdown\",\"content\":\"合成进度记录：请求格式已确认，接口联调仍在进行。本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_GAP_PROGRESS_RAW_EXEC_R1",
+      "data": {
+        "content": "接口联调这块目前还在推进中，具体完成时间暂时没法给到确定日期，后续有明确节点我再同步。请求格式已经确认，联调按现有节奏继续走。",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 124,
+          "completion_tokens": 39,
+          "total_tokens": 163,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 124
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_GAP_PROGRESS_V25_EXEC_R1",
+    "caseId": "DEV_STATE_GAP_PROGRESS",
+    "version": "V25",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "帮我写一段可以直接发给合作方的接口联调进度说明。已知情况是：请求格式已确认，接口联调仍在进行；目前没有压测记录或验收记录，也没有已确认的完成日期或其他对外承诺。联调完成时间我拿不准，所以不要给出具体日期或时间承诺，也不要把话说死，用留有余地的表述说明进展和后续安排。语气保持专业、礼貌、简洁，篇幅控制在一段或几小段，适合直接发送给合作方。\n\n用户同时提供的材料：\n[{\"path\":\"notes/integration-progress.md\",\"language\":\"markdown\",\"content\":\"合成进度记录：请求格式已确认，接口联调仍在进行。本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_GAP_PROGRESS_V25_EXEC_R1",
+      "data": {
+        "content": "您好，就当前接口联调进展同步如下：请求格式已确认，接口联调仍在进行中。目前尚无压测记录或验收记录，也暂未确认完成日期。后续我们将根据联调情况推进压测和验收等相关工作，如有阶段性进展会及时同步。感谢您的理解与配合。",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 198,
+          "completion_tokens": 66,
+          "total_tokens": 264,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 198
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_GAP_PROGRESS_V25_GEN",
+    "caseId": "DEV_STATE_GAP_PROGRESS",
+    "version": "25",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "帮我写一段能发给合作方的进度说明：接口联调什么时候完成我现在也拿不准，其他表述你安排，别把话说死。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/integration-progress.md",
+            "language": "markdown",
+            "content": "合成进度记录：请求格式已确认，接口联调仍在进行。本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_GAP_PROGRESS_V25_GEN",
+      "data": {
+        "optimizedPrompt": "帮我写一段可以直接发给合作方的接口联调进度说明。已知情况是：请求格式已确认，接口联调仍在进行；目前没有压测记录或验收记录，也没有已确认的完成日期或其他对外承诺。联调完成时间我拿不准，所以不要给出具体日期或时间承诺，也不要把话说死，用留有余地的表述说明进展和后续安排。语气保持专业、礼貌、简洁，篇幅控制在一段或几小段，适合直接发送给合作方。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/integration-progress.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/integration-progress.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成进度记录：请求格式已确认，接口联调仍在进行。本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。",
+              "summary": "Markdown 文档摘要：合成进度记录：请求格式已确认，接口联调仍在进行。；本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2825,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "25",
+        "framework": "APE",
+        "recordId": "a315df53-d554-4657-afac-7111fd96b8e5",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_GAP_PROGRESS_V4_EXEC_R1",
+    "caseId": "DEV_STATE_GAP_PROGRESS",
+    "version": "V4",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "帮我写一段可以直接发给合作方的进度说明。内容依据现有进度记录：请求格式已确认，接口联调仍在进行；资料中没有压测记录或验收记录，也没有已确认的完成日期或其他对外承诺。接口联调的具体完成时间我现在拿不准，所以不要给出确切日期，也不要把话说死，用留有余地的表述说明联调仍在推进、后续时间待确认。其余措辞和结构你安排，写成一段适合直接发送给合作方的简短说明。\n\n用户同时提供的材料：\n[{\"path\":\"notes/integration-progress.md\",\"language\":\"markdown\",\"content\":\"合成进度记录：请求格式已确认，接口联调仍在进行。本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_GAP_PROGRESS_V4_EXEC_R1",
+      "data": {
+        "content": "各位好，同步一下当前进度：请求格式已经确认，接口联调仍在推进中。目前资料中没有压测记录或验收记录，联调的具体完成时间也还需要进一步确认，后续时间安排确定后会及时同步。感谢理解与配合。",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 196,
+          "completion_tokens": 53,
+          "total_tokens": 249,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 196
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_GAP_PROGRESS_V4_GEN",
+    "caseId": "DEV_STATE_GAP_PROGRESS",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "帮我写一段能发给合作方的进度说明：接口联调什么时候完成我现在也拿不准，其他表述你安排，别把话说死。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/integration-progress.md",
+            "language": "markdown",
+            "content": "合成进度记录：请求格式已确认，接口联调仍在进行。本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_GAP_PROGRESS_V4_GEN",
+      "data": {
+        "optimizedPrompt": "帮我写一段可以直接发给合作方的进度说明。内容依据现有进度记录：请求格式已确认，接口联调仍在进行；资料中没有压测记录或验收记录，也没有已确认的完成日期或其他对外承诺。接口联调的具体完成时间我现在拿不准，所以不要给出确切日期，也不要把话说死，用留有余地的表述说明联调仍在推进、后续时间待确认。其余措辞和结构你安排，写成一段适合直接发送给合作方的简短说明。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/integration-progress.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/integration-progress.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成进度记录：请求格式已确认，接口联调仍在进行。本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。",
+              "summary": "Markdown 文档摘要：合成进度记录：请求格式已确认，接口联调仍在进行。；本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3513,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "a052d827-3ab6-4a88-89c7-f35ab0786f10",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_NOT_STARTED_RAW_EXEC_R1",
+    "caseId": "DEV_STATE_NOT_STARTED",
+    "version": "RAW",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "请按记录写一条简短的恢复演练进展消息，给协作组同步现状和接下来需要确认的事。只要消息正文，不替我们执行操作。\n\n用户同时提供的材料：\n[{\"path\":\"notes/recovery-drill.md\",\"language\":\"markdown\",\"content\":\"恢复演练方案已经确认。演练尚未开始，目前没有已批准的演练日期。启动前仍需负责人确认时间，并通知参与同事。\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_NOT_STARTED_RAW_EXEC_R1",
+      "data": {
+        "content": "恢复演练方案已确认，演练尚未开始，目前没有已批准的演练日期。接下来需要负责人确认演练时间，并通知参与同事。",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 119,
+          "completion_tokens": 29,
+          "total_tokens": 148,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 119
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_NOT_STARTED_V25_EXEC_R1",
+    "caseId": "DEV_STATE_NOT_STARTED",
+    "version": "V25",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "请根据 notes/recovery-drill.md 的记录，写一条简短的恢复演练进展消息，用于向协作组同步现状和接下来需要确认的事。只输出消息正文，不要替我们执行任何操作。\n\n消息内容以记录为准：恢复演练方案已经确认；演练尚未开始，目前没有已批准的演练日期；启动前仍需负责人确认时间，并通知参与同事。请如实区分“方案已确认”和“演练尚未开始、日期未批准”这两种状态，不要写成演练已启动或日期已定。接下来需要确认的事可围绕负责人确认演练时间、通知参与同事展开。\n\n消息保持简短，语气适合协作组内部同步，不添加记录中没有的进展、日期、人员或结论。\n\n用户同时提供的材料：\n[{\"path\":\"notes/recovery-drill.md\",\"language\":\"markdown\",\"content\":\"恢复演练方案已经确认。演练尚未开始，目前没有已批准的演练日期。启动前仍需负责人确认时间，并通知参与同事。\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_NOT_STARTED_V25_EXEC_R1",
+      "data": {
+        "content": "恢复演练进展同步：恢复演练方案已经确认；演练尚未开始，目前没有已批准的演练日期。接下来需要负责人确认演练时间，并通知参与同事。",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 236,
+          "completion_tokens": 34,
+          "total_tokens": 270,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 236
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_NOT_STARTED_V25_GEN",
+    "caseId": "DEV_STATE_NOT_STARTED",
+    "version": "25",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请按记录写一条简短的恢复演练进展消息，给协作组同步现状和接下来需要确认的事。只要消息正文，不替我们执行操作。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/recovery-drill.md",
+            "language": "markdown",
+            "content": "恢复演练方案已经确认。演练尚未开始，目前没有已批准的演练日期。启动前仍需负责人确认时间，并通知参与同事。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_NOT_STARTED_V25_GEN",
+      "data": {
+        "optimizedPrompt": "请根据 notes/recovery-drill.md 的记录，写一条简短的恢复演练进展消息，用于向协作组同步现状和接下来需要确认的事。只输出消息正文，不要替我们执行任何操作。\n\n消息内容以记录为准：恢复演练方案已经确认；演练尚未开始，目前没有已批准的演练日期；启动前仍需负责人确认时间，并通知参与同事。请如实区分“方案已确认”和“演练尚未开始、日期未批准”这两种状态，不要写成演练已启动或日期已定。接下来需要确认的事可围绕负责人确认演练时间、通知参与同事展开。\n\n消息保持简短，语气适合协作组内部同步，不添加记录中没有的进展、日期、人员或结论。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/recovery-drill.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/recovery-drill.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n恢复演练方案已经确认。演练尚未开始，目前没有已批准的演练日期。启动前仍需负责人确认时间，并通知参与同事。",
+              "summary": "Markdown 文档摘要：恢复演练方案已经确认。；演练尚未开始，目前没有已批准的演练日期。；启动前仍需负责人确认时间，并通知参与同事。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3792,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "25",
+        "framework": "APE",
+        "recordId": "67b3a7d3-9b68-44a2-b3d8-c36b92b171af",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_NOT_STARTED_V4_EXEC_R1",
+    "caseId": "DEV_STATE_NOT_STARTED",
+    "version": "V4",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "请根据 notes/recovery-drill.md 的记录，写一条简短的恢复演练进展消息，发给协作组，用于同步现状和接下来需要确认的事。只输出消息正文，不要替我执行任何操作。\n\n消息内容以记录为准：恢复演练方案已经确认；演练尚未开始，目前没有已批准的演练日期；启动前仍需负责人确认时间，并通知参与同事。请如实反映这些状态，不要写成演练已开始、日期已确定或通知已发出。\n\n消息要简短，面向协作组同事，语气自然，便于直接转发；现状和待确认事项要清楚分开，重点落在需要负责人确认演练时间、以及启动前通知参与同事这两件事上。\n\n用户同时提供的材料：\n[{\"path\":\"notes/recovery-drill.md\",\"language\":\"markdown\",\"content\":\"恢复演练方案已经确认。演练尚未开始，目前没有已批准的演练日期。启动前仍需负责人确认时间，并通知参与同事。\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_NOT_STARTED_V4_EXEC_R1",
+      "data": {
+        "content": "恢复演练进展同步：恢复演练方案已确认，演练尚未开始，目前没有已批准的演练日期。接下来需要确认两件事：一是请负责人确认演练时间，二是在启动前通知参与同事。",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 228,
+          "completion_tokens": 43,
+          "total_tokens": 271,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 228
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_NOT_STARTED_V4_GEN",
+    "caseId": "DEV_STATE_NOT_STARTED",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请按记录写一条简短的恢复演练进展消息，给协作组同步现状和接下来需要确认的事。只要消息正文，不替我们执行操作。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/recovery-drill.md",
+            "language": "markdown",
+            "content": "恢复演练方案已经确认。演练尚未开始，目前没有已批准的演练日期。启动前仍需负责人确认时间，并通知参与同事。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_NOT_STARTED_V4_GEN",
+      "data": {
+        "optimizedPrompt": "请根据 notes/recovery-drill.md 的记录，写一条简短的恢复演练进展消息，发给协作组，用于同步现状和接下来需要确认的事。只输出消息正文，不要替我执行任何操作。\n\n消息内容以记录为准：恢复演练方案已经确认；演练尚未开始，目前没有已批准的演练日期；启动前仍需负责人确认时间，并通知参与同事。请如实反映这些状态，不要写成演练已开始、日期已确定或通知已发出。\n\n消息要简短，面向协作组同事，语气自然，便于直接转发；现状和待确认事项要清楚分开，重点落在需要负责人确认演练时间、以及启动前通知参与同事这两件事上。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/recovery-drill.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/recovery-drill.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n恢复演练方案已经确认。演练尚未开始，目前没有已批准的演练日期。启动前仍需负责人确认时间，并通知参与同事。",
+              "summary": "Markdown 文档摘要：恢复演练方案已经确认。；演练尚未开始，目前没有已批准的演练日期。；启动前仍需负责人确认时间，并通知参与同事。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3692,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "eadf3197-adfb-466f-80e7-91880cf3d63c",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_STRICT_JSON_RAW_EXEC_R1",
+    "caseId": "DEV_STATE_STRICT_JSON",
+    "version": "RAW",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "把通知中的三项状态转成JSON，只输出一个对象，键必须恰好为room、start、streaming，值都用原文字符串。不要代码围栏或解释，也不要新增其他键。\n\n用户同时提供的材料：\n[{\"path\":\"notes/session-notice.md\",\"language\":\"markdown\",\"content\":\"会议室：已确认A302\\n开始时间：尚待主持人确认\\n直播：已确认不提供\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_STRICT_JSON_RAW_EXEC_R1",
+      "data": {
+        "content": "{\"room\":\"已确认A302\",\"start\":\"尚待主持人确认\",\"streaming\":\"已确认不提供\"}",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 123,
+          "completion_tokens": 23,
+          "total_tokens": 146,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 123
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_STRICT_JSON_V25_EXEC_R1",
+    "caseId": "DEV_STATE_STRICT_JSON",
+    "version": "V25",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "读取 notes/session-notice.md 中的通知内容，把其中会议室、开始时间、直播这三项状态转成一个 JSON 对象。只输出这个 JSON 对象本身，不要代码围栏，也不要任何解释。对象的键必须恰好为 room、start、streaming，不得新增其他键；每个键的值都使用通知中的原文字符串，不要改写、翻译或补全。\n\n用户同时提供的材料：\n[{\"path\":\"notes/session-notice.md\",\"language\":\"markdown\",\"content\":\"会议室：已确认A302\\n开始时间：尚待主持人确认\\n直播：已确认不提供\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_STRICT_JSON_V25_EXEC_R1",
+      "data": {
+        "content": "{\"room\":\"已确认A302\",\"start\":\"尚待主持人确认\",\"streaming\":\"已确认不提供\"}",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 162,
+          "completion_tokens": 23,
+          "total_tokens": 185,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 162
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_STRICT_JSON_V25_GEN",
+    "caseId": "DEV_STATE_STRICT_JSON",
+    "version": "25",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "把通知中的三项状态转成JSON，只输出一个对象，键必须恰好为room、start、streaming，值都用原文字符串。不要代码围栏或解释，也不要新增其他键。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/session-notice.md",
+            "language": "markdown",
+            "content": "会议室：已确认A302\n开始时间：尚待主持人确认\n直播：已确认不提供"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_STRICT_JSON_V25_GEN",
+      "data": {
+        "optimizedPrompt": "读取 notes/session-notice.md 中的通知内容，把其中会议室、开始时间、直播这三项状态转成一个 JSON 对象。只输出这个 JSON 对象本身，不要代码围栏，也不要任何解释。对象的键必须恰好为 room、start、streaming，不得新增其他键；每个键的值都使用通知中的原文字符串，不要改写、翻译或补全。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/session-notice.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/session-notice.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n会议室：已确认A302\n开始时间：尚待主持人确认\n直播：已确认不提供",
+              "summary": "Markdown 文档摘要：会议室：已确认A302；开始时间：尚待主持人确认；直播：已确认不提供",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2908,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "25",
+        "framework": "APE",
+        "recordId": "7d921b0a-8467-41e6-a7a4-5ff09c57ccfe",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_STRICT_JSON_V4_EXEC_R1",
+    "caseId": "DEV_STATE_STRICT_JSON",
+    "version": "V4",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "读取 notes/session-notice.md 中的通知，把其中会议室、开始时间、直播三项状态转成 JSON。只输出一个 JSON 对象，不要代码围栏或任何解释；键必须恰好为 room、start、streaming，不得新增其他键，三个值都使用通知中的原文字符串。\n\n用户同时提供的材料：\n[{\"path\":\"notes/session-notice.md\",\"language\":\"markdown\",\"content\":\"会议室：已确认A302\\n开始时间：尚待主持人确认\\n直播：已确认不提供\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_STRICT_JSON_V4_EXEC_R1",
+      "data": {
+        "content": "{\"room\":\"已确认A302\",\"start\":\"尚待主持人确认\",\"streaming\":\"已确认不提供\"}",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 146,
+          "completion_tokens": 23,
+          "total_tokens": 169,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 146
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_STRICT_JSON_V4_GEN",
+    "caseId": "DEV_STATE_STRICT_JSON",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "把通知中的三项状态转成JSON，只输出一个对象，键必须恰好为room、start、streaming，值都用原文字符串。不要代码围栏或解释，也不要新增其他键。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/session-notice.md",
+            "language": "markdown",
+            "content": "会议室：已确认A302\n开始时间：尚待主持人确认\n直播：已确认不提供"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_STRICT_JSON_V4_GEN",
+      "data": {
+        "optimizedPrompt": "读取 notes/session-notice.md 中的通知，把其中会议室、开始时间、直播三项状态转成 JSON。只输出一个 JSON 对象，不要代码围栏或任何解释；键必须恰好为 room、start、streaming，不得新增其他键，三个值都使用通知中的原文字符串。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/session-notice.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/session-notice.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n会议室：已确认A302\n开始时间：尚待主持人确认\n直播：已确认不提供",
+              "summary": "Markdown 文档摘要：会议室：已确认A302；开始时间：尚待主持人确认；直播：已确认不提供",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2789,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "183c6651-34ad-402a-83d3-6bb0866cd916",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_USER_UNCERTAIN_RAW_EXEC_R1",
+    "caseId": "DEV_STATE_USER_UNCERTAIN",
+    "version": "RAW",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "我已经把两个备选时段发给客户了，但现在不清楚客户回没回。帮我写条给同事的简短消息，请他核对一下客户回复，再把结果同步给我。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_USER_UNCERTAIN_RAW_EXEC_R1",
+      "data": {
+        "content": "请帮我核对一下客户是否已回复我发的两个备选时段，确认后把结果同步给我。谢谢。",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 70,
+          "completion_tokens": 24,
+          "total_tokens": 94,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 70
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_USER_UNCERTAIN_V25_EXEC_R1",
+    "caseId": "DEV_STATE_USER_UNCERTAIN",
+    "version": "V25",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "我已经把两个备选时段发给客户了，但目前不清楚客户是否回复。请帮我写一条给同事的简短消息，请他核对一下客户有没有回复，并把核对结果同步给我。消息要简短、直接，说明需要核对的是客户对这两个备选时段的回复情况，并明确请对方把结果反馈给我。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_USER_UNCERTAIN_V25_EXEC_R1",
+      "data": {
+        "content": "客户那边我发了两个备选时段，但还不确定有没有回复。麻烦你帮忙核对一下客户对这两个备选时段的回复情况，有结果同步我一下，谢谢。",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 101,
+          "completion_tokens": 38,
+          "total_tokens": 139,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 101
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_USER_UNCERTAIN_V25_GEN",
+    "caseId": "DEV_STATE_USER_UNCERTAIN",
+    "version": "25",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "我已经把两个备选时段发给客户了，但现在不清楚客户回没回。帮我写条给同事的简短消息，请他核对一下客户回复，再把结果同步给我。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_USER_UNCERTAIN_V25_GEN",
+      "data": {
+        "optimizedPrompt": "我已经把两个备选时段发给客户了，但目前不清楚客户是否回复。请帮我写一条给同事的简短消息，请他核对一下客户有没有回复，并把核对结果同步给我。消息要简短、直接，说明需要核对的是客户对这两个备选时段的回复情况，并明确请对方把结果反馈给我。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2460,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "25",
+        "framework": "APE",
+        "recordId": "feeda9f7-1df7-4f31-b6d6-6d37a553b428",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_USER_UNCERTAIN_V4_EXEC_R1",
+    "caseId": "DEV_STATE_USER_UNCERTAIN",
+    "version": "V4",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "帮我写一条发给同事的简短消息，请他核对客户是否回复了我此前发出的两个备选时段，并把核对结果同步给我。消息要简短、直接，说清需要核对的事项和回复我的要求，语气自然，适合同事间沟通。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_USER_UNCERTAIN_V4_EXEC_R1",
+      "data": {
+        "content": "帮我核对一下客户有没有回复我之前发的两个备选时段，核对完同步我一下，谢谢。",
+        "finishReason": "stop",
+        "usage": {
+          "prompt_tokens": 86,
+          "completion_tokens": 21,
+          "total_tokens": 107,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 86
+        }
+      }
+    }
+  },
+  {
+    "id": "DEV_STATE_USER_UNCERTAIN_V4_GEN",
+    "caseId": "DEV_STATE_USER_UNCERTAIN",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "我已经把两个备选时段发给客户了，但现在不清楚客户回没回。帮我写条给同事的简短消息，请他核对一下客户回复，再把结果同步给我。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "DEV_STATE_USER_UNCERTAIN_V4_GEN",
+      "data": {
+        "optimizedPrompt": "帮我写一条发给同事的简短消息，请他核对客户是否回复了我此前发出的两个备选时段，并把核对结果同步给我。消息要简短、直接，说清需要核对的事项和回复我的要求，语气自然，适合同事间沟通。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2301,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "244fb4d9-71d5-4447-9e58-0784775561b8",
+        "editRevision": 0
+      }
+    }
+  }
+]
