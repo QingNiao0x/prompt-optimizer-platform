@@ -1,0 +1,58 @@
+{
+  "batch": "natural-source-fidelity-2026-10-22",
+  "status": "CLOSED_EARLY_NOT_ADOPTED",
+  "baselineVersion": "4",
+  "candidateVersions": [
+    "16",
+    "17"
+  ],
+  "adoptCandidates": false,
+  "defaultVersionAfter": "4",
+  "actualCalls": 10,
+  "logicalResults": 10,
+  "phaseCounts": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 10
+  },
+  "protocolRetries": 0,
+  "qualityRetries": 0,
+  "httpSuccessResults": 10,
+  "finishStopResults": 10,
+  "totalTokens": 21028,
+  "mechanicalFixtureExpectationMatches": 6,
+  "mechanicalFixtureCount": 10,
+  "mechanicalResultIsSemanticPassRate": false,
+  "semanticGateMet": false,
+  "normalVariantsByteUnchanged": 1,
+  "normalVariantsRequiredByteUnchanged": 4,
+  "controlledErrorsWithCorrespondingCorrection": 4,
+  "realFailureReplays": {
+    "NEIGHBOR_MESSAGE": "漏报，正文未改",
+    "SHARED_EXPENSE_TOOL": "范围问题部分纠正，但额外删除结算指导/余数示例并引入重复，未完整通过"
+  },
+  "mainCallsPlanned": {
+    "GENERATION": 60,
+    "PLAN": 1,
+    "EXECUTION": 40
+  },
+  "mainCallsStoppedBeforeStart": 101,
+  "plannedTotalCalls": 111,
+  "fixtureReviewCallsCompleted": 10,
+  "actualMainCalls": 0,
+  "plannedMainCallsNotExecuted": 101,
+  "unusedBatchAllowanceClosed": 150,
+  "offlineValidation": {
+    "tests": 153,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "source": "offline-validation.json",
+    "limit": "受影响单元检查与打包通过不代表真实模型语义辨别通过。"
+  },
+  "historyValidation": "本批没有生成或保存优化记录，未执行新的历史一致性检查。",
+  "conclusion": "真实审阅机制门槛未达，提前停止后续主调用，不采用16/17；保留全部错误及正常变体误改原件。",
+  "publicationScope": "未验证完整16/17生成、Plan、作品路径，不证明候选已部署或发布。",
+  "taskStatus": "候选16/17不采用；用户要求的信息状态与要求保真质量目标仍未完成。"
+}

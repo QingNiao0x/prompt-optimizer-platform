@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * 同次生成中的要求覆盖、缺口与提问影响记录；核对来源关联和最终正文锚点，不另调裁判。
+ * 自然链路的要求覆盖、缺口与提问影响记录；核对来源关联和最终正文锚点，校验本身不另调裁判。
  * 下标与引文不能证明语义等价或穷尽原要求，模型的语义自查仍须以实际作品验证。
  * 记录仅用于本次内部校验，不进入优化提示词、用户历史或日志。
  *
@@ -38,6 +38,13 @@ public record NaturalTaskReview(InputReadiness inputReadiness, List<Coverage> re
 
     /** 每道实际问题的必要性与答案差异；不能仅凭模型自报理由证明问题确实必要。 */
     public record PlanImpact(String questionId, String whyAsk, String answerDifference) { }
+
+    /** 补全准备尚无正文或Plan交付，不能预填覆盖引用或宣称提出新问题；最终阶段仍独立执行全部覆盖检查。 */
+    public void validatePreparation() {
+        if (!requirementCoverage.isEmpty() || !additionCoverage.isEmpty() || !planImpacts.isEmpty()) {
+            throw invalid("补全准备不能宣称正文覆盖或新的Plan提问");
+        }
+    }
 
     /**
      * 在来源原句已校验后核对记录完整性；每份真实题答必须有来源关联，但关联本身不证明全部语义已保留。
@@ -140,6 +147,12 @@ public record NaturalTaskReview(InputReadiness inputReadiness, List<Coverage> re
         public String repairInstruction() {
             return "\n任务理解的evidence尚未关联这些现有来源编号：" + String.join("、", new java.util.TreeSet<>(sourceIds))
                     + "。请核对这些原始题答并补齐出处及对应正文锚点；已有正文确实覆盖时保留有效表达，不新增事实或确认。";
+        }
+
+        /** 准备阶段仅修复来源关联，尚无正文可引用；编号仍来自服务端差集，不回传题答或用户原文。 */
+        public String preparationRepairInstruction() {
+            return "\n补全准备的evidence尚未关联这些现有来源编号：" + String.join("、", new java.util.TreeSet<>(sourceIds))
+                    + "。请从完整原始题答补齐出处，三个review数组继续为空；不新增事实、确认或Plan问题。";
         }
     }
 }

@@ -1,0 +1,228 @@
+{
+  "assessor": "开发代理核对并由另一开发代理独立复核；合成任务开发评测，非外部专家或全局发布验收",
+  "comparison": "同一原始信息、材料、模型和参数；主判定为15相对4，原始臂只作作品参照",
+  "adopt15": false,
+  "criteriaSource": "protocol.json#criteria",
+  "requiredPrimaryPromptWins": 3,
+  "requiredPrimaryWorkWins": 3,
+  "primaryCaseCount": 6,
+  "primaryPromptWins": 1,
+  "primaryWorkWins": 1,
+  "maximumClearlySupportedPromptWins": 1,
+  "maximumClearlySupportedWorkWins": 1,
+  "winCases": [
+    "ACTIVITY_SIGNUP_FORM"
+  ],
+  "controlCases": 2,
+  "seenRegressionCases": 2,
+  "cases": [
+    {
+      "id": "TEN_MINUTE_REVIEW",
+      "role": "PRIMARY",
+      "verdict": "NO_CLEAR_GAIN",
+      "promptWin": false,
+      "workWin": false,
+      "rawPrompt": "我每周事情做了不少，却总觉得忙乱、老问题还会重复。帮我设计一个每周花十分钟就能用的复盘办法，怎么做和记录什么由你安排。",
+      "materialPaths": [],
+      "promptAssessment": "第四版已有十分钟内步骤与时间分配、简短记录模板、识别重复问题并转为下周一两个动作。15重排并明确这两个问题，未增加第四版缺少的关键可执行内容。",
+      "workAssessment": "两份增强作品均有可执行的十分钟流程和简短记录项；15增加细分步骤不单独证明更有用。原始臂另设20分钟根因分析的负担不能作为15相对第四版的增益。",
+      "evidence": [
+        "TEN_MINUTE_REVIEW_V4_GEN",
+        "TEN_MINUTE_REVIEW_V15_GEN",
+        "TEN_MINUTE_REVIEW_V4_EXEC",
+        "TEN_MINUTE_REVIEW_V15_EXEC"
+      ]
+    },
+    {
+      "id": "NEIGHBOR_MESSAGE",
+      "role": "PRIMARY",
+      "verdict": "INFORMATION_STATE_REGRESSION",
+      "promptWin": false,
+      "workWin": false,
+      "rawPrompt": "帮我写条发给楼上邻居的信息，晚上有噪音影响我休息。我想解决问题，但不想把邻里关系闹僵，具体怎么说你来设计。",
+      "materialPaths": [],
+      "promptAssessment": "用户只说晚上有噪音影响休息，并委托措辞；15将用户未提供的知识状态写成“由于我不确定噪音的具体来源”。可建议语气留余地，但不能替用户确认不知道来源。",
+      "promptQuote": "由于我不确定噪音的具体来源",
+      "workAssessment": "15作品将该新增状态直接写成“具体是什么声音、从哪儿来的我也不太确定”。这是增强正文已出现、下游继续执行的信息状态错误。第四版的“可能是不小心碰到东西或者走动的声音”属于试探性举例，不能据此等同认定为已确认来源。",
+      "workQuote": "具体是什么声音、从哪儿来的我也不太确定",
+      "firstObservedStage": "GENERATION",
+      "attribution": "增强内容首先新增无依据状态；下游将其带入实际短信。",
+      "evidence": [
+        "NEIGHBOR_MESSAGE_V15_GEN",
+        "NEIGHBOR_MESSAGE_V15_EXEC",
+        "NEIGHBOR_MESSAGE_V4_EXEC"
+      ]
+    },
+    {
+      "id": "UNIT_PRICE_LEARNING",
+      "role": "PRIMARY",
+      "verdict": "NO_CLEAR_GAIN",
+      "promptWin": false,
+      "workWin": false,
+      "rawPrompt": "我在超市看大包装和小包装总算不清哪个划算。帮我弄明白怎么比，讲法和例子你来设计，要让我下次买东西真会用。",
+      "materialPaths": [],
+      "promptAssessment": "15预先指定500克12元与1千克20元的计算例子；第四版已有两三道计算示例、单位换算和大包装未必便宜的反例。具体例子属拟议教学材料，未形成相对第四版明确缺口补全。",
+      "workAssessment": "两份作品都有正确的单位价格换算和可练习内容；15更长及更多例子不单独算收益。15中2.4元/100克与2.0元/100克计算正确，不因优化器提供拟议数字而误判编造真实商品价格。",
+      "evidence": [
+        "UNIT_PRICE_LEARNING_V4_GEN",
+        "UNIT_PRICE_LEARNING_V15_GEN",
+        "UNIT_PRICE_LEARNING_V4_EXEC",
+        "UNIT_PRICE_LEARNING_V15_EXEC"
+      ]
+    },
+    {
+      "id": "SHARED_EXPENSE_TOOL",
+      "role": "PRIMARY",
+      "verdict": "SCOPE_EXPANSION_AND_WORK_EXAMPLE_ERROR",
+      "promptWin": false,
+      "workWin": false,
+      "rawPrompt": "我们聚餐时常有人垫付，最后AA总算不清。用Python帮我做个平摊费用的小工具，输入方式和结果怎么展示你来设计，给我完整代码和用法。",
+      "materialPaths": [],
+      "promptAssessment": "原始任务为多人垫付后的AA平摊工具，并委托输入与展示设计。15加入必须支持按单笔消费选择部分参与人，扩大数据模型和录入负担；用户未要求差异化消费分摊，不能把多功能直接记为增益。金额精度和净额核对服务原有核心目标，与新增分组消费不同。",
+      "promptQuote": "并支持指定某笔消费只有部分人参与分摊",
+      "workAssessment": "两份代码各6组核心守恒及净额结清检查通过。15按每笔取整导致某用例2分差异，已按声明规则认作正常变体，不以总额均分规则强判失败；但其公布的分组消费示例与实际代码计算不一致，仍需修改。",
+      "workExample": {
+        "actualSharesCents": {
+          "张三": 10267,
+          "李四": 13201,
+          "王五": 13199,
+          "赵六": 11683
+        },
+        "publishedSharesCents": {
+          "张三": 11017,
+          "李四": 11017,
+          "王五": 11017,
+          "赵六": 15299
+        },
+        "exampleMatchesCode": false
+      },
+      "firstObservedStage": {
+        "scopeExpansion": "GENERATION",
+        "publishedExampleMismatch": "EXECUTION"
+      },
+      "attribution": "范围扩大在增强正文中已出现；算例错误首次出现在下游作品，现有证据不足以将算例错误单独归因于准备阶段。",
+      "evidence": [
+        "SHARED_EXPENSE_TOOL_V4_GEN",
+        "SHARED_EXPENSE_TOOL_V15_GEN",
+        "SHARED_EXPENSE_TOOL_V4_EXEC",
+        "SHARED_EXPENSE_TOOL_V15_EXEC",
+        "code-artifact-checks.json"
+      ]
+    },
+    {
+      "id": "HOUSEHOLD_BUFFER",
+      "role": "PRIMARY",
+      "verdict": "NO_CLEAR_GAIN_WITH_DOWNSTREAM_LIMIT",
+      "promptWin": false,
+      "workWin": false,
+      "rawPrompt": "根据这份收支记录，帮我安排下个月的家用，想给突发开销留点余地。具体怎么分配由你设计，给我一份能照着执行的安排。",
+      "materialPaths": [
+        "notes/household-month.md"
+      ],
+      "promptAssessment": "15显式算出固定支出3550元、剩余2650元；第四版已有按材料安排预算、应急预留、分次执行和到账后处理。仅把可直接计算的中间数写入提示词，尚未带来明确作品改善。",
+      "workAssessment": "两份作品主预算均为固定3550元、日常1500元、应急1150元，合计6200元，均未把未确认的800元奖金纳入主预算。15月底要求应急余额至少1150元，与前文允许实际应急动用存在冲突；该矛盾首次出现在下游。两份按四周分配月度1500元，余下月日缺少安排，是共同局限。设计支出顺序是用户委托范围内的建议，不一概当作伪造真实账单日。",
+      "workQuote": "应急预留是否 ≥1150 元（含结转）",
+      "firstObservedStage": "EXECUTION",
+      "attribution": "预算矛盾首先发生于下游作品；现有对照不证明增强模型独有根因。",
+      "evidence": [
+        "HOUSEHOLD_BUFFER_V4_GEN",
+        "HOUSEHOLD_BUFFER_V15_GEN",
+        "HOUSEHOLD_BUFFER_V4_EXEC",
+        "HOUSEHOLD_BUFFER_V15_EXEC"
+      ]
+    },
+    {
+      "id": "ACTIVITY_SIGNUP_FORM",
+      "role": "PRIMARY",
+      "verdict": "CLEAR_LOCAL_GAIN",
+      "promptWin": true,
+      "workWin": true,
+      "rawPrompt": "根据这些活动规则帮我设计一份报名表方案，字段、选项和填写提示你来安排，让第一次来的人填起来不容易出错。",
+      "materialPaths": [
+        "notes/activity-signup.md"
+      ],
+      "promptAssessment": "15将材料中未满16岁须一名成年人陪同、成年人计人数、人数最多2的关联转为未满16岁时人数应为2；第四版保留各条但没有同样明确联动校验。",
+      "promptQuote": "未满16岁情形下参与人数应为2且其中一名为陪同成年人",
+      "workAssessment": "15作品明确选择未满16岁却填1人时提示改为2人并阻止提交，可减少首次填写者实际错误。两份均保留两场单选、人数上限、短信条件手机号、不收身份证、名额与结果待确认等独立条件。额外勾选确认可能增加填写负担，不因此夸大为全方位收益；可选去重并不等于强制所有人提供手机号。",
+      "evidence": [
+        "ACTIVITY_SIGNUP_FORM_V4_GEN",
+        "ACTIVITY_SIGNUP_FORM_V15_GEN",
+        "ACTIVITY_SIGNUP_FORM_V4_EXEC",
+        "ACTIVITY_SIGNUP_FORM_V15_EXEC"
+      ]
+    },
+    {
+      "id": "CONTROL_LINEBREAKS",
+      "role": "CONTROL",
+      "verdict": "PASS_NORMAL_TIE",
+      "promptWin": false,
+      "workWin": false,
+      "rawPrompt": "将“甲=07|乙=00”中的“|”替换为换行，其他字符原样保留。只输出两行纯文本，不加空格、编号、代码围栏或说明，保留所有前导0。",
+      "materialPaths": [],
+      "workAssessment": "原始、4、15三臂均严格输出甲=07换行乙=00，无额外说明；充分需求不要求扩写或必有增益。",
+      "evidence": [
+        "CONTROL_LINEBREAKS_RAW_EXEC",
+        "CONTROL_LINEBREAKS_V4_EXEC",
+        "CONTROL_LINEBREAKS_V15_EXEC"
+      ]
+    },
+    {
+      "id": "CONTROL_SORTED_JSON",
+      "role": "CONTROL",
+      "verdict": "PASS_NORMAL_TIE",
+      "promptWin": false,
+      "workWin": false,
+      "rawPrompt": "把数组[3,0,-2,3]按数值升序排列，保留重复项和0。只输出排序后的JSON数组，不加代码围栏、说明或其他字段。",
+      "materialPaths": [],
+      "workAssessment": "原始、4、15三臂均输出[-2,0,3,3]，保留重复值且无额外文本。",
+      "evidence": [
+        "CONTROL_SORTED_JSON_RAW_EXEC",
+        "CONTROL_SORTED_JSON_V4_EXEC",
+        "CONTROL_SORTED_JSON_V15_EXEC"
+      ]
+    },
+    {
+      "id": "TEAM_HANDOVER",
+      "role": "SEEN_REGRESSION",
+      "verdict": "NO_ESTABLISHED_GAIN",
+      "promptWin": false,
+      "workWin": false,
+      "rawPrompt": "我们小组经常有人请假，交接时容易漏事。帮我设计一个简便的交接做法，交接表怎么写、怎么走流程都由你安排，希望接手的人看完就知道先干什么。",
+      "materialPaths": [],
+      "workAssessment": "两份均覆盖交接记录与接收确认。15作品十列表格、签名及负责人知晓等增加维护负担，与原始“简便”目标存在张力，未证明相对第四版更实用；其协作工具为明确举例，不当成用户已有工具。已见题不计主胜数。",
+      "evidence": [
+        "TEAM_HANDOVER_V4_GEN",
+        "TEAM_HANDOVER_V15_GEN",
+        "TEAM_HANDOVER_V4_EXEC",
+        "TEAM_HANDOVER_V15_EXEC"
+      ]
+    },
+    {
+      "id": "PLAN_MAINTENANCE",
+      "role": "SEEN_REGRESSION",
+      "verdict": "PARTIAL_FAITHFULNESS_GAIN_NOT_READY_TO_SEND",
+      "promptWin": false,
+      "workWin": false,
+      "rawPrompt": "帮我写一则发给同事的网络维护通知。维护安排与影响范围以我确认的信息为准，其他措辞你来定。",
+      "materialPaths": [],
+      "promptAssessment": "两个增强正文均保留共同实际题答：维护时间、办公无线中断、有线正常、远程不受影响、自动重连未知；Plan固定复用第四版，未检验新的Plan提问策略。",
+      "workAssessment": "第四版作品写入未确认署名“网络维护团队”和发布日期2026年10月30日；15没有把具体署名/发布日期写成事实，但保留[通知发布部门]、[发布日期]占位符，仍需编辑。该保真局部改善不计新主任务收益，也不能据此宣称Plan升级通过。",
+      "firstObservedStage": "EXECUTION",
+      "evidence": [
+        "PLAN_MAINTENANCE_V4_PLAN",
+        "PLAN_MAINTENANCE_V4_PLAN_GEN",
+        "PLAN_MAINTENANCE_V15_PLAN_GEN",
+        "PLAN_MAINTENANCE_V4_EXEC",
+        "PLAN_MAINTENANCE_V15_EXEC",
+        "common-confirmation-PLAN_MAINTENANCE.json"
+      ]
+    }
+  ],
+  "protocolFailures": [],
+  "evaluationCorrection": {
+    "issue": "首次代码探测把全总额均分的一分公平强加到按每笔取整的正常变体。",
+    "resolution": "按代码已声明的每笔取整规则检查总额守恒和净额结清，不以2分差异判代码失败；真实的公布示例不匹配仍保留。",
+    "evidence": "code-artifact-checks.json"
+  },
+  "conclusion": "最多1/6主任务支持提示词及作品明确收益，低于冻结的两个3/6要求；另有无依据用户状态和范围扩大。候选15不采用，不修改阈值，不质量重试。"
+}

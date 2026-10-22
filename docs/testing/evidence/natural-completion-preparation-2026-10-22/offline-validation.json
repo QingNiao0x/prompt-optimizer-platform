@@ -1,0 +1,73 @@
+{
+  "tests": 128,
+  "reports": [
+    {
+      "name": "com.promptoptimizer.enhancement.dto.DocumentOptimizationControllerTest(preparation-final-green)",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.promptoptimizer.enhancement.service.impl.NaturalEnhancementServiceTest(preparation-final-green)",
+      "tests": "26",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.promptoptimizer.history.service.impl.MybatisOptimizationHistoryServiceTest(preparation-final-green)",
+      "tests": "28",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.promptoptimizer.provider.domain.NaturalTaskReviewTest(preparation-final-green)",
+      "tests": "10",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.promptoptimizer.provider.domain.NaturalTaskUnderstandingTest(preparation-final-green)",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleNaturalPreparationTest(preparation-final-green)",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleNaturalPromptProviderTest(preparation-final-green)",
+      "tests": "51",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "redBeforeFix": {
+    "testClass": "OpenAiCompatibleNaturalPreparationTest",
+    "tests": 4,
+    "failures": 2,
+    "errors": 2,
+    "command": "mvn -q -s ../../.mvn/settings.xml -Dtest=OpenAiCompatibleNaturalPreparationTest -Dsurefire.reportNameSuffix=preparation-red test",
+    "limit": "证明新阶段及边界缺失，不代表可以离线证明语义质量。"
+  },
+  "defaultVersion": "4",
+  "candidateVersion": "15",
+  "planInstructionUnchanged": true,
+  "finalSourceAndCoverageChecksUnchanged": true,
+  "preparationHasNoCoverageOrPlanClaims": true,
+  "allStagesCounted": true,
+  "newModelCalls": 0,
+  "noNewAccounts": true,
+  "newMigration": "V25 comments only, not applied",
+  "preparationSourceRepairHasNoPrematureAnchors": true,
+  "phaseRepairRegressionRedBeforeFix": true
+}

@@ -1,0 +1,97 @@
+{
+  "batch": "natural-completion-preparation-2026-10-22",
+  "status": "CLOSED_NOT_ADOPTED",
+  "baselineVersion": "4",
+  "candidateVersion": "15",
+  "adoptCandidate": false,
+  "defaultVersionAfter": "4",
+  "actualCalls": 61,
+  "logicalResults": 51,
+  "phaseCounts": {
+    "GENERATION": 30,
+    "PLAN": 1,
+    "EXECUTION": 30,
+    "REVIEW": 0
+  },
+  "generationStageCounts": {
+    "DIRECT": 10,
+    "PREPARATION": 10,
+    "REWRITE": 10
+  },
+  "logicalGenerationRequests": 20,
+  "logicalPlanRequests": 1,
+  "actualWorks": 30,
+  "httpSuccessResults": 51,
+  "executionFinishStop": 30,
+  "protocolRetries": 0,
+  "qualityRetries": 0,
+  "preparationIsProtocolRetry": false,
+  "totalTokens": 113127,
+  "generationCost": {
+    "4": {
+      "actualCalls": 10,
+      "inputTokens": 15437,
+      "outputTokens": 8500,
+      "totalTokens": 23937,
+      "aggregateTransportElapsedMs": 40247
+    },
+    "15": {
+      "actualCalls": 20,
+      "inputTokens": 36198,
+      "outputTokens": 16595,
+      "totalTokens": 52793,
+      "aggregateTransportElapsedMs": 73919
+    }
+  },
+  "generationCostComparison": {
+    "candidateCallsMultiplier": 2,
+    "candidateTokenMultiplier": 2.205498,
+    "candidateAggregateTransportElapsedMultiplier": 1.836634,
+    "limit": "两阶段额外预算；传输耗时累计不等于完整用户端到端延迟，无货币成本估计。"
+  },
+  "primaryQuality": {
+    "cases": 6,
+    "requiredPromptWins": 3,
+    "requiredWorkWins": 3,
+    "promptWins": 1,
+    "workWins": 1,
+    "maximumClearlySupportedWins": 1,
+    "winCases": [
+      "ACTIVITY_SIGNUP_FORM"
+    ],
+    "adoptionCriterionMet": false
+  },
+  "controls": {
+    "cases": 2,
+    "armsPerCase": 3,
+    "exactArtifactChecksPassed": 6
+  },
+  "codeArtifacts": {
+    "coreCasesPerEnhancedArm": 6,
+    "coreChecksPassed": 12,
+    "publishedCandidateExampleMatchesCode": false,
+    "normalPerExpenseRoundingNotCountedAsFailure": true
+  },
+  "historyChecks": {
+    "count": 20,
+    "allPassed": true,
+    "newAccounts": 0
+  },
+  "offlineValidation": {
+    "tests": 128,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "source": "offline-validation.json",
+    "limit": "冻结前已有受影响验证，不代表语义质量或发布通过。"
+  },
+  "mainLimitations": [
+    "15新增未提供的用户知识状态，并在邻居消息作品中呈现。",
+    "15把部分消费参与人选择升级为必备能力，扩大原AA工具范围。",
+    "AA作品公布示例与实际代码不一致；核心守恒检查仍通过。",
+    "仅报名表联动约束有明确局部收益，不能满足主样本两个3/6要求。"
+  ],
+  "planScope": "Plan仍为第四版，共同实际题答用于4/15生成；不将此次协议成功记为Plan提问收益。",
+  "publicationScope": "本目录为评测原件，不证明候选已部署或正式发布，不修改默认。",
+  "taskStatus": "候选15闭批，不代表用户要求的整体质量提升目标已经完成。"
+}

@@ -1,0 +1,188 @@
+{
+  "assessor": "开发代理逐条核对模型原件与冻结夹具预期；合成开发评测，非外部专家评测",
+  "scope": "只完成10份信息状态/要求保真审阅夹具，未开展新提示词生成、Plan或实际作品对照。",
+  "candidateVersions": [
+    "16",
+    "17"
+  ],
+  "adoptCandidates": false,
+  "criteriaSource": "protocol.json#criteria",
+  "requiredMechanismGate": {
+    "controlledErrorsCorrected": 4,
+    "realFailuresConservativelyCorrected": 2,
+    "normalVariantsByteUnchanged": 4
+  },
+  "actualMechanismObservations": {
+    "protocolValidResponses": 10,
+    "mechanicalExpectationMatches": 6,
+    "mechanicalExpectationTotal": 10,
+    "controlledErrorFixturesWithCorrespondingCorrection": 4,
+    "normalVariantsByteUnchanged": 1,
+    "normalVariantsRewritten": 3,
+    "realNeighborFailureDetected": false,
+    "realAAFailurePartiallyCorrected": true,
+    "realAAConservativeCorrectionPassed": false,
+    "mechanismGateMet": false,
+    "confirmedUnnecessaryNormalRewriteCases": [
+      "N2_CONFIRMED",
+      "N3_REAL_AUTH"
+    ],
+    "normalFrozenGoldDefectCases": [
+      "N4_DESIGN"
+    ],
+    "normalRewriteCountInterpretation": "3份改写是机械事实；其中N2/N3为明确无实质变化复写，N4金标有缺陷，补回目标可合法，不计明确误报。"
+  },
+  "semanticSuccessRateComputed": false,
+  "mechanicalSemanticDistinction": "6/10只表示夹具机械预期检查命中，不是语义通过率；其中AA类型命中同时存在过删与重复，不能算完整修复。",
+  "cases": [
+    {
+      "id": "B1_UNKNOWN_STATE",
+      "expected": "UNSUPPORTED_FACT",
+      "mechanicalExpectation": true,
+      "protocolValid": true,
+      "sameDraft": false,
+      "verdict": "CONTROLLED_ERROR_CORRECTED",
+      "rawPrompt": "帮我写一条给物业的噪音情况说明，写法你安排。",
+      "originalBody": "由于我不确定噪音的具体来源，请帮我写一条给物业的噪音情况说明。",
+      "explanation": "原始请求没有表示用户不知道来源。删除“由于我不确定噪音的具体来源”，纠正无依据用户状态；该受控短句夹具修复成功，不代表真实长正文同类问题已通过。",
+      "evidence": "B1_UNKNOWN_STATE_REVIEW"
+    },
+    {
+      "id": "N1_INPUT_GAP",
+      "expected": "UNCHANGED",
+      "mechanicalExpectation": true,
+      "protocolValid": true,
+      "sameDraft": true,
+      "verdict": "NORMAL_VARIANT_PRESERVED",
+      "rawPrompt": "帮我写一条给物业的噪音情况说明，写法你安排。",
+      "originalBody": "请帮我写一条给物业的噪音情况说明。本次输入未提供具体来源信息，涉及来源的内容保持未决，其余措辞由你设计。",
+      "explanation": "“本次输入未提供具体来源信息”描述资料缺口，并未断言用户本人不知道；正文逐字未改，保留了该合法区别。",
+      "evidence": "N1_INPUT_GAP_REVIEW"
+    },
+    {
+      "id": "B2_PROPOSAL",
+      "expected": "STATE_PROMOTION",
+      "mechanicalExpectation": true,
+      "protocolValid": true,
+      "sameDraft": false,
+      "verdict": "CONTROLLED_ERROR_CORRECTED",
+      "rawPrompt": "帮我完善活动安排。建议先试办一次，但尚未决定是否举办；给出拟议方案即可。",
+      "originalBody": "请按已经决定举办一次试办活动完善安排。",
+      "explanation": "把尚未决定的试办建议写成已决定举办，属于状态升级。修订恢复拟议安排和举办未决状态。",
+      "evidence": "B2_PROPOSAL_REVIEW"
+    },
+    {
+      "id": "N2_CONFIRMED",
+      "expected": "UNCHANGED",
+      "mechanicalExpectation": false,
+      "protocolValid": true,
+      "sameDraft": false,
+      "verdict": "UNNECESSARY_REWRITE",
+      "rawPrompt": "我已经决定先举办一次试办活动，请据此完善活动安排，具体组织方式由你设计。",
+      "originalBody": "请按已经决定举办一次试办活动完善安排。",
+      "explanation": "用户已确认试办，原正文“按已经决定举办一次试办活动完善安排”保留确认状态且没有擅自换交付。审阅器以遗漏为由回填“具体组织方式由你设计”等原句，没有证明原正文发生实质遗漏，违反冻结的正常变体逐字不改要求。",
+      "evidence": "N2_CONFIRMED_REVIEW",
+      "reportedIssueTypes": [
+        "REQUIREMENT_OMISSION"
+      ]
+    },
+    {
+      "id": "B3_VERIFY_AUTH",
+      "expected": "AUTHORITY_EXPANSION",
+      "mechanicalExpectation": true,
+      "protocolValid": true,
+      "sameDraft": false,
+      "verdict": "CONTROLLED_ERROR_CORRECTED",
+      "rawPrompt": "请检查近期修改是否已部署，给出核查依据和差距；本次只核查，不进行部署。",
+      "originalBody": "先将近期修改部署到运行环境，再检查是否生效。",
+      "explanation": "原始要求只核查、不部署；正文先部署再检查扩大授权。修订恢复核查目标与禁止部署边界。",
+      "evidence": "B3_VERIFY_AUTH_REVIEW"
+    },
+    {
+      "id": "N3_REAL_AUTH",
+      "expected": "UNCHANGED",
+      "mechanicalExpectation": false,
+      "protocolValid": true,
+      "sameDraft": false,
+      "verdict": "UNNECESSARY_REWRITE",
+      "rawPrompt": "我确认允许将近期修改部署到本地测试环境，再检查是否生效并给出依据；不要操作生产环境。",
+      "originalBody": "将近期修改部署到本地测试环境，再检查是否生效并给出依据；不要操作生产环境。",
+      "explanation": "用户确已允许本地测试部署，原正文准确保留本地环境、核查依据、禁止生产操作；审阅器仅把“我确认允许”重新加到开头，没有实际恢复缺失授权边界。",
+      "evidence": "N3_REAL_AUTH_REVIEW",
+      "reportedIssueTypes": [
+        "REQUIREMENT_OMISSION"
+      ]
+    },
+    {
+      "id": "B4_SCOPE",
+      "expected": "SCOPE_EXPANSION",
+      "mechanicalExpectation": true,
+      "protocolValid": true,
+      "sameDraft": false,
+      "verdict": "CONTROLLED_ERROR_CORRECTED",
+      "rawPrompt": "帮我设计一个最简单的AA分账小工具，输入总金额和人数，算出每人应付；输入和展示方式由你设计。",
+      "originalBody": "AA分账小工具必须支持将消费项目分组，并按组分别计算。",
+      "explanation": "原始只要输入总金额和人数的最简均分工具；正文强制分组消费扩大必需能力。修订恢复原始简单范围。",
+      "evidence": "B4_SCOPE_REVIEW"
+    },
+    {
+      "id": "N4_DESIGN",
+      "expected": "UNCHANGED",
+      "mechanicalExpectation": false,
+      "protocolValid": true,
+      "sameDraft": false,
+      "verdict": "FROZEN_GOLD_DEFECT_TARGET_REPAIR_CAN_BE_LEGITIMATE",
+      "rawPrompt": "请设计AA分账工具，整体功能和交互由你安排；除总额均分外，可提出有用扩展作为可选方案。",
+      "originalBody": "核心提供总额均分；可选扩展为按消费项目分组计算，是否纳入首版按实际需求决定。",
+      "explanation": "独立复核发现冻结正常稿仅写核心/可选功能，缺少“设计AA分账工具”的目标与对象；审阅器补回目标可以是合法的要求遗漏修复，不能将N4算作明确误报。额外复写完整功能交互委托仍可评价编辑最小性，但不等于补回目标非法。原UNCHANGED金标及机械未命中作为历史原件保留，见erratum-n4-design.json。",
+      "evidence": "N4_DESIGN_REVIEW",
+      "reportedIssueTypes": [
+        "REQUIREMENT_OMISSION"
+      ],
+      "frozenGoldDefect": true,
+      "countAsConfirmedFalsePositive": false,
+      "minimalityConcern": "补回目标与对象之外，又重述了完整用户委托；仅评价这部分编辑是否必要。"
+    },
+    {
+      "id": "REPLAY_NEIGHBOR_MESSAGE",
+      "expected": "UNSUPPORTED_FACT",
+      "mechanicalExpectation": false,
+      "protocolValid": true,
+      "sameDraft": true,
+      "verdict": "REAL_FAILURE_MISSED",
+      "rawPrompt": "帮我写条发给楼上邻居的信息，晚上有噪音影响我休息。我想解决问题，但不想把邻里关系闹僵，具体怎么说你来设计。",
+      "originalBody": "帮我写一条发给楼上邻居的信息，反映晚上有噪音影响我休息。我想解决问题，但不想把邻里关系闹僵，具体怎么说你来设计。\n\n请直接给出一条可复制发送的成品信息，简短、口语化，一段话即可，按先致意、再说明情况、最后提出请求的顺序来写。由于我不确定噪音的具体来源，信息里不要指认具体声音或责任人，用“可能”“不确定是不是”这类留有余地的说法，只说明是晚上休息时段听到声响。结尾提出一个低门槛、可协商的请求，比如请对方晚间留意一下声响，或问对方方便时能否沟通。整体语气友善、不对抗，让对方容易接受，同时把问题说清楚。",
+      "explanation": "同一批真实失败原件中的“由于我不确定噪音的具体来源”仍将未提供的信息写成用户知识状态。审阅器返回issues为空、正文逐字未改，漏掉本批要修复的真实问题；与B1成功构成短夹具与长正文辨别差异。",
+      "evidence": "REPLAY_NEIGHBOR_MESSAGE_REVIEW",
+      "problemQuote": "由于我不确定噪音的具体来源"
+    },
+    {
+      "id": "REPLAY_SHARED_EXPENSE_TOOL",
+      "expected": "SCOPE_EXPANSION",
+      "mechanicalExpectation": true,
+      "protocolValid": true,
+      "sameDraft": false,
+      "verdict": "PARTIAL_CORRECTION_WITH_OVER_REMOVAL",
+      "rawPrompt": "我们聚餐时常有人垫付，最后AA总算不清。用Python帮我做个平摊费用的小工具，输入方式和结果怎么展示你来设计，给我完整代码和用法。",
+      "originalBody": "用 Python 写一个聚餐 AA 平摊费用的小工具，解决多人垫付后总算不清的问题，交付完整可运行的代码和用法说明。输入方式和结果展示由你设计，建议做成命令行交互或简单文本/CSV 录入：逐条记录参与人姓名、每笔垫付的付款人和金额，并支持指定某笔消费只有部分人参与分摊（如有人不喝酒、有人不吃某道菜），这样能覆盖常见的聚餐场景。计算后按参与人汇总垫付总额与应分摊额，输出每人应收或应付的净额，并给出尽量少笔数的转账结算方案（谁转给谁多少钱），使每人净额归零。金额按分处理，明确取整和除不尽的余数分配规则（如余数给垫付人或按顺序分配），保证结果可核对、无尾差争议。用法部分给出运行命令、示例输入及对应的输出示例，让用户能照着直接用。",
+      "explanation": "审阅器删掉了必须支持部分人消费分摊，命中范围扩大问题；但同时把尽量少笔数的结算指导及余数分配示例也判为范围扩大并删除，未独立证明这些服务原有结算目标的内容需要移除，且修订正文出现相邻重复。机械类型命中不能计为完整语义修复。",
+      "evidence": "REPLAY_SHARED_EXPENSE_TOOL_REVIEW",
+      "correctedProblem": "强制支持指定某笔消费只有部分人参与分摊",
+      "extraRemovals": [
+        "尽量少笔数",
+        "如余数给垫付人或按顺序分配"
+      ],
+      "introducedDuplicate": "输入方式和结果展示由你设计，输入方式和结果展示由你设计",
+      "mechanicalMatchIsSemanticPass": false
+    }
+  ],
+  "rootCauseAssessment": {
+    "observed": "短造错均有对应修复，但真实长邻居正文漏报；正常确认和授权两份稿件被无实质变化复写，AA审阅把不同功能依据混为范围问题并过删。N4正常稿缺完整目标，审阅补回目标可能合法，其机械未命中包含夹具金标缺陷，不能算明确模型误报。",
+    "attribution": "HTTP和既有解析检查均成功；N2/N3、真实邻居及AA的问题出现在模型审阅判断/修订内容。N4则存在评测金标缺陷，需与模型误报分开。平台当前保护未阻止已确认的语义问题；本批未运行完整16/17增强链路，不能用十份审阅结果证明其生产路径行为或下游作品质量。",
+    "notEstablished": "尚不能比较准备阶段保留与否的实际作品收益，也不能宣称16或17优于第四版。"
+  },
+  "decision": "16/17均不采用；N4金标缺陷已独立更正归因，不回改原件或机械计数。N2/N3无实质变化复写、真实邻居漏报与AA过删重复仍阻断采用。原定111次计划已完成审阅10次，其余101次生成/Plan/作品调用不开展，保留第四版，不追加质量重试。",
+  "errata": [
+    "erratum-n4-design.json"
+  ]
+}

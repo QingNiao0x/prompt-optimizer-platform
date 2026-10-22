@@ -1,0 +1,158 @@
+{
+  "batch": "natural-completion-preparation-2026-10-22",
+  "authorizationQuote": "授权新增最多1024次实际调用, 以增强生成的提示词质量为主要目标",
+  "taskMaximumNewActualCalls": 1024,
+  "maximumNewActualCalls": 100,
+  "previousClosedActualCalls": 978,
+  "taskPreviouslyActual": 292,
+  "taskPreviouslyAllocatedClosed": 392,
+  "freshUnallocatedBefore": 632,
+  "freshUnallocatedAfterAllocation": 532,
+  "closedBalanceTransferred": 0,
+  "formalLimitsAfterAuthorization": {
+    "total": 1738,
+    "baseline": 80,
+    "candidate": 1658
+  },
+  "baselineCommit": "8195626e",
+  "baselineVersion": "4",
+  "candidateVersion": "15",
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 16384,
+    "reviewMaxTokens": 4096,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 64,
+    "PLAN": 6,
+    "EXECUTION": 30,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 30,
+    "PLAN": 1,
+    "EXECUTION": 30,
+    "REVIEW": 0
+  },
+  "generation": [
+    "TEN_MINUTE_REVIEW",
+    "NEIGHBOR_MESSAGE",
+    "UNIT_PRICE_LEARNING",
+    "SHARED_EXPENSE_TOOL",
+    "HOUSEHOLD_BUFFER",
+    "ACTIVITY_SIGNUP_FORM",
+    "CONTROL_LINEBREAKS",
+    "CONTROL_SORTED_JSON",
+    "TEAM_HANDOVER"
+  ],
+  "plan": [
+    "PLAN_MAINTENANCE"
+  ],
+  "confirmedPlanGeneration": [
+    "PLAN_MAINTENANCE"
+  ],
+  "execution": [
+    "TEN_MINUTE_REVIEW",
+    "NEIGHBOR_MESSAGE",
+    "UNIT_PRICE_LEARNING",
+    "SHARED_EXPENSE_TOOL",
+    "HOUSEHOLD_BUFFER",
+    "ACTIVITY_SIGNUP_FORM",
+    "CONTROL_LINEBREAKS",
+    "CONTROL_SORTED_JSON",
+    "TEAM_HANDOVER",
+    "PLAN_MAINTENANCE"
+  ],
+  "primaryCases": [
+    "TEN_MINUTE_REVIEW",
+    "NEIGHBOR_MESSAGE",
+    "UNIT_PRICE_LEARNING",
+    "SHARED_EXPENSE_TOOL",
+    "HOUSEHOLD_BUFFER",
+    "ACTIVITY_SIGNUP_FORM"
+  ],
+  "seenRegressionCases": [
+    "TEAM_HANDOVER",
+    "PLAN_MAINTENANCE"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "commonPlanAnchorVersion": "4",
+  "criteria": [
+    "只比较独立补全准备＋第四版正文生成，Plan策略与全部来源/最终覆盖保护不变。准备不是正文或新事实来源，每个阶段及协议修复均计数。",
+    "6道新的有补全空间的主任务中，至少3份优化提示词相对第四版有可指认实质增量，至少3份实际作品有明确用户收益，且无新增严重退步。另2道充分输入只作守护，对正常并列不要求增益；2道已见回归不计主胜数。",
+    "本批用独立准备阶段分配额外生成预算，不能将收益归为同成本优化；比较各臂同一原始信息、模型、参数，独立报告实际调用/延迟/Token。",
+    "提示词与作品分别核对原目标、交付、独立条件、实际答复、信息状态、可用内容和必要修改；标题、篇幅、补充记录自报和一次下游发挥不单独算胜。",
+    "不调用模型裁判，REVIEW上限0；同一代理开发、另一代理编题/复核仍是合成开发评测，非外部专家或全局发布验收。",
+    "充分输入严格格式及业务条件任何新增严重退步阻止采用；没有足够收益不切默认，不降低门槛或质量重试。"
+  ],
+  "stopConditions": [
+    "达到总或阶段上限即停止；失败与协议修复均计数，不做质量重试。",
+    "同一假设两候选出现相同严重失败时停止扩采，复盘机制和证据，不堆指令或重试到成功。",
+    "本批只处理用户选定的补全指导，其他四项建议不自动开工；未达采用标准保留第四版默认。"
+  ],
+  "status": "FROZEN",
+  "allowedJobs": [
+    "TEN_MINUTE_REVIEW_V4_GEN",
+    "TEN_MINUTE_REVIEW_V15_GEN",
+    "NEIGHBOR_MESSAGE_V4_GEN",
+    "NEIGHBOR_MESSAGE_V15_GEN",
+    "UNIT_PRICE_LEARNING_V4_GEN",
+    "UNIT_PRICE_LEARNING_V15_GEN",
+    "SHARED_EXPENSE_TOOL_V4_GEN",
+    "SHARED_EXPENSE_TOOL_V15_GEN",
+    "HOUSEHOLD_BUFFER_V4_GEN",
+    "HOUSEHOLD_BUFFER_V15_GEN",
+    "ACTIVITY_SIGNUP_FORM_V4_GEN",
+    "ACTIVITY_SIGNUP_FORM_V15_GEN",
+    "CONTROL_LINEBREAKS_V4_GEN",
+    "CONTROL_LINEBREAKS_V15_GEN",
+    "CONTROL_SORTED_JSON_V4_GEN",
+    "CONTROL_SORTED_JSON_V15_GEN",
+    "TEAM_HANDOVER_V4_GEN",
+    "TEAM_HANDOVER_V15_GEN",
+    "PLAN_MAINTENANCE_V4_PLAN",
+    "PLAN_MAINTENANCE_V4_PLAN_GEN",
+    "PLAN_MAINTENANCE_V15_PLAN_GEN",
+    "TEN_MINUTE_REVIEW_RAW_EXEC",
+    "TEN_MINUTE_REVIEW_V4_EXEC",
+    "TEN_MINUTE_REVIEW_V15_EXEC",
+    "NEIGHBOR_MESSAGE_RAW_EXEC",
+    "NEIGHBOR_MESSAGE_V4_EXEC",
+    "NEIGHBOR_MESSAGE_V15_EXEC",
+    "UNIT_PRICE_LEARNING_RAW_EXEC",
+    "UNIT_PRICE_LEARNING_V4_EXEC",
+    "UNIT_PRICE_LEARNING_V15_EXEC",
+    "SHARED_EXPENSE_TOOL_RAW_EXEC",
+    "SHARED_EXPENSE_TOOL_V4_EXEC",
+    "SHARED_EXPENSE_TOOL_V15_EXEC",
+    "HOUSEHOLD_BUFFER_RAW_EXEC",
+    "HOUSEHOLD_BUFFER_V4_EXEC",
+    "HOUSEHOLD_BUFFER_V15_EXEC",
+    "ACTIVITY_SIGNUP_FORM_RAW_EXEC",
+    "ACTIVITY_SIGNUP_FORM_V4_EXEC",
+    "ACTIVITY_SIGNUP_FORM_V15_EXEC",
+    "CONTROL_LINEBREAKS_RAW_EXEC",
+    "CONTROL_LINEBREAKS_V4_EXEC",
+    "CONTROL_LINEBREAKS_V15_EXEC",
+    "CONTROL_SORTED_JSON_RAW_EXEC",
+    "CONTROL_SORTED_JSON_V4_EXEC",
+    "CONTROL_SORTED_JSON_V15_EXEC",
+    "TEAM_HANDOVER_RAW_EXEC",
+    "TEAM_HANDOVER_V4_EXEC",
+    "TEAM_HANDOVER_V15_EXEC",
+    "PLAN_MAINTENANCE_RAW_EXEC",
+    "PLAN_MAINTENANCE_V4_EXEC",
+    "PLAN_MAINTENANCE_V15_EXEC"
+  ],
+  "controlCases": [
+    "CONTROL_LINEBREAKS",
+    "CONTROL_SORTED_JSON"
+  ]
+}

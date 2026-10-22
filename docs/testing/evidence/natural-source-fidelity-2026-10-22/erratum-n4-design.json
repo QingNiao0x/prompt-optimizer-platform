@@ -1,0 +1,44 @@
+{
+  "id": "N4_DESIGN_GOLD_CORRECTION",
+  "date": "2026-10-22",
+  "status": "INTERPRETATION_CORRECTED_RAW_EVIDENCE_PRESERVED",
+  "independentAudit": "state_fidelity_audit",
+  "fixtureId": "N4_DESIGN",
+  "originalFrozenExpected": "UNCHANGED",
+  "originalBody": "核心提供总额均分；可选扩展为按消费项目分组计算，是否纳入首版按实际需求决定。",
+  "originalAssessment": "将N4改写计为明确的无必要遗漏修复。",
+  "correctedAssessment": "冻结正常稿没有显式交付目标“设计AA分账工具”，只描述核心及可选功能。审阅器补回目标和对象可以是合法的要求遗漏修复，不能把N4计为明确误报。",
+  "minimalityConcern": "补回目标不必同时完整重述用户的功能交互委托；这部分可继续评价编辑是否最小，但不据此否定补回目标本身的合法性。",
+  "frozenGoldDefect": true,
+  "confirmedUnnecessaryRewriteCases": [
+    "N2_CONFIRMED",
+    "N3_REAL_AUTH"
+  ],
+  "unchangedBlockingEvidence": [
+    "REPLAY_NEIGHBOR_MESSAGE仍漏报无依据用户知识状态。",
+    "REPLAY_SHARED_EXPENSE_TOOL纠正分组范围时额外过删并引入相邻重复。"
+  ],
+  "rawCountsUnchanged": {
+    "actualCalls": 10,
+    "httpSuccessResults": 10,
+    "mechanicalExpectationMatches": 6,
+    "mechanicalExpectationTotal": 10,
+    "normalFrozenDraftsByteUnchanged": 1,
+    "normalFrozenDraftCount": 4
+  },
+  "countInterpretation": "原始机械6/10及逐字未改1/4保留为冻结规则观测，不写成校正后的语义通过率，也不将N4机械未命中单独作为模型误报证据。",
+  "adoptionDecisionUnchanged": "16/17不采用，默认仍为4；N2/N3无实质变化复写、真实邻居漏报和AA过删重复足以维持未通过结论。",
+  "nextBatchBoundary": "下一轮须重新冻结包含完整目标和对象的N4正常稿；不回改本批旧稿、不重写既有结果或机械计数，不自动授权或执行下一轮。",
+  "untouchedEvidenceSha256": {
+    "protocol.json": "d596557bbde6705965ddff9ea785c264e2d05be541365e8b0e9f5e66e6a13226",
+    "review-fixtures.json": "002ca553b178cee3483b41bde624d5c14c267600d1cba0c8a382efc31d642d88",
+    "fixture-checks.json": "2fc37b7d3fcae5ae080ed0b3d7e6f52db0696a29339ad7306c7ee3899682e48b",
+    "transports.jsonl": "c488380ead6eb171ab5db5434d8c94082658008d8773396558b1f8eff6765201",
+    "http-results.json": "bfc4cd28af6ec40577351e6d2809270a2c82c66e27006e136c396c1d77832308",
+    "cost-and-fixture-checks.json": "e43fa41a0aa6e3ad0413f42ad4058a44b95a56305fcbd30e15d3ddf420c0bd5b",
+    "closure.json": "58e389240b2a4fad5d3ec4d0fab8341a83541418902f33fb660e60a63774a6b8",
+    "summary.json": "e634b83aab52473369a68a34c70a9bb25c0c5b2fd150ba6b11f0dce761a5c7d7",
+    "final-call-audit.json": "0196299a6afed8552a0cf22de9b001f945426aea6aa6ad6ef2a9898f8d0829d5",
+    "source-manifest.json": "ba220b177acd171df1a67d078f708671e7bdbf5c290e4e73629fa67b8064d3e8"
+  }
+}

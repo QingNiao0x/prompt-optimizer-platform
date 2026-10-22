@@ -58,14 +58,54 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     @Override
     public <T> T enhance(NaturalPromptInput input, Function<NaturalPromptDraft, T> validation) {
         if (!NaturalPromptInstructions.supports(input.strategyVersion())) throw invalid("自然链路版本不受支持");
+        NaturalTaskUnderstanding suggestions = null;
+        if (NaturalPromptPreparationInstructions.VERSION.equals(input.strategyVersion())
+                || NaturalPromptFidelityInstructions.PREPARED_VERSION.equals(input.strategyVersion())) {
+            // 独立预算用于内容准备，不是失败后的质量重试。两阶段均保留原始输入并逐次计量。
+            suggestions = invoke(input, NaturalPromptPreparationInstructions.PREPARE, "prompt.optimize", null, true, (body, metadata) -> {
+                var task = understanding(body, input);
+                task.review().validatePreparation();
+                return task;
+            });
+        }
         String instruction = NaturalPromptInstructions.enhancementInstruction(input.strategyVersion());
-        return invoke(input, instruction, "prompt.optimize", (body, metadata) -> {
+        if (NaturalPromptFidelityInstructions.supports(input.strategyVersion())) {
+            return enhanceWithFidelity(input, instruction, suggestions, validation);
+        }
+        return invoke(input, instruction, "prompt.optimize", suggestions, false, (body, metadata) -> {
             try {
                 return validation.apply(new NaturalPromptDraft(requiredText(body, "optimizedPrompt"),
                         NaturalPromptDraft.Framework.valueOf(requiredText(body, "framework")), metadata,
                         understanding(body, input)));
             } catch (IllegalArgumentException failure) {
                 throw invalid("自然正文或框架标识无效");
+            }
+        });
+    }
+
+    /**
+     * 先按原回调完整预检首稿，再独立核对来源语义；未通过必要保护的首稿不发送给审阅阶段。
+     * 回调契约无副作用，历史仍由应用层最终保存一次；最终再次调用可纳入审阅耗时，不返回预检时的旧计时。
+     */
+    private <T> T enhanceWithFidelity(NaturalPromptInput input, String instruction,
+            NaturalTaskUnderstanding suggestions, Function<NaturalPromptDraft, T> validation) {
+        NaturalPromptDraft draft = invoke(input, instruction, "prompt.optimize", suggestions, false, (body, metadata) -> {
+            try {
+                var candidate = new NaturalPromptDraft(requiredText(body, "optimizedPrompt"),
+                        NaturalPromptDraft.Framework.valueOf(requiredText(body, "framework")), metadata, understanding(body, input));
+                validation.apply(candidate);
+                return candidate;
+            } catch (IllegalArgumentException failure) {
+                throw invalid("自然正文或框架标识无效");
+            }
+        });
+        return invoke(input, NaturalPromptFidelityInstructions.REVIEW, "prompt.optimize", null, draft, false, (body, metadata) -> {
+            try {
+                var review = json.treeToValue(body, NaturalPromptFidelityReview.class);
+                // 无问题时apply返回原对象；有问题只替换已定位片段，仍经过同一组最终业务保护。
+                return validation.apply(review.apply(input, draft));
+            } catch (JsonProcessingException | IllegalArgumentException failure) {
+                throw invalid("自然保真审阅协议无效");
             }
         });
     }
@@ -89,12 +129,34 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
 
     /** 所有失败尝试均计量；只对响应协议/校验失败补一次，不重试鉴权、超时或网络错误。 */
     private <T> T invoke(NaturalPromptInput input, String instruction, String operation, ResponseReader<T> reader) {
+        return invoke(input, instruction, operation, null, false, reader);
+    }
+
+    /**
+     * 补全提案只进入当前正文调用的私有辅助字段，不加入来源目录或替换原始输入。
+     * 使用同一个传输与计量入口，各阶段协议修复仍最多一次；未通过准备校验时不继续生成正文。
+     */
+    private <T> T invoke(NaturalPromptInput input, String instruction, String operation,
+            NaturalTaskUnderstanding suggestions, boolean preparation, ResponseReader<T> reader) {
+        return invoke(input, instruction, operation, suggestions, null, preparation, reader);
+    }
+
+    /** 生成建议与首稿仅为当前阶段的私有辅助材料，不进入来源目录、响应或历史记录。 */
+    private <T> T invoke(NaturalPromptInput input, String instruction, String operation,
+            NaturalTaskUnderstanding suggestions, NaturalPromptDraft fidelityDraft, boolean preparation, ResponseReader<T> reader) {
         var selection = resolve(input.modelId());
         var route = selection.route();
         String modelVersion = catalog == null ? "" : catalog.resolve(selection.publicModelId()).displayName();
         String user;
         try {
             var payload = json.valueToTree(input);
+            if (suggestions != null && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode prepared) {
+                prepared.set("completionSuggestions", json.valueToTree(suggestions));
+            }
+            if (fidelityDraft != null && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode review) {
+                review.set("fidelityDraft", json.valueToTree(Map.of("optimizedPrompt", fidelityDraft.optimizedPrompt(),
+                        "framework", fidelityDraft.framework(), "taskUnderstanding", fidelityDraft.taskUnderstanding())));
+            }
             if (NaturalPromptInstructionsV1.VERSION.equals(input.strategyVersion())
                     && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode legacy) {
                 legacy.remove(List.of("strategyVersion", "taskSources"));
@@ -159,8 +221,9 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 } catch (ProviderException failure) {
                     boolean retry = failure.getFailureType() == ProviderFailureType.INVALID_RESPONSE && attempt < MAX_ATTEMPTS;
                     // 仅追加服务端生成的编号提示，不能把异常原文、上游响应或用户答案拼回system。
+                    // 准备阶段尚无正文，不能要求补锚点；既有正文和Plan分支沿用原提示，不因新阶段改变旧策略。
                     repairHint = retry && failure instanceof NaturalTaskReview.MissingSources missing
-                            ? missing.repairInstruction() : "";
+                            ? (preparation ? missing.preparationRepairInstruction() : missing.repairInstruction()) : "";
                     fail(operation, selection, failure, null, retry, attempt, started);
                     if (!retry) throw failure;
                 } catch (RestClientException failure) {

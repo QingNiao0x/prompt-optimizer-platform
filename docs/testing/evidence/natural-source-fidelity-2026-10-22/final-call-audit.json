@@ -1,0 +1,39 @@
+{
+  "batch": "natural-source-fidelity-2026-10-22",
+  "actualNewCalls": 10,
+  "phaseCounts": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 10
+  },
+  "logicalResults": 10,
+  "protocolRetries": 0,
+  "qualityRetries": 0,
+  "actualTokens": 21028,
+  "formalLimits": {
+    "total": 1738,
+    "baseline": 80,
+    "candidate": 1658
+  },
+  "actualAfter": {
+    "total": 1049,
+    "baseline": 70,
+    "candidate": 979
+  },
+  "taskAuthorization": 1024,
+  "taskActual": 363,
+  "taskAllocated": 652,
+  "closedAllocatedUnused": 289,
+  "freshUnallocatedForSameTask": 372,
+  "closedBalancesTransferred": 0,
+  "currentBatchMaximum": 160,
+  "currentBatchUnusedClosed": 150,
+  "defaultVersionAfter": "4",
+  "candidatesNotAdopted": [
+    "16",
+    "17"
+  ],
+  "noFurtherJobsForThisBatch": true,
+  "countingRule": "全部十次都是审阅夹具调用，虽然经execute评测入口传输，但按冻结作业REVIEW计数；实际作品EXECUTION为0。"
+}

@@ -1,0 +1,45 @@
+{
+  "batch": "natural-completion-preparation-2026-10-22",
+  "actualNewCalls": 61,
+  "phaseCounts": {
+    "GENERATION": 30,
+    "PLAN": 1,
+    "EXECUTION": 30,
+    "REVIEW": 0
+  },
+  "generationStageCounts": {
+    "DIRECT": 10,
+    "PREPARATION": 10,
+    "REWRITE": 10
+  },
+  "logicalResults": 51,
+  "protocolRetries": 0,
+  "qualityRetries": 0,
+  "reviewCalls": 0,
+  "actualTokens": 113127,
+  "historyChecks": 20,
+  "formalLimits": {
+    "total": 1738,
+    "baseline": 80,
+    "candidate": 1658
+  },
+  "actualAfter": {
+    "total": 1039,
+    "baseline": 70,
+    "candidate": 969
+  },
+  "taskAuthorization": 1024,
+  "taskActual": 353,
+  "taskAllocated": 492,
+  "closedAllocatedUnused": 139,
+  "freshUnallocatedForSameTask": 532,
+  "closedBalancesTransferred": 0,
+  "currentBatchMaximum": 100,
+  "currentBatchUnusedClosed": 39,
+  "defaultVersionAfter": "4",
+  "candidatesNotAdopted": [
+    "15"
+  ],
+  "noFurtherJobsForThisBatch": true,
+  "countingRule": "V15的10次准备与10次正文重写均为冻结计划内真实调用；按jobId与generationStage组合计算协议重试，故协议重试为0。"
+}
