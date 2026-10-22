@@ -154,5 +154,11 @@ public record NaturalTaskReview(InputReadiness inputReadiness, List<Coverage> re
             return "\n补全准备的evidence尚未关联这些现有来源编号：" + String.join("、", new java.util.TreeSet<>(sourceIds))
                     + "。请从完整原始题答补齐出处，三个review数组继续为空；不新增事实、确认或Plan问题。";
         }
+
+        /** 分阶段Plan只修复要求的来源关联；编号仍来自服务端差集，不请求尚未生成的正文证明。 */
+        public String phasePlanningRepairInstruction() {
+            return "\nPlan的task.requirements[*].evidence尚未关联这些现有来源编号：" + String.join("、", new java.util.TreeSet<>(sourceIds))
+                    + "。请核对完整原始输入，在requirements的evidence中补齐出处；保留原任务和全部独立条件，不新增事实或确认。";
+        }
     }
 }

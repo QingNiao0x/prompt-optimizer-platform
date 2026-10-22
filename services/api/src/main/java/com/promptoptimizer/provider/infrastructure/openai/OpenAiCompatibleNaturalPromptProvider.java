@@ -3,6 +3,11 @@ package com.promptoptimizer.provider.infrastructure.openai;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.cfg.CoercionAction;
+import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
+import com.fasterxml.jackson.databind.type.LogicalType;
 import com.fasterxml.jackson.core.io.JsonEOFException;
 import com.promptoptimizer.common.logging.ModelCallLogger;
 import com.promptoptimizer.common.logging.ModelTokenUsageReader;
@@ -19,6 +24,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 
@@ -35,6 +41,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     private static final int MAX_ATTEMPTS = 2;
     private final RestClient client;
     private final ObjectMapper json;
+    private final ObjectReader enhancementPhaseReader;
+    private final ObjectReader planningPhaseReader;
     private final OpenAiCompatibleProperties properties;
     private final PlatformModelCatalog catalog;
 
@@ -51,6 +59,23 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             OpenAiCompatibleProperties properties, PlatformModelCatalog catalog) {
         this.client = client;
         this.json = json;
+        // 候选阶段DTO拒绝未知字段和标量类型猜换；局部副本不改变第四版及其它业务的Jackson兼容行为。
+        ObjectMapper phases = json.copy().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+                DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS)
+                .disable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY,
+                        DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS,
+                        DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT,
+                        DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+        for (LogicalType type : List.of(LogicalType.Textual, LogicalType.Boolean, LogicalType.Enum)) {
+            for (CoercionInputShape shape : List.of(CoercionInputShape.Integer, CoercionInputShape.Float,
+                    CoercionInputShape.EmptyString)) {
+                phases.coercionConfigFor(type).setCoercion(shape, CoercionAction.Fail);
+            }
+        }
+        phases.coercionConfigFor(LogicalType.Textual).setCoercion(CoercionInputShape.Boolean, CoercionAction.Fail);
+        phases.coercionConfigFor(LogicalType.Boolean).setCoercion(CoercionInputShape.String, CoercionAction.Fail);
+        this.enhancementPhaseReader = phases.readerFor(NaturalPromptPhasePayloads.Enhancement.class);
+        this.planningPhaseReader = phases.readerFor(NaturalPromptPhasePayloads.Planning.class);
         this.properties = properties;
         this.catalog = catalog;
     }
@@ -69,6 +94,10 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             });
         }
         String instruction = NaturalPromptInstructions.enhancementInstruction(input.strategyVersion());
+        if (NaturalPromptStageInstructions.supports(input.strategyVersion())) {
+            return invoke(input, instruction, "prompt.optimize", (body, metadata) ->
+                    validation.apply(readEnhancementPhase(body, input, metadata)));
+        }
         if (NaturalPromptFidelityInstructions.supports(input.strategyVersion())) {
             return enhanceWithFidelity(input, instruction, suggestions, validation);
         }
@@ -159,6 +188,9 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         if (!NaturalPromptInstructions.supports(input.strategyVersion())) throw invalid("自然链路版本不受支持");
         String instruction = NaturalPromptInstructions.planningInstruction(input.strategyVersion());
         return invoke(input, instruction, "plan.generate", (body, metadata) -> {
+            if (NaturalPromptStageInstructions.supports(input.strategyVersion())) {
+                return validation.apply(readPlanningPhase(body, input, metadata));
+            }
             if (!body.path("questions").isArray()) throw invalid("Plan问题列表无效");
             try {
                 List<PlanQuestion> questions = json.convertValue(body.get("questions"),
@@ -169,6 +201,26 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 throw invalid("Plan问题协议无效");
             }
         });
+    }
+
+    /** 严格读取增强专用字段后生成内部覆盖记录，不靠删除非法Plan字段放行旧失败。 */
+    private NaturalPromptDraft readEnhancementPhase(JsonNode body, NaturalPromptInput input, ProviderMetadata metadata) {
+        try {
+            NaturalPromptPhasePayloads.Enhancement payload = enhancementPhaseReader.readValue(body);
+            return payload.toDraft(input, metadata);
+        } catch (IOException | IllegalArgumentException failure) {
+            throw invalid("自然增强阶段协议无效");
+        }
+    }
+
+    /** Plan的依据与题目就地绑定；注册、实际回答确认与历史保存仍由现有应用服务负责。 */
+    private PlanningProviderResponse readPlanningPhase(JsonNode body, NaturalPromptInput input, ProviderMetadata metadata) {
+        try {
+            NaturalPromptPhasePayloads.Planning payload = planningPhaseReader.readValue(body);
+            return payload.toResponse(input, metadata);
+        } catch (IOException | IllegalArgumentException failure) {
+            throw invalid("自然Plan阶段协议无效");
+        }
     }
 
     /** 所有失败尝试均计量；只对响应协议/校验失败补一次，不重试鉴权、超时或网络错误。 */
@@ -280,9 +332,14 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 } catch (ProviderException failure) {
                     boolean retry = failure.getFailureType() == ProviderFailureType.INVALID_RESPONSE && attempt < MAX_ATTEMPTS;
                     // 仅追加服务端生成的编号提示，不能把异常原文、上游响应或用户答案拼回system。
-                    // 准备阶段尚无正文，不能要求补锚点；既有正文和Plan分支沿用原提示，不因新阶段改变旧策略。
-                    repairHint = retry && failure instanceof NaturalTaskReview.MissingSources missing
-                            ? (preparation ? missing.preparationRepairInstruction() : missing.repairInstruction()) : "";
+                    // 新阶段Plan没有正文锚点字段，只修复requirements出处；旧版正文/Plan及准备分支保留原修复契约。
+                    repairHint = "";
+                    if (retry && failure instanceof NaturalTaskReview.MissingSources missing) {
+                        if (preparation) repairHint = missing.preparationRepairInstruction();
+                        else if ("plan.generate".equals(operation) && NaturalPromptStageInstructions.supports(input.strategyVersion())) {
+                            repairHint = missing.phasePlanningRepairInstruction();
+                        } else repairHint = missing.repairInstruction();
+                    }
                     fail(operation, selection, failure, null, retry, attempt, started);
                     if (!retry) throw failure;
                 } catch (RestClientException failure) {

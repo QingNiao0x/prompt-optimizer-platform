@@ -11,7 +11,8 @@ public final class NaturalPromptInstructions {
 
     /** 已保存的自然版本继续使用各自冻结指导，不静默改换再次增强策略。 */
     public static boolean supports(String version) {
-        return VERSION.equals(version) || NaturalPromptSourceReviewInstructions.VERSION.equals(version)
+        return VERSION.equals(version) || NaturalPromptStageInstructions.supports(version)
+                || NaturalPromptSourceReviewInstructions.VERSION.equals(version)
                 || NaturalPromptFidelityInstructions.supports(version) || NaturalPromptPreparationInstructions.VERSION.equals(version)
                 || NaturalPromptConciseInstructions.supports(version)
                 || NaturalPromptCompletionGuidance.supports(version) || NaturalPromptActionGuidance.supports(version)
@@ -27,7 +28,8 @@ public final class NaturalPromptInstructions {
 
     /** 第四版及补全候选共用覆盖保护；增加示范不能降低来源、题答和正文锚点校验。 */
     public static boolean requiresTaskReview(String version) {
-        return VERSION.equals(version) || NaturalPromptSourceReviewInstructions.VERSION.equals(version)
+        return VERSION.equals(version) || NaturalPromptStageInstructions.supports(version)
+                || NaturalPromptSourceReviewInstructions.VERSION.equals(version)
                 || NaturalPromptFidelityInstructions.supports(version) || NaturalPromptPreparationInstructions.VERSION.equals(version)
                 || NaturalPromptConciseInstructions.supports(version)
                 || NaturalPromptCompletionGuidance.supports(version) || NaturalPromptActionGuidance.supports(version)
@@ -55,6 +57,8 @@ public final class NaturalPromptInstructions {
             case NaturalPromptFidelityInstructions.SEPARATED_VERSION -> ENHANCE;
             case NaturalPromptFidelityInstructions.GROUNDED_VERSION -> ENHANCE;
             case NaturalPromptSourceReviewInstructions.VERSION -> NaturalPromptSourceReviewInstructions.ENHANCE;
+            case NaturalPromptStageInstructions.VERSION, NaturalPromptStageInstructions.OPTIONAL_FRAMEWORK_VERSION,
+                    NaturalPromptStageInstructions.NO_FRAMEWORK_VERSION -> NaturalPromptStageInstructions.enhancementInstruction(version);
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
     }
@@ -78,6 +82,9 @@ public final class NaturalPromptInstructions {
                     NaturalPromptFidelityInstructions.SEPARATED_VERSION, NaturalPromptFidelityInstructions.GROUNDED_VERSION -> PLAN;
             // 单次生成内自检不新增Plan提问阶段，完整题答继续走原有保护。
             case NaturalPromptSourceReviewInstructions.VERSION -> PLAN;
+            // 阶段协议候选不增加提问阶段；21/22/23共用同一提问策略和完整实际题答保护。
+            case NaturalPromptStageInstructions.VERSION, NaturalPromptStageInstructions.OPTIONAL_FRAMEWORK_VERSION,
+                    NaturalPromptStageInstructions.NO_FRAMEWORK_VERSION -> NaturalPromptStageInstructions.planningInstruction(version);
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
     }
