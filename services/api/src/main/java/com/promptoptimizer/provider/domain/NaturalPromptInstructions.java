@@ -12,6 +12,8 @@ public final class NaturalPromptInstructions {
     /** 已保存的自然版本继续使用各自冻结指导，不静默改换再次增强策略。 */
     public static boolean supports(String version) {
         return VERSION.equals(version) || NaturalPromptStageInstructions.supports(version)
+                || NaturalPromptSourcePreservingInstructions.VERSION.equals(version)
+                || NaturalPromptInformationStateInstructions.VERSION.equals(version)
                 || NaturalPromptSourceReviewInstructions.VERSION.equals(version)
                 || NaturalPromptFidelityInstructions.supports(version) || NaturalPromptPreparationInstructions.VERSION.equals(version)
                 || NaturalPromptConciseInstructions.supports(version)
@@ -29,6 +31,8 @@ public final class NaturalPromptInstructions {
     /** 第四版及补全候选共用覆盖保护；增加示范不能降低来源、题答和正文锚点校验。 */
     public static boolean requiresTaskReview(String version) {
         return VERSION.equals(version) || NaturalPromptStageInstructions.supports(version)
+                || NaturalPromptSourcePreservingInstructions.VERSION.equals(version)
+                || NaturalPromptInformationStateInstructions.VERSION.equals(version)
                 || NaturalPromptSourceReviewInstructions.VERSION.equals(version)
                 || NaturalPromptFidelityInstructions.supports(version) || NaturalPromptPreparationInstructions.VERSION.equals(version)
                 || NaturalPromptConciseInstructions.supports(version)
@@ -57,6 +61,8 @@ public final class NaturalPromptInstructions {
             case NaturalPromptFidelityInstructions.SEPARATED_VERSION -> ENHANCE;
             case NaturalPromptFidelityInstructions.GROUNDED_VERSION -> ENHANCE;
             case NaturalPromptSourceReviewInstructions.VERSION -> NaturalPromptSourceReviewInstructions.ENHANCE;
+            case NaturalPromptInformationStateInstructions.VERSION -> NaturalPromptInformationStateInstructions.ENHANCE;
+            case NaturalPromptSourcePreservingInstructions.VERSION -> NaturalPromptSourcePreservingInstructions.ENHANCE;
             case NaturalPromptStageInstructions.VERSION, NaturalPromptStageInstructions.OPTIONAL_FRAMEWORK_VERSION,
                     NaturalPromptStageInstructions.NO_FRAMEWORK_VERSION, NaturalPromptStageInstructions.DIAGNOSTIC_COMPATIBILITY_VERSION
                     -> NaturalPromptStageInstructions.enhancementInstruction(version);
@@ -83,6 +89,10 @@ public final class NaturalPromptInstructions {
                     NaturalPromptFidelityInstructions.SEPARATED_VERSION, NaturalPromptFidelityInstructions.GROUNDED_VERSION -> PLAN;
             // 单次生成内自检不新增Plan提问阶段，完整题答继续走原有保护。
             case NaturalPromptSourceReviewInstructions.VERSION -> PLAN;
+            // 25仅改第四版增强中的信息状态与上下文取舍，Plan提问和实际题答协议继续逐字沿用第四版。
+            case NaturalPromptInformationStateInstructions.VERSION -> PLAN;
+            // 26仅调整增强中任务指令与材料原句的处理，沿用第四版Plan，不新增调用阶段。
+            case NaturalPromptSourcePreservingInstructions.VERSION -> PLAN;
             // 阶段协议候选不增加提问阶段；21—24共用同一提问策略和完整实际题答保护。
             case NaturalPromptStageInstructions.VERSION, NaturalPromptStageInstructions.OPTIONAL_FRAMEWORK_VERSION,
                     NaturalPromptStageInstructions.NO_FRAMEWORK_VERSION, NaturalPromptStageInstructions.DIAGNOSTIC_COMPATIBILITY_VERSION

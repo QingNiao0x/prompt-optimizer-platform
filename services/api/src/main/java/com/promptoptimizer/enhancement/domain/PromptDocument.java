@@ -29,7 +29,11 @@ public record PromptDocument(
         PromptFormat promptFormat,
         ConstraintBundle constraintGroups,
         String generationPipeline,
-        /** 服务端保存的链路版本；21—23为阶段协议/框架消融，24沿用21指导兼容无权威诊断，均非默认且不表示质量通过。 */
+        /**
+         * 服务端链路版本；21—23为阶段协议/框架消融，24沿用21指导兼容无权威诊断；
+         * 25调整信息状态与上下文取舍，26分开处理任务指令与完整材料原句；均为第四版单次增强候选，
+         * 沿用第四版协议及Plan。以上候选均非默认且不表示质量通过。
+         */
         String chainVersion,
         /** 可选组织诊断标记；自然22/23未给出有效标记时的APE是兼容默认值，不表示模型匹配命中。 */
         String framework,
