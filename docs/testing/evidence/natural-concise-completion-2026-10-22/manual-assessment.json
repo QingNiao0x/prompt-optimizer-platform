@@ -1,0 +1,44 @@
+{
+  "assessor": "开发代理逐项核对，另一个开发代理独立复核；非专业用户或独立专家认证",
+  "adopt13": false,
+  "primaryPromptWins": 0,
+  "primaryWorkWins": 0,
+  "minorEditingBenefitCases": [
+    "VENUE_DECISION"
+  ],
+  "cases": [
+    {
+      "id": "RENTAL_VIEWING",
+      "result": "两版可用，4已经更明确要求检查动作/问题信号/追问，13未增加实质内容。"
+    },
+    {
+      "id": "WEEKLY_COOKING",
+      "result": "13不及4具体，作品增加第3天用料可第4天采购、鸡腿冷藏/冷冻冲突等；4也有番茄使用日矛盾。错误首次下游，不追加菜谱专用指令。"
+    },
+    {
+      "id": "REFUND_REPLY",
+      "result": "提示词近似，13作品10天前变超过10天，首次下游；未改变退款判断但需修改。"
+    },
+    {
+      "id": "VENUE_DECISION",
+      "result": "三臂保留四项条件并暂不定场；13少重复有轻度编辑收益，未新增实质内容。"
+    },
+    {
+      "id": "SUFFICIENT_TSV",
+      "result": "三臂逐字符正确，并列。"
+    },
+    {
+      "id": "SUFFICIENT_REMINDER",
+      "result": "RAW46超45，4=41/13=43均保留四项条件，并列。"
+    },
+    {
+      "id": "REMOTE_GUIDE",
+      "result": "已见回归，两版均有具体做法，未证实13额外收益。"
+    },
+    {
+      "id": "PLAN_MAINTENANCE",
+      "result": "确认均保留；13作品新增落款编辑提示，4作品直接可发送，不计提问质量变化。"
+    }
+  ],
+  "conclusion": "整体压缩加删除检验未优于4，局部修订将保留4有效内容，只替换补全段；不改Plan/校验/示例。"
+}

@@ -1,0 +1,140 @@
+{
+  "batch": "natural-concise-completion-2026-10-22",
+  "authorizationQuote": "授权新增最多1024次实际调用, 以增强生成的提示词质量为主要目标",
+  "taskMaximumNewActualCalls": 1024,
+  "maximumNewActualCalls": 60,
+  "previousClosedActualCalls": 894,
+  "taskPreviouslyActual": 208,
+  "taskPreviouslyAllocatedClosed": 272,
+  "freshUnallocatedBefore": 752,
+  "freshUnallocatedAfterAllocation": 692,
+  "closedBalanceTransferred": 0,
+  "formalLimitsAfterAuthorization": {
+    "total": 1738,
+    "baseline": 80,
+    "candidate": 1658
+  },
+  "baselineCommit": "c6a62e7c",
+  "baselineVersion": "4",
+  "candidateVersion": "13",
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 16384,
+    "reviewMaxTokens": 4096,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 32,
+    "PLAN": 4,
+    "EXECUTION": 24,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 16,
+    "PLAN": 1,
+    "EXECUTION": 24,
+    "REVIEW": 0
+  },
+  "generation": [
+    "RENTAL_VIEWING",
+    "WEEKLY_COOKING",
+    "REFUND_REPLY",
+    "VENUE_DECISION",
+    "SUFFICIENT_TSV",
+    "SUFFICIENT_REMINDER",
+    "REMOTE_GUIDE"
+  ],
+  "plan": [
+    "PLAN_MAINTENANCE"
+  ],
+  "confirmedPlanGeneration": [
+    "PLAN_MAINTENANCE"
+  ],
+  "execution": [
+    "RENTAL_VIEWING",
+    "WEEKLY_COOKING",
+    "REFUND_REPLY",
+    "VENUE_DECISION",
+    "SUFFICIENT_TSV",
+    "SUFFICIENT_REMINDER",
+    "REMOTE_GUIDE",
+    "PLAN_MAINTENANCE"
+  ],
+  "primaryCases": [
+    "RENTAL_VIEWING",
+    "WEEKLY_COOKING",
+    "REFUND_REPLY",
+    "VENUE_DECISION",
+    "SUFFICIENT_TSV",
+    "SUFFICIENT_REMINDER"
+  ],
+  "seenRegressionCases": [
+    "REMOTE_GUIDE",
+    "PLAN_MAINTENANCE"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "commonPlanAnchorVersion": "4",
+  "criteria": [
+    "以第四版为基线只改变自然正文补全指导；COMMON、TASK_RECORD、Plan、来源覆盖与安全机制不变，无内部示例或场景分支。",
+    "6道新题中至少3份优化提示词具有可指出的实质增量，至少3份实际作品相对第四版有直接用户收益，无新增严重退步；充分需求可并列，回归不计新题胜数。",
+    "优化提示词与实际作品分别核对原意、要求、格式篇幅、补充作用、事实状态与必要编辑；不能以标题、篇幅、自报覆盖或单一评分判优。",
+    "原始、第四版、候选执行获得相同资料和同一真实绑定答复，模型参数与输出容量相同；合成题不是专业用户或全局发布验收。",
+    "严格格式按实际字符验证；明确字数按可见非空白正文字符保守核对，保留原始字符计数。",
+    "不常态增加裁判调用，本批REVIEW额度为0；先人工与确定性核对，有损失时区分增强、平台、下游与工具，不能逐题追加规则。"
+  ],
+  "stopConditions": [
+    "达到总或阶段上限即停止；失败与协议修复均计数，不做质量重试。",
+    "同一假设两候选出现相同严重失败时停止扩采，复盘机制和证据，不堆指令或重试到成功。",
+    "本批只处理用户选定的补全指导，其他四项建议不自动开工；未达采用标准保留第四版默认。"
+  ],
+  "status": "FROZEN",
+  "allowedJobs": [
+    "RENTAL_VIEWING_V4_GEN",
+    "RENTAL_VIEWING_V13_GEN",
+    "WEEKLY_COOKING_V4_GEN",
+    "WEEKLY_COOKING_V13_GEN",
+    "REFUND_REPLY_V4_GEN",
+    "REFUND_REPLY_V13_GEN",
+    "VENUE_DECISION_V4_GEN",
+    "VENUE_DECISION_V13_GEN",
+    "SUFFICIENT_TSV_V4_GEN",
+    "SUFFICIENT_TSV_V13_GEN",
+    "SUFFICIENT_REMINDER_V4_GEN",
+    "SUFFICIENT_REMINDER_V13_GEN",
+    "REMOTE_GUIDE_V4_GEN",
+    "REMOTE_GUIDE_V13_GEN",
+    "PLAN_MAINTENANCE_V4_PLAN",
+    "PLAN_MAINTENANCE_V4_PLAN_GEN",
+    "PLAN_MAINTENANCE_V13_PLAN_GEN",
+    "RENTAL_VIEWING_RAW_EXEC",
+    "RENTAL_VIEWING_V4_EXEC",
+    "RENTAL_VIEWING_V13_EXEC",
+    "WEEKLY_COOKING_RAW_EXEC",
+    "WEEKLY_COOKING_V4_EXEC",
+    "WEEKLY_COOKING_V13_EXEC",
+    "REFUND_REPLY_RAW_EXEC",
+    "REFUND_REPLY_V4_EXEC",
+    "REFUND_REPLY_V13_EXEC",
+    "VENUE_DECISION_RAW_EXEC",
+    "VENUE_DECISION_V4_EXEC",
+    "VENUE_DECISION_V13_EXEC",
+    "SUFFICIENT_TSV_RAW_EXEC",
+    "SUFFICIENT_TSV_V4_EXEC",
+    "SUFFICIENT_TSV_V13_EXEC",
+    "SUFFICIENT_REMINDER_RAW_EXEC",
+    "SUFFICIENT_REMINDER_V4_EXEC",
+    "SUFFICIENT_REMINDER_V13_EXEC",
+    "REMOTE_GUIDE_RAW_EXEC",
+    "REMOTE_GUIDE_V4_EXEC",
+    "REMOTE_GUIDE_V13_EXEC",
+    "PLAN_MAINTENANCE_RAW_EXEC",
+    "PLAN_MAINTENANCE_V4_EXEC",
+    "PLAN_MAINTENANCE_V13_EXEC"
+  ]
+}

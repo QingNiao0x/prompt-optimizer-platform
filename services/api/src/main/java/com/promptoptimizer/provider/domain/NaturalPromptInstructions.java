@@ -11,7 +11,8 @@ public final class NaturalPromptInstructions {
 
     /** 已保存的自然版本继续使用各自冻结指导，不静默改换再次增强策略。 */
     public static boolean supports(String version) {
-        return VERSION.equals(version) || NaturalPromptCompletionGuidance.supports(version) || NaturalPromptActionGuidance.supports(version)
+        return VERSION.equals(version) || NaturalPromptConciseInstructions.supports(version)
+                || NaturalPromptCompletionGuidance.supports(version) || NaturalPromptActionGuidance.supports(version)
                 || NaturalPromptPreparedInstructions.supports(version)
                 || NaturalPromptInstructionsV3.VERSION.equals(version) || NaturalPromptInstructionsV2.VERSION.equals(version)
                 || NaturalPromptInstructionsV1.VERSION.equals(version);
@@ -24,7 +25,8 @@ public final class NaturalPromptInstructions {
 
     /** 第四版及补全候选共用覆盖保护；增加示范不能降低来源、题答和正文锚点校验。 */
     public static boolean requiresTaskReview(String version) {
-        return VERSION.equals(version) || NaturalPromptCompletionGuidance.supports(version) || NaturalPromptActionGuidance.supports(version)
+        return VERSION.equals(version) || NaturalPromptConciseInstructions.supports(version)
+                || NaturalPromptCompletionGuidance.supports(version) || NaturalPromptActionGuidance.supports(version)
                 || NaturalPromptPreparedInstructions.supports(version);
     }
 
@@ -41,6 +43,8 @@ public final class NaturalPromptInstructions {
             case NaturalPromptActionGuidance.EXEMPLAR_VERSION -> NaturalPromptActionGuidance.ENHANCE_WITH_DEMONSTRATIONS;
             case NaturalPromptPreparedInstructions.GUIDANCE_VERSION -> NaturalPromptPreparedInstructions.ENHANCE;
             case NaturalPromptPreparedInstructions.EXEMPLAR_VERSION -> NaturalPromptPreparedInstructions.enhancementWithDemonstrations();
+            case NaturalPromptConciseInstructions.VERSION -> NaturalPromptConciseInstructions.ENHANCE;
+            case NaturalPromptConciseInstructions.FOCUSED_VERSION -> NaturalPromptConciseInstructions.FOCUSED_ENHANCE;
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
     }
@@ -56,6 +60,8 @@ public final class NaturalPromptInstructions {
             case NaturalPromptCompletionGuidance.GUIDANCE_VERSION, NaturalPromptCompletionGuidance.EXEMPLAR_VERSION -> PLAN;
             case NaturalPromptActionGuidance.GUIDANCE_VERSION, NaturalPromptActionGuidance.EXEMPLAR_VERSION -> PLAN;
             case NaturalPromptPreparedInstructions.GUIDANCE_VERSION, NaturalPromptPreparedInstructions.EXEMPLAR_VERSION -> PLAN;
+            // 本轮只收敛补全指导；提问策略与已确认题答的保护继续采用第四版。
+            case NaturalPromptConciseInstructions.VERSION, NaturalPromptConciseInstructions.FOCUSED_VERSION -> PLAN;
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
     }

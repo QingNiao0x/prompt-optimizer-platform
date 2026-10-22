@@ -1,0 +1,20 @@
+{
+  "paidModelCallsDuringToolFailures": 0,
+  "failures": [
+    {
+      "type": "PowerShell5.1Encoding",
+      "effect": "脚本解析失败，无进程或模型调用",
+      "fix": "脚本保存UTF8 BOM"
+    },
+    {
+      "type": "PowerShell5.1DotNetApi",
+      "effect": "冻结和启动前GetRelativePath不可用，无模型调用",
+      "fix": "明确PowerShell7要求，保留失败准备目录后用7启动"
+    },
+    {
+      "type": "CaptchaLogin400",
+      "effect": "固定账号第一次登录校验未过，无模型调用",
+      "fix": "重新获取验证码并登录同一账号；未创建替代身份"
+    }
+  ]
+}

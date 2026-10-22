@@ -67,7 +67,7 @@
 
 上下文普通分析、模型目录、认证与 Plan 事件仍沿用已有 V1 接口；不因为版本号不同复制这些业务模块。
 
-PromptDocument的resultKind区分TEXT和SECTIONS，generationPipeline区分NATURAL和LEGACY，chainVersion记录生成契约。正式新请求仍使用NATURAL/4，兼容NATURAL/1—3及LEGACY/1、2；LEGACY/2表示五模块投影，旧记录缺省LEGACY/1。2026-10-22的[内部示范对照](../testing/自然增强实质补全与内部示范对照验收-2026-10-22.md)还保留NATURAL/7—12，仅供已保存的合成评测历史按原策略重放，未采用为默认，浏览器没有版本或示范开关。自然历史再次增强显式使用保存版本，候选兼容不表示质量通过。旧COMPACT不能被排版字段误判为新自然链。未知版本再次增强返回409 / RESULT_VERSION_UNSUPPORTED。
+PromptDocument的resultKind区分TEXT和SECTIONS，generationPipeline区分NATURAL和LEGACY，chainVersion记录生成契约。正式新请求仍使用NATURAL/4，兼容NATURAL/1—3及LEGACY/1、2；LEGACY/2表示五模块投影，旧记录缺省LEGACY/1。2026-10-22的[内部示范对照](../testing/自然增强实质补全与内部示范对照验收-2026-10-22.md)还保留NATURAL/7—12，仅供已保存的合成评测历史按原策略重放，未采用为默认，浏览器没有版本或示范开关。后续[第四版补全指导收敛](../testing/自然增强第四版补全指导收敛与定向复验-2026-10-22.md)保留NATURAL/13、14：前者整体收敛、后者仅局部替换第四版补全段，均未采用为默认；Plan及覆盖协议不变，无内部示例。自然历史再次增强显式使用保存版本，候选兼容不表示质量通过。旧COMPACT不能被排版字段误判为新自然链。未知版本再次增强返回409 / RESULT_VERSION_UNSUPPORTED。
 
 TEXT 的 wire 响应不包含 sections；前端为兼容集合操作将其归一为空集合，不构造假段落。旧 V1 历史列表只查询 SECTIONS，直接读取新正文会返回稳定版本冲突；V2 列表和详情同时支持两类结果。上线时前后端需同批更新，不能让 V2 前端连接未升级的后端。
 
@@ -103,3 +103,5 @@ MockNaturalPromptProvider 只用于离线连通性验证，明确返回 Mock 提
 
 旧链的事实、确认、凭据、重复和专业案例失败保留为风险证据。独立协议、五模块格式、构建或测试通过均不能替代真实效果、专业验收与 G1—G8 门禁。
 
+
+[V24前向注释迁移](../../services/api/src/main/resources/db/migration/V24__document_concise_completion_candidate.sql)仅补充13/14受控历史版本语义，未改结构、旧迁移或历史数据，本条未应用Flyway。

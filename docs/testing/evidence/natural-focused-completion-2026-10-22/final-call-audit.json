@@ -1,0 +1,94 @@
+{
+  "stages": [
+    {
+      "batch": "natural-concise-completion-2026-10-22",
+      "actualCalls": 41,
+      "phaseCounts": {
+        "GENERATION": 16,
+        "PLAN": 1,
+        "EXECUTION": 24
+      },
+      "protocolRetries": 0,
+      "qualityRetries": 0,
+      "tokens": 61680,
+      "generationCost": {
+        "4": {
+          "attempts": 8,
+          "tokens": 19109,
+          "inputTokens": 12478,
+          "systemCharacters": [
+            2581
+          ]
+        },
+        "13": {
+          "attempts": 8,
+          "tokens": 18395,
+          "inputTokens": 12422,
+          "systemCharacters": [
+            2578
+          ]
+        }
+      }
+    },
+    {
+      "batch": "natural-focused-completion-2026-10-22",
+      "actualCalls": 43,
+      "phaseCounts": {
+        "GENERATION": 18,
+        "PLAN": 1,
+        "EXECUTION": 24
+      },
+      "protocolRetries": 2,
+      "qualityRetries": 0,
+      "tokens": 64665,
+      "generationCost": {
+        "4": {
+          "attempts": 9,
+          "tokens": 21820,
+          "inputTokens": 14317,
+          "systemCharacters": [
+            2581,
+            2629
+          ]
+        },
+        "14": {
+          "attempts": 9,
+          "tokens": 22578,
+          "inputTokens": 15460,
+          "systemCharacters": [
+            2790,
+            2838
+          ]
+        }
+      }
+    }
+  ],
+  "actualNewCalls": 84,
+  "actualTokens": 126345,
+  "historyChecks": 32,
+  "protocolRetries": 2,
+  "qualityRetries": 0,
+  "reviewCalls": 0,
+  "formalLimits": {
+    "total": 1738,
+    "baseline": 80,
+    "candidate": 1658
+  },
+  "actualAfter": {
+    "total": 978,
+    "baseline": 70,
+    "candidate": 908
+  },
+  "taskAuthorization": 1024,
+  "taskActual": 292,
+  "taskAllocated": 392,
+  "closedAllocatedUnused": 100,
+  "freshUnallocatedForSameTask": 632,
+  "closedBalancesTransferred": 0,
+  "defaultVersionAfter": "4",
+  "candidatesNotAdopted": [
+    "13",
+    "14"
+  ],
+  "noFurtherJobs": true
+}

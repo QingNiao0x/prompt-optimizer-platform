@@ -315,7 +315,7 @@ class OpenAiCompatibleNaturalPromptProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"7", "8", "9", "10", "11", "12"})
+    @ValueSource(strings = {"7", "8", "9", "10", "11", "12", "13", "14"})
     void completionCandidatesKeepDemonstrationsOutsideCurrentTaskAndUseTheExistingCoverage(String version) throws Exception {
         server.expect(requestTo(ENDPOINT)).andExpect(request -> {
             var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
@@ -339,7 +339,7 @@ class OpenAiCompatibleNaturalPromptProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"7", "8", "9", "10", "11", "12"})
+    @ValueSource(strings = {"7", "8", "9", "10", "11", "12", "13", "14"})
     void completionCandidatesCannotTreatADemonstrationAsCurrentEvidenceOrDropCoverage(String version) throws Exception {
         var tree = (com.fasterxml.jackson.databind.node.ObjectNode) json.readTree(reviewResponse("请写邮件。", false));
         ((com.fasterxml.jackson.databind.node.ObjectNode) tree.path("taskUnderstanding").path("requirements").get(0)
@@ -354,7 +354,7 @@ class OpenAiCompatibleNaturalPromptProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"7", "8", "9", "10", "11", "12"})
+    @ValueSource(strings = {"7", "8", "9", "10", "11", "12", "13", "14"})
     void completionCandidatesPreserveThePlanProtocolAndDoNotAddRewriteDemonstrationsToQuestions(String version) throws Exception {
         server.expect(requestTo(ENDPOINT)).andExpect(request -> {
             var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());

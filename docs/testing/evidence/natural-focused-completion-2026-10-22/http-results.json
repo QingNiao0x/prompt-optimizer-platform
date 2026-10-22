@@ -1,0 +1,2283 @@
+[
+  {
+    "id": "LIBRARY_RENEWAL_RAW_EXEC",
+    "caseId": "LIBRARY_RENEWAL",
+    "version": "RAW",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "根据资料给这位读者写一条借阅提醒，180字以内，让他知道三件借阅物接下来分别怎么处理。别把可以申请续借写成已经续借成功。\n\n用户同时提供的材料：\n[{\"path\":\"notes/library-loans.md\",\"language\":\"markdown\",\"content\":\"合成图书室规则：普通图书在到期前可以申请续借一次，续借期为14天；已有他人预约的图书不能续借。活动资料包不能续借。读者借阅物：图书《微光》2026年11月5日到期，未续借、无人预约；图书《地图笔记》2026年11月8日到期，已有他人预约；活动资料包《纸艺》2026年11月6日到期。当前没有任何续借申请或办理结果，没有已确认的逾期或费用信息。\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "LIBRARY_RENEWAL_RAW_EXEC",
+      "data": {
+        "content": "您好，提醒您三件借阅物的处理安排：1.《微光》11月5日到期，无人预约，到期前可申请续借一次（14天），目前尚未申请；2.《地图笔记》11月8日到期，已有他人预约，不能续借，请按期归还；3.活动资料包《纸艺》11月6日到期，不能续借，请按时归还。",
+        "usage": {
+          "prompt_tokens": 211,
+          "completion_tokens": 87,
+          "total_tokens": 298,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 211
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "LIBRARY_RENEWAL_V14_EXEC",
+    "caseId": "LIBRARY_RENEWAL",
+    "version": "V14",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "请根据 notes/library-loans.md 中的借阅信息，给这位读者写一条借阅提醒，180字以内，清楚说明三件借阅物接下来分别怎么处理。\n\n提醒中要逐项写明：《微光》2026年11月5日到期，未续借且无人预约，可在到期前申请续借一次，续借期14天；《地图笔记》2026年11月8日到期，已有他人预约，不能续借，请按期归还；活动资料包《纸艺》2026年11月6日到期，不能续借，请按期归还。\n\n注意：目前没有任何续借申请或办理结果，因此只能写《微光》可以申请续借，不能写成已经续借成功；资料中没有已确认的逾期或费用信息，不要编造。语气简洁、直接，便于读者快速照办。\n\n用户同时提供的材料：\n[{\"path\":\"notes/library-loans.md\",\"language\":\"markdown\",\"content\":\"合成图书室规则：普通图书在到期前可以申请续借一次，续借期为14天；已有他人预约的图书不能续借。活动资料包不能续借。读者借阅物：图书《微光》2026年11月5日到期，未续借、无人预约；图书《地图笔记》2026年11月8日到期，已有他人预约；活动资料包《纸艺》2026年11月6日到期。当前没有任何续借申请或办理结果，没有已确认的逾期或费用信息。\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "LIBRARY_RENEWAL_V14_EXEC",
+      "data": {
+        "content": "【借阅提醒】您有三件借阅物即将到期，请分别处理：\n1.《微光》2026年11月5日到期，未续借且无人预约，可在到期前申请续借一次，续借期14天；\n2.《地图笔记》2026年11月8日到期，已有他人预约，不能续借，请按期归还；\n3.活动资料包《纸艺》2026年11月6日到期，不能续借，请按期归还。\n请及时办理。",
+        "usage": {
+          "prompt_tokens": 354,
+          "completion_tokens": 109,
+          "total_tokens": 463,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 354
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "LIBRARY_RENEWAL_V14_GEN",
+    "caseId": "LIBRARY_RENEWAL",
+    "version": "14",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "根据资料给这位读者写一条借阅提醒，180字以内，让他知道三件借阅物接下来分别怎么处理。别把可以申请续借写成已经续借成功。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/library-loans.md",
+            "language": "markdown",
+            "content": "合成图书室规则：普通图书在到期前可以申请续借一次，续借期为14天；已有他人预约的图书不能续借。活动资料包不能续借。读者借阅物：图书《微光》2026年11月5日到期，未续借、无人预约；图书《地图笔记》2026年11月8日到期，已有他人预约；活动资料包《纸艺》2026年11月6日到期。当前没有任何续借申请或办理结果，没有已确认的逾期或费用信息。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "LIBRARY_RENEWAL_V14_GEN",
+      "data": {
+        "optimizedPrompt": "请根据 notes/library-loans.md 中的借阅信息，给这位读者写一条借阅提醒，180字以内，清楚说明三件借阅物接下来分别怎么处理。\n\n提醒中要逐项写明：《微光》2026年11月5日到期，未续借且无人预约，可在到期前申请续借一次，续借期14天；《地图笔记》2026年11月8日到期，已有他人预约，不能续借，请按期归还；活动资料包《纸艺》2026年11月6日到期，不能续借，请按期归还。\n\n注意：目前没有任何续借申请或办理结果，因此只能写《微光》可以申请续借，不能写成已经续借成功；资料中没有已确认的逾期或费用信息，不要编造。语气简洁、直接，便于读者快速照办。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/library-loans.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/library-loans.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成图书室规则：普通图书在到期前可以申请续借一次，续借期为14天；已有他人预约的图书不能续借。活动资料包不能续借。读者借阅物：图书《微光》2026年11月5日到期，未续借、无人预约；图书《地图笔记》2026年11月8日到期，已有他人预约；活动资料包《纸艺》2026年11月6日到期。当前没有任何续借申请或办理结果，没有已确认的逾期或费用信息。",
+              "summary": "Markdown 文档摘要：合成图书室规则：普通图书在到期前可以申请续借一次，续借期为14天；已有他人预约的图书不能续借。；活动资料包不能续借。；读者借阅物：图书《微光》2026年11月5日到期，未续借、无人预约；图书《地图笔记》2026年11月8日到期，已有他人预约；活动资料包《纸艺》2026年11月6日到期。；当前没有任何续借申请或办理结果，没有已确认的逾期或费用信息。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4306,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "14",
+        "framework": "APE",
+        "recordId": "74dc9afd-5954-4775-8688-264e956d99f4",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "LIBRARY_RENEWAL_V4_EXEC",
+    "caseId": "LIBRARY_RENEWAL",
+    "version": "V4",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "请根据 notes/library-loans.md 中的规则和借阅信息，给这位读者写一条借阅提醒，全文180字以内，清楚说明三件借阅物接下来分别怎么处理。\n\n提醒中要分别交代：图书《微光》2026年11月5日到期，未续借、无人预约，属于到期前可以申请续借一次的情形，续借期为14天，请写成可以申请续借，不要写成已经续借成功；图书《地图笔记》2026年11月8日到期，已有他人预约，不能续借，请提醒按期归还；活动资料包《纸艺》2026年11月6日到期，不能续借，请提醒按期归还。\n\n当前没有任何续借申请或办理结果，也没有已确认的逾期或费用信息，提醒中不要声称已办理续借、已产生逾期或费用。语气自然、简洁，直接面向读者，篇幅控制在180字以内。\n\n用户同时提供的材料：\n[{\"path\":\"notes/library-loans.md\",\"language\":\"markdown\",\"content\":\"合成图书室规则：普通图书在到期前可以申请续借一次，续借期为14天；已有他人预约的图书不能续借。活动资料包不能续借。读者借阅物：图书《微光》2026年11月5日到期，未续借、无人预约；图书《地图笔记》2026年11月8日到期，已有他人预约；活动资料包《纸艺》2026年11月6日到期。当前没有任何续借申请或办理结果，没有已确认的逾期或费用信息。\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "LIBRARY_RENEWAL_V4_EXEC",
+      "data": {
+        "content": "您好，提醒您关注以下三件借阅物：《微光》将于2026年11月5日到期，目前未续借且无人预约，您可在到期前申请续借一次，续借期为14天；《地图笔记》将于2026年11月8日到期，因已有他人预约，不能续借，请按期归还；活动资料包《纸艺》将于2026年11月6日到期，不能续借，请按期归还。请合理安排归还或续借时间。",
+        "usage": {
+          "prompt_tokens": 370,
+          "completion_tokens": 108,
+          "total_tokens": 478,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 370
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "LIBRARY_RENEWAL_V4_GEN",
+    "caseId": "LIBRARY_RENEWAL",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "根据资料给这位读者写一条借阅提醒，180字以内，让他知道三件借阅物接下来分别怎么处理。别把可以申请续借写成已经续借成功。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/library-loans.md",
+            "language": "markdown",
+            "content": "合成图书室规则：普通图书在到期前可以申请续借一次，续借期为14天；已有他人预约的图书不能续借。活动资料包不能续借。读者借阅物：图书《微光》2026年11月5日到期，未续借、无人预约；图书《地图笔记》2026年11月8日到期，已有他人预约；活动资料包《纸艺》2026年11月6日到期。当前没有任何续借申请或办理结果，没有已确认的逾期或费用信息。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "LIBRARY_RENEWAL_V4_GEN",
+      "data": {
+        "optimizedPrompt": "请根据 notes/library-loans.md 中的规则和借阅信息，给这位读者写一条借阅提醒，全文180字以内，清楚说明三件借阅物接下来分别怎么处理。\n\n提醒中要分别交代：图书《微光》2026年11月5日到期，未续借、无人预约，属于到期前可以申请续借一次的情形，续借期为14天，请写成可以申请续借，不要写成已经续借成功；图书《地图笔记》2026年11月8日到期，已有他人预约，不能续借，请提醒按期归还；活动资料包《纸艺》2026年11月6日到期，不能续借，请提醒按期归还。\n\n当前没有任何续借申请或办理结果，也没有已确认的逾期或费用信息，提醒中不要声称已办理续借、已产生逾期或费用。语气自然、简洁，直接面向读者，篇幅控制在180字以内。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/library-loans.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/library-loans.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成图书室规则：普通图书在到期前可以申请续借一次，续借期为14天；已有他人预约的图书不能续借。活动资料包不能续借。读者借阅物：图书《微光》2026年11月5日到期，未续借、无人预约；图书《地图笔记》2026年11月8日到期，已有他人预约；活动资料包《纸艺》2026年11月6日到期。当前没有任何续借申请或办理结果，没有已确认的逾期或费用信息。",
+              "summary": "Markdown 文档摘要：合成图书室规则：普通图书在到期前可以申请续借一次，续借期为14天；已有他人预约的图书不能续借。；活动资料包不能续借。；读者借阅物：图书《微光》2026年11月5日到期，未续借、无人预约；图书《地图笔记》2026年11月8日到期，已有他人预约；活动资料包《纸艺》2026年11月6日到期。；当前没有任何续借申请或办理结果，没有已确认的逾期或费用信息。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4079,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "ce60d96e-a8cf-4676-a99b-78274a33f58d",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "PARCEL_INTAKE_RAW_EXEC",
+    "caseId": "PARCEL_INTAKE",
+    "version": "RAW",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "把这份规则整理成给第一次值班的人用的快递代收操作说明，让他拿到包裹时知道怎么处理。普通件、贵重件和异常件的区别都要保留。\n\n用户同时提供的材料：\n[{\"path\":\"notes/parcel-rules.md\",\"language\":\"markdown\",\"content\":\"合成代收点规则：收件人是本楼住户、姓名与房号都能核对且外包装完好的普通件，可以代收；记录快递单号后四位、收件人姓名、房号和代收时间，再放入对应房号格。标注贵重物品的件，即使外包装完好也不能代收，请快递员联系收件人本人。外包装破损、渗漏或收件信息无法核对的件，均暂停代收，记录异常并联系收件人确认；在确认之前不能签收或放进房号格。非本楼住户的件不代收。没有已确定的保管收费、赔偿承诺或其他处理办法。\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "PARCEL_INTAKE_RAW_EXEC",
+      "data": {
+        "content": "# 快递代收操作说明（第一次值班用）\n\n拿到包裹后，先判断它属于哪一类，再按对应步骤处理。\n\n## 一、先判断包裹类型\n\n| 类型 | 判断标准 | 能否代收 |\n|---|---|---|\n| **普通件** | 收件人是本楼住户，姓名和房号都能核对，外包装完好 | 可以代收 |\n| **贵重件** | 包裹上标注了“贵重物品” | **不能代收**，即使外包装完好也不行 |\n| **异常件** | 外包装破损、渗漏，或收件信息无法核对 | **暂停代收**，先记录并联系收件人确认 |\n| **非本楼住户的件** | 收件人不是本楼住户 | 不代收 |\n\n## 二、普通件怎么处理\n\n1. 核对收件人是不是本楼住户。\n2. 核对收件人姓名和房号，两项都要能对上。\n3. 检查外包装是否完好。\n4. 以上都符合后，记录以下四项：\n   - 快递单号后四位\n   - 收件人姓名\n   - 房号\n   - 代收时间\n5. 把包裹放入对应房号的格子。\n\n## 三、贵重件怎么处理\n\n- 不代收。\n- 请快递员联系收件人本人处理。\n\n## 四、异常件怎么处理\n\n1. 暂停代收。\n2. 记录异常情况。\n3. 联系收件人确认。\n4. **在收件人确认之前，不能签收，也不能放进房号格。**\n\n## 五、其他注意事项\n\n- 非本楼住户的件不代收。\n- 目前没有已确定的保管收费、赔偿承诺或其他处理办法；遇到这类问题不要自行承诺。",
+        "usage": {
+          "prompt_tokens": 236,
+          "completion_tokens": 392,
+          "total_tokens": 628,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 236
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "PARCEL_INTAKE_V14_EXEC",
+    "caseId": "PARCEL_INTAKE",
+    "version": "V14",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "请把 notes/parcel-rules.md 中的代收规则整理成一份给第一次值班的人看的快递代收操作说明，目标是让新人拿到包裹时能按说明判断并处理。说明中要保留普通件、贵重件和异常件的区别，并写清每类件的判断条件和处理动作：普通件需收件人为本楼住户、姓名与房号都能核对且外包装完好，可代收，记录快递单号后四位、收件人姓名、房号和代收时间后放入对应房号格；标注贵重物品的件即使外包装完好也不能代收，请快递员联系收件人本人；外包装破损、渗漏或收件信息无法核对的件暂停代收，记录异常并联系收件人确认，确认前不能签收或放进房号格；非本楼住户的件不代收。说明中不要写保管收费、赔偿承诺或其他处理办法，因为规则中没有确定这些内容。请按新人值班时从拿到包裹到完成处理的顺序组织，语言直接、可照着操作。\n\n用户同时提供的材料：\n[{\"path\":\"notes/parcel-rules.md\",\"language\":\"markdown\",\"content\":\"合成代收点规则：收件人是本楼住户、姓名与房号都能核对且外包装完好的普通件，可以代收；记录快递单号后四位、收件人姓名、房号和代收时间，再放入对应房号格。标注贵重物品的件，即使外包装完好也不能代收，请快递员联系收件人本人。外包装破损、渗漏或收件信息无法核对的件，均暂停代收，记录异常并联系收件人确认；在确认之前不能签收或放进房号格。非本楼住户的件不代收。没有已确定的保管收费、赔偿承诺或其他处理办法。\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "PARCEL_INTAKE_V14_EXEC",
+      "data": {
+        "content": "# 快递代收操作说明（新人值班版）\n\n拿到包裹后，按下面顺序判断和处理。\n\n## 第一步：先看是不是本楼住户的件\n\n- **判断**：核对收件人是否为**本楼住户**。\n- **处理**：**非本楼住户的件不代收**，直接告知快递员不能代收。\n\n## 第二步：再看是不是贵重件\n\n- **判断**：查看包裹是否**标注贵重物品**。\n- **处理**：标注贵重物品的件，**即使外包装完好也不能代收**，请快递员联系收件人本人。\n\n## 第三步：检查外包装和收件信息\n\n- **判断**：查看外包装是否**破损、渗漏**，以及收件信息（姓名、房号）是否**无法核对**。\n- **处理**：出现外包装破损、渗漏或收件信息无法核对的情况，**暂停代收**，记录异常并联系收件人确认；**确认之前不能签收，也不能放进房号格**。\n\n## 第四步：普通件符合条件才代收\n\n- **判断**：同时满足以下条件：\n  1. 收件人是**本楼住户**；\n  2. **姓名与房号都能核对**；\n  3. **外包装完好**。\n- **处理**：可以代收。记录以下四项后，放入对应房号格：\n  1. 快递单号**后四位**；\n  2. 收件人**姓名**；\n  3. **房号**；\n  4. **代收时间**。\n\n## 快速对照表\n\n| 包裹情况 | 判断条件 | 处理动作 |\n|---|---|---|\n| 普通件 | 本楼住户、姓名与房号都能核对、外包装完好 | 可代收；记录单号后四位、姓名、房号、代收时间，放入对应房号格 |\n| 贵重件 | 标注贵重物品 | 即使外包装完好也不能代收；请快递员联系收件人本人 |\n| 异常件 | 外包装破损、渗漏，或收件信息无法核对 | 暂停代收；记录异常并联系收件人确认；确认前不能签收或放进房号格 |\n| 非本楼住户件 | 收件人不是本楼住户 | 不代收 |\n\n> 本说明只按现有规则整理。规则中没有确定保管收费、赔偿承诺或其他处理办法，值班时不要自行承诺或采用其他处理方式。",
+        "usage": {
+          "prompt_tokens": 425,
+          "completion_tokens": 536,
+          "total_tokens": 961,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 425
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "PARCEL_INTAKE_V14_GEN",
+    "caseId": "PARCEL_INTAKE",
+    "version": "14",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "把这份规则整理成给第一次值班的人用的快递代收操作说明，让他拿到包裹时知道怎么处理。普通件、贵重件和异常件的区别都要保留。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/parcel-rules.md",
+            "language": "markdown",
+            "content": "合成代收点规则：收件人是本楼住户、姓名与房号都能核对且外包装完好的普通件，可以代收；记录快递单号后四位、收件人姓名、房号和代收时间，再放入对应房号格。标注贵重物品的件，即使外包装完好也不能代收，请快递员联系收件人本人。外包装破损、渗漏或收件信息无法核对的件，均暂停代收，记录异常并联系收件人确认；在确认之前不能签收或放进房号格。非本楼住户的件不代收。没有已确定的保管收费、赔偿承诺或其他处理办法。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "PARCEL_INTAKE_V14_GEN",
+      "data": {
+        "optimizedPrompt": "请把 notes/parcel-rules.md 中的代收规则整理成一份给第一次值班的人看的快递代收操作说明，目标是让新人拿到包裹时能按说明判断并处理。说明中要保留普通件、贵重件和异常件的区别，并写清每类件的判断条件和处理动作：普通件需收件人为本楼住户、姓名与房号都能核对且外包装完好，可代收，记录快递单号后四位、收件人姓名、房号和代收时间后放入对应房号格；标注贵重物品的件即使外包装完好也不能代收，请快递员联系收件人本人；外包装破损、渗漏或收件信息无法核对的件暂停代收，记录异常并联系收件人确认，确认前不能签收或放进房号格；非本楼住户的件不代收。说明中不要写保管收费、赔偿承诺或其他处理办法，因为规则中没有确定这些内容。请按新人值班时从拿到包裹到完成处理的顺序组织，语言直接、可照着操作。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/parcel-rules.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/parcel-rules.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成代收点规则：收件人是本楼住户、姓名与房号都能核对且外包装完好的普通件，可以代收；记录快递单号后四位、收件人姓名、房号和代收时间，再放入对应房号格。标注贵重物品的件，即使外包装完好也不能代收，请快递员联系收件人本人。外包装破损、渗漏或收件信息无法核对的件，均暂停代收，记录异常并联系收件人确认；在确认之前不能签收或放进房号格。非本楼住户的件不代收。没有已确定的保管收费、赔偿承诺或其他处理办法。",
+              "summary": "Markdown 文档摘要：合成代收点规则：收件人是本楼住户、姓名与房号都能核对且外包装完好的普通件，可以代收；记录快递单号后四位、收件人姓名、房号和代收时间，再放入对应房号格。；标注贵重物品的件，即使外包装完好也不能代收，请快递员联系收件人本人。；外包装破损、渗漏或收件信息无法核对的件，均暂停代收，记录异常并联系收件人确认；在确认之前不能签收或放进房号格。；非本楼住户的件不代收。；没有已确定的保管收费、赔偿承诺或其他处理办法。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5249,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "14",
+        "framework": "APE",
+        "recordId": "a8ea8115-3c38-4e79-8f0c-78b4ddd2b66a",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "PARCEL_INTAKE_V4_EXEC",
+    "caseId": "PARCEL_INTAKE",
+    "version": "V4",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "请把 notes/parcel-rules.md 中的代收点规则整理成一份给第一次值班的人使用的快递代收操作说明，让值班人员拿到包裹时能按说明判断和处理。说明要保留普通件、贵重件和异常件的区别，并按这三类分别写清判断条件和处理动作：普通件需收件人是本楼住户、姓名与房号都能核对且外包装完好，可代收，记录快递单号后四位、收件人姓名、房号和代收时间后放入对应房号格；标注贵重物品的件即使外包装完好也不能代收，请快递员联系收件人本人；外包装破损、渗漏或收件信息无法核对的件一律暂停代收，记录异常并联系收件人确认，确认之前不能签收或放进房号格。另外写明非本楼住户的件不代收。说明中不要写入保管收费、赔偿承诺或其他处理办法，因为规则里没有确定这些内容。语言要简洁直白，便于新值班人员现场对照执行。\n\n用户同时提供的材料：\n[{\"path\":\"notes/parcel-rules.md\",\"language\":\"markdown\",\"content\":\"合成代收点规则：收件人是本楼住户、姓名与房号都能核对且外包装完好的普通件，可以代收；记录快递单号后四位、收件人姓名、房号和代收时间，再放入对应房号格。标注贵重物品的件，即使外包装完好也不能代收，请快递员联系收件人本人。外包装破损、渗漏或收件信息无法核对的件，均暂停代收，记录异常并联系收件人确认；在确认之前不能签收或放进房号格。非本楼住户的件不代收。没有已确定的保管收费、赔偿承诺或其他处理办法。\"}]"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "PARCEL_INTAKE_V4_EXEC",
+      "data": {
+        "content": "# 快递代收操作说明（第一次值班用）\n\n拿到包裹后，先判断属于哪一类，再按对应动作处理。\n\n## 一、普通件\n\n**判断条件（需同时满足）：**\n- 收件人是本楼住户；\n- 收件人姓名与房号都能核对；\n- 外包装完好。\n\n**处理动作：**\n可以代收。记录以下四项后，放入对应房号格：\n1. 快递单号后四位；\n2. 收件人姓名；\n3. 房号；\n4. 代收时间。\n\n## 二、贵重件\n\n**判断条件：**\n- 包裹标注“贵重物品”。\n\n**处理动作：**\n即使外包装完好，也不能代收。请快递员联系收件人本人。\n\n## 三、异常件\n\n**判断条件（符合任一即算）：**\n- 外包装破损；\n- 外包装渗漏；\n- 收件信息无法核对。\n\n**处理动作：**\n一律暂停代收。记录异常并联系收件人确认；确认之前不能签收，也不能放进房号格。\n\n## 四、非本楼住户的件\n\n不代收。\n\n---\n\n**现场提醒：** 只按以上规则判断和处理；规则未确定的事项不要自行承诺或处理。",
+        "usage": {
+          "prompt_tokens": 422,
+          "completion_tokens": 272,
+          "total_tokens": 694,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 422
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "PARCEL_INTAKE_V4_GEN",
+    "caseId": "PARCEL_INTAKE",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "把这份规则整理成给第一次值班的人用的快递代收操作说明，让他拿到包裹时知道怎么处理。普通件、贵重件和异常件的区别都要保留。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "notes/parcel-rules.md",
+            "language": "markdown",
+            "content": "合成代收点规则：收件人是本楼住户、姓名与房号都能核对且外包装完好的普通件，可以代收；记录快递单号后四位、收件人姓名、房号和代收时间，再放入对应房号格。标注贵重物品的件，即使外包装完好也不能代收，请快递员联系收件人本人。外包装破损、渗漏或收件信息无法核对的件，均暂停代收，记录异常并联系收件人确认；在确认之前不能签收或放进房号格。非本楼住户的件不代收。没有已确定的保管收费、赔偿承诺或其他处理办法。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "PARCEL_INTAKE_V4_GEN",
+      "data": {
+        "optimizedPrompt": "请把 notes/parcel-rules.md 中的代收点规则整理成一份给第一次值班的人使用的快递代收操作说明，让值班人员拿到包裹时能按说明判断和处理。说明要保留普通件、贵重件和异常件的区别，并按这三类分别写清判断条件和处理动作：普通件需收件人是本楼住户、姓名与房号都能核对且外包装完好，可代收，记录快递单号后四位、收件人姓名、房号和代收时间后放入对应房号格；标注贵重物品的件即使外包装完好也不能代收，请快递员联系收件人本人；外包装破损、渗漏或收件信息无法核对的件一律暂停代收，记录异常并联系收件人确认，确认之前不能签收或放进房号格。另外写明非本楼住户的件不代收。说明中不要写入保管收费、赔偿承诺或其他处理办法，因为规则里没有确定这些内容。语言要简洁直白，便于新值班人员现场对照执行。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "notes/",
+            "notes/parcel-rules.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "notes/parcel-rules.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n合成代收点规则：收件人是本楼住户、姓名与房号都能核对且外包装完好的普通件，可以代收；记录快递单号后四位、收件人姓名、房号和代收时间，再放入对应房号格。标注贵重物品的件，即使外包装完好也不能代收，请快递员联系收件人本人。外包装破损、渗漏或收件信息无法核对的件，均暂停代收，记录异常并联系收件人确认；在确认之前不能签收或放进房号格。非本楼住户的件不代收。没有已确定的保管收费、赔偿承诺或其他处理办法。",
+              "summary": "Markdown 文档摘要：合成代收点规则：收件人是本楼住户、姓名与房号都能核对且外包装完好的普通件，可以代收；记录快递单号后四位、收件人姓名、房号和代收时间，再放入对应房号格。；标注贵重物品的件，即使外包装完好也不能代收，请快递员联系收件人本人。；外包装破损、渗漏或收件信息无法核对的件，均暂停代收，记录异常并联系收件人确认；在确认之前不能签收或放进房号格。；非本楼住户的件不代收。；没有已确定的保管收费、赔偿承诺或其他处理办法。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5154,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "7f4b49b1-9f62-4f82-90eb-7981a2a97e65",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "PLAN_MAINTENANCE_RAW_EXEC",
+    "caseId": "PLAN_MAINTENANCE",
+    "version": "RAW",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "帮我写一则发给同事的网络维护通知。维护安排与影响范围以我确认的信息为准，其他措辞你来定。\n\n用户已提供的本次答复（未知项保持未知）：\n维护时间是2026年10月30日18:30到20:00。办公区无线网络会中断，有线网络正常，远程访问不受影响。结束后是否自动重连还不确定，不要承诺自动恢复连接。没有其他已确定安排，通知语气与排版由AI设计。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "PLAN_MAINTENANCE_RAW_EXEC",
+      "data": {
+        "content": "**网络维护通知**\n\n各位同事：\n\n为保障网络稳定运行，我们将于 **2026年10月30日（周五）18:30 至 20:00** 进行网络维护。\n\n维护期间影响如下：\n\n- **办公区无线网络**：将中断，无法正常使用。\n- **有线网络**：正常，不受影响。\n- **远程访问**：不受影响。\n\n维护结束后，无线网络连接是否会自动恢复尚不确定。如届时无法连接，请尝试手动重新连接无线网络；如有问题，请联系IT支持。\n\n请各位同事提前安排好相关工作，由此带来的不便，敬请谅解。\n\n感谢大家的理解与配合。\n\nIT支持  \n2026年10月30日",
+        "usage": {
+          "prompt_tokens": 132,
+          "completion_tokens": 144,
+          "total_tokens": 276,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 132
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "PLAN_MAINTENANCE_V14_EXEC",
+    "caseId": "PLAN_MAINTENANCE",
+    "version": "V14",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "帮我写一则发给同事的网络维护通知。维护安排与影响范围以我确认的信息为准，其他措辞你来定。\n\n已确认的信息如下，请据此撰写：维护时间为2026年10月30日18:30到20:00；维护期间办公区无线网络会中断，有线网络正常，远程访问不受影响。维护结束后是否自动重连尚不确定，通知中不要承诺会自动恢复连接，可提示同事届时留意网络状态或按需手动重连。除此之外没有其他已确定安排。\n\n通知语气与排版由你设计，做到简洁、清楚、便于同事快速了解时间、影响范围和注意事项；只写上述已确认内容，不要编造维护原因、负责人、联系方式或其他安排。\n\n用户已提供的本次答复（未知项保持未知）：\n维护时间是2026年10月30日18:30到20:00。办公区无线网络会中断，有线网络正常，远程访问不受影响。结束后是否自动重连还不确定，不要承诺自动恢复连接。没有其他已确定安排，通知语气与排版由AI设计。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "PLAN_MAINTENANCE_V14_EXEC",
+      "data": {
+        "content": "**网络维护通知**\n\n各位同事：\n\n2026年10月30日（18:30—20:00）将进行网络维护，具体安排如下：\n\n- **维护时间**：2026年10月30日 18:30—20:00\n- **影响范围**：办公区无线网络将中断\n- **不受影响**：有线网络正常；远程访问不受影响\n\n**注意事项**：维护结束后，无线网络是否自动重连尚不确定。届时请留意网络状态，如有需要请手动重连。\n\n请提前做好安排，感谢配合。",
+        "usage": {
+          "prompt_tokens": 256,
+          "completion_tokens": 120,
+          "total_tokens": 376,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 256
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "PLAN_MAINTENANCE_V14_PLAN_GEN",
+    "caseId": "PLAN_MAINTENANCE",
+    "version": "14",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "帮我写一则发给同事的网络维护通知。维护安排与影响范围以我确认的信息为准，其他措辞你来定。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": {
+        "planId": "c6f26ee6-2403-4c28-ab24-e6e90979945f",
+        "planningContext": {
+          "contextId": "e178eb52-de86-4af6-8d14-7bbc5973d0db",
+          "version": "sha256:c0aedd52e8dff2c502a2117ddf7f08dff2fece6fa52262a84cdb9d1f56282ee1"
+        },
+        "answers": [
+          {
+            "questionId": "maintenance_details",
+            "question": "请提供本次网络维护已确认的安排与影响范围（例如：维护日期与起止时间、涉及的系统或网络区域、预计中断时长、受影响的同事范围、是否需要提前备份或采取应对措施）。",
+            "answer": "维护时间是2026年10月30日18:30到20:00。办公区无线网络会中断，有线网络正常，远程访问不受影响。结束后是否自动重连还不确定，不要承诺自动恢复连接。没有其他已确定安排，通知语气与排版由AI设计。"
+          }
+        ]
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "PLAN_MAINTENANCE_V14_PLAN_GEN",
+      "data": {
+        "optimizedPrompt": "帮我写一则发给同事的网络维护通知。维护安排与影响范围以我确认的信息为准，其他措辞你来定。\n\n已确认的信息如下，请据此撰写：维护时间为2026年10月30日18:30到20:00；维护期间办公区无线网络会中断，有线网络正常，远程访问不受影响。维护结束后是否自动重连尚不确定，通知中不要承诺会自动恢复连接，可提示同事届时留意网络状态或按需手动重连。除此之外没有其他已确定安排。\n\n通知语气与排版由你设计，做到简洁、清楚、便于同事快速了解时间、影响范围和注意事项；只写上述已确认内容，不要编造维护原因、负责人、联系方式或其他安排。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 7401,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "14",
+        "framework": "APE",
+        "recordId": "085ff519-2c47-4f49-9aef-f8f8fb8cb47f",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "PLAN_MAINTENANCE_V4_EXEC",
+    "caseId": "PLAN_MAINTENANCE",
+    "version": "V4",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "帮我写一则发给同事的网络维护通知，语气和排版由你设计。通知中的维护安排与影响范围必须严格以以下已确认信息为准，不要添加其他安排：维护时间为2026年10月30日18:30到20:00；办公区无线网络会中断，有线网络正常，远程访问不受影响。维护结束后是否自动重连尚不确定，通知中不要承诺会自动恢复连接，可提醒同事届时留意网络状态。请直接输出可发送的通知正文。\n\n用户已提供的本次答复（未知项保持未知）：\n维护时间是2026年10月30日18:30到20:00。办公区无线网络会中断，有线网络正常，远程访问不受影响。结束后是否自动重连还不确定，不要承诺自动恢复连接。没有其他已确定安排，通知语气与排版由AI设计。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "PLAN_MAINTENANCE_V4_EXEC",
+      "data": {
+        "content": "【网络维护通知】\n\n各位同事：\n\n为进行网络维护，现将相关安排通知如下：\n\n- 维护时间：2026年10月30日（周五）18:30—20:00\n- 影响范围：办公区无线网络将中断\n- 不受影响：有线网络正常使用；远程访问不受影响\n\n维护结束后，无线网络是否会自动重连尚不确定，请大家届时留意网络状态。\n\n感谢理解与配合。\n\n网络维护组",
+        "usage": {
+          "prompt_tokens": 209,
+          "completion_tokens": 95,
+          "total_tokens": 304,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 209
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "PLAN_MAINTENANCE_V4_PLAN",
+    "caseId": "PLAN_MAINTENANCE",
+    "version": "4",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "帮我写一则发给同事的网络维护通知。维护安排与影响范围以我确认的信息为准，其他措辞你来定。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "e178eb52-de86-4af6-8d14-7bbc5973d0db",
+        "version": "sha256:c0aedd52e8dff2c502a2117ddf7f08dff2fece6fa52262a84cdb9d1f56282ee1"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "PLAN_MAINTENANCE_V4_PLAN",
+      "data": {
+        "summary": "用户需要一则发给同事的网络维护通知，措辞由执行者拟定，但维护安排与影响范围必须依据用户确认的信息。当前用户未提供任何此类事实，因此需先确认维护安排与影响范围，才能产出可用的通知。",
+        "questions": [
+          {
+            "id": "maintenance_details",
+            "question": "请提供本次网络维护已确认的安排与影响范围（例如：维护日期与起止时间、涉及的系统或网络区域、预计中断时长、受影响的同事范围、是否需要提前备份或采取应对措施）。",
+            "hint": "这是通知的核心事实内容，原文要求以你确认的信息为准；执行者不能自行编造时间、范围或影响。提供得越具体，通知越完整可直接发布；若部分信息未定，请说明哪些已确认、哪些待定。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [
+              "10月18日22:00至次日2:00对办公区有线与无线网络进行升级，期间全楼网络中断，请提前保存工作并避免安排远程会议。",
+              "仅确认下周三晚间进行核心交换机维护，具体时长和影响范围待定。"
+            ],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4218,
+        "planId": "c6f26ee6-2403-4c28-ab24-e6e90979945f",
+        "planningContext": {
+          "contextId": "e178eb52-de86-4af6-8d14-7bbc5973d0db",
+          "version": "sha256:c0aedd52e8dff2c502a2117ddf7f08dff2fece6fa52262a84cdb9d1f56282ee1"
+        },
+        "expiresAt": "2026-10-22T04:50:11.211279700Z"
+      }
+    }
+  },
+  {
+    "id": "PLAN_MAINTENANCE_V4_PLAN_GEN",
+    "caseId": "PLAN_MAINTENANCE",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "帮我写一则发给同事的网络维护通知。维护安排与影响范围以我确认的信息为准，其他措辞你来定。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": {
+        "planId": "c6f26ee6-2403-4c28-ab24-e6e90979945f",
+        "planningContext": {
+          "contextId": "e178eb52-de86-4af6-8d14-7bbc5973d0db",
+          "version": "sha256:c0aedd52e8dff2c502a2117ddf7f08dff2fece6fa52262a84cdb9d1f56282ee1"
+        },
+        "answers": [
+          {
+            "questionId": "maintenance_details",
+            "question": "请提供本次网络维护已确认的安排与影响范围（例如：维护日期与起止时间、涉及的系统或网络区域、预计中断时长、受影响的同事范围、是否需要提前备份或采取应对措施）。",
+            "answer": "维护时间是2026年10月30日18:30到20:00。办公区无线网络会中断，有线网络正常，远程访问不受影响。结束后是否自动重连还不确定，不要承诺自动恢复连接。没有其他已确定安排，通知语气与排版由AI设计。"
+          }
+        ]
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "PLAN_MAINTENANCE_V4_PLAN_GEN",
+      "data": {
+        "optimizedPrompt": "帮我写一则发给同事的网络维护通知，语气和排版由你设计。通知中的维护安排与影响范围必须严格以以下已确认信息为准，不要添加其他安排：维护时间为2026年10月30日18:30到20:00；办公区无线网络会中断，有线网络正常，远程访问不受影响。维护结束后是否自动重连尚不确定，通知中不要承诺会自动恢复连接，可提醒同事届时留意网络状态。请直接输出可发送的通知正文。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 7596,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "44629b03-4c97-445f-8ccb-3bd5c451b993",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "SUFFICIENT_FUNCTION_RAW_EXEC",
+    "caseId": "SUFFICIENT_FUNCTION",
+    "version": "RAW",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "用Python定义函数is_even(n)，已知n是整数，偶数返回布尔值True，奇数返回False；负数和0也按同一规则。只输出函数代码，不要代码围栏、解释、打印、调用示例或测试。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "SUFFICIENT_FUNCTION_RAW_EXEC",
+      "data": {
+        "content": "def is_even(n):\n    return n % 2 == 0",
+        "usage": {
+          "prompt_tokens": 84,
+          "completion_tokens": 15,
+          "total_tokens": 99,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 84
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "SUFFICIENT_FUNCTION_V14_EXEC",
+    "caseId": "SUFFICIENT_FUNCTION",
+    "version": "V14",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "用 Python 定义函数 is_even(n)，已知 n 是整数：偶数返回布尔值 True，奇数返回 False，负数和 0 也按同一规则处理。只输出函数代码，不要代码围栏、解释、打印、调用示例或测试。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "SUFFICIENT_FUNCTION_V14_EXEC",
+      "data": {
+        "content": "def is_even(n):\n    return n % 2 == 0",
+        "usage": {
+          "prompt_tokens": 89,
+          "completion_tokens": 15,
+          "total_tokens": 104,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 89
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "SUFFICIENT_FUNCTION_V14_GEN",
+    "caseId": "SUFFICIENT_FUNCTION",
+    "version": "14",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "用Python定义函数is_even(n)，已知n是整数，偶数返回布尔值True，奇数返回False；负数和0也按同一规则。只输出函数代码，不要代码围栏、解释、打印、调用示例或测试。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "SUFFICIENT_FUNCTION_V14_GEN",
+      "data": {
+        "optimizedPrompt": "用 Python 定义函数 is_even(n)，已知 n 是整数：偶数返回布尔值 True，奇数返回 False，负数和 0 也按同一规则处理。只输出函数代码，不要代码围栏、解释、打印、调用示例或测试。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2215,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "14",
+        "framework": "APE",
+        "recordId": "72545d46-4e0c-40cd-8342-ff89765c3faa",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "SUFFICIENT_FUNCTION_V4_EXEC",
+    "caseId": "SUFFICIENT_FUNCTION",
+    "version": "V4",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "用Python定义函数is_even(n)，已知n是整数：偶数返回布尔值True，奇数返回False；负数和0也按同一规则处理。只输出函数代码，不要代码围栏、解释、打印、调用示例或测试。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "SUFFICIENT_FUNCTION_V4_EXEC",
+      "data": {
+        "content": "def is_even(n):\n    return n % 2 == 0",
+        "usage": {
+          "prompt_tokens": 85,
+          "completion_tokens": 15,
+          "total_tokens": 100,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 85
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "SUFFICIENT_FUNCTION_V4_GEN",
+    "caseId": "SUFFICIENT_FUNCTION",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "用Python定义函数is_even(n)，已知n是整数，偶数返回布尔值True，奇数返回False；负数和0也按同一规则。只输出函数代码，不要代码围栏、解释、打印、调用示例或测试。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "SUFFICIENT_FUNCTION_V4_GEN",
+      "data": {
+        "optimizedPrompt": "用Python定义函数is_even(n)，已知n是整数：偶数返回布尔值True，奇数返回False；负数和0也按同一规则处理。只输出函数代码，不要代码围栏、解释、打印、调用示例或测试。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2266,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "1c029d60-e0d7-4a2f-860b-e131026519b4",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "SUFFICIENT_TABLE_RAW_EXEC",
+    "caseId": "SUFFICIENT_TABLE",
+    "version": "RAW",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "将“北区=12；南区=0”转成Markdown表格，只要区域、数量两列，保持北区在前、南区在后，保留0。只输出表头、分隔行和两行数据，不加标题、合计、说明或代码围栏。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "SUFFICIENT_TABLE_RAW_EXEC",
+      "data": {
+        "content": "| 区域 | 数量 |\n|---|---|\n| 北区 | 12 |\n| 南区 | 0 |",
+        "usage": {
+          "prompt_tokens": 91,
+          "completion_tokens": 24,
+          "total_tokens": 115,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 91
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "SUFFICIENT_TABLE_V14_EXEC",
+    "caseId": "SUFFICIENT_TABLE",
+    "version": "V14",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "将“北区=12；南区=0”转成 Markdown 表格，只保留“区域”和“数量”两列，行序为北区在前、南区在后，数量值原样保留，包括 0。只输出表头、分隔行和两行数据，不要添加标题、合计、说明或代码围栏。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "SUFFICIENT_TABLE_V14_EXEC",
+      "data": {
+        "content": "| 区域 | 数量 |\n| --- | --- |\n| 北区 | 12 |\n| 南区 | 0 |",
+        "usage": {
+          "prompt_tokens": 107,
+          "completion_tokens": 27,
+          "total_tokens": 134,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 107
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "SUFFICIENT_TABLE_V14_GEN",
+    "caseId": "SUFFICIENT_TABLE",
+    "version": "14",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "将“北区=12；南区=0”转成Markdown表格，只要区域、数量两列，保持北区在前、南区在后，保留0。只输出表头、分隔行和两行数据，不加标题、合计、说明或代码围栏。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "SUFFICIENT_TABLE_V14_GEN",
+      "data": {
+        "optimizedPrompt": "将“北区=12；南区=0”转成 Markdown 表格，只保留“区域”和“数量”两列，行序为北区在前、南区在后，数量值原样保留，包括 0。只输出表头、分隔行和两行数据，不要添加标题、合计、说明或代码围栏。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2354,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "14",
+        "framework": "APE",
+        "recordId": "55206f5a-a21d-4eb7-8068-ac17c1718e00",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "SUFFICIENT_TABLE_V4_EXEC",
+    "caseId": "SUFFICIENT_TABLE",
+    "version": "V4",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "将“北区=12；南区=0”转成 Markdown 表格，只要“区域”和“数量”两列，保持北区在前、南区在后，并保留南区的 0。只输出表头、分隔行和两行数据，不加标题、合计、说明或代码围栏。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "SUFFICIENT_TABLE_V4_EXEC",
+      "data": {
+        "content": "| 区域 | 数量 |\n| --- | --- |\n| 北区 | 12 |\n| 南区 | 0 |",
+        "usage": {
+          "prompt_tokens": 100,
+          "completion_tokens": 27,
+          "total_tokens": 127,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 100
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "SUFFICIENT_TABLE_V4_GEN",
+    "caseId": "SUFFICIENT_TABLE",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "将“北区=12；南区=0”转成Markdown表格，只要区域、数量两列，保持北区在前、南区在后，保留0。只输出表头、分隔行和两行数据，不加标题、合计、说明或代码围栏。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "SUFFICIENT_TABLE_V4_GEN",
+      "data": {
+        "optimizedPrompt": "将“北区=12；南区=0”转成 Markdown 表格，只要“区域”和“数量”两列，保持北区在前、南区在后，并保留南区的 0。只输出表头、分隔行和两行数据，不加标题、合计、说明或代码围栏。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2147,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "23d9c976-cd96-47dc-824e-410a583edb66",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "TEAM_HANDOVER_RAW_EXEC",
+    "caseId": "TEAM_HANDOVER",
+    "version": "RAW",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "我们小组经常有人请假，交接时容易漏事。帮我设计一个简便的交接做法，交接表怎么写、怎么走流程都由你安排，希望接手的人看完就知道先干什么。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "TEAM_HANDOVER_RAW_EXEC",
+      "data": {
+        "content": "# 请假交接简便做法\n\n## 一、核心思路\n\n只抓三件事：**谁接手、先干什么、什么不能漏**。交接表控制在一页纸内，5 分钟能填完、3 分钟能看懂。\n\n## 二、交接表模板（一页纸）\n\n**表头**：请假人 / 接手人 / 请假起止时间 / 填表时间\n\n**正文分四块，按接手人的阅读顺序排：**\n\n| 区块 | 内容 | 填写要求 |\n|---|---|---|\n| ① 先做这几件 | 请假期间必须按时完成的事 | 按时间先后列，每条写清**做什么、什么时候、找谁**。最多 5 条 |\n| ② 别漏的事 | 容易忘的节点、要盯的进度、要回复的人 | 写清\"什么事 + 截止时间 + 漏了会怎样\" |\n| ③ 进行中的事 | 手头没做完、接手人要接着推的 | 每条写：现在到哪一步、下一步做什么、卡在谁那里 |\n| ④ 找谁 / 东西在哪 | 关键联系人、文件位置、账号权限 | 只写接手人真会用到的，别抄通讯录 |\n\n**表尾**：请假人签字确认\"已交接清楚\" + 接手人签字\"已看懂\"。\n\n## 三、流程（四步，当天完成）\n\n1. **请假人填表**：确定请假当天，用 10 分钟填完，发到小组群或共享文档。\n2. **接手人过一遍**：看完在表尾签\"已看懂\"；有疑问当场问，问不清的写进表里再确认。\n3. **组长扫一眼**：只看①和②两块，确认没有明显遗漏即可，不逐条审。\n4. **销假时对账**：请假人回来，对照①\"先做这几件\"逐条确认是否完成，没完成的当场补。这一步是防漏的关键，别省。\n\n## 四、几条让做法真正落地的小规矩\n\n- **固定模板**：表格放共享文档里，谁请假谁复制一份填，不临时发挥格式。\n- **只写接手人需要的**：不写背景故事、不写\"详见某文件\"，接手人看完要能直接动手。\n- **①块最多 5 条**：超过 5 条说明没分清主次，逼自己排优先级。\n- **口头交接不算数**：说了也要落到表上，否则等于没交接。\n- **请假超过 3 天的**，第 3 步组长改成逐条看①块，并在群里回一句\"已确认\"。\n\n这样一套下来，填表的人负担小，接手的人打开表先看①块就知道先干什么，销假对账又能兜住漏掉的事。",
+        "usage": {
+          "prompt_tokens": 72,
+          "completion_tokens": 610,
+          "total_tokens": 682,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 72
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "TEAM_HANDOVER_V14_EXEC",
+    "caseId": "TEAM_HANDOVER",
+    "version": "V14",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "我们小组经常有人临时请假，交接时容易漏事。请帮我设计一套简便的交接做法，交接表怎么写、交接流程怎么走都由你安排。目标是让接手的人看完就知道先干什么。请交付一份可直接使用的小组交接方案，包含：交接表的具体字段和填写示例（示例可用占位内容），以及从请假提出到交接完成、接手人确认的简要流程步骤；说明每一步由谁做什么、在什么时间点完成。方案要简短易操作，适合小组日常使用，不需要复杂系统或额外工具。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "TEAM_HANDOVER_V14_EXEC",
+      "data": {
+        "content": "# 小组临时请假交接方案\n\n## 一、交接表（一页纸，直接照填）\n\n**表头**：交接日期｜请假人｜接手人｜预计离岗时间｜预计返岗时间\n\n**核心字段（按接手人阅读顺序排列）**：\n\n| 字段 | 填写要求 | 示例（占位） |\n|---|---|---|\n| ① 最急的事（今天/明天必须做） | 只写1–3件，写清“做什么+什么时候+找谁” | 今天17:00前把XX表发给王老师（模板在共享盘/XX文件夹） |\n| ② 进行中的事 | 每件写：当前进度、下一步、卡在哪 | XX活动报名统计：已收30人，明天需催未交的5人（名单见群文件） |\n| ③ 定时/例行事项 | 写清时间点和动作 | 每天10:00看群通知并回复“收到” |\n| ④ 待办但可缓 | 简单列条目即可 | 整理上月会议记录（本周内均可） |\n| ⑤ 关键联系人 | 姓名+什么事找他 | 李同学：场地问题；张老师：审批签字 |\n| ⑥ 文件/账号位置 | 只写路径，不写密码 | 共享盘/XX组/本周材料；群公告有账号说明 |\n| ⑦ 风险提醒 | 容易漏、容易错的点 | 周五的表格必须用新模板，旧模板已作废 |\n| ⑧ 交接人补充 | 其他口头难说清的 | 无 |\n\n**填写规则（3条）**：\n1. 每件事必须带“时间点”或“下一步动作”，否则不算填完。\n2. 只写接手人能独立执行的信息，不写背景故事。\n3. 全表控制在半页到一页，5分钟内能写完。\n\n## 二、流程步骤（从提出请假到确认完成）\n\n| 步骤 | 谁做 | 做什么 | 时间点 |\n|---|---|---|---|\n| 1. 提出请假 | 请假人 | 在群里说明请假时间，并@一名接手人 | 确定请假时立即 |\n| 2. 指定接手 | 组长（或请假人自行协商） | 确认接手人；无人可接时组长兜底 | 请假当天 |\n| 3. 填交接表 | 请假人 | 按上表填写，重点填①最急的事 | 离岗前至少半天（紧急情况离岗前1小时） |\n| 4. 当面/语音过一遍 | 请假人+接手人 | 请假人按①→⑦顺序讲5分钟，接手人可提问 | 离岗前 |\n| 5. 接手人确认 | 接手人 | 在表尾签“已确认，知道先做什么”，并复述①中最急的1件事 | 交接结束时 |\n| 6. 表存档 | 请假人 | 交接表发到小组群或共享盘固定位置 | 交接完成后立即 |\n| 7. 返岗回收 | 请假人+接手人 | 返岗当天接手人用3分钟说明哪些事已处理、哪些待跟进 | 返岗当天 |\n\n## 三、两个简化约定\n\n- **紧急请假（1小时内离岗）**：只填①③⑤三项，微信发给接手人并语音确认即可，返岗后补全表。\n- **确认标准**：接手人能说出“我今天先做哪件事”，即视为交接完成；说不出来就当场补问，不拖到事后。",
+        "usage": {
+          "prompt_tokens": 148,
+          "completion_tokens": 775,
+          "total_tokens": 923,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 148
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "TEAM_HANDOVER_V14_GEN",
+    "caseId": "TEAM_HANDOVER",
+    "version": "14",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "我们小组经常有人请假，交接时容易漏事。帮我设计一个简便的交接做法，交接表怎么写、怎么走流程都由你安排，希望接手的人看完就知道先干什么。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "TEAM_HANDOVER_V14_GEN",
+      "data": {
+        "optimizedPrompt": "我们小组经常有人临时请假，交接时容易漏事。请帮我设计一套简便的交接做法，交接表怎么写、交接流程怎么走都由你安排。目标是让接手的人看完就知道先干什么。请交付一份可直接使用的小组交接方案，包含：交接表的具体字段和填写示例（示例可用占位内容），以及从请假提出到交接完成、接手人确认的简要流程步骤；说明每一步由谁做什么、在什么时间点完成。方案要简短易操作，适合小组日常使用，不需要复杂系统或额外工具。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4546,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "14",
+        "framework": "APE",
+        "recordId": "168c76ca-398e-4a82-b8a5-79c4e6139c91",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "TEAM_HANDOVER_V4_EXEC",
+    "caseId": "TEAM_HANDOVER",
+    "version": "V4",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "我们小组经常有人临时请假，交接时容易漏事，请帮我设计一套简便的交接做法，交付一份可直接使用的交接方案，包含交接表模板和交接流程说明。交接表怎么写、流程怎么走都由你安排，目标是让接手的人看完就知道先干什么。\n\n方案请围绕以下重点展开：\n1. 交接表模板：给出可直接填写或复制的表格，字段要精简但覆盖关键信息，例如事项名称、当前状态、下一步动作、优先级或紧急程度、截止时间、相关文件或联系人、遗留风险与注意事项、交接人和接手人确认。字段设计要让接手人一眼看出哪些事最急、先做什么。\n2. 交接流程：说明请假人提出交接的时机、填写和移交方式、接手人如何确认、交接完成后如何留痕，以及临时紧急请假时如何简化处理。流程步骤要少而清楚，适合小组日常使用，不依赖复杂工具。\n3. 使用说明：简要说明交接表怎么填、优先级怎么判断、接手人拿到表后按什么顺序处理，并给出一个填写示例，帮助小组直接照做。\n\n方案以文字加表格形式呈现，篇幅紧凑实用，避免空泛原则。如果涉及需要小组自行确定的参数（如交接时限、确认方式），请标明为建议值，由小组按实际情况调整。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "TEAM_HANDOVER_V4_EXEC",
+      "data": {
+        "content": "# 小组临时请假交接方案\n\n## 一、交接表模板（可直接复制填写）\n\n| 序号 | 事项名称 | 当前状态 | 下一步动作（接手人先做什么） | 优先级 | 截止时间 | 相关文件/联系人 | 遗留风险与注意事项 | 交接人确认 | 接手人确认 |\n|---|---|---|---|---|---|---|---|---|---|\n| 1 |  | □未开始 □进行中 □待他人反馈 □基本完成 |  | □急 □中 □缓 |  |  |  | 姓名+日期 | 姓名+日期 |\n| 2 |  |  |  |  |  |  |  |  |  |\n| 3 |  |  |  |  |  |  |  |  |  |\n\n**填写要点：**\n- **当前状态**：勾选即可，让接手人知道事情卡在哪。\n- **下一步动作**：写“动词+对象”，如“催王工回传报价单”“把方案发群里确认”，不写“跟进一下”这类空话。\n- **优先级**：急=今天/明天必须动；中=本周内处理；缓=可等请假人回来。判断标准见第三节。\n- **截止时间**：写具体日期或“X月X日下班前”，没有明确截止的写“无硬性截止”。\n- **相关文件/联系人**：写文件位置（群文件/共享盘路径）和联系人姓名+电话/微信，不写“见群”。\n- **遗留风险与注意事项**：写“如果……就会……”的坑，如“对方只认邮件确认，微信不算”。\n- **确认栏**：交接人填完签字/写名+日期；接手人看完当面或线上回一句“已确认”，再写名+日期。\n\n> 建议值：交接表用在线文档或群文件一份即可，不另建系统；确认方式建议“接手人在表上写名+在群里回‘已接手’”，小组可按习惯改为当面确认。\n\n---\n\n## 二、交接流程（5步，日常够用）\n\n**第1步：提出与定时（建议值：请假前至少半天）**\n请假人确定请假后，先在小组群说一句“我X月X日请假，事项已列交接表”，然后填表。临时急假可先口头说最急的1-3件事，事后补表。\n\n**第2步：填表与移交**\n请假人按模板逐项填，**只填需要别人接着做的事**，自己回来能补的不填。填完把表放到小组固定位置（群文件/共享文档），并在群里@接手人。\n\n**第3步：接手人确认（建议值：收到后30分钟内）**\n接手人看表，按“急→中→缓”扫一遍，对不清楚的当场问一句，确认后在“接手人确认”栏写名+日期，并在群里回“已接手，先做第X项”。\n\n**第4步：交接完成留痕**\n表留在固定位置不删，群消息自然形成记录。请假人回来后在表上补一列“回来核对”或口头对一遍即可，不另做台账。\n\n**第5步：紧急请假简化版**\n来不及填全表时，只做三件事：①群里发一条“最急事项+截止时间+找谁”；②指定一个接手人；③回来后24小时内补全交接表。**急事优先口头+群消息，表格后补。**\n\n> 建议值：确认时限30分钟、补表时限24小时，小组可按实际节奏调整。\n\n---\n\n## 三、使用说明\n\n**1. 怎么填**\n- 一行一件事，不合并写。\n- “下一步动作”必须让接手人看完就知道第一个电话打给谁、第一个文件打开哪个。\n- 风险栏只写真正会出问题的点，不写客套话。\n\n**2. 优先级怎么判断**\n- **急**：有今天/明天硬截止，或卡着别人干活。\n- **中**：本周内有节点，但不影响今天。\n- **缓**：没有硬截止，请假人回来处理也行。\n- 拿不准时按“会不会耽误别人”判断，会耽误就升一级。\n\n**3. 接手人拿到表后的处理顺序**\n①先看“急”行，按截止时间从早到晚排；②每做完一项在表上标“已处理”；③遇到表里没写清或情况变了的，先在群里问一句再动，不自己猜；④“缓”项原则上不动，等请假人回来。\n\n**4. 填写示例**\n\n| 序号 | 事项名称 | 当前状态 | 下一步动作 | 优先级 | 截止时间 | 相关文件/联系人 | 遗留风险与注意事项 | 交接人确认 | 接手人确认 |\n|---|---|---|---|---|---|---|---|---|---|\n| 1 | 周五活动场地确认 | 待他人反馈 | 打电话催李经理确认场地，并把确认截图发群里 | 急 | 周四17:00前 | 场地合同在群文件“活动/合同.pdf”；李经理138xxxx | 对方只认电话确认，微信不回；超时场地可能被订走 | 张三 3/5 | 李四 3/5 |\n| 2 | 周报汇总 | 进行中 | 把各组周报收齐后合并成一页发组长 | 中 | 周五下班前 | 模板在共享盘“周报/模板.docx” | 二组常迟交，需单独催 | 张三 3/5 | 李四 3/5 |\n| 3 | 报销单整理 | 未开始 | 等请假人回来处理 | 缓 | 无硬性截止 | 票据在张三抽屉 | 无 | 张三 3/5 | 李四 3/5 |\n\n**一句话总结：** 请假人只填“别人要接着干的事”，接手人先干“急”行、按截止时间排、不清楚先问，表留原地就是记录。",
+        "usage": {
+          "prompt_tokens": 309,
+          "completion_tokens": 1295,
+          "total_tokens": 1604,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 309
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "TEAM_HANDOVER_V4_GEN",
+    "caseId": "TEAM_HANDOVER",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "我们小组经常有人请假，交接时容易漏事。帮我设计一个简便的交接做法，交接表怎么写、怎么走流程都由你安排，希望接手的人看完就知道先干什么。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "TEAM_HANDOVER_V4_GEN",
+      "data": {
+        "optimizedPrompt": "我们小组经常有人临时请假，交接时容易漏事，请帮我设计一套简便的交接做法，交付一份可直接使用的交接方案，包含交接表模板和交接流程说明。交接表怎么写、流程怎么走都由你安排，目标是让接手的人看完就知道先干什么。\n\n方案请围绕以下重点展开：\n1. 交接表模板：给出可直接填写或复制的表格，字段要精简但覆盖关键信息，例如事项名称、当前状态、下一步动作、优先级或紧急程度、截止时间、相关文件或联系人、遗留风险与注意事项、交接人和接手人确认。字段设计要让接手人一眼看出哪些事最急、先做什么。\n2. 交接流程：说明请假人提出交接的时机、填写和移交方式、接手人如何确认、交接完成后如何留痕，以及临时紧急请假时如何简化处理。流程步骤要少而清楚，适合小组日常使用，不依赖复杂工具。\n3. 使用说明：简要说明交接表怎么填、优先级怎么判断、接手人拿到表后按什么顺序处理，并给出一个填写示例，帮助小组直接照做。\n\n方案以文字加表格形式呈现，篇幅紧凑实用，避免空泛原则。如果涉及需要小组自行确定的参数（如交接时限、确认方式），请标明为建议值，由小组按实际情况调整。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5671,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "0db214c5-56d3-4dd7-a5e3-bda4d53c90ee",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "TRAVEL_PACKING_RAW_EXEC",
+    "caseId": "TRAVEL_PACKING",
+    "version": "RAW",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "我总在两三天的短途出行时漏带东西，帮我设计一套出门前能照着做的打包办法，清单和检查方式都由你安排。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "TRAVEL_PACKING_RAW_EXEC",
+      "data": {
+        "content": "下面是一套专为「2–3 天短途出行」设计的打包办法，按「先定框架 → 再装包 → 出门前检查」三步走，照着做就能明显减少漏带。\n\n## 一、先定框架：三类物品，固定位置\n\n把要带的东西分成三类，每类固定放在同一个包/隔层里，形成肌肉记忆：\n\n1. **证件与电子（随身小包）**：身份证、手机、充电器、充电宝、耳机、少量现金。\n2. **衣物与洗漱（主包）**：按天数配好的换洗衣物、洗漱包、常用药。\n3. **场景补充（按行程加）**：雨具、防晒、礼物、工作用品等。\n\n原则：**每类物品有固定归属，不临时换位置**，这样检查时只需确认「三类都在」。\n\n## 二、装包顺序：从难到易\n\n按这个顺序装，避免最后塞不下：\n\n1. 先放**大件硬物**（鞋、洗漱包、充电宝）贴包底。\n2. 再放**衣物**，卷起来省空间，按「内衣→上衣→裤子→外套」从里到外。\n3. 最后放**零碎小件**（数据线、药、纸巾）进侧袋或小收纳袋。\n4. **证件和手机单独放随身小包**，不混进主包。\n\n## 三、出门前检查：两遍法\n\n**第一遍（装完包后，逐类点名）**\n- 证件电子：身份证、手机、充电器、充电宝、耳机——逐个数一遍。\n- 衣物洗漱：换洗衣物套数 = 天数，洗漱包、常用药。\n- 场景补充：对照行程想一遍「有没有特殊场合」，比如见客户要带名片、下雨要带伞。\n\n**第二遍（出门前 5 分钟，只查三样）**\n- 手机和身份证在不在身上。\n- 充电宝有没有电。\n- 门钥匙/房卡。\n\n## 四、防漏小机制\n\n- **固定清单**：把上面三类写成一张纸贴在门口，每次出门扫一眼。\n- **前一晚装包**：睡前装好，早上只做第二遍检查，避免匆忙漏带。\n- **回程即复位**：回家后把充电器、洗漱包放回固定位置，下次直接拿。\n\n## 五、2–3 天极简清单（可直接照抄）\n\n- 证件：身份证、少量现金\n- 电子：手机、充电器、充电宝、耳机\n- 衣物：内衣袜子各 2–3 套、上衣 2–3 件、裤子 1–2 条、外套 1 件（按天气）\n- 洗漱：牙刷、牙膏、洗面奶、护肤品小样、毛巾（如酒店不提供）\n- 药品：常用药、创可贴\n- 其他：纸巾、雨伞（看天气）、水杯\n\n按「三类固定位置 + 两遍检查」执行，两三次之后就会形成习惯，漏带会明显减少。",
+        "usage": {
+          "prompt_tokens": 65,
+          "completion_tokens": 672,
+          "total_tokens": 737,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 65
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "TRAVEL_PACKING_V14_EXEC",
+    "caseId": "TRAVEL_PACKING",
+    "version": "V14",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "我总在两三天的短途出行时漏带东西，请帮我设计一套出门前能照着做的打包办法，清单和检查方式都由你安排。\n\n交付物是一份可直接使用的打包方案，包含两部分：一份按类别组织的打包清单，以及一套出门前的检查方式。清单要覆盖两三天的短途出行常见物品，按证件与钱、电子设备与充电、衣物、洗漱与护肤、药品与健康、雨具与随身小物等类别分组，每项写清具体物品和大致数量，并标出容易漏带的关键项（如充电器、身份证、常用药、雨伞）。检查方式要能照着执行，例如出门前按清单逐项核对、出发前一晚先集中摆放、离家前做一次最终确认，并说明如何标记已装和未装。\n\n方案要简洁实用，篇幅控制在一页左右，语言直白，适合打印或存手机随时查看。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "TRAVEL_PACKING_V14_EXEC",
+      "data": {
+        "content": "# 两三天短途出行打包方案\n\n## 一、打包清单（按类别，数量按2–3天/1人）\n\n**证件与钱**\n- 身份证 1（★易漏）\n- 银行卡/信用卡 1–2\n- 现金 少量（约200–300元）\n- 车票/机票/酒店预订信息（手机截图或打印）\n\n**电子设备与充电**\n- 手机 1 + 充电器 1（★易漏）\n- 充电宝 1 + 其充电线\n- 耳机 1\n- 相机/平板（按需）+ 对应充电线\n\n**衣物**\n- 上衣 2–3件\n- 裤子/裙子 1–2条\n- 内衣裤 2–3套、袜子 2–3双\n- 睡衣 1套\n- 外套 1件（按天气）\n- 舒适鞋 1双（穿走）+ 备用鞋 1双（按需）\n\n**洗漱与护肤**\n- 牙刷、牙膏（旅行装）\n- 洗面奶、面霜、防晒\n- 毛巾 1条（或确认住宿提供）\n- 梳子、剃须刀（按需）\n- 小瓶洗发水/沐浴露（住宿不提供时）\n\n**药品与健康**\n- 常用药（★易漏，按个人情况：降压药、过敏药等）\n- 创可贴 几片、肠胃药、感冒药、止痛药\n- 口罩 2–3个\n\n**雨具与随身小物**\n- 雨伞 1把（★易漏）\n- 纸巾/湿巾 1包\n- 水杯 1个\n- 钥匙 1串（★易漏）\n- 小锁/行李牌（按需）\n\n## 二、出门前检查方式\n\n**第1步：出发前一晚——集中摆放**\n把行李箱/背包打开放在固定位置，按上面6个类别逐类把物品放入，放一类勾一类。药品和证件最后放，避免压坏或遗忘。\n\n**第2步：装包时——标记已装/未装**\n- 打印清单或用手机备忘录，每装一项打“✓”。\n- 未装的项标“○”，装完仍为“○”的即为待补。\n- 易漏关键项（★项）单独用红笔圈出，装好后重点复核。\n\n**第3步：离家前10分钟——最终确认**\n按“伸手要钱”口诀快速过一遍：**身**（身份证）、**手**（手机+充电器）、**要**（钥匙）、**钱**（钱包/现金），再确认**药**（常用药）和**伞**（雨伞）。同时检查：充电器是否拔下带走、药品是否在包内、雨伞是否放入。\n\n**第4步：关门后30秒——回头确认**\n锁门前看一眼清单上★项是否全部打“✓”；若时间允许，把包放在门口再检查一次拉链和证件位置。\n\n> 使用建议：把本页打印后贴在门后，或存手机备忘录；每次出行前按“一晚摆放→逐项打勾→口诀终检→关门复核”四步执行即可。",
+        "usage": {
+          "prompt_tokens": 227,
+          "completion_tokens": 701,
+          "total_tokens": 928,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 227
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "TRAVEL_PACKING_V14_GEN",
+    "caseId": "TRAVEL_PACKING",
+    "version": "14",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "我总在两三天的短途出行时漏带东西，帮我设计一套出门前能照着做的打包办法，清单和检查方式都由你安排。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "TRAVEL_PACKING_V14_GEN",
+      "data": {
+        "optimizedPrompt": "我总在两三天的短途出行时漏带东西，请帮我设计一套出门前能照着做的打包办法，清单和检查方式都由你安排。\n\n交付物是一份可直接使用的打包方案，包含两部分：一份按类别组织的打包清单，以及一套出门前的检查方式。清单要覆盖两三天的短途出行常见物品，按证件与钱、电子设备与充电、衣物、洗漱与护肤、药品与健康、雨具与随身小物等类别分组，每项写清具体物品和大致数量，并标出容易漏带的关键项（如充电器、身份证、常用药、雨伞）。检查方式要能照着执行，例如出门前按清单逐项核对、出发前一晚先集中摆放、离家前做一次最终确认，并说明如何标记已装和未装。\n\n方案要简洁实用，篇幅控制在一页左右，语言直白，适合打印或存手机随时查看。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4593,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "14",
+        "framework": "APE",
+        "recordId": "71a6e68e-8fb8-4867-bd54-57cb9169c1d4",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "TRAVEL_PACKING_V4_EXEC",
+    "caseId": "TRAVEL_PACKING",
+    "version": "V4",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "我经常在两三天的短途出行时漏带东西，请帮我设计一套出门前能照着做的打包办法，清单和检查方式都由你安排。\n\n请交付一份可直接使用的打包方案，包含：一份按类别整理的打包清单（如证件与钱、衣物、洗漱用品、电子设备与充电、常用药品、雨具等），每项标注是否必需、数量或件数建议，并区分“每次必带”和“按天气/行程选带”；一套出门前的检查方式，例如按固定顺序逐项核对、出发前做一次总检查、返程前清点，说明具体怎么执行、在什么时间点做；以及针对两三天的行程如何控制行李量和避免遗漏的实用做法。清单和检查流程要简洁、便于打印或存手机，能直接照着操作。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "TRAVEL_PACKING_V4_EXEC",
+      "data": {
+        "content": "下面是一套可直接照着用的 **2–3 天短途出行打包方案**，包含清单、检查流程和控量方法。可打印，也可存手机备忘录。\n\n---\n\n## 一、打包清单（按类别）\n\n标记说明：  \n- **必带**＝每次必带  \n- **选带**＝按天气/行程选带  \n- 数量按 2–3 天、1 人计；有特殊行程再调整\n\n### 1. 证件与钱（必带）\n| 项目 | 建议数量 | 说明 |\n|---|---|---|\n| 身份证/护照 | 1 | 必带 |\n| 银行卡/现金 | 1–2 张/少量 | 必带 |\n| 手机（含支付） | 1 | 必带 |\n| 车票/机票/预订信息 | 电子或打印 1 份 | 必带 |\n| 驾驶证/行驶证 | 按需 | 选带：自驾 |\n| 学生证/老年证等优惠证件 | 按需 | 选带 |\n\n### 2. 衣物（必带＋选带）\n| 项目 | 建议数量 | 说明 |\n|---|---|---|\n| 上衣 | 2–3 件 | 必带 |\n| 下装 | 1–2 条 | 必带 |\n| 内衣裤 | 3 套 | 必带 |\n| 袜子 | 3 双 | 必带 |\n| 睡衣/家居服 | 1 套 | 选带：住酒店可简化为舒适T恤 |\n| 外套/薄羽绒 | 1 件 | 选带：看温差 |\n| 鞋 | 穿 1 双，带 0–1 双 | 必带；选带备用鞋 |\n| 拖鞋 | 1 双 | 选带：酒店不提供或介意卫生 |\n| 帽子/围巾/手套 | 各 1 | 选带：防晒/保暖 |\n| 泳衣/运动衣 | 1 套 | 选带：按行程 |\n\n### 3. 洗漱与护肤（必带＋选带）\n| 项目 | 建议数量 | 说明 |\n|---|---|---|\n| 牙刷/牙膏 | 1 套 | 必带（旅行装） |\n| 洗面奶/面霜 | 各 1 小瓶 | 必带 |\n| 洗发水/沐浴露 | 小瓶或分装 | 选带：酒店提供可不带 |\n| 毛巾 | 1 条 | 选带：可用酒店 |\n| 梳子 | 1 把 | 必带 |\n| 剃须刀 | 1 | 选带 |\n| 防晒霜 | 1 小瓶 | 选带：户外/晴天 |\n| 化妆品 | 少量 | 选带 |\n| 卫生用品 | 按需 | 选带 |\n\n### 4. 电子设备与充电（必带）\n| 项目 | 建议数量 | 说明 |\n|---|---|---|\n| 手机 | 1 | 必带 |\n| 充电器/充电线 | 1 套 | 必带 |\n| 充电宝 | 1 | 必带：短途常用 |\n| 耳机 | 1 | 选带 |\n| 相机/存储卡 | 1 | 选带 |\n| 转换插头 | 1 | 选带：出境/特殊插座 |\n| 平板/电脑 | 按需 | 选带：非必要不带 |\n\n### 5. 常用药品（必带小包＋选带）\n| 项目 | 建议数量 | 说明 |\n|---|---|---|\n| 创可贴 | 3–5 片 | 必带 |\n| 止痛/退烧药 | 少量 | 必带 |\n| 肠胃药 | 少量 | 必带 |\n| 感冒药 | 少量 | 选带：换季/温差大 |\n| 晕车药 | 少量 | 选带：乘车船 |\n| 抗过敏药 | 少量 | 选带：过敏体质 |\n| 个人处方药 | 足量 | 必带：按医嘱 |\n| 口罩 | 2–3 个 | 选带 |\n\n### 6. 雨具与天气相关（选带）\n| 项目 | 建议数量 | 说明 |\n|---|---|---|\n| 折叠伞 | 1 把 | 选带：有雨/多云 |\n| 雨衣 | 1 件 | 选带：户外/大风 |\n| 防晒帽/墨镜 | 各 1 | 选带：晴天户外 |\n| 保温杯/水杯 | 1 | 选带 |\n\n### 7. 其他小件（必带＋选带）\n| 项目 | 建议数量 | 说明 |\n|---|---|---|\n| 钥匙 | 1 串 | 必带 |\n| 纸巾/湿巾 | 各 1 包 | 必带 |\n| 垃圾袋 | 2–3 个 | 选带：装脏衣/杂物 |\n| 折叠袋 | 1 个 | 选带：回程装东西 |\n| 眼罩/耳塞 | 各 1 | 选带：睡眠浅 |\n| 小锁 | 1 | 选带：青旅/行李 |\n| 笔 | 1 支 | 选带：填表 |\n\n---\n\n## 二、出门前检查方式\n\n### 方法：固定顺序核对＋出发前总检查＋返程前清点\n\n#### 1. 打包时：按固定顺序逐项核对\n按这个顺序装包，避免来回找：\n\n**证件钱 → 电子充电 → 药品 → 洗漱 → 衣物 → 雨具天气件 → 其他小件**\n\n每装完一类，在清单上打勾。  \n建议把清单存手机备忘录，打包时逐项勾选。\n\n#### 2. 出发前 10 分钟：做一次“总检查”\n站在门口，按 **“伸手要钱”** 口诀快速确认：\n\n- **伸**：身份证/护照\n- **手**：手机\n- **要**：钥匙\n- **钱**：钱包/支付工具\n\n再补三问：\n- 充电器和充电宝带了吗？\n- 今天天气需要的雨具/外套带了吗？\n- 处方药和常用药带了吗？\n\n#### 3. 出门前 1 分钟：门口“三摸”\n- 摸口袋：手机、钥匙\n- 摸包侧：证件、车票\n- 摸充电线：充电宝/充电器\n\n#### 4. 返程前：退房/离开前清点\n按 **“床—桌—卫生间—插座—衣柜”** 顺序看一遍：\n\n- 床：枕头下、被子下\n- 桌：充电器、耳机、证件\n- 卫生间：洗漱包、剃须刀\n- 插座：充电头是否拔走\n- 衣柜：外套、帽子、围巾\n\n#### 5. 时间点建议\n- **出发前一晚**：按清单装包，勾选 90%\n- **出发当天早上**：补装洗漱用品、当天衣物\n- **出门前 10 分钟**：总检查\n- **出门前 1 分钟**：三摸\n- **返程退房前**：五处清点\n\n---\n\n## 三、2–3 天行程控量＋防遗漏做法\n\n1. **只带一个主包＋一个小包**  \n   主包放衣物和洗漱，小包放证件、手机、充电宝、药品。避免大箱小箱。\n\n2. **衣物按“1 穿 2 换”控制**  \n   身上穿 1 套，包里带 2 套换洗；内衣袜按 3 天上限带。鞋最多穿 1 带 1。\n\n3. **洗漱用品全部旅行装/分装**  \n   每样不超过 100ml，装一个洗漱包，用完直接补回包内。\n\n4. **药品固定一个小药包**  \n   创可贴、止痛、肠胃药、个人处方药常驻包内，出门前只检查是否补齐。\n\n5. **充电设备固定一个收纳袋**  \n   充电器、线、充电宝放同一袋，回酒店固定放桌上同一位置，退房只看这一处。\n\n6. **用“缺一不可”四件套做底线**  \n   身份证、手机、钥匙、充电宝。这四样单独放小包，出门前先确认。\n\n7. **选带物品用“天气/行程两问”决定**  \n   - 天气：下雨吗？温差大吗？  \n   - 行程：有户外/正式场合/游泳吗？  \n   两问都否，就不带。\n\n8. **留一个折叠袋**  \n   回程买的东西、脏衣服放折叠袋，避免主包爆满和遗漏。\n\n9. **清单只保留一页**  \n   打印版贴门口，手机版设成备忘录置顶；每次出行只改“选带”项。\n\n10. **返程前 5 分钟固定清点**  \n    按“床—桌—卫生间—插座—衣柜”走一遍，形成肌肉记忆。\n\n---\n\n## 四、可打印/存手机的极简版\n\n**出门四件套：身份证、手机、钥匙、充电宝**  \n**打包顺序：证件钱→电子→药品→洗漱→衣物→雨具→其他**  \n**出门前：总检查 10 分钟＋三摸 1 分钟**  \n**返程前：床—桌—卫生间—插座—衣柜**\n\n这份方案可直接打印成 A4 一页，或复制到手机备忘录，每次出行按勾选执行即可。",
+        "usage": {
+          "prompt_tokens": 204,
+          "completion_tokens": 2116,
+          "total_tokens": 2320,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 204
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "TRAVEL_PACKING_V4_GEN",
+    "caseId": "TRAVEL_PACKING",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "我总在两三天的短途出行时漏带东西，帮我设计一套出门前能照着做的打包办法，清单和检查方式都由你安排。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "TRAVEL_PACKING_V4_GEN",
+      "data": {
+        "optimizedPrompt": "我经常在两三天的短途出行时漏带东西，请帮我设计一套出门前能照着做的打包办法，清单和检查方式都由你安排。\n\n请交付一份可直接使用的打包方案，包含：一份按类别整理的打包清单（如证件与钱、衣物、洗漱用品、电子设备与充电、常用药品、雨具等），每项标注是否必需、数量或件数建议，并区分“每次必带”和“按天气/行程选带”；一套出门前的检查方式，例如按固定顺序逐项核对、出发前做一次总检查、返程前清点，说明具体怎么执行、在什么时间点做；以及针对两三天的行程如何控制行李量和避免遗漏的实用做法。清单和检查流程要简洁、便于打印或存手机，能直接照着操作。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5618,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "eaa7feb3-2dac-4986-a1d8-90cb5e0ee65d",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "WEEKLY_COOKING_RAW_EXEC",
+    "caseId": "WEEKLY_COOKING",
+    "version": "RAW",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "帮我安排一周一个人的晚饭和买菜清单，普通家常菜就行。我想少买重复食材、少剩菜，菜单和怎么安排你来设计。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "WEEKLY_COOKING_RAW_EXEC",
+      "data": {
+        "content": "下面按“一个人、一周7天晚饭、普通家常菜、少重复食材、少剩菜”来设计。核心思路是：**把容易剩的食材拆成2–3次用掉，蔬菜按耐放程度排先后，肉类分装冷冻，主食轮换但不过量。**\n\n## 一周晚餐菜单\n\n| 星期 | 晚餐 | 设计目的 |\n|---|---|---|\n| 周一 | 番茄炒蛋 + 蒜蓉青菜 + 米饭 | 简单开局，番茄和青菜先消耗 |\n| 周二 | 青椒土豆丝 + 煎鸡胸/鸡腿肉 + 米饭 | 土豆、青椒各用一部分，鸡肉开始消耗 |\n| 周三 | 西红柿鸡蛋面 + 凉拌黄瓜 | 消耗番茄、鸡蛋、黄瓜，主食换面条 |\n| 周四 | 洋葱炒肉片 + 清炒西兰花 + 米饭 | 猪肉片、洋葱、西兰花搭配 |\n| 周五 | 土豆胡萝卜炖鸡块 + 米饭 | 消耗土豆、胡萝卜、剩余鸡肉，一锅出 |\n| 周六 | 西兰花炒虾仁/鸡蛋 + 紫菜蛋花汤 + 米饭 | 消耗剩余西兰花、鸡蛋，汤简单 |\n| 周日 | 黄瓜拌木耳 + 剩余肉片/鸡蛋炒饭 | 清冰箱，剩菜风险最低 |\n\n> 如果不想买虾仁，周六可改成“西兰花炒鸡蛋”，更省事。\n\n## 买菜清单（按一人一周量，可按饭量增减）\n\n### 蔬菜类\n- 番茄：4个（周一2个、周三1–2个）\n- 青菜/小白菜：1把（周一）\n- 青椒：2个（周二用1个，剩余可周日炒饭）\n- 土豆：3个中等大小（周二1个、周五2个）\n- 黄瓜：2根（周三1根、周日1根）\n- 洋葱：1个（周四）\n- 西兰花：1颗（周四、周六分两次用）\n- 胡萝卜：1–2根（周五）\n- 大蒜：1头\n- 姜：1小块\n- 小葱：1小把（可选）\n\n### 肉蛋豆类\n- 鸡蛋：10–12个（番茄炒蛋、面条、汤、炒饭都可能用）\n- 鸡胸肉或鸡腿肉：约500克（周二、周五分两次用）\n- 猪瘦肉/肉片：约250克（周四，剩余周日炒饭）\n- 虾仁：约150克（可选，周六）\n- 干木耳：一小包（周日凉拌，用量少）\n- 紫菜：一小包（周六汤）\n\n### 主食与调味\n- 大米：家里有可不买\n- 面条：1小把/1人份2–3份\n- 食用油、盐、生抽、老抽、醋、蚝油、淀粉：按家里存量补\n- 料酒：可选\n\n## 怎么安排更省事、少剩菜\n\n1. **买回当天分装**\n   - 鸡肉分成2份：周二一份、周五一份，冷冻。\n   - 猪肉片分成2份：周四一份、周日炒饭一份，冷冻。\n   - 西兰花整颗不要提前切，吃前再切；周四用一半，周六用一半。\n   - 青菜、黄瓜、番茄先吃；土豆、洋葱、胡萝卜耐放，排后面。\n\n2. **蔬菜使用顺序**\n   - 先吃：青菜、黄瓜、番茄\n   - 中间吃：青椒、西兰花\n   - 后吃：土豆、洋葱、胡萝卜\n\n3. **剩菜控制**\n   - 每顿按“1个主菜 + 1个简单配菜/汤”做，不额外多做。\n   - 米饭一次煮1–1.5碗量；如果多煮了，周日直接做蛋炒饭。\n   - 周四洋葱炒肉片如果剩一点，周日切碎炒饭，不单独再热一盘。\n   - 周六西兰花只用半颗，剩下半颗周日可加进炒饭或凉拌。\n\n4. **采购小技巧**\n   - 鸡蛋、土豆、洋葱、胡萝卜、木耳、紫菜可一次买齐，耐放。\n   - 绿叶菜只买1把，避免烂掉。\n   - 肉类让摊主分装，或回家立刻分袋冷冻，避免反复解冻。\n   - 番茄买4个刚好，不要囤太多。\n\n## 每天大概操作时间\n\n- 周一、周三：15–20分钟\n- 周二、周四、周六：20–25分钟\n- 周五炖鸡块：30–35分钟，但可一锅出\n- 周日炒饭：10–15分钟\n\n这样一周食材基本能闭环：番茄、鸡蛋、青菜、土豆、青椒、黄瓜、洋葱、西兰花、胡萝卜、鸡肉、猪肉、木耳、紫菜都用上，重复采购少，剩菜也少。",
+        "usage": {
+          "prompt_tokens": 64,
+          "completion_tokens": 1076,
+          "total_tokens": 1140,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 64
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "WEEKLY_COOKING_V14_EXEC",
+    "caseId": "WEEKLY_COOKING",
+    "version": "V14",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "帮我安排一周（7天）一个人的晚饭菜单和对应的买菜清单，做普通家常菜就行。核心要求是少买重复食材、少剩菜：请让同一批食材在一周内被合理复用，控制每餐分量适合一人食用，并尽量让食材用量前后衔接、不浪费。菜单和一周的做饭安排都由你来设计，请直接给出可执行的方案，包括每天晚餐吃什么、大致做法，以及按采购批次整理的买菜清单（标明食材和大致用量）。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "WEEKLY_COOKING_V14_EXEC",
+      "data": {
+        "content": "下面给你一套**一人食、7天晚餐**的可执行方案。思路是：  \n- **主蛋白分两批买**：周初买鸡胸/猪里脊/鸡蛋/豆腐，周中补鱼/虾/牛肉片，避免一次买太多。  \n- **蔬菜按“耐放+易坏”搭配**：根茎类、瓜类放前中段，绿叶菜集中在2-3天内吃完。  \n- **主食轮换但不过量**：米饭、面条、馒头/饼穿插，剩饭只安排一次炒饭。  \n- **每餐一荤一素或一锅出**，分量按一人份控制，尽量不留隔夜菜。  \n\n---\n\n## 一周晚餐菜单与做法\n\n### 周一：鸡胸肉炒青椒 + 番茄蛋汤 + 米饭\n**做法**：鸡胸切丝，用生抽、淀粉抓匀；青椒切丝。热锅少油滑炒鸡丝至变色盛出，再炒青椒，回锅鸡丝，加盐/生抽调味。番茄切块煮汤，淋蛋液，加盐和少许香油。米饭煮1人份（约80g生米）。  \n**复用**：鸡胸、青椒、番茄、鸡蛋、葱姜。\n\n### 周二：豆腐烧肉末 + 清炒油麦菜 + 米饭\n**做法**：猪里脊剁末（或买现成肉末），豆腐切块。少油炒肉末，加豆瓣酱/生抽炒香，加水放豆腐小火焖5分钟，收汁。油麦菜蒜蓉清炒。米饭1人份。  \n**复用**：豆腐、肉末、油麦菜、蒜。  \n**注意**：肉末用周一鸡胸剩下的边角也可，但建议单独买小份猪里脊，口感更好。\n\n### 周三：番茄鸡蛋面 + 凉拌黄瓜\n**做法**：番茄炒软加水煮开，下面条，淋蛋液，加盐/生抽。黄瓜拍碎，加蒜末、醋、生抽、少许香油凉拌。  \n**复用**：番茄、鸡蛋、面条、黄瓜、蒜。  \n**分量**：面条约80-100g干面，鸡蛋1个。\n\n### 周四：虾仁炒西兰花 + 米饭\n**做法**：虾仁解冻/鲜虾去壳，用盐、料酒、淀粉抓匀；西兰花焯水。热锅少油炒虾仁至变色，加西兰花翻炒，盐/蚝油调味。米饭1人份。  \n**复用**：虾仁、西兰花、蒜。  \n**采购**：周中批次买虾仁小份。\n\n### 周五：牛肉片炒洋葱 + 紫菜蛋花汤 + 米饭\n**做法**：牛肉片用生抽、淀粉、少许油抓匀；洋葱切丝。热锅快炒牛肉至变色盛出，炒洋葱至软，回锅牛肉，加黑胡椒/生抽。紫菜撕小片，水开淋蛋液，加盐、香油。米饭1人份。  \n**复用**：牛肉片、洋葱、紫菜、鸡蛋。\n\n### 周六：鸡腿肉焖土豆胡萝卜 + 米饭\n**做法**：鸡腿肉切块（或买去骨鸡腿肉），土豆、胡萝卜切块。少油炒鸡腿肉至表面变色，加姜片、生抽、老抽少许，加水放土豆胡萝卜，小火焖15分钟收汁。米饭1人份。  \n**复用**：鸡腿肉、土豆、胡萝卜、姜。  \n**分量**：鸡腿肉约150g，土豆1小个，胡萝卜半根。\n\n### 周日：剩饭蔬菜蛋炒饭 + 紫菜虾皮汤\n**做法**：周六预留一小碗米饭（或周日现煮少量），加鸡蛋、胡萝卜丁、洋葱丁/青豆等炒饭，盐/生抽调味。紫菜+虾皮冲汤。  \n**复用**：鸡蛋、胡萝卜、洋葱、紫菜、虾皮、剩饭。  \n**注意**：这餐专门消化前几天的少量边角料，不额外买大份蔬菜。\n\n---\n\n## 按采购批次整理的买菜清单\n\n### 第一批：周初采购（周一至周三用）\n| 食材 | 大致用量 | 用途 |\n|---|---|---|\n| 鸡胸肉 | 200g | 周一炒青椒，剩余可周二肉末替代或周三不加 |\n| 猪里脊/肉末 | 100-150g | 周二豆腐烧肉末 |\n| 鸡蛋 | 6个 | 周一汤、周三面、周五汤、周日炒饭 |\n| 嫩豆腐 | 1盒（约300g） | 周二 |\n| 番茄 | 3个中等 | 周一汤、周三面 |\n| 青椒 | 2个 | 周一 |\n| 油麦菜 | 1小把 | 周二 |\n| 黄瓜 | 1根 | 周三凉拌 |\n| 面条 | 1小把（约100g） | 周三 |\n| 大米 | 约500g | 周一至周三米饭，少量余量 |\n| 葱姜蒜 | 各少量 | 调味 |\n\n**说明**：鸡胸200g周一用约150g，剩余50g可切丁放周三面里或周二肉末中，避免剩。鸡蛋6个按周一1、周三1、周五1、周日1-2个安排，余量做汤。\n\n### 第二批：周中补货（周四至周日用）\n| 食材 | 大致用量 | 用途 |\n|---|---|---|\n| 虾仁 | 100-150g | 周四西兰花 |\n| 西兰花 | 1小颗 | 周四 |\n| 牛肉片 | 150g | 周五洋葱 |\n| 洋葱 | 1个 | 周五、周日炒饭 |\n| 紫菜 | 1小包 | 周五汤、周日汤 |\n| 鸡腿肉 | 150-200g | 周六土豆胡萝卜 |\n| 土豆 | 1小个 | 周六 |\n| 胡萝卜 | 1根 | 周六、周日炒饭 |\n| 虾皮 | 1小包 | 周日汤 |\n| 米饭补充 | 约300g大米 | 周四至周日 |\n\n**说明**：周四虾仁和周五牛肉片都是小份，避免冷冻太久。洋葱1个分周五炒菜和周日炒饭。胡萝卜1根分周六焖菜和周日炒饭丁。紫菜一包两次汤用完。\n\n---\n\n## 一周做饭安排建议\n\n- **周一做饭时**：米饭多煮半碗，留作周二蛋炒饭？不建议，因为周二已有米饭。更稳妥是每天现煮少量，或一次煮2份冷藏，48小时内吃完。  \n- **周三**：面条为主，不再煮米饭，减少主食剩余。  \n- **周六**：焖菜时多留一小碗米饭，周日做炒饭，正好消化。  \n- **蔬菜保鲜**：绿叶菜周二前吃完；西兰花周四买周四做；洋葱、土豆、胡萝卜耐放，放阴凉处。  \n- **肉类分装**：鸡胸、肉末、虾仁、牛肉片按每餐份量分小袋冷藏/冷冻，避免反复解冻。  \n- **调味原则**：家常菜以盐、生抽、蚝油、醋、蒜、姜、葱为主，不额外买复杂酱料；豆瓣酱可选小包。  \n\n这套方案的核心是：**周初蛋白+番茄青椒黄瓜，周中虾牛+西兰花洋葱，周末鸡腿土豆胡萝卜收尾，周日用边角料炒饭**。每餐一人份，蔬菜和肉类前后衔接，基本不剩菜。",
+        "usage": {
+          "prompt_tokens": 136,
+          "completion_tokens": 1668,
+          "total_tokens": 1804,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 136
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "WEEKLY_COOKING_V14_GEN",
+    "caseId": "WEEKLY_COOKING",
+    "version": "14",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "帮我安排一周一个人的晚饭和买菜清单，普通家常菜就行。我想少买重复食材、少剩菜，菜单和怎么安排你来设计。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "WEEKLY_COOKING_V14_GEN",
+      "data": {
+        "optimizedPrompt": "帮我安排一周（7天）一个人的晚饭菜单和对应的买菜清单，做普通家常菜就行。核心要求是少买重复食材、少剩菜：请让同一批食材在一周内被合理复用，控制每餐分量适合一人食用，并尽量让食材用量前后衔接、不浪费。菜单和一周的做饭安排都由你来设计，请直接给出可执行的方案，包括每天晚餐吃什么、大致做法，以及按采购批次整理的买菜清单（标明食材和大致用量）。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4388,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "14",
+        "framework": "APE",
+        "recordId": "748054d5-88c2-4abf-8731-dbbe48b9e540",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "WEEKLY_COOKING_V4_EXEC",
+    "caseId": "WEEKLY_COOKING",
+    "version": "V4",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "执行用户请求并交付其要求的作品。无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "帮我设计一个人一周的晚饭安排和对应的买菜清单，做普通家常菜即可。请以少买重复食材、少剩菜为目标来设计菜单和采购安排，菜单内容和一周怎么安排都由你来定。\n\n交付一份可直接照着执行的方案，包含：\n1. 一周七天晚餐菜单：每天列出菜名，并简要说明搭配（荤素、主食、汤或凉菜按需安排），保证家常、做法不复杂、一个人能吃完。\n2. 食材复用思路：说明哪些食材会在多天之间重复使用，如何通过同一食材的不同做法减少重复采购和剩余。\n3. 买菜清单：按蔬菜、肉蛋、豆制品/主食、调味或干货等类别列出食材及大致用量（按一人份估算），并标注哪些是跨天共用、哪些只需少量。\n4. 采购与备菜安排：说明哪些食材适合一次买齐、哪些宜中途补买，以及简单的分装、预处理和保存方式，帮助控制剩菜。\n\n菜单以常见、易买、做法简单的家常菜为主，避免过多特殊食材；用量按一人一周晚餐估算，若某些食材只能整份购买，请在清单中说明如何在一周内用完或妥善保存。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "WEEKLY_COOKING_V4_EXEC",
+      "data": {
+        "content": "下面是一份可直接照着执行的一人一周晚餐方案。按“每晚 1 个主菜 + 1 个快手素菜/凉菜 + 主食，部分天加简易汤”设计，尽量让同一种食材在 2–3 天内用完，减少重复采购和剩菜。\n\n---\n\n## 一、一周七天晚餐菜单\n\n| 星期 | 晚餐菜单 | 搭配说明 |\n|---|---|---|\n| 周一 | 青椒土豆丝炒肉 + 蒜蓉生菜 + 米饭 | 一荤一素，土豆丝兼当半主食，米饭煮 1 杯米即可 |\n| 周二 | 番茄炒蛋 + 清炒油麦菜 + 米饭 | 快手素荤搭配，番茄炒蛋汤汁拌饭，不再另做汤 |\n| 周三 | 香菇滑鸡 + 凉拌黄瓜 + 米饭 | 鸡肉配香菇，黄瓜凉菜解腻；香菇滑鸡可带少量汤汁 |\n| 周四 | 芹菜香干炒肉丝 + 紫菜蛋花汤 + 米饭 | 肉丝、香干、芹菜一锅炒；汤用少量紫菜和半个蛋 |\n| 周五 | 蒜香煎鸡腿排 + 清炒西兰花 + 米饭 | 鸡腿排用周三剩余鸡腿或单独小鸡腿；西兰花焯水后快炒 |\n| 周六 | 麻婆豆腐（家常少辣版）+ 清炒小白菜 + 米饭 | 豆腐为主蛋白，肉末少量提味；小白菜清口 |\n| 周日 | 番茄金针菇肥牛卷 + 凉拌木耳 + 米饭 | 番茄汤底一锅出，肥牛卷少量；木耳提前泡发，凉拌即可 |\n\n> 主食统一为米饭，按每餐生米约 80–100 g 估算；若某天不想吃米饭，可把土豆、粉丝等算作部分主食，不建议额外囤多种主食。\n\n---\n\n## 二、食材复用思路\n\n1. **猪肉分两次用**：周一土豆丝炒肉用约 80 g 瘦肉；周四芹菜香干炒肉丝用约 80 g 瘦肉；周六麻婆豆腐用约 50 g 肉末。可买一块约 200 g 瘦肉，买回后分三份冷冻/冷藏，按天取用。\n2. **鸡肉分两次用**：周三香菇滑鸡用 1 个鸡腿或约 150 g 鸡腿肉；周五煎鸡腿排用 1 个鸡腿。可买 2 个鸡腿，周三、周五各用一个；若买整袋鸡腿，剩余冷冻。\n3. **番茄跨天使用**：周二番茄炒蛋用 1 个番茄；周日番茄肥牛用 1–2 个番茄。买 3 个中等番茄，周二用 1 个，周日用 2 个，避免一次买太多。\n4. **鸡蛋少量多次用**：周二番茄炒蛋用 2 个；周四紫菜蛋花汤用半个；剩余鸡蛋可留到下周或做早餐。买 6 个装小盒即可。\n5. **绿叶菜按“2 天一轮”买**：生菜、油麦菜、小白菜各买一小把，分别对应周一、周二、周六；西兰花和黄瓜耐放些，安排在中后段。绿叶菜不要一次买太多，避免黄叶。\n6. **香菇、金针菇少量搭配**：香菇 3–4 朵用于周三；金针菇一小把用于周日。若只能整盒买，香菇可冷冻或晒干保存，金针菇尽量周日前用完。\n7. **香干和木耳做“少量配菜”**：香干 2 块用于周四；木耳一小把用于周日凉拌。干木耳耐存，按需泡发，不要一次泡多。\n8. **肥牛卷少量购买**：周日用约 100–150 g 肥牛卷即可，若只能买整盒，剩余可分装冷冻，留作下次快手菜。\n\n---\n\n## 三、买菜清单（按一人一周晚餐估算）\n\n### 蔬菜类\n| 食材 | 大致用量 | 用途/备注 |\n|---|---|---|\n| 土豆 | 1 个中等大小（约 200 g） | 周一土豆丝；耐放 |\n| 青椒 | 1–2 个 | 周一土豆丝炒肉；剩余可放冰箱 |\n| 生菜 | 1 小把（约 150 g） | 周一蒜蓉生菜；当天用完 |\n| 番茄 | 3 个中等大小 | 周二 1 个、周日 2 个；跨天共用 |\n| 油麦菜 | 1 小把（约 150 g） | 周二清炒；当天用完 |\n| 黄瓜 | 1 根 | 周三凉拌黄瓜；耐放 |\n| 香菇 | 3–4 朵 | 周三香菇滑鸡；可整盒买，剩余冷冻 |\n| 芹菜 | 1 小把（约 150 g） | 周四芹菜香干炒肉丝 |\n| 西兰花 | 1 小颗（约 200 g） | 周五清炒；焯水后快炒 |\n| 小白菜 | 1 小把（约 150 g） | 周六清炒；当天用完 |\n| 金针菇 | 1 小把（约 100 g） | 周日番茄肥牛；可整袋买，剩余冷藏尽快用 |\n| 大蒜 | 1 头 | 多天爆香、蒜蓉用；耐放 |\n| 姜 | 1 小块 | 鸡肉、肉丝去腥；耐放 |\n| 小葱 | 1 小把 | 凉菜、汤、煎鸡腿点缀；可切葱花冷冻 |\n\n### 肉蛋类\n| 食材 | 大致用量 | 用途/备注 |\n|---|---|---|\n| 猪瘦肉 | 约 200 g | 周一 80 g、周四 80 g、周六肉末 50 g；买回分三份 |\n| 鸡腿 | 2 个 | 周三 1 个、周五 1 个；可买 2 个装或整袋分装冷冻 |\n| 肥牛卷 | 100–150 g | 周日番茄肥牛；整盒购买则剩余分装冷冻 |\n| 鸡蛋 | 6 个装 1 盒 | 周二用 2 个、周四用半个；剩余可做早餐 |\n\n### 豆制品/主食类\n| 食材 | 大致用量 | 用途/备注 |\n|---|---|---|\n| 香干 | 2 块 | 周四芹菜香干炒肉丝 |\n| 嫩豆腐 | 1 盒（约 300 g） | 周六麻婆豆腐；一人一盒刚好 |\n| 大米 | 约 700–800 g | 一周晚餐主食；按每餐 80–100 g 生米估算 |\n| 干木耳 | 1 小把（约 10 g） | 周日凉拌木耳；泡发后约一小碗 |\n| 紫菜 | 1 小包 | 周四蛋花汤；只需少量，剩余密封保存 |\n\n### 调味/干货类（家中已有可跳过）\n| 食材 | 大致用量 | 备注 |\n|---|---|---|\n| 生抽、老抽、蚝油、料酒、淀粉、盐、糖、胡椒粉 | 各少量 | 家常调味，按家中存量补 |\n| 豆瓣酱或辣椒酱 | 1 小勺 | 周六麻婆豆腐用，不吃辣可省略 |\n| 香油 | 少量 | 凉拌黄瓜、木耳用 |\n| 食用油 | 少量 | 按家中存量 |\n\n> **整份购买提醒**：香菇、金针菇、肥牛卷、豆腐、鸡蛋常为整盒/整袋销售。香菇剩余可切片冷冻；金针菇剩余可冷藏 1–2 天内煮汤；肥牛卷剩余分小袋冷冻；豆腐尽量买小盒当天或次日用完；鸡蛋按 6 个装买，一周内用不完可做早餐。\n\n---\n\n## 四、采购与备菜安排\n\n### 1. 适合一次买齐的\n- **耐放类**：土豆、青椒、黄瓜、大蒜、姜、大米、干木耳、紫菜、调味料。\n- **可冷冻类**：猪瘦肉、鸡腿、肥牛卷。买回当天按每餐用量分装，标注日期后冷冻。\n- **蛋类**：6 个装鸡蛋一盒，冷藏保存。\n\n### 2. 宜中途补买或分两次买的\n- **绿叶菜**：生菜、油麦菜、小白菜不耐放，建议周一/周二买一次，周六前再补一次；若超市离家近，按当天买当天吃最好。\n- **番茄**：可一次买 3 个，周二用 1 个，剩余放冰箱冷藏，周日再用。\n- **西兰花、芹菜**：可在周三或周四补买，保证周五、周四使用时仍新鲜。\n- **豆腐、金针菇**：周六、周日用的豆腐和金针菇，建议周五或周六再买，避免提前变质。\n\n### 3. 买回后的分装与预处理\n- **猪瘦肉**：洗净擦干，切成肉丝和肉末两种形态，按周一 80 g 肉丝、周四 80 g 肉丝、周六 50 g 肉末分三袋，冷藏 1–2 天内用的放冷藏，其余冷冻。\n- **鸡腿**：周三用的可冷藏；周五用的冷冻，提前一晚放冷藏解冻。若买的是整袋鸡腿，逐个分装冷冻。\n- **肥牛卷**：按周日用量分装，剩余小袋冷冻，避免反复解冻。\n- **香菇**：周三用的冷藏；多余切片后冷冻，下次直接下锅。\n- **小葱**：洗净切葱花，一部分冷藏 2–3 天内用，多余装袋冷冻。\n- **干木耳**：周日吃的话，周六晚上或周日早上用冷水泡发，泡发后当天用完，不要隔夜。\n- **绿叶菜**：买回后不要洗，用厨房纸包一下放保鲜袋冷藏，吃前再洗，能多放 1–2 天。\n\n### 4. 每晚简单备菜顺序\n- **前一晚**：把第二天要用的冷冻肉移到冷藏解冻；需要泡发的木耳提前泡。\n- **下班后**：先煮米饭，同时洗切蔬菜；先做需要炖/煎的菜，再做快炒和凉拌。\n- **控制剩菜**：每餐主菜按一人份做，素菜当天吃完；米饭按 1 杯米以内煮。若某天菜量偏大，优先把荤菜留到第二天带饭，绿叶菜不建议剩。\n\n### 5. 一周执行小提示\n- 周一、周二以新鲜绿叶菜为主，周三、周四用耐放蔬菜和豆制品，周五、周六、周日再补一次短保鲜食材。\n- 肉类统一买回分装，是控制“买多、剩多”的关键。\n- 调味以生抽、蚝油、盐为主，麻婆豆腐和凉拌菜再少量用豆瓣酱、香油，不需要为一道菜买大量特殊调料。\n\n按这份方案执行，一周晚餐食材基本能在 2–3 次采购内完成，肉类和耐放蔬菜一次买齐，绿叶菜和豆腐类中途补买，剩菜风险较低。",
+        "usage": {
+          "prompt_tokens": 287,
+          "completion_tokens": 2517,
+          "total_tokens": 2804,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 287
+        },
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "WEEKLY_COOKING_V4_GEN",
+    "caseId": "WEEKLY_COOKING",
+    "version": "4",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "帮我安排一周一个人的晚饭和买菜清单，普通家常菜就行。我想少买重复食材、少剩菜，菜单和怎么安排你来设计。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "WEEKLY_COOKING_V4_GEN",
+      "data": {
+        "optimizedPrompt": "帮我设计一个人一周的晚饭安排和对应的买菜清单，做普通家常菜即可。请以少买重复食材、少剩菜为目标来设计菜单和采购安排，菜单内容和一周怎么安排都由你来定。\n\n交付一份可直接照着执行的方案，包含：\n1. 一周七天晚餐菜单：每天列出菜名，并简要说明搭配（荤素、主食、汤或凉菜按需安排），保证家常、做法不复杂、一个人能吃完。\n2. 食材复用思路：说明哪些食材会在多天之间重复使用，如何通过同一食材的不同做法减少重复采购和剩余。\n3. 买菜清单：按蔬菜、肉蛋、豆制品/主食、调味或干货等类别列出食材及大致用量（按一人份估算），并标注哪些是跨天共用、哪些只需少量。\n4. 采购与备菜安排：说明哪些食材适合一次买齐、哪些宜中途补买，以及简单的分装、预处理和保存方式，帮助控制剩菜。\n\n菜单以常见、易买、做法简单的家常菜为主，避免过多特殊食材；用量按一人一周晚餐估算，若某些食材只能整份购买，请在清单中说明如何在一周内用完或妥善保存。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4684,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "4",
+        "framework": "APE",
+        "recordId": "bf834224-d83a-4cdb-8414-0de512a41a7c",
+        "editRevision": 0
+      }
+    }
+  }
+]
