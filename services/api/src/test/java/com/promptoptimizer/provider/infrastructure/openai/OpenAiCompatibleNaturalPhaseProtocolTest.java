@@ -583,10 +583,11 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
         server.verify();
     }
 
-    @Test
-    void inferredReadinessFeedbackCannotStartANewWritingStage() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"30", "31"})
+    void inferredReadinessFeedbackCannotStartANewWritingStage(String version) throws Exception {
         String raw = "先吃透材料中各状态的关系，后面我会逐项给你问题。";
-        var input = new NaturalPromptInput(raw, null, List.of(), List.of(), List.of(), null).withStrategyVersion("30");
+        var input = new NaturalPromptInput(raw, null, List.of(), List.of(), List.of(), null).withStrategyVersion(version);
         var response = (ObjectNode) json.readTree("""
                 {"actions":[{"text":"理解状态关系","timing":"CURRENT","condition":"","evidence":[{"sourceId":"rawPrompt","quote":"先吃透材料中各状态的关系"}]}],
                  "response":{"basis":"INHERENT","description":"确认已理解并等待问题","evidence":[{"sourceId":"rawPrompt","quote":"后面我会逐项给你问题"}]}}
@@ -595,6 +596,21 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
         var draft = provider.enhance(input, this::checkDraft);
         assertThat(draft.optimizedPrompt()).isEqualTo(raw);
         assertThat(draft.taskUnderstanding().deliverable()).isEmpty();
+        server.verify();
+    }
+
+    @Test
+    void guardedFourthSendsTheExactFrozenFourthWritingInputAfterScopePreparation() throws Exception {
+        var input = input("31");
+        expect(1, scope(), input);
+        var normalized = json.treeToValue(enhancement(), NaturalPromptPhasePayloads.Enhancement.class)
+                .toDraft(input, new com.promptoptimizer.enhancement.domain.ProviderMetadata("fixture", "fixture", false));
+        var frozen = json.createObjectNode().put("optimizedPrompt", BODY).put("framework", "APE");
+        frozen.set("taskUnderstanding", json.valueToTree(normalized.taskUnderstanding()));
+        expect(1, frozen, input("4"), system -> assertThat(system).isEqualTo(NaturalPromptInstructions.ENHANCE));
+        var draft = provider.enhance(input, this::checkDraft);
+        assertThat(draft.optimizedPrompt()).isEqualTo(BODY);
+        assertThat(draft.taskUnderstanding().requirements()).hasSize(4);
         server.verify();
     }
 
@@ -663,6 +679,7 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
             checkSystem.accept(sent.path("messages").get(0).path("content").asText());
             String user = sent.path("messages").get(1).path("content").asText();
             var payload = json.readTree(user.substring(user.indexOf('{')));
+            if ("4".equals(input.strategyVersion())) assertThat(payload).isEqualTo(json.valueToTree(input));
             if (NaturalPromptScopedInstructions.supports(input.strategyVersion())) {
                 boolean preparing = sent.path("messages").get(0).path("content").asText()
                         .startsWith(NaturalPromptScopedInstructions.PREPARE);

@@ -1,0 +1,517 @@
+{
+  "cases": [
+    {
+      "id": "G01",
+      "prompt": {
+        "left": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "right": {
+          "issues": [
+            {
+              "quote": "阅读后请给我一份简要梳理：东区两年夏季种番茄、秋季种叶菜的轮作习惯；西区香草区由三户居民共同照看的分工情况；来信中反映的矛盾点……请把种植记录中的事实与来信中的居民诉求分开呈现，并指出哪些问题彼此关联或可能冲突。",
+              "requirement": "当前动作是理解已提供材料并保留后续讨论阶段，不新增独立文档、方案或实际执行；允许简短反馈，不强制逐条复述或产出梳理文档。",
+              "edit": "删除“请给我一份简要梳理”及分项呈现、关联冲突分析等交付要求，改为“先看看，熟悉一下，晚点再讨论”。",
+              "severity": "MAJOR"
+            }
+          ],
+          "minimumEdits": 1
+        },
+        "winner": "LEFT",
+        "reason": "左侧保留原准备阶段意图，仅附材料；右侧把“先看看”升级为交付梳理文档并强制分项与关联分析，增加独立义务。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "LEFT",
+          "reason": "左侧简短梳理并明确待讨论；右侧虽准确但按被扩大的提示词产出较长分项文档，超出原准备阶段。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "LEFT",
+          "reason": "左侧自然简短、不越界；右侧内容准确但更冗长，且源于提示词新增的梳理交付义务。"
+        }
+      ],
+      "planObservation": "右侧提示词新增梳理文档义务，影响当前结果；不属于已委托设计。"
+    },
+    {
+      "id": "G02",
+      "prompt": {
+        "left": {
+          "issues": [
+            {
+              "quote": "形成一份便于周末与施工队沟通的整理稿",
+              "requirement": "当前动作是理解已提供材料并保留后续讨论阶段，不新增独立文档、方案或实际执行。",
+              "edit": "删除“形成整理稿”及分项整理要求，改为先过一遍、理一理，周末再细聊。",
+              "severity": "MAJOR"
+            },
+            {
+              "quote": "将现状与意向对应起来，标出每项改造意向可能涉及的现状条件或待核实事项",
+              "requirement": "不新增独立文档、方案或实际执行；准备阶段不应扩展为对应表与待核实清单。",
+              "edit": "删除对应表与待核实项要求。",
+              "severity": "MAJOR"
+            }
+          ],
+          "minimumEdits": 2
+        },
+        "right": {
+          "issues": [
+            {
+              "quote": "形成一份便于周末与施工队沟通的整理稿",
+              "requirement": "当前动作是理解已提供材料并保留后续讨论阶段，不新增独立文档、方案或实际执行。",
+              "edit": "删除“形成整理稿”交付要求，改为先过一遍、理一理。",
+              "severity": "MAJOR"
+            },
+            {
+              "quote": "对每项改造意向，可简要指出与现有房屋状况相关的关注点",
+              "requirement": "准备阶段不新增独立文档或方案性整理；关注点梳理属于额外交付。",
+              "edit": "删除逐项关注点要求。",
+              "severity": "MAJOR"
+            }
+          ],
+          "minimumEdits": 2
+        },
+        "winner": "BOTH_FAIL",
+        "reason": "两侧都把“先过一遍”升级为交付整理稿，均违反准备阶段不新增独立文档的要求。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧均按被扩大的提示词交付整理稿，内容准确、区分事实与意向，无明显事实错误。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧整理稿均准确且未编造，差异主要在篇幅与表格，不构成实质质量差。"
+        }
+      ],
+      "planObservation": "两侧提示词均新增整理稿义务，影响当前结果；不属于已委托设计。"
+    },
+    {
+      "id": "G03",
+      "prompt": {
+        "left": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "right": {
+          "issues": [
+            {
+              "quote": "请基于这些内容做一份熟悉与梳理，交付一份简短的准备说明，内容包括：1. 逐条对照……2. 归纳……3. 列出修订讨论中需要重点商量的点",
+              "requirement": "当前动作是理解已提供材料并保留后续讨论阶段，不新增独立文档、方案或实际执行。",
+              "edit": "删除“交付准备说明”及三项分项要求，改为先熟悉、之后商量修订。",
+              "severity": "MAJOR"
+            }
+          ],
+          "minimumEdits": 1
+        },
+        "winner": "LEFT",
+        "reason": "左侧保留准备阶段；右侧把熟悉升级为交付准备说明并强制归纳规律与讨论点，增加独立义务。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "LEFT",
+          "reason": "左侧简短准确并保留待讨论；右侧按扩大提示词产出较长准备说明，超出原准备阶段。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "LEFT",
+          "reason": "左侧自然简短；右侧虽准确但更冗长，源于新增的梳理交付义务。"
+        }
+      ],
+      "planObservation": "右侧提示词新增准备说明义务，影响当前结果；不属于已委托设计。"
+    },
+    {
+      "id": "G04",
+      "prompt": {
+        "left": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "right": {
+          "issues": [
+            {
+              "quote": "请先通读并整理成一份供后续讨论用的记录",
+              "requirement": "当前动作是理解已提供材料并保留后续讨论阶段，不新增独立文档、方案或实际执行。",
+              "edit": "删除“整理成记录”交付要求，改为先看看、记一下，过两天再讨论。",
+              "severity": "MAJOR"
+            },
+            {
+              "quote": "整理结果按上述三类分条呈现",
+              "requirement": "准备阶段不新增独立文档；分条呈现属于额外交付格式。",
+              "edit": "删除分条呈现要求。",
+              "severity": "MINOR"
+            }
+          ],
+          "minimumEdits": 2
+        },
+        "winner": "LEFT",
+        "reason": "左侧保留原准备意图；右侧把“先看看”升级为交付三类分条记录，增加独立文档义务。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "LEFT",
+          "reason": "左侧简短记录并保留待讨论；右侧按扩大提示词产出较长分条记录，超出原准备阶段。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "LEFT",
+          "reason": "左侧自然简短；右侧准确但更冗长，源于新增记录交付义务。"
+        }
+      ],
+      "planObservation": "右侧提示词新增记录交付义务，影响当前结果；不属于已委托设计。"
+    },
+    {
+      "id": "G05",
+      "prompt": {
+        "left": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "right": {
+          "issues": [
+            {
+              "quote": "请交付一份简短的熟悉笔记，按菜品和特殊用料两部分梳理上述内容",
+              "requirement": "当前动作是理解已提供材料并保留后续讨论阶段，不新增独立文档、方案或实际执行。",
+              "edit": "删除“交付熟悉笔记”及分项要求，改为先翻翻、熟悉，下周再聊。",
+              "severity": "MAJOR"
+            }
+          ],
+          "minimumEdits": 1
+        },
+        "winner": "LEFT",
+        "reason": "左侧保留准备阶段；右侧把熟悉升级为交付熟悉笔记，增加独立文档义务。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "LEFT",
+          "reason": "左侧简短准确并保留待讨论；右侧按扩大提示词产出分项笔记，超出原准备阶段。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "LEFT",
+          "reason": "左侧自然简短；右侧准确但更冗长，源于新增笔记交付义务。"
+        }
+      ],
+      "planObservation": "右侧提示词新增熟悉笔记义务，影响当前结果；不属于已委托设计。"
+    },
+    {
+      "id": "G06",
+      "prompt": {
+        "left": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "right": {
+          "issues": [
+            {
+              "quote": "请基于材料整理一份简明的熟悉情况说明",
+              "requirement": "当前动作是理解已提供材料并保留后续讨论阶段，不新增独立文档、方案或实际执行。",
+              "edit": "删除“整理熟悉情况说明”交付要求，改为先过一遍、熟悉，之后商量。",
+              "severity": "MAJOR"
+            },
+            {
+              "quote": "可据此说明每次缺席人数及大致出勤比例",
+              "requirement": "准备阶段不新增独立文档；计算并呈现出勤比例属于额外交付。",
+              "edit": "删除出勤比例计算要求。",
+              "severity": "MINOR"
+            }
+          ],
+          "minimumEdits": 2
+        },
+        "winner": "LEFT",
+        "reason": "左侧保留原准备意图；右侧把熟悉升级为交付情况说明并强制计算比例，增加独立义务。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "LEFT",
+          "reason": "左侧简短梳理并保留待讨论；右侧按扩大提示词产出较长说明，超出原准备阶段。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "LEFT",
+          "reason": "左侧自然简短；右侧准确但更冗长，源于新增说明交付义务。"
+        }
+      ],
+      "planObservation": "右侧提示词新增情况说明义务，影响当前结果；不属于已委托设计。"
+    },
+    {
+      "id": "G07",
+      "prompt": {
+        "left": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "right": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "winner": "TIE",
+        "reason": "两侧均保留恰好两句、意象与节奏各一句的要求，未增加独立义务。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧均恰好两句，分别针对意象与节奏且结合诗句，质量相当。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧均恰好两句且具体，无明显事实或格式问题。"
+        }
+      ],
+      "planObservation": "不适用。"
+    },
+    {
+      "id": "G08",
+      "prompt": {
+        "left": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "right": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "winner": "TIE",
+        "reason": "两侧均要求一句口号和三条小贴士，适合小学生，未增加独立义务。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧均交付口号和三条小贴士，语言适合小学生，质量相当。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧均符合格式与受众要求，无明显差异。"
+        }
+      ],
+      "planObservation": "不适用。"
+    },
+    {
+      "id": "G09",
+      "prompt": {
+        "left": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "right": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "winner": "TIE",
+        "reason": "两侧均要求基于机制给出名字及理由，未增加无依据义务。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧均给出多个名字并说明与机制关联，质量相当。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧均符合要求，理由结合抽卡、交换、订单与得分。"
+        }
+      ],
+      "planObservation": "不适用。"
+    },
+    {
+      "id": "G10",
+      "prompt": {
+        "left": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "right": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "winner": "TIE",
+        "reason": "两侧均要求直接交付下午活动方案，含时间、环节、物品，并考虑大人小孩；右侧增加备选调整但属合理设计变体。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧均交付可执行方案，含时间、环节、物品与大人小孩参与安排，质量相当。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧均完整可用，右侧备选调整更细但未造成范围缺陷。"
+        }
+      ],
+      "planObservation": "不适用。"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "default": "31",
+  "files": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "ac0e4dddccf9d74781e203c5c7b5d9e906c331b1689be2b239a5b453592c9ebe"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementService.java",
+      "sha256": "7fda65a4b6df3468d32f992a0c1aa01970edca03c84620d741f0dc144e607717"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPreservedRequest.java",
+      "sha256": "d115ff15b7addb65a304f3112a74c3542dad6cd906f3cc6081bed6c9c291607d"
+    },
+    {
+      "path": "docs/testing/evidence/natural-guarded-fourth-2026-10-23/run-live-smoke.mjs",
+      "sha256": "33c6d0a2afafbe2c1a1caaf0b5f20d129afd2440793782ceb5a2475eb209d381"
+    },
+    {
+      "path": "docs/testing/evidence/natural-guarded-fourth-2026-10-23/live-smoke/protocol.json",
+      "sha256": "8876683db6c211cee773fd3364c95e479b5d9b112ccc8c45ebaaad3d0b920506"
+    }
+  ],
+  "preCallHarnessCorrection": {
+    "oldScriptSha256": "b47b6ac079f0032d2b4f74fa8b2fdaf1bf8f8581d7f19c50063c5583c7c54669",
+    "reason": "Move protocol load before origin access; discovered during offline review before any smoke calls",
+    "casesAndSourceUnchanged": true
+  }
+}

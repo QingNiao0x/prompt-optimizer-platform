@@ -1,0 +1,52 @@
+{
+  "version": "31",
+  "decision": "ADOPT_LOCAL_MECHANISM_WITH_RECORDED_LIMITS",
+  "rawAIReviews": {
+    "promptWinsBoth": 5,
+    "stableDoubleWorkWinsBoth": 5,
+    "normalRequestedResultsTied": 4,
+    "bothVersionsStillProblematic": [
+      "G02"
+    ]
+  },
+  "conservativeReview": {
+    "confirmedPromptBenefits": [
+      "G01",
+      "G03",
+      "G05",
+      "G06"
+    ],
+    "confirmedStableDoubleWorkBenefits": [
+      "G03",
+      "G05",
+      "G06"
+    ],
+    "ambiguousCases": [
+      "G02: 理一理现状可被理解为整理回应，两版均生成独立整理稿，保留未解决，不计通过。",
+      "G04: 记一下允许记录形式，保守不把更多分节自身视为新增任务。"
+    ],
+    "sourceConcern": [
+      "G01第1次候选作品对东区关联的措辞不够谨慎；原优化提示词保留原始投诉来源，保守不计该次作品稳定胜出。"
+    ],
+    "reviewQuoteCorrection": {
+      "case": "G03",
+      "round": 2,
+      "issue": "模型把多个不同段落串为带省略号的概括引用，部分措辞不逐字一致。",
+      "actualContiguousQuote": "请基于这些内容做一份熟悉与梳理，交付一份简短的准备说明，内容包括：",
+      "evidence": "heldout/prompts/G03_V4_GEN.md",
+      "scoreChanged": false
+    },
+    "noNewSeverePlatformRequirementViolationObserved": true
+  },
+  "thresholds": {
+    "promptBenefitsAtLeast3": true,
+    "stableDoubleWorkBenefitsAtLeast2": true,
+    "necessaryEditsDecreased": true,
+    "oldFailuresReclassifiedAsPass": false
+  },
+  "scope": "当前目标机制局部采用；不能宣称所有语义歧义已解决或所有领域普遍优于第四版。明确成果的5条实际上游写作请求与第四版逐字一致。",
+  "defaultAfterAdoption": "31",
+  "frozenFourth": "4",
+  "sourceChangeAfterHeldout": "只切新请求默认、更新注释，并修复原请求覆盖锚点对首尾空白/Unicode换行的兼容；动作/成果判定、材料选择及生成指导未根据题目改写。",
+  "releaseGates": "G1-G8及专业用户验收未完成，不将局部修复写成全面正式发布通过。"
+}

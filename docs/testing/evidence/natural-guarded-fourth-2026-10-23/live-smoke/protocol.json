@@ -1,0 +1,29 @@
+{
+  "status": "FROZEN",
+  "batch": "natural31-applied-local-runtime-2026-10-23",
+  "taskMaximumActualCalls": 80,
+  "taskPreviouslyActual": 75,
+  "maximumNewActualCalls": 5,
+  "phaseLimits": {
+    "GENERATION": 5
+  },
+  "expectedDefault": "31",
+  "origin": "http://127.0.0.1:9000",
+  "modelId": "deepseek:deepseek-flash",
+  "maximumCallsPerBusinessRequest": 4,
+  "cases": [
+    {
+      "id": "PREPARE",
+      "rawPrompt": "你是一名高级全栈Java开发工程师，请先熟悉这套前后端项目：前端使用Vue3和TypeScript，后端使用Spring Boot 3；后端care是新模块、legacycare是旧模块，前端care是新模块、care-old是旧模块。今后涉及随访功能修改时，新旧模块需要同步。",
+      "expectPreserved": true
+    },
+    {
+      "id": "REQUESTED_RESULT",
+      "rawPrompt": "请为部门同事写一条会议通知，不超过50字，只输出正文：明天上午10点在二楼会议室讨论排期，带上进度记录。",
+      "expectPreserved": false
+    }
+  ],
+  "counting": "每次业务请求前按自然31最多4个实际尝试预留；完成后用对应requestId的真实服务model.call日志结算，剩余不足4时不再发起下一请求。日志无法核实时按4次保守结算并停止，不做质量重试。",
+  "migrationsEnabled": false,
+  "accountCreationAllowed": false
+}

@@ -22,6 +22,7 @@ class NaturalPromptPhaseInstructionsTest {
         assertThat(sha256(NaturalPromptInstructions.planningInstruction("4")))
                 .isEqualTo("0978f29a6bcfccb4d1de46a0ac549dfb91f0df63c25ad686e5fc9b08fe646a05");
         assertThat(NaturalPromptInstructions.VERSION).isEqualTo("4");
+        assertThat(NaturalPromptInstructions.CURRENT_VERSION).isEqualTo("31");
     }
 
     @Test

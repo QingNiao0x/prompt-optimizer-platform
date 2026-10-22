@@ -1,7 +1,7 @@
 package com.promptoptimizer.provider.domain;
 
 /**
- * 先界定当前动作及回应范围，再分别生成自然正文或Plan的受控候选。
+ * 先界定当前动作及回应范围，再生成自然正文或Plan；31已局部采用，28至30保留受控对照。
  * 准备阶段只识别边界，不寻找作品缺口；后续沿用阶段协议的来源与正文保护。
  *
  * @author QingNiao
@@ -13,9 +13,13 @@ public final class NaturalPromptScopedInstructions {
     public static final String PRESERVED_VERSION = "29";
     /** 成果推定不能建立新的生成义务；只有明确要求的回应进入正文扩写。 */
     public static final String CONSERVATIVE_VERSION = "30";
+    /** 仅增加意图守门；明确成果的写作输入与第四版逐字一致，不把范围协议混进正文生成。 */
+    public static final String GUARDED_FOURTH_VERSION = "31";
 
+    /** 判断版本是否使用独立的范围准备；其它冻结版本沿用各自原协议。 */
     public static boolean supports(String version) {
-        return VERSION.equals(version) || PRESERVED_VERSION.equals(version) || CONSERVATIVE_VERSION.equals(version);
+        return VERSION.equals(version) || PRESERVED_VERSION.equals(version) || CONSERVATIVE_VERSION.equals(version)
+                || GUARDED_FOURTH_VERSION.equals(version);
     }
 
     public static final String PREPARE = NaturalPromptInstructions.COMMON + """

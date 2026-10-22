@@ -98,12 +98,17 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         if (NaturalPromptScopedInstructions.supports(input.strategyVersion())) {
             ScopePreparation prepared = prepareScope(input, "prompt.optimize");
             NaturalTaskScope scope = prepared.scope();
-            // 推定的准备就绪反馈不能授权一个新的正文作品；30仍保留原请求中的全部自然回应和明确任务。
+            // 推定的准备就绪反馈不能授权一个新的正文作品；30/31保留原请求中的全部自然回应和明确任务。
             if ((NaturalPromptScopedInstructions.PRESERVED_VERSION.equals(input.strategyVersion())
                     && scope.response().basis() == NaturalTaskScope.ResponseBasis.UNSPECIFIED)
-                    || (NaturalPromptScopedInstructions.CONSERVATIVE_VERSION.equals(input.strategyVersion())
+                    || ((NaturalPromptScopedInstructions.CONSERVATIVE_VERSION.equals(input.strategyVersion())
+                    || NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION.equals(input.strategyVersion()))
                     && scope.response().basis() != NaturalTaskScope.ResponseBasis.EXPLICIT)) {
                 return validation.apply(NaturalPreservedRequest.create(input, scope, prepared.metadata()));
+            }
+            if (NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION.equals(input.strategyVersion())) {
+                // 明确成果没有新增写作变量：复用冻结4的全部业务输入、system、解析和保护，历史版本由应用层记录31。
+                return enhance(input.withStrategyVersion(NaturalPromptInstructions.VERSION), validation);
             }
             return invoke(input, NaturalPromptInstructions.enhancementInstruction(input.strategyVersion()), "prompt.optimize", null, null, null, false, scope,
                     (body, metadata) -> validation.apply(readEnhancementPhase(bindScope(body, scope), input, metadata)));

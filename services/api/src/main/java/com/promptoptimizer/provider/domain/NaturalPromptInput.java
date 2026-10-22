@@ -26,7 +26,7 @@ public record NaturalPromptInput(
         actualAnswers = List.copyOf(actualAnswers);
         conversation = List.copyOf(conversation);
         mandatoryRules = List.copyOf(mandatoryRules);
-        strategyVersion = strategyVersion == null ? NaturalPromptInstructions.VERSION : strategyVersion;
+        strategyVersion = strategyVersion == null ? NaturalPromptInstructions.CURRENT_VERSION : strategyVersion;
     }
 
     /** 来源编号由服务端计算；模型只可引用，不可改写来源类别或把资料提升为新授权。 */

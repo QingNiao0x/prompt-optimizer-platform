@@ -21,7 +21,8 @@ public final class NaturalPreservedRequest {
      * 已完成权限过滤的当前与Plan快照均保留，重复材料按完整内容归并，实际题答绝不归并。
      */
     public static NaturalPromptDraft create(NaturalPromptInput input, NaturalTaskScope scope, ProviderMetadata metadata) {
-        boolean inferredOnly = NaturalPromptScopedInstructions.CONSERVATIVE_VERSION.equals(input.strategyVersion())
+        boolean inferredOnly = (NaturalPromptScopedInstructions.CONSERVATIVE_VERSION.equals(input.strategyVersion())
+                || NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION.equals(input.strategyVersion()))
                 && scope.response().basis() == NaturalTaskScope.ResponseBasis.INHERENT;
         if (scope.response().basis() != NaturalTaskScope.ResponseBasis.UNSPECIFIED && !inferredOnly) {
             throw new IllegalArgumentException("已有独立回应要求须走正文生成");
@@ -60,6 +61,9 @@ public final class NaturalPreservedRequest {
         int index = requirements.size();
         requirements.add(new NaturalTaskUnderstanding.Requirement(text,
                 List.of(new NaturalTaskUnderstanding.Evidence(source.id(), source.text())), List.of(dimension)));
-        coverage.add(new NaturalTaskReview.Coverage(index, List.of(source.text().lines().filter(line -> !line.isBlank()).findFirst().orElseThrow())));
+        // 锚点使用与既有覆盖校验相同的换行边界；只归一化锚点，不改变原请求或实际题答正文。
+        String quote = java.util.Arrays.stream(source.text().split("\\R")).map(String::strip)
+                .filter(line -> !line.isBlank()).findFirst().orElseThrow();
+        coverage.add(new NaturalTaskReview.Coverage(index, List.of(quote)));
     }
 }

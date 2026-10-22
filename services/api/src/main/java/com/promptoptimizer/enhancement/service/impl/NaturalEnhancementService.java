@@ -62,7 +62,7 @@ public class NaturalEnhancementService {
 
     /** 生成完整自然正文；零问题 Plan 与有回答 Plan 均通过同一服务端绑定入口。 */
     public PromptDocument optimize(OptimizationRequest request) {
-        return optimize(request, NaturalPromptInstructions.VERSION);
+        return optimize(request, NaturalPromptInstructions.CURRENT_VERSION);
     }
 
     /** 旧历史显式选择已知版本；新请求使用当前版本，未知版本在模型调用前拒绝。 */
@@ -130,7 +130,7 @@ public class NaturalEnhancementService {
 
     /** 第四版指导最多八题，协议容量仍为64且不截断；注册后最终回答受服务端所有权和TTL约束。 */
     public OptimizationPlan plan(OptimizationPlanRequest request) {
-        return plan(request, NaturalPromptInstructions.VERSION);
+        return plan(request, NaturalPromptInstructions.CURRENT_VERSION);
     }
 
     /** 服务端兼容分发与受控对照可显式选择已知策略，浏览器请求不能自报版本。 */

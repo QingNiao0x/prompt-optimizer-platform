@@ -6,10 +6,26 @@ import com.promptoptimizer.enhancement.dto.ConversationMessage;
 import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import static org.assertj.core.api.Assertions.*;
 
 /** 验证无成果请求的逐字承载，不能用一个片段冒充全部实际题答或把助手建议当用户确认。 */
 class NaturalPreservedRequestTest {
+    @ParameterizedTest
+    @ValueSource(strings = {"\n", "\r\n", "\u2028", "\u0085"})
+    void preservesSourceAcrossSupportedLineBreaksAndOuterWhitespace(String lineBreak) {
+        String raw = "  先理解材料" + lineBreak + "后续再讨论。  ";
+        var input = new NaturalPromptInput(raw, null, List.of(), List.of(), List.of(), null);
+        var scope = new NaturalTaskScope(List.of(new NaturalTaskScope.Action("理解材料", NaturalTaskScope.Timing.CURRENT, "",
+                List.of(new NaturalTaskScope.Evidence("rawPrompt", "先理解材料")))),
+                new NaturalTaskScope.Response(NaturalTaskScope.ResponseBasis.UNSPECIFIED, "", List.of())).resolve(input);
+        var draft = NaturalPreservedRequest.create(input, scope, new ProviderMetadata("fixture", "fixture", false));
+        assertThat(draft.optimizedPrompt()).isEqualTo(raw.strip());
+        draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
+        assertThat(input.strategyVersion()).isEqualTo("31");
+    }
+
     @Test
     void preservesRawRoleConditionsMaterialsAndEveryActualAnswerWithoutAddingDeliverable() {
         String raw = "你是高级开发工程师。\n先熟悉项目。\n之后仅在我明确提出需求时修改。";

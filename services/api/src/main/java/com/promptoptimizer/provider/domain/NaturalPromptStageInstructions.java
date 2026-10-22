@@ -93,6 +93,7 @@ public final class NaturalPromptStageInstructions {
     /** 21—23逐一消融协议、框架必填及框架指导；24必须逐字复用21，兼容处理仅发生在读取端。 */
     public static String enhancementInstruction(String version) {
         if (!supports(version)) throw new IllegalArgumentException("分阶段自然增强版本不受支持");
+        if (NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION.equals(version)) return NaturalPromptInstructions.ENHANCE;
         if (NaturalPromptScopedInstructions.PRESERVED_VERSION.equals(version)
                 || NaturalPromptScopedInstructions.CONSERVATIVE_VERSION.equals(version)) return NaturalPromptScopedInstructions.PRESERVED_ENHANCE;
         if (NaturalPromptScopedInstructions.VERSION.equals(version)) return NaturalPromptScopedInstructions.ENHANCE;

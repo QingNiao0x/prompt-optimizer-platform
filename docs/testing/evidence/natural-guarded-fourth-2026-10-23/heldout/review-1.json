@@ -1,0 +1,591 @@
+{
+  "cases": [
+    {
+      "id": "G01",
+      "prompt": {
+        "left": {
+          "issues": [
+            {
+              "quote": "阅读后请给我一份简要梳理：东区两年夏季种番茄、秋季种叶菜的轮作习惯；西区香草区由三户居民共同照看的分工情况；来信中反映的矛盾点……请把种植记录中的事实与来信中的居民诉求分开呈现，并指出哪些问题彼此关联或可能冲突。",
+              "requirement": "当前动作是理解材料并保留后续讨论阶段，不新增独立文档；原需求只要求先看看熟悉，未要求交付梳理文档",
+              "edit": "改为简短确认已熟悉材料，不要求交付梳理文档或分析关联冲突",
+              "severity": "MAJOR"
+            }
+          ],
+          "minimumEdits": 1
+        },
+        "right": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "winner": "RIGHT",
+        "reason": "右侧保留原准备阶段和简短熟悉意图；左侧新增了独立梳理文档和关联分析义务，超出原需求。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [
+              {
+                "quote": "## 简要梳理（仅基于 materials/G01.md）……### 四、问题之间的关联或潜在冲突",
+                "requirement": "不新增独立文档、方案；当前只需理解材料供后续讨论",
+                "edit": "改为简短确认已熟悉材料，不输出独立梳理文档",
+                "severity": "MAJOR"
+              }
+            ],
+            "minimumEdits": 1
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "RIGHT",
+          "reason": "右侧简短反馈并保留待讨论状态；左侧生成独立梳理文档，增加用户需删除的额外产物。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [
+              {
+                "quote": "## 简要梳理（仅熟悉材料，不提出明年调整方案）……### 四、彼此关联或可能冲突之处",
+                "requirement": "不新增独立文档、方案；当前只需理解材料供后续讨论",
+                "edit": "改为简短确认已熟悉材料，不输出独立梳理文档",
+                "severity": "MAJOR"
+              }
+            ],
+            "minimumEdits": 1
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "RIGHT",
+          "reason": "右侧简洁准确；左侧仍输出独立梳理文档，超出准备阶段。"
+        }
+      ],
+      "planObservation": "左侧提示词和作品把准备阶段扩展为独立梳理文档，影响当前结果且非已委托设计。"
+    },
+    {
+      "id": "G02",
+      "prompt": {
+        "left": {
+          "issues": [
+            {
+              "quote": "形成一份便于周末与施工队沟通的整理稿……输出一份结构清晰的整理稿，篇幅紧凑，直接可用",
+              "requirement": "当前动作是理解材料并保留后续讨论阶段，不新增独立文档、方案或实际执行",
+              "edit": "改为简短确认已熟悉材料，不要求交付整理稿",
+              "severity": "MAJOR"
+            }
+          ],
+          "minimumEdits": 1
+        },
+        "right": {
+          "issues": [
+            {
+              "quote": "形成一份便于周末与施工队沟通的整理稿……交付一份条理清晰的整理稿即可",
+              "requirement": "当前动作是理解材料并保留后续讨论阶段，不新增独立文档、方案或实际执行",
+              "edit": "改为简短确认已熟悉材料，不要求交付整理稿",
+              "severity": "MAJOR"
+            }
+          ],
+          "minimumEdits": 1
+        },
+        "winner": "BOTH_FAIL",
+        "reason": "两侧提示词都把准备阶段改成交付独立整理稿，均超出原需求。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [
+              {
+                "quote": "# 老宅翻修沟通整理稿（周末与施工队沟通用）",
+                "requirement": "不新增独立文档、方案；当前只需理解材料供后续讨论",
+                "edit": "改为简短确认已熟悉材料，不输出整理稿",
+                "severity": "MAJOR"
+              }
+            ],
+            "minimumEdits": 1
+          },
+          "right": {
+            "issues": [
+              {
+                "quote": "# 老宅翻修沟通整理稿（周末与施工队沟通用）……## 三、现状与意向对应表",
+                "requirement": "不新增独立文档、方案；当前只需理解材料供后续讨论",
+                "edit": "改为简短确认已熟悉材料，不输出整理稿和对应表",
+                "severity": "MAJOR"
+              }
+            ],
+            "minimumEdits": 1
+          },
+          "winner": "BOTH_FAIL",
+          "reason": "两侧作品都生成独立整理稿，均需用户删除额外产物。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [
+              {
+                "quote": "# 老宅翻修沟通整理稿（周末与施工队沟通用）",
+                "requirement": "不新增独立文档、方案；当前只需理解材料供后续讨论",
+                "edit": "改为简短确认已熟悉材料，不输出整理稿",
+                "severity": "MAJOR"
+              }
+            ],
+            "minimumEdits": 1
+          },
+          "right": {
+            "issues": [
+              {
+                "quote": "# 老宅翻修沟通整理稿（周末与施工队沟通用）……## 三、现状与改造意向对应表",
+                "requirement": "不新增独立文档、方案；当前只需理解材料供后续讨论",
+                "edit": "改为简短确认已熟悉材料，不输出整理稿和对应表",
+                "severity": "MAJOR"
+              }
+            ],
+            "minimumEdits": 1
+          },
+          "winner": "BOTH_FAIL",
+          "reason": "两侧作品仍生成独立整理稿，均超出准备阶段。"
+        }
+      ],
+      "planObservation": "两侧提示词和作品都把准备阶段扩展为独立整理稿，影响当前结果且非已委托设计。"
+    },
+    {
+      "id": "G03",
+      "prompt": {
+        "left": {
+          "issues": [
+            {
+              "quote": "请基于这些内容做一份熟悉与梳理，交付一份简短的准备说明……归纳这两处对照中体现出的词汇对照规律和语气差异类型……列出修订讨论中需要重点商量的点",
+              "requirement": "当前动作是理解材料并保留后续讨论阶段，不新增独立文档、方案或实际执行",
+              "edit": "改为简短确认已熟悉材料，不要求交付准备说明或归纳规律",
+              "severity": "MAJOR"
+            }
+          ],
+          "minimumEdits": 1
+        },
+        "right": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "winner": "RIGHT",
+        "reason": "右侧保留原准备阶段和简短熟悉意图；左侧新增独立准备说明和归纳义务。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [
+              {
+                "quote": "## 准备说明（基于 materials/G03.md）……### 2. 可归纳的对照规律与语气差异类型……### 3. 修订讨论需重点商量的点",
+                "requirement": "不新增独立文档、方案；当前只需理解材料供后续讨论",
+                "edit": "改为简短确认已熟悉材料，不输出准备说明",
+                "severity": "MAJOR"
+              }
+            ],
+            "minimumEdits": 1
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "RIGHT",
+          "reason": "右侧简短反馈并保留待讨论状态；左侧生成独立准备说明，增加用户需删除的额外产物。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [
+              {
+                "quote": "## 准备说明（基于 materials/G03.md 的两组对照）……### 2. 可归纳的词汇对照规律与语气差异类型",
+                "requirement": "不新增独立文档、方案；当前只需理解材料供后续讨论",
+                "edit": "改为简短确认已熟悉材料，不输出准备说明",
+                "severity": "MAJOR"
+              }
+            ],
+            "minimumEdits": 1
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "RIGHT",
+          "reason": "右侧简洁准确；左侧仍输出独立准备说明，超出准备阶段。"
+        }
+      ],
+      "planObservation": "左侧提示词和作品把准备阶段扩展为独立准备说明，影响当前结果且非已委托设计。"
+    },
+    {
+      "id": "G04",
+      "prompt": {
+        "left": {
+          "issues": [
+            {
+              "quote": "请先通读并整理成一份供后续讨论用的记录……整理结果按上述三类分条呈现",
+              "requirement": "当前动作是理解材料并保留后续讨论阶段，不新增独立文档、方案或实际执行",
+              "edit": "改为简短确认已熟悉材料，不要求交付记录文档",
+              "severity": "MAJOR"
+            }
+          ],
+          "minimumEdits": 1
+        },
+        "right": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "winner": "RIGHT",
+        "reason": "右侧保留原准备阶段和简短记录意图；左侧新增独立记录文档义务。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [
+              {
+                "quote": "以下按你要求的三类整理……## 1. 时间节点……## 2. 可能冲突的习俗……## 3. 尚未确认的事项",
+                "requirement": "不新增独立文档、方案；当前只需理解材料供后续讨论",
+                "edit": "改为简短确认已熟悉材料，不输出独立记录文档",
+                "severity": "MAJOR"
+              }
+            ],
+            "minimumEdits": 1
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "RIGHT",
+          "reason": "右侧简短记录并保留待讨论状态；左侧生成独立记录文档，增加用户需删除的额外产物。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [
+              {
+                "quote": "以下按你要求的三类整理……## 1. 时间节点（按材料原始时间顺序）",
+                "requirement": "不新增独立文档、方案；当前只需理解材料供后续讨论",
+                "edit": "改为简短确认已熟悉材料，不输出独立记录文档",
+                "severity": "MAJOR"
+              }
+            ],
+            "minimumEdits": 1
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "RIGHT",
+          "reason": "右侧简洁准确；左侧仍输出独立记录文档，超出准备阶段。"
+        }
+      ],
+      "planObservation": "左侧提示词和作品把准备阶段扩展为独立记录文档，影响当前结果且非已委托设计。"
+    },
+    {
+      "id": "G05",
+      "prompt": {
+        "left": {
+          "issues": [
+            {
+              "quote": "请交付一份简短的熟悉笔记，按菜品和特殊用料两部分梳理上述内容",
+              "requirement": "当前动作是理解材料并保留后续讨论阶段，不新增独立文档、方案或实际执行",
+              "edit": "改为简短确认已熟悉材料，不要求交付熟悉笔记",
+              "severity": "MAJOR"
+            }
+          ],
+          "minimumEdits": 1
+        },
+        "right": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "winner": "RIGHT",
+        "reason": "右侧保留原准备阶段和简短熟悉意图；左侧新增独立熟悉笔记义务。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [
+              {
+                "quote": "## 熟悉笔记……### 一、菜品……### 二、特殊用料……### 三、未决信息",
+                "requirement": "不新增独立文档、方案；当前只需理解材料供后续讨论",
+                "edit": "改为简短确认已熟悉材料，不输出熟悉笔记",
+                "severity": "MAJOR"
+              }
+            ],
+            "minimumEdits": 1
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "RIGHT",
+          "reason": "右侧简短反馈并保留待讨论状态；左侧生成独立熟悉笔记，增加用户需删除的额外产物。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [
+              {
+                "quote": "## 熟悉笔记（materials/G05.md）……### 一、菜品",
+                "requirement": "不新增独立文档、方案；当前只需理解材料供后续讨论",
+                "edit": "改为简短确认已熟悉材料，不输出熟悉笔记",
+                "severity": "MAJOR"
+              }
+            ],
+            "minimumEdits": 1
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "RIGHT",
+          "reason": "右侧简洁准确；左侧仍输出独立熟悉笔记，超出准备阶段。"
+        }
+      ],
+      "planObservation": "左侧提示词和作品把准备阶段扩展为独立熟悉笔记，影响当前结果且非已委托设计。"
+    },
+    {
+      "id": "G06",
+      "prompt": {
+        "left": {
+          "issues": [
+            {
+              "quote": "请基于材料整理一份简明的熟悉情况说明……可据此说明每次缺席人数及大致出勤比例……从上述信息中能看出的、与排练安排相关的观察点",
+              "requirement": "当前动作是理解材料并保留后续讨论阶段，不新增独立文档、方案或实际执行",
+              "edit": "改为简短确认已熟悉材料，不要求交付熟悉情况说明",
+              "severity": "MAJOR"
+            }
+          ],
+          "minimumEdits": 1
+        },
+        "right": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "winner": "RIGHT",
+        "reason": "右侧保留原准备阶段和简短熟悉意图；左侧新增独立熟悉情况说明义务。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [
+              {
+                "quote": "# 社区合唱团排练情况熟悉说明……## 三、与排练安排相关的观察点（供后续讨论参考）",
+                "requirement": "不新增独立文档、方案；当前只需理解材料供后续讨论",
+                "edit": "改为简短确认已熟悉材料，不输出熟悉说明",
+                "severity": "MAJOR"
+              }
+            ],
+            "minimumEdits": 1
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "RIGHT",
+          "reason": "右侧简短反馈并保留待讨论状态；左侧生成独立熟悉说明，增加用户需删除的额外产物。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [
+              {
+                "quote": "# 社区合唱团排练情况熟悉说明……## 三、与排练安排相关的观察点",
+                "requirement": "不新增独立文档、方案；当前只需理解材料供后续讨论",
+                "edit": "改为简短确认已熟悉材料，不输出熟悉说明",
+                "severity": "MAJOR"
+              }
+            ],
+            "minimumEdits": 1
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "RIGHT",
+          "reason": "右侧简洁准确；左侧仍输出独立熟悉说明，超出准备阶段。"
+        }
+      ],
+      "planObservation": "左侧提示词和作品把准备阶段扩展为独立熟悉说明，影响当前结果且非已委托设计。"
+    },
+    {
+      "id": "G07",
+      "prompt": {
+        "left": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "right": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "winner": "TIE",
+        "reason": "两侧提示词都保留恰好两句反馈和意象/节奏分工，未增加独立义务。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧都给出两句具体反馈，分别对应意象和节奏，符合要求。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧都给出两句具体反馈，分别对应意象和节奏，符合要求。"
+        }
+      ],
+      "planObservation": "不适用，两侧均满足恰好两句反馈要求。"
+    },
+    {
+      "id": "G08",
+      "prompt": {
+        "left": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "right": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "winner": "TIE",
+        "reason": "两侧提示词都要求一句口号和三条小贴士，适合小学生，未增加额外义务。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧都交付一句口号和三条小贴士，语言适合小学生。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧都交付一句口号和三条小贴士，语言适合小学生。"
+        }
+      ],
+      "planObservation": "不适用，两侧均满足交付要求。"
+    },
+    {
+      "id": "G09",
+      "prompt": {
+        "left": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "right": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "winner": "TIE",
+        "reason": "两侧提示词都要求基于机制给出名字和理由，未增加无依据义务。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧都给出多个名字并结合抽卡、交换、订单、得分说明理由。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧都给出多个名字并结合机制说明理由。"
+        }
+      ],
+      "planObservation": "不适用，两侧均满足交付要求。"
+    },
+    {
+      "id": "G10",
+      "prompt": {
+        "left": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "right": {
+          "issues": [],
+          "minimumEdits": 0
+        },
+        "winner": "TIE",
+        "reason": "两侧提示词都要求直接交付下午活动方案，包含时间、环节和物品，未增加无依据义务。"
+      },
+      "works": [
+        {
+          "repeat": 1,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧都交付可直接执行的下午方案，包含时间、环节和物品，兼顾大人小孩。"
+        },
+        {
+          "repeat": 2,
+          "left": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "right": {
+            "issues": [],
+            "minimumEdits": 0
+          },
+          "winner": "TIE",
+          "reason": "两侧都交付可直接执行的下午方案，包含时间、环节和物品，兼顾大人小孩。"
+        }
+      ],
+      "planObservation": "不适用，两侧均满足交付要求。"
+    }
+  ]
+}

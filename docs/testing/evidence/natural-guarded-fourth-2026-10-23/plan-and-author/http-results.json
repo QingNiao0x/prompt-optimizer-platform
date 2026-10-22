@@ -1,0 +1,305 @@
+[
+  {
+    "id": "H09_V31_PLAN",
+    "caseId": "H09",
+    "version": "31",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "请把这份活动复盘要点整理成一条可以直接发出去的跟进消息，提醒相关的人做好下一次准备。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "074b19ed-0c87-4518-afc7-2295ba4b5417",
+        "version": "sha256:26ce571c6205c25386ac73536b12ee2fa16d0f3cc290a44031c697547806298d"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H09_V31_PLAN",
+      "data": {
+        "summary": "用户要求把活动复盘要点整理成一条可直接发出的跟进消息，提醒相关的人做好下一次准备。复盘材料已明确签到排队、入口指示不清、场地方愿提供第二个立牌、下次日期未定，并记录了一项未对外公布的预算结余，且未说明收件对象。需澄清收件对象与内部预算结余是否可写入消息，这两点会实质改变消息内容与可发送范围。",
+        "questions": [
+          {
+            "id": "recipients",
+            "question": "这条跟进消息的收件对象是谁？",
+            "hint": "收件对象决定称呼、语气以及哪些内容适合对外发送，直接影响消息能否直接发出。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "volunteers",
+                "label": "引导志愿者等现场执行人员",
+                "description": "面向参与现场引导与执行的志愿者",
+                "answer": "收件对象为引导志愿者等现场执行人员",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "venue",
+                "label": "场地方对接人",
+                "description": "面向提供场地与立牌支持的场地方",
+                "answer": "收件对象为场地方对接人",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "internal",
+                "label": "内部团队",
+                "description": "面向组织内部工作人员",
+                "answer": "收件对象为内部团队",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "mixed",
+                "label": "上述多方合并发送",
+                "description": "一条消息同时发给志愿者、场地方与内部人员",
+                "answer": "收件对象为志愿者、场地方与内部人员合并",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "budget",
+            "question": "未对外公布的预算结余是否可以写进这条跟进消息？",
+            "hint": "该信息标注为未对外公布，是否写入决定消息的可发送范围与内容。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "exclude",
+                "label": "不写入",
+                "description": "消息中完全不提及预算结余",
+                "answer": "消息中不写入预算结余",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "include",
+                "label": "可以写入",
+                "description": "在消息中提及预算结余",
+                "answer": "消息中可以写入预算结余",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "internalOnly",
+                "label": "仅在发给内部人员时写入",
+                "description": "对外消息不提，内部版本可提",
+                "answer": "预算结余仅在发给内部人员的版本中写入",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 7256,
+        "planId": "18d385ee-c204-483c-8a88-27bab524b6f1",
+        "planningContext": {
+          "contextId": "074b19ed-0c87-4518-afc7-2295ba4b5417",
+          "version": "sha256:26ce571c6205c25386ac73536b12ee2fa16d0f3cc290a44031c697547806298d"
+        },
+        "expiresAt": "2026-10-22T19:16:36.013951300Z"
+      }
+    }
+  },
+  {
+    "id": "H09_V31_PLAN_GEN",
+    "caseId": "H09",
+    "version": "31",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请把这份活动复盘要点整理成一条可以直接发出去的跟进消息，提醒相关的人做好下一次准备。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "materials/H09.md",
+            "language": "markdown",
+            "content": "复盘要点：本次签到二维码只有一个打印件，高峰时排队；场地方愿意下次提供第二个立牌。引导志愿者说入口指示不够明显。内部复盘还记录了一项未对外公布的预算结余。下次活动具体日期尚未确定。没有说明这条消息的收件对象。"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": {
+        "planId": "18d385ee-c204-483c-8a88-27bab524b6f1",
+        "planningContext": {
+          "contextId": "074b19ed-0c87-4518-afc7-2295ba4b5417",
+          "version": "sha256:26ce571c6205c25386ac73536b12ee2fa16d0f3cc290a44031c697547806298d"
+        },
+        "answers": [
+          {
+            "questionId": "recipients",
+            "question": "这条跟进消息的收件对象是谁？",
+            "answer": "发给场地方的联系人，只请对方协助第二个签到立牌和入口指示；不要带上内部预算。日期还没定，不写具体日期。"
+          },
+          {
+            "questionId": "budget",
+            "question": "未对外公布的预算结余是否可以写进这条跟进消息？",
+            "answer": "其他细节请根据已经提供的信息合理组织，不新增事实或额外任务。"
+          }
+        ]
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H09_V31_PLAN_GEN",
+      "data": {
+        "optimizedPrompt": "请根据 materials/H09.md 中的活动复盘要点，整理一条可以直接发给场地方联系人的跟进消息，用于提醒对方协助做好下一次活动的准备。\n\n消息只请对方协助两件事：一是在下次活动提供第二个签到立牌，以缓解本次只有一个签到二维码打印件、高峰时排队的问题；二是改善入口指示，因为引导志愿者反馈入口指示不够明显。语气礼貌、简洁，便于对方直接阅读和回复。\n\n消息中不要提及内部复盘记录的未对外公布预算结余，也不要写下次活动的具体日期，因为日期尚未确定。其他细节请根据已提供的信息合理组织，不新增事实或额外任务。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "materials/",
+            "materials/H09.md"
+          ],
+          "fileSnippets": [
+            {
+              "path": "materials/H09.md",
+              "language": "markdown",
+              "content": "[片段 1/1]\n复盘要点：本次签到二维码只有一个打印件，高峰时排队；场地方愿意下次提供第二个立牌。引导志愿者说入口指示不够明显。内部复盘还记录了一项未对外公布的预算结余。下次活动具体日期尚未确定。没有说明这条消息的收件对象。",
+              "summary": "Markdown 文档摘要：复盘要点：本次签到二维码只有一个打印件，高峰时排队；场地方愿意下次提供第二个立牌。；引导志愿者说入口指示不够明显。；内部复盘还记录了一项未对外公布的预算结余。；下次活动具体日期尚未确定。；没有说明这条消息的收件对象。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 6598,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "31",
+        "framework": "APE",
+        "recordId": "12439db8-5fea-42e4-94c2-0f9ee1534f9e",
+        "editRevision": 0
+      }
+    }
+  },
+  {
+    "id": "H10_V31_PLAN",
+    "caseId": "H10",
+    "version": "31",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "给我设计一个在家连续做四天的阅读小练习。每天最多十分钟，具体顺序和形式由你安排，最后用一个四行的小表格告诉我每天做什么，不要再让我选方案。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "f2ca3871-e1fa-435d-b099-ad78762dfc53",
+        "version": "sha256:7f944fbba7b5d52474d2b48b6908cc693911ed512da26e44762a91d159bd0b8f"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "H10_V31_PLAN",
+      "data": {
+        "summary": "用户要求直接设计一个在家连续四天、每天不超过十分钟的阅读小练习，练习聚焦人物想法的变化，仅用纸笔、不使用手机或音频，适用于同一本短篇小说集中的任意一篇；最后用一个四行小表格说明每天做什么，不再让用户选方案。现有信息已足以完成该设计，无需再向用户提问。",
+        "questions": [],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3600,
+        "planId": "798079dd-afba-40d0-befa-23f09f179d8f",
+        "planningContext": {
+          "contextId": "f2ca3871-e1fa-435d-b099-ad78762dfc53",
+          "version": "sha256:7f944fbba7b5d52474d2b48b6908cc693911ed512da26e44762a91d159bd0b8f"
+        },
+        "expiresAt": "2026-10-22T19:16:43.380305800Z"
+      }
+    }
+  },
+  {
+    "id": "SEALED_AUTHOR",
+    "caseId": "H09",
+    "version": "AUTHOR",
+    "phase": "REVIEW",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 8192,
+      "thinking": {
+        "type": "disabled"
+      },
+      "response_format": {
+        "type": "json_object"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是内部独立评测题目作者。本次不提供候选代码、优化指导、已生成提示词或失败题。只编写新的合成测试材料和事前评分要求，不能尝试优化候选。只输出合法JSON，材料自足、无真实隐私、无需联网，不预设所有任务都需要作品，也不要求理解任务完全沉默。"
+        },
+        {
+          "role": "user",
+          "content": "生成全新的10题，ID为G01-G10。所有题均DIRECT，必须给intentClass。G01-G06的intentClass=STATE_PREPARATION：用户让助手先接收/熟悉/消化材料、建立对关系或约束的理解，稍后才给具体问题或决定；当前完成标志是助手的理解/准备状态。不能把“帮我列准备事项、帮我了解哪些维度、告诉我几个要点”误作这种题，它们实际已要求内容回答。也不要通过显式“禁止报告/不要输出/只回收到”等限制把题做成容易的否定匹配；让准备目的和后续阶段自然体现。背景可含既成写作/制作动作、不同对象、例外或尚未确定事项，但不授权新增任务。G07-G10的intentClass=REQUESTED_RESULT：1题理解后要求两句具体反馈，1题写作交付，1题未命名作品但以自然疑问要求判断结果，1题明确委托AI自行设计可用安排。这四题防止把需要的结果误取消。十题领域各异，使用不在前轮出现的新领域，避免项目熟悉、借用、排班、展览、读书、志愿者、市场推荐、客户续约、BI看板、设备领用、消防、销售汇总、客服知识库。所有材料均合成自足，无需联网或真实执行。rawPrompt每题60到110中文字，context每题120到180中文字，acceptance给hardRequirements最多4项、acceptableVariants最多2项、meaningfulGain最多2项。不要预设唯一措辞，状态准备允许自然简短反馈但不能强制独立说明文档。只输出合法JSON {\"cases\":[{\"id\":\"G01\",\"intentClass\":\"STATE_PREPARATION或REQUESTED_RESULT\",\"rawPrompt\":\"...\",\"context\":\"...\",\"acceptance\":{\"hardRequirements\":[\"...\"],\"acceptableVariants\":[\"...\"],\"meaningfulGain\":[\"...\"]}}]}，共10题。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "SEALED_AUTHOR",
+      "data": {
+        "usage": {
+          "prompt_tokens": 512,
+          "completion_tokens": 2724,
+          "total_tokens": 3236,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 512
+        },
+        "content": "{\n  \"cases\": [\n    {\n      \"id\": \"G01\",\n      \"intentClass\": \"STATE_PREPARATION\",\n      \"rawPrompt\": \"我发你一份社区花园的种植记录和几封居民来信，你先看看，熟悉一下里面的种植习惯和矛盾点，我晚点再跟你讨论怎么调整明年的种植计划。\",\n      \"context\": \"用户是社区花园协调员，手头有2023-2024年的种植日志（记录每块地种了什么、收成如何）和五封居民来信（有的抱怨光照被挡，有的希望增加香草区，有的提到浇水分配不均）。用户希望助手先消化这些材料，理解种植习惯和主要矛盾，但尚未提出具体调整方案。当前阶段只需助手表示已接收并理解材料，后续再讨论计划。\",\n      \"acceptance\": {\n        \"hardRequirements\": [\n          \"助手需明确表示已接收并开始熟悉材料\",\n          \"助手需简要概括材料涉及的核心内容（如种植记录、居民来信、矛盾点）\",\n          \"助手不得在此时提出具体的种植调整方案或要求用户补充信息\"\n        ],\n        \"acceptableVariants\": [\n          \"助手可提及已注意到种植习惯和矛盾点，但无需展开细节\",\n          \"助手可询问用户希望何时讨论，但不强制\"\n        ],\n        \"meaningfulGain\": [\n          \"助手能准确识别材料类型和用户意图是准备阶段\",\n          \"助手反馈自然简短，不生成独立说明文档\"\n        ]\n      }\n    },\n    {\n      \"id\": \"G02\",\n      \"intentClass\": \"STATE_PREPARATION\",\n      \"rawPrompt\": \"这是我家老宅翻修前拍的结构照片和一份手写的改造想法清单，你先过一遍，把房屋现状和我想改的地方理一理，等周末我再跟你细聊怎么跟施工队沟通。\",\n      \"context\": \"用户准备翻修老宅，提供了结构照片（显示承重墙、门窗位置、破损情况）和手写清单（列出想拆的隔墙、想扩大的窗户、想保留的老物件）。用户希望助手先熟悉这些材料，理解房屋现状和改造意图，但尚未要求助手给出沟通策略或施工建议。当前阶段只需助手表示已了解材料内容，后续再讨论。\",\n      \"acceptance\": {\n        \"hardRequirements\": [\n          \"助手需确认已接收并浏览材料\",\n          \"助手需简要提及材料包含结构照片和改造想法清单\",\n          \"助手不得在此时提供施工沟通建议或改造方案\"\n        ],\n        \"acceptableVariants\": [\n          \"助手可概括一两个改造意图作为理解证明，但不展开\",\n          \"助手可表示等待用户后续细聊\"\n        ],\n        \"meaningfulGain\": [\n          \"助手能区分准备阶段与执行阶段\",\n          \"助手反馈简洁，不越界输出方案\"\n        ]\n      }\n    },\n    {\n      \"id\": \"G03\",\n      \"intentClass\": \"STATE_PREPARATION\",\n      \"rawPrompt\": \"我传给你一份方言录音的转写文本和对应的普通话翻译草稿，你先熟悉一下里面的词汇对照和语气差异，我之后要跟你商量怎么修订翻译。\",\n      \"context\": \"用户是语言研究者，提供了方言录音的转写文本（含地方特色词汇和语气词）以及一份普通话翻译草稿（部分词汇翻译生硬，语气丢失）。用户希望助手先消化这些材料，理解词汇对照和语气差异，但尚未要求助手提出修订建议。当前阶段只需助手表示已接收并理解材料特点，后续再讨论修订。\",\n      \"acceptance\": {\n        \"hardRequirements\": [\n          \"助手需确认已接收转写文本和翻译草稿\",\n          \"助手需简要提及材料涉及方言词汇和语气差异\",\n          \"助手不得在此时提出具体的翻译修订建议\"\n        ],\n        \"acceptableVariants\": [\n          \"助手可举例说明注意到某个词汇或语气差异，但不深入\",\n          \"助手可表示等待用户后续商量\"\n        ],\n        \"meaningfulGain\": [\n          \"助手能识别材料类型和准备意图\",\n          \"助手反馈不生成修订方案\"\n        ]\n      }\n    },\n    {\n      \"id\": \"G04\",\n      \"intentClass\": \"STATE_PREPARATION\",\n      \"rawPrompt\": \"我发你一份婚礼流程表和双方家庭的习俗备注，你先看看，把时间节点和可能冲突的习俗记一下，我过两天再跟你讨论怎么协调。\",\n      \"context\": \"用户正在筹备婚礼，提供了流程表（含仪式、宴席、拍照等时间安排）和双方家庭习俗备注（如敬茶顺序、红包金额、座位安排等存在差异）。用户希望助手先熟悉材料，理解时间节点和习俗冲突点，但尚未要求助手提出协调方案。当前阶段只需助手表示已了解材料内容，后续再讨论。\",\n      \"acceptance\": {\n        \"hardRequirements\": [\n          \"助手需确认已接收流程表和习俗备注\",\n          \"助手需简要提及材料涉及时间节点和习俗差异\",\n          \"助手不得在此时提出具体的协调方案\"\n        ],\n        \"acceptableVariants\": [\n          \"助手可概括一两个潜在冲突点作为理解证明，但不展开\",\n          \"助手可表示等待用户后续讨论\"\n        ],\n        \"meaningfulGain\": [\n          \"助手能准确识别准备阶段\",\n          \"助手反馈自然，不越界给方案\"\n        ]\n      }\n    },\n    {\n      \"id\": \"G05\",\n      \"intentClass\": \"STATE_PREPARATION\",\n      \"rawPrompt\": \"这是我从旧书摊淘来的一本手写菜谱的扫描件和几页食材笔记，你先翻翻，熟悉一下里面的菜品和特殊用料，我下周再跟你聊怎么整理成电子版。\",\n      \"context\": \"用户收集了一本手写菜谱的扫描件（字迹潦草，含地方菜和家常菜）和几页食材笔记（记录特殊用料和替代方案）。用户希望助手先熟悉材料，理解菜品内容和特殊用料，但尚未要求助手提出整理方案。当前阶段只需助手表示已接收并浏览材料，后续再讨论电子化整理。\",\n      \"acceptance\": {\n        \"hardRequirements\": [\n          \"助手需确认已接收扫描件和食材笔记\",\n          \"助手需简要提及材料涉及手写菜谱和特殊用料\",\n          \"助手不得在此时提出具体的整理或电子化方案\"\n        ],\n        \"acceptableVariants\": [\n          \"助手可提及注意到字迹或用料特点，但不深入\",\n          \"助手可表示等待用户后续讨论\"\n        ],\n        \"meaningfulGain\": [\n          \"助手能识别材料类型和准备意图\",\n          \"助手反馈简洁，不生成整理方案\"\n        ]\n      }\n    },\n    {\n      \"id\": \"G06\",\n      \"intentClass\": \"STATE_PREPARATION\",\n      \"rawPrompt\": \"我发你一份社区合唱团的排练录音片段和团员出勤表，你先听听看看，熟悉一下各声部的情况和出勤规律，我之后要跟你商量怎么调整排练安排。\",\n      \"context\": \"用户是社区合唱团组织者，提供了排练录音片段（各声部演唱片段）和团员出勤表（记录每次排练的出席情况）。用户希望助手先熟悉材料，理解各声部表现和出勤规律，但尚未要求助手提出调整建议。当前阶段只需助手表示已接收并了解材料内容，后续再讨论排练安排调整。\",\n      \"acceptance\": {\n        \"hardRequirements\": [\n          \"助手需确认已接收录音片段和出勤表\",\n          \"助手需简要提及材料涉及声部情况和出勤规律\",\n          \"助手不得在此时提出具体的排练调整建议\"\n        ],\n        \"acceptableVariants\": [\n          \"助手可概括一两个声部或出勤特点作为理解证明，但不展开\",\n          \"助手可表示等待用户后续商量\"\n        ],\n        \"meaningfulGain\": [\n          \"助手能区分准备与执行阶段\",\n          \"助手反馈不越界给调整方案\"\n        ]\n      }\n    },\n    {\n      \"id\": \"G07\",\n      \"intentClass\": \"REQUESTED_RESULT\",\n      \"rawPrompt\": \"我写了一首关于城市夜晚的短诗，发给你看看。读完后请给我两句具体的反馈：一句说意象运用，一句说节奏感受。\",\n      \"context\": \"用户创作了一首八行的短诗，主题是城市夜晚，包含霓虹、地铁、便利店等意象。用户明确要求助手阅读后给出两句具体反馈：一句针对意象运用，一句针对节奏感受。助手需要理解诗歌内容并直接提供这两句反馈，不能只表示已读或要求更多信息。\",\n      \"acceptance\": {\n        \"hardRequirements\": [\n          \"助手需提供恰好两句反馈\",\n          \"第一句需针对意象运用，第二句需针对节奏感受\",\n          \"反馈需具体，结合诗歌内容，不能空泛\"\n        ],\n        \"acceptableVariants\": [\n          \"反馈顺序可互换，但需明确对应意象和节奏\",\n          \"反馈语气可鼓励或中性，但需具体\"\n        ],\n        \"meaningfulGain\": [\n          \"助手能准确理解诗歌并给出针对性反馈\",\n          \"反馈简洁，不展开成长篇评论\"\n        ]\n      }\n    },\n    {\n      \"id\": \"G08\",\n      \"intentClass\": \"REQUESTED_RESULT\",\n      \"rawPrompt\": \"我需要一份面向小学生的‘垃圾分类’宣传海报的文案，包括一句口号和三条分类小贴士，请直接写出来。\",\n      \"context\": \"用户是小学老师，需要为校园垃圾分类活动制作宣传海报，要求助手直接提供文案：一句朗朗上口的口号，以及三条适合小学生理解的分类小贴士。助手需理解需求并直接输出文案，不能只表示准备或询问更多细节。\",\n      \"acceptance\": {\n        \"hardRequirements\": [\n          \"助手需提供一句口号\",\n          \"助手需提供三条分类小贴士\",\n          \"内容需适合小学生理解，语言简洁\"\n        ],\n        \"acceptableVariants\": [\n          \"口号风格可活泼或押韵，小贴士可涵盖不同分类\",\n          \"小贴士可用短句或列表形式\"\n        ],\n        \"meaningfulGain\": [\n          \"助手能直接交付可用文案\",\n          \"文案符合小学生认知水平\"\n        ]\n      }\n    },\n    {\n      \"id\": \"G09\",\n      \"intentClass\": \"REQUESTED_RESULT\",\n      \"rawPrompt\": \"我设计了一个简单的桌游规则，但还没起名字。规则是玩家轮流抽卡、交换资源、完成订单。你觉得这个桌游适合叫什么名字？为什么？\",\n      \"context\": \"用户设计了一款桌游，核心机制是抽卡、资源交换和完成订单，但尚未命名。用户以自然疑问询问助手认为适合叫什么名字以及理由。助手需理解规则并给出一个或多个名字建议及理由，不能只表示已读或要求更多信息。\",\n      \"acceptance\": {\n        \"hardRequirements\": [\n          \"助手需给出至少一个桌游名字建议\",\n          \"助手需说明理由，理由需结合规则机制\",\n          \"不能只表示已读或要求更多信息\"\n        ],\n        \"acceptableVariants\": [\n          \"可给出多个名字并分别说明理由\",\n          \"名字风格可多样，但需与机制相关\"\n        ],\n        \"meaningfulGain\": [\n          \"助手能基于规则提出贴切的名字\",\n          \"理由清晰，体现对机制的理解\"\n        ]\n      }\n    },\n    {\n      \"id\": \"G10\",\n      \"intentClass\": \"REQUESTED_RESULT\",\n      \"rawPrompt\": \"我下周要在家办一个十人左右的聚会，有大人也有小孩，你帮我设计一个下午的活动安排，包括时间、环节和需要准备的东西，直接给我一个可用的方案。\",\n      \"context\": \"用户计划在家举办十人左右的聚会，参与者包括大人和小孩，时间是一个下午。用户明确委托助手自行设计一个可用的活动安排，包括时间分配、环节设计和准备物品清单。助手需直接输出完整方案，不能只表示准备或询问更多细节。\",\n      \"acceptance\": {\n        \"hardRequirements\": [\n          \"助手需提供一份下午的活动安排\",\n          \"安排需包含时间分配、环节设计和准备物品清单\",\n          \"方案需考虑大人和小孩共同参与\"\n        ],\n        \"acceptableVariants\": [\n          \"环节可包括游戏、手工、茶歇等，顺序可调整\",\n          \"准备物品清单可简可详，但需覆盖主要环节\"\n        ],\n        \"meaningfulGain\": [\n          \"助手能交付可直接执行的方案\",\n          \"方案兼顾不同年龄参与者\"\n        ]\n      }\n    }\n  ]\n}",
+        "finishReason": "stop"
+      }
+    }
+  }
+]

@@ -7,7 +7,10 @@ package com.promptoptimizer.provider.domain;
  * @since 0.1.0
  */
 public final class NaturalPromptInstructions {
+    /** 冻结第四版，供旧历史和明确成果的原始生成路径使用，不能随默认切换回改。 */
     public static final String VERSION = "4";
+    /** 新自然请求采用意图守门；明确成果仍以冻结第四版的原始请求完成生成。 */
+    public static final String CURRENT_VERSION = NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION;
 
     /** 已保存的自然版本继续使用各自冻结指导，不静默改换再次增强策略。 */
     public static boolean supports(String version) {
@@ -68,6 +71,7 @@ public final class NaturalPromptInstructions {
                     NaturalPromptActionContractInstructions.VERSION, NaturalPromptScopedInstructions.VERSION, NaturalPromptScopedInstructions.PRESERVED_VERSION,
                     NaturalPromptScopedInstructions.CONSERVATIVE_VERSION
                     -> NaturalPromptStageInstructions.enhancementInstruction(version);
+            case NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION -> ENHANCE;
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
     }
@@ -101,6 +105,7 @@ public final class NaturalPromptInstructions {
                     NaturalPromptActionContractInstructions.VERSION, NaturalPromptScopedInstructions.VERSION, NaturalPromptScopedInstructions.PRESERVED_VERSION,
                     NaturalPromptScopedInstructions.CONSERVATIVE_VERSION
                     -> NaturalPromptStageInstructions.planningInstruction(version);
+            case NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION -> NaturalPromptScopedInstructions.PLAN;
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
     }
