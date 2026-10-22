@@ -1,0 +1,28 @@
+{
+  "scope": "TEAM_HANDOVER与PLAN_MAINTENANCE实际作品，开发者只读核对，不调用模型或改冻结资料",
+  "candidateAdoptionSupported": false,
+  "cases": [
+    {
+      "id": "TEAM_HANDOVER",
+      "comparison": "三臂均交付表格与流程；20未表现出更简便的使用收益，表格填写负担反而更大。",
+      "rawObservation": "原始臂用四块模板和四步流程，另有每周更新及审批建议，已有使用负担。",
+      "v4Observation": "一个十列表格及表尾确认区，六步流程。至少提前半天与未确认不得离岗为下游新增的拟议流程；不是已确认组织制度，使用前需调整。",
+      "v20Observation": "表头加A至G七块，优先事项、待办、进行中状态和跟进对象多处重填；与简便、填写省时的任务目标存在张力。四步流程的数量更少不等于实际填写更少。",
+      "attribution": "20提示词对优先区、进行中、跟进对象、风险等并列列举较多，下游扩展为多张重叠表。属于提示词与下游的混合便利性问题，不据此设置所有任务的固定字段上限。",
+      "workWinFor20": false,
+      "confidence": "MEDIUM: simplicity is a qualitative comparison, not a deterministic safety or correctness failure"
+    },
+    {
+      "id": "PLAN_MAINTENANCE",
+      "actualPlanQuestions": 2,
+      "actualBoundAnswers": 2,
+      "v4PromptStatus": 502,
+      "v4WorkAvailable": false,
+      "comparison": "不可做4/20作品质量胜负比较；20成功交付与4失败分别记录，不将失败对手当语义收益。",
+      "rawAnd20WorkObservation": "均保留2026-10-30 18:30至20:00、无线中断、有线正常、远程不受影响和自动重连未知。20更紧凑，但两臂都自行添加IT支持署名及以维护日为落款日期；作为拟稿需核对发布主体与发布日期，不能直接当用户已确认事实。",
+      "attribution": "第四版首响应缺第二份实际答复来源，第二响应在正文阶段填写非空planImpacts，离线回放已确认违反冻结协议。20正文保留题答，实际通知的额外落款由下游生成，不由此认定模型能力不足或追加全局通知规则。",
+      "workWinFor20": false
+    }
+  ],
+  "limits": "回归不计旧六主任务3/6门槛。没有重试作品、伪造确认或改业务数据。"
+}

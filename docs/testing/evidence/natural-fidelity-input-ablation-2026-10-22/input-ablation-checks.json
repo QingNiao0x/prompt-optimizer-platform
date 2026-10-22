@@ -1,0 +1,90 @@
+{
+  "priorBatch": "natural-source-fidelity-2026-10-22",
+  "currentBatch": "natural-fidelity-input-ablation-2026-10-22",
+  "systemInstructionByteEqual": true,
+  "sharedFixtureRequests": [
+    {
+      "id": "B1_UNKNOWN_STATE",
+      "priorId": "B1_UNKNOWN_STATE",
+      "sameModelParametersSystemAndProtocol": true,
+      "sameOtherInputAfterTaskUnderstandingRemoval": true,
+      "priorDraftTaskUnderstandingPresent": true,
+      "ablationDraftTaskUnderstandingAbsent": true
+    },
+    {
+      "id": "N1_INPUT_GAP",
+      "priorId": "N1_INPUT_GAP",
+      "sameModelParametersSystemAndProtocol": true,
+      "sameOtherInputAfterTaskUnderstandingRemoval": true,
+      "priorDraftTaskUnderstandingPresent": true,
+      "ablationDraftTaskUnderstandingAbsent": true
+    },
+    {
+      "id": "B2_PROPOSAL",
+      "priorId": "B2_PROPOSAL",
+      "sameModelParametersSystemAndProtocol": true,
+      "sameOtherInputAfterTaskUnderstandingRemoval": true,
+      "priorDraftTaskUnderstandingPresent": true,
+      "ablationDraftTaskUnderstandingAbsent": true
+    },
+    {
+      "id": "N2_CONFIRMED",
+      "priorId": "N2_CONFIRMED",
+      "sameModelParametersSystemAndProtocol": true,
+      "sameOtherInputAfterTaskUnderstandingRemoval": true,
+      "priorDraftTaskUnderstandingPresent": true,
+      "ablationDraftTaskUnderstandingAbsent": true
+    },
+    {
+      "id": "B3_VERIFY_AUTH",
+      "priorId": "B3_VERIFY_AUTH",
+      "sameModelParametersSystemAndProtocol": true,
+      "sameOtherInputAfterTaskUnderstandingRemoval": true,
+      "priorDraftTaskUnderstandingPresent": true,
+      "ablationDraftTaskUnderstandingAbsent": true
+    },
+    {
+      "id": "N3_REAL_AUTH",
+      "priorId": "N3_REAL_AUTH",
+      "sameModelParametersSystemAndProtocol": true,
+      "sameOtherInputAfterTaskUnderstandingRemoval": true,
+      "priorDraftTaskUnderstandingPresent": true,
+      "ablationDraftTaskUnderstandingAbsent": true
+    },
+    {
+      "id": "B4_SCOPE",
+      "priorId": "B4_SCOPE",
+      "sameModelParametersSystemAndProtocol": true,
+      "sameOtherInputAfterTaskUnderstandingRemoval": true,
+      "priorDraftTaskUnderstandingPresent": true,
+      "ablationDraftTaskUnderstandingAbsent": true
+    },
+    {
+      "id": "LEGACY_N4_MISSING_GOAL",
+      "priorId": "N4_DESIGN",
+      "sameModelParametersSystemAndProtocol": true,
+      "sameOtherInputAfterTaskUnderstandingRemoval": true,
+      "priorDraftTaskUnderstandingPresent": true,
+      "ablationDraftTaskUnderstandingAbsent": true
+    },
+    {
+      "id": "REPLAY_NEIGHBOR_MESSAGE",
+      "priorId": "REPLAY_NEIGHBOR_MESSAGE",
+      "sameModelParametersSystemAndProtocol": true,
+      "sameOtherInputAfterTaskUnderstandingRemoval": true,
+      "priorDraftTaskUnderstandingPresent": true,
+      "ablationDraftTaskUnderstandingAbsent": true
+    },
+    {
+      "id": "REPLAY_SHARED_EXPENSE_TOOL",
+      "priorId": "REPLAY_SHARED_EXPENSE_TOOL",
+      "sameModelParametersSystemAndProtocol": true,
+      "sameOtherInputAfterTaskUnderstandingRemoval": true,
+      "priorDraftTaskUnderstandingPresent": true,
+      "ablationDraftTaskUnderstandingAbsent": true
+    }
+  ],
+  "newNormalControl": "N4_COMPLETE_DESIGN",
+  "goldCorrection": "旧N4以LEGACY_N4_MISSING_GOAL保留正文并改作目标遗漏探针；新完整目标N4作为单独正常稿冻结，不回改前批。",
+  "comparisonLimit": "十份共享请求只移除首稿任务理解，另新增一份正常稿；两批总机械命中率分母和旧N4金标不同，不能直接作定量因果比较。"
+}

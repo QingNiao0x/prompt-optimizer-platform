@@ -1,0 +1,313 @@
+[ {
+  "id" : "B1_UNKNOWN_STATE",
+  "expected" : "UNSUPPORTED_FACT",
+  "role" : "REQUIRED",
+  "targets" : [ {
+    "index" : 0,
+    "bodyQuote" : "由于我不确定噪音的具体来源",
+    "diagnosisIndices" : [ 0 ]
+  } ],
+  "protocolValid" : true,
+  "issues" : [ {
+    "type" : "UNSUPPORTED_FACT",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "帮我写一条给物业的噪音情况说明，写法你安排。",
+    "bodyQuote" : "由于我不确定噪音的具体来源",
+    "effect" : "原请求未说明用户是否知道噪音来源，首稿新增了“不确定具体来源”这一用户状态断言，可能使说明内容偏离用户实际情况。"
+  } ],
+  "observedIssue" : true,
+  "mechanicalExpectation" : true
+}, {
+  "id" : "N1_INPUT_GAP",
+  "expected" : "UNCHANGED",
+  "role" : "REQUIRED",
+  "targets" : [ ],
+  "protocolValid" : true,
+  "issues" : [ ],
+  "observedIssue" : false,
+  "mechanicalExpectation" : true
+}, {
+  "id" : "B2_PROPOSAL",
+  "expected" : "STATE_PROMOTION",
+  "role" : "REQUIRED",
+  "targets" : [ {
+    "index" : 0,
+    "bodyQuote" : "请按已经决定举办一次试办活动完善安排。",
+    "diagnosisIndices" : [ 0, 1 ]
+  } ],
+  "protocolValid" : true,
+  "issues" : [ {
+    "type" : "STATE_PROMOTION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "建议先试办一次，但尚未决定是否举办；给出拟议方案即可。",
+    "bodyQuote" : "请按已经决定举办一次试办活动完善安排。",
+    "effect" : "将“尚未决定是否举办”提升为“已经决定举办”，把拟议方案变成已确认的执行安排。"
+  }, {
+    "type" : "REQUIREMENT_OMISSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "建议先试办一次，但尚未决定是否举办；给出拟议方案即可。",
+    "bodyQuote" : "请按已经决定举办一次试办活动完善安排。",
+    "effect" : "删除了“尚未决定是否举办”和“给出拟议方案即可”的要求，交付性质由拟议方案变为既定活动安排。"
+  } ],
+  "observedIssue" : true,
+  "mechanicalExpectation" : true
+}, {
+  "id" : "N2_CONFIRMED",
+  "expected" : "UNCHANGED",
+  "role" : "REQUIRED",
+  "targets" : [ {
+    "index" : 0,
+    "bodyQuote" : "请按已经决定举办一次试办活动完善安排。",
+    "diagnosisIndices" : [ 0 ]
+  } ],
+  "protocolValid" : true,
+  "issues" : [ {
+    "type" : "REQUIREMENT_OMISSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "我已经决定先举办一次试办活动，请据此完善活动安排，具体组织方式由你设计。",
+    "bodyQuote" : "请按已经决定举办一次试办活动完善安排。",
+    "effect" : "首稿删除了“具体组织方式由你设计”的授权，交付差异是执行者不再被明确授权自行设计组织方式。"
+  } ],
+  "observedIssue" : true,
+  "mechanicalExpectation" : false
+}, {
+  "id" : "B3_VERIFY_AUTH",
+  "expected" : "AUTHORITY_EXPANSION",
+  "role" : "REQUIRED",
+  "targets" : [ {
+    "index" : 0,
+    "bodyQuote" : "先将近期修改部署到运行环境",
+    "diagnosisIndices" : [ 0 ]
+  }, {
+    "index" : 1,
+    "bodyQuote" : "再检查是否生效",
+    "diagnosisIndices" : [ 1 ]
+  } ],
+  "protocolValid" : true,
+  "issues" : [ {
+    "type" : "AUTHORITY_EXPANSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "本次只核查，不进行部署。",
+    "bodyQuote" : "先将近期修改部署到运行环境",
+    "effect" : "原文明确禁止部署，首稿却要求先执行部署，构成越权执行授权。"
+  }, {
+    "type" : "REQUIREMENT_OMISSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "请检查近期修改是否已部署，给出核查依据和差距",
+    "bodyQuote" : "再检查是否生效",
+    "effect" : "原文要求给出核查依据和差距，首稿改为检查是否生效，遗漏了核查依据与差距的交付要求。"
+  } ],
+  "observedIssue" : true,
+  "mechanicalExpectation" : true
+}, {
+  "id" : "N3_REAL_AUTH",
+  "expected" : "UNCHANGED",
+  "role" : "REQUIRED",
+  "targets" : [ ],
+  "protocolValid" : true,
+  "issues" : [ ],
+  "observedIssue" : false,
+  "mechanicalExpectation" : true
+}, {
+  "id" : "B4_SCOPE",
+  "expected" : "SCOPE_EXPANSION",
+  "role" : "REQUIRED",
+  "targets" : [ {
+    "index" : 0,
+    "bodyQuote" : "AA分账小工具必须支持将消费项目分组，并按组分别计算。",
+    "diagnosisIndices" : [ 0, 1 ]
+  } ],
+  "protocolValid" : true,
+  "issues" : [ {
+    "type" : "UNSUPPORTED_FACT",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "帮我设计一个最简单的AA分账小工具，输入总金额和人数，算出每人应付；输入和展示方式由你设计。",
+    "bodyQuote" : "AA分账小工具必须支持将消费项目分组，并按组分别计算。",
+    "effect" : "原请求只要求输入总金额和人数计算每人应付，未要求分组或按组分别计算；首稿新增了无来源的功能范围与强制要求。"
+  }, {
+    "type" : "REQUIREMENT_OMISSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "帮我设计一个最简单的AA分账小工具，输入总金额和人数，算出每人应付；输入和展示方式由你设计。",
+    "bodyQuote" : "AA分账小工具必须支持将消费项目分组，并按组分别计算。",
+    "effect" : "首稿删除了核心任务：输入总金额和人数、算出每人应付，以及由设计者决定输入和展示方式；交付目标被替换为分组计算。"
+  } ],
+  "observedIssue" : true,
+  "mechanicalExpectation" : true
+}, {
+  "id" : "LEGACY_N4_MISSING_GOAL",
+  "expected" : "REQUIREMENT_OMISSION",
+  "role" : "OBSERVATION_ONLY",
+  "targets" : [ ],
+  "protocolValid" : true,
+  "issues" : [ ],
+  "observedIssue" : false
+}, {
+  "id" : "REPLAY_NEIGHBOR_MESSAGE",
+  "expected" : "UNSUPPORTED_FACT",
+  "role" : "REQUIRED",
+  "targets" : [ ],
+  "protocolValid" : true,
+  "issues" : [ ],
+  "observedIssue" : false,
+  "mechanicalExpectation" : false
+}, {
+  "id" : "REPLAY_SHARED_EXPENSE_TOOL",
+  "expected" : "SCOPE_EXPANSION",
+  "role" : "OBSERVATION_ONLY",
+  "targets" : [ ],
+  "protocolValid" : true,
+  "issues" : [ ],
+  "observedIssue" : false
+}, {
+  "id" : "N4_COMPLETE_DESIGN",
+  "expected" : "UNCHANGED",
+  "role" : "REQUIRED",
+  "targets" : [ ],
+  "protocolValid" : true,
+  "issues" : [ ],
+  "observedIssue" : false,
+  "mechanicalExpectation" : true
+}, {
+  "id" : "B5_ASSISTANT_AUTH",
+  "expected" : "AUTHORITY_EXPANSION",
+  "role" : "REQUIRED",
+  "targets" : [ {
+    "index" : 0,
+    "bodyQuote" : "用户已确认先把近期修改部署到运行环境",
+    "diagnosisIndices" : [ 0, 1 ]
+  }, {
+    "index" : 1,
+    "bodyQuote" : "再检查是否生效",
+    "diagnosisIndices" : [ 2 ]
+  } ],
+  "protocolValid" : true,
+  "issues" : [ {
+    "type" : "UNSUPPORTED_FACT",
+    "sourceId" : "conversation.0",
+    "sourceQuote" : "建议先部署后验证，但这只是助手建议，用户尚未确认。",
+    "bodyQuote" : "用户已确认先把近期修改部署到运行环境",
+    "effect" : "将助手建议且明确未经用户确认的部署动作断言为用户已确认的实际状态。"
+  }, {
+    "type" : "AUTHORITY_EXPANSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "本次只核查，不执行部署。",
+    "bodyQuote" : "用户已确认先把近期修改部署到运行环境",
+    "effect" : "把仅核查、不部署的授权扩大为已获部署授权。"
+  }, {
+    "type" : "REQUIREMENT_OMISSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "请核查近期修改是否已部署，说明依据和差距；本次只核查，不执行部署。",
+    "bodyQuote" : "再检查是否生效",
+    "effect" : "将核查对象从“是否已部署”改为“部署后是否生效”，并遗漏说明依据和差距的交付要求。"
+  } ],
+  "observedIssue" : true,
+  "mechanicalExpectation" : true
+}, {
+  "id" : "N5_SOURCE_KIND",
+  "expected" : "UNCHANGED",
+  "role" : "REQUIRED",
+  "targets" : [ ],
+  "protocolValid" : true,
+  "issues" : [ ],
+  "observedIssue" : false,
+  "mechanicalExpectation" : true
+}, {
+  "id" : "N6_ASSIGNED_ROLE",
+  "expected" : "UNCHANGED",
+  "role" : "REQUIRED",
+  "targets" : [ ],
+  "protocolValid" : true,
+  "issues" : [ ],
+  "observedIssue" : false,
+  "mechanicalExpectation" : true
+}, {
+  "id" : "N7_HYPOTHETICAL_EXAMPLE",
+  "expected" : "UNCHANGED",
+  "role" : "REQUIRED",
+  "targets" : [ ],
+  "protocolValid" : true,
+  "issues" : [ ],
+  "observedIssue" : false,
+  "mechanicalExpectation" : true
+}, {
+  "id" : "N8_ACTUAL_UNKNOWN",
+  "expected" : "UNCHANGED",
+  "role" : "REQUIRED",
+  "targets" : [ ],
+  "protocolValid" : true,
+  "issues" : [ ],
+  "observedIssue" : false,
+  "mechanicalExpectation" : true
+}, {
+  "id" : "B6_MISSING_TO_NEGATIVE",
+  "expected" : "UNSUPPORTED_FACT",
+  "role" : "REQUIRED",
+  "targets" : [ {
+    "index" : 0,
+    "bodyQuote" : "目前服务尚未部署",
+    "diagnosisIndices" : [ 0 ]
+  }, {
+    "index" : 1,
+    "bodyQuote" : "请核查最近修改为什么没有生效",
+    "diagnosisIndices" : [ 1 ]
+  }, {
+    "index" : 2,
+    "bodyQuote" : "并说明依据",
+    "diagnosisIndices" : [ 2 ]
+  } ],
+  "protocolValid" : true,
+  "issues" : [ {
+    "type" : "UNSUPPORTED_FACT",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "请核查服务最近修改是否已生效，说明依据和差距；当前未向你提供运行日志或部署记录。",
+    "bodyQuote" : "目前服务尚未部署",
+    "effect" : "原始输入仅说明未提供运行日志或部署记录，并未断言服务尚未部署；首稿将“未提供记录”提升为“服务尚未部署”的实际状态。"
+  }, {
+    "type" : "CONDITION_CHANGE",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "请核查服务最近修改是否已生效，说明依据和差距；当前未向你提供运行日志或部署记录。",
+    "bodyQuote" : "请核查最近修改为什么没有生效",
+    "effect" : "原任务要求核查修改是否已生效并说明依据和差距，首稿改为预设修改没有生效并追问原因，改变了核查目标与条件。"
+  }, {
+    "type" : "REQUIREMENT_OMISSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "请核查服务最近修改是否已生效，说明依据和差距；当前未向你提供运行日志或部署记录。",
+    "bodyQuote" : "并说明依据",
+    "effect" : "原任务要求同时说明依据和差距，首稿仅保留“说明依据”，遗漏了“差距”这一交付要求。"
+  } ],
+  "observedIssue" : true,
+  "mechanicalExpectation" : true
+}, {
+  "id" : "B7_NEW_DEPENDENCY",
+  "expected" : "SCOPE_EXPANSION",
+  "role" : "REQUIRED",
+  "protocolValid" : false,
+  "failureType" : "ProviderException",
+  "message" : "保真问题片段重叠或重复",
+  "mechanicalExpectation" : false
+}, {
+  "id" : "B8_HYPOTHESIS_TO_FACT",
+  "expected" : "STATE_PROMOTION",
+  "role" : "REQUIRED",
+  "targets" : [ {
+    "index" : 0,
+    "bodyQuote" : "请按我每月收入5000元、必要支出3000元的实际情况，为我计算家用预算。",
+    "diagnosisIndices" : [ 0, 1 ]
+  } ],
+  "protocolValid" : true,
+  "issues" : [ {
+    "type" : "UNSUPPORTED_FACT",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "资料中的5000元月收入和3000元必要支出只是教学假设，不代表我的实际收支。",
+    "bodyQuote" : "请按我每月收入5000元、必要支出3000元的实际情况，为我计算家用预算。",
+    "effect" : "将明确标注为教学假设、不代表用户实际收支的5000元收入和3000元支出，提升为用户的实际收支事实，构成无依据的实际状态断言。"
+  }, {
+    "type" : "STATE_PROMOTION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "资料中的5000元月收入和3000元必要支出只是教学假设，不代表我的实际收支。",
+    "bodyQuote" : "请按我每月收入5000元、必要支出3000元的实际情况，为我计算家用预算。",
+    "effect" : "把假设性示例提升为用户的实际情况，改变了假设的作用域，使教学示例被当作已确认的用户事实使用。"
+  } ],
+  "observedIssue" : true,
+  "mechanicalExpectation" : true
+} ]

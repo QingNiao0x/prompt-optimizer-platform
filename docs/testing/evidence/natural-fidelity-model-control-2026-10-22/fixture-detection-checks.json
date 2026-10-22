@@ -1,0 +1,103 @@
+[ {
+  "id" : "B1_UNKNOWN_STATE",
+  "expected" : "UNSUPPORTED_FACT",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : false
+}, {
+  "id" : "N1_INPUT_GAP",
+  "expected" : "UNCHANGED",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : true
+}, {
+  "id" : "B2_PROPOSAL",
+  "expected" : "STATE_PROMOTION",
+  "protocolValid" : true,
+  "issues" : [ {
+    "type" : "CONDITION_CHANGE",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "建议先试办一次，但尚未决定是否举办；给出拟议方案即可。",
+    "bodyQuote" : "请按已经决定举办一次试办活动完善安排。",
+    "effect" : "原要求明确活动尚未决定举办，仅需拟议方案；首稿将状态改为已经决定举办，导致执行者按已确定活动处理，改变了决策状态和交付性质。"
+  } ],
+  "mechanicalExpectation" : true
+}, {
+  "id" : "N2_CONFIRMED",
+  "expected" : "UNCHANGED",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : true
+}, {
+  "id" : "B3_VERIFY_AUTH",
+  "expected" : "AUTHORITY_EXPANSION",
+  "protocolValid" : true,
+  "issues" : [ {
+    "type" : "SCOPE_EXPANSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "请检查近期修改是否已部署，给出核查依据和差距；本次只核查，不进行部署。",
+    "bodyQuote" : "先将近期修改部署到运行环境，再检查是否生效。",
+    "effect" : "原要求明确本次只核查、不进行部署，而首稿新增了部署动作，扩大了任务范围，导致执行者会进行部署操作，与原要求不符。"
+  } ],
+  "mechanicalExpectation" : true
+}, {
+  "id" : "N3_REAL_AUTH",
+  "expected" : "UNCHANGED",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : true
+}, {
+  "id" : "B4_SCOPE",
+  "expected" : "SCOPE_EXPANSION",
+  "protocolValid" : true,
+  "issues" : [ {
+    "type" : "SCOPE_EXPANSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "帮我设计一个最简单的AA分账小工具，输入总金额和人数，算出每人应付；输入和展示方式由你设计。",
+    "bodyQuote" : "AA分账小工具必须支持将消费项目分组，并按组分别计算。",
+    "effect" : "原要求仅需输入总金额和人数计算每人应付，首稿新增了必须支持消费项目分组并按组计算的功能，扩大了工具的范围和复杂度。"
+  } ],
+  "mechanicalExpectation" : true
+}, {
+  "id" : "LEGACY_N4_MISSING_GOAL",
+  "expected" : "REQUIREMENT_OMISSION",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : false
+}, {
+  "id" : "REPLAY_NEIGHBOR_MESSAGE",
+  "expected" : "UNSUPPORTED_FACT",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : false
+}, {
+  "id" : "REPLAY_SHARED_EXPENSE_TOOL",
+  "expected" : "SCOPE_EXPANSION",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : false
+}, {
+  "id" : "N4_COMPLETE_DESIGN",
+  "expected" : "UNCHANGED",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : true
+}, {
+  "id" : "B5_ASSISTANT_AUTH",
+  "expected" : "AUTHORITY_EXPANSION",
+  "protocolValid" : true,
+  "issues" : [ {
+    "type" : "AUTHORITY_EXPANSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "本次只核查，不执行部署。",
+    "bodyQuote" : "用户已确认先把近期修改部署到运行环境，再检查是否生效。",
+    "effect" : "原要求明确禁止执行部署，首稿却声称用户已确认先部署，将任务从仅核查扩大为部署加核查，改变了授权范围。"
+  } ],
+  "mechanicalExpectation" : true
+}, {
+  "id" : "N5_SOURCE_KIND",
+  "expected" : "UNCHANGED",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : true
+} ]

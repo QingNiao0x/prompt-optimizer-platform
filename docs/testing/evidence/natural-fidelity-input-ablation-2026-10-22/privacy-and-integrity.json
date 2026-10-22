@@ -1,0 +1,207 @@
+{
+  "scope": "本批公开证据导出、冻结输入保留、关键源码快照及常见凭证/隐藏推理检查；非全仓库安全认证。",
+  "exportChecks": {
+    "traceSourceCount": 11,
+    "publicTraceCount": 11,
+    "traceParsedEquality": true,
+    "resultSourceCount": 11,
+    "publicLogicalResultCount": 11,
+    "resultParsedEquality": true,
+    "firstResponsesAndDomainApplyFailuresPreserved": true,
+    "originalFixturesAndMechanicalChecksUnchanged": true
+  },
+  "privacyChecks": {
+    "structuredPayloadFiles": [
+      "transports.jsonl",
+      "http-results.json"
+    ],
+    "forbiddenCredentialOrHiddenReasoningKeyCount": 0,
+    "fullPublicTextFilesScanned": [
+      ".gitattributes",
+      "candidate-source/history/entity/OptimizationRecordEntity.java",
+      "candidate-source/provider/domain/NaturalPromptFidelityInstructions.java",
+      "candidate-source/provider/domain/NaturalPromptFidelityReview.java",
+      "candidate-source/provider/domain/NaturalPromptInstructions.java",
+      "candidate-source/provider/domain/NaturalPromptPreparationInstructions.java",
+      "candidate-source/provider/domain/NaturalTaskReview.java",
+      "candidate-source/provider/domain/NaturalTaskUnderstanding.java",
+      "candidate-source/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "candidate-source-checks.json",
+      "cases.json",
+      "closure.json",
+      "cost-and-fixture-checks.json",
+      "DumpFidelityInstructions.java",
+      "environment-before.json",
+      "fidelity-instruction.txt",
+      "FidelityFixtureCheck.java",
+      "final-call-audit.json",
+      "fixture-checks.json",
+      "frozen-artifact-preservation.json",
+      "http-results.json",
+      "input-ablation-checks.json",
+      "invoke-evaluation.ps1",
+      "manual-assessment.json",
+      "NaturalFidelityInputAblationEvaluationServer.java",
+      "offline-validation.json",
+      "protocol.json",
+      "README.md",
+      "review-fixtures.json",
+      "run-evaluation.mjs",
+      "source-manifest.json",
+      "start-evaluation.ps1",
+      "summary.json",
+      "transports.jsonl"
+    ],
+    "credentialPatternCounts": {
+      "privateKey": 0,
+      "providerSecret": 0,
+      "awsAccessKey": 0,
+      "bearerCredential": 0,
+      "jwt": 0
+    },
+    "knownCredentialPatternsMatched": 0,
+    "loginArtifactsExported": false,
+    "privateAccountFilesReadOrExportedByCloseout": false,
+    "sourceIdentifierNamesAreNotCredentialValues": true,
+    "limit": "结构化原件无认证/密码/API密钥/Cookie/隐藏推理字段；公开文本无私钥、长API密钥、Bearer或JWT常见样式。源码中的环境变量及私有凭据引用仅为标识，不等于密钥值；此检查不识别所有未知秘密格式。",
+    "finalPublicTextScan": {
+      "filesScanned": 35,
+      "credentialPatternCounts": {
+        "privateKey": 0,
+        "providerSecret": 0,
+        "awsAccessKey": 0,
+        "bearerCredential": 0,
+        "jwt": 0
+      },
+      "limit": "Common credential patterns only, not full repository or unknown-secret certification"
+    }
+  },
+  "frozenCandidateSourceChecks": {
+    "sourceManifestFiles": 1143,
+    "checks": [
+      {
+        "candidateFile": "candidate-source/provider/domain/NaturalPromptFidelityInstructions.java",
+        "frozenSourcePath": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptFidelityInstructions.java",
+        "sha256": "f08ed61d4dcceb29d10826f3cc31ca6473e0cf1f54a39cbf14f45b92aff10539",
+        "matchesFrozenManifest": true
+      },
+      {
+        "candidateFile": "candidate-source/provider/domain/NaturalPromptFidelityReview.java",
+        "frozenSourcePath": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptFidelityReview.java",
+        "sha256": "9eeb789893c407169a68eaf2a3f4cf8ec96f1d72a597e9626fea4f144f680df0",
+        "matchesFrozenManifest": true
+      },
+      {
+        "candidateFile": "candidate-source/provider/domain/NaturalPromptPreparationInstructions.java",
+        "frozenSourcePath": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptPreparationInstructions.java",
+        "sha256": "2bacb34b3b447bc7ebd000b3f850239ae7ad12b9bd820d20f5417767b2f90ed2",
+        "matchesFrozenManifest": true
+      },
+      {
+        "candidateFile": "candidate-source/history/entity/OptimizationRecordEntity.java",
+        "frozenSourcePath": "services/api/src/main/java/com/promptoptimizer/history/entity/OptimizationRecordEntity.java",
+        "sha256": "cd0d28dc2f3780c59a3fe8b1d23703d776e37663c2139c5a5e47071abb5af5f1",
+        "matchesFrozenManifest": true
+      },
+      {
+        "candidateFile": "candidate-source/provider/domain/NaturalPromptInstructions.java",
+        "frozenSourcePath": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+        "sha256": "52c25411b5e006d6ae2b1a71e0eb46a62be8e85c11903481b8273b29a40f7f17",
+        "matchesFrozenManifest": true
+      },
+      {
+        "candidateFile": "candidate-source/provider/domain/NaturalTaskReview.java",
+        "frozenSourcePath": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java",
+        "sha256": "e9f120efbffd7d0048f976f2b4bfeb256ded7086c46bd3adf883e3b17ebd6ebd",
+        "matchesFrozenManifest": true
+      },
+      {
+        "candidateFile": "candidate-source/provider/domain/NaturalTaskUnderstanding.java",
+        "frozenSourcePath": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskUnderstanding.java",
+        "sha256": "78b4c03e0a8259fdce83bd12b9521b9e63f59b956f640c9996e39e5ee2cb121b",
+        "matchesFrozenManifest": true
+      },
+      {
+        "candidateFile": "candidate-source/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+        "frozenSourcePath": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+        "sha256": "cbcc2669604eb155eaffc4d66503443c70a918a356d272d1ba0ff5036e7181df",
+        "matchesFrozenManifest": true
+      }
+    ]
+  },
+  "frozenInputPreservation": {
+    "frozenInputAndMechanicalArtifactsUnchanged": true,
+    "sha256": {
+      "protocol.json": "d9fe802a607dafaa559ea15376cdb7a5b9ab295cdd536819912cf3612eb6cbac",
+      "review-fixtures.json": "f913b2d78dde7faf4450b1f0dbb6cc212f73e53bc6db69de50018bf0c0a96224",
+      "fixture-checks.json": "cdf13b8c4f2f2c51df1bb75044548f37f5ba2f223a7cb865f1ccc633a3ec93e6",
+      "fidelity-instruction.txt": "f2bc2ae8f77bced55008807278e629a2926e30a20e7e285267302beefb2014d0",
+      "source-manifest.json": "318ffa8cb366e1572c6d5db8450c83e95be6cd4f5d6d92a604fb05d8db42fc47",
+      "run-evaluation.mjs": "b4772c037c701e954b782a073817bfc69b164da2a1ace4b2ad07435a1429a730"
+    }
+  },
+  "publicSha256": {
+    ".gitattributes": "f06202a408fef9b9ea69bb6b1cb8160dbb0378c5bb67a444d510d231813824c8",
+    "candidate-source/history/entity/OptimizationRecordEntity.java": "cd0d28dc2f3780c59a3fe8b1d23703d776e37663c2139c5a5e47071abb5af5f1",
+    "candidate-source/provider/domain/NaturalPromptFidelityInstructions.java": "f08ed61d4dcceb29d10826f3cc31ca6473e0cf1f54a39cbf14f45b92aff10539",
+    "candidate-source/provider/domain/NaturalPromptFidelityReview.java": "9eeb789893c407169a68eaf2a3f4cf8ec96f1d72a597e9626fea4f144f680df0",
+    "candidate-source/provider/domain/NaturalPromptInstructions.java": "52c25411b5e006d6ae2b1a71e0eb46a62be8e85c11903481b8273b29a40f7f17",
+    "candidate-source/provider/domain/NaturalPromptPreparationInstructions.java": "2bacb34b3b447bc7ebd000b3f850239ae7ad12b9bd820d20f5417767b2f90ed2",
+    "candidate-source/provider/domain/NaturalTaskReview.java": "e9f120efbffd7d0048f976f2b4bfeb256ded7086c46bd3adf883e3b17ebd6ebd",
+    "candidate-source/provider/domain/NaturalTaskUnderstanding.java": "78b4c03e0a8259fdce83bd12b9521b9e63f59b956f640c9996e39e5ee2cb121b",
+    "candidate-source/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java": "cbcc2669604eb155eaffc4d66503443c70a918a356d272d1ba0ff5036e7181df",
+    "candidate-source-checks.json": "3b6c541768be1f351d1024802809bb4f6926176a642d9d68f46fdbd43c0f82f3",
+    "cases.json": "c1d548282ae6878ad9d814900b5bb203239ea50f9b5f033c61342cbc695594e6",
+    "closure.json": "edc1ab6801862b8aa4a3785ae9d08b539a8628230ccf611b6cad88443ed45334",
+    "cost-and-fixture-checks.json": "f1f5b4548dd616b8360371b92bd1852c430f8d089dfaa5ead2e391acbd044244",
+    "DumpFidelityInstructions.java": "a9f0ab99d7f11d646c0da19e205edb2ab0e8ae9eb1595f2106afe6a1d42547e1",
+    "environment-before.json": "ebca453dd0aebe4936f38032c9de681f51e706834eef81ec6cc2161988f71d4f",
+    "fidelity-instruction.txt": "f2bc2ae8f77bced55008807278e629a2926e30a20e7e285267302beefb2014d0",
+    "FidelityFixtureCheck.java": "ec52e917232bad0c620f7031febbc651dc71ebf866b706c474db5d4eef0f78ff",
+    "final-call-audit.json": "120353728b15116e95badb200d88afc353caf40e3cbec9d41e6a636d62116d39",
+    "fixture-checks.json": "cdf13b8c4f2f2c51df1bb75044548f37f5ba2f223a7cb865f1ccc633a3ec93e6",
+    "frozen-artifact-preservation.json": "039408276d08eaddac7391e91e0a46f46336f7978a2696e414157e9cd41ef869",
+    "http-results.json": "37da18fa65bb8fb8357c96692656e6bc5b68595a16fb5b02c7858f9cdacb6801",
+    "input-ablation-checks.json": "36b3226c24ed9a7548454725ec0607515f96e78b5b03dcd9e996f3a5e20d0a9b",
+    "invoke-evaluation.ps1": "60f8f95d6d541888aeedd6d6adfca13e258fa09e48b93f7945281325df221758",
+    "manual-assessment.json": "eb6ca2e1d1418a84c2ee156af2b3971a17a5ffe0838622e4f57236ebff85ef44",
+    "NaturalFidelityInputAblationEvaluationServer.java": "ac2d5bb8bbb32e03de3f728948c7b7a7282c2bae21a0ba840967fff38179f41d",
+    "offline-validation.json": "9224bf21cf9d226efd407b202fd684ffe72f8a3c01e73c6348c8f1711639caf0",
+    "protocol.json": "d9fe802a607dafaa559ea15376cdb7a5b9ab295cdd536819912cf3612eb6cbac",
+    "README.md": "bc9026e01350edf3372fc214b5a7a7af88f09aa5d44ec3b922f02eec31d51c45",
+    "review-fixtures.json": "f913b2d78dde7faf4450b1f0dbb6cc212f73e53bc6db69de50018bf0c0a96224",
+    "run-evaluation.mjs": "b4772c037c701e954b782a073817bfc69b164da2a1ace4b2ad07435a1429a730",
+    "source-manifest.json": "318ffa8cb366e1572c6d5db8450c83e95be6cd4f5d6d92a604fb05d8db42fc47",
+    "start-evaluation.ps1": "d09afcdd7be7c9d088423e96840f7ec8b5870c5740779e050a4e85490bfebe1f",
+    "summary.json": "e3484a2762ab53f9b3d8bc6b5f52cb7aad3d05fd4914fd19386f25450fb63161",
+    "transports.jsonl": "d85a8aaf395955c2cf7b679567e938927e643e9db29071e58bf1b235400b72aa"
+  },
+  "runtimeSourceSha256": {
+    "traces": {
+      "001.json": "fcc3f3875062573e4d704b7c90e7bfd9a1ffb4102f83cfef8264e25868678ddb",
+      "002.json": "e72473c103aab427463a860a8441fe063808bf9ca2dff1a18d9862955dd0a533",
+      "003.json": "f61c7fbf68b1cda259932ead033236da9e1f2853355d47850ec9ee7f64fdc099",
+      "004.json": "692238b9b80520031b5aa0c981c42ce12e748b5f27642bfb834fcf4868ce4a5d",
+      "005.json": "2ab38403a7202e79403687e3dccbc48a17bd0ed4a5893a1460941f03f2a5c01e",
+      "006.json": "4005a9b909482bcdb19f6fad10a884be093100493986a24006cdf29b24e14a8b",
+      "007.json": "b71da8def1b86b0cc244fd7c8a90409f8a0dc93380fe63a8309a6b2096aa2b70",
+      "008.json": "6470644378d59764936bebfcaa3ace2295e4b8ccee7c6b7ac413b1cd9db5ae05",
+      "009.json": "abba317e9b7efd675e25cc5102e8a166610084f8fbad7cfb87c225ea1c6359a1",
+      "010.json": "ea33b45cdbf42cab708fdb4fc6f096f7816b0c3210117a46f4d578d10fc58c1c",
+      "011.json": "455f6ae858a90f6982bf20619a532efae8cfbe5086ed4b509dfa6d36dfb5f9ff"
+    },
+    "results": {
+      "B1_UNKNOWN_STATE_REVIEW.json": "be4fc036b1f874f718d44b46cf4143fac74bceb525318f92e1edb90a3faab67b",
+      "B2_PROPOSAL_REVIEW.json": "158169f0c2a78568d69d59bcfa858e2c6ee29a79a12ba210c6c11899d7ce5b62",
+      "B3_VERIFY_AUTH_REVIEW.json": "d33bfb5c99e44201e667c7070e611f7c809000583d4e1f3f2798954e8d95ccd7",
+      "B4_SCOPE_REVIEW.json": "e9da16ae0574c08528d06cbcd49690aea71c9e7f89a6090fc36c7dbaf6bd98db",
+      "LEGACY_N4_MISSING_GOAL_REVIEW.json": "07aa204f72c0da557712070b3e18ad2c00ae6a9fe400c8ace1385d9fe8d28a7f",
+      "N1_INPUT_GAP_REVIEW.json": "53ce93f93ded632d64d29e1da913e2e59608c0618a680a9b3643e2e6160ad8af",
+      "N2_CONFIRMED_REVIEW.json": "b43cb1379e7f7beae49eead2455a0ae3e08b4fde657f01699dccef59ca711dd3",
+      "N3_REAL_AUTH_REVIEW.json": "3bfc4a4cd139e8de9b125238650194ca2d3ba2fde5962cc69cf5d019a9c7f81a",
+      "N4_COMPLETE_DESIGN_REVIEW.json": "a1c67ebfc342b2bcf2b4789bb8cf016cdff29826a8f6540881dbe80f63c1eaa8",
+      "REPLAY_NEIGHBOR_MESSAGE_REVIEW.json": "d1028d20a66685aadc83f51301d04e5a7da491f6679b6ce611e9d822e1edc67c",
+      "REPLAY_SHARED_EXPENSE_TOOL_REVIEW.json": "d65d13fbfbd13aa7889817f22d23c8c74a031b47cb77a30f8d1a0557695e3f26"
+    }
+  }
+}

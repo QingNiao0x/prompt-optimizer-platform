@@ -1,0 +1,105 @@
+[ {
+  "id" : "B1_UNKNOWN_STATE",
+  "expected" : "UNSUPPORTED_FACT",
+  "protocolValid" : true,
+  "issues" : [ {
+    "type" : "UNSUPPORTED_FACT",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "帮我写一条给物业的噪音情况说明，写法你安排。",
+    "bodyQuote" : "由于我不确定噪音的具体来源",
+    "effect" : "原要求未说明噪音来源是否明确，首稿新增“不确定噪音的具体来源”这一用户状态断言，会改变说明中关于噪音来源的表述前提，可能导致正文回避或模糊来源信息。"
+  } ],
+  "mechanicalExpectation" : true
+}, {
+  "id" : "N1_INPUT_GAP",
+  "expected" : "UNCHANGED",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : true
+}, {
+  "id" : "B2_PROPOSAL",
+  "expected" : "STATE_PROMOTION",
+  "protocolValid" : true,
+  "issues" : [ {
+    "type" : "STATE_PROMOTION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "建议先试办一次，但尚未决定是否举办；给出拟议方案即可。",
+    "bodyQuote" : "请按已经决定举办一次试办活动完善安排。",
+    "effect" : "原要求是尚未决定是否举办、只需给出拟议方案；首稿将试办活动表述为已决定举办，把未定状态提升为确定状态，改变了方案的前提与授权范围。"
+  } ],
+  "mechanicalExpectation" : true
+}, {
+  "id" : "N2_CONFIRMED",
+  "expected" : "UNCHANGED",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : true
+}, {
+  "id" : "B3_VERIFY_AUTH",
+  "expected" : "AUTHORITY_EXPANSION",
+  "protocolValid" : true,
+  "issues" : [ {
+    "type" : "AUTHORITY_EXPANSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "本次只核查，不进行部署。",
+    "bodyQuote" : "先将近期修改部署到运行环境",
+    "effect" : "原要求明确禁止部署、仅做核查；首稿却把部署列为第一步必做动作，执行者会实际执行部署，超出用户授权范围。"
+  }, {
+    "type" : "REQUIREMENT_OMISSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "给出核查依据和差距",
+    "bodyQuote" : "再检查是否生效",
+    "effect" : "原要求交付核查依据和差距说明；首稿只要求检查是否生效，未保留输出核查依据与差距的交付要求，交付内容会缺失。"
+  } ],
+  "mechanicalExpectation" : true
+}, {
+  "id" : "N3_REAL_AUTH",
+  "expected" : "UNCHANGED",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : true
+}, {
+  "id" : "B4_SCOPE",
+  "expected" : "SCOPE_EXPANSION",
+  "protocolValid" : false,
+  "failureType" : "ProviderException",
+  "message" : "保真问题片段重叠或重复",
+  "mechanicalExpectation" : false
+}, {
+  "id" : "LEGACY_N4_MISSING_GOAL",
+  "expected" : "REQUIREMENT_OMISSION",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : false
+}, {
+  "id" : "REPLAY_NEIGHBOR_MESSAGE",
+  "expected" : "UNSUPPORTED_FACT",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : false
+}, {
+  "id" : "REPLAY_SHARED_EXPENSE_TOOL",
+  "expected" : "SCOPE_EXPANSION",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : false
+}, {
+  "id" : "N4_COMPLETE_DESIGN",
+  "expected" : "UNCHANGED",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : true
+}, {
+  "id" : "B5_ASSISTANT_AUTH",
+  "expected" : "AUTHORITY_EXPANSION",
+  "protocolValid" : false,
+  "failureType" : "ProviderException",
+  "message" : "保真问题片段重叠或重复",
+  "mechanicalExpectation" : false
+}, {
+  "id" : "N5_SOURCE_KIND",
+  "expected" : "UNCHANGED",
+  "protocolValid" : true,
+  "issues" : [ ],
+  "mechanicalExpectation" : true
+} ]

@@ -1,0 +1,162 @@
+{
+  "assessor": "开发代理按原始来源、冻结夹具与paid response逐条复核；合成诊断，不是外部专业评测。",
+  "hypothesis": "首稿任务理解输入可能锚定后续审阅；只移除该模型输入，服务端仍保留原任务记录和全部域保护。",
+  "scope": "11次审阅输入消融，无生成、Plan、下游作品或新版本端到端验收。",
+  "criteriaSource": "protocol.json#criteria",
+  "configurationAdopted": false,
+  "mechanicalExpectations": {
+    "matches": 4,
+    "total": 11,
+    "domainApplyValid": 10,
+    "domainApplyRejected": 1,
+    "normalDraftsByteUnchanged": 0,
+    "normalDraftsTotal": 4,
+    "realFailureDraftsCorrected": 0,
+    "realFailureDraftsTotal": 2
+  },
+  "mechanicalSuccessIsSemanticSuccessRate": false,
+  "semanticSuccessRateComputed": false,
+  "mechanicalMeaning": "FidelityFixtureCheck只按合法apply后是否保留原draft判断UNCHANGED/应改，不证明问题类别、有效内容保留、拼接质量或完整语义修复；B3孤立逗号即属于机械命中但成品不合格。",
+  "cases": [
+    {
+      "id": "B1_UNKNOWN_STATE",
+      "expected": "UNSUPPORTED_FACT",
+      "protocolValid": false,
+      "mechanicalExpectation": false,
+      "originalBody": "由于我不确定噪音的具体来源，请帮我写一条给物业的噪音情况说明。",
+      "rawPrompt": "帮我写一条给物业的噪音情况说明，写法你安排。",
+      "verdict": "DETECTED_BUT_REPAIR_REJECTED",
+      "explanation": "模型识别出无依据用户状态并给出删除，但重建覆盖记录引用“写法你安排”，修订正文没有该句。现有覆盖保护按规则拒绝，不算完成修复；HTTP成功与域apply失败须区分。",
+      "evidence": "B1_UNKNOWN_STATE_REVIEW",
+      "invalidCoverageQuote": "写法你安排",
+      "domainFailure": "正文覆盖记录越界、重复或缺少对应原句",
+      "attribution": "模型修订与覆盖记录不一致，平台保护按现有规则拒绝；未证明是合法正文被误拒。"
+    },
+    {
+      "id": "N1_INPUT_GAP",
+      "expected": "UNCHANGED",
+      "protocolValid": true,
+      "mechanicalExpectation": false,
+      "originalBody": "请帮我写一条给物业的噪音情况说明。本次输入未提供具体来源信息，涉及来源的内容保持未决，其余措辞由你设计。",
+      "rawPrompt": "帮我写一条给物业的噪音情况说明，写法你安排。",
+      "verdict": "NORMAL_VARIANT_UNNECESSARILY_REWRITTEN",
+      "explanation": "资料未提供来源不等于用户本人不知道来源，原稿明确区分且合法；审阅器将其当作遗漏并替换为“写法由你安排”，删掉有意义的资料缺口边界。",
+      "evidence": "N1_INPUT_GAP_REVIEW",
+      "removedValidContent": "本次输入未提供具体来源信息，涉及来源的内容保持未决"
+    },
+    {
+      "id": "B2_PROPOSAL",
+      "expected": "STATE_PROMOTION",
+      "protocolValid": true,
+      "mechanicalExpectation": true,
+      "originalBody": "请按已经决定举办一次试办活动完善安排。",
+      "rawPrompt": "帮我完善活动安排。建议先试办一次，但尚未决定是否举办；给出拟议方案即可。",
+      "verdict": "CONTROLLED_ERROR_CORRECTED",
+      "explanation": "原稿把尚未决定的建议升级为决定，修订恢复拟议试办与是否举办未决状态。",
+      "evidence": "B2_PROPOSAL_REVIEW"
+    },
+    {
+      "id": "N2_CONFIRMED",
+      "expected": "UNCHANGED",
+      "protocolValid": true,
+      "mechanicalExpectation": false,
+      "originalBody": "请按已经决定举办一次试办活动完善安排。",
+      "rawPrompt": "我已经决定先举办一次试办活动，请据此完善活动安排，具体组织方式由你设计。",
+      "verdict": "NORMAL_VARIANT_UNNECESSARILY_REWRITTEN",
+      "explanation": "原稿已保留用户确认试办的状态和安排目标；仅回填原始委托措辞，不改变实质要求或交付。",
+      "evidence": "N2_CONFIRMED_REVIEW"
+    },
+    {
+      "id": "B3_VERIFY_AUTH",
+      "expected": "AUTHORITY_EXPANSION",
+      "protocolValid": true,
+      "mechanicalExpectation": true,
+      "originalBody": "先将近期修改部署到运行环境，再检查是否生效。",
+      "rawPrompt": "请检查近期修改是否已部署，给出核查依据和差距；本次只核查，不进行部署。",
+      "verdict": "AUTHORIZATION_CORRECTED_WITH_BROKEN_EDIT_SEAM",
+      "explanation": "识别并删除越权部署，另补回核查范围与禁止部署，方向正确；多片段替换未连同原逗号处理，最终正文以孤立“，”开头，仍需编辑，不能把apply成功算成完整修复。",
+      "evidence": "B3_VERIFY_AUTH_REVIEW",
+      "revisedBody": "，请检查近期修改是否已部署，给出核查依据和差距；本次只核查，不进行部署。",
+      "attribution": "模型给出的局部删除/替换边界与直接拼接职责耦合；结构apply成功未证明成品文本连贯。"
+    },
+    {
+      "id": "N3_REAL_AUTH",
+      "expected": "UNCHANGED",
+      "protocolValid": true,
+      "mechanicalExpectation": false,
+      "originalBody": "将近期修改部署到本地测试环境，再检查是否生效并给出依据；不要操作生产环境。",
+      "rawPrompt": "我确认允许将近期修改部署到本地测试环境，再检查是否生效并给出依据；不要操作生产环境。",
+      "verdict": "NORMAL_VARIANT_UNNECESSARILY_REWRITTEN",
+      "explanation": "用户确已授权本地测试部署，原稿保留操作、环境与生产禁区；仅把“我确认允许”加回句首，没有恢复实质缺失授权。",
+      "evidence": "N3_REAL_AUTH_REVIEW"
+    },
+    {
+      "id": "B4_SCOPE",
+      "expected": "SCOPE_EXPANSION",
+      "protocolValid": true,
+      "mechanicalExpectation": true,
+      "originalBody": "AA分账小工具必须支持将消费项目分组，并按组分别计算。",
+      "rawPrompt": "帮我设计一个最简单的AA分账小工具，输入总金额和人数，算出每人应付；输入和展示方式由你设计。",
+      "verdict": "CONTROLLED_ERROR_CORRECTED",
+      "explanation": "原稿强制分组消费扩大最简总额均分任务；修订恢复总金额、人数、每人应付及委托输入展示。虽然模型标签为遗漏，正文纠正与机械apply应分别观察，不以标签一致性替代内容检查。",
+      "evidence": "B4_SCOPE_REVIEW"
+    },
+    {
+      "id": "LEGACY_N4_MISSING_GOAL",
+      "expected": "REQUIREMENT_OMISSION",
+      "protocolValid": true,
+      "mechanicalExpectation": true,
+      "originalBody": "核心提供总额均分；可选扩展为按消费项目分组计算，是否纳入首版按实际需求决定。",
+      "rawPrompt": "请设计AA分账工具，整体功能和交互由你安排；除总额均分外，可提出有用扩展作为可选方案。",
+      "verdict": "LEGACY_GOLD_CORRECTION_PROBE_REPAIRED",
+      "explanation": "旧N4稿只描述核心和可选功能，确实缺显式任务目标与对象；本批独立将它冻结为遗漏探针，补回“请设计AA分账工具”合法。此前N4的错误金标不再用作明确误报证据。",
+      "evidence": "LEGACY_N4_MISSING_GOAL_REVIEW",
+      "priorFixture": "N4_DESIGN",
+      "priorErratum": "../natural-source-fidelity-2026-10-22/erratum-n4-design.json"
+    },
+    {
+      "id": "REPLAY_NEIGHBOR_MESSAGE",
+      "expected": "UNSUPPORTED_FACT",
+      "protocolValid": true,
+      "mechanicalExpectation": false,
+      "originalBody": "帮我写一条发给楼上邻居的信息，反映晚上有噪音影响我休息。我想解决问题，但不想把邻里关系闹僵，具体怎么说你来设计。\n\n请直接给出一条可复制发送的成品信息，简短、口语化，一段话即可，按先致意、再说明情况、最后提出请求的顺序来写。由于我不确定噪音的具体来源，信息里不要指认具体声音或责任人，用“可能”“不确定是不是”这类留有余地的说法，只说明是晚上休息时段听到声响。结尾提出一个低门槛、可协商的请求，比如请对方晚间留意一下声响，或问对方方便时能否沟通。整体语气友善、不对抗，让对方容易接受，同时把问题说清楚。",
+      "rawPrompt": "帮我写条发给楼上邻居的信息，晚上有噪音影响我休息。我想解决问题，但不想把邻里关系闹僵，具体怎么说你来设计。",
+      "verdict": "REAL_FAILURE_MISSED",
+      "explanation": "无依据“由于我不确定噪音的具体来源”仍在正文；模型issues为空、正文未改，真实信息状态问题再次漏报。",
+      "evidence": "REPLAY_NEIGHBOR_MESSAGE_REVIEW",
+      "problemQuote": "由于我不确定噪音的具体来源"
+    },
+    {
+      "id": "REPLAY_SHARED_EXPENSE_TOOL",
+      "expected": "SCOPE_EXPANSION",
+      "protocolValid": true,
+      "mechanicalExpectation": false,
+      "originalBody": "用 Python 写一个聚餐 AA 平摊费用的小工具，解决多人垫付后总算不清的问题，交付完整可运行的代码和用法说明。输入方式和结果展示由你设计，建议做成命令行交互或简单文本/CSV 录入：逐条记录参与人姓名、每笔垫付的付款人和金额，并支持指定某笔消费只有部分人参与分摊（如有人不喝酒、有人不吃某道菜），这样能覆盖常见的聚餐场景。计算后按参与人汇总垫付总额与应分摊额，输出每人应收或应付的净额，并给出尽量少笔数的转账结算方案（谁转给谁多少钱），使每人净额归零。金额按分处理，明确取整和除不尽的余数分配规则（如余数给垫付人或按顺序分配），保证结果可核对、无尾差争议。用法部分给出运行命令、示例输入及对应的输出示例，让用户能照着直接用。",
+      "rawPrompt": "我们聚餐时常有人垫付，最后AA总算不清。用Python帮我做个平摊费用的小工具，输入方式和结果怎么展示你来设计，给我完整代码和用法。",
+      "verdict": "REAL_FAILURE_MISSED",
+      "explanation": "仍强制支持只有部分人参与某笔消费，超出用户委托输入展示的原AA工具范围；模型issues为空、正文未改，未纠正真实范围问题。",
+      "evidence": "REPLAY_SHARED_EXPENSE_TOOL_REVIEW",
+      "problemQuote": "并支持指定某笔消费只有部分人参与分摊"
+    },
+    {
+      "id": "N4_COMPLETE_DESIGN",
+      "expected": "UNCHANGED",
+      "protocolValid": true,
+      "mechanicalExpectation": false,
+      "originalBody": "请设计AA分账工具，核心提供总额均分；可选扩展为按消费项目分组计算，是否纳入首版按实际需求决定。",
+      "rawPrompt": "请设计AA分账工具，整体功能和交互由你安排；除总额均分外，可提出有用扩展作为可选方案。",
+      "verdict": "COMPLETE_NORMAL_VARIANT_UNNECESSARILY_REWRITTEN",
+      "explanation": "本批新增正常稿已包含“请设计AA分账工具”，保留总额均分核心、分组仅可选、首版未决。模型仍以委托措辞遗漏为由重述功能交互设计，没有恢复实质缺失目标，属于不必要改写。",
+      "evidence": "N4_COMPLETE_DESIGN_REVIEW",
+      "distinctFromLegacyMissingGoal": true
+    }
+  ],
+  "conclusion": {
+    "inputAnchoringIsSoleRootCause": false,
+    "finding": "移除首稿任务理解仍保留四份正常稿误改、两份真实失败漏报，另出现覆盖记录失配与拼接接缝问题；锚定输入不能作为唯一根因。",
+    "causalLimit": "同模型的两次合成诊断不是因果充分证明，也不能据总4/11和旧6/10的不同分母作质量升降定量结论。",
+    "nextMechanismDecision": "停止同一指导下的输入微调与扩采；下一种方案应把检测问题与修订文本分开职责，再另行冻结和验证，不由本批自动发起新调用。",
+    "adoption": "不采用该输入消融配置，默认保持第四版；既有16/17不采用结论不变。"
+  },
+  "attribution": "语义漏报/误改首先出现在模型审阅判断；B1是修订覆盖记录不一致且保护拒绝，B3是局部编辑边界与拼接连贯性问题。不是HTTP或登录失败；也没有本批下游作品可归因。"
+}

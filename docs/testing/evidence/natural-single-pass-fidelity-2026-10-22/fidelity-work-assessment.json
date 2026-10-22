@@ -1,0 +1,152 @@
+{
+  "assessor": "独立开发代理：逐项阅读四个新压力任务、4/20优化提示词及三臂实际作品，不使用模型评审，不修改冻结输入或金标",
+  "scope": "仅FRESH_STATUS_EVIDENCE、FRESH_UNKNOWN_AND_ABSENCE、FRESH_DESIGN_WITH_FACTS、FRESH_INDEPENDENT_EXCEPTIONS；这些是已见机制的新输入压力验证，不是独立盲测或全场景验收。",
+  "criteriaSource": "protocol.json#criteria与cases.json中各任务acceptance",
+  "freshFidelityGatePassed": false,
+  "adoptionSupportedByFreshCases": false,
+  "relativeToFourthVersion": {
+    "definitePromptWins": 0,
+    "definiteWorkWins": 0,
+    "promptNormalTies": 3,
+    "promptSharedStateFailures": 1,
+    "workNormalTies": 2,
+    "workSharedStateFailures": 1,
+    "workComparisonsUnavailableBecauseOfTransportFailure": 1
+  },
+  "comparisonRule": "只有第四版存在确定错误、20确实修复且保留有效内容才算收益。正常相持不计提升；HTTP成功率差异、篇幅、额外设计或缺失作品均不替代语义收益。四个新任务不计入旧六个主任务的3/6实质补全门槛。",
+  "informationAndTransportChecks": {
+    "generationRequestsChecked": 8,
+    "generationRawPromptsEqualFrozenCases": true,
+    "generationMaterialsEqualFrozenCases": true,
+    "executionRequestsChecked": 12,
+    "executionMaterialsEqualFrozenCasesAcrossAllArms": true,
+    "executionSystemIdenticalAcrossAllArms": true,
+    "executionParameters": {
+      "model": "deepseek-flash",
+      "temperature": 0.2,
+      "max_tokens": 16384,
+      "thinking": "disabled"
+    },
+    "unicodeReplacementCharactersFound": false,
+    "executionHttpSuccesses": 11,
+    "executionTransportFailures": 1,
+    "qualityRetriesPerformedByAssessor": 0
+  },
+  "cases": [
+    {
+      "id": "FRESH_STATUS_EVIDENCE",
+      "promptVerdict": "NORMAL_TIE",
+      "workVerdict": "NORMAL_TIE",
+      "promptWin": false,
+      "workWin": false,
+      "promptAssessment": "4与20均准确保留d72e91c构建成功、被采集/version为b41a820、未采集部署记录和其他实例信息的状态，要求区分构建与部署运行，并保留只查看、不改环境。20更明确限制下一步为查看类动作，但4已经要求只查看和分析，未出现确定越权错误。",
+      "workAssessment": "三臂均未执行或声称执行环境变更，均区分构建成功与运行生效。4正文明确将运行版本判断限定为被采集实例，并保留其他实例未知；20开头就明确局部观测不能推广到整个环境。4已有相同实质边界，因此不把20较早写出限制计为修复收益。",
+      "normalVariance": "原始臂将确认未部署后的发布安排写成条件性的下一步建议，不是本次已经执行部署。不得把建议一律当作执行授权越界。4/20对可能灰度、缓存、发布时间线的讨论均作为待核查可能性，未冒充已知部署事实。",
+      "preserved": [
+        "目标提交与观测提交分别保留",
+        "构建成功不等于已部署生效",
+        "资料缺口不等于现实没有记录或实例",
+        "局部实例结论不推广全环境",
+        "只查看的授权边界"
+      ],
+      "evidence": [
+        "FRESH_STATUS_EVIDENCE_V4_GEN",
+        "FRESH_STATUS_EVIDENCE_V20_GEN",
+        "FRESH_STATUS_EVIDENCE_RAW_EXEC",
+        "FRESH_STATUS_EVIDENCE_V4_EXEC",
+        "FRESH_STATUS_EVIDENCE_V20_EXEC"
+      ],
+      "executionTokens": { "RAW": 677, "V4": 1249, "V20": 1048 }
+    },
+    {
+      "id": "FRESH_UNKNOWN_AND_ABSENCE",
+      "promptVerdict": "SHARED_UNSUPPORTED_STATE_NOT_FIXED",
+      "workVerdict": "SHARED_UNSUPPORTED_STATE_NOT_FIXED",
+      "promptWin": false,
+      "workWin": false,
+      "sourceQuote": "本次资料没有提供压测记录或验收记录，没有已确认的完成日期或其他对外承诺。",
+      "fourthPromptQuote": "目前没有压测记录或验收记录",
+      "candidatePromptQuote": "目前没有压测记录或验收记录",
+      "fourthWorkQuote": "现阶段尚无压测记录或验收记录",
+      "candidateWorkQuote": "目前尚无压测记录或验收记录",
+      "promptAssessment": "两版都将“本次资料没有提供记录”写成目前不存在相关记录的实际状态，并列在已知情况中，没有保留输入可见范围。20的来源自检没有修复第四版在本题出现的确定状态错误。两版均保留用户实际表示拿不准完成时间这一已知未知，没有误删，也没有编造完成日期。",
+      "workAssessment": "原始臂没有断言不存在压测或验收记录；4与20作品均沿用增强后的“尚无记录”状态，会把无依据状态直接发送给合作方。两版作品都仍可表达真实进度和未知日期，但需删除或改正记录状态后才能按冻结事实边界直接发送。",
+      "firstObservedStage": "GENERATION",
+      "attribution": "错误已出现在两版增强正文，下游继续采用，不能归为纯下游违约。原始材料在生成及三臂执行请求中均完整保留，未发现材料丢失或乱码；引用和覆盖协议不能证明该状态改写语义正确。现有证据不能进一步确定增强模型漏检的内部原因。",
+      "communicationCaveat": "三臂作品均采用后续同步进展的沟通措辞，原始臂“第一时间”更强。是否形成额外对外承诺需要语用判断；本结论不靠该争议点增加失败数或制造20收益，已由明确的记录状态错误足以判定本题未修复。",
+      "preserved": [
+        "请求格式已确认",
+        "接口联调仍在进行",
+        "用户确实拿不准完成时间",
+        "未给出具体完成日期",
+        "措辞由执行者设计"
+      ],
+      "evidence": [
+        "FRESH_UNKNOWN_AND_ABSENCE_V4_GEN",
+        "FRESH_UNKNOWN_AND_ABSENCE_V20_GEN",
+        "FRESH_UNKNOWN_AND_ABSENCE_RAW_EXEC",
+        "FRESH_UNKNOWN_AND_ABSENCE_V4_EXEC",
+        "FRESH_UNKNOWN_AND_ABSENCE_V20_EXEC"
+      ],
+      "executionTokens": { "RAW": 167, "V4": 268, "V20": 252 }
+    },
+    {
+      "id": "FRESH_DESIGN_WITH_FACTS",
+      "promptVerdict": "NORMAL_TIE",
+      "workVerdict": "COMPARISON_UNAVAILABLE_TRANSPORT_TIMEOUT",
+      "promptWin": false,
+      "workWin": false,
+      "promptAssessment": "两版均保留日期、14:00至16:00、社区阅览室、12位成人、2位志愿者和两套各供6人的现有桌游；均未编造具体游戏名称或规则，也没有把采购、增加人手或额外预算变成必做前提。20给出两组各6人和志愿者分工，4同样要求在既有容量下设计分组、轮换和带领流程。提前熟悉实际桌游规则是受托活动组织中的合理准备，不能只因原始提示词未逐字写出便判新增越界依赖。",
+      "rawWorkAssessment": "原始作品包含可执行时间线、分组、带领提示和规则确认准备，保留原确认事实；内容较长，存在较多自选预案。未将这些由AI设计的活动细节一概当作伪造用户现状。",
+      "candidateWorkAssessment": "20作品提供两小时安排、两桌并行、志愿者分工、讲解步骤、换桌与收尾，明确现有桌游A/B为占位名称、具体规则以实物为准。没有要求采购或增加人手，主要受托设计已落实。文中的零新增预算和不采购可作为本方案的保守设计约束理解，不据这一简写单独判用户已确认实际预算为零。仍可能需要按实际游戏时长调整分段，不能据此宣称完整规则已由材料支持。",
+      "fourthWorkAssessment": "第四版作品未返回，不能进行内容质量比较，不能把20的HTTP成功计为作品质量胜出。",
+      "transportFailure": {
+        "jobId": "FRESH_DESIGN_WITH_FACTS_V4_EXEC",
+        "outerStatus": 500,
+        "outerCode": "INTERNAL_ERROR",
+        "trace": "tmp/natural-single-pass-fidelity-20261022/traces/062.json",
+        "transportFailure": "SocketTimeoutException",
+        "elapsedMs": 61639,
+        "upstreamHttpStatusPresent": false,
+        "upstreamResponsePresent": false,
+        "classification": "TRANSPORT_OR_RUNTIME_FAILURE_NOT_MODEL_WORK_QUALITY",
+        "specificNetworkRootCause": "未定；现有原件只支持传输超时，不能推断为第四版内容导致模型质量失败。"
+      },
+      "evidence": [
+        "FRESH_DESIGN_WITH_FACTS_V4_GEN",
+        "FRESH_DESIGN_WITH_FACTS_V20_GEN",
+        "FRESH_DESIGN_WITH_FACTS_RAW_EXEC",
+        "FRESH_DESIGN_WITH_FACTS_V4_EXEC",
+        "FRESH_DESIGN_WITH_FACTS_V20_EXEC",
+        "traces/062.json"
+      ],
+      "executionTokens": { "RAW": 2827, "V4": null, "V20": 2041 }
+    },
+    {
+      "id": "FRESH_INDEPENDENT_EXCEPTIONS",
+      "promptVerdict": "NORMAL_TIE",
+      "workVerdict": "NORMAL_TIE",
+      "promptWin": false,
+      "workWin": false,
+      "promptAssessment": "4和20均完整保留一般成员周五、新成员周四、场务志愿者对上述截止时间的独立例外，以及线上免填到场时间但选择材料包仍填领取人姓名的相反分支。20再次复述各条覆盖要求，4原本也没有遗漏或改动；重复强调不能单独算增强收益。",
+      "workAssessment": "三臂作品均为可以发群的简短正文，没有加入具体日期、负责人姓名或新渠道。场务志愿者例外未被新成员条件覆盖，线上豁免未扩大到材料包领取人字段。20与4均正常相持。",
+      "preserved": [
+        "一般成员周五前回复",
+        "新成员周四前回复",
+        "场务志愿者不适用上述截止时间，另按负责人通知",
+        "线上参加免填到场时间",
+        "选择现场材料包仍填领取人姓名",
+        "只交付可发出的简短正文"
+      ],
+      "evidence": [
+        "FRESH_INDEPENDENT_EXCEPTIONS_V4_GEN",
+        "FRESH_INDEPENDENT_EXCEPTIONS_V20_GEN",
+        "FRESH_INDEPENDENT_EXCEPTIONS_RAW_EXEC",
+        "FRESH_INDEPENDENT_EXCEPTIONS_V4_EXEC",
+        "FRESH_INDEPENDENT_EXCEPTIONS_V20_EXEC"
+      ],
+      "executionTokens": { "RAW": 159, "V4": 169, "V20": 241 }
+    }
+  ],
+  "conclusion": "四个新机制压力任务没有证明20相对第四版的确定提示词或作品收益；一题两版均把输入缺口写成实际不存在，另有一题作品比较因传输超时未完成。其余正常相持。新四题不支持采用20，也不能替代旧六个主任务的独立实质补全门槛。保留错误和超时原件，不重试到成功、不改金标、不因单次工具失败修改产品指导。"
+}

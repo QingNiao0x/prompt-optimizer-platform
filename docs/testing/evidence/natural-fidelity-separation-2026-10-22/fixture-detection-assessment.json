@@ -1,0 +1,24 @@
+{
+  "batch": "natural-fidelity-separation-2026-10-22",
+  "candidateVersion": "18",
+  "semanticGatePassed": false,
+  "assessor": "独立开发代理复核，详见manual-assessment.json",
+  "mechanicalExpectationMatches": 8,
+  "mechanicalExpectationTotal": 13,
+  "mechanicalCountIsNotSemanticPassRate": true,
+  "normalNoFindings": 5,
+  "normalTotal": 5,
+  "missedRequiredProblems": [
+    "LEGACY_N4_MISSING_GOAL",
+    "REPLAY_NEIGHBOR_MESSAGE",
+    "REPLAY_SHARED_EXPENSE_TOOL"
+  ],
+  "realProblemsRejectedForOverlappingBodyQuotes": [
+    "B4_SCOPE",
+    "B5_ASSISTANT_AUTH"
+  ],
+  "reason": "五份正常稿均不报问题，但目标遗漏与两个真实复杂失败漏检；B4/B5真实多问题共指片段被产品拒绝。不得进入条件修订或端到端调用。",
+  "conditionalRepairAllowed": false,
+  "generationAllowed": false,
+  "executionAllowed": false
+}

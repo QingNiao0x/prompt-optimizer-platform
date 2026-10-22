@@ -1,0 +1,110 @@
+{
+  "assessor": "独立开发代理，只读核对冻结输入与首次原始响应；未调用模型、未修改金标、未重采样",
+  "scope": "第19版GROUNDED_DETECT的19份冻结夹具；17项必要边界和2项观察项。本结论不代表修订、真实生成或下游作品已验收。",
+  "semanticGatePassed": false,
+  "continueToRepairOrGeneration": false,
+  "mechanicalExpectationIsQualityPassRate": false,
+  "requiredCounts": {
+    "total": 17,
+    "mechanicalMatches": 14,
+    "normalDrafts": 8,
+    "normalDraftsWithoutFalsePositive": 7,
+    "normalFalsePositives": 1,
+    "definitePositiveDrafts": 9,
+    "positivesRecognizedInRawModelOutput": 8,
+    "positivesWithProtocolValidActionableDetection": 7,
+    "semanticMisses": 1,
+    "recognizedButRejectedForPartialOverlap": 1
+  },
+  "countInterpretation": "14/17是冻结机械预期匹配数，不是增强质量通过率。8个正常稿中7个无误报；9个确定正例中8个在原始响应有实质诊断，其中B7因部分重叠被正确拒绝，只有7个正例形成协议可用诊断。没有执行PATCH，不能把已检出的正例称作已修复。",
+  "rawVerification": [
+    {
+      "id": "N2_CONFIRMED",
+      "requestRawPromptEqualsFrozenFixture": true,
+      "requestDraftEqualsFrozenFixture": true,
+      "unicodeReplacementCharacterCount": 0,
+      "draftTaskUnderstandingSentToDetector": false,
+      "finishReason": "stop"
+    },
+    {
+      "id": "REPLAY_NEIGHBOR_MESSAGE",
+      "requestRawPromptEqualsFrozenFixture": true,
+      "requestDraftEqualsFrozenFixture": true,
+      "unicodeReplacementCharacterCount": 0,
+      "draftTaskUnderstandingSentToDetector": false,
+      "draftActualNewlineCount": 2,
+      "draftLiteralBackslashNCount": 0,
+      "finishReason": "stop"
+    },
+    {
+      "id": "B7_NEW_DEPENDENCY",
+      "requestRawPromptEqualsFrozenFixture": true,
+      "requestDraftEqualsFrozenFixture": true,
+      "unicodeReplacementCharacterCount": 0,
+      "draftTaskUnderstandingSentToDetector": false,
+      "finishReason": "stop"
+    }
+  ],
+  "failures": [
+    {
+      "id": "N2_CONFIRMED",
+      "classification": "DETECTION_FALSE_POSITIVE",
+      "sourceQuote": "我已经决定先举办一次试办活动，请据此完善活动安排，具体组织方式由你设计。",
+      "draftQuote": "请按已经决定举办一次试办活动完善安排。",
+      "observedType": "REQUIREMENT_OMISSION",
+      "observedEffect": "首稿删除了“具体组织方式由你设计”的授权，交付差异是执行者不再被明确授权自行设计组织方式。",
+      "assessment": "正文已经要求在既定试办前提下完善活动安排，并未把普通组织设计保留给用户或设置另行确认门槛。要求再次出现委托措辞，不等于恢复实质丢失的设计空间。检测把明确措辞的省略解释成授权撤销，属于误报。",
+      "attribution": "原始输入完整且首稿任务记录未发送；协议接受了合法定位的响应。错误发生在检测模型的语义判断，不能继续仅归因于首稿自分类记录的干扰。",
+      "evidence": "tmp/natural-grounded-fidelity-20261022/results/N2_CONFIRMED_DETECT.json"
+    },
+    {
+      "id": "REPLAY_NEIGHBOR_MESSAGE",
+      "classification": "DETECTION_FALSE_NEGATIVE",
+      "sourceQuote": "帮我写条发给楼上邻居的信息，晚上有噪音影响我休息。我想解决问题，但不想把邻里关系闹僵，具体怎么说你来设计。",
+      "unsupportedDraftQuote": "由于我不确定噪音的具体来源",
+      "observedResponse": { "issues": [] },
+      "assessment": "用户委托措辞设计并要求维护邻里关系，支持温和、不直接指责的表达；未说明自己是否知道噪音来源。首稿的因果旁述直接断言用户的知识状态，不能由措辞委托或本次未提供细节推出。空诊断漏掉了这一具体断言。前后仍有效的礼貌策略不应一并删除。",
+      "attribution": "请求正文与冻结原件相同、中文无替换字符、保留真实换行，模型完整结束且没有协议拒绝。属于检测语义漏报，不是乱码、来源丢失、响应截断或平台组装所致。简短B1能识别相似断言，而长稿仍漏报；长度、整体合理性或谨慎语用可能影响判断，但现有证据不能确定单一认知根因。",
+      "evidence": "tmp/natural-grounded-fidelity-20261022/results/REPLAY_NEIGHBOR_MESSAGE_DETECT.json"
+    },
+    {
+      "id": "B7_NEW_DEPENDENCY",
+      "classification": "DETECTION_PROTOCOL_FAILURE_AFTER_SEMANTIC_RECOGNITION",
+      "sourceQuote": "请用现有浏览器完成一个可打开的活动介绍页，内容与样式由你设计；不安装其他软件，不需要服务端。",
+      "draftQuote": "请先安装本地数据库和服务端运行环境，再制作活动介绍页。",
+      "detectedBodyQuotes": [
+        "请先安装本地数据库和服务端运行环境",
+        "请先安装本地数据库和服务端运行环境，再制作活动介绍页。"
+      ],
+      "assessment": "原始输出正确指出额外安装依赖与原约束相反，并指出原交付要求遗漏。两条引文是前缀与整句的部分重叠，不是完全相同跨度，因此不能按同跨度多诊断归组。类型名称的差异不是本项失败依据。",
+      "platformRejectedCorrectly": true,
+      "platformMessage": "保真问题片段重叠或重复",
+      "attribution": "模型诊断有实质依据，但未遵守编辑跨度协议。平台拒绝符合已冻结边界，不能归因为工具误判，也不能自动扩大为整句目标、丢弃一个诊断或放宽重叠规则来凑通过。",
+      "evidence": "tmp/natural-grounded-fidelity-20261022/results/B7_NEW_DEPENDENCY_DETECT.json"
+    }
+  ],
+  "observationOnly": [
+    {
+      "id": "LEGACY_N4_MISSING_GOAL",
+      "observedResponse": { "issues": [] },
+      "assessment": "原句存在动作和对象不够明确的表达问题，但是否造成实质交付遗漏仍有解释空间。本轮冻结为观察项，不强制命中，也不计入17项必要边界。"
+    },
+    {
+      "id": "REPLAY_SHARED_EXPENSE_TOOL",
+      "observedResponse": { "issues": [] },
+      "assessment": "增加部分参与人分摊会增加设计复杂性，但原始委托无“最简单/仅全员均分”硬限制，且增强以建议引入。确定必做范围越界的金标依据不足；保留原件为观察项，不因本轮漏报更改其地位或强制命中。"
+    }
+  ],
+  "crossCandidateConclusion": "去掉首稿自分类、职责分离、按实际状态优先核对及同跨度诊断归组，仍未同时解决正常委托误报、长稿状态断言漏报与跨度协议失败。连续critic对照没有证明可靠净收益；本批停止进入修订和生成，不继续叠加逐词禁令、放宽跨度或重采样。",
+  "architectureAssessment": {
+    "preferredDirection": "以保持不变的第四版作为基线，另行评估单次生成内部的来源状态自检；不采用当前额外检测/修订链路。",
+    "reason": "单次生成可避免新增critic的正常稿改写风险、合法语义被跨度协议拒绝的失败面及额外串行调用。已有任务理解、来源和全部题答保护可以复用，不需要再添加事实分类表或第二套来源目录。",
+    "existingFieldsToReuse": [
+      "requirements.evidence保留原来源、对象及明确要求，不用引用存在证明语义等价",
+      "additions保留有具体缺口与收益的拟议设计，不给其中实际状态断言补造依据",
+      "openDecisions继续将用户独有事实及保留选择留作未知，不把已委托普通设计退回用户",
+      "review继续核对最终正文覆盖，保留原始输入、独立条件和全部实际题答"
+    ],
+    "limit": "架构收敛是基于当前失败面和收益证据的选择，不等于已证明单次自检会提升语义质量。任何新生成指导应作为独立候选，保持历史第四版与Plan不变；只有冻结对照中的提示词及实际作品能证明采用收益。"
+  }
+}

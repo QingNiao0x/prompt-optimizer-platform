@@ -1,0 +1,46 @@
+{
+  "status": "CLOSED_AT_DETECTION_NOT_ADOPTED",
+  "actualCalls": 13,
+  "phaseCounts": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 13
+  },
+  "reviewStageCounts": {
+    "DETECT": 13,
+    "PATCH": 0
+  },
+  "logicalResults": 13,
+  "protocolRetries": 0,
+  "qualityRetries": 0,
+  "stageMaximum": 120,
+  "unusedStageCallsClosed": 107,
+  "previousClosedActualCalls": 1060,
+  "cumulativeActual": 1073,
+  "formalLimits": {
+    "total": 1738,
+    "baseline": 80,
+    "candidate": 1658
+  },
+  "actualAfter": {
+    "total": 1073,
+    "baseline": 70,
+    "candidate": 1003
+  },
+  "taskMaximumNewActualCalls": 1024,
+  "taskActual": 387,
+  "taskStagesAllocated": 796,
+  "taskAllocatedUnusedClosed": 409,
+  "taskFreshUnallocated": 228,
+  "taskAuthorizationStatus": "REMAINDER_AUTHORIZED_FOR_SAME_TASK_NOT_ALLOCATED",
+  "closedBalancesTransferred": 0,
+  "defaultVersionAfter": "4",
+  "candidateVersionsNotAdopted": [
+    "18"
+  ],
+  "goalStableQualityImprovementAchieved": false,
+  "reason": "五份正常稿均无问题，但真实邻居/AA及旧稿目标遗漏漏检；B4/B5识别的多种实质偏差共指同片段，被产品非重叠契约拒绝。结构预期8/13不等于语义通过，检测门槛失败，未调用修订或端到端阶段，停止本批扩采。",
+  "automaticFurtherCalls": false,
+  "closureScope": "仅关闭本批120次配额，未用107次关闭；本任务尚未分配228次授权不自动分配或调用。"
+}

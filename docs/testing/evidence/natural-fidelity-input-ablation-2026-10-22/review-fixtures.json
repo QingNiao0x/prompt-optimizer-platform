@@ -1,0 +1,710 @@
+{
+  "synthetic": true,
+  "fixtures": [
+    {
+      "id": "B1_UNKNOWN_STATE",
+      "rawPrompt": "帮我写一条给物业的噪音情况说明，写法你安排。",
+      "body": "由于我不确定噪音的具体来源，请帮我写一条给物业的噪音情况说明。",
+      "taskUnderstanding": {
+        "goal": "帮我写一条给物业的噪音情况说明，写法你安排。",
+        "deliverable": "原定交付",
+        "requirements": [
+          {
+            "text": "帮我写一条给物业的噪音情况说明，写法你安排。",
+            "dimensions": [
+              "GOAL"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "帮我写一条给物业的噪音情况说明，写法你安排。"
+              }
+            ]
+          }
+        ],
+        "additions": [],
+        "openDecisions": [],
+        "review": {
+          "inputReadiness": "SUFFICIENT",
+          "requirementCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "由于我不确定噪音的具体来源，请帮我写一条给物业的噪音情况说明。"
+              ]
+            }
+          ],
+          "additionCoverage": [],
+          "planImpacts": []
+        }
+      },
+      "expected": "UNSUPPORTED_FACT"
+    },
+    {
+      "id": "N1_INPUT_GAP",
+      "rawPrompt": "帮我写一条给物业的噪音情况说明，写法你安排。",
+      "body": "请帮我写一条给物业的噪音情况说明。本次输入未提供具体来源信息，涉及来源的内容保持未决，其余措辞由你设计。",
+      "taskUnderstanding": {
+        "goal": "帮我写一条给物业的噪音情况说明，写法你安排。",
+        "deliverable": "原定交付",
+        "requirements": [
+          {
+            "text": "帮我写一条给物业的噪音情况说明，写法你安排。",
+            "dimensions": [
+              "GOAL"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "帮我写一条给物业的噪音情况说明，写法你安排。"
+              }
+            ]
+          }
+        ],
+        "additions": [],
+        "openDecisions": [],
+        "review": {
+          "inputReadiness": "SUFFICIENT",
+          "requirementCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "请帮我写一条给物业的噪音情况说明。本次输入未提供具体来源信息，涉及来源的内容保持未决，其余措辞由你设计。"
+              ]
+            }
+          ],
+          "additionCoverage": [],
+          "planImpacts": []
+        }
+      },
+      "expected": "UNCHANGED"
+    },
+    {
+      "id": "B2_PROPOSAL",
+      "rawPrompt": "帮我完善活动安排。建议先试办一次，但尚未决定是否举办；给出拟议方案即可。",
+      "body": "请按已经决定举办一次试办活动完善安排。",
+      "taskUnderstanding": {
+        "goal": "帮我完善活动安排。建议先试办一次，但尚未决定是否举办；给出拟议方案即可。",
+        "deliverable": "原定交付",
+        "requirements": [
+          {
+            "text": "帮我完善活动安排。建议先试办一次，但尚未决定是否举办；给出拟议方案即可。",
+            "dimensions": [
+              "GOAL"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "帮我完善活动安排。建议先试办一次，但尚未决定是否举办；给出拟议方案即可。"
+              }
+            ]
+          }
+        ],
+        "additions": [],
+        "openDecisions": [],
+        "review": {
+          "inputReadiness": "SUFFICIENT",
+          "requirementCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "请按已经决定举办一次试办活动完善安排。"
+              ]
+            }
+          ],
+          "additionCoverage": [],
+          "planImpacts": []
+        }
+      },
+      "expected": "STATE_PROMOTION"
+    },
+    {
+      "id": "N2_CONFIRMED",
+      "rawPrompt": "我已经决定先举办一次试办活动，请据此完善活动安排，具体组织方式由你设计。",
+      "body": "请按已经决定举办一次试办活动完善安排。",
+      "taskUnderstanding": {
+        "goal": "我已经决定先举办一次试办活动，请据此完善活动安排，具体组织方式由你设计。",
+        "deliverable": "原定交付",
+        "requirements": [
+          {
+            "text": "我已经决定先举办一次试办活动，请据此完善活动安排，具体组织方式由你设计。",
+            "dimensions": [
+              "GOAL"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "我已经决定先举办一次试办活动，请据此完善活动安排，具体组织方式由你设计。"
+              }
+            ]
+          }
+        ],
+        "additions": [],
+        "openDecisions": [],
+        "review": {
+          "inputReadiness": "SUFFICIENT",
+          "requirementCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "请按已经决定举办一次试办活动完善安排。"
+              ]
+            }
+          ],
+          "additionCoverage": [],
+          "planImpacts": []
+        }
+      },
+      "expected": "UNCHANGED"
+    },
+    {
+      "id": "B3_VERIFY_AUTH",
+      "rawPrompt": "请检查近期修改是否已部署，给出核查依据和差距；本次只核查，不进行部署。",
+      "body": "先将近期修改部署到运行环境，再检查是否生效。",
+      "taskUnderstanding": {
+        "goal": "请检查近期修改是否已部署，给出核查依据和差距；本次只核查，不进行部署。",
+        "deliverable": "原定交付",
+        "requirements": [
+          {
+            "text": "请检查近期修改是否已部署，给出核查依据和差距；本次只核查，不进行部署。",
+            "dimensions": [
+              "GOAL"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请检查近期修改是否已部署，给出核查依据和差距；本次只核查，不进行部署。"
+              }
+            ]
+          }
+        ],
+        "additions": [],
+        "openDecisions": [],
+        "review": {
+          "inputReadiness": "SUFFICIENT",
+          "requirementCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "先将近期修改部署到运行环境，再检查是否生效。"
+              ]
+            }
+          ],
+          "additionCoverage": [],
+          "planImpacts": []
+        }
+      },
+      "expected": "AUTHORITY_EXPANSION"
+    },
+    {
+      "id": "N3_REAL_AUTH",
+      "rawPrompt": "我确认允许将近期修改部署到本地测试环境，再检查是否生效并给出依据；不要操作生产环境。",
+      "body": "将近期修改部署到本地测试环境，再检查是否生效并给出依据；不要操作生产环境。",
+      "taskUnderstanding": {
+        "goal": "我确认允许将近期修改部署到本地测试环境，再检查是否生效并给出依据；不要操作生产环境。",
+        "deliverable": "原定交付",
+        "requirements": [
+          {
+            "text": "我确认允许将近期修改部署到本地测试环境，再检查是否生效并给出依据；不要操作生产环境。",
+            "dimensions": [
+              "GOAL"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "我确认允许将近期修改部署到本地测试环境，再检查是否生效并给出依据；不要操作生产环境。"
+              }
+            ]
+          }
+        ],
+        "additions": [],
+        "openDecisions": [],
+        "review": {
+          "inputReadiness": "SUFFICIENT",
+          "requirementCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "将近期修改部署到本地测试环境，再检查是否生效并给出依据；不要操作生产环境。"
+              ]
+            }
+          ],
+          "additionCoverage": [],
+          "planImpacts": []
+        }
+      },
+      "expected": "UNCHANGED"
+    },
+    {
+      "id": "B4_SCOPE",
+      "rawPrompt": "帮我设计一个最简单的AA分账小工具，输入总金额和人数，算出每人应付；输入和展示方式由你设计。",
+      "body": "AA分账小工具必须支持将消费项目分组，并按组分别计算。",
+      "taskUnderstanding": {
+        "goal": "帮我设计一个最简单的AA分账小工具，输入总金额和人数，算出每人应付；输入和展示方式由你设计。",
+        "deliverable": "原定交付",
+        "requirements": [
+          {
+            "text": "帮我设计一个最简单的AA分账小工具，输入总金额和人数，算出每人应付；输入和展示方式由你设计。",
+            "dimensions": [
+              "GOAL"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "帮我设计一个最简单的AA分账小工具，输入总金额和人数，算出每人应付；输入和展示方式由你设计。"
+              }
+            ]
+          }
+        ],
+        "additions": [],
+        "openDecisions": [],
+        "review": {
+          "inputReadiness": "SUFFICIENT",
+          "requirementCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "AA分账小工具必须支持将消费项目分组，并按组分别计算。"
+              ]
+            }
+          ],
+          "additionCoverage": [],
+          "planImpacts": []
+        }
+      },
+      "expected": "SCOPE_EXPANSION"
+    },
+    {
+      "id": "LEGACY_N4_MISSING_GOAL",
+      "rawPrompt": "请设计AA分账工具，整体功能和交互由你安排；除总额均分外，可提出有用扩展作为可选方案。",
+      "body": "核心提供总额均分；可选扩展为按消费项目分组计算，是否纳入首版按实际需求决定。",
+      "taskUnderstanding": {
+        "goal": "请设计AA分账工具，整体功能和交互由你安排；除总额均分外，可提出有用扩展作为可选方案。",
+        "deliverable": "原定交付",
+        "requirements": [
+          {
+            "text": "请设计AA分账工具，整体功能和交互由你安排；除总额均分外，可提出有用扩展作为可选方案。",
+            "dimensions": [
+              "GOAL"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请设计AA分账工具，整体功能和交互由你安排；除总额均分外，可提出有用扩展作为可选方案。"
+              }
+            ]
+          }
+        ],
+        "additions": [],
+        "openDecisions": [],
+        "review": {
+          "inputReadiness": "SUFFICIENT",
+          "requirementCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "核心提供总额均分；可选扩展为按消费项目分组计算，是否纳入首版按实际需求决定。"
+              ]
+            }
+          ],
+          "additionCoverage": [],
+          "planImpacts": []
+        }
+      },
+      "expected": "REQUIREMENT_OMISSION"
+    },
+    {
+      "id": "REPLAY_NEIGHBOR_MESSAGE",
+      "input": {
+        "rawPrompt": "帮我写条发给楼上邻居的信息，晚上有噪音影响我休息。我想解决问题，但不想把邻里关系闹僵，具体怎么说你来设计。",
+        "context": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "actualAnswers": [],
+        "conversation": [],
+        "mandatoryRules": [],
+        "modelId": "deepseek:deepseek-flash",
+        "planningContext": null,
+        "strategyVersion": "15",
+        "taskSources": [
+          {
+            "id": "rawPrompt",
+            "kind": "ORIGINAL_REQUEST"
+          }
+        ]
+      },
+      "rawPrompt": "帮我写条发给楼上邻居的信息，晚上有噪音影响我休息。我想解决问题，但不想把邻里关系闹僵，具体怎么说你来设计。",
+      "body": "帮我写一条发给楼上邻居的信息，反映晚上有噪音影响我休息。我想解决问题，但不想把邻里关系闹僵，具体怎么说你来设计。\n\n请直接给出一条可复制发送的成品信息，简短、口语化，一段话即可，按先致意、再说明情况、最后提出请求的顺序来写。由于我不确定噪音的具体来源，信息里不要指认具体声音或责任人，用“可能”“不确定是不是”这类留有余地的说法，只说明是晚上休息时段听到声响。结尾提出一个低门槛、可协商的请求，比如请对方晚间留意一下声响，或问对方方便时能否沟通。整体语气友善、不对抗，让对方容易接受，同时把问题说清楚。",
+      "framework": "APE",
+      "taskUnderstanding": {
+        "goal": "帮用户写一条发给楼上邻居的信息，反映晚上噪音影响休息，同时以解决问题为导向、不激化邻里关系",
+        "deliverable": "一条可直接发送给楼上邻居的简短信息文本；具体措辞由助手设计",
+        "requirements": [
+          {
+            "text": "写一条发给楼上邻居的信息",
+            "dimensions": [
+              "GOAL",
+              "OBJECT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "帮我写条发给楼上邻居的信息"
+              }
+            ]
+          },
+          {
+            "text": "信息内容指向晚上噪音影响我休息",
+            "dimensions": [
+              "OBJECT",
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "晚上有噪音影响我休息"
+              }
+            ]
+          },
+          {
+            "text": "以解决问题为目的，不把邻里关系闹僵",
+            "dimensions": [
+              "GOAL",
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "我想解决问题，但不想把邻里关系闹僵"
+              }
+            ]
+          },
+          {
+            "text": "具体怎么说由助手设计",
+            "dimensions": [
+              "USER_CONFIRMATION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "具体怎么说你来设计"
+              }
+            ]
+          }
+        ],
+        "additions": [
+          {
+            "text": "信息中不指认具体噪音来源或责任人，用“可能”“不确定是不是”等措辞描述听到的声音，并说明是晚上休息时段",
+            "gap": "原文只说“晚上有噪音”，未说明是否知道噪音来源；若直接指认易引发对方防御，影响“不闹僵”的目标",
+            "benefit": "使信息在事实未确认时仍可发送，降低指责感，保留邻里关系"
+          },
+          {
+            "text": "信息结尾提出一个低门槛、可协商的请求，例如请对方留意晚间声响，或询问方便时能否沟通",
+            "gap": "原文只表达“想解决问题”，未给出具体行动落点，信息可能停留在抱怨层面",
+            "benefit": "让信息有明确、温和的解决出口，符合“解决问题”的目标"
+          },
+          {
+            "text": "采用简短、口语化、先致意后说明再请求的结构，篇幅控制在一段话内",
+            "gap": "原文未指定语气和篇幅，而邻里信息过长或过于正式可能显得生硬",
+            "benefit": "使成品可直接复制发送，符合日常邻里沟通场景"
+          }
+        ],
+        "openDecisions": [
+          {
+            "issue": "用户是否知道噪音的具体来源（如脚步声、挪家具、音乐等）以及噪音发生的大致时段",
+            "impact": "决定信息中能否具体描述声音类型和时段；若不知道来源，措辞需更模糊、更留余地",
+            "questionId": "",
+            "kind": "USER_INFORMATION"
+          },
+          {
+            "issue": "用户希望以何种渠道发送（微信、短信、纸条等）及与邻居的熟悉程度",
+            "impact": "影响称呼、语气正式程度和是否适合直接提出当面沟通",
+            "questionId": "",
+            "kind": "USER_INFORMATION"
+          }
+        ],
+        "review": {
+          "inputReadiness": "SUFFICIENT",
+          "requirementCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "帮我写一条发给楼上邻居的信息"
+              ]
+            },
+            {
+              "index": 1,
+              "quotes": [
+                "反映晚上有噪音影响我休息"
+              ]
+            },
+            {
+              "index": 2,
+              "quotes": [
+                "我想解决问题，但不想把邻里关系闹僵"
+              ]
+            },
+            {
+              "index": 3,
+              "quotes": [
+                "具体怎么说你来设计"
+              ]
+            }
+          ],
+          "additionCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "信息里不要指认具体声音或责任人",
+                "只说明是晚上休息时段听到声响"
+              ]
+            },
+            {
+              "index": 1,
+              "quotes": [
+                "结尾提出一个低门槛、可协商的请求"
+              ]
+            },
+            {
+              "index": 2,
+              "quotes": [
+                "简短、口语化，一段话即可",
+                "按先致意、再说明情况、最后提出请求的顺序来写"
+              ]
+            }
+          ],
+          "planImpacts": []
+        }
+      },
+      "expected": "UNSUPPORTED_FACT",
+      "originTrace": "NEIGHBOR_MESSAGE_V15_GEN/REWRITE"
+    },
+    {
+      "id": "REPLAY_SHARED_EXPENSE_TOOL",
+      "input": {
+        "rawPrompt": "我们聚餐时常有人垫付，最后AA总算不清。用Python帮我做个平摊费用的小工具，输入方式和结果怎么展示你来设计，给我完整代码和用法。",
+        "context": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "actualAnswers": [],
+        "conversation": [],
+        "mandatoryRules": [],
+        "modelId": "deepseek:deepseek-flash",
+        "planningContext": null,
+        "strategyVersion": "15",
+        "taskSources": [
+          {
+            "id": "rawPrompt",
+            "kind": "ORIGINAL_REQUEST"
+          }
+        ]
+      },
+      "rawPrompt": "我们聚餐时常有人垫付，最后AA总算不清。用Python帮我做个平摊费用的小工具，输入方式和结果怎么展示你来设计，给我完整代码和用法。",
+      "body": "用 Python 写一个聚餐 AA 平摊费用的小工具，解决多人垫付后总算不清的问题，交付完整可运行的代码和用法说明。输入方式和结果展示由你设计，建议做成命令行交互或简单文本/CSV 录入：逐条记录参与人姓名、每笔垫付的付款人和金额，并支持指定某笔消费只有部分人参与分摊（如有人不喝酒、有人不吃某道菜），这样能覆盖常见的聚餐场景。计算后按参与人汇总垫付总额与应分摊额，输出每人应收或应付的净额，并给出尽量少笔数的转账结算方案（谁转给谁多少钱），使每人净额归零。金额按分处理，明确取整和除不尽的余数分配规则（如余数给垫付人或按顺序分配），保证结果可核对、无尾差争议。用法部分给出运行命令、示例输入及对应的输出示例，让用户能照着直接用。",
+      "framework": "APE",
+      "taskUnderstanding": {
+        "goal": "用 Python 做一个聚餐 AA 平摊费用的小工具，解决多人垫付后总算不清的问题",
+        "deliverable": "完整可运行的 Python 代码及用法说明",
+        "requirements": [
+          {
+            "text": "用 Python 实现平摊费用小工具",
+            "dimensions": [
+              "GOAL",
+              "OBJECT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "用Python帮我做个平摊费用的小工具"
+              }
+            ]
+          },
+          {
+            "text": "解决聚餐中有人垫付、最后AA总算不清的问题",
+            "dimensions": [
+              "GOAL"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "我们聚餐时常有人垫付，最后AA总算不清"
+              }
+            ]
+          },
+          {
+            "text": "输入方式和结果展示由设计者自行决定",
+            "dimensions": [
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "输入方式和结果怎么展示你来设计"
+              }
+            ]
+          },
+          {
+            "text": "交付完整代码和用法",
+            "dimensions": [
+              "FORMAT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "给我完整代码和用法"
+              }
+            ]
+          }
+        ],
+        "additions": [
+          {
+            "text": "输入设计：命令行交互或文本/CSV录入，逐条记录参与人、每笔垫付的付款人与金额，并支持部分人参与某笔消费",
+            "gap": "原提示词未给出输入结构，执行者需自行确定如何表达垫付人、金额与参与范围",
+            "benefit": "使代码可直接实现并覆盖部分人分摊的常见聚餐场景"
+          },
+          {
+            "text": "计算与结果设计：汇总每人垫付总额与应分摊额，输出应收/应付净额及最少笔数转账方案",
+            "gap": "原提示词未明确输出内容与结算完成标志",
+            "benefit": "直接产出可执行的结算清单，确保每人净额归零"
+          },
+          {
+            "text": "用法说明：运行命令、示例输入与输出示例，并说明金额精度与余数分配规则",
+            "gap": "原提示词要求用法但未指定形式，AA平摊存在除不尽问题",
+            "benefit": "让用户照示例直接使用，保证金额可核对、无尾差争议"
+          }
+        ],
+        "openDecisions": [
+          {
+            "issue": "是否需要支持部分人参与某笔消费、以及是否需要保存/读取历史账单文件",
+            "impact": "决定输入结构与代码复杂度，影响是否引入文件读写与分组分摊逻辑",
+            "questionId": "",
+            "kind": "USER_INFORMATION"
+          },
+          {
+            "issue": "金额取整与余数分配规则（如四舍五入到分、余数给垫付人或按顺序分配）",
+            "impact": "影响每人净额与转账方案的具体数值",
+            "questionId": "",
+            "kind": "EXECUTION_CHOICE"
+          }
+        ],
+        "review": {
+          "inputReadiness": "SUFFICIENT",
+          "requirementCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "用 Python 写一个聚餐 AA 平摊费用的小工具"
+              ]
+            },
+            {
+              "index": 1,
+              "quotes": [
+                "解决多人垫付后总算不清的问题"
+              ]
+            },
+            {
+              "index": 2,
+              "quotes": [
+                "输入方式和结果展示由你设计"
+              ]
+            },
+            {
+              "index": 3,
+              "quotes": [
+                "交付完整可运行的代码和用法说明"
+              ]
+            }
+          ],
+          "additionCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "逐条记录参与人姓名、每笔垫付的付款人和金额，并支持指定某笔消费只有部分人参与分摊"
+              ]
+            },
+            {
+              "index": 1,
+              "quotes": [
+                "输出每人应收或应付的净额，并给出尽量少笔数的转账结算方案"
+              ]
+            },
+            {
+              "index": 2,
+              "quotes": [
+                "金额按分处理，明确取整和除不尽的余数分配规则"
+              ]
+            }
+          ],
+          "planImpacts": []
+        }
+      },
+      "expected": "SCOPE_EXPANSION",
+      "originTrace": "SHARED_EXPENSE_TOOL_V15_GEN/REWRITE"
+    },
+    {
+      "id": "N4_COMPLETE_DESIGN",
+      "rawPrompt": "请设计AA分账工具，整体功能和交互由你安排；除总额均分外，可提出有用扩展作为可选方案。",
+      "body": "请设计AA分账工具，核心提供总额均分；可选扩展为按消费项目分组计算，是否纳入首版按实际需求决定。",
+      "taskUnderstanding": {
+        "goal": "请设计AA分账工具，整体功能和交互由你安排；除总额均分外，可提出有用扩展作为可选方案。",
+        "deliverable": "原定交付",
+        "requirements": [
+          {
+            "text": "请设计AA分账工具，整体功能和交互由你安排；除总额均分外，可提出有用扩展作为可选方案。",
+            "dimensions": [
+              "GOAL"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请设计AA分账工具，整体功能和交互由你安排；除总额均分外，可提出有用扩展作为可选方案。"
+              }
+            ]
+          }
+        ],
+        "additions": [],
+        "openDecisions": [],
+        "review": {
+          "inputReadiness": "SUFFICIENT",
+          "requirementCoverage": [
+            {
+              "index": 0,
+              "quotes": [
+                "请设计AA分账工具，核心提供总额均分；可选扩展为按消费项目分组计算，是否纳入首版按实际需求决定。"
+              ]
+            }
+          ],
+          "additionCoverage": [],
+          "planImpacts": []
+        }
+      },
+      "expected": "UNCHANGED"
+    }
+  ],
+  "noQualityRetries": true,
+  "criteria": [
+    "四个故意错误和两个真实失败原件需要具体修正；四个正常变体正文必须逐字不变。",
+    "独立调用不做协议或质量重试；所有输出经产品域对象实际应用、来源与覆盖校验。",
+    "这是语义辨别机制验证，不替代实际生成及作品对照。"
+  ],
+  "inputAblation": "Only omit fidelityDraft.taskUnderstanding from model input; keep the original server-side record and all original sources.",
+  "goldCorrection": "The legacy N4 body omitted the task action/object; preserve it as an omission probe, add a complete normal draft separately. Do not rewrite prior results."
+}

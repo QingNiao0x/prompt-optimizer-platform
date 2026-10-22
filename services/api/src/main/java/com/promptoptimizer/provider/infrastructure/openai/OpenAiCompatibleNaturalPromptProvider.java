@@ -99,13 +99,57 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 throw invalid("自然正文或框架标识无效");
             }
         });
-        return invoke(input, NaturalPromptFidelityInstructions.REVIEW, "prompt.optimize", null, draft, false, (body, metadata) -> {
+        if (NaturalPromptFidelityInstructions.SEPARATED_VERSION.equals(input.strategyVersion())
+                || NaturalPromptFidelityInstructions.GROUNDED_VERSION.equals(input.strategyVersion())) {
+            return inspectThenRepair(input, draft, validation);
+        }
+        return invoke(input, NaturalPromptFidelityInstructions.REVIEW, "prompt.optimize", null, draft, null, false, (body, metadata) -> {
             try {
                 var review = json.treeToValue(body, NaturalPromptFidelityReview.class);
                 // 无问题时apply返回原对象；有问题只替换已定位片段，仍经过同一组最终业务保护。
                 return validation.apply(review.apply(input, draft));
             } catch (JsonProcessingException | IllegalArgumentException failure) {
                 throw invalid("自然保真审阅协议无效");
+            }
+        });
+    }
+
+    /**
+     * 独立识别只比较完整来源与正文，避免首稿的自我解释充当事实依据。
+     * 无问题保持原稿；有问题才进入一次明确的局部修订阶段，每个阶段的协议修复和用量分别计量。
+     */
+    private <T> T inspectThenRepair(NaturalPromptInput input, NaturalPromptDraft draft, Function<NaturalPromptDraft, T> validation) {
+        boolean grounded = NaturalPromptFidelityInstructions.GROUNDED_VERSION.equals(input.strategyVersion());
+        NaturalPromptFidelityFindings findings = invoke(input, grounded ? NaturalPromptFidelityInstructions.GROUNDED_DETECT
+                : NaturalPromptFidelityInstructions.DETECT, "prompt.optimize",
+                null, draft, null, false, (body, metadata) -> {
+                    try {
+                        var result = json.treeToValue(body, NaturalPromptFidelityFindings.class);
+                        if (grounded) NaturalPromptFidelityTargets.resolve(input, draft, result);
+                        else result.validate(input, draft);
+                        return result;
+                    } catch (JsonProcessingException | IllegalArgumentException failure) {
+                        throw invalid("自然保真识别协议无效");
+                    }
+                });
+        if (findings.issues().isEmpty()) return validation.apply(draft);
+        if (grounded) {
+            return invoke(input, NaturalPromptFidelityInstructions.GROUNDED_PATCH, "prompt.optimize", null, draft, findings, false,
+                    (body, metadata) -> {
+                        try {
+                            var repair = json.treeToValue(body, NaturalPromptFidelityTargets.Repair.class);
+                            return validation.apply(NaturalPromptFidelityTargets.applyRepair(input, draft, findings, repair));
+                        } catch (JsonProcessingException | IllegalArgumentException failure) {
+                            throw invalid("自然保真编辑目标修订协议无效");
+                        }
+                    });
+        }
+        return invoke(input, NaturalPromptFidelityInstructions.PATCH, "prompt.optimize", null, draft, findings, false, (body, metadata) -> {
+            try {
+                var repair = json.treeToValue(body, NaturalPromptFidelityReview.class);
+                return validation.apply(findings.applyRepair(input, draft, repair));
+            } catch (JsonProcessingException | IllegalArgumentException failure) {
+                throw invalid("自然保真局部修订协议无效");
             }
         });
     }
@@ -138,12 +182,13 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
      */
     private <T> T invoke(NaturalPromptInput input, String instruction, String operation,
             NaturalTaskUnderstanding suggestions, boolean preparation, ResponseReader<T> reader) {
-        return invoke(input, instruction, operation, suggestions, null, preparation, reader);
+        return invoke(input, instruction, operation, suggestions, null, null, preparation, reader);
     }
 
     /** 生成建议与首稿仅为当前阶段的私有辅助材料，不进入来源目录、响应或历史记录。 */
     private <T> T invoke(NaturalPromptInput input, String instruction, String operation,
-            NaturalTaskUnderstanding suggestions, NaturalPromptDraft fidelityDraft, boolean preparation, ResponseReader<T> reader) {
+            NaturalTaskUnderstanding suggestions, NaturalPromptDraft fidelityDraft, NaturalPromptFidelityFindings findings,
+            boolean preparation, ResponseReader<T> reader) {
         var selection = resolve(input.modelId());
         var route = selection.route();
         String modelVersion = catalog == null ? "" : catalog.resolve(selection.publicModelId()).displayName();
@@ -154,8 +199,22 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 prepared.set("completionSuggestions", json.valueToTree(suggestions));
             }
             if (fidelityDraft != null && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode review) {
-                review.set("fidelityDraft", json.valueToTree(Map.of("optimizedPrompt", fidelityDraft.optimizedPrompt(),
-                        "framework", fidelityDraft.framework(), "taskUnderstanding", fidelityDraft.taskUnderstanding())));
+                var projected = json.createObjectNode();
+                projected.put("optimizedPrompt", fidelityDraft.optimizedPrompt());
+                projected.put("framework", fidelityDraft.framework().name());
+                // 识别阶段不读取首稿自述记录；局部修订才用它更新覆盖，原来源目录始终不变。
+                boolean separated = NaturalPromptFidelityInstructions.SEPARATED_VERSION.equals(input.strategyVersion())
+                        || NaturalPromptFidelityInstructions.GROUNDED_VERSION.equals(input.strategyVersion());
+                if (!separated || findings != null) {
+                    projected.set("taskUnderstanding", json.valueToTree(fidelityDraft.taskUnderstanding()));
+                }
+                review.set("fidelityDraft", projected);
+                if (findings != null) {
+                    review.set("fidelityFindings", json.valueToTree(findings));
+                    if (NaturalPromptFidelityInstructions.GROUNDED_VERSION.equals(input.strategyVersion())) {
+                        review.set("fidelityEditTargets", json.valueToTree(NaturalPromptFidelityTargets.resolve(input, fidelityDraft, findings)));
+                    }
+                }
             }
             if (NaturalPromptInstructionsV1.VERSION.equals(input.strategyVersion())
                     && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode legacy) {

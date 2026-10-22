@@ -1,0 +1,316 @@
+{
+  "batch": "natural-single-pass-fidelity-2026-10-22",
+  "status": "COMPLETE_BOUNDED_USER_FACING_WORK_ASSESSMENT",
+  "assessor": "独立开发代理人工核对18份实际作品；先形成作品阅读记录和初步判定，再查看提示词评估摘要，非盲测、非外部专业评测。",
+  "baselineVersion": "4",
+  "candidateVersion": "20",
+  "actualModelCallsByAssessor": 0,
+  "scope": "原六主任务RAW/4/20实际作品；TEAM、实际Plan作品和四项新输入由其他评估文件单独记录，不扩大旧六题分母。",
+  "criteria": [
+    "任务及重要条件保真",
+    "用户能否直接使用与必要修改量",
+    "实际计算/示例正确性",
+    "合理的操作负担",
+    "开放设计保留合理变体，相持和更长文本不计胜"
+  ],
+  "evidence": {
+    "inputs": "cases.json",
+    "sameInformationAudit": "same-information-checks.json",
+    "rawWorks": "http-results.json",
+    "codeExecution": "code-artifact-checks.json"
+  },
+  "legacyCompletionBenefitGate": {
+    "primaryCaseCount": 6,
+    "minimumWorkWins": 3,
+    "observedClearWorkWins": 1,
+    "workWinCases": [
+      "HOUSEHOLD_BUFFER"
+    ],
+    "workGatePassed": false,
+    "normalTiesAreNotWins": true,
+    "freshCasesCountTowardThisGate": false,
+    "promptGateAssessedSeparately": "prompt-assessment.json"
+  },
+  "cases": [
+    {
+      "caseId": "TEN_MINUTE_REVIEW",
+      "verdictV20VersusV4": "NO_CLEAR_GAIN_WITH_MORE_RECORDING_BURDEN",
+      "clearWorkWin": false,
+      "rawWork": "给出2+4+2+2分钟的四步法、三列记录和一个下周改进动作，可照做；额外月度回看属于可选内容。",
+      "v4Work": "四行记录、2/3/3/2分钟流程和1–2个下周动作；能识别两周重复问题并转成行动。首次使用允许10–12分钟，超过用户十分钟目标，是基线自身局限。",
+      "v20Work": "四步相加为10分钟，但要求七个字段，包含多组最多3项和1–3个行动；新增必须写主动放弃项，同时又说写不出的项可以空着。对重复问题通常等3周才专门处理。",
+      "userFacingReason": "均有可执行办法；20增加字段和决策量，未证实降低十分钟内的操作负担，也未显示比4更能处理老问题。不能仅按标称时间或模板更长判提升。",
+      "sourceQuotes": {
+        "V4": [
+          "首次使用（约 10–12 分钟，可略超）"
+        ],
+        "V20": [
+          "第7项必须写**一件主动放弃或延后的事**",
+          "写不出来的项可以空着，不追求完整。",
+          "十分钟到点就停，没写完的留到下周回放时再看。"
+        ]
+      },
+      "limits": [
+        "未组织真实用户计时；七字段的负担是文本任务分析，不能断言任何用户都无法十分钟完成。"
+      ],
+      "artifacts": [
+        {
+          "id": "TEN_MINUTE_REVIEW_RAW_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "cc0a3955aa3f111ecd0d45790ac9edb94c91a6fa0cac362f1398c36c6370a5c6",
+          "contentCharacters": 950
+        },
+        {
+          "id": "TEN_MINUTE_REVIEW_V4_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "353cae0b41f9d10152e85d69bbc9dff31f1aec8a2b7be23edcd0db284967d26a",
+          "contentCharacters": 1644
+        },
+        {
+          "id": "TEN_MINUTE_REVIEW_V20_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "171423d82e37151e4792af9a44be88a889b4034c66ac82d40fc5874e6f3dcb42",
+          "contentCharacters": 1677
+        }
+      ]
+    },
+    {
+      "caseId": "NEIGHBOR_MESSAGE",
+      "verdictV20VersusV4": "REGRESSION_UNSUPPORTED_USER_FACTS",
+      "clearWorkWin": false,
+      "rawWork": "语气友好，但给出脚步/家具和22点等未提供细节；末尾让用户替换，不能无修改直接发送。",
+      "v4Work": "仅交付一条克制的信息，表达受影响和希望协商；使用时间段和噪音类型两个占位，需要用户补改，直接可用性仍不足。",
+      "v20Work": "外观上可直接复制，却把睡得早写成用户事实，还设定脚步/挪家具和22点后的具体场景；用户必须先核实或删改。",
+      "userFacingReason": "20用无依据的具体事实换取流畅度，用户直接发送可能作出不真实陈述；比4的显式待填信息更容易误用。没有把正常礼貌假设一概判作事实。",
+      "sourceQuotes": {
+        "V4": [
+          "晚上【时间段】经常听到【噪音类型，比如脚步声/拖动家具/电视声等】"
+        ],
+        "V20": [
+          "我睡得比较早",
+          "晚上10点后能不能稍微放轻一点脚步、挪东西时轻一些？",
+          "可能房子隔音一般"
+        ]
+      },
+      "limits": [
+        "“可能房子隔音一般”是显式推测，单独观察，未按已确认用户事实计缺陷。第一处错误出现于下游作品不等于增强模型是唯一原因。"
+      ],
+      "artifacts": [
+        {
+          "id": "NEIGHBOR_MESSAGE_RAW_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "caf3f2093d7b94a13c22c69904a53f68b4c511fe919ff92db5dd982609a63aec",
+          "contentCharacters": 234
+        },
+        {
+          "id": "NEIGHBOR_MESSAGE_V4_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "d060d3f5b3a88c95967e82e971869602368b19076854cc17241121fe7b733f65",
+          "contentCharacters": 145
+        },
+        {
+          "id": "NEIGHBOR_MESSAGE_V20_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "0ba34ed842676200c6b0efb7d8adc650587c56efd495f26f5f3f7220de602e50",
+          "contentCharacters": 143
+        }
+      ]
+    },
+    {
+      "caseId": "UNIT_PRICE_LEARNING",
+      "verdictV20VersusV4": "MIXED_NO_CLEAR_GAIN",
+      "clearWorkWin": false,
+      "rawWork": "给出同单位单价、实例、促销和买多浪费的提醒，可在货架前使用。",
+      "v4Work": "同单位单价公式、3公斤/1.5公斤、750克/1.2公斤和买赠例题计算正确，并给出货架三步法。",
+      "v20Work": "主要例题算术正确，补充保质期、用量与产品可比性有用；但同时引入千克约等于升的近似，又建议洗衣液等按标签原单位统一，增加初学者不必承担的跨维度换算判断。",
+      "userFacingReason": "20有有用扩展，但基础方法4已具备；额外例子及更长篇幅不能单独算收益。质量收益与新理解负担并存，本次没有明确作品胜出。",
+      "sourceQuotes": {
+        "V20": [
+          "1 千克 ≈ 1 升（仅对水、饮料、洗衣液等密度接近水的液体粗略适用；洗衣液、油等最好按标注的克或毫升各自统一）",
+          "单价低 ≠ 总花费低，先看能不能吃完。"
+        ]
+      },
+      "limits": [
+        "质量/体积换算依赖密度；这里记录教学复杂性与潜在误用，不声称该条件近似本身在所有情形均错误，也未作真实学习者迁移测试。"
+      ],
+      "artifacts": [
+        {
+          "id": "UNIT_PRICE_LEARNING_RAW_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "7c414bd1c777b906ff2f48bb0f4b41db2d426ee9681d6782a9b497d923749470",
+          "contentCharacters": 1294
+        },
+        {
+          "id": "UNIT_PRICE_LEARNING_V4_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "1b9d17573052424df849f8bf815cff482099a1b83b94dac8f30a11cf3837a444",
+          "contentCharacters": 1703
+        },
+        {
+          "id": "UNIT_PRICE_LEARNING_V20_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "4b123ba2b5465928cfe603fc65f043a3a4f5a2fb603e5f1c07b0e84208a514d2",
+          "contentCharacters": 2230
+        }
+      ]
+    },
+    {
+      "caseId": "SHARED_EXPENSE_TOOL",
+      "verdictV20VersusV4": "REGRESSION_PUBLISHED_EXAMPLE_MISMATCH",
+      "clearWorkWin": false,
+      "rawWork": "完整标准库代码与用法；普通整数金额可计算，100元三人分摊时独立舍入净额留下1分钱；发布示例金额也与代码不一致。",
+      "v4Work": "完整代码、交互/JSON输入、金额校验、按分分配及结算；四个共同核心用例守恒归零，自己的加权示例与代码一致。可选均摊/份数/比例增加选择量，但默认均摊仍可使用。",
+      "v20Work": "代码更短，逐行输入、全员默认和可选部分人分摊可用；四个共同核心用例守恒归零。然而“对应输出”错列应摊额和转账，后文承认并更正应摊额却保留前表。",
+      "userFacingReason": "20没有比4更强的核心计算收益，用户照示例核对会困惑；篇幅减少和省去可选权重模式不足以抵消错误的示例交付。不能把合理的可选分摊扩展或另一种余数分配法本身判成错误。",
+      "sourceQuotes": {
+        "V20": [
+          "小明           86.17    200.00     113.83（应收）",
+          "上面输出为演示排版，实际运行会按真实计算给出精确到分的数字。"
+        ]
+      },
+      "limits": [
+        "安全执行仅覆盖已静态审查的内存解析/计算函数，没有执行文件读取或交互入口。具体输入、实际结果、代码指纹及边界见code-artifact-checks.json。"
+      ],
+      "artifacts": [
+        {
+          "id": "SHARED_EXPENSE_TOOL_RAW_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "46209a8e40d4b1de27c9b98df28a660c1dbd2708877fbbd0593357d50fd54f17",
+          "contentCharacters": 5450
+        },
+        {
+          "id": "SHARED_EXPENSE_TOOL_V4_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "b298fc54d106dd4416b15f5081bcccad1d7360aeca674868f218ed3bc48cc97c",
+          "contentCharacters": 16805
+        },
+        {
+          "id": "SHARED_EXPENSE_TOOL_V20_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "a5d32ea5551a7516b5f121780a067fcbcdd1b05e3f272ecadc6cd553843bed48",
+          "contentCharacters": 10703
+        }
+      ]
+    },
+    {
+      "caseId": "HOUSEHOLD_BUFFER",
+      "verdictV20VersusV4": "LOCAL_WORK_GAIN_RESERVE_USE_CONSISTENCY",
+      "clearWorkWin": true,
+      "rawWork": "按6200元提出可执行预留，未依赖未到账奖金；总体算术合理，按四周控制仍需留意整月剩余天数。",
+      "v4Work": "3550固定+1650伙食日用+1000备用=6200，调整幅度可作为建议；允许真实突发使用备用金，却在月末要求1000仍在，并给出遗漏已花备用金的对账等式。",
+      "v20Work": "3550固定+1700伙食日用+950备用=6200；先预留必须支出、按到期日支付，允许必要突发动用并记录，明确未动用时才保留到月底；奖金只在到账后另行分配。",
+      "userFacingReason": "本次20作品在备用金允许使用后的月末处理上较4一致，减少用户需要修正的对账要求，计一项局部作品收益。1650/1700和1000/950本身是合理设计变体，不按金额取舍判胜。当前结余0为材料明确事实，不能误判为缺失信息被否定。",
+      "sourceQuotes": {
+        "V4": [
+          "确认应急储备 1000 元仍在",
+          "总收入 6200 元 = 必须项 3550 元 + 伙食日用实际支出 + 应急储备余额 + 未花完的伙食日用余额"
+        ],
+        "V20": [
+          "未动用时**：月末仍保留为备用金",
+          "动用后记录金额和原因"
+        ]
+      },
+      "limits": [
+        "这是单次作品中可观察的局部收益，不足以证明20自检机制稳定修复此问题；20也没有提供完整的突发动用后月末对账算式。"
+      ],
+      "artifacts": [
+        {
+          "id": "HOUSEHOLD_BUFFER_RAW_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "ec32f3c4816f4415f85d9cd15fc04f345a86b9d35a1bf53072de684654a168ed",
+          "contentCharacters": 1761
+        },
+        {
+          "id": "HOUSEHOLD_BUFFER_V4_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "5593bed159f5092efeb860d46ab1dbb159cd98651a342374410c3e0e7783cb66",
+          "contentCharacters": 1711
+        },
+        {
+          "id": "HOUSEHOLD_BUFFER_V20_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "2b78eacc7a94f92c24292fe467ed4c314abd1f73287ba1e278a7eb4caa905e86",
+          "contentCharacters": 1507
+        }
+      ]
+    },
+    {
+      "caseId": "ACTIVITY_SIGNUP_FORM",
+      "verdictV20VersusV4": "TIE_NO_CLEAR_GAIN",
+      "clearWorkWin": false,
+      "rawWork": "实际字段、条件提示和提交文案可据此制表，成年人计入人数、短信条件和不收身份证号均覆盖；附加确认项增加少量填写量。",
+      "v4Work": "覆盖场次单选、人数1/2、未满16岁由用户选择且必须成人陪同计2人、短信才必填手机号、不收身份证号、余位未知及后续确认。字段/错误提示已可据此落地。",
+      "v20Work": "同样保留上述独立条件，并给出表格、联动和一份更长JSON字段结构例；所需方案可使用，但核心条件并未比4新增修复。",
+      "userFacingReason": "两版均满足主要制表需求。20约为4两倍字符，附加结构示例没有实证缩短用户制作过程，因此记相持，不把格式增多判为收益。JSON字段例不是承诺可运行表单引擎，未因跨字段规则写在说明中而标代码缺陷。",
+      "sourceQuotes": {
+        "V20": [
+          "参与人数",
+          "短信",
+          "未满16岁"
+        ]
+      },
+      "limits": [
+        "未部署实际表单、未做真实填写者测试；这里验收的是用户要求的报名表方案，而非可运行页面。"
+      ],
+      "artifacts": [
+        {
+          "id": "ACTIVITY_SIGNUP_FORM_RAW_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "d35b7f37267ffb6542210368884e5017f540a0d2965e688518b49a1420df4988",
+          "contentCharacters": 2866
+        },
+        {
+          "id": "ACTIVITY_SIGNUP_FORM_V4_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "7a348cadd472ab39b3fd01f512d4c29ce07626d551d285a07f60dd2916d5a9d6",
+          "contentCharacters": 3427
+        },
+        {
+          "id": "ACTIVITY_SIGNUP_FORM_V20_EXEC",
+          "status": 200,
+          "finishReason": "stop",
+          "resultSha256": "a4f36e8ee341241ba8cecc6d10a99d9629cbd06d6a96ccb45d02818ddb8c7cbc",
+          "contentCharacters": 6817
+        }
+      ]
+    }
+  ],
+  "additionalPlanProtocolVerification": {
+    "replay": "plan-response-replay.json",
+    "reproducer": "PlanResponseReplay.java",
+    "input": "transports.jsonl",
+    "transportLines": [
+      29,
+      30
+    ],
+    "firstAttempt": "029 resolve拒绝：模型覆盖记录没有提供全部实际题答来源，缺actualAnswers.1。",
+    "secondAttempt": "030 resolve通过；validateEnhancement拒绝：最终正文检查携带非空planImpacts，与最终增强阶段协议冲突。",
+    "attribution": "两次均能用未修改的领域验证离线重现模型协议违约；没有合法响应被平台误拒的证据。",
+    "comparisonBoundary": "4最终502不计为20语义质量胜出，不追加第三次或质量重试，不据此扩大到协议精简任务。",
+    "reproduction": "Compile/run PlanResponseReplay.java with API Java21 runtime/dependency classpath, passing public transports.jsonl and a writable output JSON path. No account or services required."
+  },
+  "conclusion": "原六作品只有一项局部收益，未达到既定3/6门槛；邻居实际事实及AA发布示例存在确定退步。没有支持采用20或宣称整体增强质量提升的作品证据。",
+  "causalityAndLimits": [
+    "同信息同模型单次回归对照仍有生成波动，具体下游作品差异不自动证明增强机制单独造成。",
+    "没有新增模型采样、模型评审或质量重试，沿用本批闭批67次实际调用。",
+    "仅为合成开发回归；未验证专业全场景、统计显著性或真实用户时间/学习效果。",
+    "本评估不把基线缺陷当候选合格，也不为凑通过更改旧题标准。"
+  ]
+}

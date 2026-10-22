@@ -1,0 +1,36 @@
+{
+  "batch": "natural-fidelity-input-ablation-2026-10-22",
+  "actualNewCalls": 11,
+  "phaseCounts": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 11
+  },
+  "logicalResults": 11,
+  "protocolRetries": 0,
+  "qualityRetries": 0,
+  "actualTokens": 19538,
+  "formalLimits": {
+    "total": 1738,
+    "baseline": 80,
+    "candidate": 1658
+  },
+  "actualAfter": {
+    "total": 1060,
+    "baseline": 70,
+    "candidate": 990
+  },
+  "taskAuthorization": 1024,
+  "taskActual": 374,
+  "taskAllocated": 676,
+  "closedAllocatedUnused": 302,
+  "freshUnallocatedForSameTask": 348,
+  "closedBalancesTransferred": 0,
+  "currentBatchMaximum": 24,
+  "currentBatchUnusedClosed": 13,
+  "defaultVersionAfter": "4",
+  "diagnosticConfigurationNotAdopted": "INPUT_ABLATION_ONLY",
+  "noFurtherJobsForThisBatch": true,
+  "countingRule": "十一次真实夹具审阅均计REVIEW；B1 HTTP成功但域apply失败仍计一次，不重试。"
+}

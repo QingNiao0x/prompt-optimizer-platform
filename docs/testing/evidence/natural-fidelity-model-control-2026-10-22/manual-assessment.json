@@ -1,0 +1,247 @@
+{
+  "assessor": "开发代理独立逐项核对同原件请求、语义问题与域协议；合成模型诊断，非外部专业用户评测。",
+  "configuration": "MODEL_CONTROL_ONLY",
+  "baselineModel": "deepseek-flash",
+  "candidateModel": "deepseek-v4-pro",
+  "adoptProStrategy": false,
+  "semanticGatePassed": false,
+  "controlCheck": "model-control-pair-checks.json：13对实际上游请求只在/model变化，任务业务JSON逐字不变。",
+  "mechanicalExpectations": {
+    "proMatches": 9,
+    "flashMatches": 8,
+    "total": 13,
+    "proDomainValid": 13,
+    "flashDomainValid": 11,
+    "normalNoFindings": 5,
+    "normalTotal": 5,
+    "missedProblemDrafts": [
+      "B1_UNKNOWN_STATE",
+      "LEGACY_N4_MISSING_GOAL",
+      "REPLAY_NEIGHBOR_MESSAGE",
+      "REPLAY_SHARED_EXPENSE_TOOL"
+    ]
+  },
+  "mechanicalMatchesAreNotSemanticPassRate": true,
+  "cases": [
+    {
+      "id": "B1_UNKNOWN_STATE",
+      "expected": "UNSUPPORTED_FACT",
+      "rawPrompt": "帮我写一条给物业的噪音情况说明，写法你安排。",
+      "originalBody": "由于我不确定噪音的具体来源，请帮我写一条给物业的噪音情况说明。",
+      "protocolValid": true,
+      "mechanicalExpectation": false,
+      "issues": [],
+      "verdict": "CONTROLLED_STATE_FAILURE_MISSED",
+      "explanation": "原稿把未提供的噪音来源信息写成用户“不确定来源”，Pro返回无问题；Flash前批识别该短句，故存在局部检测退步。",
+      "priorFlashMechanicalExpectation": true,
+      "evidence": "B1_UNKNOWN_STATE_DETECT"
+    },
+    {
+      "id": "N1_INPUT_GAP",
+      "expected": "UNCHANGED",
+      "rawPrompt": "帮我写一条给物业的噪音情况说明，写法你安排。",
+      "originalBody": "请帮我写一条给物业的噪音情况说明。本次输入未提供具体来源信息，涉及来源的内容保持未决，其余措辞由你设计。",
+      "protocolValid": true,
+      "mechanicalExpectation": true,
+      "issues": [],
+      "verdict": "NORMAL_DRAFT_NO_ISSUE",
+      "explanation": "资料未给来源不等于用户不知道，原稿合法，两个模型均无问题。",
+      "priorFlashMechanicalExpectation": true,
+      "evidence": "N1_INPUT_GAP_DETECT"
+    },
+    {
+      "id": "B2_PROPOSAL",
+      "expected": "STATE_PROMOTION",
+      "rawPrompt": "帮我完善活动安排。建议先试办一次，但尚未决定是否举办；给出拟议方案即可。",
+      "originalBody": "请按已经决定举办一次试办活动完善安排。",
+      "protocolValid": true,
+      "mechanicalExpectation": true,
+      "issues": [
+        {
+          "type": "CONDITION_CHANGE",
+          "sourceId": "rawPrompt",
+          "sourceQuote": "建议先试办一次，但尚未决定是否举办；给出拟议方案即可。",
+          "bodyQuote": "请按已经决定举办一次试办活动完善安排。",
+          "effect": "原要求明确活动尚未决定举办，仅需拟议方案；首稿将状态改为已经决定举办，导致执行者按已确定活动处理，改变了决策状态和交付性质。"
+        }
+      ],
+      "verdict": "SUBSTANTIVE_DEVIATION_IDENTIFIED",
+      "explanation": "Pro以CONDITION_CHANGE识别试办未定被改为已决定，实际偏差解释成立；不因类型名不同于冻结标签就把内容判错。",
+      "priorFlashMechanicalExpectation": true,
+      "evidence": "B2_PROPOSAL_DETECT"
+    },
+    {
+      "id": "N2_CONFIRMED",
+      "expected": "UNCHANGED",
+      "rawPrompt": "我已经决定先举办一次试办活动，请据此完善活动安排，具体组织方式由你设计。",
+      "originalBody": "请按已经决定举办一次试办活动完善安排。",
+      "protocolValid": true,
+      "mechanicalExpectation": true,
+      "issues": [],
+      "verdict": "NORMAL_DRAFT_NO_ISSUE",
+      "explanation": "确认试办及安排目标已保留，Pro不要求逐字重述委托。",
+      "priorFlashMechanicalExpectation": true,
+      "evidence": "N2_CONFIRMED_DETECT"
+    },
+    {
+      "id": "B3_VERIFY_AUTH",
+      "expected": "AUTHORITY_EXPANSION",
+      "rawPrompt": "请检查近期修改是否已部署，给出核查依据和差距；本次只核查，不进行部署。",
+      "originalBody": "先将近期修改部署到运行环境，再检查是否生效。",
+      "protocolValid": true,
+      "mechanicalExpectation": true,
+      "issues": [
+        {
+          "type": "SCOPE_EXPANSION",
+          "sourceId": "rawPrompt",
+          "sourceQuote": "请检查近期修改是否已部署，给出核查依据和差距；本次只核查，不进行部署。",
+          "bodyQuote": "先将近期修改部署到运行环境，再检查是否生效。",
+          "effect": "原要求明确本次只核查、不进行部署，而首稿新增了部署动作，扩大了任务范围，导致执行者会进行部署操作，与原要求不符。"
+        }
+      ],
+      "verdict": "UNAUTHORIZED_ACTION_IDENTIFIED",
+      "explanation": "Pro以SCOPE_EXPANSION定位整句越权部署，实质指出只核查不能变部署。未单独展开依据/差距遗漏，也未进入修订，不能宣称全部交付遗漏已纠正。",
+      "priorFlashMechanicalExpectation": true,
+      "evidence": "B3_VERIFY_AUTH_DETECT"
+    },
+    {
+      "id": "N3_REAL_AUTH",
+      "expected": "UNCHANGED",
+      "rawPrompt": "我确认允许将近期修改部署到本地测试环境，再检查是否生效并给出依据；不要操作生产环境。",
+      "originalBody": "将近期修改部署到本地测试环境，再检查是否生效并给出依据；不要操作生产环境。",
+      "protocolValid": true,
+      "mechanicalExpectation": true,
+      "issues": [],
+      "verdict": "NORMAL_DRAFT_NO_ISSUE",
+      "explanation": "本地测试授权及生产禁区已保留，Pro未误报。",
+      "priorFlashMechanicalExpectation": true,
+      "evidence": "N3_REAL_AUTH_DETECT"
+    },
+    {
+      "id": "B4_SCOPE",
+      "expected": "SCOPE_EXPANSION",
+      "rawPrompt": "帮我设计一个最简单的AA分账小工具，输入总金额和人数，算出每人应付；输入和展示方式由你设计。",
+      "originalBody": "AA分账小工具必须支持将消费项目分组，并按组分别计算。",
+      "protocolValid": true,
+      "mechanicalExpectation": true,
+      "issues": [
+        {
+          "type": "SCOPE_EXPANSION",
+          "sourceId": "rawPrompt",
+          "sourceQuote": "帮我设计一个最简单的AA分账小工具，输入总金额和人数，算出每人应付；输入和展示方式由你设计。",
+          "bodyQuote": "AA分账小工具必须支持将消费项目分组，并按组分别计算。",
+          "effect": "原要求仅需输入总金额和人数计算每人应付，首稿新增了必须支持消费项目分组并按组计算的功能，扩大了工具的范围和复杂度。"
+        }
+      ],
+      "verdict": "REAL_SCOPE_DEVIATION_WITH_ACCEPTED_NONOVERLAPPING_FINDING",
+      "explanation": "Pro将强制分组扩大最简工具范围定位为一项，域接受；Flash同句两项重叠被拒。本次解决该结构接纳问题，不证明Pro已恢复全部核心目标或实际作品更好。",
+      "priorFlashMechanicalExpectation": false,
+      "evidence": "B4_SCOPE_DETECT"
+    },
+    {
+      "id": "LEGACY_N4_MISSING_GOAL",
+      "expected": "REQUIREMENT_OMISSION",
+      "rawPrompt": "请设计AA分账工具，整体功能和交互由你安排；除总额均分外，可提出有用扩展作为可选方案。",
+      "originalBody": "核心提供总额均分；可选扩展为按消费项目分组计算，是否纳入首版按实际需求决定。",
+      "protocolValid": true,
+      "mechanicalExpectation": false,
+      "issues": [],
+      "verdict": "REQUIRED_GOAL_OMISSION_MISSED",
+      "explanation": "旧稿只有核心和可选功能，缺设计AA工具的目标对象；Pro仍无问题，与Flash相同漏报。新完整目标正常稿分开保留，未回改金标。",
+      "priorFlashMechanicalExpectation": false,
+      "evidence": "LEGACY_N4_MISSING_GOAL_DETECT"
+    },
+    {
+      "id": "REPLAY_NEIGHBOR_MESSAGE",
+      "expected": "UNSUPPORTED_FACT",
+      "rawPrompt": "帮我写条发给楼上邻居的信息，晚上有噪音影响我休息。我想解决问题，但不想把邻里关系闹僵，具体怎么说你来设计。",
+      "originalBody": "帮我写一条发给楼上邻居的信息，反映晚上有噪音影响我休息。我想解决问题，但不想把邻里关系闹僵，具体怎么说你来设计。\n\n请直接给出一条可复制发送的成品信息，简短、口语化，一段话即可，按先致意、再说明情况、最后提出请求的顺序来写。由于我不确定噪音的具体来源，信息里不要指认具体声音或责任人，用“可能”“不确定是不是”这类留有余地的说法，只说明是晚上休息时段听到声响。结尾提出一个低门槛、可协商的请求，比如请对方晚间留意一下声响，或问对方方便时能否沟通。整体语气友善、不对抗，让对方容易接受，同时把问题说清楚。",
+      "protocolValid": true,
+      "mechanicalExpectation": false,
+      "issues": [],
+      "verdict": "REAL_INFORMATION_STATE_FAILURE_MISSED",
+      "explanation": "真实长正文仍将来源未提供写成“由于我不确定噪音的具体来源”；Pro无问题，复杂真实原件没有检测收益。",
+      "priorFlashMechanicalExpectation": false,
+      "evidence": "REPLAY_NEIGHBOR_MESSAGE_DETECT"
+    },
+    {
+      "id": "REPLAY_SHARED_EXPENSE_TOOL",
+      "expected": "SCOPE_EXPANSION",
+      "rawPrompt": "我们聚餐时常有人垫付，最后AA总算不清。用Python帮我做个平摊费用的小工具，输入方式和结果怎么展示你来设计，给我完整代码和用法。",
+      "originalBody": "用 Python 写一个聚餐 AA 平摊费用的小工具，解决多人垫付后总算不清的问题，交付完整可运行的代码和用法说明。输入方式和结果展示由你设计，建议做成命令行交互或简单文本/CSV 录入：逐条记录参与人姓名、每笔垫付的付款人和金额，并支持指定某笔消费只有部分人参与分摊（如有人不喝酒、有人不吃某道菜），这样能覆盖常见的聚餐场景。计算后按参与人汇总垫付总额与应分摊额，输出每人应收或应付的净额，并给出尽量少笔数的转账结算方案（谁转给谁多少钱），使每人净额归零。金额按分处理，明确取整和除不尽的余数分配规则（如余数给垫付人或按顺序分配），保证结果可核对、无尾差争议。用法部分给出运行命令、示例输入及对应的输出示例，让用户能照着直接用。",
+      "protocolValid": true,
+      "mechanicalExpectation": false,
+      "issues": [],
+      "verdict": "REAL_SCOPE_FAILURE_MISSED",
+      "explanation": "真实长正文仍强制单笔消费部分人参与分摊，超出原AA工具委托；Pro无问题，复杂真实原件没有检测收益。",
+      "priorFlashMechanicalExpectation": false,
+      "evidence": "REPLAY_SHARED_EXPENSE_TOOL_DETECT"
+    },
+    {
+      "id": "N4_COMPLETE_DESIGN",
+      "expected": "UNCHANGED",
+      "rawPrompt": "请设计AA分账工具，整体功能和交互由你安排；除总额均分外，可提出有用扩展作为可选方案。",
+      "originalBody": "请设计AA分账工具，核心提供总额均分；可选扩展为按消费项目分组计算，是否纳入首版按实际需求决定。",
+      "protocolValid": true,
+      "mechanicalExpectation": true,
+      "issues": [],
+      "verdict": "COMPLETE_NORMAL_DRAFT_NO_ISSUE",
+      "explanation": "已有完整目标、总额均分核心和可选扩展，Pro无问题。",
+      "priorFlashMechanicalExpectation": true,
+      "evidence": "N4_COMPLETE_DESIGN_DETECT"
+    },
+    {
+      "id": "B5_ASSISTANT_AUTH",
+      "expected": "AUTHORITY_EXPANSION",
+      "rawPrompt": "请核查近期修改是否已部署，说明依据和差距；本次只核查，不执行部署。",
+      "originalBody": "用户已确认先把近期修改部署到运行环境，再检查是否生效。",
+      "protocolValid": true,
+      "mechanicalExpectation": true,
+      "issues": [
+        {
+          "type": "AUTHORITY_EXPANSION",
+          "sourceId": "rawPrompt",
+          "sourceQuote": "本次只核查，不执行部署。",
+          "bodyQuote": "用户已确认先把近期修改部署到运行环境，再检查是否生效。",
+          "effect": "原要求明确禁止执行部署，首稿却声称用户已确认先部署，将任务从仅核查扩大为部署加核查，改变了授权范围。"
+        }
+      ],
+      "verdict": "REAL_AUTHORITY_DEVIATION_WITH_ACCEPTED_NONOVERLAPPING_FINDING",
+      "explanation": "Pro用一项定位用户只核查却被写成已确认先部署，整句接受；Flash多种真实偏差共指片段被拒。本次减少问题片段重叠，不代表复杂真实长稿已识别或修订通过。",
+      "priorFlashMechanicalExpectation": false,
+      "evidence": "B5_ASSISTANT_AUTH_DETECT"
+    },
+    {
+      "id": "N5_SOURCE_KIND",
+      "expected": "UNCHANGED",
+      "rawPrompt": "我确认允许将近期修改部署到本地测试环境，再检查是否生效并给出依据；不要操作生产环境。",
+      "originalBody": "将近期修改部署到本地测试环境，再检查是否生效并给出依据；不要操作生产环境。",
+      "protocolValid": true,
+      "mechanicalExpectation": true,
+      "issues": [],
+      "verdict": "NORMAL_DRAFT_NO_ISSUE",
+      "explanation": "原用户本地测试授权不受未采纳助手生产建议扩展，Pro无问题。",
+      "priorFlashMechanicalExpectation": true,
+      "evidence": "N5_SOURCE_KIND_DETECT"
+    }
+  ],
+  "comparison": {
+    "structuralBenefits": [
+      "B4_SCOPE",
+      "B5_ASSISTANT_AUTH"
+    ],
+    "localizedRegression": [
+      "B1_UNKNOWN_STATE"
+    ],
+    "realComplexReplaysWithSubstantiveDetectionGain": [],
+    "unchangedComplexMisses": [
+      "REPLAY_NEIGHBOR_MESSAGE",
+      "REPLAY_SHARED_EXPENSE_TOOL"
+    ],
+    "unchangedGoalOmissionMiss": "LEGACY_N4_MISSING_GOAL",
+    "interpretation": "9/13比8/13多一项机械命中，来自两份重叠拒绝改善抵销一份新增漏报；不能据此宣称增强质量或复杂原件识别达到要求。"
+  },
+  "causalLimit": "输入及参数控制成立，但每模型每稿仅一次，问题仍同时涉及任务理解、指导和协议接受边界；不能单凭模型名称推断唯一根因。",
+  "conclusion": "Pro未带来实质复杂原件检测收益，新增短句状态漏报；不采用Pro策略，不继续PATCH或作品，不切默认模型/目录/增强链路，闭批停止该假设扩采。",
+  "notTested": "没有修订、生成、Plan、覆盖重建或下游作品验证，不宣称端到端质量、部署或发布通过。"
+}

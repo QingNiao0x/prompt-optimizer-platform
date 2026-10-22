@@ -1,0 +1,64 @@
+{
+  "batch": "natural-fidelity-separation-2026-10-22",
+  "status": "CLOSED_AT_DETECTION_NOT_ADOPTED",
+  "candidateVersion": "18",
+  "adoptCandidate": false,
+  "defaultVersionAfter": "4",
+  "actualCalls": 13,
+  "logicalResults": 13,
+  "phaseCounts": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 13
+  },
+  "reviewStageCounts": {
+    "DETECT": 13,
+    "PATCH": 0
+  },
+  "protocolRetries": 0,
+  "qualityRetries": 0,
+  "httpSuccessResults": 13,
+  "finishStopResults": 13,
+  "totalTokens": 10125,
+  "productDomainValid": 11,
+  "productDomainRejectedForOverlap": 2,
+  "mechanicalFixtureExpectationMatches": 8,
+  "mechanicalFixtureCount": 13,
+  "mechanicalResultIsSemanticPassRate": false,
+  "semanticGatePassed": false,
+  "normalNoFindings": 5,
+  "normalRequiredNoFindings": 5,
+  "missedProblemFixtures": [
+    "LEGACY_N4_MISSING_GOAL",
+    "REPLAY_NEIGHBOR_MESSAGE",
+    "REPLAY_SHARED_EXPENSE_TOOL"
+  ],
+  "overlappingRealProblemFixtures": [
+    "B4_SCOPE",
+    "B5_ASSISTANT_AUTH"
+  ],
+  "conditionalRepairsRun": 0,
+  "plannedMainCallsNotExecuted": 61,
+  "plannedMainCallBreakdown": {
+    "GENERATION": 30,
+    "PLAN": 1,
+    "EXECUTION": 30
+  },
+  "zeroCallPreflightRevisionPreserved": true,
+  "sourceSnapshots": {
+    "manifestFiles": 1149,
+    "keySourceCopies": 9,
+    "allKeySourceCopiesMatchManifest": true
+  },
+  "offlineValidation": {
+    "affectedTests": 174,
+    "boundaryRecheckTests": 46,
+    "failures": 0,
+    "errors": 0,
+    "source": "offline-validation.json",
+    "limit": "冻结前已有验证，46项与174项有重叠，不相加为独立测试量；离线成功不等于语义门槛通过。"
+  },
+  "conclusion": "本次五份正常稿均不报问题，但复杂原件与实质目标遗漏仍漏检，并出现真实多问题与非重叠契约不匹配，18不采用，不扩大Flash采样。",
+  "taskStatus": "局部职责分离及保护代码已有证据，用户质量目标仍未完成；无修订、作品或发布通过声明。"
+}

@@ -1,0 +1,152 @@
+[ {
+  "id" : "B1_UNKNOWN_STATE",
+  "expected" : "UNSUPPORTED_FACT",
+  "protocolValid" : false,
+  "failureType" : "ProviderException",
+  "message" : "正文覆盖记录越界、重复或缺少对应原句",
+  "mechanicalExpectation" : false
+}, {
+  "id" : "N1_INPUT_GAP",
+  "expected" : "UNCHANGED",
+  "protocolValid" : true,
+  "sameDraft" : false,
+  "bodyEqual" : false,
+  "issues" : [ {
+    "type" : "REQUIREMENT_OMISSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "帮我写一条给物业的噪音情况说明，写法你安排。",
+    "bodyQuote" : "本次输入未提供具体来源信息，涉及来源的内容保持未决，其余措辞由你设计。",
+    "replacement" : "写法由你安排。"
+  } ],
+  "revisedBody" : "请帮我写一条给物业的噪音情况说明。写法由你安排。",
+  "mechanicalExpectation" : false
+}, {
+  "id" : "B2_PROPOSAL",
+  "expected" : "STATE_PROMOTION",
+  "protocolValid" : true,
+  "sameDraft" : false,
+  "bodyEqual" : false,
+  "issues" : [ {
+    "type" : "STATE_PROMOTION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "建议先试办一次，但尚未决定是否举办；给出拟议方案即可。",
+    "bodyQuote" : "请按已经决定举办一次试办活动完善安排。",
+    "replacement" : "请完善活动安排。建议先试办一次，但尚未决定是否举办；给出拟议方案即可。"
+  } ],
+  "revisedBody" : "请完善活动安排。建议先试办一次，但尚未决定是否举办；给出拟议方案即可。",
+  "mechanicalExpectation" : true
+}, {
+  "id" : "N2_CONFIRMED",
+  "expected" : "UNCHANGED",
+  "protocolValid" : true,
+  "sameDraft" : false,
+  "bodyEqual" : false,
+  "issues" : [ {
+    "type" : "REQUIREMENT_OMISSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "具体组织方式由你设计。",
+    "bodyQuote" : "请按已经决定举办一次试办活动完善安排。",
+    "replacement" : "请按已经决定举办一次试办活动完善活动安排，具体组织方式由你设计。"
+  } ],
+  "revisedBody" : "请按已经决定举办一次试办活动完善活动安排，具体组织方式由你设计。",
+  "mechanicalExpectation" : false
+}, {
+  "id" : "B3_VERIFY_AUTH",
+  "expected" : "AUTHORITY_EXPANSION",
+  "protocolValid" : true,
+  "sameDraft" : false,
+  "bodyEqual" : false,
+  "issues" : [ {
+    "type" : "AUTHORITY_EXPANSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "本次只核查，不进行部署。",
+    "bodyQuote" : "先将近期修改部署到运行环境",
+    "replacement" : ""
+  }, {
+    "type" : "REQUIREMENT_OMISSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "请检查近期修改是否已部署，给出核查依据和差距；本次只核查，不进行部署。",
+    "bodyQuote" : "再检查是否生效。",
+    "replacement" : "请检查近期修改是否已部署，给出核查依据和差距；本次只核查，不进行部署。"
+  } ],
+  "revisedBody" : "，请检查近期修改是否已部署，给出核查依据和差距；本次只核查，不进行部署。",
+  "mechanicalExpectation" : true
+}, {
+  "id" : "N3_REAL_AUTH",
+  "expected" : "UNCHANGED",
+  "protocolValid" : true,
+  "sameDraft" : false,
+  "bodyEqual" : false,
+  "issues" : [ {
+    "type" : "REQUIREMENT_OMISSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "我确认允许将近期修改部署到本地测试环境",
+    "bodyQuote" : "将近期修改部署到本地测试环境",
+    "replacement" : "我确认允许将近期修改部署到本地测试环境"
+  } ],
+  "revisedBody" : "我确认允许将近期修改部署到本地测试环境，再检查是否生效并给出依据；不要操作生产环境。",
+  "mechanicalExpectation" : false
+}, {
+  "id" : "B4_SCOPE",
+  "expected" : "SCOPE_EXPANSION",
+  "protocolValid" : true,
+  "sameDraft" : false,
+  "bodyEqual" : false,
+  "issues" : [ {
+    "type" : "REQUIREMENT_OMISSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "帮我设计一个最简单的AA分账小工具，输入总金额和人数，算出每人应付；输入和展示方式由你设计。",
+    "bodyQuote" : "AA分账小工具必须支持将消费项目分组，并按组分别计算。",
+    "replacement" : "帮我设计一个最简单的AA分账小工具：输入总金额和人数，算出每人应付；输入和展示方式由你设计。"
+  } ],
+  "revisedBody" : "帮我设计一个最简单的AA分账小工具：输入总金额和人数，算出每人应付；输入和展示方式由你设计。",
+  "mechanicalExpectation" : true
+}, {
+  "id" : "LEGACY_N4_MISSING_GOAL",
+  "expected" : "REQUIREMENT_OMISSION",
+  "protocolValid" : true,
+  "sameDraft" : false,
+  "bodyEqual" : false,
+  "issues" : [ {
+    "type" : "REQUIREMENT_OMISSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "请设计AA分账工具，整体功能和交互由你安排；除总额均分外，可提出有用扩展作为可选方案。",
+    "bodyQuote" : "核心提供总额均分；可选扩展为按消费项目分组计算，是否纳入首版按实际需求决定。",
+    "replacement" : "请设计AA分账工具，整体功能和交互由你安排；核心提供总额均分，并可提出有用扩展作为可选方案，例如按消费项目分组计算，是否纳入首版按实际需求决定。"
+  } ],
+  "revisedBody" : "请设计AA分账工具，整体功能和交互由你安排；核心提供总额均分，并可提出有用扩展作为可选方案，例如按消费项目分组计算，是否纳入首版按实际需求决定。",
+  "mechanicalExpectation" : true
+}, {
+  "id" : "REPLAY_NEIGHBOR_MESSAGE",
+  "expected" : "UNSUPPORTED_FACT",
+  "protocolValid" : true,
+  "sameDraft" : true,
+  "bodyEqual" : true,
+  "issues" : [ ],
+  "revisedBody" : "帮我写一条发给楼上邻居的信息，反映晚上有噪音影响我休息。我想解决问题，但不想把邻里关系闹僵，具体怎么说你来设计。\n\n请直接给出一条可复制发送的成品信息，简短、口语化，一段话即可，按先致意、再说明情况、最后提出请求的顺序来写。由于我不确定噪音的具体来源，信息里不要指认具体声音或责任人，用“可能”“不确定是不是”这类留有余地的说法，只说明是晚上休息时段听到声响。结尾提出一个低门槛、可协商的请求，比如请对方晚间留意一下声响，或问对方方便时能否沟通。整体语气友善、不对抗，让对方容易接受，同时把问题说清楚。",
+  "mechanicalExpectation" : false
+}, {
+  "id" : "REPLAY_SHARED_EXPENSE_TOOL",
+  "expected" : "SCOPE_EXPANSION",
+  "protocolValid" : true,
+  "sameDraft" : true,
+  "bodyEqual" : true,
+  "issues" : [ ],
+  "revisedBody" : "用 Python 写一个聚餐 AA 平摊费用的小工具，解决多人垫付后总算不清的问题，交付完整可运行的代码和用法说明。输入方式和结果展示由你设计，建议做成命令行交互或简单文本/CSV 录入：逐条记录参与人姓名、每笔垫付的付款人和金额，并支持指定某笔消费只有部分人参与分摊（如有人不喝酒、有人不吃某道菜），这样能覆盖常见的聚餐场景。计算后按参与人汇总垫付总额与应分摊额，输出每人应收或应付的净额，并给出尽量少笔数的转账结算方案（谁转给谁多少钱），使每人净额归零。金额按分处理，明确取整和除不尽的余数分配规则（如余数给垫付人或按顺序分配），保证结果可核对、无尾差争议。用法部分给出运行命令、示例输入及对应的输出示例，让用户能照着直接用。",
+  "mechanicalExpectation" : false
+}, {
+  "id" : "N4_COMPLETE_DESIGN",
+  "expected" : "UNCHANGED",
+  "protocolValid" : true,
+  "sameDraft" : false,
+  "bodyEqual" : false,
+  "issues" : [ {
+    "type" : "REQUIREMENT_OMISSION",
+    "sourceId" : "rawPrompt",
+    "sourceQuote" : "整体功能和交互由你安排",
+    "bodyQuote" : "核心提供总额均分；可选扩展为按消费项目分组计算，是否纳入首版按实际需求决定。",
+    "replacement" : "核心提供总额均分；整体功能与交互由你安排，除总额均分外可提出有用扩展作为可选方案，例如按消费项目分组计算，是否纳入首版按实际需求决定。"
+  } ],
+  "revisedBody" : "请设计AA分账工具，核心提供总额均分；整体功能与交互由你安排，除总额均分外可提出有用扩展作为可选方案，例如按消费项目分组计算，是否纳入首版按实际需求决定。",
+  "mechanicalExpectation" : false
+} ]

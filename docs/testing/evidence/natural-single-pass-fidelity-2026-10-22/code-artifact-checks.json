@@ -1,0 +1,1000 @@
+{
+  "batch": "natural-single-pass-fidelity-2026-10-22",
+  "kind": "OFFLINE_GENERATED_ARTIFACT_EXECUTION",
+  "actualModelCalls": 0,
+  "sourceResultPattern": "SHARED_EXPENSE_TOOL_{RAW|V4|V20}_EXEC.json",
+  "safety": [
+    {
+      "arm": "RAW",
+      "codeSha256": "58af3955277933f53a89192dfb7c54da3cba128ae409cea1524de6af31fd2a17",
+      "lineCount": 137,
+      "imports": [
+        "import argparse",
+        "import sys",
+        "from collections import defaultdict"
+      ],
+      "manualStaticReview": "PASS_FOR_SELECTED_PURE_FUNCTIONS",
+      "executionBoundary": "Loaded with non-main run_name; no interactive/main/file-reading branch invoked. Standard-library imports and pure parser/calculation functions only."
+    },
+    {
+      "arm": "V4",
+      "codeSha256": "af9c81e6418b6b88b55d30a7382f2183cf385f6fac866db58eb3772f600ed8cb",
+      "lineCount": 436,
+      "imports": [
+        "import json",
+        "import sys",
+        "from decimal import Decimal, InvalidOperation"
+      ],
+      "manualStaticReview": "PASS_FOR_SELECTED_PURE_FUNCTIONS",
+      "executionBoundary": "Loaded with non-main run_name; no interactive/main/file-reading branch invoked. Standard-library imports and pure parser/calculation functions only."
+    },
+    {
+      "arm": "V20",
+      "codeSha256": "52a6e9f55408232695c9b38604fe468c45cbdc9a6578a589a89e94ce55004a0a",
+      "lineCount": 328,
+      "imports": [
+        "from decimal import Decimal, ROUND_HALF_UP, InvalidOperation",
+        "from typing import Dict, List, Optional, Tuple",
+        "import sys"
+      ],
+      "manualStaticReview": "PASS_FOR_SELECTED_PURE_FUNCTIONS",
+      "executionBoundary": "Loaded with non-main run_name; no interactive/main/file-reading branch invoked. Standard-library imports and pure parser/calculation functions only."
+    }
+  ],
+  "commonCoreChecks": [
+    {
+      "caseId": "equal_three",
+      "arm": "RAW",
+      "input": {
+        "people": [
+          "A",
+          "B",
+          "C"
+        ],
+        "expenses": [
+          {
+            "payer": "A",
+            "amount": "60.00"
+          }
+        ]
+      },
+      "paidCents": {
+        "A": 6000,
+        "B": 0,
+        "C": 0
+      },
+      "owedDisplayedCents": {
+        "A": 2000,
+        "B": 2000,
+        "C": 2000
+      },
+      "netCents": {
+        "A": 4000,
+        "B": -2000,
+        "C": -2000
+      },
+      "transfersCents": [
+        [
+          "B",
+          "A",
+          2000
+        ],
+        [
+          "C",
+          "A",
+          2000
+        ]
+      ],
+      "residualCentsAfterTransfers": {
+        "A": 0,
+        "B": 0,
+        "C": 0
+      },
+      "totalCents": 6000,
+      "paidTotalCents": 6000,
+      "owedDisplayedTotalCents": 6000,
+      "conservesDisplayedCents": true,
+      "settlesToZero": true
+    },
+    {
+      "caseId": "equal_three",
+      "arm": "V4",
+      "input": {
+        "people": [
+          "A",
+          "B",
+          "C"
+        ],
+        "expenses": [
+          {
+            "payer": "A",
+            "amount": "60.00"
+          }
+        ]
+      },
+      "paidCents": {
+        "A": 6000,
+        "B": 0,
+        "C": 0
+      },
+      "owedDisplayedCents": {
+        "A": 2000,
+        "B": 2000,
+        "C": 2000
+      },
+      "netCents": {
+        "A": 4000,
+        "B": -2000,
+        "C": -2000
+      },
+      "transfersCents": [
+        [
+          "B",
+          "A",
+          2000
+        ],
+        [
+          "C",
+          "A",
+          2000
+        ]
+      ],
+      "residualCentsAfterTransfers": {
+        "A": 0,
+        "B": 0,
+        "C": 0
+      },
+      "totalCents": 6000,
+      "paidTotalCents": 6000,
+      "owedDisplayedTotalCents": 6000,
+      "conservesDisplayedCents": true,
+      "settlesToZero": true
+    },
+    {
+      "caseId": "equal_three",
+      "arm": "V20",
+      "input": {
+        "people": [
+          "A",
+          "B",
+          "C"
+        ],
+        "expenses": [
+          {
+            "payer": "A",
+            "amount": "60.00"
+          }
+        ]
+      },
+      "paidCents": {
+        "A": 6000,
+        "B": 0,
+        "C": 0
+      },
+      "owedDisplayedCents": {
+        "A": 2000,
+        "B": 2000,
+        "C": 2000
+      },
+      "netCents": {
+        "A": 4000,
+        "B": -2000,
+        "C": -2000
+      },
+      "transfersCents": [
+        [
+          "B",
+          "A",
+          2000
+        ],
+        [
+          "C",
+          "A",
+          2000
+        ]
+      ],
+      "residualCentsAfterTransfers": {
+        "A": 0,
+        "B": 0,
+        "C": 0
+      },
+      "totalCents": 6000,
+      "paidTotalCents": 6000,
+      "owedDisplayedTotalCents": 6000,
+      "conservesDisplayedCents": true,
+      "settlesToZero": true
+    },
+    {
+      "caseId": "multiple_payers",
+      "arm": "RAW",
+      "input": {
+        "people": [
+          "A",
+          "B",
+          "C"
+        ],
+        "expenses": [
+          {
+            "payer": "A",
+            "amount": "30.00"
+          },
+          {
+            "payer": "B",
+            "amount": "12.00"
+          }
+        ]
+      },
+      "paidCents": {
+        "A": 3000,
+        "B": 1200,
+        "C": 0
+      },
+      "owedDisplayedCents": {
+        "A": 1400,
+        "B": 1400,
+        "C": 1400
+      },
+      "netCents": {
+        "A": 1600,
+        "B": -200,
+        "C": -1400
+      },
+      "transfersCents": [
+        [
+          "C",
+          "A",
+          1400
+        ],
+        [
+          "B",
+          "A",
+          200
+        ]
+      ],
+      "residualCentsAfterTransfers": {
+        "A": 0,
+        "B": 0,
+        "C": 0
+      },
+      "totalCents": 4200,
+      "paidTotalCents": 4200,
+      "owedDisplayedTotalCents": 4200,
+      "conservesDisplayedCents": true,
+      "settlesToZero": true
+    },
+    {
+      "caseId": "multiple_payers",
+      "arm": "V4",
+      "input": {
+        "people": [
+          "A",
+          "B",
+          "C"
+        ],
+        "expenses": [
+          {
+            "payer": "A",
+            "amount": "30.00"
+          },
+          {
+            "payer": "B",
+            "amount": "12.00"
+          }
+        ]
+      },
+      "paidCents": {
+        "A": 3000,
+        "B": 1200,
+        "C": 0
+      },
+      "owedDisplayedCents": {
+        "A": 1400,
+        "B": 1400,
+        "C": 1400
+      },
+      "netCents": {
+        "A": 1600,
+        "B": -200,
+        "C": -1400
+      },
+      "transfersCents": [
+        [
+          "C",
+          "A",
+          1400
+        ],
+        [
+          "B",
+          "A",
+          200
+        ]
+      ],
+      "residualCentsAfterTransfers": {
+        "A": 0,
+        "B": 0,
+        "C": 0
+      },
+      "totalCents": 4200,
+      "paidTotalCents": 4200,
+      "owedDisplayedTotalCents": 4200,
+      "conservesDisplayedCents": true,
+      "settlesToZero": true
+    },
+    {
+      "caseId": "multiple_payers",
+      "arm": "V20",
+      "input": {
+        "people": [
+          "A",
+          "B",
+          "C"
+        ],
+        "expenses": [
+          {
+            "payer": "A",
+            "amount": "30.00"
+          },
+          {
+            "payer": "B",
+            "amount": "12.00"
+          }
+        ]
+      },
+      "paidCents": {
+        "A": 3000,
+        "B": 1200,
+        "C": 0
+      },
+      "owedDisplayedCents": {
+        "A": 1400,
+        "B": 1400,
+        "C": 1400
+      },
+      "netCents": {
+        "A": 1600,
+        "B": -200,
+        "C": -1400
+      },
+      "transfersCents": [
+        [
+          "C",
+          "A",
+          1400
+        ],
+        [
+          "B",
+          "A",
+          200
+        ]
+      ],
+      "residualCentsAfterTransfers": {
+        "A": 0,
+        "B": 0,
+        "C": 0
+      },
+      "totalCents": 4200,
+      "paidTotalCents": 4200,
+      "owedDisplayedTotalCents": 4200,
+      "conservesDisplayedCents": true,
+      "settlesToZero": true
+    },
+    {
+      "caseId": "cent_remainder_three",
+      "arm": "RAW",
+      "input": {
+        "people": [
+          "A",
+          "B",
+          "C"
+        ],
+        "expenses": [
+          {
+            "payer": "A",
+            "amount": "100.00"
+          }
+        ]
+      },
+      "paidCents": {
+        "A": 10000,
+        "B": 0,
+        "C": 0
+      },
+      "owedDisplayedCents": {
+        "A": 3333,
+        "B": 3333,
+        "C": 3333
+      },
+      "netCents": {
+        "A": 6667,
+        "B": -3333,
+        "C": -3333
+      },
+      "transfersCents": [
+        [
+          "B",
+          "A",
+          3333
+        ],
+        [
+          "C",
+          "A",
+          3333
+        ]
+      ],
+      "residualCentsAfterTransfers": {
+        "A": 1,
+        "B": 0,
+        "C": 0
+      },
+      "totalCents": 10000,
+      "paidTotalCents": 10000,
+      "owedDisplayedTotalCents": 9999,
+      "conservesDisplayedCents": false,
+      "settlesToZero": false
+    },
+    {
+      "caseId": "cent_remainder_three",
+      "arm": "V4",
+      "input": {
+        "people": [
+          "A",
+          "B",
+          "C"
+        ],
+        "expenses": [
+          {
+            "payer": "A",
+            "amount": "100.00"
+          }
+        ]
+      },
+      "paidCents": {
+        "A": 10000,
+        "B": 0,
+        "C": 0
+      },
+      "owedDisplayedCents": {
+        "A": 3334,
+        "B": 3333,
+        "C": 3333
+      },
+      "netCents": {
+        "A": 6666,
+        "B": -3333,
+        "C": -3333
+      },
+      "transfersCents": [
+        [
+          "B",
+          "A",
+          3333
+        ],
+        [
+          "C",
+          "A",
+          3333
+        ]
+      ],
+      "residualCentsAfterTransfers": {
+        "A": 0,
+        "B": 0,
+        "C": 0
+      },
+      "totalCents": 10000,
+      "paidTotalCents": 10000,
+      "owedDisplayedTotalCents": 10000,
+      "conservesDisplayedCents": true,
+      "settlesToZero": true
+    },
+    {
+      "caseId": "cent_remainder_three",
+      "arm": "V20",
+      "input": {
+        "people": [
+          "A",
+          "B",
+          "C"
+        ],
+        "expenses": [
+          {
+            "payer": "A",
+            "amount": "100.00"
+          }
+        ]
+      },
+      "paidCents": {
+        "A": 10000,
+        "B": 0,
+        "C": 0
+      },
+      "owedDisplayedCents": {
+        "A": 3334,
+        "B": 3333,
+        "C": 3333
+      },
+      "netCents": {
+        "A": 6666,
+        "B": -3333,
+        "C": -3333
+      },
+      "transfersCents": [
+        [
+          "B",
+          "A",
+          3333
+        ],
+        [
+          "C",
+          "A",
+          3333
+        ]
+      ],
+      "residualCentsAfterTransfers": {
+        "A": 0,
+        "B": 0,
+        "C": 0
+      },
+      "totalCents": 10000,
+      "paidTotalCents": 10000,
+      "owedDisplayedTotalCents": 10000,
+      "conservesDisplayedCents": true,
+      "settlesToZero": true
+    },
+    {
+      "caseId": "offered_subset",
+      "arm": "RAW",
+      "input": {
+        "people": [
+          "A",
+          "B",
+          "C"
+        ],
+        "expenses": [
+          {
+            "payer": "A",
+            "amount": "60.00"
+          },
+          {
+            "payer": "B",
+            "amount": "30.00",
+            "participants": [
+              "A",
+              "B"
+            ]
+          }
+        ]
+      },
+      "paidCents": {
+        "A": 6000,
+        "B": 3000,
+        "C": 0
+      },
+      "owedDisplayedCents": {
+        "A": 3500,
+        "B": 3500,
+        "C": 2000
+      },
+      "netCents": {
+        "A": 2500,
+        "B": -500,
+        "C": -2000
+      },
+      "transfersCents": [
+        [
+          "C",
+          "A",
+          2000
+        ],
+        [
+          "B",
+          "A",
+          500
+        ]
+      ],
+      "residualCentsAfterTransfers": {
+        "A": 0,
+        "B": 0,
+        "C": 0
+      },
+      "totalCents": 9000,
+      "paidTotalCents": 9000,
+      "owedDisplayedTotalCents": 9000,
+      "conservesDisplayedCents": true,
+      "settlesToZero": true
+    },
+    {
+      "caseId": "offered_subset",
+      "arm": "V4",
+      "input": {
+        "people": [
+          "A",
+          "B",
+          "C"
+        ],
+        "expenses": [
+          {
+            "payer": "A",
+            "amount": "60.00"
+          },
+          {
+            "payer": "B",
+            "amount": "30.00",
+            "participants": [
+              "A",
+              "B"
+            ]
+          }
+        ]
+      },
+      "paidCents": {
+        "A": 6000,
+        "B": 3000,
+        "C": 0
+      },
+      "owedDisplayedCents": {
+        "A": 3500,
+        "B": 3500,
+        "C": 2000
+      },
+      "netCents": {
+        "A": 2500,
+        "B": -500,
+        "C": -2000
+      },
+      "transfersCents": [
+        [
+          "C",
+          "A",
+          2000
+        ],
+        [
+          "B",
+          "A",
+          500
+        ]
+      ],
+      "residualCentsAfterTransfers": {
+        "A": 0,
+        "B": 0,
+        "C": 0
+      },
+      "totalCents": 9000,
+      "paidTotalCents": 9000,
+      "owedDisplayedTotalCents": 9000,
+      "conservesDisplayedCents": true,
+      "settlesToZero": true
+    },
+    {
+      "caseId": "offered_subset",
+      "arm": "V20",
+      "input": {
+        "people": [
+          "A",
+          "B",
+          "C"
+        ],
+        "expenses": [
+          {
+            "payer": "A",
+            "amount": "60.00"
+          },
+          {
+            "payer": "B",
+            "amount": "30.00",
+            "participants": [
+              "A",
+              "B"
+            ]
+          }
+        ]
+      },
+      "paidCents": {
+        "A": 6000,
+        "B": 3000,
+        "C": 0
+      },
+      "owedDisplayedCents": {
+        "A": 3500,
+        "B": 3500,
+        "C": 2000
+      },
+      "netCents": {
+        "A": 2500,
+        "B": -500,
+        "C": -2000
+      },
+      "transfersCents": [
+        [
+          "C",
+          "A",
+          2000
+        ],
+        [
+          "B",
+          "A",
+          500
+        ]
+      ],
+      "residualCentsAfterTransfers": {
+        "A": 0,
+        "B": 0,
+        "C": 0
+      },
+      "totalCents": 9000,
+      "paidTotalCents": 9000,
+      "owedDisplayedTotalCents": 9000,
+      "conservesDisplayedCents": true,
+      "settlesToZero": true
+    }
+  ],
+  "publishedExampleChecks": [
+    {
+      "arm": "RAW",
+      "input": {
+        "people": [
+          "张三",
+          "李四",
+          "王五"
+        ],
+        "expenses": [
+          {
+            "payer": "张三",
+            "amount": "300.00"
+          },
+          {
+            "payer": "李四",
+            "amount": "120.00",
+            "participants": [
+              "张三",
+              "李四"
+            ]
+          },
+          {
+            "payer": "王五",
+            "amount": "80.00",
+            "participants": [
+              "王五",
+              "李四"
+            ]
+          }
+        ]
+      },
+      "publishedOwedCents": {
+        "张三": 14667,
+        "李四": 14667,
+        "王五": 10667
+      },
+      "publishedExampleMatchesCode": false,
+      "paidCents": {
+        "张三": 30000,
+        "李四": 12000,
+        "王五": 8000
+      },
+      "owedDisplayedCents": {
+        "张三": 16000,
+        "李四": 20000,
+        "王五": 14000
+      },
+      "netCents": {
+        "张三": 14000,
+        "李四": -8000,
+        "王五": -6000
+      },
+      "transfersCents": [
+        [
+          "李四",
+          "张三",
+          8000
+        ],
+        [
+          "王五",
+          "张三",
+          6000
+        ]
+      ],
+      "residualCentsAfterTransfers": {
+        "张三": 0,
+        "李四": 0,
+        "王五": 0
+      },
+      "totalCents": 50000,
+      "paidTotalCents": 50000,
+      "owedDisplayedTotalCents": 50000,
+      "conservesDisplayedCents": true,
+      "settlesToZero": true
+    },
+    {
+      "arm": "V4",
+      "input": {
+        "people": [
+          "张三",
+          "李四",
+          "王五",
+          "赵六"
+        ],
+        "expenses": [
+          {
+            "payer": "张三",
+            "amount": "480.00"
+          },
+          {
+            "payer": "李四",
+            "amount": "150.00",
+            "participants": [
+              "张三",
+              "李四",
+              "王五"
+            ]
+          },
+          {
+            "payer": "王五",
+            "amount": "100.00",
+            "participants": [
+              "张三",
+              "李四",
+              "赵六"
+            ],
+            "mode": "shares",
+            "weights": {
+              "张三": 1,
+              "李四": 1,
+              "赵六": 2
+            }
+          }
+        ]
+      },
+      "publishedOwedCents": {
+        "张三": 19500,
+        "李四": 19500,
+        "王五": 17000,
+        "赵六": 17000
+      },
+      "publishedExampleMatchesCode": true,
+      "paidCents": {
+        "张三": 48000,
+        "李四": 15000,
+        "王五": 10000,
+        "赵六": 0
+      },
+      "owedDisplayedCents": {
+        "张三": 19500,
+        "李四": 19500,
+        "王五": 17000,
+        "赵六": 17000
+      },
+      "netCents": {
+        "张三": 28500,
+        "李四": -4500,
+        "王五": -7000,
+        "赵六": -17000
+      },
+      "transfersCents": [
+        [
+          "赵六",
+          "张三",
+          17000
+        ],
+        [
+          "王五",
+          "张三",
+          7000
+        ],
+        [
+          "李四",
+          "张三",
+          4500
+        ]
+      ],
+      "residualCentsAfterTransfers": {
+        "张三": 0,
+        "李四": 0,
+        "王五": 0,
+        "赵六": 0
+      },
+      "totalCents": 73000,
+      "paidTotalCents": 73000,
+      "owedDisplayedTotalCents": 73000,
+      "conservesDisplayedCents": true,
+      "settlesToZero": true
+    },
+    {
+      "arm": "V20",
+      "input": {
+        "people": [
+          "小明",
+          "小红",
+          "小刚",
+          "小丽"
+        ],
+        "expenses": [
+          {
+            "payer": "小明",
+            "amount": "200.00"
+          },
+          {
+            "payer": "小红",
+            "amount": "88.50",
+            "participants": [
+              "小明",
+              "小红",
+              "小刚"
+            ]
+          },
+          {
+            "payer": "小刚",
+            "amount": "36.60",
+            "participants": [
+              "小刚",
+              "小丽"
+            ]
+          }
+        ]
+      },
+      "publishedOwedCents": {
+        "小明": 8617,
+        "小红": 7950,
+        "小刚": 7950,
+        "小丽": 7983
+      },
+      "publishedExampleMatchesCode": false,
+      "paidCents": {
+        "小明": 20000,
+        "小红": 8850,
+        "小刚": 3660,
+        "小丽": 0
+      },
+      "owedDisplayedCents": {
+        "小明": 7950,
+        "小红": 7950,
+        "小刚": 9780,
+        "小丽": 6830
+      },
+      "netCents": {
+        "小明": 12050,
+        "小红": 900,
+        "小刚": -6120,
+        "小丽": -6830
+      },
+      "transfersCents": [
+        [
+          "小丽",
+          "小明",
+          6830
+        ],
+        [
+          "小刚",
+          "小明",
+          5220
+        ],
+        [
+          "小刚",
+          "小红",
+          900
+        ]
+      ],
+      "residualCentsAfterTransfers": {
+        "小明": 0,
+        "小红": 0,
+        "小刚": 0,
+        "小丽": 0
+      },
+      "totalCents": 32510,
+      "paidTotalCents": 32510,
+      "owedDisplayedTotalCents": 32510,
+      "conservesDisplayedCents": true,
+      "settlesToZero": true
+    }
+  ],
+  "summary": {
+    "RAW": "Ordinary whole-cent cases pass; splitting 100.00 across three leaves a one-cent residual after independently rounding net amounts. Published sample differs from its code.",
+    "V4": "All four core cases conserve cents and settle; its own weighted sample matches the code.",
+    "V20": "All four core cases conserve cents and settle; its published corresponding output does not match the code. A following paragraph admits and corrects owed amounts, leaving the example internally contradictory.",
+    "v20VersusV4": "NO_WORK_WIN: fewer optional modes can reduce input choices, but the incorrect worked output is a concrete usability regression. Valid remainder distributions and different settlement paths are accepted."
+  },
+  "limits": [
+    "No network, protected-path access, external files or production actions.",
+    "Only manually reviewed in-memory APIs executed; interactive and file-loading UX not exercised.",
+    "This bounded execution is not exhaustive validation of either generated application.",
+    "These are downstream artifacts; the first occurrence of a defect alone does not establish sole enhancement-model causation."
+  ]
+}

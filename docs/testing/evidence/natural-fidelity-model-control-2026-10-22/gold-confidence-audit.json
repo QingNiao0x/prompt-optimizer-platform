@@ -1,0 +1,154 @@
+{
+  "id": "CROSS_BATCH_GOLD_CONFIDENCE_AUDIT",
+  "date": "2026-10-22",
+  "purpose": "审计真实原件和合成探针的金标可信度，避免把需要质量权衡的开放设计直接当成确定严重违约；不回改冻结规则或计数。",
+  "reviewProvenance": "依据root汇总的两位独立复核一致结论；本收口代理另核对原始请求、增强正文、实际作品和逐次Token原件。",
+  "affectedBatchInterpretations": [
+    "natural-completion-preparation-2026-10-22",
+    "natural-source-fidelity-2026-10-22",
+    "natural-fidelity-input-ablation-2026-10-22",
+    "natural-fidelity-separation-2026-10-22",
+    "natural-fidelity-model-control-2026-10-22"
+  ],
+  "interpretationPrecedence": "本审计下调下列AA/legacy的确定严重错误归因；旧assessment中的强断言作为当时审阅记录保留，不能在后续判断中继续无条件沿用。原始协议、金标、结果和机械观测均保留。",
+  "findings": [
+    {
+      "id": "REPLAY_SHARED_EXPENSE_TOOL",
+      "confidenceInSevereScopeViolation": "NOT_ESTABLISHED",
+      "confidenceInComplexityConcern": "PLAUSIBLE_QUALITY_OBSERVATION",
+      "rawPrompt": "我们聚餐时常有人垫付，最后AA总算不清。用Python帮我做个平摊费用的小工具，输入方式和结果怎么展示你来设计，给我完整代码和用法。",
+      "evidence": [
+        {
+          "source": "../natural-completion-preparation-2026-10-22/cases.json#SHARED_EXPENSE_TOOL",
+          "fact": "原始需求没有“最简单”、只收总额人数或禁止扩展的明确限制，并委托输入和展示设计。"
+        },
+        {
+          "source": "../natural-completion-preparation-2026-10-22/http-results.json#SHARED_EXPENSE_TOOL_V15_GEN",
+          "quote": "建议做成命令行交互或简单文本/CSV 录入",
+          "fact": "正文以建议提出实现方式，后续部分人分摊可读为拟议设计的一部分；“并支持”的必需程度仍有表达歧义。原AA核心和完整代码/用法交付保留。"
+        },
+        {
+          "source": "../natural-completion-preparation-2026-10-22/http-results.json#SHARED_EXPENSE_TOOL_RAW_EXEC",
+          "quote": "默认所有人分摊，也可以指定部分人（比如有人不喝酒）。",
+          "fact": "原始提示词的下游也自主选择该功能，说明它可以是开放设计的正常变体。它不能追认用户已确认该功能，也不能证明任何扩展均适用。"
+        }
+      ],
+      "correctedConclusion": "不能把真实AA稿确定判为严重越界或必修语义错误。应观察默认实现复杂度、用户录入负担及功能是否值得采用；这与B4明确要求最简单/总金额人数的合成错误不同。",
+      "downstreamFinding": {
+        "confidence": "HIGH",
+        "source": "../natural-completion-preparation-2026-10-22/code-artifact-checks.json",
+        "fact": "V15公布的分组算例与实际代码计算不一致；两臂各6组核心守恒/结清检查通过。错误首次可见于下游作品，不得把按每笔取整的正常变体当失败。",
+        "attribution": "具体算例不一致属于下游交付问题；复杂度是否促成错误、增强是否为唯一根因未定。"
+      },
+      "newFreezeRole": "QUALITY_OBSERVATION_ONLY",
+      "mustNotInfer": [
+        "未被用户明确要求不等于必然越界。",
+        "RAW自行选择不能冒充用户已确认。",
+        "这一功能导致作品Token增加。"
+      ]
+    },
+    {
+      "id": "LEGACY_N4_MISSING_GOAL",
+      "confidenceInSevereRequirementOmission": "UNDETERMINED",
+      "confidenceInExpressionAmbiguity": "PLAUSIBLE",
+      "rawPrompt": "请设计AA分账工具，整体功能和交互由你安排；除总额均分外，可提出有用扩展作为可选方案。",
+      "body": "核心提供总额均分；可选扩展为按消费项目分组计算，是否纳入首版按实际需求决定。",
+      "evidence": [
+        {
+          "source": "review-fixtures.json#LEGACY_N4_MISSING_GOAL",
+          "fact": "虽未显式重述“请设计AA分账工具”，功能片段仍可能让执行者推断要进行工具设计。"
+        },
+        {
+          "source": "../natural-source-fidelity-2026-10-22/erratum-n4-design.json",
+          "fact": "先前勘误确认补回完整目标可以合法，但“可以合法补回”不等于已证明原稿存在严重实质遗漏。"
+        },
+        {
+          "source": "http-results.json#LEGACY_N4_MISSING_GOAL_DETECT",
+          "fact": "本批只有检测结果，没有该稿与完整目标稿的实际作品对照，无法证明未补目标必然改变交付。"
+        }
+      ],
+      "correctedConclusion": "保留表达不够完整/目标不清的质量疑点，严重任务遗漏未定；不能将模型未报问题直接算确定严重漏检。",
+      "newFreezeRole": "QUALITY_OBSERVATION_ONLY",
+      "fullGoalNormalControl": "N4_COMPLETE_DESIGN继续独立作为正常稿守护，不与旧稿混同或回改旧金标。"
+    },
+    {
+      "id": "REPLAY_NEIGHBOR_MESSAGE",
+      "confidenceInUnsupportedUserKnowledgeState": "HIGH",
+      "rawPrompt": "帮我写条发给楼上邻居的信息，晚上有噪音影响我休息。我想解决问题，但不想把邻里关系闹僵，具体怎么说你来设计。",
+      "unsupportedQuote": "由于我不确定噪音的具体来源",
+      "downstreamPropagationQuote": "具体是什么声音、从哪儿来的我也不太确定",
+      "evidence": [
+        {
+          "source": "../natural-completion-preparation-2026-10-22/http-results.json#NEIGHBOR_MESSAGE_V15_GEN",
+          "fact": "原始请求未给出用户不知道来源的知识状态，增强正文却用因果句将其写成用户立场。"
+        },
+        {
+          "source": "../natural-completion-preparation-2026-10-22/http-results.json#NEIGHBOR_MESSAGE_V15_EXEC",
+          "fact": "该新增知识状态实际传播到可发送消息中，影响用户自述内容。"
+        }
+      ],
+      "correctedConclusion": "这是有明确证据的信息状态新增，仍是确定错误原件。礼貌、留余地和可协商请求服务用户不伤邻里关系的目标，具有价值；应纠正无依据状态，不全面删除礼貌缓和表达。",
+      "attribution": "无依据状态首先出现于增强正文，继而被下游带入作品；不把礼貌文风本身归为缺陷。",
+      "newFreezeRole": "DEFINITE_ERROR_REPLAY"
+    }
+  ],
+  "costAudit": {
+    "caseId": "SHARED_EXPENSE_TOOL",
+    "source": "../natural-completion-preparation-2026-10-22/transports.jsonl",
+    "v4GenerationTotalTokens": 2421,
+    "v15GenerationTotalTokens": 5105,
+    "v15GenerationStages": {
+      "PREPARATION": 1902,
+      "REWRITE": 3203
+    },
+    "v4WorkTotalTokens": 4172,
+    "v15WorkTotalTokens": 4000,
+    "workTokenDifferenceV15MinusV4": -172,
+    "conclusion": "该题V15作品Token比第四版少172，不能声称部分人分摊功能使作品Token上升。增强端成本增加与两阶段机制同时发生，不能把全部增量单因果归到某个功能。Token是输入输出总和，不是货币成本或正文长度。"
+  },
+  "newFreezeGuidance": {
+    "qualityObservationCases": [
+      "REPLAY_SHARED_EXPENSE_TOOL",
+      "LEGACY_N4_MISSING_GOAL"
+    ],
+    "definiteErrorCases": [
+      "B1_UNKNOWN_STATE",
+      "B2_PROPOSAL",
+      "B3_VERIFY_AUTH",
+      "B4_SCOPE",
+      "B5_ASSISTANT_AUTH",
+      "REPLAY_NEIGHBOR_MESSAGE"
+    ],
+    "normalControlsRemainStrict": [
+      "N1_INPUT_GAP",
+      "N2_CONFIRMED",
+      "N3_REAL_AUTH",
+      "N4_COMPLETE_DESIGN",
+      "N5_SOURCE_KIND"
+    ],
+    "boundary": "这是后续新冻结的分类依据，不回改当前protocol、旧金标、机械计数或通过条件；不自动发起新评测。"
+  },
+  "unchangedDecision": {
+    "currentMechanicalExpectationMatches": 9,
+    "currentMechanicalExpectationTotal": 13,
+    "currentActualCalls": 13,
+    "semanticGatePassed": false,
+    "adoptProStrategy": false,
+    "defaultVersionAfter": "4",
+    "reason": "审计不把旧9/13改成通过。即使AA/legacy不再作确定严重漏检，Pro仍漏掉确定的B1和真实邻居知识状态问题，没有证明复杂原件收益或端到端质量；五正常严格保护要求继续有效。"
+  },
+  "provenanceAndBudget": "本审计未执行真实模型调用，累计1086、本任务实际400及闭批总账均不变。",
+  "preservedOldArtifactSha256": {
+    "protocol.json": "495b67ca1c0e91ae1287856417306b30200876db0e91ff82b585bf2d1e0601ff",
+    "review-fixtures.json": "0f5cfe188b88b47a7010e03bff1dbcdd3e918d41b4088e94fba1b28d954e639a",
+    "fixture-detection-checks.json": "f61163ffec4631fbcb27c0f3d85b77eaa1b8410f4cc1dbfdd4f9c7130f73ded0",
+    "transports.jsonl": "e9e2f90dde30dde71c36a7c3d2772b86136d5cea3513628d4363e7bcf63bc892",
+    "http-results.json": "9652c8070591e799c0b47e633f39cfab7fb69517d66069988207df2a7ad3a67c",
+    "cost-and-fixture-checks.json": "2b72848a7e1ea6be2ec56e72367dc412ca56dbca89537ea0c878ab479624d2e8",
+    "manual-assessment.json": "f3621478470c53d98d875bc82549eb787695cf6f898807d7ad6752e0fed0a66f",
+    "fixture-detection-assessment.json": "0a816dd24606b77ff9575586fca2a3622e8709b408cab8c6d5070230db64f082",
+    "summary.json": "e3193a196e8274358958aac8a8ee1a9dcd8c3752e2cb7fdc5415fcdf9bd380fb",
+    "closure.json": "7806cec8a175c88757ad491fc331d6a39af0bd425d1438069009e8c19332ed61",
+    "final-call-audit.json": "be52705a2c1fa6040675eba405060803e765a64717cefc4b656d5f07aac54220"
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "batch": "natural-fidelity-model-control-2026-10-22",
+  "authorizationQuote": "授权新增最多1024次实际调用, 以增强生成的提示词质量为主要目标",
+  "taskMaximumNewActualCalls": 1024,
+  "maximumNewActualCalls": 20,
+  "previousClosedActualCalls": 1073,
+  "taskPreviouslyActual": 387,
+  "taskPreviouslyAllocatedClosed": 796,
+  "freshUnallocatedBefore": 228,
+  "freshUnallocatedAfterAllocation": 208,
+  "closedBalanceTransferred": 0,
+  "formalLimitsAfterAuthorization": {
+    "total": 1738,
+    "baseline": 80,
+    "candidate": 1658
+  },
+  "baselineCommit": "8195626e",
+  "baselineVersion": "4",
+  "candidateVersion": "MODEL_CONTROL_ONLY",
+  "modelId": "deepseek:deepseek-v4-pro",
+  "upstreamModel": "deepseek-v4-pro",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 16384,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 20
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 13
+  },
+  "generation": [],
+  "plan": [],
+  "confirmedPlanGeneration": [],
+  "execution": [],
+  "primaryCases": [],
+  "seenRegressionCases": [],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "commonPlanAnchorVersion": "4",
+  "criteria": [
+    "同一13份原件、相同DETECT指导、温度0.2/8192上限/禁用thinking，仅把上游检测模型由deepseek-flash换为既有deepseek-v4-pro；业务JSON中的原modelId也保持不变。",
+    "先通过现有服务端模型目录解析，未开放或路由不可用时停止；不发布/切换目录、不修改默认模型或产品默认策略。",
+    "正常5份应无问题，错误8份应正确定位实际执行差异、保留有效邻近内容且通过现有域协议。单变量收益按13对请求指纹逐项复算，不归因纯模型能力或全场景通过。",
+    "只做检测能力诊断，不调用PATCH/生成/Plan/作品，不作质量重试；若未达门槛保留失败并停止扩采该假设。"
+  ],
+  "stopConditions": [
+    "达到总或阶段上限即停止，失败和协议重试计数，不做质量重试。",
+    "同一假设连续两个候选出现相同严重失败时停止扩采，重新检查职责和证据。",
+    "只处理用户本条授权的补全指导与信息状态要求保真，后续方案不自动开工。"
+  ],
+  "status": "FROZEN",
+  "allowedJobs": [
+    "B1_UNKNOWN_STATE_DETECT",
+    "N1_INPUT_GAP_DETECT",
+    "B2_PROPOSAL_DETECT",
+    "N2_CONFIRMED_DETECT",
+    "B3_VERIFY_AUTH_DETECT",
+    "N3_REAL_AUTH_DETECT",
+    "B4_SCOPE_DETECT",
+    "LEGACY_N4_MISSING_GOAL_DETECT",
+    "REPLAY_NEIGHBOR_MESSAGE_DETECT",
+    "REPLAY_SHARED_EXPENSE_TOOL_DETECT",
+    "N4_COMPLETE_DESIGN_DETECT",
+    "B5_ASSISTANT_AUTH_DETECT",
+    "N5_SOURCE_KIND_DETECT"
+  ],
+  "controlCases": [],
+  "candidateVersions": [],
+  "plannedConditionalFixtureRepairs": 8,
+  "plannedConditionalGenerationRepairs": 10
+}

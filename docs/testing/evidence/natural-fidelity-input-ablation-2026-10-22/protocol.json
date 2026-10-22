@@ -1,0 +1,80 @@
+{
+  "batch": "natural-fidelity-input-ablation-2026-10-22",
+  "authorizationQuote": "授权新增最多1024次实际调用, 以增强生成的提示词质量为主要目标",
+  "taskMaximumNewActualCalls": 1024,
+  "maximumNewActualCalls": 24,
+  "previousClosedActualCalls": 1049,
+  "taskPreviouslyActual": 363,
+  "taskPreviouslyAllocatedClosed": 652,
+  "freshUnallocatedBefore": 372,
+  "freshUnallocatedAfterAllocation": 348,
+  "closedBalanceTransferred": 0,
+  "formalLimitsAfterAuthorization": {
+    "total": 1738,
+    "baseline": 80,
+    "candidate": 1658
+  },
+  "baselineCommit": "8195626e",
+  "baselineVersion": "4",
+  "candidateVersion": "INPUT_ABLATION_ONLY",
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 16384,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 24
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 11
+  },
+  "generation": [],
+  "plan": [],
+  "confirmedPlanGeneration": [],
+  "execution": [],
+  "primaryCases": [],
+  "seenRegressionCases": [],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "commonPlanAnchorVersion": "4",
+  "criteria": [
+    "同模型同参数同原始来源、正文、指导、输出协议与域检查，只移除模型输入中的首稿任务理解；原任务记录在服务端保留。",
+    "保持六类语义问题，不关闭实质遗漏；N2/N3及新的完整N4和其余正常稿正文必须逐字不变；故意错误和真实两原件需实质修正，不删除有效补充、不新增重复。",
+    "旧N4存在金标缺陷，保留原件并作为目标遗漏探针；新增完整任务目标的N4正常稿独立记录，不据其结果回改前批计数。",
+    "识别与修订分别人工审查；单次结构apply成功不能证明修复；若再次出现同类严重失败，不继续叠加指令或扩大采样，重新检查职责。",
+    "这是输入锚定假说的诊断实验，无生成或作品收益宣称，不切产品默认、不代替端到端验收。"
+  ],
+  "stopConditions": [
+    "达到总或阶段上限即停止，失败和协议重试计数，不做质量重试。",
+    "同一假设连续两个候选出现相同严重失败时停止扩采，重新检查职责和证据。",
+    "只处理用户本条授权的补全指导与信息状态要求保真，后续方案不自动开工。"
+  ],
+  "status": "FROZEN",
+  "allowedJobs": [
+    "B1_UNKNOWN_STATE_REVIEW",
+    "N1_INPUT_GAP_REVIEW",
+    "B2_PROPOSAL_REVIEW",
+    "N2_CONFIRMED_REVIEW",
+    "B3_VERIFY_AUTH_REVIEW",
+    "N3_REAL_AUTH_REVIEW",
+    "B4_SCOPE_REVIEW",
+    "LEGACY_N4_MISSING_GOAL_REVIEW",
+    "REPLAY_NEIGHBOR_MESSAGE_REVIEW",
+    "REPLAY_SHARED_EXPENSE_TOOL_REVIEW",
+    "N4_COMPLETE_DESIGN_REVIEW"
+  ],
+  "controlCases": [],
+  "candidateVersions": []
+}

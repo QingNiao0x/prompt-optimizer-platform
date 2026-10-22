@@ -1,0 +1,58 @@
+{
+  "batch": "natural-fidelity-model-control-2026-10-22",
+  "status": "CLOSED_MODEL_CONTROL_NOT_ADOPTED",
+  "configuration": "MODEL_CONTROL_ONLY",
+  "baselineModel": "deepseek-flash",
+  "candidateModel": "deepseek-v4-pro",
+  "adoptProStrategy": false,
+  "defaultVersionAfter": "4",
+  "actualCalls": 13,
+  "logicalResults": 13,
+  "phaseCounts": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 13
+  },
+  "reviewStageCounts": {
+    "DETECT": 13,
+    "PATCH": 0
+  },
+  "protocolRetries": 0,
+  "qualityRetries": 0,
+  "httpSuccessResults": 13,
+  "finishStopResults": 13,
+  "totalTokens": 9770,
+  "all13RequestPairsDifferOnlyByModel": true,
+  "businessJsonByteUnchanged": true,
+  "unexpectedRequestDifferences": [],
+  "productDomainValid": 13,
+  "mechanicalExpectationMatches": 9,
+  "mechanicalExpectationTotal": 13,
+  "priorFlashMechanicalExpectationMatches": 8,
+  "mechanicalResultIsSemanticPassRate": false,
+  "semanticGatePassed": false,
+  "normalNoFindings": 5,
+  "normalCount": 5,
+  "missedProblemDrafts": [
+    "B1_UNKNOWN_STATE",
+    "LEGACY_N4_MISSING_GOAL",
+    "REPLAY_NEIGHBOR_MESSAGE",
+    "REPLAY_SHARED_EXPENSE_TOOL"
+  ],
+  "nonoverlapStructuralImprovements": [
+    "B4_SCOPE",
+    "B5_ASSISTANT_AUTH"
+  ],
+  "substantiveComplexReplayGains": 0,
+  "patchOrGenerationPlanExecutionCalls": 0,
+  "sourceSnapshots": {
+    "manifestFiles": 1149,
+    "keySourceCopies": 9,
+    "keySourceUnchangedFromPriorBatch": true
+  },
+  "offlineValidation": "沿用相同主实现既有174项检查及重叠46项复查证据副本，本批没有重跑，不相加也不代表语义通过。",
+  "conclusion": "Pro结构接受改善没有转化为真实复杂原件检测收益，并新增B1漏报，不采用Pro策略、停止该假设扩采。",
+  "publicationScope": "纯检测能力诊断，不变更默认模型、目录或自然增强默认；无作品收益或发布声明。",
+  "taskStatus": "本批闭批，整体增强质量目标仍未完成。"
+}

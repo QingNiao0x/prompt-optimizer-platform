@@ -1,0 +1,19 @@
+[ {
+  "trace" : "029.json",
+  "actualAnswerSources" : [ "actualAnswers.0", "actualAnswers.1" ],
+  "accepted" : false,
+  "stage" : "resolve",
+  "failureClass" : "MissingSources",
+  "failureType" : "INVALID_RESPONSE",
+  "message" : "覆盖记录遗漏原始需求或实际题答来源",
+  "planImpactCount" : 0
+}, {
+  "trace" : "030.json",
+  "actualAnswerSources" : [ "actualAnswers.0", "actualAnswers.1" ],
+  "accepted" : false,
+  "stage" : "validateEnhancement",
+  "failureClass" : "ProviderException",
+  "failureType" : "INVALID_RESPONSE",
+  "message" : "正文检查混入了新的Plan提问",
+  "planImpactCount" : 1
+} ]

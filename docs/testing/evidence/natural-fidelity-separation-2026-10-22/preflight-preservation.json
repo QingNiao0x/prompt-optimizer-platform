@@ -1,0 +1,65 @@
+{
+  "zeroPaidCallsBeforeRevision": true,
+  "sameBatchAllocation": 120,
+  "revisionRecord": "preflight-revision.json",
+  "preflightArtifacts": [
+    "preflight-protocol.json",
+    "preflight-source-manifest.json",
+    "preflight-environment-before.json"
+  ],
+  "currentFreezeArtifacts": [
+    "protocol.json",
+    "source-manifest.json"
+  ],
+  "reason": "启动前复核恢复既有资料/助手建议不能建立用户授权的明确边界；补两个来源类别守护；工具解析兼容产品JSON围栏。原零调用协议和清单保留。",
+  "isQualityRetry": false,
+  "modelProtocolRetriesInPaidRun": 0,
+  "compatibilitySourcePreserved": [
+    "FidelitySeparationFixtureCheck.java",
+    "run-evaluation.mjs",
+    "NaturalFidelitySeparationEvaluationServer.java"
+  ],
+  "boundary": "零调用前复核与工具JSON围栏兼容修改不记为模型质量重试；前检协议和源码指纹保留，当前关键源码另存candidate-source。",
+  "sourceFingerprintDifferencesBeforeFirstPaidCall": [
+    {
+      "path": "docs/testing/evidence/natural-fidelity-separation-2026-10-22/fidelity-instruction.txt",
+      "preflightSha256": "73659da058d2ce0edf8349378e6058de7b0b0ec067198e4f048fad31910f063c",
+      "frozenSha256": "69bf45f3ea6e30666821aa1a1e029774db741961dac631ab7c75a03ebfb8405f"
+    },
+    {
+      "path": "docs/testing/evidence/natural-fidelity-separation-2026-10-22/offline-validation.json",
+      "preflightSha256": "853b06a0185329ab434372c5f50b94433a15a586d6617b7bfb5d5eee4d448669",
+      "frozenSha256": "8f87d2fc9763c7cbddb66fb48a49912c399f2dcc69d4199d84a4ce1bfea26925"
+    },
+    {
+      "path": "docs/testing/evidence/natural-fidelity-separation-2026-10-22/protocol.json",
+      "preflightSha256": "3a96c43650891ba21329ab2511774daad6442fd18dbf739f2d4e80c2eb3e50e9",
+      "frozenSha256": "bf3ee65680d26a047e9c9dec2e137ed427adf9e0dd3395da7fdb2ed07ad34ab4"
+    },
+    {
+      "path": "docs/testing/evidence/natural-fidelity-separation-2026-10-22/review-fixtures.json",
+      "preflightSha256": "f913b2d78dde7faf4450b1f0dbb6cc212f73e53bc6db69de50018bf0c0a96224",
+      "frozenSha256": "0f5cfe188b88b47a7010e03bff1dbcdd3e918d41b4088e94fba1b28d954e639a"
+    },
+    {
+      "path": "docs/testing/evidence/natural-fidelity-separation-2026-10-22/run-evaluation.mjs",
+      "preflightSha256": "14d1ce2c33988639f20960da73ecc979651378e886245ceab9e1e4cdccf084b7",
+      "frozenSha256": "248fe811747a92379b51c3c52a32c5db9ddaf033336c209f785656a2f868166d"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptFidelityInstructions.java",
+      "preflightSha256": "21f155a8b4b39817225d60efb7294cfb6adbe1bd9513adc4bccd9e53da222bed",
+      "frozenSha256": "caba9eb935b5d9914269a4503b5edafa5d99880d6ec2ca28259ce07e9479b342"
+    },
+    {
+      "path": "tmp/natural-fidelity-separation-20261022/runtime/classes/com/promptoptimizer/provider/domain/NaturalPromptFidelityInstructions.class",
+      "preflightSha256": "efaf4296c9afb4931caf87621b371d6dffcd419264bffe6c5f82a4834831f4a8",
+      "frozenSha256": "d00ec0cde5168420c7d9a3bb7cf7cc81eef92a4f56f25d2298ea97c97d4768a8"
+    },
+    {
+      "path": "tmp/natural-fidelity-separation-20261022/runtime/classes/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.class",
+      "preflightSha256": "205466e208df1d66be943e3e1a0881d2e984983dd3913ea7a854bf47ccaa3cbb",
+      "frozenSha256": "4eb3469461620f190a4414780d69ec5843944a057fcf1deb5ede1c8d1accab6c"
+    }
+  ]
+}

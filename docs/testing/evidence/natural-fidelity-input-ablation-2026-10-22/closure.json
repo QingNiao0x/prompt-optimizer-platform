@@ -1,0 +1,44 @@
+{
+  "status": "CLOSED_DIAGNOSTIC_NOT_ADOPTED",
+  "actualCalls": 11,
+  "phaseCounts": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 11
+  },
+  "logicalResults": 11,
+  "protocolRetries": 0,
+  "qualityRetries": 0,
+  "stageMaximum": 24,
+  "unusedStageCallsClosed": 13,
+  "previousClosedActualCalls": 1049,
+  "cumulativeActual": 1060,
+  "formalLimits": {
+    "total": 1738,
+    "baseline": 80,
+    "candidate": 1658
+  },
+  "actualAfter": {
+    "total": 1060,
+    "baseline": 70,
+    "candidate": 990
+  },
+  "taskMaximumNewActualCalls": 1024,
+  "taskActual": 374,
+  "taskStagesAllocated": 676,
+  "taskAllocatedUnusedClosed": 302,
+  "taskFreshUnallocated": 348,
+  "taskAuthorizationStatus": "REMAINDER_AUTHORIZED_FOR_SAME_TASK_NOT_ALLOCATED",
+  "closedBalancesTransferred": 0,
+  "defaultVersionAfter": "4",
+  "diagnosticConfigurationNotAdopted": "INPUT_ABLATION_ONLY",
+  "previousCandidatesRemainNotAdopted": [
+    "16",
+    "17"
+  ],
+  "goalStableQualityImprovementAchieved": false,
+  "reason": "移除首稿任务理解后，结构apply预期仅4/11，且该数不是语义通过率；正常四稿仍误改、两个真实失败仍漏报，另有覆盖失配和局部删除接缝问题。输入锚定不是唯一根因，停止同指导微调及扩采，下一方案需改变检测/修订职责。",
+  "automaticFurtherCalls": false,
+  "closureScope": "仅关闭本批24次配额中的未用13次；同任务尚未分配348次授权不自动分配或调用。"
+}

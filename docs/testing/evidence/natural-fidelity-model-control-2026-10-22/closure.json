@@ -1,0 +1,44 @@
+{
+  "status": "CLOSED_MODEL_CONTROL_NOT_ADOPTED",
+  "actualCalls": 13,
+  "phaseCounts": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 13
+  },
+  "reviewStageCounts": {
+    "DETECT": 13,
+    "PATCH": 0
+  },
+  "logicalResults": 13,
+  "protocolRetries": 0,
+  "qualityRetries": 0,
+  "stageMaximum": 20,
+  "unusedStageCallsClosed": 7,
+  "previousClosedActualCalls": 1073,
+  "cumulativeActual": 1086,
+  "formalLimits": {
+    "total": 1738,
+    "baseline": 80,
+    "candidate": 1658
+  },
+  "actualAfter": {
+    "total": 1086,
+    "baseline": 70,
+    "candidate": 1016
+  },
+  "taskMaximumNewActualCalls": 1024,
+  "taskActual": 400,
+  "taskStagesAllocated": 816,
+  "taskAllocatedUnusedClosed": 416,
+  "taskFreshUnallocated": 208,
+  "taskAuthorizationStatus": "REMAINDER_AUTHORIZED_FOR_SAME_TASK_NOT_ALLOCATED",
+  "closedBalancesTransferred": 0,
+  "defaultVersionAfter": "4",
+  "diagnosticConfigurationNotAdopted": "MODEL_CONTROL_ONLY_PRO",
+  "goalStableQualityImprovementAchieved": false,
+  "reason": "13对请求仅模型变化；Pro结构预期9/13且五正常无问题，B4/B5不再重叠，但B1、两份真实复杂稿、旧目标遗漏稿均漏报。无实质复杂原件收益，不采用Pro策略，不进入PATCH或作品，停止扩采该假设。",
+  "automaticFurtherCalls": false,
+  "closureScope": "仅关闭本批20次配额中的未用7次；同任务尚未分配208次授权不自动分配或调用。"
+}

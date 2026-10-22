@@ -1,0 +1,55 @@
+{
+  "batch": "natural-fidelity-input-ablation-2026-10-22",
+  "status": "CLOSED_DIAGNOSTIC_HYPOTHESIS_NOT_SUFFICIENT",
+  "configuration": "INPUT_ABLATION_ONLY",
+  "configurationAdopted": false,
+  "defaultVersionAfter": "4",
+  "actualCalls": 11,
+  "logicalResults": 11,
+  "phaseCounts": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 11
+  },
+  "protocolRetries": 0,
+  "qualityRetries": 0,
+  "httpSuccessResults": 11,
+  "finishStopResults": 11,
+  "totalTokens": 19538,
+  "domainApplyValid": 10,
+  "domainApplyRejected": 1,
+  "mechanicalFixtureExpectationMatches": 4,
+  "mechanicalFixtureCount": 11,
+  "mechanicalResultIsSemanticPassRate": false,
+  "semanticGateMet": false,
+  "normalVariantsByteUnchanged": 0,
+  "normalVariantsRequiredByteUnchanged": 4,
+  "normalUnnecessarilyRewritten": [
+    "N1_INPUT_GAP",
+    "N2_CONFIRMED",
+    "N3_REAL_AUTH",
+    "N4_COMPLETE_DESIGN"
+  ],
+  "realFailuresCorrected": 0,
+  "realFailuresCount": 2,
+  "importantFailures": [
+    "B1识别问题但覆盖引用缺少正文原句，域保护拒绝。",
+    "B3修正越权部署但局部删除遗留开头孤立逗号，机械成功不能算语义通过。",
+    "N1/N2/N3和新的完整N4正常稿均误改；两个真实失败原件均漏报。"
+  ],
+  "N4Boundary": {
+    "legacyMissingGoalProbe": "LEGACY_N4_MISSING_GOAL",
+    "newCompleteNormalDraft": "N4_COMPLETE_DESIGN",
+    "priorRawEvidenceUnchanged": true
+  },
+  "hypothesisResult": "首稿任务理解输入锚定不是唯一根因；停止同指导微调和扩采，须重审检测/修订职责。",
+  "sourceSnapshots": {
+    "manifestFiles": 1143,
+    "keySourceCopies": 8,
+    "allKeySourceCopiesMatchManifest": true
+  },
+  "offlineValidation": "offline-validation.json是前一批fidelity-green同实现的153项离线证据副本，不是本批重新运行或11次语义质量通过。",
+  "publicationScope": "纯诊断，无新提示词、Plan、作品或部署收益声明。",
+  "taskStatus": "用户的质量目标尚未完成，本诊断配置不采用，后续方案另行实施与冻结。"
+}

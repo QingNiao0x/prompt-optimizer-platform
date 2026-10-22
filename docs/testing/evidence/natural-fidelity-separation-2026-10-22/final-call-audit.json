@@ -1,0 +1,42 @@
+{
+  "batch": "natural-fidelity-separation-2026-10-22",
+  "actualNewCalls": 13,
+  "phaseCounts": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 13
+  },
+  "reviewStageCounts": {
+    "DETECT": 13,
+    "PATCH": 0
+  },
+  "logicalResults": 13,
+  "protocolRetries": 0,
+  "qualityRetries": 0,
+  "actualTokens": 10125,
+  "formalLimits": {
+    "total": 1738,
+    "baseline": 80,
+    "candidate": 1658
+  },
+  "actualAfter": {
+    "total": 1073,
+    "baseline": 70,
+    "candidate": 1003
+  },
+  "taskAuthorization": 1024,
+  "taskActual": 387,
+  "taskAllocated": 796,
+  "closedAllocatedUnused": 409,
+  "freshUnallocatedForSameTask": 228,
+  "closedBalancesTransferred": 0,
+  "currentBatchMaximum": 120,
+  "currentBatchUnusedClosed": 107,
+  "defaultVersionAfter": "4",
+  "candidatesNotAdopted": [
+    "18"
+  ],
+  "noFurtherJobsForThisBatch": true,
+  "countingRule": "13次均为DETECT审阅，HTTP完成但产品域拒绝的B4/B5也计费；零调用前检调整不属于付费协议修复。"
+}

@@ -1,0 +1,42 @@
+{
+  "status": "CLOSED_GROUNDED_FIDELITY_NOT_ADOPTED",
+  "actualCalls": 19,
+  "phaseCounts": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 19
+  },
+  "reviewStageCounts": {
+    "DETECT": 19,
+    "PATCH": 0
+  },
+  "logicalResults": 19,
+  "protocolRetries": 0,
+  "qualityRetries": 0,
+  "actualTokens": 14784,
+  "stageMaximum": 120,
+  "unusedStageCallsClosed": 101,
+  "previousClosedActualCalls": 1086,
+  "cumulativeActual": 1105,
+  "formalLimits": {
+    "total": 1738,
+    "baseline": 80,
+    "candidate": 1658
+  },
+  "actualAfter": {
+    "total": 1105,
+    "baseline": 70,
+    "candidate": 1035
+  },
+  "taskMaximumNewActualCalls": 1024,
+  "taskActual": 419,
+  "taskStagesAllocated": 936,
+  "taskAllocatedUnusedClosed": 517,
+  "taskFreshUnallocated": 88,
+  "closedBalancesTransferred": 0,
+  "defaultVersionAfter": "4",
+  "goalStableQualityImprovementAchieved": false,
+  "reason": "17必验结构预期14满足：正常委托误报、真实长稿用户状态漏报、新依赖同句部分重叠被拒。未进入修订、生成、Plan或作品；不继续堆叠事后critic指导。2观察样本不纳入必须命中统计。",
+  "automaticFurtherCalls": false
+}
