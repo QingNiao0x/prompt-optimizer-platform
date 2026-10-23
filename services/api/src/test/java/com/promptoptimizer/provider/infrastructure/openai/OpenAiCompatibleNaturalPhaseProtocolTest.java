@@ -584,7 +584,7 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"30", "31"})
+    @ValueSource(strings = {"30", "31", "32", "33"})
     void inferredReadinessFeedbackCannotStartANewWritingStage(String version) throws Exception {
         String raw = "先吃透材料中各状态的关系，后面我会逐项给你问题。";
         var input = new NaturalPromptInput(raw, null, List.of(), List.of(), List.of(), null).withStrategyVersion(version);
@@ -612,6 +612,114 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
         assertThat(draft.optimizedPrompt()).isEqualTo(BODY);
         assertThat(draft.taskUnderstanding().requirements()).hasSize(4);
         server.verify();
+    }
+
+    @Test
+    void relationalCompletionKeepsFullInputAndFourthCoverageAfterTheSameScopeGuard() throws Exception {
+        var input = input("32");
+        expect(1, scope(), input);
+        var normalized = json.treeToValue(enhancement(), NaturalPromptPhasePayloads.Enhancement.class)
+                .toDraft(input, new com.promptoptimizer.enhancement.domain.ProviderMetadata("fixture", "fixture", false));
+        var response = json.createObjectNode().put("optimizedPrompt", BODY).put("framework", "APE");
+        response.set("taskUnderstanding", json.valueToTree(normalized.taskUnderstanding()));
+        expect(1, response, input, system -> assertThat(system).isEqualTo(NaturalPromptRelationalInstructions.ENHANCE));
+        var draft = provider.enhance(input, this::checkDraft);
+        assertThat(draft.taskUnderstanding().requirements()).hasSize(4);
+        assertThat(draft.optimizedPrompt()).isEqualTo(BODY);
+        server.verify();
+    }
+
+    @Test
+    void supplementCandidateChecksSourceAndFinalBodyWithoutAddingAnotherModelStage() throws Exception {
+        var input = input("33");
+        expect(1, scope(), input);
+        var response = fourthResponse(input);
+        String addition = "请按已知条件选择通知措辞，未知时间继续保留待定。";
+        response.put("optimizedPrompt", BODY + "\n" + addition);
+        ((ArrayNode) response.path("taskUnderstanding").path("additions")).addObject()
+                .put("text", addition).put("benefit", "保留条件到表达的关系").put("gap", "条件如何影响通知措辞需明确");
+        ((ArrayNode) response.path("taskUnderstanding").path("review").path("additionCoverage"))
+                .addObject().put("index", 0).putArray("quotes").add(addition);
+        expect(1, response, input, system -> assertThat(system).isEqualTo(NaturalPromptRelationalInstructions.ENHANCE));
+        var checked = new ArrayList<NaturalPromptDraft>();
+        var observations = new ArrayList<ModelCallObservation>();
+        NaturalPromptDraft result;
+        try (var ignored = audit(observations)) {
+            result = provider.enhance(input, draft -> { checked.add(draft); return checkDraft(draft); });
+        }
+        assertThat(checked).hasSize(2);
+        assertThat(checked.getFirst().optimizedPrompt()).isEqualTo(BODY + "\n" + addition);
+        assertThat(result.optimizedPrompt()).startsWith(RAW).contains(addition,
+                "用户实际题答：\n活动时间？\n尚未确定。", "用户实际题答：\n活动地点？\n尚未确定。")
+                .doesNotContain(BODY);
+        assertThat(result.taskUnderstanding().requirements()).isEqualTo(checked.getFirst().taskUnderstanding().requirements());
+        assertThat(result.taskUnderstanding().openDecisions()).isEqualTo(checked.getFirst().taskUnderstanding().openDecisions());
+        assertThat(result.taskUnderstanding().goal()).isEqualTo("写活动通知");
+        assertThat(result.taskUnderstanding().deliverable()).isEqualTo("通知正文");
+        assertThat(result.taskUnderstanding().review().additionCoverage()).hasSize(1);
+        assertThat(observations).hasSize(2);
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"32", "33"})
+    void relationalFrameworkProtocolErrorsReceiveOnlyTheExistingBoundedRepair(String version) throws Exception {
+        var input = input(version);
+        expect(1, scope(), input);
+        var bad = fourthResponse(input).put("framework", "UNKNOWN_FRAMEWORK");
+        expect(1, bad, input);
+        expect(1, fourthResponse(input), input, system -> assertThat(system)
+                .startsWith(NaturalPromptRelationalInstructions.ENHANCE).contains("上次响应未满足协议或必要保护"));
+        var observations = new ArrayList<ModelCallObservation>();
+        try (var ignored = audit(observations)) {
+            var draft = provider.enhance(input, this::checkDraft);
+            assertThat(draft.framework()).isEqualTo(NaturalPromptDraft.Framework.APE);
+        }
+        assertThat(observations).hasSize(3);
+        assertThat(observations).extracting(ModelCallObservation::attempt).containsExactly(1, 1, 2);
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"32", "33"})
+    void relationalFrameworkRemainsRejectedAfterTwoInvalidAttempts(String version) throws Exception {
+        var input = input(version);
+        expect(1, scope(), input);
+        expect(2, fourthResponse(input).put("framework", "UNKNOWN_FRAMEWORK"), input);
+        var observations = new ArrayList<ModelCallObservation>();
+        try (var ignored = audit(observations)) {
+            assertThatThrownBy(() -> provider.enhance(input, this::checkDraft))
+                    .isInstanceOfSatisfying(ProviderException.class,
+                            failure -> assertThat(failure.getFailureType()).isEqualTo(ProviderFailureType.INVALID_RESPONSE));
+        }
+        assertThat(observations).hasSize(3);
+        server.verify();
+    }
+
+    @Test
+    void supplementCannotUseRenderingToBypassInvalidSourceDraftCoverage() throws Exception {
+        var input = input("33");
+        expect(1, scope(), input);
+        var bad = fourthResponse(input);
+        ((ObjectNode) bad.path("taskUnderstanding").path("review").path("requirementCoverage").get(0))
+                .putArray("quotes").add("并未存在于首稿的片段");
+        expect(1, bad, input);
+        expect(1, fourthResponse(input), input);
+        var observations = new ArrayList<ModelCallObservation>();
+        try (var ignored = audit(observations)) {
+            assertThat(provider.enhance(input, this::checkDraft).optimizedPrompt()).startsWith(RAW);
+        }
+        assertThat(observations).hasSize(3);
+        server.verify();
+    }
+
+    /** 32/33仍读取冻结4形状，不用新阶段DTO替换其来源和覆盖协议。 */
+    private ObjectNode fourthResponse(NaturalPromptInput input) throws Exception {
+        var normalized = json.treeToValue(enhancement(), NaturalPromptPhasePayloads.Enhancement.class)
+                .toDraft(input, new com.promptoptimizer.enhancement.domain.ProviderMetadata("fixture", "fixture", false));
+        var response = json.createObjectNode().put("optimizedPrompt", BODY).put("framework", "APE");
+        response.set("taskUnderstanding", json.valueToTree(normalized.taskUnderstanding()));
+        return response;
     }
 
     /** 三份原响应按UTF-8内容哈希冻结，运行期不依赖本机tmp或评测目录。 */
@@ -683,8 +791,10 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
             if (NaturalPromptScopedInstructions.supports(input.strategyVersion())) {
                 boolean preparing = sent.path("messages").get(0).path("content").asText()
                         .startsWith(NaturalPromptScopedInstructions.PREPARE);
-                assertThat(payload.has("taskScope")).isEqualTo(!preparing);
-                if (!preparing) assertThat(payload.path("taskScope").has("actions")).isTrue();
+                boolean writing32 = NaturalPromptRelationalInstructions.supports(input.strategyVersion()) && !preparing
+                        && sent.path("messages").get(0).path("content").asText().startsWith(NaturalPromptRelationalInstructions.ENHANCE);
+                assertThat(payload.has("taskScope")).isEqualTo(!preparing && !writing32);
+                if (!preparing && !writing32) assertThat(payload.path("taskScope").has("actions")).isTrue();
             }
             assertThat(payload.path("rawPrompt").asText()).isEqualTo(input.rawPrompt());
             assertThat(payload.path("context")).isEqualTo(json.valueToTree(input.context()));

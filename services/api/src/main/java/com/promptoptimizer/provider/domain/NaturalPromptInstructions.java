@@ -72,6 +72,8 @@ public final class NaturalPromptInstructions {
                     NaturalPromptScopedInstructions.CONSERVATIVE_VERSION
                     -> NaturalPromptStageInstructions.enhancementInstruction(version);
             case NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION -> ENHANCE;
+            case NaturalPromptRelationalInstructions.VERSION, NaturalPromptRelationalInstructions.SUPPLEMENT_VERSION
+                    -> NaturalPromptRelationalInstructions.ENHANCE;
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
     }
@@ -106,6 +108,8 @@ public final class NaturalPromptInstructions {
                     NaturalPromptScopedInstructions.CONSERVATIVE_VERSION
                     -> NaturalPromptStageInstructions.planningInstruction(version);
             case NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION -> NaturalPromptScopedInstructions.PLAN;
+            case NaturalPromptRelationalInstructions.VERSION, NaturalPromptRelationalInstructions.SUPPLEMENT_VERSION
+                    -> NaturalPromptScopedInstructions.PLAN;
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
         };
     }

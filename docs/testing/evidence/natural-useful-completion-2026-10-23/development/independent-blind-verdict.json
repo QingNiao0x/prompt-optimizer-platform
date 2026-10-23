@@ -1,0 +1,217 @@
+{
+  "reviewMode": "INDEPENDENT_BLIND_READ_ONLY_SOURCE",
+  "source": "tmp/natural-useful-completion-2026-10-23/development/independent-blind-review.json",
+  "sourceSha256": "CC1601A88A7372B64EBAF1F0843CDC8D80D63EE93C4C8DB79A0FAF4618C83915",
+  "sourceScope": "只读取指定匿名包；未读取其他开发结果、既有评分或策略映射；不推断A/B/C身份；无外部模型调用。",
+  "judgmentBasis": "依原始请求及包内上下文核对事实、交付范围与实际操作；允许合理设计变体，不按篇幅、标题或栏目数量判优。以下修改仅为评审建议，未修改作品。",
+  "summary": {
+    "overallRecommendedArm": null,
+    "decision": "NO_SINGLE_ARM_HAS_DEMONSTRATED_STABLE_SUBSTANTIVE_SUPERIORITY",
+    "explanation": "D01三臂都能交付，A/C的组织差异不足以证实稳定实质收益；D03 A/C均比B第二次少一个明确事实错误，但B第一次本就较好，不能记作两次稳定胜出。D04全部通过。D02六份总表均40分钟，具体执行仍有程度不同的时间或衔接问题，C第二次出现可确定的分组与时间说明冲突，不能以C第一次较清楚就推荐整臂。",
+    "stableSubstantiveWinCases": [],
+    "singleWorkPreferencesNotStableArmWins": [
+      "D02 C第一次的14=4+4+4+2、7+7轮转和主持人独立组织清楚，可作为单份较好方案；仍宜删除额外会后整理义务。",
+      "D02 A第一次不依赖主持人补齐分组，14人都被轮答和书写覆盖；按其允许的每人25秒可执行，不应因为上限30秒无余量而直接判定必然超时。"
+    ],
+    "mustNotInfer": [
+      "总表相加40分钟不等于内部每个细分指令都能照办。",
+      "主持人示范、巡场、倾听落单者不等于把主持人算作第15位新同事，不能一概误判。",
+      "同一会议室内走动、换座和分组不违反单会议室要求。",
+      "主持人手机计时与可选拍照不等于手机投票；包内禁止的是投影和手机投票。",
+      "四条反馈不等于四位总体用户；A/D来自不同账号不证明同一根因或问题普遍。"
+    ]
+  },
+  "cases": [
+    {
+      "caseId": "D01",
+      "recommendation": "A_AND_C_ACCEPTABLE_TIE_WITH_B_ALSO_USABLE",
+      "stableGain": false,
+      "promptAssessment": "A/C都保留完整状态和审批条件。C多给操作先后，A也已要求可直接执行；B的提示词简短，但作品获得上下文并没有丢失规则。不能仅据提示词长度判胜。",
+      "workVerdicts": [
+        {"arm": "A", "repeat": 1, "verdict": "PASS", "minimumEdits": [], "note": "可借后普通借出、精密审批、归还先登记再检查、缺件待处理、在借及排队条件均保留。口诀为辅助，不覆盖前文精密审批须通过。"},
+        {"arm": "A", "repeat": 2, "verdict": "PASS", "minimumEdits": [], "note": "全部关键条件保留；不用强制新增状态表才算可用。"},
+        {"arm": "B", "repeat": 1, "verdict": "PASS_WITH_OPTIONAL_LIGHTENING", "minimumEdits": [], "note": "借用人信息登记是拟议日常操作，不等于新增签字、表单或审批层级；没有必要一概判违约。"},
+        {"arm": "B", "repeat": 2, "verdict": "PASS_WITH_OPTIONAL_LIGHTENING", "minimumEdits": [], "note": "借出登记字段可以依现有登记方式处理；不把它认作用户已有制度，也不据此认定整份失败。"},
+        {"arm": "C", "repeat": 1, "verdict": "PASS", "minimumEdits": [], "note": "先查可借状态及明确已收回时不能借出有助快速操作；速判表仍保留一般排队不是成功，没有确定的新增层级或违约。"},
+        {"arm": "C", "repeat": 2, "verdict": "PASS", "minimumEdits": [], "note": "归还顺序、配件检查后状态和精密审批通过后交付均明确。"}
+      ],
+      "acceptedVariants": ["步骤、分节、速判表都可以。", "借出登记可以作为合理操作设计，不要求另设新表或收集额外敏感信息。", "排队提醒可放在精密段落，但不能把所有普通设备也强制纳入管理员审批；现有速判表没有这样要求。"]
+    },
+    {
+      "caseId": "D02",
+      "recommendation": "NO_STABLE_ARM_WINNER; C_R1_AND_A_R1_ARE_USABLE_WITH_LOCAL_EDITS",
+      "stableGain": false,
+      "promptAssessment": "A明确时段、主持动作与参与方式；C进一步要求逐环节步骤、物料和衔接语。后者确实影响作品组织，但不能以栏目更多证明好处，也没有保证第二次分组与细分时间正确。B允许更灵活的活动设计，同样保留包内给定条件。",
+      "commonChecks": {
+        "allSixTopLevelSchedulesTotalMinutes": 40,
+        "allSixTopLevelSchedulesContiguous": true,
+        "allSixStayInOneMeetingRoom": true,
+        "noRequiredProjectorOrPhoneVoting": true,
+        "participationMeans": "全员至少可通过书写、对话或轮答实际参与，不要求每一环节都由14人分别全场发言。",
+        "durationScope": "明示的会前5分钟准备与40分钟活动分开计算可接受；若用户另要求含准备总共40分钟才需另判。"
+      },
+      "workVerdicts": [
+        {
+          "arm": "A",
+          "repeat": 1,
+          "verdict": "USABLE_WITH_LOCAL_CLARIFICATIONS",
+          "timeBreakdownMinutes": [3, 7, 8, 10, 7, 5],
+          "participantArithmetic": "14人逐号轮答、全员书写和传纸，不依赖第15位参与者；主持人另写卡不计14人。",
+          "operationalFinding": "轮答若人人使用30秒上限便占满7分钟，尚有10秒示范、说明和逐人回应；作品也允许25秒，因此存在可执行正常变体，不能确定判超时。开头声称有必须起立的环节，后文却要求不离座位，属于可删除的内部指示残留。卡片带走与留桌交由主持人跟进也需统一。",
+          "evidence": [
+            "14人依次每人约30秒",
+            "主持人先做10秒示范",
+            "14人每人至少发言1次，每次约25–30秒",
+            "每人都要起立参与“一分钟认识你”环节",
+            "确保不分组、不离开座位。"
+          ],
+          "minimumEdits": [
+            "将轮答统一为每人25秒以内，保留约70秒用于说明、示范和轮转回应；或取消逐人回应，不同时按30秒上限承诺无余量。",
+            "删除开头不存在的必须起立参与“一分钟认识你”要求。",
+            "卡片统一由本人带走；若确需留下问题，由参与者自愿留问题纸，不强加会后转交义务。"
+          ],
+          "severity": "LOCAL_EDIT_NOT_DETERMINISTIC_HARD_FAILURE"
+        },
+        {
+          "arm": "A",
+          "repeat": 2,
+          "verdict": "USABLE_AFTER_GROUP_INSTRUCTION_CLARIFICATION",
+          "timeBreakdownMinutes": [3, 7, 8, 8, 8, 4, 2],
+          "participantArithmetic": "列出的1/2/8/9、3/4/10/11、5/6/12/13、7/14覆盖1—14且无重复；3个4人组加1个2人组本身可以完成每人介绍同伴及共同点任务。",
+          "operationalFinding": "不能因最后一组2人就断言不执行，任务并不必须4人；但写成主持人补位或3人组，又要求主持人巡场，会使其是否参与该组不清楚。主持人只作引导可接受，不能依靠把他当额外参与者补人数。",
+          "evidence": [
+            "1—2—8—9，3—4—10—11，5—6—12—13，7—14—（主持人补位或3人组）",
+            "尽量形成3个4人组+1个2人组由主持人补位",
+            "2人组由主持人补位时，主持人只引导不占汇报名额"
+          ],
+          "minimumEdits": ["明确最后一组保持2名新同事并做同一任务，删除主持人作为第3人的补位选项；主持人可短暂指导后继续巡场。"],
+          "severity": "LOCAL_ROLE_CLARIFICATION"
+        },
+        {
+          "arm": "B",
+          "repeat": 1,
+          "verdict": "USABLE_AFTER_LOCAL_PARTICIPATION_AND_EVIDENCE_FIXES",
+          "timeBreakdownMinutes": [3, 7, 12, 10, 6, 2],
+          "participantArithmetic": "4组3人+1组2人=14；3人组每人2分钟、2人组每人3分钟均为每轮6分钟，两轮可同期完成。主持人巡场不计参与人数。",
+          "operationalFinding": "破冰没有逐个抽完并不违约，后续分组及轮答覆盖全部14人。共同点只问至少8个人却要求得出全14人共同拥有的3件事，结论支持不足；直接只做听众的兜底也削弱全员实际参与，应给低压力书写方式。",
+          "evidence": [
+            "4组3人、1组2人（14人正好）",
+            "2人组每人3分钟，保持同步。",
+            "我们14个人共同拥有的3件事",
+            "必须至少问到8个人",
+            "可让其只做听众"
+          ],
+          "minimumEdits": [
+            "把共同点目标改为找出若干同事共享的3个具体联系，记录相关人名；或在全场收尾请14人逐项确认后才称为全部共同。优先前者以保持简便。",
+            "不愿口头分享者可写一句，由搭档代读或自行展示；不强迫当众说，但保留实际参与途径。",
+            "两轮快聊之间从12分钟内留出短暂换组时间，例如每轮5.5分钟、换组1分钟。"
+          ],
+          "severity": "LOCAL_EVIDENCE_AND_PARTICIPATION_EDIT"
+        },
+        {
+          "arm": "B",
+          "repeat": 2,
+          "verdict": "REQUIRES_TIME_ALLOCATION_EDIT",
+          "timeBreakdownMinutes": [3, 7, 10, 10, 7, 3],
+          "participantArithmetic": "14人两人深聊=7对；全员有自我介绍、自由找共同点及配对交流，主持人只示范和协助。",
+          "operationalFinding": "两真一假14×30秒已占7分钟，仍要求先写三句、主持示范、其他人猜及本人公布。按给出的逐人30秒就无法全部纳入7分钟；不能靠表格刚好40分钟认定通过。开场也需为14×10秒自介和规则留边界。",
+          "evidence": [
+            "每人先在纸上写关于自己的3句话",
+            "每人用30秒说出这3句，其他人猜哪句是假的。猜完本人公布答案。",
+            "14人 × 30秒 ≈ 7分钟，刚好。",
+            "主持人第一个示范"
+          ],
+          "minimumEdits": [
+            "在7分钟内明确包含1分钟写卡、30秒规则/示范、14人每人20秒含猜答共4分40秒，余50秒轮转；或改为7对同时游戏，保证每人参与。",
+            "开场统一为规则1分钟、14人每人不超过8秒介绍，余量用于示范和轮转。",
+            "两轮深聊给换人留出时间，不能两轮均满5分钟后另行换人。"
+          ],
+          "severity": "MATERIAL_TIME_CLOSURE_PROBLEM"
+        },
+        {
+          "arm": "C",
+          "repeat": 1,
+          "verdict": "USABLE_WITH_OPTIONAL_SCOPE_LIGHTENING",
+          "timeBreakdownMinutes": [3, 5, 8, 8, 8, 6, 2],
+          "participantArithmetic": "14=4+4+4+2明确处理余人；2人组用同规则可执行。14=7+7形成7对，3站每站2分钟共6分钟，8分钟块尚有2分钟组织和转换。主持人独立巡场。",
+          "operationalFinding": "这是六份里一份关系较清楚的实际方案。40分钟主路径、全员参与和主持角色可成立。额外会后整理一页纸并发送不是原请求所需，不应变成新的强制义务；保留现场活动结果可接受。",
+          "evidence": [
+            "14人=4+4+4+2",
+            "主持人提醒2人小组按同样规则做。",
+            "外圈7人、内圈7人，内外面对面，形成7对",
+            "每站2分钟",
+            "汇总区清单由主持人拍照或抄录后，整理成一页纸发给14位新同事"
+          ],
+          "minimumEdits": ["将会后整理一页纸发送改为如需留存可自愿拍照/抄录现场清单，删除强制会后制作与发送。"],
+          "severity": "LOCAL_SCOPE_EDIT",
+          "singleWorkPreference": "ONE_OF_THE_MORE_EXECUTABLE_WORKS; NOT_AN_ARM_LEVEL_STABLE_WIN"
+        },
+        {
+          "arm": "C",
+          "repeat": 2,
+          "verdict": "REQUIRES_GROUP_AND_TIME_INSTRUCTION_CORRECTIONS",
+          "timeBreakdownMinutes": [3, 6, 8, 8, 8, 5, 2],
+          "participantArithmetic": "预设4+4+3+3=14可执行，但正文又列3个4人组+1个2人组并合为6人组或以主持人补成3人组，后面仍要求每组3—4人。这些不是可以同时遵循的步骤。",
+          "operationalFinding": "全体拼图的前3分钟、后3分钟、最后2分钟本身总和8，但具体钟点又让20—23写补充、24才分享，无法兼容前述三段分配。问题配对正文3+3+2分钟已用满8，钟点还给写卡与收发占去前三分钟，互相冲突。结尾把14人每人最多5秒的轮答放进30秒也不保证完成。",
+          "evidence": [
+            "2组4人、2组3人（4+4+3+3）",
+            "将2人组与最近的一个4人组合并成6人组",
+            "确保每组不超过4人、不少于3人。",
+            "0:17开始，0:20提醒“开始写补充便签”，0:23提醒“回座位”，0:24请3位同事发言，0:25结束。",
+            "前3分钟：每人阅读手中的问题卡",
+            "0:25开始写卡，0:27收卡发卡，0:28开始写建议，0:31起立交还，0:32请2人分享，0:33结束。",
+            "用30秒请所有人用一句话或一个词说“今天带走什么”",
+            "每人不超过5秒"
+          ],
+          "minimumEdits": [
+            "只保留预设4+4+3+3并给出成员编号；删除6人组合并及主持人作为第3人的替代方案，组间调整不必保留原配对。",
+            "全体拼图统一为17—20浏览并贴补充、20—23回座并3人各20秒分享、23—25主持归纳；删除另一套冲突钟点。",
+            "问题配对统一25—27写问题、27—28打乱发卡、28—30写建议、30—32交还、32—33两人各30秒分享；同时将正文3+3+2改为该实际分配。",
+            "结尾给14人轮答至少70秒，另30秒总结、20秒感谢恰为2分钟；或明确每人不超过2秒仅说一个词。"
+          ],
+          "severity": "MATERIAL_EXECUTION_CONTRADICTIONS",
+          "attribution": "具体矛盾出现在下游作品；提示词已有40分钟和主持独立要求，无法由匿名包认定平台是唯一根因。"
+        }
+      ],
+      "acceptedVariants": [
+        "14人可以分7对、4+4+4+2、4+4+3+3或4组3人加1组2人，只要任务适应各组人数。",
+        "主持人可以示范、巡场和短暂指导，但不能靠把主持人当额外参与者来填补必需人数。",
+        "允许会前准备和自愿会后交流；不要求用户承担新增正式文档、建群或跟进任务。",
+        "7分钟轮答若每人25秒且留出过渡可以执行；若给每人30秒说话外再加未计时操作，就需要校准。"
+      ]
+    },
+    {
+      "caseId": "D03",
+      "recommendation": "A_AND_C_ACCEPTABLE_TIE; B_R2_NEEDS_ONE_FACT_CORRECTION",
+      "stableGain": false,
+      "promptAssessment": "A/C都保留来源、未知范围及上传/归档/外观分类。两者明确合并的是排查主题，不是已确认同一根因。实际作品均给优先次序，不能只因某版采用来源标签就判定另一版不可用。",
+      "workVerdicts": [
+        {"arm": "A", "repeat": 1, "verdict": "PASS", "minimumEdits": [], "note": "A/D具体表现分别记录，合并排查主题；明确不能推断频率或影响范围；建议补信息服务现有优先判断，没有变成独立研究项目。"},
+        {"arm": "A", "repeat": 2, "verdict": "PASS", "minimumEdits": [], "note": "保留D未记录文件大小、不同账号、B首次用、C偏好及总体数据缺口；初步关注顺序有依据。"},
+        {"arm": "B", "repeat": 1, "verdict": "PASS", "minimumEdits": [], "note": "只报本次4条反馈；未把上传重试成功改成永久失败，未确认根因或普遍性。可删重复下一步以更紧凑，但不因这点判实质失败。"},
+        {"arm": "B", "repeat": 2, "verdict": "LOCAL_FACT_ERROR", "evidence": ["以上仅基于 5 条试用反馈"], "minimumEdits": ["将5条改为4条；A一次反馈中两次尝试不是额外一条反馈。"], "note": "其他核心归类与状态基本保留；一句话纠正即可，不以此认定整份建议无用。"},
+        {"arm": "C", "repeat": 1, "verdict": "PASS", "minimumEdits": [], "note": "逐项标来源，保留两条上传反馈不同账号但不能推断范围；未给未经提供的故障率或根因。"},
+        {"arm": "C", "repeat": 2, "verdict": "PASS_WITH_OPTIONAL_CAUTION", "minimumEdits": ["可将“归档后入口不清晰”改为“首次使用时找不到归档去向，建议检查入口与提示”，让标题更贴近单条反馈的确认程度。"], "note": "正文已限定单条新用户反馈与依据有限，标题不是足以推翻整体的严重事实升级。"}
+      ],
+      "acceptedVariants": ["上传体验先、归档可发现性其次、外观偏好后是合理初步排序，不要求唯一结论。", "补充复现日志或文件大小是当前排查建议，不等于要求先补全部材料才提供建议。", "将A/D合并为上传排查主题可接受，不可据此认定同一故障根因。"],
+      "stableBenefitBoundary": "A/C两次均没有B第二次的错误条数，但B第一次已经满足要求；仅凭一次B计数错误不能确认跨重复稳定的实质胜出。"
+    },
+    {
+      "caseId": "D04",
+      "recommendation": "ALL_ARMS_TIE_PASS",
+      "stableGain": false,
+      "countRule": "按删除全部Unicode空白后的字符串字符数计，保留汉字、数字和标点；本题均为BMP字符，未出现计数口径歧义。",
+      "workVerdicts": [
+        {"arm": "A", "repeat": 1, "nonWhitespaceChars": 38, "within60": true, "verdict": "PASS", "minimumEdits": []},
+        {"arm": "A", "repeat": 2, "nonWhitespaceChars": 38, "within60": true, "verdict": "PASS", "minimumEdits": []},
+        {"arm": "B", "repeat": 1, "nonWhitespaceChars": 36, "within60": true, "verdict": "PASS", "minimumEdits": []},
+        {"arm": "B", "repeat": 2, "nonWhitespaceChars": 36, "within60": true, "verdict": "PASS", "minimumEdits": []},
+        {"arm": "C", "repeat": 1, "nonWhitespaceChars": 33, "within60": true, "verdict": "PASS", "minimumEdits": []},
+        {"arm": "C", "repeat": 2, "nonWhitespaceChars": 33, "within60": true, "verdict": "PASS", "minimumEdits": []}
+      ],
+      "allSixPreserve": ["周五18点前上传周报", "系统打不开则发给组长", "已上传不重复提交", "只输出单段正文、无标题"],
+      "acceptedVariants": ["请于与直接陈述都可。", "省略同事仍能明确指向打不开系统的人。", "33、36、38均在60以内，更短不独立构成收益。"]
+    }
+  ],
+  "limits": "这是开发代理对同一冻结匿名包的独立复核，不是外部专家、统计显著性或未见题证明；不覆盖其他题或模型，不修改原评分、不重采样、不解盲。"
+}

@@ -1,0 +1,32 @@
+{
+  "decision": "KEEP31_DO_NOT_ADOPT32_OR33",
+  "engineering": "IMPLEMENTED_AND_TESTED",
+  "productQualityGoal": "NOT_ACHIEVED",
+  "candidate32": {
+    "promptBenefitsOver31": 0,
+    "stableDoubleWorkBenefitsOver31": 0,
+    "adopted": false
+  },
+  "candidate33": {
+    "promptBenefitsOver31": 0,
+    "stableDoubleWorkBenefitsOver31": 0,
+    "localBenefitOverOriginal": [
+      "D02:两份作品相对原始臂减少具体执行修改，但第二份仍有纸张数量问题"
+    ],
+    "adopted": false
+  },
+  "reviewLimitations": [
+    "两轮上游评审对D02内部资源/时长矛盾漏检，不能把complete=true当作语义通过。",
+    "部分评审将D04语义相同写成逐字相同，实际仅33与原始提示词逐字一致。",
+    "内部复核已匿名位置，但其作者参与33实现，不能宣称独立专家。",
+    "四题开发资料较充分，31本来多已可用；不把小集持平外推所有任务无提升空间。"
+  ],
+  "heldoutOpened": false,
+  "sameInformation": true,
+  "reusedResultsAreNotNewCalls": true,
+  "noQualityRetry": true,
+  "defaultRetained": "31",
+  "liveRuntimeChanged": false,
+  "requiredNextEvidence": "具体真实未达标输入及必要修改，用以判别共同缺口；不追加逐题规则或按职业路由。",
+  "at": "2026-10-23T08:41:03.232359+00:00"
+}

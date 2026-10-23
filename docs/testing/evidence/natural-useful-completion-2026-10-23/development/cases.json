@@ -1,0 +1,78 @@
+{
+  "set": "DEVELOPMENT_NOT_HOLDOUT",
+  "author": "implementation agent",
+  "cases": [
+    {
+      "id": "D01",
+      "category": "VAGUE_DELEGATED",
+      "rawPrompt": "请帮我写一份给值班同事看的设备借用操作说明，简短、拿来就能用。",
+      "contextDescription": "现有规则：普通设备可当天直接借走；精密设备必须经过管理员审批，审批没出结果前不能交付。所有设备归还时先登记已收回，再检查配件；检查无误才变为可借，有缺件则保持待处理。已经在借的设备不能再借给别人。排队等待不是预约成功。",
+      "files": [],
+      "unambiguousHardRequirements": [
+        "面向值班同事的简短操作说明",
+        "精密审批前不交付",
+        "收回不等于可借",
+        "缺件待处理、在借不可再借、排队不等于成功"
+      ],
+      "qualityDimensions": [
+        "将条件与可执行动作对应",
+        "不新增表单、签字和审批层级"
+      ],
+      "intendedResult": "操作说明"
+    },
+    {
+      "id": "D02",
+      "category": "VAGUE_DELEGATED",
+      "rawPrompt": "请帮我设计一个40分钟的新同事交流活动，大家都能参与，给我一个方便主持的流程就行。",
+      "contextDescription": "共14位新同事，另有1位主持人。只有一间会议室，不能分到别的房间。可以使用纸笔，不准备投影和手机投票。主持人负责引导，不计入14位参与者。",
+      "files": [],
+      "unambiguousHardRequirements": [
+        "40分钟",
+        "14位均可参与",
+        "主持人独立于参与人数",
+        "单会议室纸笔，无投影/手机投票"
+      ],
+      "qualityDimensions": [
+        "时间覆盖40分钟且环节无重叠",
+        "人数分配、角色与轮换可以实际执行",
+        "流程保持简便，不增加完整讲稿或调研"
+      ],
+      "intendedResult": "主持流程"
+    },
+    {
+      "id": "D03",
+      "category": "VAGUE_DELEGATED",
+      "rawPrompt": "把这些试用反馈整理成一份给产品团队看的简短建议，告诉他们先关注什么。",
+      "contextDescription": "A：同一个报表上传两次都卡在90%，最后重试成功。B：第一次用，不知道“归档”后去哪里找。C：希望把列表变成深色。D：报表上传慢，我的文件大小没记下来。A和D用的是不同账号；没有总体用户数、错误日志或全量使用数据。",
+      "files": [],
+      "unambiguousHardRequirements": [
+        "简短建议及先关注什么",
+        "反馈来源和确认程度不改变",
+        "未提供总体用户数或日志不能编造频率/根因"
+      ],
+      "qualityDimensions": [
+        "把观察、诉求与建议行动对应",
+        "区分初步优先级与已证实普遍问题",
+        "不把简短建议改成独立研究方案"
+      ],
+      "intendedResult": "简短产品建议"
+    },
+    {
+      "id": "D04",
+      "category": "SUFFICIENT",
+      "rawPrompt": "请把下面三条提醒整理成一段不超过60字的中文通知，只输出通知正文，不加标题：周五18点前上传周报；打不开系统的同事发给组长；已上传的不用重复提交。",
+      "contextDescription": "",
+      "files": [],
+      "unambiguousHardRequirements": [
+        "只输出正文",
+        "不超过60个非空白字符",
+        "周五18点、打不开系统发给组长、已上传不重复均保留"
+      ],
+      "qualityDimensions": [
+        "充分需求不扩写",
+        "保留独立条件"
+      ],
+      "intendedResult": "通知正文"
+    }
+  ]
+}

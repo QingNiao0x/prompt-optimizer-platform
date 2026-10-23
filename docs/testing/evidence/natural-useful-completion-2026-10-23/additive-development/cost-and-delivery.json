@@ -1,0 +1,60 @@
+{
+  "actualCalls": 18,
+  "phaseCounts": {
+    "GENERATION": 8,
+    "EXECUTION": 8,
+    "REVIEW": 2
+  },
+  "logicalJobs": 14,
+  "availableLogicalResults": 34,
+  "reusedLogicalResults": 20,
+  "reusedByPhase": {
+    "EXECUTION": 16,
+    "GENERATION": 4
+  },
+  "newStatuses": {
+    "200": 14
+  },
+  "reusedStatuses": {
+    "200": 20
+  },
+  "protocolRetries": 0,
+  "qualityRetries": 0,
+  "statuses": {
+    "200": 34
+  },
+  "groups": [
+    {
+      "phase": "EXECUTION",
+      "version": "V33",
+      "attempts": 8,
+      "inputTokens": 1628,
+      "outputTokens": 4909,
+      "totalTokens": 6537,
+      "missingUsage": 0,
+      "medianElapsedMs": 2665.5
+    },
+    {
+      "phase": "GENERATION",
+      "version": "33",
+      "attempts": 8,
+      "inputTokens": 9626,
+      "outputTokens": 3611,
+      "totalTokens": 13237,
+      "missingUsage": 0,
+      "medianElapsedMs": 2229.0
+    },
+    {
+      "phase": "REVIEW",
+      "version": "ANONYMOUS",
+      "attempts": 2,
+      "inputTokens": 42444,
+      "outputTokens": 6744,
+      "totalTokens": 49188,
+      "missingUsage": 0,
+      "medianElapsedMs": 13903.5
+    }
+  ],
+  "emptyDeliveries": [],
+  "monetaryCost": "仅报告实际tokens和耗时，未冻结账单价格，不推算金额。"
+}

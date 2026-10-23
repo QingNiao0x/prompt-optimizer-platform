@@ -26,6 +26,25 @@ class NaturalPromptPhaseInstructionsTest {
     }
 
     @Test
+    void relationalCandidatePreservesProtocolPlanAndCurrentDefault() {
+        assertThat(NaturalPromptInstructions.supports("32")).isTrue();
+        assertThat(NaturalPromptInstructions.CURRENT_VERSION).isEqualTo("31");
+        assertThat(NaturalPromptInstructions.enhancementInstruction("32")).isNotEqualTo(NaturalPromptInstructions.ENHANCE)
+                .startsWith(NaturalPromptInstructions.COMMON).endsWith(NaturalPromptInstructions.TASK_RECORD);
+        assertThat(NaturalPromptInstructions.planningInstruction("32")).isEqualTo(NaturalPromptInstructions.planningInstruction("31"));
+    }
+
+    @Test
+    void supplementCandidateOnlyRegistersANewRenderingVersionWithoutChangingWritingOrPlanGuidance() {
+        assertThat(NaturalPromptInstructions.supports("33")).isTrue();
+        assertThat(NaturalPromptInstructions.requiresTaskUnderstanding("33")).isTrue();
+        assertThat(NaturalPromptInstructions.requiresTaskReview("33")).isTrue();
+        assertThat(NaturalPromptInstructions.CURRENT_VERSION).isEqualTo("31");
+        assertThat(NaturalPromptInstructions.enhancementInstruction("33")).isEqualTo(NaturalPromptInstructions.enhancementInstruction("32"));
+        assertThat(NaturalPromptInstructions.planningInstruction("33")).isEqualTo(NaturalPromptInstructions.planningInstruction("31"));
+    }
+
+    @Test
     void phaseProtocolPreservesFourthWritingGuidanceAndDoesNotEnterCriticStages() {
         String fourth = NaturalPromptInstructions.enhancementInstruction("4");
         String businessGuidance = fourth.substring(0, fourth.indexOf("只返回JSON："));

@@ -102,13 +102,31 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             if ((NaturalPromptScopedInstructions.PRESERVED_VERSION.equals(input.strategyVersion())
                     && scope.response().basis() == NaturalTaskScope.ResponseBasis.UNSPECIFIED)
                     || ((NaturalPromptScopedInstructions.CONSERVATIVE_VERSION.equals(input.strategyVersion())
-                    || NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION.equals(input.strategyVersion()))
+                    || NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION.equals(input.strategyVersion())
+                    || NaturalPromptRelationalInstructions.supports(input.strategyVersion()))
                     && scope.response().basis() != NaturalTaskScope.ResponseBasis.EXPLICIT)) {
                 return validation.apply(NaturalPreservedRequest.create(input, scope, prepared.metadata()));
             }
             if (NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION.equals(input.strategyVersion())) {
                 // 明确成果没有新增写作变量：复用冻结4的全部业务输入、system、解析和保护，历史版本由应用层记录31。
                 return enhance(input.withStrategyVersion(NaturalPromptInstructions.VERSION), validation);
+            }
+            if (NaturalPromptRelationalInstructions.supports(input.strategyVersion())) {
+                // 32/33共用32指导及旧4协议；33仅改变校验后的呈现，不把范围辅助记录混成用户要求。
+                return invoke(input, NaturalPromptRelationalInstructions.ENHANCE, "prompt.optimize", null, false,
+                        (body, metadata) -> {
+                            try {
+                                var draft = new NaturalPromptDraft(requiredText(body, "optimizedPrompt"),
+                                        NaturalPromptDraft.Framework.valueOf(requiredText(body, "framework")), metadata,
+                                        understanding(body, input));
+                                T checked = validation.apply(draft);
+                                if (!NaturalPromptRelationalInstructions.SUPPLEMENT_VERSION.equals(input.strategyVersion())) return checked;
+                                return validation.apply(NaturalPreservedRequest.supplement(input, draft));
+                            } catch (IllegalArgumentException failure) {
+                                // 与冻结4相同地将框架枚举等协议错误映射为INVALID_RESPONSE，最多修复一次；不改变32正文语义。
+                                throw invalid("自然正文或框架标识无效");
+                            }
+                        });
             }
             return invoke(input, NaturalPromptInstructions.enhancementInstruction(input.strategyVersion()), "prompt.optimize", null, null, null, false, scope,
                     (body, metadata) -> validation.apply(readEnhancementPhase(bindScope(body, scope), input, metadata)));

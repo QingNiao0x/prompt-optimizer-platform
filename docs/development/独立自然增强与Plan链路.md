@@ -18,6 +18,8 @@
 
 ## 1. 模式与职责
 
+2026-10-23后续[有用补全与原件承载实验](../testing/自然增强有用补全与原件承载对照-2026-10-23.md)实现32／33受控候选，但未证明稳定优于31，均不采用。代码支持仅用于受控历史兼容，不改变本文件上方当前默认和原Plan职责。
+
 | 入口 / 偏好 | 生成策略 | 返回及兼容 |
 | --- | --- | --- |
 | V2 默认或 COMPACT | NaturalEnhancementService → NaturalPromptProvider，独立 system 指导、输入、解析和正文校验 | resultKind=TEXT，optimizedPrompt 为唯一正文，不返回 sections |
