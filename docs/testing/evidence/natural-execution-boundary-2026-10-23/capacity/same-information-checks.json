@@ -1,0 +1,70 @@
+{
+  "checks": [
+    {
+      "caseId": "D02",
+      "stage": "GENERATION",
+      "complete": true,
+      "executorMaterialsAbsent": true,
+      "equal": true,
+      "independentActualPlans": false,
+      "availableResults": 2,
+      "newResults": 0,
+      "reusedResults": 2,
+      "resultOrigins": {
+        "31": {
+          "stage": "development",
+          "path": "tmp/natural-execution-boundary-2026-10-23/development/results/D02_V31_GEN.json",
+          "sha256": "b2292b418e432949318284aa6e86df72fc59e62d073140bbbe2c75daa02bdbbc"
+        },
+        "34": {
+          "stage": "development",
+          "path": "tmp/natural-execution-boundary-2026-10-23/development/results/D02_V34_GEN.json",
+          "sha256": "41860bdc169f10e7314ee62dbc61ae6e99772dbb7c7ed55f25556ce56ac88e0d"
+        }
+      },
+      "answerFactIdsByVersion": {},
+      "note": "直接增强输入逐字一致。"
+    },
+    {
+      "caseId": "D02",
+      "stage": "EXECUTION",
+      "equal": true,
+      "complete": true,
+      "availableResults": 6,
+      "newResults": 6,
+      "reusedResults": 0,
+      "expected": 6,
+      "sameMaterial": true,
+      "executorMaterialsIdentical": true,
+      "resultOrigins": {
+        "D02_ORIGINAL_EXEC_R1": {
+          "stage": "capacity",
+          "newResult": true
+        },
+        "D02_ORIGINAL_EXEC_R2": {
+          "stage": "capacity",
+          "newResult": true
+        },
+        "D02_V31_EXEC_R1": {
+          "stage": "capacity",
+          "newResult": true
+        },
+        "D02_V31_EXEC_R2": {
+          "stage": "capacity",
+          "newResult": true
+        },
+        "D02_V34_EXEC_R1": {
+          "stage": "capacity",
+          "newResult": true
+        },
+        "D02_V34_EXEC_R2": {
+          "stage": "capacity",
+          "newResult": true
+        }
+      }
+    }
+  ],
+  "historyPassed": 2,
+  "newHistoryPassed": 0,
+  "reusedHistoryPassed": 2
+}

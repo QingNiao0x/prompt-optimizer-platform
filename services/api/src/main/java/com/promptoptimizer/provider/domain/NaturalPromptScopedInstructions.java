@@ -19,7 +19,8 @@ public final class NaturalPromptScopedInstructions {
     /** 判断版本是否使用独立的范围准备；其它冻结版本沿用各自原协议。 */
     public static boolean supports(String version) {
         return VERSION.equals(version) || PRESERVED_VERSION.equals(version) || CONSERVATIVE_VERSION.equals(version)
-                || GUARDED_FOURTH_VERSION.equals(version) || NaturalPromptRelationalInstructions.supports(version);
+                || GUARDED_FOURTH_VERSION.equals(version) || NaturalPromptRelationalInstructions.supports(version)
+                || NaturalPromptExecutionBoundaryInstructions.VERSION.equals(version);
     }
 
     public static final String PREPARE = NaturalPromptInstructions.COMMON + """

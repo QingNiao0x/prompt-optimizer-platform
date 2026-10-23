@@ -584,7 +584,7 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"30", "31", "32", "33"})
+    @ValueSource(strings = {"30", "31", "32", "33", "34"})
     void inferredReadinessFeedbackCannotStartANewWritingStage(String version) throws Exception {
         String raw = "先吃透材料中各状态的关系，后面我会逐项给你问题。";
         var input = new NaturalPromptInput(raw, null, List.of(), List.of(), List.of(), null).withStrategyVersion(version);
@@ -630,6 +630,36 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
     }
 
     @Test
+    void executionBoundaryUsesTheFullOriginalRequestAndConfirmedUnknownsWithoutANewStage() throws Exception {
+        var input = input("34");
+        expect(1, scope(), input, system -> assertThat(system).isEqualTo(NaturalPromptExecutionBoundaryInstructions.PREPARE));
+        expect(1, fourthResponse(input), input,
+                system -> assertThat(system).isEqualTo(NaturalPromptExecutionBoundaryInstructions.ENHANCE));
+        var draft = provider.enhance(input, this::checkDraft);
+        assertThat(draft.optimizedPrompt()).contains("时间待定", "地点待定");
+        assertThat(draft.taskUnderstanding().requirements()).hasSize(4);
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"true", "false"})
+    void executionBoundaryPlanKeepsImportantQuestionsAndAllowsNoQuestion(String hasQuestion) throws Exception {
+        var input = input("34");
+        expect(1, scope(), input);
+        var response = planning(Boolean.parseBoolean(hasQuestion));
+        ((ObjectNode) response.path("task")).remove(List.of("goal", "deliverable"));
+        expect(1, response, input,
+                system -> assertThat(system).isEqualTo(NaturalPromptExecutionBoundaryInstructions.PLAN));
+        var plan = provider.plan(input, this::checkPlan);
+        assertThat(plan.questions()).hasSize(Boolean.parseBoolean(hasQuestion) ? 1 : 0);
+        assertThat(plan.taskUnderstanding().requirements()).hasSize(4);
+        assertThat(plan.taskUnderstanding().requirements().subList(2, 4))
+                .allSatisfy(requirement -> assertThat(requirement.evidence().getFirst().origin())
+                        .isEqualTo(NaturalTaskSource.Kind.BOUND_PLAN_ANSWER));
+        server.verify();
+    }
+
+    @Test
     void supplementCandidateChecksSourceAndFinalBodyWithoutAddingAnotherModelStage() throws Exception {
         var input = input("33");
         expect(1, scope(), input);
@@ -662,14 +692,14 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"32", "33"})
+    @ValueSource(strings = {"32", "33", "34"})
     void relationalFrameworkProtocolErrorsReceiveOnlyTheExistingBoundedRepair(String version) throws Exception {
         var input = input(version);
         expect(1, scope(), input);
         var bad = fourthResponse(input).put("framework", "UNKNOWN_FRAMEWORK");
         expect(1, bad, input);
         expect(1, fourthResponse(input), input, system -> assertThat(system)
-                .startsWith(NaturalPromptRelationalInstructions.ENHANCE).contains("上次响应未满足协议或必要保护"));
+                .startsWith(NaturalPromptInstructions.enhancementInstruction(version)).contains("上次响应未满足协议或必要保护"));
         var observations = new ArrayList<ModelCallObservation>();
         try (var ignored = audit(observations)) {
             var draft = provider.enhance(input, this::checkDraft);
@@ -681,7 +711,7 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"32", "33"})
+    @ValueSource(strings = {"32", "33", "34"})
     void relationalFrameworkRemainsRejectedAfterTwoInvalidAttempts(String version) throws Exception {
         var input = input(version);
         expect(1, scope(), input);
@@ -713,7 +743,7 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
         server.verify();
     }
 
-    /** 32/33仍读取冻结4形状，不用新阶段DTO替换其来源和覆盖协议。 */
+    /** 32—34仍读取冻结4形状，不用新阶段DTO替换其来源和覆盖协议。 */
     private ObjectNode fourthResponse(NaturalPromptInput input) throws Exception {
         var normalized = json.treeToValue(enhancement(), NaturalPromptPhasePayloads.Enhancement.class)
                 .toDraft(input, new com.promptoptimizer.enhancement.domain.ProviderMetadata("fixture", "fixture", false));
@@ -789,12 +819,14 @@ class OpenAiCompatibleNaturalPhaseProtocolTest {
             var payload = json.readTree(user.substring(user.indexOf('{')));
             if ("4".equals(input.strategyVersion())) assertThat(payload).isEqualTo(json.valueToTree(input));
             if (NaturalPromptScopedInstructions.supports(input.strategyVersion())) {
-                boolean preparing = sent.path("messages").get(0).path("content").asText()
-                        .startsWith(NaturalPromptScopedInstructions.PREPARE);
+                String system = sent.path("messages").get(0).path("content").asText();
+                boolean preparing = system.startsWith(NaturalPromptScopedInstructions.PREPARE)
+                        || system.startsWith(NaturalPromptExecutionBoundaryInstructions.PREPARE);
                 boolean writing32 = NaturalPromptRelationalInstructions.supports(input.strategyVersion()) && !preparing
                         && sent.path("messages").get(0).path("content").asText().startsWith(NaturalPromptRelationalInstructions.ENHANCE);
-                assertThat(payload.has("taskScope")).isEqualTo(!preparing && !writing32);
-                if (!preparing && !writing32) assertThat(payload.path("taskScope").has("actions")).isTrue();
+                boolean writing34 = "34".equals(input.strategyVersion()) && system.startsWith(NaturalPromptExecutionBoundaryInstructions.ENHANCE);
+                assertThat(payload.has("taskScope")).isEqualTo(!preparing && !writing32 && !writing34);
+                if (!preparing && !writing32 && !writing34) assertThat(payload.path("taskScope").has("actions")).isTrue();
             }
             assertThat(payload.path("rawPrompt").asText()).isEqualTo(input.rawPrompt());
             assertThat(payload.path("context")).isEqualTo(json.valueToTree(input.context()));

@@ -1,0 +1,124 @@
+[
+  {
+    "id": "EB-U04_V31_PLAN",
+    "caseId": "EB-U04",
+    "version": "31",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "请写一封给已报名成员的活动地点变更通知正文。活动仍在2027年5月9日10:00举行，原地点是松石楼一层；新地点尚未确定，只能由我决定。先向我确认新地点，不要猜、不用示例地点，也不能把原地点写成新地点。我未回答时，先把不依赖新地点的通知正文写好，地点一句明确标为待确认，不要因此停掉整封通知。不要编变更原因。",
+      "contextDescription": "用户没有给出新的地点确认。本题没有其他补充对话、Plan答案或已确认新地址。",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "68930021-3eb6-43d6-8ca2-af6b8905610b",
+        "version": "sha256:63dc09a9f3a563a3aa39c5a1a6157e8b7c6c2e47b9aaf9df83f75af50a4d664f"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "EB-U04_V31_PLAN",
+      "data": {
+        "summary": "用户委托撰写一封给已报名成员的活动地点变更通知正文：活动时间2027年5月9日10:00不变，原地点为松石楼一层，新地点须由用户确认、不得猜测或把原地点当新地点；用户未回答时先写好不依赖新地点的正文，地点一句标为待确认，且不编造变更原因。当前需澄清的是新地点这一用户独有信息，以及未确认前正文中地点句的呈现方式是否按用户原话执行。",
+        "questions": [
+          {
+            "id": "newVenue",
+            "question": "活动的新地点是什么？请给出可直接写入通知的地点名称或位置描述。",
+            "hint": "新地点只能由用户决定，直接决定通知正文地点句的最终内容；未提供时正文该句保持待确认。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "pendingPlaceholder",
+            "question": "用户未确认新地点前，正文中地点一句希望如何标注为待确认？",
+            "hint": "影响未确认版本正文中地点句的具体呈现，但不改变其余正文内容。",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "bracket",
+                "label": "用方括号占位标注",
+                "description": "如“新地点：【待确认】”",
+                "answer": "地点句使用方括号占位标注待确认",
+                "recommended": true,
+                "recommendationReason": "与原文“明确标为待确认”一致，且便于后续替换为确认地点"
+              },
+              {
+                "id": "sentence",
+                "label": "用完整句子说明待确认",
+                "description": "如“新地点尚待确认，确认后将另行通知”",
+                "answer": "地点句用完整句子说明新地点待确认并将另行通知",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 8623,
+        "planId": "eb9cb008-f170-4716-88e0-cae23d9aafa0",
+        "planningContext": {
+          "contextId": "68930021-3eb6-43d6-8ca2-af6b8905610b",
+          "version": "sha256:63dc09a9f3a563a3aa39c5a1a6157e8b7c6c2e47b9aaf9df83f75af50a4d664f"
+        },
+        "expiresAt": "2026-10-23T11:35:12.293364300Z"
+      }
+    }
+  },
+  {
+    "id": "EB-U04_V34_PLAN",
+    "caseId": "EB-U04",
+    "version": "34",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "请写一封给已报名成员的活动地点变更通知正文。活动仍在2027年5月9日10:00举行，原地点是松石楼一层；新地点尚未确定，只能由我决定。先向我确认新地点，不要猜、不用示例地点，也不能把原地点写成新地点。我未回答时，先把不依赖新地点的通知正文写好，地点一句明确标为待确认，不要因此停掉整封通知。不要编变更原因。",
+      "contextDescription": "用户没有给出新的地点确认。本题没有其他补充对话、Plan答案或已确认新地址。",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "68930021-3eb6-43d6-8ca2-af6b8905610b",
+        "version": "sha256:63dc09a9f3a563a3aa39c5a1a6157e8b7c6c2e47b9aaf9df83f75af50a4d664f"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "EB-U04_V34_PLAN",
+      "data": {
+        "summary": "用户要求写一封给已报名成员的活动地点变更通知正文：活动时间仍为2027年5月9日10:00，原地点为松石楼一层，新地点只能由用户决定。执行时须先向用户确认新地点，不猜测、不用示例地点、不把原地点当新地点、不编造变更原因；用户未回答时，先完成不依赖新地点的正文，并将地点一句明确标为待确认。",
+        "questions": [
+          {
+            "id": "newVenue",
+            "question": "活动的新地点具体是什么？请给出可直接写入通知的地点名称（如楼栋、楼层、房间或场地名称）。",
+            "hint": "新地点只能由你决定；它决定通知中地点一句的最终写法。未确认前，执行者会先完成其余正文并将地点标为待确认，不会猜测或用示例地点。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 6118,
+        "planId": "32757d8c-118d-48f7-abe9-0569a5b31721",
+        "planningContext": {
+          "contextId": "68930021-3eb6-43d6-8ca2-af6b8905610b",
+          "version": "sha256:63dc09a9f3a563a3aa39c5a1a6157e8b7c6c2e47b9aaf9df83f75af50a4d664f"
+        },
+        "expiresAt": "2026-10-23T11:35:12.293364300Z"
+      }
+    }
+  }
+]

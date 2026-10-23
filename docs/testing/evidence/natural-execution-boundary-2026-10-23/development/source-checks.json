@@ -1,0 +1,530 @@
+{
+  "status": "SOURCE_RECHECK_COMPLETE_NO_ADOPTION_DECISION",
+  "caseIds": [
+    "D02",
+    "D03"
+  ],
+  "assessor": "只读协作代理；曾参与职责设计诊断与代码审阅，非外部专业盲审。未读independent-cases或未来留出题。",
+  "checkedAt": "2026-10-23T10:18:33.733287+00:00",
+  "newModelCalls": 0,
+  "scope": "逐一复核既有六份D02作品（包括截断前内容）、六份D03代码及两份既有匿名评审。只新增本文件，不修改冻结协议、作品、旧评审或closure。",
+  "sourceFiles": [
+    {
+      "file": "cases.json",
+      "sha256": "deaa455c68adafb715f7ffaf27d4c72e19a97d44074b7c489d284fc74b43df29"
+    },
+    {
+      "file": "anonymous-review-map.json",
+      "sha256": "b8b44ba6d85cf1e7ce051351369f55d1729a611aea63837866ef138a9860441c"
+    },
+    {
+      "file": "deterministic-work-checks.json",
+      "sha256": "70981722d7dd494c44ac26bf442468030b1d63733e7680bd69ce184cf530ce41"
+    }
+  ],
+  "D02": {
+    "referenceArithmetic": {
+      "arriagaSums": {
+        "全人群": {
+          "all_cause_contribution_years": "2.0",
+          "cardio_cerebrovascular_contribution_years": "0.80",
+          "other_causes_contribution_years": "1.20"
+        },
+        "男": {
+          "all_cause_contribution_years": "2.20",
+          "cardio_cerebrovascular_contribution_years": "0.90",
+          "other_causes_contribution_years": "1.30"
+        },
+        "女": {
+          "all_cause_contribution_years": "1.80",
+          "cardio_cerebrovascular_contribution_years": "0.70",
+          "other_causes_contribution_years": "1.10"
+        }
+      },
+      "allPopulationCardioShare": "0.80/2.00=40%",
+      "otherCauseShare": "1.20/2.00=60%",
+      "sexYllRateAbsoluteGap": "2015:8400-6000=2400;2025:6400-4400=2000;缩小400人年/10万人",
+      "sexYllRateRelativeRatio": "2015:1.40;2025:1.454545...;相对比增大，不能与绝对差方向混淆",
+      "districtCrudeRateAbsoluteGap": "2015:320-280=40;2025:220-180=40;不变",
+      "crudeRateGeometricAnnualDecline": "1-(200/300)^(1/10)=0.0397354992...，约3.97%，2015到2025为10个年度间隔",
+      "ageGroup0to44": "每年死亡10、率25/10万人，非下降组",
+      "yllByAge": "材料没有分年龄YLL，不能仅由年龄别死亡数推断YLL主要人群"
+    },
+    "promptChecks": [
+      {
+        "version": "31",
+        "file": "prompts/D02_V31_GEN.md",
+        "sha256": "5cfd55078267679b9438168462fbff4aaa8f8c30370c45889605d4d21aaee097",
+        "containsComputedArriagaTotals": false,
+        "observation": "两提示均把Arriaga扩为死亡率变化贡献因素；未直接给出e0分解对象。增强时未见执行专属e0表，不能因未预知该表就定错；但其自定“总体死亡率变化”也不能当成已验证专业适用性。具体合计/占比错误首次出现在下游作品，不能仅据首次出现便认定下游是唯一根因。"
+      },
+      {
+        "version": "34",
+        "file": "prompts/D02_V34_GEN.md",
+        "sha256": "ed639596e1a7346264e710fe90768bcf5d42c886c08d1f42a4a3f935d165fbdd",
+        "containsComputedArriagaTotals": false,
+        "observation": "两提示均把Arriaga扩为死亡率变化贡献因素；未直接给出e0分解对象。增强时未见执行专属e0表，不能因未预知该表就定错；但其自定“总体死亡率变化”也不能当成已验证专业适用性。具体合计/占比错误首次出现在下游作品，不能仅据首次出现便认定下游是唯一根因。"
+      }
+    ],
+    "workChecks": [
+      {
+        "jobId": "D02_ORIGINAL_EXEC_R1",
+        "file": "works/D02_ORIGINAL_EXEC_R1.md",
+        "sha256": "e2699f1dea986a1742617fc219c112c5c82d95837fe287fc52497c91bb4d88c7",
+        "httpStatus": 200,
+        "finishReason": "length",
+        "delivery": "DELIVERY_FAILURE",
+        "positiveChecks": [
+          "年度起止死亡数300→200、粗率300→200、标化率237.5→160与材料相符。",
+          "月峰1月1.3091、谷7/8月0.7855与合成月分布相符；不能据此作因果结论。",
+          "年度YLL7200→5400，男YLL4200→3200/率8400→6400，女YLL3000→2200/率6000→4400均有材料支持。",
+          "正文保留合成地区/资料限定，未据此声称真实临床结论。"
+        ],
+        "issues": [
+          {
+            "id": "AGE_TREND_OVERGENERALIZED",
+            "evidence": {
+              "file": "works/D02_ORIGINAL_EXEC_R1.md",
+              "line": 34,
+              "quote": "而是各年龄组死亡数同步下降的结果"
+            },
+            "expected": "0—44岁死亡数每年均10；下降来自45—64及65岁及以上两组。",
+            "finding": "概括将不下降的0—44岁一并写成下降，后文126行虽正确说明恒定，仍需删改这一自相矛盾的泛化。",
+            "severity": "MINOR",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "AGE_TREND_OVERGENERALIZED"
+          }
+        ],
+        "attribution": {
+          "numericOrConditionErrors": "实际作品中的算术、方向或未支持推断；并非平台确定性组装填入这些数值。",
+          "truncation": "五份finishReason=length是在统一4096-token执行上限下发生，实验容量与生成篇幅共同影响，不据此单独判断模型能力或某候选根因。"
+        },
+        "distinctSourceIssueGroups": 1,
+        "notAnExhaustivePassStatement": true
+      },
+      {
+        "jobId": "D02_ORIGINAL_EXEC_R2",
+        "file": "works/D02_ORIGINAL_EXEC_R2.md",
+        "sha256": "252bd3d8c91d7cb88695ea72e352eb6c40d159eb728154b2b7e692fe35c76684",
+        "httpStatus": 200,
+        "finishReason": "stop",
+        "delivery": "DELIVERED_WITH_SOURCE_ISSUES",
+        "positiveChecks": [
+          "年度起止死亡数300→200、粗率300→200、标化率237.5→160与材料相符。",
+          "月峰1月1.3091、谷7/8月0.7855与合成月分布相符；不能据此作因果结论。",
+          "年度YLL7200→5400，男YLL4200→3200/率8400→6400，女YLL3000→2200/率6000→4400均有材料支持。",
+          "正文保留合成地区/资料限定，未据此声称真实临床结论。"
+        ],
+        "issues": [
+          {
+            "id": "CONSTANT_DISTRICT_GAP_CALLED_EXPANDING",
+            "evidence": {
+              "file": "works/D02_ORIGINAL_EXEC_R2.md",
+              "line": 37,
+              "quote": "且差距由2015年的40/10万扩大至2025年的40/10万"
+            },
+            "expected": "两年差均40/10万，绝对差不变，相对比值约1.14→1.22增大。",
+            "finding": "同段又说明绝对差保持不变，前面的“扩大”仍需更正。",
+            "severity": "MINOR",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "CONSTANT_DISTRICT_GAP_CALLED_EXPANDING"
+          },
+          {
+            "id": "AGE_SPECIFIC_YLL_UNSUPPORTED",
+            "evidence": {
+              "file": "works/D02_ORIGINAL_EXEC_R2.md",
+              "line": 89,
+              "quote": "65岁及以上组是死亡和YLL的主要人群"
+            },
+            "expected": "资料给出高龄组死亡最多，但YLL只提供年度和性别分层，不能确定年龄别YLL主导人群。",
+            "finding": "把已知死亡数年龄分布推广成没有提供的年龄别YLL结论。",
+            "severity": "MAJOR",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "AGE_SPECIFIC_YLL_UNSUPPORTED"
+          }
+        ],
+        "attribution": {
+          "numericOrConditionErrors": "实际作品中的算术、方向或未支持推断；并非平台确定性组装填入这些数值。",
+          "truncation": "本件stop，但完整返回不等于语义正确。"
+        },
+        "distinctSourceIssueGroups": 2,
+        "notAnExhaustivePassStatement": true
+      },
+      {
+        "jobId": "D02_V31_EXEC_R1",
+        "file": "works/D02_V31_EXEC_R1.md",
+        "sha256": "5f1412958a8a97c683916348f4f7a11338c1087c49b7a140f763a7cc691b5c42",
+        "httpStatus": 200,
+        "finishReason": "length",
+        "delivery": "DELIVERY_FAILURE",
+        "positiveChecks": [
+          "年度起止死亡数300→200、粗率300→200、标化率237.5→160与材料相符。",
+          "月峰1月1.3091、谷7/8月0.7855与合成月分布相符；不能据此作因果结论。",
+          "年度YLL7200→5400，男YLL4200→3200/率8400→6400，女YLL3000→2200/率6000→4400均有材料支持。",
+          "正文保留合成地区/资料限定，未据此声称真实临床结论。"
+        ],
+        "issues": [
+          {
+            "id": "CAGR_WRONG",
+            "evidence": {
+              "file": "works/D02_V31_EXEC_R1.md",
+              "line": 61,
+              "quote": "即年均相对下降约3.0%（按几何平均估算）"
+            },
+            "expected": "2015→2025有10个年度间隔；1-(200/300)^(1/10)=3.9735499%，约3.97%。",
+            "finding": "几何年均降幅3.0%与源数值不符，不能把累计33.3%除以11代替几何平均。",
+            "severity": "MAJOR",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "CAGR_WRONG"
+          },
+          {
+            "id": "AGE_TREND_OVERGENERALIZED",
+            "evidence": {
+              "file": "works/D02_V31_EXEC_R1.md",
+              "line": 60,
+              "quote": "而是各年龄组死亡水平同步下降的结果"
+            },
+            "expected": "0—44岁组恒25/10万；只有两个更高年龄组下降。",
+            "finding": "摘要及概括写各组均下降，后文有正确例外；按一个共同过度概括问题计，不按每次出现重复加数。",
+            "severity": "MINOR",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "AGE_TREND_OVERGENERALIZED"
+          }
+        ],
+        "attribution": {
+          "numericOrConditionErrors": "实际作品中的算术、方向或未支持推断；并非平台确定性组装填入这些数值。",
+          "truncation": "五份finishReason=length是在统一4096-token执行上限下发生，实验容量与生成篇幅共同影响，不据此单独判断模型能力或某候选根因。"
+        },
+        "distinctSourceIssueGroups": 2,
+        "notAnExhaustivePassStatement": true
+      },
+      {
+        "jobId": "D02_V31_EXEC_R2",
+        "file": "works/D02_V31_EXEC_R2.md",
+        "sha256": "2ecedd7643bcf5ed6d7841710a3bf6f3be941485ec2b19316c2505a465a39f87",
+        "httpStatus": 200,
+        "finishReason": "length",
+        "delivery": "DELIVERY_FAILURE",
+        "positiveChecks": [
+          "年度起止死亡数300→200、粗率300→200、标化率237.5→160与材料相符。",
+          "月峰1月1.3091、谷7/8月0.7855与合成月分布相符；不能据此作因果结论。",
+          "年度YLL7200→5400，男YLL4200→3200/率8400→6400，女YLL3000→2200/率6000→4400均有材料支持。",
+          "正文保留合成地区/资料限定，未据此声称真实临床结论。"
+        ],
+        "issues": [
+          {
+            "id": "ARRIAGA_TOTAL_WRONG",
+            "evidence": {
+              "file": "works/D02_V31_EXEC_R2.md",
+              "line": 7,
+              "quote": "其中心脑血管疾病死亡变化贡献1.0年（0.05+0.25+0.50）"
+            },
+            "expected": "全人群心脑血管贡献=0.80年，其他死因1.20年，合计2.00年；贡献占40%。",
+            "finding": "摘要将三个明确贡献相加错误为1.0，重要结果错误；与34_R1出现同类错误，不能归为候选唯一新增。",
+            "severity": "SEVERE",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "ARRIAGA_TOTAL_WRONG"
+          },
+          {
+            "id": "CONSTANT_SEX_GAP_CALLED_EXPANDING",
+            "evidence": {
+              "file": "works/D02_V31_EXEC_R2.md",
+              "line": 117,
+              "quote": "性别绝对差由120/10万扩大至120/10万（绝对值不变）"
+            },
+            "expected": "两年性别绝对差均120/10万，只有相对率比扩大。",
+            "finding": "同句数值与括号已正确但动词矛盾，需更正。",
+            "severity": "MINOR",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "CONSTANT_SEX_GAP_CALLED_EXPANDING"
+          },
+          {
+            "id": "DISTRICT_RATIO_DIRECTION_REVERSED",
+            "evidence": {
+              "file": "works/D02_V31_EXEC_R2.md",
+              "line": 123,
+              "quote": "相对比由1.14降至1.22"
+            },
+            "expected": "东/西比值1.14→1.22上升。",
+            "finding": "本段结论为相对差扩大，数值也正确；“降至”反向，应改为升至。",
+            "severity": "MINOR",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "DISTRICT_RATIO_DIRECTION_REVERSED"
+          },
+          {
+            "id": "AGE_TREND_OVERGENERALIZED",
+            "evidence": {
+              "file": "works/D02_V31_EXEC_R2.md",
+              "line": 7,
+              "quote": "各分组死亡率均下降"
+            },
+            "expected": "0—44岁年龄组恒25/10万，其他所列组下降。",
+            "finding": "摘要泛化与正文正确例外不一致，需要限定。",
+            "severity": "MINOR",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "AGE_TREND_OVERGENERALIZED"
+          }
+        ],
+        "attribution": {
+          "numericOrConditionErrors": "实际作品中的算术、方向或未支持推断；并非平台确定性组装填入这些数值。",
+          "truncation": "五份finishReason=length是在统一4096-token执行上限下发生，实验容量与生成篇幅共同影响，不据此单独判断模型能力或某候选根因。"
+        },
+        "distinctSourceIssueGroups": 4,
+        "notAnExhaustivePassStatement": true
+      },
+      {
+        "jobId": "D02_V34_EXEC_R1",
+        "file": "works/D02_V34_EXEC_R1.md",
+        "sha256": "2abe557e16ada95f90ef95a5d967c3e3130473d64041b843081ee74e2b00e450",
+        "httpStatus": 200,
+        "finishReason": "length",
+        "delivery": "DELIVERY_FAILURE",
+        "positiveChecks": [
+          "年度起止死亡数300→200、粗率300→200、标化率237.5→160与材料相符。",
+          "月峰1月1.3091、谷7/8月0.7855与合成月分布相符；不能据此作因果结论。",
+          "年度YLL7200→5400，男YLL4200→3200/率8400→6400，女YLL3000→2200/率6000→4400均有材料支持。",
+          "正文保留合成地区/资料限定，未据此声称真实临床结论。"
+        ],
+        "issues": [
+          {
+            "id": "ARRIAGA_TOTAL_SHARE_AND_ROUNDING_WRONG",
+            "evidence": {
+              "file": "works/D02_V34_EXEC_R1.md",
+              "line": 107,
+              "quote": "心脑血管疾病贡献合计1.00年（0—44岁0.05、45—64岁0.25、65岁及以上0.50）"
+            },
+            "expected": "0.05+0.25+0.50=0.80；0.80/2.00=40%；其他1.20/2.00=60%；合计100%。",
+            "finding": "正文及摘要将贡献总额算为1.00，又推出50%及110%，并错误称10个百分点差异来自四舍五入。一个算术错误及其连锁解释合并记一项。",
+            "severity": "SEVERE",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "ARRIAGA_TOTAL_SHARE_AND_ROUNDING_WRONG"
+          },
+          {
+            "id": "ROUNDING_EXPLANATION_FALSE",
+            "evidence": {
+              "file": "works/D02_V34_EXEC_R1.md",
+              "line": 107,
+              "quote": "二者合计因四舍五入为110%"
+            },
+            "expected": "原表加总严格100%，0.80+1.20=2.00，差异不是舍入。",
+            "finding": "此项是上一总额错误的连锁错误，不另外累计必要修改数。",
+            "severity": "SEVERE",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "ARRIAGA_TOTAL_SHARE_AND_ROUNDING_WRONG"
+          },
+          {
+            "id": "YLL_ABSOLUTE_GAP_DIRECTION_WRONG",
+            "evidence": {
+              "file": "works/D02_V34_EXEC_R1.md",
+              "line": 101,
+              "quote": "性别间YLL率差距由2015年2400人年/10万扩大至2025年2000人年/10万"
+            },
+            "expected": "8400-6000=2400，6400-4400=2000；绝对差缩小400，相对比由1.40升至约1.4545。",
+            "finding": "把绝对差缩小写成扩大，尽管紧接括号说明缩小，报告仍需更正。",
+            "severity": "MINOR",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "YLL_ABSOLUTE_GAP_DIRECTION_WRONG"
+          },
+          {
+            "id": "CONSTANT_DISTRICT_GAP_CALLED_EXPANDING",
+            "evidence": {
+              "file": "works/D02_V34_EXEC_R1.md",
+              "line": 67,
+              "quote": "差距由40/10万扩大至40/10万"
+            },
+            "expected": "绝对差40不变，扩大的是相对比值。",
+            "finding": "同句自相矛盾，需更正。",
+            "severity": "MINOR",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "CONSTANT_DISTRICT_GAP_CALLED_EXPANDING"
+          },
+          {
+            "id": "AGE_TREND_OVERGENERALIZED",
+            "evidence": {
+              "file": "works/D02_V34_EXEC_R1.md",
+              "line": 75,
+              "quote": "研究期内各年龄组相对降幅相近（约33%—35%）"
+            },
+            "expected": "0—44岁下降0%，45—64岁约33.3%，65岁及以上约34.8%。",
+            "finding": "摘要/小结“各组均下降”与本句都需限定为下降的年龄组；同段已说明0—44岁未降，不重复计多个同类问题。",
+            "severity": "MINOR",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "AGE_TREND_OVERGENERALIZED"
+          }
+        ],
+        "attribution": {
+          "numericOrConditionErrors": "实际作品中的算术、方向或未支持推断；并非平台确定性组装填入这些数值。",
+          "truncation": "五份finishReason=length是在统一4096-token执行上限下发生，实验容量与生成篇幅共同影响，不据此单独判断模型能力或某候选根因。"
+        },
+        "distinctSourceIssueGroups": 4,
+        "notAnExhaustivePassStatement": true
+      },
+      {
+        "jobId": "D02_V34_EXEC_R2",
+        "file": "works/D02_V34_EXEC_R2.md",
+        "sha256": "c789e50d6216ae9d8fc0f16c79b4a93dbb307c71866d69c37ce1c6ffeecb865a",
+        "httpStatus": 200,
+        "finishReason": "length",
+        "delivery": "DELIVERY_FAILURE",
+        "positiveChecks": [
+          "年度起止死亡数300→200、粗率300→200、标化率237.5→160与材料相符。",
+          "月峰1月1.3091、谷7/8月0.7855与合成月分布相符；不能据此作因果结论。",
+          "年度YLL7200→5400，男YLL4200→3200/率8400→6400，女YLL3000→2200/率6000→4400均有材料支持。",
+          "正文保留合成地区/资料限定，未据此声称真实临床结论。"
+        ],
+        "issues": [
+          {
+            "id": "OLDER_DEATH_SHARE_DIRECTION_CONTRADICTED",
+            "evidence": {
+              "file": "works/D02_V34_EXEC_R2.md",
+              "line": 104,
+              "quote": "死亡在年龄上的相对集中度进一步向老年组倾斜"
+            },
+            "expected": "65岁及以上死亡占比230/300约76.7%→150/200=75.0%，并未进一步向该组集中。",
+            "finding": "后半句自我纠正为实际下降，仍保留相反的前半句结论。",
+            "severity": "MAJOR",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "OLDER_DEATH_SHARE_DIRECTION_CONTRADICTED"
+          },
+          {
+            "id": "CONSTANT_DISTRICT_COUNT_GAP_CALLED_EXPANDING",
+            "evidence": {
+              "file": "works/D02_V34_EXEC_R2.md",
+              "line": 98,
+              "quote": "两区死亡数之差由20例扩大至20例"
+            },
+            "expected": "两年均相差20例，绝对差不变。",
+            "finding": "同句括号已写绝对差不变，但动词矛盾需更正。",
+            "severity": "MINOR",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "CONSTANT_DISTRICT_COUNT_GAP_CALLED_EXPANDING"
+          },
+          {
+            "id": "YLL_PER_DEATH_DIMENSION_MISLABELED",
+            "evidence": {
+              "file": "works/D02_V34_EXEC_R2.md",
+              "line": 140,
+              "quote": "约为同年粗死亡率（300/10万）的24倍"
+            },
+            "expected": "YLL率/死亡率=(人年/10万人)/(死亡例数/10万人)=人年/例；2015为24人年/例、2025为27人年/例。",
+            "finding": "数值24与27可由资料计算，但不能当作无量纲倍数或单独“放大效应”；需用每例死亡平均寿命损失的单位准确描述。",
+            "severity": "MAJOR",
+            "firstObservedStage": "DOWNSTREAM_WORK",
+            "editGroup": "YLL_PER_DEATH_DIMENSION_MISLABELED"
+          }
+        ],
+        "attribution": {
+          "numericOrConditionErrors": "实际作品中的算术、方向或未支持推断；并非平台确定性组装填入这些数值。",
+          "truncation": "五份finishReason=length是在统一4096-token执行上限下发生，实验容量与生成篇幅共同影响，不据此单独判断模型能力或某候选根因。"
+        },
+        "distinctSourceIssueGroups": 3,
+        "notAnExhaustivePassStatement": true
+      }
+    ],
+    "interpretation": "34_R1和31_R2均出现Arriaga合计错误，不归为34唯一新增；原始R2完整且Arriaga正确，但仍有独立条件/推断问题。五份截断和已返回内容的语义错误分别保留。不得根据两份漏审或止于HTTP200宣布质量提升。",
+    "reviewCountCaution": "同一Arriaga加总错误的总额、占比、110%借口共享editGroup，不重复累计；截断单列交付状态，不因少出现后文章节就判错误更少。"
+  },
+  "D03": {
+    "contractQuote": "【本地合成代码夹具】函数签名paginateRows(rows, options = {})。rows元素含id、name、status；先保留status恰好为ACTIVE的记录，再按name包含keyword进行不区分大小写的子串筛选，keyword按String(options.keyword || emptyString).trim().toLowerCase()归一化。筛选后的顺序沿用输入顺序。options.page与options.pageSize若给出则是有限正整数；默认page=1、pageSize=3，无需设计新的输入协议。返回结构固定{items,page,pageSize,total,totalPages}，total是全部筛选命中数，totalPages是其向上取整的页数。请求page超出最后一页时收敛至最后一页。无命中时items=[]、page=1、total=0、totalPages=0。不能修改rows或元素，不新增依赖/API或返回字段。",
+    "reviewCorrection": "若给出则为有限正整数是输入保证，不是要求函数覆盖NaN、负数、非整数等域外输入。原始两份使用||默认值和Math.min收敛在契约内正确，增强额外校验不构成本题必要收益。",
+    "workChecks": [
+      {
+        "jobId": "D03_ORIGINAL_EXEC_R1",
+        "file": "works/D03_ORIGINAL_EXEC_R1.md",
+        "sha256": "884ac107011abcadcfd1048a8d100a41dc6b15ec3572166227f4f031755c4bbb",
+        "finishReason": "stop",
+        "contractDomainChecks": 5,
+        "passed": true,
+        "necessaryEditsProvenByInvalidParameterArguments": 0,
+        "finding": "所提供正整数/默认参数域内实现正确；对未承诺非法输入的不同处理不能记作本任务收益或必改问题。"
+      },
+      {
+        "jobId": "D03_ORIGINAL_EXEC_R2",
+        "file": "works/D03_ORIGINAL_EXEC_R2.md",
+        "sha256": "d0d7e280289997dd03b317d4e3742283b5ee56982125c43d957bce732476787e",
+        "finishReason": "stop",
+        "contractDomainChecks": 5,
+        "passed": true,
+        "necessaryEditsProvenByInvalidParameterArguments": 0,
+        "finding": "所提供正整数/默认参数域内实现正确；对未承诺非法输入的不同处理不能记作本任务收益或必改问题。"
+      },
+      {
+        "jobId": "D03_V31_EXEC_R1",
+        "file": "works/D03_V31_EXEC_R1.md",
+        "sha256": "465fc67b44eb196a9f1ef9eb9e53f2bdf05609940e508c31367312f432aaf1af",
+        "finishReason": "stop",
+        "contractDomainChecks": 5,
+        "passed": true,
+        "necessaryEditsProvenByInvalidParameterArguments": 0,
+        "finding": "所提供正整数/默认参数域内实现正确；对未承诺非法输入的不同处理不能记作本任务收益或必改问题。"
+      },
+      {
+        "jobId": "D03_V31_EXEC_R2",
+        "file": "works/D03_V31_EXEC_R2.md",
+        "sha256": "030e103fcc30026b1446cc67c5d0048350dfd2113ca5c611f8e19281546c225c",
+        "finishReason": "stop",
+        "contractDomainChecks": 5,
+        "passed": true,
+        "necessaryEditsProvenByInvalidParameterArguments": 0,
+        "finding": "所提供正整数/默认参数域内实现正确；对未承诺非法输入的不同处理不能记作本任务收益或必改问题。"
+      },
+      {
+        "jobId": "D03_V34_EXEC_R1",
+        "file": "works/D03_V34_EXEC_R1.md",
+        "sha256": "bfb51eb933617fa881dc598fd120a478dbaf98c772bbd8c13b2e98f18740e753",
+        "finishReason": "stop",
+        "contractDomainChecks": 5,
+        "passed": true,
+        "necessaryEditsProvenByInvalidParameterArguments": 0,
+        "finding": "所提供正整数/默认参数域内实现正确；对未承诺非法输入的不同处理不能记作本任务收益或必改问题。"
+      },
+      {
+        "jobId": "D03_V34_EXEC_R2",
+        "file": "works/D03_V34_EXEC_R2.md",
+        "sha256": "31be8c43cd04d9f673f7ef627181f8f51c69b16c6ca88dcb0b9bd8af98b4ae30",
+        "finishReason": "stop",
+        "contractDomainChecks": 5,
+        "passed": true,
+        "necessaryEditsProvenByInvalidParameterArguments": 0,
+        "finding": "所提供正整数/默认参数域内实现正确；对未承诺非法输入的不同处理不能记作本任务收益或必改问题。"
+      }
+    ],
+    "deterministicEvidence": "deterministic-work-checks.json中D03共30项、全部通过。另本代理使用8个正常域样例逐份VM离线执行亦通过；不与既有数量相加声称不同业务能力。",
+    "correctedComparison": "六份作品在已验证契约域内持平；可指认的提示词边界重述不等于实际作品稳定增益。"
+  },
+  "reviewCorrections": [
+    {
+      "reviewId": "REVIEW_1",
+      "originalResultSha256": "a0e3fc58ca585155bfb657360fbaab20c48ade96016993f4df204f0aa5a9ee83",
+      "corrections": [
+        "漏记34_R1全人群Arriaga总额/占比及110%解释错误；漏记31_R2摘要的同类总额错误。",
+        "漏记各臂的方向矛盾或未支持YLL年龄推断；原始R2不能称无需修改。",
+        "D03把输入保证误读为函数必须校验非法值：删除据此产生的原始臂MINOR与增强臂收益。",
+        "D03原始已明确可替换完整实现，评审称未明确输出形式不成立；6份正常域功能检查均通过，未证明稳定作品增益。"
+      ],
+      "d02V34Repeat1QuoteAudit": {
+        "quote": "三个年龄组的全死因贡献分别为0—44岁0.30年、45—64岁0.60",
+        "exactInActualRepeat1": false,
+        "exactInActualRepeat2": true,
+        "interpretation": "REVIEW_1还把第二次作品附近的截断文字归到第一次。第一次实际已进入完整分解解释，但算错重要总额并在末尾截断；不能用错误引用掩盖数值问题。"
+      }
+    },
+    {
+      "reviewId": "REVIEW_2",
+      "originalResultSha256": "cb35ef1024a89537cd657aee784659416f68d2533b3135465d21d410988b0ce9",
+      "corrections": [
+        "漏记34_R1全人群Arriaga总额/占比及110%解释错误；漏记31_R2摘要的同类总额错误。",
+        "漏记各臂的方向矛盾或未支持YLL年龄推断；原始R2不能称无需修改。",
+        "D03把输入保证误读为函数必须校验非法值：删除据此产生的原始臂MINOR与增强臂收益。",
+        "D03原始已明确可替换完整实现，评审称未明确输出形式不成立；6份正常域功能检查均通过，未证明稳定作品增益。"
+      ],
+      "d02V34Repeat1QuoteAudit": {
+        "quote": "资料未提供分解的标准误或检验结果，不能判断",
+        "exactInActualRepeat1": true,
+        "exactInActualRepeat2": false,
+        "interpretation": "本次引文属于实际第一次；其截断判断不抵消此前出现的算术错误。"
+      }
+    }
+  ],
+  "overallBoundary": "这是来源复核和评审纠错，不是预定采用判决。原始、31、34的错误都完整列出；后续容量对照或独立验证需单独判断，不能覆盖本批失败原件。"
+}

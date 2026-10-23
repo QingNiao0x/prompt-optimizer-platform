@@ -1,0 +1,38 @@
+{
+  "status": "FROZEN",
+  "authorizationQuote": "请执行自动化开发自行决定真实评测的次数，以实际可以提升提示词质量为目标；用户补充实际失败例后继续原目标。",
+  "selectedMaximumActualCalls": 100,
+  "previousClosedActual": 1693,
+  "originalAuthorizedTaskMaximum": 160,
+  "originalTaskClosedActual": 60,
+  "settledReservationReallocated": 100,
+  "previousClosedBalanceTransferred": 0,
+  "baseline": "31",
+  "candidate": "34",
+  "stages": [
+    {
+      "name": "development",
+      "maximum": 56
+    },
+    {
+      "name": "regression",
+      "maximum": 40
+    },
+    {
+      "name": "runtime-check",
+      "maximum": 4
+    }
+  ],
+  "hypothesis": "优化器只增强执行要求，不把优化时缺少材料擅自写成执行时现实缺失；充分使用下游实际材料形成结果，避免用口径说明、占位或方案替代用户要的作品。",
+  "adoptionCriteria": [
+    "同信息三臂每臂两次实际作品；两份独立评审左右对换、原始臂居中，保留原件和分歧。",
+    "开发题用于定位共同机制，不冒充未见外部验收；冻结候选后再开独立回归。",
+    "严重意图/事实/授权错误不放行；有用补充须使作品可用、减少用户必要删改，充分需求持平可接受。"
+  ],
+  "stopConditions": [
+    "任务100次、各阶段和phase上限均有效；失败、协议修复、评审计数，不做质量重试。",
+    "同一失败假设连续两个候选出现相同严重失败时停止该假设，审查职责和证据。",
+    "未证明目标收益前默认31保持，停止采样不等于质量目标完成。"
+  ],
+  "frozenAt": "2026-10-23T09:31:50.332994+00:00"
+}

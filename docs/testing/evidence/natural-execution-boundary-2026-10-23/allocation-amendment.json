@@ -1,0 +1,50 @@
+{
+  "status": "FROZEN",
+  "reason": "开发阶段42次结算后发现D02三臂大部分4096token作品截断；独立容量对照只提高下游容量，不重生成优化正文。未修改候选34，不覆盖旧失败，不做质量重试。",
+  "taskMaximumActualCalls": 100,
+  "taskPreviouslyActual": 42,
+  "taskRemainingAtAmendment": 58,
+  "originalTaskProtocol": {
+    "path": "docs/testing/evidence/natural-execution-boundary-2026-10-23/task-protocol.json",
+    "sha256": "02f54746479c7c57e198d2ce26449363b7c92f365b5fa72c9edacbad209b9571"
+  },
+  "closedStage": {
+    "path": "docs/testing/evidence/natural-execution-boundary-2026-10-23/development/closure.json",
+    "sha256": "d8c79e0e73b1ec2c06f79f070b364d8939c89090b6de953de61b053d1fdb40eb"
+  },
+  "allocations": [
+    {
+      "name": "development",
+      "maximum": 42,
+      "status": "CLOSED",
+      "actual": 42
+    },
+    {
+      "name": "capacity",
+      "maximum": 8
+    },
+    {
+      "name": "unseen",
+      "maximum": 42
+    },
+    {
+      "name": "plan",
+      "maximum": 4
+    },
+    {
+      "name": "runtime-check",
+      "maximum": 4
+    }
+  ],
+  "releasedUnusedDevelopmentReservation": 14,
+  "previousStageAllocationReplacedProspectively": true,
+  "newNumericAuthorization": 0,
+  "oldClosedBalancesRestored": 0,
+  "notes": [
+    "旧开发协议、源码清单、作品、传输与闭批原件不变。",
+    "未来阶段分别冻结，调用总账仍由同一父tmp目录逐次累计100；开发实际42计入，容量最多8后最多余50。",
+    "unseen42替代原regression40，容量8和Plan4使用已结算的未用预留；不是绕过阶段上限。",
+    "未见题本次不读取或复制，独立验收另行冻结。"
+  ],
+  "frozenAt": "2026-10-23T10:05:55.961403+00:00"
+}

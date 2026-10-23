@@ -26,7 +26,8 @@ public final class NaturalPreservedRequest {
     public static NaturalPromptDraft create(NaturalPromptInput input, NaturalTaskScope scope, ProviderMetadata metadata) {
         boolean inferredOnly = (NaturalPromptScopedInstructions.CONSERVATIVE_VERSION.equals(input.strategyVersion())
                 || NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION.equals(input.strategyVersion())
-                || NaturalPromptRelationalInstructions.supports(input.strategyVersion()))
+                || NaturalPromptRelationalInstructions.supports(input.strategyVersion())
+                || NaturalPromptExecutionBoundaryInstructions.VERSION.equals(input.strategyVersion()))
                 && scope.response().basis() == NaturalTaskScope.ResponseBasis.INHERENT;
         if (scope.response().basis() != NaturalTaskScope.ResponseBasis.UNSPECIFIED && !inferredOnly) {
             throw new IllegalArgumentException("已有独立回应要求须走正文生成");

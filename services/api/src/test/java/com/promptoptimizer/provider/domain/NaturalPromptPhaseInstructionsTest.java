@@ -45,6 +45,19 @@ class NaturalPromptPhaseInstructionsTest {
     }
 
     @Test
+    void executionBoundaryCandidateKeepsOriginalProtectionAndDoesNotChangeTheDefault() {
+        assertThat(NaturalPromptInstructions.supports("34")).isTrue();
+        assertThat(NaturalPromptInstructions.requiresTaskUnderstanding("34")).isTrue();
+        assertThat(NaturalPromptInstructions.requiresTaskReview("34")).isTrue();
+        assertThat(NaturalPromptInstructions.CURRENT_VERSION).isEqualTo("31");
+        assertThat(NaturalPromptInstructions.enhancementInstruction("34"))
+                .isNotEqualTo(NaturalPromptInstructions.enhancementInstruction("31"));
+        assertThat(NaturalPromptInstructions.planningInstruction("31")).isEqualTo(NaturalPromptScopedInstructions.PLAN);
+        assertThat(NaturalPromptInstructions.planningInstruction("34"))
+                .contains("Plan仍须询问执行者不能合理确定", "不将未附资料写成现实缺失");
+    }
+
+    @Test
     void phaseProtocolPreservesFourthWritingGuidanceAndDoesNotEnterCriticStages() {
         String fourth = NaturalPromptInstructions.enhancementInstruction("4");
         String businessGuidance = fourth.substring(0, fourth.indexOf("只返回JSON："));

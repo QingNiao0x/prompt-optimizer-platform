@@ -103,7 +103,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                     && scope.response().basis() == NaturalTaskScope.ResponseBasis.UNSPECIFIED)
                     || ((NaturalPromptScopedInstructions.CONSERVATIVE_VERSION.equals(input.strategyVersion())
                     || NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION.equals(input.strategyVersion())
-                    || NaturalPromptRelationalInstructions.supports(input.strategyVersion()))
+                    || NaturalPromptRelationalInstructions.supports(input.strategyVersion())
+                    || NaturalPromptExecutionBoundaryInstructions.VERSION.equals(input.strategyVersion()))
                     && scope.response().basis() != NaturalTaskScope.ResponseBasis.EXPLICIT)) {
                 return validation.apply(NaturalPreservedRequest.create(input, scope, prepared.metadata()));
             }
@@ -111,9 +112,10 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 // 明确成果没有新增写作变量：复用冻结4的全部业务输入、system、解析和保护，历史版本由应用层记录31。
                 return enhance(input.withStrategyVersion(NaturalPromptInstructions.VERSION), validation);
             }
-            if (NaturalPromptRelationalInstructions.supports(input.strategyVersion())) {
-                // 32/33共用32指导及旧4协议；33仅改变校验后的呈现，不把范围辅助记录混成用户要求。
-                return invoke(input, NaturalPromptRelationalInstructions.ENHANCE, "prompt.optimize", null, false,
+            if (NaturalPromptRelationalInstructions.supports(input.strategyVersion())
+                    || NaturalPromptExecutionBoundaryInstructions.VERSION.equals(input.strategyVersion())) {
+                // 32/33共用32指导，34只改变执行资料职责；均沿用4协议，不把范围记录混成用户要求。
+                return invoke(input, NaturalPromptInstructions.enhancementInstruction(input.strategyVersion()), "prompt.optimize", null, false,
                         (body, metadata) -> {
                             try {
                                 var draft = new NaturalPromptDraft(requiredText(body, "optimizedPrompt"),
@@ -123,7 +125,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                                 if (!NaturalPromptRelationalInstructions.SUPPLEMENT_VERSION.equals(input.strategyVersion())) return checked;
                                 return validation.apply(NaturalPreservedRequest.supplement(input, draft));
                             } catch (IllegalArgumentException failure) {
-                                // 与冻结4相同地将框架枚举等协议错误映射为INVALID_RESPONSE，最多修复一次；不改变32正文语义。
+                                // 框架等协议错误与冻结4一样最多修复一次，不用静默默认值掩盖错误。
                                 throw invalid("自然正文或框架标识无效");
                             }
                         });
@@ -236,7 +238,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         if (!NaturalPromptInstructions.supports(input.strategyVersion())) throw invalid("自然链路版本不受支持");
         if (NaturalPromptScopedInstructions.supports(input.strategyVersion())) {
             NaturalTaskScope scope = prepareScope(input, "plan.generate").scope();
-            return invoke(input, NaturalPromptScopedInstructions.PLAN, "plan.generate", null, null, null, false, scope,
+            return invoke(input, NaturalPromptInstructions.planningInstruction(input.strategyVersion()), "plan.generate", null, null, null, false, scope,
                     (body, metadata) -> validation.apply(readPlanningPhase(bindScope(body, scope), input, metadata)));
         }
         String instruction = NaturalPromptInstructions.planningInstruction(input.strategyVersion());
@@ -258,7 +260,9 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
 
     /** 独立识别范围，复用同一受控传输和逐次计量；语义失败不能当作免费质量重试。 */
     private ScopePreparation prepareScope(NaturalPromptInput input, String operation) {
-        return invoke(input, NaturalPromptScopedInstructions.PREPARE, operation, (body, metadata) -> {
+        String instruction = NaturalPromptExecutionBoundaryInstructions.VERSION.equals(input.strategyVersion())
+                ? NaturalPromptExecutionBoundaryInstructions.PREPARE : NaturalPromptScopedInstructions.PREPARE;
+        return invoke(input, instruction, operation, (body, metadata) -> {
             try {
                 NaturalTaskScope scope = scopeReader.readValue(body);
                 return new ScopePreparation(scope.resolve(input), metadata);

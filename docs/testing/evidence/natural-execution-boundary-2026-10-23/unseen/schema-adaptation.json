@@ -1,0 +1,44 @@
+{
+  "status": "SCHEMA_ADAPTATION_ONLY",
+  "adaptedAt": "2026-10-23T10:29:29.701891+00:00",
+  "source": {
+    "path": "tmp/natural-execution-boundary-2026-10-23/independent-cases.json",
+    "sha256": "074fc2828abd137114160d5d9883a60e93234dde0afdc2bfea5b946f8e5c1762"
+  },
+  "target": {
+    "path": "docs/testing/evidence/natural-execution-boundary-2026-10-23/unseen/cases.json",
+    "sha256": "a845d8c07f8b28663095bc494c9b6c6afca716ada7843287d3c1a32b62c4020f"
+  },
+  "authorization": "Parent authorized first reading after candidate34 and guidance freeze; source SHA verified before adaptation. No generated result was consulted.",
+  "candidateFreeze": {
+    "path": "docs/testing/evidence/natural-execution-boundary-2026-10-23/development/source-manifest.json",
+    "sha256": "af3b857d6325774933c20d16e8196687e07672627392ebee6ced3412a802d1db"
+  },
+  "originalFieldsPreservedExactly": true,
+  "originalRawPromptsAndOraclesChanged": false,
+  "transforms": [
+    {
+      "from": "cases[].optimizationContext",
+      "to": "cases[].contextDescription",
+      "operation": "copy verbatim string"
+    },
+    {
+      "from": "cases[].executionEnvironment except resources",
+      "to": "cases[].executorMaterials[0].content",
+      "operation": "serialize complete mode/network/permissions/availability metadata as readable input"
+    },
+    {
+      "from": "cases[].executionEnvironment.resources[].path/text",
+      "to": "cases[].executorMaterials[1..].name/content",
+      "operation": "copy resource names and full text verbatim"
+    },
+    {
+      "from": "cases[].oracle and commonRubric",
+      "to": "cases[].acceptance.caseOracle/commonRubric",
+      "operation": "copy full scoring criteria without edits, review only"
+    }
+  ],
+  "newExpectedAnswersAdded": false,
+  "modelCalls": 0,
+  "originalSealedStatusIsProvenanceOnly": "Original top-level status is preserved as source data; these cases are now opened for frozen-candidate evaluation, not still hidden from root."
+}

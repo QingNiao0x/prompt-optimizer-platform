@@ -1,0 +1,57 @@
+{
+  "status": "SOURCE_RECHECK_COMPLETE",
+  "modelCalls": 4,
+  "baselineQuestions": [
+    {
+      "id": "newVenue",
+      "question": "活动的新地点是什么？请给出可直接写入通知的地点名称或位置描述。",
+      "hint": "新地点只能由用户决定，直接决定通知正文地点句的最终内容；未提供时正文该句保持待确认。",
+      "type": "FREE_TEXT",
+      "options": [],
+      "examples": [],
+      "allowCustomAnswer": true
+    },
+    {
+      "id": "pendingPlaceholder",
+      "question": "用户未确认新地点前，正文中地点一句希望如何标注为待确认？",
+      "hint": "影响未确认版本正文中地点句的具体呈现，但不改变其余正文内容。",
+      "type": "SINGLE_CHOICE",
+      "options": [
+        {
+          "id": "bracket",
+          "label": "用方括号占位标注",
+          "description": "如“新地点：【待确认】”",
+          "answer": "地点句使用方括号占位标注待确认",
+          "recommended": true,
+          "recommendationReason": "与原文“明确标为待确认”一致，且便于后续替换为确认地点"
+        },
+        {
+          "id": "sentence",
+          "label": "用完整句子说明待确认",
+          "description": "如“新地点尚待确认，确认后将另行通知”",
+          "answer": "地点句用完整句子说明新地点待确认并将另行通知",
+          "recommended": false,
+          "recommendationReason": ""
+        }
+      ],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ],
+  "candidateQuestions": [
+    {
+      "id": "newVenue",
+      "question": "活动的新地点具体是什么？请给出可直接写入通知的地点名称（如楼栋、楼层、房间或场地名称）。",
+      "hint": "新地点只能由你决定；它决定通知中地点一句的最终写法。未确认前，执行者会先完成其余正文并将地点标为待确认，不会猜测或用示例地点。",
+      "type": "FREE_TEXT",
+      "options": [],
+      "examples": [],
+      "allowCustomAnswer": true
+    }
+  ],
+  "finding": "两版都问新地点；31追加待确认句式选择不改变关键交付，34未追加；单题定向观察，不代表稳定跨题收益。",
+  "toolFailurePreserved": "原plan两次400、0模型调用：评测runner丢普通上下文，产品正确拒绝；corrected只修评测请求字段，未改产品。",
+  "zeroQuestionLiveRetest": false,
+  "finalGenerationAfterAnswerRetest": false,
+  "semanticCorrectnessNotInferredFromHttp200": true
+}

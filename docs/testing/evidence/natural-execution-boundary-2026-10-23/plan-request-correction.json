@@ -1,0 +1,53 @@
+{
+  "status": "FROZEN",
+  "recordedAt": "2026-10-23T10:57:32.586228+00:00",
+  "kind": "EVALUATION_TOOL_REQUEST_CONTEXT_MISMATCH",
+  "attribution": "TOOL_ERROR_NOT_PRODUCT_DEFECT",
+  "originalStage": "plan",
+  "correctedStage": "plan-corrected",
+  "originalClosure": {
+    "path": "docs/testing/evidence/natural-execution-boundary-2026-10-23/plan/closure.json",
+    "sha256": "df96656fa78edc7cc5bdd9661d115667da2bd623ddea62a01e37fc5ff9502b23"
+  },
+  "originalResults": {
+    "path": "docs/testing/evidence/natural-execution-boundary-2026-10-23/plan/http-results.json",
+    "sha256": "772f6d505c79172a53c706facb7dfaa6277cdce3c2668b7384643b54eb147cd9"
+  },
+  "originalRunner": {
+    "path": "docs/testing/evidence/natural-execution-boundary-2026-10-23/run-evaluation.mjs",
+    "sha256": "163a9b79e9016034a8fce4ce1dad0a5268ab4a28b712fe7bd671988c9106a1b6"
+  },
+  "correctedRunner": {
+    "path": "docs/testing/evidence/natural-execution-boundary-2026-10-23/run-plan-evaluation.mjs",
+    "sha256": "7c8168fb8ef1c646c5ade5601c82cd0148d37c9909b2b8a36f25832c3bd504bb"
+  },
+  "originalCases": {
+    "path": "docs/testing/evidence/natural-execution-boundary-2026-10-23/plan/cases.json",
+    "sha256": "a845d8c07f8b28663095bc494c9b6c6afca716ada7843287d3c1a32b62c4020f"
+  },
+  "correctedCases": {
+    "path": "docs/testing/evidence/natural-execution-boundary-2026-10-23/plan-corrected/cases.json",
+    "sha256": "a845d8c07f8b28663095bc494c9b6c6afca716ada7843287d3c1a32b62c4020f"
+  },
+  "originalAllocation": {
+    "path": "docs/testing/evidence/natural-execution-boundary-2026-10-23/allocation-amendment.json",
+    "sha256": "e0ce7185893f2068bbda9a6e80e32547e60ac269326d012a880a044b9ceeef41"
+  },
+  "originalActualModelCalls": 0,
+  "originalFailedBusinessRequests": 2,
+  "failure": "HTTP400 INVALID_ARGUMENT: 需求内容已变化，请重新分析文件上下文",
+  "rootCause": "Context preparation used sample.contextDescription via input(sample).context, but Plan request used hard-coded empty contextDescription. EB-U04 ordinary context is non-empty; the product correctly rejected an inconsistent planningContext binding before model calls.",
+  "correction": "Only new runner changes Plan contextDescription to sample.contextDescription??''; original frozen runner and failed requests are untouched.",
+  "productCodeChanged": false,
+  "candidateChanged": false,
+  "casesOrScoringChanged": false,
+  "qualityRetry": false,
+  "taskMaximumActualCalls": 100,
+  "releasedUnspentPlanReservation": 4,
+  "correctedStageMaximum": 4,
+  "newNumericAuthorization": 0,
+  "balanceFromEarlierClosedTasksTransferred": 0,
+  "originalFailedRecordsReplaced": false,
+  "replacementAllocation": "Original plan allocation4 settles at0 and releases4; plan-corrected independently freezes PLAN4. All stages stay under same task100 actual-call ledger.",
+  "frozenAt": "2026-10-23T11:01:17.795254+00:00"
+}

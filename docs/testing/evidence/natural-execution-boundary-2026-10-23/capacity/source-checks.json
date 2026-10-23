@@ -1,0 +1,445 @@
+{
+  "status": "SOURCE_RECHECK_COMPLETE",
+  "checkedAt": "2026-10-23T10:33:49.693956+00:00",
+  "caseId": "D02",
+  "scope": "容量纠正阶段的六份完整作品逐源复核。只写此新增文件；不改开发批/冻结协议/产品/旧作品或旧评审，不读取独立封存题。",
+  "assessor": "参与职责设计诊断和代码复核的协作代理；非外部专家或完全独立专业盲审。",
+  "newModelCalls": 0,
+  "casesSha256": "deaa455c68adafb715f7ffaf27d4c72e19a97d44074b7c489d284fc74b43df29",
+  "protocolSha256": "f1cf04a68b6f264a12b74ce88840187d4c0eef743bef8d02adac30233828ff54",
+  "generationReuseChecks": [
+    {
+      "version": "31",
+      "identicalGenerationResultExceptReusePointer": true,
+      "optimizedPromptIdentical": true
+    },
+    {
+      "version": "34",
+      "identicalGenerationResultExceptReusePointer": true,
+      "optimizedPromptIdentical": true
+    }
+  ],
+  "referenceArithmetic": {
+    "intervals2015to2025": 10,
+    "crudeAnnualAbsoluteDecline": 10,
+    "standardizedAnnualAbsoluteDecline": 7.75,
+    "crudeGeometricAnnualRelativeDeclineApproxPercent": 3.97355,
+    "groupSlopesPer100000PerYear": {
+      "男": 10,
+      "女": 10,
+      "东": 10,
+      "西": 10,
+      "0—44岁": 0,
+      "45—64岁": 5,
+      "65岁及以上": 40,
+      "心血管亚类": 7,
+      "脑血管亚类": 3
+    },
+    "yllSexAbsoluteRateGap": "2400→2000，缩小400人年/10万人；相对比1.40→约1.45上升。",
+    "arriagaAllPopulation": "心脑血管0.80年/40%；其他1.20年/60%；合计2年/100%。",
+    "arriagaMale": "0.90年/40.9%；65岁及以上在本性别心脑贡献占61.1%。",
+    "arriagaFemale": "0.70年/38.9%；65岁及以上在本性别心脑贡献占64.3%。",
+    "ageSpecificYll": "未提供。不能由死亡数最多直接断言YLL最多；允许有依据且标明不确定的合理讨论。"
+  },
+  "workChecks": [
+    {
+      "jobId": "D02_ORIGINAL_EXEC_R1",
+      "sourceSha256": "c673f21830c9db2ceb27c31797f7e19ad26dd668348ad5709914dd5e545209de",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "completionTokens": 6131,
+      "fourAreasActuallyDeveloped": true,
+      "annualAndSexYllAndRatePresent": true,
+      "arriagaE0NotDirectRateDifference": true,
+      "preservesSyntheticAndNoCausalScope": true,
+      "delivery": "DELIVERED_WITH_SOURCE_ISSUES",
+      "issues": [
+        {
+          "id": "STABLE_SHARE_CALLED_FALLING",
+          "editGroup": "STABLE_SHARE_CALLED_FALLING",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_ORIGINAL_EXEC_R1.json",
+            "field": "body.data.content",
+            "contentLine": 88,
+            "quote": "45—64岁组死亡数占比由20.0%降至20.0%"
+          },
+          "expected": "两年均20%，占比保持不变。",
+          "finding": "数值正确但方向动词矛盾，需删改“降至”；不把“骨架”一词本身计为模板失败，实际正文已展开。",
+          "severity": "MINOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        }
+      ],
+      "distinctNecessaryEditGroupsLowerBound": 1,
+      "notAnExhaustiveCorrectnessPass": true,
+      "attribution": "具体算术/解释错误首次出现在下游作品；增强提示词未给出这些错误数值。初现层不等于唯一根因，没有隔离实验证明平台/增强引导与下游各自因果比例。"
+    },
+    {
+      "jobId": "D02_ORIGINAL_EXEC_R2",
+      "sourceSha256": "9f48597f08ddbe0831498bca9c1a73795abf01976ff250185be44dfda8f17d01",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "completionTokens": 6978,
+      "fourAreasActuallyDeveloped": true,
+      "annualAndSexYllAndRatePresent": true,
+      "arriagaE0NotDirectRateDifference": true,
+      "preservesSyntheticAndNoCausalScope": true,
+      "delivery": "DELIVERED_WITH_SOURCE_ISSUES",
+      "issues": [
+        {
+          "id": "DISTRICT_RATE_GAP_WRONG",
+          "editGroup": "DISTRICT_RATE_GAP_WRONG",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_ORIGINAL_EXEC_R2.json",
+            "field": "body.data.content",
+            "contentLine": 88,
+            "quote": "绝对差保持20/10万"
+          },
+          "expected": "320-280=40/10万，220-180=40/10万；20是死亡例数差。",
+          "finding": "本段混淆例数差与率差，后表及小结写40不能消除前文错误。",
+          "severity": "MAJOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        },
+        {
+          "id": "SEX_RATIO_DIRECTION_REVERSED",
+          "editGroup": "SEX_RATIO_DIRECTION_REVERSED",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_ORIGINAL_EXEC_R2.json",
+            "field": "body.data.content",
+            "contentLine": 66,
+            "quote": "但相对比由1.50降至1.86"
+          },
+          "expected": "性别率比由1.50升至约1.86。",
+          "finding": "同段数值与方向矛盾，需更正下降动词。",
+          "severity": "MINOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        },
+        {
+          "id": "DISTRICT_RATIO_DIRECTION_REVERSED",
+          "editGroup": "DISTRICT_RATIO_DIRECTION_REVERSED",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_ORIGINAL_EXEC_R2.json",
+            "field": "body.data.content",
+            "contentLine": 88,
+            "quote": "相对比由1.14降至1.22"
+          },
+          "expected": "地区率比由约1.14升至约1.22。",
+          "finding": "同段数值与方向矛盾，需更正下降动词。",
+          "severity": "MINOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        },
+        {
+          "id": "STABLE_SUBTYPE_RATIO_CALLED_FALLING",
+          "editGroup": "STABLE_SUBTYPE_RATIO_CALLED_FALLING",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_ORIGINAL_EXEC_R2.json",
+            "field": "body.data.content",
+            "contentLine": 132,
+            "quote": "比值由2.33降至2.33"
+          },
+          "expected": "比值恒为210/90=140/60约2.33。",
+          "finding": "后文已称稳定，但前面的“降”需删除。",
+          "severity": "MINOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        }
+      ],
+      "distinctNecessaryEditGroupsLowerBound": 4,
+      "notAnExhaustiveCorrectnessPass": true,
+      "attribution": "具体算术/解释错误首次出现在下游作品；增强提示词未给出这些错误数值。初现层不等于唯一根因，没有隔离实验证明平台/增强引导与下游各自因果比例。"
+    },
+    {
+      "jobId": "D02_V31_EXEC_R1",
+      "sourceSha256": "99ed31c06ee3841882eef9a68f7a7299ff89bda92b4c20d2c22a626e664fc56b",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "completionTokens": 5508,
+      "fourAreasActuallyDeveloped": true,
+      "annualAndSexYllAndRatePresent": true,
+      "arriagaE0NotDirectRateDifference": true,
+      "preservesSyntheticAndNoCausalScope": true,
+      "delivery": "DELIVERED_WITH_SOURCE_ISSUES",
+      "issues": [
+        {
+          "id": "ANNUAL_INTERVAL_DENOMINATOR_WRONG",
+          "editGroup": "ANNUAL_INTERVAL_DENOMINATOR_WRONG",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V31_EXEC_R1.json",
+            "field": "body.data.content",
+            "contentLine": 52,
+            "quote": "粗率约9.1/10万/年（以2015年为基期的年均相对降幅约3.0%）；标准化率约7.05/10万/年"
+          },
+          "expected": "2015到2025为10个间隔，粗率100/10=10，标化率77.5/10=7.75；几何粗率年均降幅约3.97%。",
+          "finding": "已给逐年变化10/7.75，却将年均差分除以11，平均值与同文及源表不符。",
+          "severity": "MAJOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        },
+        {
+          "id": "ALL_AGES_DECLINING_OVERGENERALIZATION",
+          "editGroup": "ALL_AGES_DECLINING_OVERGENERALIZATION",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V31_EXEC_R1.json",
+            "field": "body.data.content",
+            "contentLine": 23,
+            "quote": "各年龄组死亡数规律性递减"
+          },
+          "expected": "0—44岁每年恒10例，另两个年龄组规律递减。",
+          "finding": "正文正确列出0—44不变，但局限概括两次泛化为各年龄组递减。按一个共同概括问题计。",
+          "severity": "MINOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        }
+      ],
+      "distinctNecessaryEditGroupsLowerBound": 2,
+      "notAnExhaustiveCorrectnessPass": true,
+      "attribution": "具体算术/解释错误首次出现在下游作品；增强提示词未给出这些错误数值。初现层不等于唯一根因，没有隔离实验证明平台/增强引导与下游各自因果比例。"
+    },
+    {
+      "jobId": "D02_V31_EXEC_R2",
+      "sourceSha256": "36b5ab694eabc44742fb38fa0bb3e87e49493f0b47f10d398237395eb8a140e8",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "completionTokens": 7430,
+      "fourAreasActuallyDeveloped": true,
+      "annualAndSexYllAndRatePresent": true,
+      "arriagaE0NotDirectRateDifference": true,
+      "preservesSyntheticAndNoCausalScope": true,
+      "delivery": "DELIVERED_WITH_SOURCE_ISSUES",
+      "issues": [
+        {
+          "id": "OLDER_CARDIO_SHARE_RANGE_WRONG",
+          "editGroup": "OLDER_CARDIO_SHARE_RANGE_WRONG",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V31_EXEC_R2.json",
+            "field": "body.data.content",
+            "contentLine": 324,
+            "quote": "占62.5%—64.3%"
+          },
+          "expected": "全人群0.50/0.80=62.5%；男0.55/0.90约61.1%；女0.45/0.70约64.3%；三组范围61.1%—64.3%。",
+          "finding": "本作男性分段已写61.1%，综合范围仍漏掉男性最低值。",
+          "severity": "MINOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        }
+      ],
+      "distinctNecessaryEditGroupsLowerBound": 1,
+      "notAnExhaustiveCorrectnessPass": true,
+      "attribution": "具体算术/解释错误首次出现在下游作品；增强提示词未给出这些错误数值。初现层不等于唯一根因，没有隔离实验证明平台/增强引导与下游各自因果比例。"
+    },
+    {
+      "jobId": "D02_V34_EXEC_R1",
+      "sourceSha256": "7b787014cf014d0a7a572e3ff826421c8a313d3542e6a4654b25d1931435e84c",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "completionTokens": 6401,
+      "fourAreasActuallyDeveloped": true,
+      "annualAndSexYllAndRatePresent": true,
+      "arriagaE0NotDirectRateDifference": true,
+      "preservesSyntheticAndNoCausalScope": true,
+      "delivery": "DELIVERED_WITH_SOURCE_ISSUES",
+      "issues": [
+        {
+          "id": "ANNUAL_STANDARDIZED_CHANGE_WRONG",
+          "editGroup": "ANNUAL_STANDARDIZED_CHANGE_WRONG",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V34_EXEC_R1.json",
+            "field": "body.data.content",
+            "contentLine": 51,
+            "quote": "标准化率由237.5/10万降至160.0/10万，累计下降77.5/10万，降幅32.6%，年均下降约7.05/10万"
+          },
+          "expected": "77.5/10=7.75/10万/年；不能除以11个端点年份。",
+          "finding": "同文明确每年下降7.75，该平均值与其矛盾。",
+          "severity": "MAJOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        },
+        {
+          "id": "CRUDE_STANDARDIZED_RATIO_NOT_CONSTANT",
+          "editGroup": "CRUDE_STANDARDIZED_RATIO_NOT_CONSTANT",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V34_EXEC_R1.json",
+            "field": "body.data.content",
+            "contentLine": 53,
+            "quote": "标准化率与粗率之比恒为0.7917（237.5/300=160.0/200）"
+          },
+          "expected": "237.5/300约0.7917，160/200=0.8000，并不恒等。",
+          "finding": "人口构成固定不意味着标准化率/粗率比恒定；这里直接把不相等的分数写等号。",
+          "severity": "MAJOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        },
+        {
+          "id": "SUBTYPE_SLOPES_WRONG",
+          "editGroup": "SUBTYPE_SLOPES_WRONG",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V34_EXEC_R1.json",
+            "field": "body.data.content",
+            "contentLine": 120,
+            "quote": "两者均每年下降7/10万"
+          },
+          "expected": "心血管210→140每年降7/10万；脑血管90→60每年降3/10万。",
+          "finding": "正确的等比例下降不能替换为绝对斜率相同。",
+          "severity": "MAJOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        },
+        {
+          "id": "GROUP_SLOPES_WRONG",
+          "editGroup": "GROUP_SLOPES_WRONG",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V34_EXEC_R1.json",
+            "field": "body.data.content",
+            "contentLine": 124,
+            "quote": "所有可下降的组别均以每年10/10万（或亚类每年7/10万）的相同绝对速度下降"
+          },
+          "expected": "性别/地区各组斜率10；年龄0/5/40；疾病亚类7/3，不能概括所有组绝对速度相同。",
+          "finding": "在分组小结和讨论中错误强加共同斜率，需按分组分别解释。",
+          "severity": "MAJOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        },
+        {
+          "id": "YLL_ABSOLUTE_GAP_WRONG",
+          "editGroup": "YLL_ABSOLUTE_GAP_WRONG",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V34_EXEC_R1.json",
+            "field": "body.data.content",
+            "contentLine": 148,
+            "quote": "绝对差值恒为2400人年/10万（8400-6000=6400-4400）"
+          },
+          "expected": "2015=2400；2025=2000；差缩小400，率比由1.40升至约1.45。",
+          "finding": "把不同的YLL绝对率差直接写成恒等式；年度表正确不能抵消这个性别比较结果错误。",
+          "severity": "MAJOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        },
+        {
+          "id": "CONSTANT_DISTRICT_GAP_CALLED_SHRINKING",
+          "editGroup": "CONSTANT_DISTRICT_GAP_CALLED_SHRINKING",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V34_EXEC_R1.json",
+            "field": "body.data.content",
+            "contentLine": 15,
+            "quote": "差值由40缩至40"
+          },
+          "expected": "地区粗率绝对差两年均40/10万。",
+          "finding": "摘要数值与动词矛盾，应改为不变。",
+          "severity": "MINOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        },
+        {
+          "id": "AGE_TREND_SUMMARY_OVERGENERALIZED",
+          "editGroup": "AGE_TREND_SUMMARY_OVERGENERALIZED",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V34_EXEC_R1.json",
+            "field": "body.data.content",
+            "contentLine": 15,
+            "quote": "各分组均下降"
+          },
+          "expected": "0—44岁组恒25/10万，非下降组。",
+          "finding": "同摘要稍后已写0—44恒定，仍应限定开头泛化。",
+          "severity": "MINOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        }
+      ],
+      "distinctNecessaryEditGroupsLowerBound": 7,
+      "notAnExhaustiveCorrectnessPass": true,
+      "attribution": "具体算术/解释错误首次出现在下游作品；增强提示词未给出这些错误数值。初现层不等于唯一根因，没有隔离实验证明平台/增强引导与下游各自因果比例。"
+    },
+    {
+      "jobId": "D02_V34_EXEC_R2",
+      "sourceSha256": "0f71d0a3c828980d6eac6e4f9763d33395d90cfe399863162028ad0a7eaeab6a",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "completionTokens": 6883,
+      "fourAreasActuallyDeveloped": true,
+      "annualAndSexYllAndRatePresent": true,
+      "arriagaE0NotDirectRateDifference": true,
+      "preservesSyntheticAndNoCausalScope": true,
+      "delivery": "DELIVERED_WITH_SOURCE_ISSUES",
+      "issues": [
+        {
+          "id": "ARRIAGA_TOTAL_AND_SHARES_WRONG",
+          "editGroup": "ARRIAGA_TOTAL_AND_SHARES_WRONG",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V34_EXEC_R2.json",
+            "field": "body.data.content",
+            "contentLine": 157,
+            "quote": "心脑血管疾病贡献0.85年（0—44岁0.05、45—64岁0.25、65岁及以上0.50）"
+          },
+          "expected": "0.05+0.25+0.50=0.80年，0.80/2=40%；其他1.20年占60%；0.50/0.80=62.5%。",
+          "finding": "全人群合计在摘要、表格、正文、讨论和结论反复写0.85，推出42.5%、其余57.5%、老年贡献58.8%等连锁错误，归同一editGroup，不按出现次数加分或计罚。",
+          "severity": "SEVERE",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        },
+        {
+          "id": "AGE_COMPOSITION_DIRECTION_AND_EXPLANATION_WRONG",
+          "editGroup": "AGE_COMPOSITION_DIRECTION_AND_EXPLANATION_WRONG",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V34_EXEC_R2.json",
+            "field": "body.data.content",
+            "contentLine": 125,
+            "quote": "死亡年龄结构向高龄集中"
+          },
+          "expected": "65岁及以上死亡占比230/300约76.7%→150/200=75.0%下降；45—64占20%不变，0—44占3.3%→5%上升。",
+          "finding": "YLL解释反转已给的年龄死亡构成方向，并在同句称76.7升至75又承认下降。不能由这些矛盾解释机制。",
+          "severity": "MAJOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        },
+        {
+          "id": "GROUP_ABSOLUTE_GAPS_SUMMARY_WRONG",
+          "editGroup": "GROUP_ABSOLUTE_GAPS_SUMMARY_WRONG",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V34_EXEC_R2.json",
+            "field": "body.data.content",
+            "contentLine": 7,
+            "quote": "且绝对差距随年份收窄"
+          },
+          "expected": "性别绝对率差恒120、地区恒40，年龄高低率差缩小，不能概括全部差距收窄。",
+          "finding": "摘要与正文正确的性别/地区恒差相矛盾，需分别描述各维度。",
+          "severity": "MAJOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        },
+        {
+          "id": "SEX_CONSTANT_GAP_CALLED_EXPANDING",
+          "editGroup": "SEX_CONSTANT_GAP_CALLED_EXPANDING",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V34_EXEC_R2.json",
+            "field": "body.data.content",
+            "contentLine": 91,
+            "quote": "2025年差值扩大至120/10万"
+          },
+          "expected": "两年性别绝对率差均120/10万，扩大的是相对率比。",
+          "finding": "同句后半已说不变，仍需删改扩大动词。",
+          "severity": "MINOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        },
+        {
+          "id": "AGE_TREND_SUMMARY_OVERGENERALIZED",
+          "editGroup": "AGE_TREND_SUMMARY_OVERGENERALIZED",
+          "evidence": {
+            "artifact": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V34_EXEC_R2.json",
+            "field": "body.data.content",
+            "contentLine": 7,
+            "quote": "各分组均呈下降"
+          },
+          "expected": "0—44岁组恒25/10万，非下降组。",
+          "finding": "摘要、讨论与结论反复泛化，与正文的恒定组矛盾；同类概括合并一项。",
+          "severity": "MINOR",
+          "firstObservedStage": "DOWNSTREAM_WORK"
+        }
+      ],
+      "distinctNecessaryEditGroupsLowerBound": 5,
+      "notAnExhaustiveCorrectnessPass": true,
+      "attribution": "具体算术/解释错误首次出现在下游作品；增强提示词未给出这些错误数值。初现层不等于唯一根因，没有隔离实验证明平台/增强引导与下游各自因果比例。"
+    }
+  ],
+  "comparison": {
+    "capacityProblemResolvedForTheseSix": true,
+    "completedAreasAloneCountAsCandidateGain": false,
+    "observedNecessarySourceEditGroups": {
+      "ORIGINAL_R1": 1,
+      "ORIGINAL_R2": 4,
+      "V31_R1": 2,
+      "V31_R2": 1,
+      "V34_R1": 7,
+      "V34_R2": 5
+    },
+    "stableCandidateReductionInUserEditsAgainst31": false,
+    "candidateWinProvenAgainstOriginal": false,
+    "reason": "六份均stop并实际展开四方面，说明原截断与容量相关；34没有因完整返回而少改。34_R1在分组斜率、标化/粗率比和YLL差等有多处实质错误，34_R2重复全人群Arriaga错算及方向矛盾。31也有年均间隔错误和一个汇总范围错误，原始也有局部错词与率差错误，全部保留，不能把原始或31称为完美；但本批没有看到34两次均稳定降低必要修改。",
+    "attributionLimit": "这些是同信息固定提示词的两次作品结果，不是统计显著或增强是唯一因果因素的结论；不能据此给每种错误追加产品禁令。",
+    "adoptionBoundary": "仅作本题实际少改收益判断；与其他题及后续独立证据合并前，不预设整体通过。"
+  }
+}

@@ -1,0 +1,595 @@
+{
+  "schemaVersion": 1,
+  "caseSetId": "natural-execution-boundary-independent-2026-10-23",
+  "createdOn": "2026-10-23",
+  "status": "SEALED_BEFORE_CANDIDATE_REVIEW",
+  "provenance": {
+    "author": "independent reader-usefulness subagent",
+    "modelCalls": 0,
+    "candidateGuidanceRead": false,
+    "candidateOutputsRead": false,
+    "readBoundary": "Current AGENTS.md, CONTEXT.md, main design and historical assessment summaries only. A broad CodeGraph query automatically returned existing generic task-scope and contract-lookup source; no candidate prompt guidance, candidate output, or developing candidate diff was inspected.",
+    "syntheticOnly": true,
+    "externalFactsUsed": false,
+    "professionalDomainJudgmentRequired": false,
+    "sourceReferences": [
+      "AGENTS.md:29-31",
+      "AGENTS.md:41-44",
+      "CONTEXT.md:10",
+      "CONTEXT.md:44",
+      "docs/14-提示词增强与Plan最小干预优化方案.md:16-18",
+      "docs/14-提示词增强与Plan最小干预优化方案.md:91-100",
+      "docs/14-提示词增强与Plan最小干预优化方案.md:108",
+      "docs/testing/evidence/natural-source-preserving-development-2026-10-22/development-decision.json:12-14",
+      "docs/testing/evidence/natural-useful-completion-2026-10-23/existing-evidence-audit.md:46-55"
+    ]
+  },
+  "handling": {
+    "unsealAfter": "Candidate source and guidance are frozen with SHA-256 hashes. Record the unseal event before reading cases to evaluate the frozen candidate.",
+    "doNotTuneUsingTheseCasesBeforeFreeze": true,
+    "optimizerInput": "For each case send rawPrompt and optimizationContext only. Do not send executionEnvironment, oracle, or the case-set rubric to the optimizer.",
+    "executionInput": "Original-prompt and enhanced-prompt arms receive exactly the same executionEnvironment resources and permissions. Resources stand in for local file or retrieval-tool results; they need not be present during optimization.",
+    "fixtureIdentity": "All organizations, activities, numbers, file paths and records below are invented test fixtures, not real-world claims. Their facts are authoritative only inside each test case.",
+    "noLiveServicesNeeded": true,
+    "noExternalNetworkNeeded": true,
+    "noQualityRetries": true,
+    "assessment": "Judge fidelity and useful execution separately. A prompt may preserve intent while the downstream work fails. Do not infer actual execution success from source review, keyword matches or a model self-check. Preserve original failures and provenance."
+  },
+  "commonRubric": {
+    "mustPreserve": [
+      "The original action, audience, deliverable level, explicit conditions and prohibitions.",
+      "The distinction between unprovided-to-optimizer, unverified-by-executor, confirmed-absent, user-reserved decision, and proposed design.",
+      "The ability to obtain and use permitted execution-stage resources before concluding that needed information is unavailable.",
+      "Useful original-task work independent of a genuine unresolved fact."
+    ],
+    "usefulAdditions": [
+      "Only additions that make the original task executable: use appropriate available sources, check relevant comparisons and show the support for the actual answer.",
+      "A local restriction or focused clarification when the executor actually cannot resolve a material gap.",
+      "Ordinary proposed organization or implementation details compatible with the user's delegation."
+    ],
+    "severeRegressions": [
+      "Declare tools, sources, fields, project contracts or facts nonexistent or undecided solely because optimization input did not contain them.",
+      "Replace requested work with a study plan, data-collection questionnaire, generic empty template, implementation proposal or source inventory.",
+      "Invent factual numbers, decisions or confirmations, including synthetic sample values when this case prohibits them.",
+      "Force all independent work to stop for a local missing fact, or erase an explicit request to clarify a genuinely user-reserved decision.",
+      "Add unrelated deliverables, signatures, approvals, role changes, fixed professional methods or occupational routing."
+    ],
+    "allowedVariation": [
+      "Natural compact wording, reordered compatible clauses and no expansion when the original is sufficient.",
+      "Relevant source and comparability notes within the requested answer; no requirement for a particular heading count or exact phrase.",
+      "A competent downstream executor may infer ordinary relations from the original prompt; if the original arm already succeeds, equivalent candidate work is a tie, not new benefit."
+    ]
+  },
+  "cases": [
+    {
+      "id": "EB-W01",
+      "kind": "writing_with_execution_stage_archive",
+      "rawPrompt": "请查阅松果社团秋季旧物交换日的活动档案，写一份可以直接发给下次筹备志愿者的复盘正文，讲清参与情况、实际开销、遇到的问题和下次能落实的改进。不要把复盘写成数据收集计划，也别编造材料里没有的效果。",
+      "optimizationContext": "",
+      "executionEnvironment": {
+        "mode": "LOCAL_TEXT_FIXTURE",
+        "network": "disabled",
+        "permissions": "Read every supplied archive resource. Produce the requested prose only; do not change files or send messages.",
+        "resourceAvailability": "The optimizer was not given the archive. The executor has the following complete archive resources for this exercise.",
+        "resources": [
+          {
+            "path": "archive/pinecone/autumn-swap/attendance.txt",
+            "text": "演练合成档案。活动：松果社团秋季旧物交换日。报名34人，现场签到28人；6名筹备志愿者已经计入这28人，不能再加一次。本次只统计报名与签到，没有交换物品总件数或满意度调查记录。"
+          },
+          {
+            "path": "archive/pinecone/autumn-swap/expenses.txt",
+            "text": "演练合成档案。批准预算600元。实支：标识与桌面物料288元，运输74元，茶歇130元。各项均已核销，没有其他已报销支出。"
+          },
+          {
+            "path": "archive/pinecone/autumn-swap/debrief.txt",
+            "text": "演练合成档案。入口与旧物分类区的箭头指向不一致，签到志愿者记录到6次问路。开场时有两箱物品未分类，整理占用了原定开放时段的10分钟。筹备会提出：下次开放前统一检查指路标识，提前留出分类时间；这是建议，尚未实际实施。档案未记录满意度结果，不能据此声称参与者普遍满意。"
+          }
+        ]
+      },
+      "oracle": {
+        "intendedAction": "Read the archive and write a usable retrospective body.",
+        "requiredDeliverable": "Actual retrospective prose addressed to future volunteers, not a plan or empty outline.",
+        "planExpected": "No necessary question solely about the absent optimization-stage archive; the executor is instructed to consult it.",
+        "mustRetain": [
+          "Participation, actual spending, observed problems and feasible improvements.",
+          "Read the available archive before deciding which evidence is missing.",
+          "Do not invent effects absent from the archive."
+        ],
+        "executionChecks": [
+          "Report 34 registrants and 28 attendees without double-counting the six volunteers.",
+          "Actual total is 492 yuan; remaining budget is 108 yuan if a remaining-budget comparison is included.",
+          "Use both observed operational issues and make compatible, clearly proposed improvements.",
+          "Do not claim satisfaction, total swapped-item counts or confirmed improvements; missing those local metrics must not prevent writing the rest."
+        ],
+        "forbiddenPremises": [
+          "The archive is unavailable because it was not attached during optimization.",
+          "Attendance, costs and issues are all currently unknown and the user must first supply them.",
+          "Only a retrospective framework or data-collection plan can be delivered."
+        ],
+        "acceptableVariants": [
+          "A concise retrospective with an integrated limitations sentence or omission of irrelevant absent metrics.",
+          "Optional attendance-rate or remaining-budget calculation, provided supported and correct.",
+          "Improvement design may use ordinary reasonable implementation details without inventing completed actions."
+        ]
+      },
+      "contextDescription": "",
+      "executorMaterials": [
+        {
+          "name": "execution-environment.txt",
+          "content": "{\n  \"mode\": \"LOCAL_TEXT_FIXTURE\",\n  \"network\": \"disabled\",\n  \"permissions\": \"Read every supplied archive resource. Produce the requested prose only; do not change files or send messages.\",\n  \"resourceAvailability\": \"The optimizer was not given the archive. The executor has the following complete archive resources for this exercise.\"\n}"
+        },
+        {
+          "name": "archive/pinecone/autumn-swap/attendance.txt",
+          "content": "演练合成档案。活动：松果社团秋季旧物交换日。报名34人，现场签到28人；6名筹备志愿者已经计入这28人，不能再加一次。本次只统计报名与签到，没有交换物品总件数或满意度调查记录。"
+        },
+        {
+          "name": "archive/pinecone/autumn-swap/expenses.txt",
+          "content": "演练合成档案。批准预算600元。实支：标识与桌面物料288元，运输74元，茶歇130元。各项均已核销，没有其他已报销支出。"
+        },
+        {
+          "name": "archive/pinecone/autumn-swap/debrief.txt",
+          "content": "演练合成档案。入口与旧物分类区的箭头指向不一致，签到志愿者记录到6次问路。开场时有两箱物品未分类，整理占用了原定开放时段的10分钟。筹备会提出：下次开放前统一检查指路标识，提前留出分类时间；这是建议，尚未实际实施。档案未记录满意度结果，不能据此声称参与者普遍满意。"
+        }
+      ],
+      "acceptance": {
+        "caseOracle": {
+          "intendedAction": "Read the archive and write a usable retrospective body.",
+          "requiredDeliverable": "Actual retrospective prose addressed to future volunteers, not a plan or empty outline.",
+          "planExpected": "No necessary question solely about the absent optimization-stage archive; the executor is instructed to consult it.",
+          "mustRetain": [
+            "Participation, actual spending, observed problems and feasible improvements.",
+            "Read the available archive before deciding which evidence is missing.",
+            "Do not invent effects absent from the archive."
+          ],
+          "executionChecks": [
+            "Report 34 registrants and 28 attendees without double-counting the six volunteers.",
+            "Actual total is 492 yuan; remaining budget is 108 yuan if a remaining-budget comparison is included.",
+            "Use both observed operational issues and make compatible, clearly proposed improvements.",
+            "Do not claim satisfaction, total swapped-item counts or confirmed improvements; missing those local metrics must not prevent writing the rest."
+          ],
+          "forbiddenPremises": [
+            "The archive is unavailable because it was not attached during optimization.",
+            "Attendance, costs and issues are all currently unknown and the user must first supply them.",
+            "Only a retrospective framework or data-collection plan can be delivered."
+          ],
+          "acceptableVariants": [
+            "A concise retrospective with an integrated limitations sentence or omission of irrelevant absent metrics.",
+            "Optional attendance-rate or remaining-budget calculation, provided supported and correct.",
+            "Improvement design may use ordinary reasonable implementation details without inventing completed actions."
+          ]
+        },
+        "commonRubric": {
+          "mustPreserve": [
+            "The original action, audience, deliverable level, explicit conditions and prohibitions.",
+            "The distinction between unprovided-to-optimizer, unverified-by-executor, confirmed-absent, user-reserved decision, and proposed design.",
+            "The ability to obtain and use permitted execution-stage resources before concluding that needed information is unavailable.",
+            "Useful original-task work independent of a genuine unresolved fact."
+          ],
+          "usefulAdditions": [
+            "Only additions that make the original task executable: use appropriate available sources, check relevant comparisons and show the support for the actual answer.",
+            "A local restriction or focused clarification when the executor actually cannot resolve a material gap.",
+            "Ordinary proposed organization or implementation details compatible with the user's delegation."
+          ],
+          "severeRegressions": [
+            "Declare tools, sources, fields, project contracts or facts nonexistent or undecided solely because optimization input did not contain them.",
+            "Replace requested work with a study plan, data-collection questionnaire, generic empty template, implementation proposal or source inventory.",
+            "Invent factual numbers, decisions or confirmations, including synthetic sample values when this case prohibits them.",
+            "Force all independent work to stop for a local missing fact, or erase an explicit request to clarify a genuinely user-reserved decision.",
+            "Add unrelated deliverables, signatures, approvals, role changes, fixed professional methods or occupational routing."
+          ],
+          "allowedVariation": [
+            "Natural compact wording, reordered compatible clauses and no expansion when the original is sufficient.",
+            "Relevant source and comparability notes within the requested answer; no requirement for a particular heading count or exact phrase.",
+            "A competent downstream executor may infer ordinary relations from the original prompt; if the original arm already succeeds, equivalent candidate work is a tie, not new benefit."
+          ]
+        }
+      }
+    },
+    {
+      "id": "EB-C02",
+      "kind": "code_with_execution_stage_contract",
+      "rawPrompt": "请在现有TypeScript小项目里补好库存变化汇总函数，先读本地契约、类型和相邻代码，沿用现有命名、返回结构与错误方式。相同物品要合并，不能改输入，也别新增接口或依赖。请交付完整可运行的实现，不要只给设计方案。",
+      "optimizationContext": "",
+      "executionEnvironment": {
+        "mode": "LOCAL_TEXT_FIXTURE",
+        "network": "disabled",
+        "permissions": "Read supplied virtual project files. Return the full replacement implementation for src/summarizeStock.ts as text. Do not access any real checkout or install packages.",
+        "resourceAvailability": "The following virtual project files are available to the executor, even though the optimizer did not receive their text.",
+        "resources": [
+          {
+            "path": "package.json",
+            "text": "{\"name\":\"synthetic-stock-summary\",\"private\":true,\"type\":\"module\",\"devDependencies\":{\"typescript\":\"5.8.3\"}}"
+          },
+          {
+            "path": "tsconfig.json",
+            "text": "{\"compilerOptions\":{\"target\":\"ES2022\",\"module\":\"ESNext\",\"moduleResolution\":\"Bundler\",\"strict\":true,\"noEmit\":true},\"include\":[\"src/**/*.ts\"]}"
+          },
+          {
+            "path": "docs/stock-contract.txt",
+            "text": "演练合成契约。summarizeStock(entries: readonly StockMovement[]): StockSummary[]。物品标识用已有normalizeSku归一化。按归一化后sku合并delta，返回按sku的ASCII升序排列的新数组；汇总delta为0的物品仍保留。任何单笔delta不是有限整数时抛RangeError，消息固定为delta must be finite integer。空sku错误沿用normalizeSku。不得修改entries或其中元素。原有类型与函数导出名不变，不新增参数、接口或依赖。"
+          },
+          {
+            "path": "src/types.ts",
+            "text": "export interface StockMovement { readonly sku: string; readonly delta: number; }\nexport interface StockSummary { sku: string; delta: number; }\n"
+          },
+          {
+            "path": "src/normalizeSku.ts",
+            "text": "export function normalizeSku(sku: string): string {\n  const normalized = sku.trim().toUpperCase();\n  if (!normalized) throw new Error('sku is required');\n  return normalized;\n}\n"
+          },
+          {
+            "path": "src/summarizeStock.ts",
+            "text": "import type { StockMovement, StockSummary } from './types';\nimport { normalizeSku } from './normalizeSku';\n\nexport function summarizeStock(entries: readonly StockMovement[]): StockSummary[] {\n  void entries;\n  void normalizeSku;\n  throw new Error('not implemented');\n}\n"
+          }
+        ]
+      },
+      "oracle": {
+        "intendedAction": "Implement the existing function under the existing local contract.",
+        "requiredDeliverable": "Full usable TypeScript replacement implementation; no invented API or dependency.",
+        "planExpected": "Do not ask the user to re-design names or contracts that the executor can read. Ask only if actual consulted sources conflict; this fixture has no such conflict.",
+        "mustRetain": [
+          "Inspect local contract, types and adjacent code before selecting details.",
+          "Merge equivalent normalized item identifiers, preserve inputs, reuse errors and names.",
+          "No extra interface, parameter or dependency; implementation remains the deliverable."
+        ],
+        "executionChecks": [
+          "Export summarizeStock with the supplied readonly-input signature and StockSummary[] output.",
+          "Reuse normalizeSku; return AB-7 delta5 and X-2 delta0 for [{sku:' ab-7 ',delta:8},{sku:'AB-7',delta:-3},{sku:'x-2',delta:0}].",
+          "Retain a net-zero group and return [] for empty input.",
+          "Reject NaN, Infinity and fractional single deltas with RangeError('delta must be finite integer'); preserve the existing empty-sku error.",
+          "Do not sort or mutate the original array or its items; output new objects.",
+          "Do not report having executed a compiler or tests unless the harness actually did so."
+        ],
+        "forbiddenPremises": [
+          "The existing input, output and error contract are absent or undecided merely because no source was pasted into the optimizer.",
+          "The user must choose the implementation language, public method name, return schema or dependency before any code can be written.",
+          "Only pseudocode or an implementation plan can be returned."
+        ],
+        "acceptableVariants": [
+          "Map, object accumulator or another compatible implementation.",
+          "Short comments explaining normalization, validation and input preservation.",
+          "No obligation to add a test suite, benchmark, service endpoint or repository-wide refactor."
+        ]
+      },
+      "contextDescription": "",
+      "executorMaterials": [
+        {
+          "name": "execution-environment.txt",
+          "content": "{\n  \"mode\": \"LOCAL_TEXT_FIXTURE\",\n  \"network\": \"disabled\",\n  \"permissions\": \"Read supplied virtual project files. Return the full replacement implementation for src/summarizeStock.ts as text. Do not access any real checkout or install packages.\",\n  \"resourceAvailability\": \"The following virtual project files are available to the executor, even though the optimizer did not receive their text.\"\n}"
+        },
+        {
+          "name": "package.json",
+          "content": "{\"name\":\"synthetic-stock-summary\",\"private\":true,\"type\":\"module\",\"devDependencies\":{\"typescript\":\"5.8.3\"}}"
+        },
+        {
+          "name": "tsconfig.json",
+          "content": "{\"compilerOptions\":{\"target\":\"ES2022\",\"module\":\"ESNext\",\"moduleResolution\":\"Bundler\",\"strict\":true,\"noEmit\":true},\"include\":[\"src/**/*.ts\"]}"
+        },
+        {
+          "name": "docs/stock-contract.txt",
+          "content": "演练合成契约。summarizeStock(entries: readonly StockMovement[]): StockSummary[]。物品标识用已有normalizeSku归一化。按归一化后sku合并delta，返回按sku的ASCII升序排列的新数组；汇总delta为0的物品仍保留。任何单笔delta不是有限整数时抛RangeError，消息固定为delta must be finite integer。空sku错误沿用normalizeSku。不得修改entries或其中元素。原有类型与函数导出名不变，不新增参数、接口或依赖。"
+        },
+        {
+          "name": "src/types.ts",
+          "content": "export interface StockMovement { readonly sku: string; readonly delta: number; }\nexport interface StockSummary { sku: string; delta: number; }\n"
+        },
+        {
+          "name": "src/normalizeSku.ts",
+          "content": "export function normalizeSku(sku: string): string {\n  const normalized = sku.trim().toUpperCase();\n  if (!normalized) throw new Error('sku is required');\n  return normalized;\n}\n"
+        },
+        {
+          "name": "src/summarizeStock.ts",
+          "content": "import type { StockMovement, StockSummary } from './types';\nimport { normalizeSku } from './normalizeSku';\n\nexport function summarizeStock(entries: readonly StockMovement[]): StockSummary[] {\n  void entries;\n  void normalizeSku;\n  throw new Error('not implemented');\n}\n"
+        }
+      ],
+      "acceptance": {
+        "caseOracle": {
+          "intendedAction": "Implement the existing function under the existing local contract.",
+          "requiredDeliverable": "Full usable TypeScript replacement implementation; no invented API or dependency.",
+          "planExpected": "Do not ask the user to re-design names or contracts that the executor can read. Ask only if actual consulted sources conflict; this fixture has no such conflict.",
+          "mustRetain": [
+            "Inspect local contract, types and adjacent code before selecting details.",
+            "Merge equivalent normalized item identifiers, preserve inputs, reuse errors and names.",
+            "No extra interface, parameter or dependency; implementation remains the deliverable."
+          ],
+          "executionChecks": [
+            "Export summarizeStock with the supplied readonly-input signature and StockSummary[] output.",
+            "Reuse normalizeSku; return AB-7 delta5 and X-2 delta0 for [{sku:' ab-7 ',delta:8},{sku:'AB-7',delta:-3},{sku:'x-2',delta:0}].",
+            "Retain a net-zero group and return [] for empty input.",
+            "Reject NaN, Infinity and fractional single deltas with RangeError('delta must be finite integer'); preserve the existing empty-sku error.",
+            "Do not sort or mutate the original array or its items; output new objects.",
+            "Do not report having executed a compiler or tests unless the harness actually did so."
+          ],
+          "forbiddenPremises": [
+            "The existing input, output and error contract are absent or undecided merely because no source was pasted into the optimizer.",
+            "The user must choose the implementation language, public method name, return schema or dependency before any code can be written.",
+            "Only pseudocode or an implementation plan can be returned."
+          ],
+          "acceptableVariants": [
+            "Map, object accumulator or another compatible implementation.",
+            "Short comments explaining normalization, validation and input preservation.",
+            "No obligation to add a test suite, benchmark, service endpoint or repository-wide refactor."
+          ]
+        },
+        "commonRubric": {
+          "mustPreserve": [
+            "The original action, audience, deliverable level, explicit conditions and prohibitions.",
+            "The distinction between unprovided-to-optimizer, unverified-by-executor, confirmed-absent, user-reserved decision, and proposed design.",
+            "The ability to obtain and use permitted execution-stage resources before concluding that needed information is unavailable.",
+            "Useful original-task work independent of a genuine unresolved fact."
+          ],
+          "usefulAdditions": [
+            "Only additions that make the original task executable: use appropriate available sources, check relevant comparisons and show the support for the actual answer.",
+            "A local restriction or focused clarification when the executor actually cannot resolve a material gap.",
+            "Ordinary proposed organization or implementation details compatible with the user's delegation."
+          ],
+          "severeRegressions": [
+            "Declare tools, sources, fields, project contracts or facts nonexistent or undecided solely because optimization input did not contain them.",
+            "Replace requested work with a study plan, data-collection questionnaire, generic empty template, implementation proposal or source inventory.",
+            "Invent factual numbers, decisions or confirmations, including synthetic sample values when this case prohibits them.",
+            "Force all independent work to stop for a local missing fact, or erase an explicit request to clarify a genuinely user-reserved decision.",
+            "Add unrelated deliverables, signatures, approvals, role changes, fixed professional methods or occupational routing."
+          ],
+          "allowedVariation": [
+            "Natural compact wording, reordered compatible clauses and no expansion when the original is sufficient.",
+            "Relevant source and comparability notes within the requested answer; no requirement for a particular heading count or exact phrase.",
+            "A competent downstream executor may infer ordinary relations from the original prompt; if the original arm already succeeds, equivalent candidate work is a tie, not new benefit."
+          ]
+        }
+      }
+    },
+    {
+      "id": "EB-R03",
+      "kind": "retrieval_and_supported_comparison",
+      "rawPrompt": "查阅松雀读书会现有活动记录，找出2024年参与率最高的两种活动，告诉我结论和依据，必要时说明可比性问题；不要拿报名人数直接当参与率。",
+      "optimizationContext": "",
+      "executionEnvironment": {
+        "mode": "LOCAL_TEXT_RETRIEVAL_FIXTURE",
+        "network": "disabled",
+        "permissions": "Read or search all supplied records as a complete local retrieval corpus. Return the answer and source references. No external lookup, real service or account is required.",
+        "resourceAvailability": "These records simulate results available to a downstream retrieval tool. No record text was sent to the optimizer.",
+        "resources": [
+          {
+            "path": "records/index.txt",
+            "text": "演练合成资料。范围：松雀读书会2024年全年活动，A/B/C为同一社团按同一方法登记的三种活动的全年汇总，不是三场单次活动。参与率=实际签到人次/有效报名人次；同一人参加多场会累计为多人次。记录为完整可比口径。2025材料仅供历史索引，不能混进2024排名。"
+          },
+          {
+            "path": "records/2024/type-a.txt",
+            "text": "演练合成资料。年份2024；活动类型A：共读交流。全年3场，有效报名60人次，实际签到48人次。"
+          },
+          {
+            "path": "records/2024/type-b.txt",
+            "text": "演练合成资料。年份2024；活动类型B：主题讨论。全年2场，有效报名40人次，实际签到36人次。"
+          },
+          {
+            "path": "records/2024/type-c.txt",
+            "text": "演练合成资料。年份2024；活动类型C：作者分享。全年3场，有效报名80人次，实际签到56人次。"
+          },
+          {
+            "path": "records/2025/archive-note.txt",
+            "text": "演练合成资料。年份2025；活动类型C作者分享的登记改为浏览量1200。该数不是签到人次，也不是2024年记录。"
+          }
+        ]
+      },
+      "oracle": {
+        "intendedAction": "Retrieve activity records, compare the requested rate for the requested year, and answer with support.",
+        "requiredDeliverable": "A direct supported answer; the original did not request a formal report, survey protocol or source-methodology essay.",
+        "planExpected": "No necessary question about metric, year or source if local sources resolve them. Do not request the same information before retrieval.",
+        "mustRetain": [
+          "2024, two highest activity types, participation rate rather than registration volume, conclusion and supporting source.",
+          "Consult the available records and resolve the actual definition from them.",
+          "Explain relevant comparability limits without replacing the answer."
+        ],
+        "executionChecks": [
+          "Rank B first at 36/40=90%, A second at 48/60=80%; C is 56/80=70%.",
+          "Link each result to its supplied local source or unambiguous source name.",
+          "Identify person-times and annual aggregation if discussing comparability; do not silently relabel them as unique-person adoption.",
+          "Exclude the 2025 view-count note and avoid claims about all communities or activity popularity outside this corpus."
+        ],
+        "forbiddenPremises": [
+          "The metric, source, scope and fields are all currently undefined because the optimizer has not seen them.",
+          "Only a proposed ranking method, source checklist or questionnaire can be supplied.",
+          "A full formal report, fixed long outline or extra professional analysis is mandatory."
+        ],
+        "acceptableVariants": [
+          "Brief prose or a compact comparison table with citations.",
+          "A short explanatory note on the denominator and limited scope.",
+          "No need to demand population size, industry codes, statistical significance or external data unrelated to the question."
+        ]
+      },
+      "contextDescription": "",
+      "executorMaterials": [
+        {
+          "name": "execution-environment.txt",
+          "content": "{\n  \"mode\": \"LOCAL_TEXT_RETRIEVAL_FIXTURE\",\n  \"network\": \"disabled\",\n  \"permissions\": \"Read or search all supplied records as a complete local retrieval corpus. Return the answer and source references. No external lookup, real service or account is required.\",\n  \"resourceAvailability\": \"These records simulate results available to a downstream retrieval tool. No record text was sent to the optimizer.\"\n}"
+        },
+        {
+          "name": "records/index.txt",
+          "content": "演练合成资料。范围：松雀读书会2024年全年活动，A/B/C为同一社团按同一方法登记的三种活动的全年汇总，不是三场单次活动。参与率=实际签到人次/有效报名人次；同一人参加多场会累计为多人次。记录为完整可比口径。2025材料仅供历史索引，不能混进2024排名。"
+        },
+        {
+          "name": "records/2024/type-a.txt",
+          "content": "演练合成资料。年份2024；活动类型A：共读交流。全年3场，有效报名60人次，实际签到48人次。"
+        },
+        {
+          "name": "records/2024/type-b.txt",
+          "content": "演练合成资料。年份2024；活动类型B：主题讨论。全年2场，有效报名40人次，实际签到36人次。"
+        },
+        {
+          "name": "records/2024/type-c.txt",
+          "content": "演练合成资料。年份2024；活动类型C：作者分享。全年3场，有效报名80人次，实际签到56人次。"
+        },
+        {
+          "name": "records/2025/archive-note.txt",
+          "content": "演练合成资料。年份2025；活动类型C作者分享的登记改为浏览量1200。该数不是签到人次，也不是2024年记录。"
+        }
+      ],
+      "acceptance": {
+        "caseOracle": {
+          "intendedAction": "Retrieve activity records, compare the requested rate for the requested year, and answer with support.",
+          "requiredDeliverable": "A direct supported answer; the original did not request a formal report, survey protocol or source-methodology essay.",
+          "planExpected": "No necessary question about metric, year or source if local sources resolve them. Do not request the same information before retrieval.",
+          "mustRetain": [
+            "2024, two highest activity types, participation rate rather than registration volume, conclusion and supporting source.",
+            "Consult the available records and resolve the actual definition from them.",
+            "Explain relevant comparability limits without replacing the answer."
+          ],
+          "executionChecks": [
+            "Rank B first at 36/40=90%, A second at 48/60=80%; C is 56/80=70%.",
+            "Link each result to its supplied local source or unambiguous source name.",
+            "Identify person-times and annual aggregation if discussing comparability; do not silently relabel them as unique-person adoption.",
+            "Exclude the 2025 view-count note and avoid claims about all communities or activity popularity outside this corpus."
+          ],
+          "forbiddenPremises": [
+            "The metric, source, scope and fields are all currently undefined because the optimizer has not seen them.",
+            "Only a proposed ranking method, source checklist or questionnaire can be supplied.",
+            "A full formal report, fixed long outline or extra professional analysis is mandatory."
+          ],
+          "acceptableVariants": [
+            "Brief prose or a compact comparison table with citations.",
+            "A short explanatory note on the denominator and limited scope.",
+            "No need to demand population size, industry codes, statistical significance or external data unrelated to the question."
+          ]
+        },
+        "commonRubric": {
+          "mustPreserve": [
+            "The original action, audience, deliverable level, explicit conditions and prohibitions.",
+            "The distinction between unprovided-to-optimizer, unverified-by-executor, confirmed-absent, user-reserved decision, and proposed design.",
+            "The ability to obtain and use permitted execution-stage resources before concluding that needed information is unavailable.",
+            "Useful original-task work independent of a genuine unresolved fact."
+          ],
+          "usefulAdditions": [
+            "Only additions that make the original task executable: use appropriate available sources, check relevant comparisons and show the support for the actual answer.",
+            "A local restriction or focused clarification when the executor actually cannot resolve a material gap.",
+            "Ordinary proposed organization or implementation details compatible with the user's delegation."
+          ],
+          "severeRegressions": [
+            "Declare tools, sources, fields, project contracts or facts nonexistent or undecided solely because optimization input did not contain them.",
+            "Replace requested work with a study plan, data-collection questionnaire, generic empty template, implementation proposal or source inventory.",
+            "Invent factual numbers, decisions or confirmations, including synthetic sample values when this case prohibits them.",
+            "Force all independent work to stop for a local missing fact, or erase an explicit request to clarify a genuinely user-reserved decision.",
+            "Add unrelated deliverables, signatures, approvals, role changes, fixed professional methods or occupational routing."
+          ],
+          "allowedVariation": [
+            "Natural compact wording, reordered compatible clauses and no expansion when the original is sufficient.",
+            "Relevant source and comparability notes within the requested answer; no requirement for a particular heading count or exact phrase.",
+            "A competent downstream executor may infer ordinary relations from the original prompt; if the original arm already succeeds, equivalent candidate work is a tie, not new benefit."
+          ]
+        }
+      }
+    },
+    {
+      "id": "EB-U04",
+      "kind": "explicit_user_reserved_unknown_and_no_assumptions",
+      "rawPrompt": "请写一封给已报名成员的活动地点变更通知正文。活动仍在2027年5月9日10:00举行，原地点是松石楼一层；新地点尚未确定，只能由我决定。先向我确认新地点，不要猜、不用示例地点，也不能把原地点写成新地点。我未回答时，先把不依赖新地点的通知正文写好，地点一句明确标为待确认，不要因此停掉整封通知。不要编变更原因。",
+      "optimizationContext": "用户没有给出新的地点确认。本题没有其他补充对话、Plan答案或已确认新地址。",
+      "executionEnvironment": {
+        "mode": "LOCAL_TEXT_FIXTURE",
+        "network": "disabled",
+        "permissions": "Read the supplied organizer note. Do not contact anyone, make a venue choice, reserve a venue or send the notification. Produce text only.",
+        "resourceAvailability": "The fixture explicitly confirms the unresolved venue choice. There is no later confirmation in the complete exercise corpus.",
+        "resources": [
+          {
+            "path": "organizer/current-notice-note.txt",
+            "text": "演练合成资料。收件范围为已报名成员。日期时间保持2027年5月9日10:00。原地点松石楼一层已不用于本次活动。组织者尚未选定新地点，资料中也没有备选地点或变更原因；新地点选择由用户本人保留。无其他变更要求。"
+          }
+        ]
+      },
+      "oracle": {
+        "intendedAction": "Ask for a genuinely user-reserved new venue, while drafting the rest of the original notification as explicitly requested.",
+        "requiredDeliverable": "A focused venue clarification and usable notification body with only the venue clause marked awaiting confirmation.",
+        "planExpected": "One necessary question about the new venue is appropriate. Do not drop it because local lookup normally resolves unknowns; this user explicitly reserved the choice. Questions about word count, greeting, motive or other unrequested decisions are unnecessary.",
+        "mustRetain": [
+          "The exact scheduled date and time, already-registered audience and location-change purpose.",
+          "Only the user can decide the new venue; ask before treating a venue as confirmed.",
+          "No assumed or sample venue, no reuse of old venue as new, no invented reason.",
+          "Continue drafting every independent part and mark just the venue clause pending."
+        ],
+        "executionChecks": [
+          "Ask which new venue should be used, without recommending an invented location as confirmed.",
+          "Retain 2027年5月9日10:00 unchanged.",
+          "Write useful notification prose for registered members, with one localized venue-to-be-confirmed statement.",
+          "Do not claim that venue change was caused by weather, renovation, scheduling conflict or any other unsupported reason.",
+          "Do not invent email addresses, sender commitments, future notification deadlines, transportation instructions or venue reservations.",
+          "Do not withhold the entire notification or turn it into a generic template with every field blank."
+        ],
+        "forbiddenPremises": [
+          "Any absence can be resolved by search or ordinary delegation, so the executor may select a new venue without the user.",
+          "No user confirmation is needed, or the old venue is still valid for convenience.",
+          "Because one required fact is missing, all writing must stop until every detail is provided."
+        ],
+        "acceptableVariants": [
+          "A brief venue question before or after a clearly marked draft, so long as the question remains explicit and no venue is assumed.",
+          "A neutral salutation and concise prose without fixed headings.",
+          "Mention the old venue solely to explain that it is no longer the venue, or omit its name to avoid confusion."
+        ]
+      },
+      "contextDescription": "用户没有给出新的地点确认。本题没有其他补充对话、Plan答案或已确认新地址。",
+      "executorMaterials": [
+        {
+          "name": "execution-environment.txt",
+          "content": "{\n  \"mode\": \"LOCAL_TEXT_FIXTURE\",\n  \"network\": \"disabled\",\n  \"permissions\": \"Read the supplied organizer note. Do not contact anyone, make a venue choice, reserve a venue or send the notification. Produce text only.\",\n  \"resourceAvailability\": \"The fixture explicitly confirms the unresolved venue choice. There is no later confirmation in the complete exercise corpus.\"\n}"
+        },
+        {
+          "name": "organizer/current-notice-note.txt",
+          "content": "演练合成资料。收件范围为已报名成员。日期时间保持2027年5月9日10:00。原地点松石楼一层已不用于本次活动。组织者尚未选定新地点，资料中也没有备选地点或变更原因；新地点选择由用户本人保留。无其他变更要求。"
+        }
+      ],
+      "acceptance": {
+        "caseOracle": {
+          "intendedAction": "Ask for a genuinely user-reserved new venue, while drafting the rest of the original notification as explicitly requested.",
+          "requiredDeliverable": "A focused venue clarification and usable notification body with only the venue clause marked awaiting confirmation.",
+          "planExpected": "One necessary question about the new venue is appropriate. Do not drop it because local lookup normally resolves unknowns; this user explicitly reserved the choice. Questions about word count, greeting, motive or other unrequested decisions are unnecessary.",
+          "mustRetain": [
+            "The exact scheduled date and time, already-registered audience and location-change purpose.",
+            "Only the user can decide the new venue; ask before treating a venue as confirmed.",
+            "No assumed or sample venue, no reuse of old venue as new, no invented reason.",
+            "Continue drafting every independent part and mark just the venue clause pending."
+          ],
+          "executionChecks": [
+            "Ask which new venue should be used, without recommending an invented location as confirmed.",
+            "Retain 2027年5月9日10:00 unchanged.",
+            "Write useful notification prose for registered members, with one localized venue-to-be-confirmed statement.",
+            "Do not claim that venue change was caused by weather, renovation, scheduling conflict or any other unsupported reason.",
+            "Do not invent email addresses, sender commitments, future notification deadlines, transportation instructions or venue reservations.",
+            "Do not withhold the entire notification or turn it into a generic template with every field blank."
+          ],
+          "forbiddenPremises": [
+            "Any absence can be resolved by search or ordinary delegation, so the executor may select a new venue without the user.",
+            "No user confirmation is needed, or the old venue is still valid for convenience.",
+            "Because one required fact is missing, all writing must stop until every detail is provided."
+          ],
+          "acceptableVariants": [
+            "A brief venue question before or after a clearly marked draft, so long as the question remains explicit and no venue is assumed.",
+            "A neutral salutation and concise prose without fixed headings.",
+            "Mention the old venue solely to explain that it is no longer the venue, or omit its name to avoid confusion."
+          ]
+        },
+        "commonRubric": {
+          "mustPreserve": [
+            "The original action, audience, deliverable level, explicit conditions and prohibitions.",
+            "The distinction between unprovided-to-optimizer, unverified-by-executor, confirmed-absent, user-reserved decision, and proposed design.",
+            "The ability to obtain and use permitted execution-stage resources before concluding that needed information is unavailable.",
+            "Useful original-task work independent of a genuine unresolved fact."
+          ],
+          "usefulAdditions": [
+            "Only additions that make the original task executable: use appropriate available sources, check relevant comparisons and show the support for the actual answer.",
+            "A local restriction or focused clarification when the executor actually cannot resolve a material gap.",
+            "Ordinary proposed organization or implementation details compatible with the user's delegation."
+          ],
+          "severeRegressions": [
+            "Declare tools, sources, fields, project contracts or facts nonexistent or undecided solely because optimization input did not contain them.",
+            "Replace requested work with a study plan, data-collection questionnaire, generic empty template, implementation proposal or source inventory.",
+            "Invent factual numbers, decisions or confirmations, including synthetic sample values when this case prohibits them.",
+            "Force all independent work to stop for a local missing fact, or erase an explicit request to clarify a genuinely user-reserved decision.",
+            "Add unrelated deliverables, signatures, approvals, role changes, fixed professional methods or occupational routing."
+          ],
+          "allowedVariation": [
+            "Natural compact wording, reordered compatible clauses and no expansion when the original is sufficient.",
+            "Relevant source and comparability notes within the requested answer; no requirement for a particular heading count or exact phrase.",
+            "A competent downstream executor may infer ordinary relations from the original prompt; if the original arm already succeeds, equivalent candidate work is a tie, not new benefit."
+          ]
+        }
+      }
+    }
+  ]
+}

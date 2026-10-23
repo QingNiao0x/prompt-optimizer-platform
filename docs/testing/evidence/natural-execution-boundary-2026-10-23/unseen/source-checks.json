@@ -1,0 +1,927 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-23T10:45:24.524Z",
+  "reviewer": {
+    "role": "INTERNAL_CASE_AUTHOR_SOURCE_REVIEW",
+    "independentExternalBlindReview": false,
+    "authorKnewOriginalCases": true,
+    "candidateGuidanceAuthoredByReviewer": false,
+    "candidateGuidanceReadForThisReview": false,
+    "modelsCalled": 0,
+    "rubric": "Sealed original case oracle only; no development medical case or new threshold used."
+  },
+  "caseSet": {
+    "path": "docs/testing/evidence/natural-execution-boundary-2026-10-23/unseen/cases.json",
+    "sha256": "a845d8c07f8b28663095bc494c9b6c6afca716ada7843287d3c1a32b62c4020f",
+    "caseIds": [
+      "EB-W01",
+      "EB-C02",
+      "EB-R03",
+      "EB-U04"
+    ],
+    "openingReceipt": "docs/testing/evidence/natural-execution-boundary-2026-10-23/unseen/opening-receipt.json"
+  },
+  "coverage": {
+    "generationRead": 8,
+    "executionWorksRead": 24,
+    "executionInputEquality": "PASS",
+    "frozenFilesModified": false,
+    "onlyNewOutputs": [
+      "source-checks.mjs",
+      "source-checks.json"
+    ],
+    "interpretation": "HTTP success and mechanical checks are evidence only; semantic judgments below apply the existing oracle."
+  },
+  "sources": [
+    {
+      "id": "EB-C02_ORIGINAL_EXEC_R1",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-C02_ORIGINAL_EXEC_R1.json",
+      "sha256": "0904b653a9486acc651158ef2e0e74983a05c173b775cbfbddcc36f2368683d1",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-C02_ORIGINAL_EXEC_R2",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-C02_ORIGINAL_EXEC_R2.json",
+      "sha256": "133cb362c8db62023595a199856dfcae6d23dc6e2eb0b37c6ec46aff1a903f39",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-C02_V31_EXEC_R1",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-C02_V31_EXEC_R1.json",
+      "sha256": "7a96ce835cf8887da7b0126eac6bfe82ea25270b25d521f500dab7ea3f2d2187",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-C02_V31_EXEC_R2",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-C02_V31_EXEC_R2.json",
+      "sha256": "1691eb6953bde4744b8b9e57c59d4b9dad392a9b36a5a6c84cfc18e29e7b38f2",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-C02_V31_GEN",
+      "phase": "GENERATION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-C02_V31_GEN.json",
+      "sha256": "0512b4ef24d3c141e217182e0f3c88e2810c4646b628ecf03824d722fc03f5c1",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-C02_V34_EXEC_R1",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-C02_V34_EXEC_R1.json",
+      "sha256": "bcb5743a93f39ab63a1ef52a1ee3a47787df36876c743285772bcde53889806e",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-C02_V34_EXEC_R2",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-C02_V34_EXEC_R2.json",
+      "sha256": "f09dbff23833839888dc63d7b847810d6694e5db527b814386f3aa35f4970e35",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-C02_V34_GEN",
+      "phase": "GENERATION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-C02_V34_GEN.json",
+      "sha256": "c5821d5c085b5e7f0acf261c8fa7a3dc2805c40eb17b86cc8266e7346d518a6b",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-R03_ORIGINAL_EXEC_R1",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-R03_ORIGINAL_EXEC_R1.json",
+      "sha256": "6e3f010fff131ada1cd70fc85a6165ef357072d30d96fce0ad3de12f40883265",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-R03_ORIGINAL_EXEC_R2",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-R03_ORIGINAL_EXEC_R2.json",
+      "sha256": "b958c970c887b100ad17d87b3e8de7ec8a10b60d232ab440c5cf7f6a9dc89299",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-R03_V31_EXEC_R1",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-R03_V31_EXEC_R1.json",
+      "sha256": "a5635b1802eca7102ed9fc9ec0dd7bd31f095fdaa6d4b071f988e16bb7035be4",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-R03_V31_EXEC_R2",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-R03_V31_EXEC_R2.json",
+      "sha256": "a49803d12abc2a7ef7380197633a19113405f76a591c8ba4f6b3a241b134dce6",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-R03_V31_GEN",
+      "phase": "GENERATION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-R03_V31_GEN.json",
+      "sha256": "95599ba6c8f4c6c50097c6e7c0d9165dc31c7e500735e26b0ad999ce861dc9fe",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-R03_V34_EXEC_R1",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-R03_V34_EXEC_R1.json",
+      "sha256": "8ac8d281975221806fc9caa5e19df3a088fa45cb65b9097b9a842f958083a018",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-R03_V34_EXEC_R2",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-R03_V34_EXEC_R2.json",
+      "sha256": "42aa2e583c5c8b81cdf75054253ad49f3af85d5211557d41166b0c1dbb2affef",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-R03_V34_GEN",
+      "phase": "GENERATION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-R03_V34_GEN.json",
+      "sha256": "5b42353273ed3cc19c6a7e54e308463ff0c3a8758a9db7bbfcfa4fc82889359f",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-U04_ORIGINAL_EXEC_R1",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-U04_ORIGINAL_EXEC_R1.json",
+      "sha256": "779e20ec7cabeac6606a7439cfcbbea861f76d3033dce20b17d5144c76993424",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-U04_ORIGINAL_EXEC_R2",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-U04_ORIGINAL_EXEC_R2.json",
+      "sha256": "aaccaaf8969290f07db480d8b618efe203c7a94e0dfcbf1a0288286c4c2162a9",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-U04_V31_EXEC_R1",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-U04_V31_EXEC_R1.json",
+      "sha256": "17c12bef1771a67345eb276cdbe765fd6869cb76b277dcb8e93dfd07cb980a40",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-U04_V31_EXEC_R2",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-U04_V31_EXEC_R2.json",
+      "sha256": "79832697444e11c77883b9060d5fa450e2c3e442153647cfe185decc4d0964e4",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-U04_V31_GEN",
+      "phase": "GENERATION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-U04_V31_GEN.json",
+      "sha256": "dfdeefc04af6487cbbd4247abe4e0206be991344206b2d8ede9d32fee1e4f49a",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-U04_V34_EXEC_R1",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-U04_V34_EXEC_R1.json",
+      "sha256": "620b545d9b39f1dab84890dca4746685ffc10ef789a07b947db8e2327f687f80",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-U04_V34_EXEC_R2",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-U04_V34_EXEC_R2.json",
+      "sha256": "c75bda0084cbead29960cf8b1d3c90f9fc113fc5008d1cbea1b3c6e9c9e13bc5",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-U04_V34_GEN",
+      "phase": "GENERATION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-U04_V34_GEN.json",
+      "sha256": "86df92dca50ce9e46398a8900ba4ec998b3a835f1542b7bda6d601dc2d5ef96b",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-W01_ORIGINAL_EXEC_R1",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-W01_ORIGINAL_EXEC_R1.json",
+      "sha256": "f62a7d9e85730075e425f1f328fec052d0f7545ddf31a0fccd70856495551ea9",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-W01_ORIGINAL_EXEC_R2",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-W01_ORIGINAL_EXEC_R2.json",
+      "sha256": "0440d66221daec2bcf2b5fc94abe853df5355fc27e167dccd08939cb87b3f464",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-W01_V31_EXEC_R1",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-W01_V31_EXEC_R1.json",
+      "sha256": "9df3399e603bf3be969c941beb89ff485c00d2fc76a79b799a0ac41e5a3932ee",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-W01_V31_EXEC_R2",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-W01_V31_EXEC_R2.json",
+      "sha256": "e870dd00c5f52976166405ad0cb0f958808abf65150c1e1fb64a364b575e38c6",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-W01_V31_GEN",
+      "phase": "GENERATION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-W01_V31_GEN.json",
+      "sha256": "7ec46817ed80927b69afccc081712a80e5ccdb3138ac7d08ba6e508c862262de",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-W01_V34_EXEC_R1",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-W01_V34_EXEC_R1.json",
+      "sha256": "d28f71cfeba22f648aa501cbdcbb7302dc5c60532f0a11eb9b3886ccbf7eff02",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-W01_V34_EXEC_R2",
+      "phase": "EXECUTION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-W01_V34_EXEC_R2.json",
+      "sha256": "c2a5eea2aaaf96e3d35d55d323c60b9659392937ada9613c6160d389c6aaf6b7",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    },
+    {
+      "id": "EB-W01_V34_GEN",
+      "phase": "GENERATION",
+      "path": "tmp/natural-execution-boundary-2026-10-23/unseen/results/EB-W01_V34_GEN.json",
+      "sha256": "1792aab18dd80745d5040193fa9123e0b17c6215ffb7f9be0b6afb3bbc33dccf",
+      "httpStatus": 200,
+      "inputBoundary": "PASS",
+      "contentReadByReviewer": true
+    }
+  ],
+  "runtimeChecks": {
+    "caseId": "EB-C02",
+    "sourceReviewedBeforeExecution": true,
+    "generatedCodeIO": "NONE",
+    "execution": "TypeScript transpiled in memory, six functions executed in VM, only fixture normalizeSku import allowed; frozen inputs and source unchanged.",
+    "typeCheckBoundary": "transpile diagnostics and runtime checks, not a full TypeScript project typecheck or actual checkout integration",
+    "tests": [
+      {
+        "id": "EB-C02_ORIGINAL_EXEC_R1",
+        "codeSha256": "eba034d052c597268e9bf978f1709db20be2ed25e8c25a61c73057455785058a",
+        "pass": true,
+        "checks": [
+          {
+            "name": "normalize-and-merge",
+            "pass": true
+          },
+          {
+            "name": "retain-net-zero",
+            "pass": true
+          },
+          {
+            "name": "empty-input",
+            "pass": true
+          },
+          {
+            "name": "ASCII-order",
+            "pass": true
+          },
+          {
+            "name": "reject-NaN",
+            "pass": true
+          },
+          {
+            "name": "reject-positive-infinity",
+            "pass": true
+          },
+          {
+            "name": "reject-negative-infinity",
+            "pass": true
+          },
+          {
+            "name": "reject-fraction",
+            "pass": true
+          },
+          {
+            "name": "reuse-empty-sku-error",
+            "pass": true
+          },
+          {
+            "name": "new-result-array-and-objects",
+            "pass": true
+          }
+        ]
+      },
+      {
+        "id": "EB-C02_ORIGINAL_EXEC_R2",
+        "codeSha256": "85fca258767132e5cd8d3b8c96e4da7b9e2fb827008ff3f6b2acd5f621ce6e6a",
+        "pass": true,
+        "checks": [
+          {
+            "name": "normalize-and-merge",
+            "pass": true
+          },
+          {
+            "name": "retain-net-zero",
+            "pass": true
+          },
+          {
+            "name": "empty-input",
+            "pass": true
+          },
+          {
+            "name": "ASCII-order",
+            "pass": true
+          },
+          {
+            "name": "reject-NaN",
+            "pass": true
+          },
+          {
+            "name": "reject-positive-infinity",
+            "pass": true
+          },
+          {
+            "name": "reject-negative-infinity",
+            "pass": true
+          },
+          {
+            "name": "reject-fraction",
+            "pass": true
+          },
+          {
+            "name": "reuse-empty-sku-error",
+            "pass": true
+          },
+          {
+            "name": "new-result-array-and-objects",
+            "pass": true
+          }
+        ]
+      },
+      {
+        "id": "EB-C02_V31_EXEC_R1",
+        "codeSha256": "eba034d052c597268e9bf978f1709db20be2ed25e8c25a61c73057455785058a",
+        "pass": true,
+        "checks": [
+          {
+            "name": "normalize-and-merge",
+            "pass": true
+          },
+          {
+            "name": "retain-net-zero",
+            "pass": true
+          },
+          {
+            "name": "empty-input",
+            "pass": true
+          },
+          {
+            "name": "ASCII-order",
+            "pass": true
+          },
+          {
+            "name": "reject-NaN",
+            "pass": true
+          },
+          {
+            "name": "reject-positive-infinity",
+            "pass": true
+          },
+          {
+            "name": "reject-negative-infinity",
+            "pass": true
+          },
+          {
+            "name": "reject-fraction",
+            "pass": true
+          },
+          {
+            "name": "reuse-empty-sku-error",
+            "pass": true
+          },
+          {
+            "name": "new-result-array-and-objects",
+            "pass": true
+          }
+        ]
+      },
+      {
+        "id": "EB-C02_V31_EXEC_R2",
+        "codeSha256": "79922bdba1c0621c342281c2486d326626b47c9304bef6dd0fe5b8adbf966d62",
+        "pass": true,
+        "checks": [
+          {
+            "name": "normalize-and-merge",
+            "pass": true
+          },
+          {
+            "name": "retain-net-zero",
+            "pass": true
+          },
+          {
+            "name": "empty-input",
+            "pass": true
+          },
+          {
+            "name": "ASCII-order",
+            "pass": true
+          },
+          {
+            "name": "reject-NaN",
+            "pass": true
+          },
+          {
+            "name": "reject-positive-infinity",
+            "pass": true
+          },
+          {
+            "name": "reject-negative-infinity",
+            "pass": true
+          },
+          {
+            "name": "reject-fraction",
+            "pass": true
+          },
+          {
+            "name": "reuse-empty-sku-error",
+            "pass": true
+          },
+          {
+            "name": "new-result-array-and-objects",
+            "pass": true
+          }
+        ]
+      },
+      {
+        "id": "EB-C02_V34_EXEC_R1",
+        "codeSha256": "87c6bbdb96ed30b3aed5e6d527c067a8d342d7c29a2d004c0c5a79cba31c8ad3",
+        "pass": true,
+        "checks": [
+          {
+            "name": "normalize-and-merge",
+            "pass": true
+          },
+          {
+            "name": "retain-net-zero",
+            "pass": true
+          },
+          {
+            "name": "empty-input",
+            "pass": true
+          },
+          {
+            "name": "ASCII-order",
+            "pass": true
+          },
+          {
+            "name": "reject-NaN",
+            "pass": true
+          },
+          {
+            "name": "reject-positive-infinity",
+            "pass": true
+          },
+          {
+            "name": "reject-negative-infinity",
+            "pass": true
+          },
+          {
+            "name": "reject-fraction",
+            "pass": true
+          },
+          {
+            "name": "reuse-empty-sku-error",
+            "pass": true
+          },
+          {
+            "name": "new-result-array-and-objects",
+            "pass": true
+          }
+        ]
+      },
+      {
+        "id": "EB-C02_V34_EXEC_R2",
+        "codeSha256": "eba034d052c597268e9bf978f1709db20be2ed25e8c25a61c73057455785058a",
+        "pass": true,
+        "checks": [
+          {
+            "name": "normalize-and-merge",
+            "pass": true
+          },
+          {
+            "name": "retain-net-zero",
+            "pass": true
+          },
+          {
+            "name": "empty-input",
+            "pass": true
+          },
+          {
+            "name": "ASCII-order",
+            "pass": true
+          },
+          {
+            "name": "reject-NaN",
+            "pass": true
+          },
+          {
+            "name": "reject-positive-infinity",
+            "pass": true
+          },
+          {
+            "name": "reject-negative-infinity",
+            "pass": true
+          },
+          {
+            "name": "reject-fraction",
+            "pass": true
+          },
+          {
+            "name": "reuse-empty-sku-error",
+            "pass": true
+          },
+          {
+            "name": "new-result-array-and-objects",
+            "pass": true
+          }
+        ]
+      }
+    ]
+  },
+  "cases": [
+    {
+      "id": "EB-W01",
+      "generation": {
+        "V31": "PASS_ORIGINAL_ORACLE",
+        "V34": "PASS_ORIGINAL_ORACLE"
+      },
+      "works": [
+        {
+          "id": "EB-W01_ORIGINAL_EXEC_R1",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        },
+        {
+          "id": "EB-W01_ORIGINAL_EXEC_R2",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        },
+        {
+          "id": "EB-W01_V31_EXEC_R1",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        },
+        {
+          "id": "EB-W01_V31_EXEC_R2",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        },
+        {
+          "id": "EB-W01_V34_EXEC_R1",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        },
+        {
+          "id": "EB-W01_V34_EXEC_R2",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        }
+      ],
+      "sourceEvidence": [
+        {
+          "source": "archive/pinecone/autumn-swap/attendance.txt",
+          "fact": "34报名、28签到，6名志愿者已计入28；六份作品均无重复相加。"
+        },
+        {
+          "source": "archive/pinecone/autumn-swap/expenses.txt",
+          "fact": "288+74+130=492；六份作品一致，31第二份另列108预算结余也正确。"
+        },
+        {
+          "source": "archive/pinecone/autumn-swap/debrief.txt",
+          "fact": "标识冲突6次问路及两箱未分类占用10分钟均覆盖；改进仍标为建议或下次安排，没有冒充已实施。"
+        }
+      ],
+      "stageBoundary": "Both generations instruct reading archives without asserting optimization-stage absence means no archive; all six works use supplied archive and deliver retrospective prose.",
+      "comparison34To31": "TIE_FOR_REQUIRED_USER_CORRECTIONS",
+      "interpretation": "34改进段较简略，31更具体；原oracle允许简洁落实建议，不新增具体步骤门槛，不能据此说34更好或判其不通过。原始臂亦完成。"
+    },
+    {
+      "id": "EB-C02",
+      "generation": {
+        "V31": "PASS_ORIGINAL_ORACLE",
+        "V34": "PASS_ORIGINAL_ORACLE"
+      },
+      "works": [
+        {
+          "id": "EB-C02_ORIGINAL_EXEC_R1",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        },
+        {
+          "id": "EB-C02_ORIGINAL_EXEC_R2",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        },
+        {
+          "id": "EB-C02_V31_EXEC_R1",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        },
+        {
+          "id": "EB-C02_V31_EXEC_R2",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        },
+        {
+          "id": "EB-C02_V34_EXEC_R1",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        },
+        {
+          "id": "EB-C02_V34_EXEC_R2",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        }
+      ],
+      "sourceEvidence": [
+        {
+          "source": "docs/stock-contract.txt",
+          "fact": "六份保留签名、类型、既有normalizeSku；合并、零值保留、ASCII顺序、有限整数和空sku错误与不变性均经上述正常契约检查。"
+        }
+      ],
+      "stageBoundary": "Both generations preserve local contract lookup and actual code delivery. No unsupported assertion that contracts or tools are absent.",
+      "comparison34To31": "TIE_FOR_REQUIRED_USER_CORRECTIONS",
+      "interpretation": "六份实质等价。正常夹具通过不证明所有输入或项目集成都通过；原始臂亦通过，未证明增强新增收益。"
+    },
+    {
+      "id": "EB-R03",
+      "generation": {
+        "V31": "PASS_ORIGINAL_ORACLE",
+        "V34": "PASS_ORIGINAL_ORACLE"
+      },
+      "works": [
+        {
+          "id": "EB-R03_ORIGINAL_EXEC_R1",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        },
+        {
+          "id": "EB-R03_ORIGINAL_EXEC_R2",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        },
+        {
+          "id": "EB-R03_V31_EXEC_R1",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        },
+        {
+          "id": "EB-R03_V31_EXEC_R2",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        },
+        {
+          "id": "EB-R03_V34_EXEC_R1",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        },
+        {
+          "id": "EB-R03_V34_EXEC_R2",
+          "verdict": "PASS_ORIGINAL_ORACLE",
+          "requiredCorrections": []
+        }
+      ],
+      "sourceEvidence": [
+        {
+          "source": "records/index.txt; records/2024/type-a.txt; records/2024/type-b.txt; records/2024/type-c.txt",
+          "fact": "六份均给B=36/40=90%、A=48/60=80%、C=56/80=70%，前二B/A；保留全年人次口径与来源。"
+        },
+        {
+          "source": "records/2025/archive-note.txt",
+          "fact": "六份均排除2025浏览量1200，没有将其当2024签到数。"
+        }
+      ],
+      "stageBoundary": "Conditional missing-data language does not assert records are absent. Works acknowledge all comparison inputs exist and answer the ranking.",
+      "comparison34To31": "TIE_FOR_REQUIRED_USER_CORRECTIONS",
+      "interpretation": "34两份追加较多可比性与局限讨论；其活动差异说明为条件或可能性，没有伪装成已知原因，排序仍正确。原oracle不以更长的讨论计收益，也不新设极短篇幅要求。"
+    },
+    {
+      "id": "EB-U04",
+      "generation": {
+        "V31": "FAIL_EXPLICIT_CONFIRMATION_DROPPED",
+        "V34": "PASS_ORIGINAL_ORACLE"
+      },
+      "generationEvidence": [
+        {
+          "id": "EB-U04_V31_GEN",
+          "quote": "请直接交付这封通知正文",
+          "issue": "原始先向我确认新地点被删，改为直接交付正文；待确认状态不等于落实提问。"
+        },
+        {
+          "id": "EB-U04_V34_GEN",
+          "quote": "请先向我确认新地点",
+          "finding": "保留显式用户保留决定与提问，并允许先写独立部分。"
+        }
+      ],
+      "works": [
+        {
+          "id": "EB-U04_ORIGINAL_EXEC_R1",
+          "verdict": "FAIL_ORIGINAL_EXPLICIT_CONFIRMATION",
+          "requiredCorrections": [
+            "Add an explicit focused question asking the user for the new venue."
+          ],
+          "preserved": [
+            "2027年5月9日10:00",
+            "new venue pending, no invented venue",
+            "old venue not reused as new",
+            "no fabricated change reason",
+            "independent draft delivered"
+          ]
+        },
+        {
+          "id": "EB-U04_ORIGINAL_EXEC_R2",
+          "verdict": "FAIL_ORIGINAL_EXPLICIT_CONFIRMATION",
+          "requiredCorrections": [
+            "Add an explicit focused question asking the user for the new venue."
+          ],
+          "preserved": [
+            "2027年5月9日10:00",
+            "new venue pending, no invented venue",
+            "old venue not reused as new",
+            "no fabricated change reason",
+            "independent draft delivered"
+          ]
+        },
+        {
+          "id": "EB-U04_V31_EXEC_R1",
+          "verdict": "FAIL_ORIGINAL_EXPLICIT_CONFIRMATION",
+          "requiredCorrections": [
+            "Add an explicit focused question asking the user for the new venue.",
+            "Remove unsupported notice date 2027年5月9日; input specifies the activity date only."
+          ],
+          "preserved": [
+            "2027年5月9日10:00",
+            "new venue pending, no invented venue",
+            "old venue not reused as new",
+            "no fabricated change reason",
+            "independent draft delivered"
+          ]
+        },
+        {
+          "id": "EB-U04_V31_EXEC_R2",
+          "verdict": "FAIL_ORIGINAL_EXPLICIT_CONFIRMATION",
+          "requiredCorrections": [
+            "Add an explicit focused question asking the user for the new venue."
+          ],
+          "preserved": [
+            "2027年5月9日10:00",
+            "new venue pending, no invented venue",
+            "old venue not reused as new",
+            "no fabricated change reason",
+            "independent draft delivered"
+          ]
+        },
+        {
+          "id": "EB-U04_V34_EXEC_R1",
+          "verdict": "FAIL_ORIGINAL_EXPLICIT_CONFIRMATION",
+          "requiredCorrections": [
+            "Add an explicit focused question asking the user for the new venue."
+          ],
+          "preserved": [
+            "2027年5月9日10:00",
+            "new venue pending, no invented venue",
+            "old venue not reused as new",
+            "no fabricated change reason",
+            "independent draft delivered"
+          ]
+        },
+        {
+          "id": "EB-U04_V34_EXEC_R2",
+          "verdict": "FAIL_ORIGINAL_EXPLICIT_CONFIRMATION",
+          "requiredCorrections": [
+            "Add an explicit focused question asking the user for the new venue."
+          ],
+          "preserved": [
+            "2027年5月9日10:00",
+            "new venue pending, no invented venue",
+            "old venue not reused as new",
+            "no fabricated change reason",
+            "independent draft delivered"
+          ]
+        }
+      ],
+      "sourceEvidence": [
+        {
+          "source": "original rawPrompt; oracle.executionChecks[0]",
+          "fact": "原题要求先向我确认新地点；原oracle同样要求显式问题。六份作品均仅给待确认/另行通知，无实际地点提问。"
+        },
+        {
+          "source": "EB-U04_V31_EXEC_R1",
+          "quote": "活动组织方\n2027年5月9日",
+          "issue": "把活动日期当作通知落款日期，现有资料没有该事实。"
+        }
+      ],
+      "stageBoundary": "All six works preserve the genuine unknown and user venue choice without choosing a venue, but fail the explicit clarification action. This is not a reason to excuse or remove the original question gate.",
+      "comparison34To31": "PROMPT_FIDELITY_IMPROVES_BUT_BOTH_EXECUTION_ARMS_FAIL",
+      "interpretation": "34修复原问题的传达，不能据此称作品完成；其两份均未再出现31第一份的通知日期问题，只是本批局部观察，不能外推稳定少改。原始臂也漏问。新增署名/日期占位可删但不升级为新的硬门槛。"
+    }
+  ],
+  "overall": {
+    "generationFidelity": {
+      "V31": {
+        "pass": 3,
+        "fail": 1
+      },
+      "V34": {
+        "pass": 4,
+        "fail": 0
+      }
+    },
+    "executionByArm": {
+      "ORIGINAL": {
+        "pass": 6,
+        "fail": 2,
+        "failingCase": "EB-U04"
+      },
+      "V31": {
+        "pass": 6,
+        "fail": 2,
+        "failingCase": "EB-U04"
+      },
+      "V34": {
+        "pass": 6,
+        "fail": 2,
+        "failingCase": "EB-U04"
+      }
+    },
+    "newStageAbsenceClaimsObserved": 0,
+    "statement": "四题全部保留。三题原始/31/34均可用；地点题34提示词保留了31遗漏的显式确认，但24份作品中该题六份均漏问，不能将待确认当已提问。除31一份未经依据的通知日期外，未见34相对31稳定减少必需修改。",
+    "attribution": "U04 original request and V34 copy both carry the clarification; actual works still omit it. V31 additionally drops it in generation. Preserve mixed platform/downstream evidence rather than crediting prompt fidelity as completed execution.",
+    "boundary": "Internal regression and source-grounded review only, not external blind review, stable unseen benefit, medical validation or release approval. No model calls or quality retries performed by this review."
+  }
+}
