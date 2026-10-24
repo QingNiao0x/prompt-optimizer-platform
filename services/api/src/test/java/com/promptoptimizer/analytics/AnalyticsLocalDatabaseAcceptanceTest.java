@@ -174,7 +174,7 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         mvc.perform(write("/api/v1/auth/logout", member)).andExpect(status().isOk());
         // 快速连续请求可共享同一数据库时间精度；相同时刻按随机 UUID 排序，不代表请求先后。
         assertThat(inspection.eventTypes(ordinary.userId())).containsExactlyInAnyOrder(
-                "LOGIN", "APP_VISIT", "APP_VISIT", "CONTEXT_PREPARED", "PLAN_CREATED",
+                "LOGIN", "CONTEXT_PREPARED", "PLAN_CREATED",
                 "OPTIMIZATION_SUBMITTED", "PLAN_COMPLETED", "RESULT_EXPORTED", "LOGOUT");
 
         String loginCorrelation = null;
@@ -195,15 +195,16 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         Login administrator = login(admin);
         LocalDate today = LocalDate.now(ZONE);
         JsonNode dashboard = dashboard(administrator, "CUSTOM", today.minusDays(1), today.plusDays(1), ordinary.userId());
-        assertThat(dashboard.path("accessCount").asInt()).isEqualTo(2);
+        assertThat(dashboard.path("accessCount").asInt()).isZero();
+        assertThat(dashboard.path("uniqueVisitorCount").asInt()).isZero();
         assertThat(dashboard.path("directEnhancementCount").asInt()).isZero();
         assertThat(dashboard.path("planCompletedCount").asInt()).isEqualTo(1);
-        for (String name : List.of("uniqueVisitorCount", "activeUserCount", "actualUserCount", "registeredAccountCount")) {
+        for (String name : List.of("activeUserCount", "actualUserCount", "registeredAccountCount")) {
             assertThat(dashboard.path(name).asInt()).as(name).isEqualTo(1);
         }
         JsonNode operations = operations(administrator, today.minusDays(1), today.plusDays(1), ordinary.userId(), 1, 10, null);
-        assertThat(operations.path("total").asInt()).isEqualTo(9);
-        assertThat(operations.path("records").size()).isEqualTo(9);
+        assertThat(operations.path("total").asInt()).isEqualTo(7);
+        assertThat(operations.path("records").size()).isEqualTo(7);
         JsonNode rank = ranking(administrator, today, ordinary.userId());
         assertThat(rank.path("items").get(0).path("operationCount").asInt()).isEqualTo(4);
         assertThat(rank.path("items").get(0).path("loginCount").asInt()).isEqualTo(1);
@@ -291,12 +292,13 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         assertThat(view.path("period").path("fromDate").asText()).isEqualTo(from.toString());
         assertThat(view.path("period").path("toDateInclusive").asText()).isEqualTo(until.minusDays(1).toString());
         assertThat(view.path("period").path("zoneId").asText()).isEqualTo(ZONE.getId());
-        assertThat(view.path("accessCount").asInt()).isEqualTo(2);
+        assertThat(view.path("accessCount").asInt()).isZero();
+        assertThat(view.path("uniqueVisitorCount").asInt()).isZero();
         assertThat(view.path("directEnhancementCount").asLong()).isEqualTo(1);
         assertThat(view.path("planCompletedCount").asLong()).isEqualTo(1);
         assertThat(view.path("dailyMetrics").get(0).path("directEnhancementCount").asLong()).isEqualTo(1);
         assertThat(view.path("dailyMetrics").get(view.path("dailyMetrics").size() - 1).path("planCompletedCount").asLong()).isEqualTo(1);
-        for (String key : List.of("newAccountCount", "uniqueVisitorCount", "activeUserCount", "actualUserCount")) {
+        for (String key : List.of("newAccountCount", "activeUserCount", "actualUserCount")) {
             assertThat(view.path(key).asInt()).as(key).isEqualTo(1);
         }
         long days = java.time.temporal.ChronoUnit.DAYS.between(from, until);
@@ -307,15 +309,17 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         JsonNode first = operations(administrator, from, until.minusDays(1), ordinary.userId(), 1, 2, null);
         JsonNode second = operations(administrator, from, until.minusDays(1), ordinary.userId(), 2, 2, null);
         JsonNode third = operations(administrator, from, until.minusDays(1), ordinary.userId(), 3, 2, null);
-        assertThat(first.path("total").asInt()).isEqualTo(6);
-        assertThat(first.path("pages").asInt()).isEqualTo(3);
+        assertThat(first.path("total").asInt()).isEqualTo(4);
+        assertThat(first.path("pages").asInt()).isEqualTo(2);
         assertThat(first.path("records").size()).isEqualTo(2);
         assertThat(second.path("records").size()).isEqualTo(2);
         HashSet<String> ids = new HashSet<>();
         first.path("records").forEach(row -> ids.add(row.path("eventId").asText()));
         second.path("records").forEach(row -> ids.add(row.path("eventId").asText()));
         third.path("records").forEach(row -> ids.add(row.path("eventId").asText()));
-        assertThat(ids).hasSize(6);
+        assertThat(ids).hasSize(4);
+        assertThat(operations(administrator, from, until.minusDays(1), ordinary.userId(), 1, 10, "APP_VISIT")
+                .path("records").isEmpty()).isTrue();
         JsonNode logins = operations(administrator, from, until.minusDays(1), ordinary.userId(), 1, 10, "LOGIN");
         assertThat(logins.path("total").asInt()).isEqualTo(1);
         assertThat(logins.path("records").get(0).path("eventType").asText()).isEqualTo("LOGIN");
@@ -387,7 +391,7 @@ class AnalyticsLocalDatabaseAcceptanceTest {
                         .header("X-User-Id", admin.userId()).header("X-Forwarded-For", "203.0.113.9")
                         .content("{\"eventType\":\"APP_VISIT\"}"))
                 .andExpect(status().isOk());
-        assertThat(inspection.eventTypes(ordinary.userId())).containsExactlyInAnyOrder("LOGIN", "APP_VISIT");
+        assertThat(inspection.eventTypes(ordinary.userId())).containsExactlyInAnyOrder("LOGIN");
         assertThat(inspection.eventTypes(admin.userId())).isEmpty();
         for (String details : inspection.eventDetails(ordinary.userId())) {
             assertThat(json.readTree(details).path("clientIp").asText()).isEqualTo(CLIENT_IP);
@@ -408,7 +412,7 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         seedEvent(ordinary, AnalyticsEventType.OPTIMIZATION_SUBMITTED, OffsetDateTime.parse("2026-11-01T09:30:00Z"));
         seedEvent(ordinary, AnalyticsEventType.APP_VISIT, period.toExclusive());
         seedEvent(admin, AnalyticsEventType.APP_VISIT, period.fromInclusive());
-        assertThat(analytics.dailyMetrics(period, AnalyticsAccountFilter.forUser(ordinary.userId()))).containsExactly(new DailyMetric(day, 2, 1, 1, 1, 1, 0, 0));
+        assertThat(analytics.dailyMetrics(period, AnalyticsAccountFilter.forUser(ordinary.userId()))).containsExactly(new DailyMetric(day, 0, 0, 1, 1, 1, 0, 0));
         assertThat(analytics.hourlyUsage(period, AnalyticsAccountFilter.forUser(ordinary.userId()))).filteredOn(hour -> hour.hour() == 1)
                 .containsExactly(new HourlyMetric(1, 2));
         assertThat(analytics.usageRanking(period, AnalyticsAccountFilter.forUser(ordinary.userId()), 20)).singleElement().satisfies(rank -> {
@@ -456,9 +460,11 @@ class AnalyticsLocalDatabaseAcceptanceTest {
         seedEvent(admin, AnalyticsEventType.OPTIMIZATION_SUBMITTED, at.plusSeconds(3));
         audit.insert(UUID.randomUUID(), ordinary.tenantId(), null, AnalyticsEventType.APP_VISIT, Map.of(), at.plusSeconds(4));
         JsonNode global = data(mvc.perform(request).andExpect(status().isOk()).andReturn());
-        for (String metric : List.of("accessCount", "uniqueVisitorCount", "activeUserCount")) {
+        for (String metric : List.of("activeUserCount")) {
             assertThat(global.path(metric).asLong() - baseline.path(metric).asLong()).as(metric).isEqualTo(2);
         }
+        assertThat(global.path("accessCount").asLong()).isZero();
+        assertThat(global.path("uniqueVisitorCount").asLong()).isZero();
         assertThat(global.path("actualUserCount").asLong() - baseline.path("actualUserCount").asLong()).isEqualTo(1);
         JsonNode adminOnly = dashboard(administrator, "CUSTOM", day, day, admin.userId());
         assertThat(adminOnly.path("registeredAccountCount").asInt()).isEqualTo(1);
@@ -487,7 +493,7 @@ class AnalyticsLocalDatabaseAcceptanceTest {
                 .param("range", "CUSTOM").param("fromDate", day.toString()).param("toDate", day.toString())
                 .param("email", emailKeyword).param("displayName", nameKeyword);
         JsonNode view = data(mvc.perform(dashboardRequest).andExpect(status().isOk()).andReturn());
-        for (String metric : List.of("registeredAccountCount", "accessCount", "uniqueVisitorCount",
+        for (String metric : List.of("registeredAccountCount",
                 "activeUserCount", "actualUserCount")) {
             assertThat(view.path(metric).asLong()).as(metric).isEqualTo(1);
         }
@@ -507,11 +513,11 @@ class AnalyticsLocalDatabaseAcceptanceTest {
             JsonNode page = data(mvc.perform(get("/api/v1/admin/analytics/operations")
                             .session(administrator.session()).param("fromDate", day.toString()).param("toDate", day.toString())
                             .param("email", emailKeyword).param("displayName", nameKeyword)
-                            .param("current", Integer.toString(current)).param("size", "2"))
+                            .param("current", Integer.toString(current)).param("size", "1"))
                     .andExpect(status().isOk()).andReturn());
-            assertThat(page.path("total").asInt()).isEqualTo(3);
+            assertThat(page.path("total").asInt()).isEqualTo(2);
             assertThat(page.path("pages").asInt()).isEqualTo(2);
-            assertThat(page.path("records").size()).isEqualTo(current == 1 ? 2 : 1);
+            assertThat(page.path("records").size()).isEqualTo(1);
             page.path("records").forEach(row -> assertThat(row.path("userId").asText())
                     .isEqualTo(ordinary.userId().toString()));
         }
@@ -525,7 +531,8 @@ class AnalyticsLocalDatabaseAcceptanceTest {
                         .param("range", "CUSTOM").param("fromDate", day.toString()).param("toDate", day.toString())
                         .param("userId", ordinary.userId().toString()).param("email", "  ").param("displayName", "  "))
                 .andExpect(status().isOk()).andReturn());
-        assertThat(blankKeywords.path("accessCount").asLong()).isEqualTo(1);
+        assertThat(blankKeywords.path("accessCount").asLong()).isZero();
+        assertThat(blankKeywords.path("activeUserCount").asLong()).isEqualTo(1);
     }
 
     /** 创建随机独立租户、账户、工作区和邮箱身份，全部加入当前回滚事务。 */

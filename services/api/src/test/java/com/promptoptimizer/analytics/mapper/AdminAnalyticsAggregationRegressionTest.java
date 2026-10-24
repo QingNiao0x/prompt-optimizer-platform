@@ -87,10 +87,10 @@ class AdminAnalyticsAggregationRegressionTest {
         AnalyticsAccountFilter filter = matchingAccounts();
 
         assertThat(analytics.accountCounts(period, filter)).isEqualTo(new AdminAnalyticsMapper.AccountCounts(4, 2));
-        assertThat(analytics.usageCounts(period, filter)).isEqualTo(new AdminAnalyticsMapper.UsageCounts(6, 2, 3, 2));
+        assertThat(analytics.usageCounts(period, filter)).isEqualTo(new AdminAnalyticsMapper.UsageCounts(0, 0, 3, 2));
         assertThat(analytics.dailyMetrics(period, filter)).containsExactly(
-                new DailyMetric(FIRST_DAY, 5, 2, 2, 2, 1, 0, 0),
-                new DailyMetric(FIRST_DAY.plusDays(1), 1, 1, 2, 1, 0, 0, 0),
+                new DailyMetric(FIRST_DAY, 0, 0, 2, 2, 1, 0, 0),
+                new DailyMetric(FIRST_DAY.plusDays(1), 0, 0, 2, 1, 0, 0, 0),
                 new DailyMetric(FIRST_DAY.plusDays(2), 0, 0, 2, 1, 1, 0, 0),
                 new DailyMetric(FIRST_DAY.plusDays(3), 0, 0, 0, 0, 0, 0, 0));
         assertHours(period, filter, Map.of(11, 4L, 14, 2L));
@@ -101,7 +101,7 @@ class AdminAnalyticsAggregationRegressionTest {
         assertThat(analytics.usageRanking(period, filter, 20)).containsExactly(
                 new UserRank(scenario.beta().id(), scenario.beta().displayName(), 3, 3, 2),
                 new UserRank(scenario.alpha().id(), scenario.alpha().displayName(), 3, 2, 3));
-        assertThat(analytics.countOperationLogs(period.fromInclusive(), period.toExclusive(), filter, null)).isEqualTo(20);
+        assertThat(analytics.countOperationLogs(period.fromInclusive(), period.toExclusive(), filter, null)).isEqualTo(14);
         assertFusedMatchesIndependent(period, filter);
 
         var dashboard = service.dashboard(new DashboardQuery("CUSTOM", FIRST_DAY.toString(),
@@ -110,7 +110,8 @@ class AdminAnalyticsAggregationRegressionTest {
         assertThat(dashboard.newAccountCount()).isEqualTo(2);
         assertThat(dashboard.actualUserCount()).isEqualTo(2);
         assertThat(dashboard.activeUserCount()).isEqualTo(3);
-        assertThat(dashboard.uniqueVisitorCount()).isEqualTo(2);
+        assertThat(dashboard.uniqueVisitorCount()).isZero();
+        assertThat(dashboard.accessCount()).isZero();
         // 日活总和为 6，含完整零日的分母为 4；期间去重活跃 3 不能直接除以日数。
         assertThat(dashboard.averageDailyActiveUsers()).isEqualByComparingTo(new BigDecimal("1.50"));
         assertThat(dashboard.rechargeStatisticsAvailable()).isFalse();
@@ -187,9 +188,9 @@ class AdminAnalyticsAggregationRegressionTest {
         AnalyticsPeriod period = period(FIRST_DAY, FIRST_DAY.plusDays(4), SHANGHAI);
         AnalyticsAccountFilter alias = new AnalyticsAccountFilter(null, seed + "-alpha-alias", null);
         assertThat(analytics.accountCounts(period, alias)).isEqualTo(new AdminAnalyticsMapper.AccountCounts(1, 1));
-        assertThat(analytics.usageCounts(period, alias)).isEqualTo(new AdminAnalyticsMapper.UsageCounts(3, 1, 1, 1));
+        assertThat(analytics.usageCounts(period, alias)).isEqualTo(new AdminAnalyticsMapper.UsageCounts(0, 0, 1, 1));
         assertThat(analytics.dailyMetrics(period, alias)).containsExactly(
-                new DailyMetric(FIRST_DAY, 3, 1, 1, 1, 1, 0, 0),
+                new DailyMetric(FIRST_DAY, 0, 0, 1, 1, 1, 0, 0),
                 new DailyMetric(FIRST_DAY.plusDays(1), 0, 0, 1, 0, 0, 0, 0),
                 new DailyMetric(FIRST_DAY.plusDays(2), 0, 0, 1, 1, 0, 0, 0),
                 new DailyMetric(FIRST_DAY.plusDays(3), 0, 0, 0, 0, 0, 0, 0));
@@ -211,7 +212,7 @@ class AdminAnalyticsAggregationRegressionTest {
         }
         assertThat(analytics.usageCounts(period, new AnalyticsAccountFilter(null,
                 (seed + "-alpha-alias").toUpperCase(java.util.Locale.ROOT), scenario.alpha().displayName())))
-                .isEqualTo(new AdminAnalyticsMapper.UsageCounts(3, 1, 1, 1));
+                .isEqualTo(new AdminAnalyticsMapper.UsageCounts(0, 0, 1, 1));
         assertFusedMatchesIndependent(period, new AnalyticsAccountFilter(null,
                 (seed + "-alpha-alias").toUpperCase(java.util.Locale.ROOT), scenario.alpha().displayName()));
     }
@@ -236,6 +237,32 @@ class AdminAnalyticsAggregationRegressionTest {
         assertThat(analytics.monthlyUsage(period, day, filter)).containsExactly(new MonthlyMetric("2020-11", 2));
         assertThat(analytics.usageRanking(period, filter, 20))
                 .containsExactly(new UserRank(user.id(), user.displayName(), 2, 0, 1));
+        assertFusedMatchesIndependent(period, filter);
+    }
+
+    @Test
+    void historicalPageOnlyAccountIsAbsentFromUsageLogsAndActiveAverages() {
+        Account user = account(tenant(), "page-only", FIRST_DAY.minusDays(1), false);
+        AnalyticsPeriod period = period(FIRST_DAY, FIRST_DAY.plusDays(2), SHANGHAI);
+        event(user, AnalyticsEventType.APP_VISIT, period.fromInclusive(), Map.of());
+        event(user, AnalyticsEventType.APP_VISIT, period.toExclusive().minusNanos(1000), Map.of());
+        AnalyticsAccountFilter filter = AnalyticsAccountFilter.forUser(user.id());
+        assertThat(analytics.usageCounts(period, filter)).isEqualTo(new AdminAnalyticsMapper.UsageCounts(0, 0, 0, 0));
+        assertThat(analytics.dailyMetrics(period, filter)).containsExactly(
+                new DailyMetric(FIRST_DAY, 0, 0, 0, 0, 0, 0, 0),
+                new DailyMetric(FIRST_DAY.plusDays(1), 0, 0, 0, 0, 0, 0, 0));
+        assertThat(analytics.usageRanking(period, filter, 20)).isEmpty();
+        assertThat(analytics.countOperationLogs(period.fromInclusive(), period.toExclusive(), filter, null)).isZero();
+        assertThat(analytics.countOperationLogs(period.fromInclusive(), period.toExclusive(), filter, "APP_VISIT")).isZero();
+        var page = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<com.promptoptimizer.analytics.dto.AnalyticsViews.OperationLog>(1, 10);
+        page.setCountId("countOperationLogs");
+        assertThat(analytics.selectOperationLogs(page, period.fromInclusive(), period.toExclusive(), filter, null).getRecords()).isEmpty();
+        var dashboard = service.dashboard(new DashboardQuery("CUSTOM", FIRST_DAY.toString(),
+                FIRST_DAY.plusDays(1).toString(), user.id(), null, null));
+        assertThat(dashboard.registeredAccountCount()).isEqualTo(1);
+        assertThat(dashboard.activeUserCount()).isZero();
+        assertThat(dashboard.actualUserCount()).isZero();
+        assertThat(dashboard.averageDailyActiveUsers()).isEqualByComparingTo(BigDecimal.ZERO);
         assertFusedMatchesIndependent(period, filter);
     }
 

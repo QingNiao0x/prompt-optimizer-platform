@@ -31,7 +31,7 @@ describe('analytics route capture', () => {
     return { auth: useAuthStore(pinia), router };
   };
 
-  it('backfills one home visit only after identity and CSRF restoration complete', async () => {
+  it('does not report visits after home identity restoration refresh or navigation', async () => {
     const { auth, router } = fixture();
     await router.push('/');
     expect(enqueue).not.toHaveBeenCalled();
@@ -45,15 +45,15 @@ describe('analytics route capture', () => {
     expect(enqueue).not.toHaveBeenCalled();
     csrfReady?.();
     await initialization;
-    expect(enqueue).toHaveBeenCalledExactlyOnceWith('APP_VISIT');
+    expect(enqueue).not.toHaveBeenCalled();
     await auth.initialize();
     await router.push('/');
-    expect(enqueue).toHaveBeenCalledOnce();
+    expect(enqueue).not.toHaveBeenCalled();
     await router.push('/workbench');
-    expect(enqueue).toHaveBeenCalledTimes(2);
+    expect(enqueue).not.toHaveBeenCalled();
   });
 
-  it('never counts an anonymous or login page, and captures only the current route after delayed identity restoration', async () => {
+  it('keeps page capture disabled through delayed restoration and account changes', async () => {
     const { auth, router } = fixture();
     await router.push('/');
     let restored: ((response: ApiResponse<AuthenticatedUser>) => void) | undefined;
@@ -64,9 +64,9 @@ describe('analytics route capture', () => {
     await initialization;
     expect(enqueue).not.toHaveBeenCalled();
     await router.push('/');
-    expect(enqueue).toHaveBeenCalledExactlyOnceWith('APP_VISIT');
+    expect(enqueue).not.toHaveBeenCalled();
     auth.user = undefined;
     await router.push('/workbench');
-    expect(enqueue).toHaveBeenCalledOnce();
+    expect(enqueue).not.toHaveBeenCalled();
   });
 });

@@ -52,6 +52,25 @@ class AuditEventDeliveryTest {
     @TempDir Path directory;
 
     @Test
+    void newPageVisitIsIgnoredAndLegacyJournalVisitIsAcknowledgedWithoutDatabaseWrite() throws Exception {
+        AuditEventJournal journal = journal();
+        AuditEventDatabaseWriter writer = mock(AuditEventDatabaseWriter.class);
+        PendingAuditEvent original = event();
+        PendingAuditEvent visit = new PendingAuditEvent(original.id(), original.tenantId(), original.actorUserId(),
+                AnalyticsEventType.APP_VISIT, original.details(), original.occurredAt());
+        AuditEventDelivery delivery = delivery(journal, writer);
+        delivery.accept(visit, true);
+        assertThat(journal.recover().events()).isEmpty();
+        // 模拟升级前已经持久接收的页面事件，恢复后也不能再写进业务数据库。
+        journal.append(visit);
+        delivery.replayPending();
+        assertThat(journal.acknowledged(visit.id())).isTrue();
+        assertThat(delivery.status().pendingEvents()).isZero();
+        org.mockito.Mockito.verifyNoInteractions(writer);
+        delivery.close();
+    }
+
+    @Test
     void anonymousModelFactSurvivesOutageRestartAndDuplicateDelivery() throws Exception {
         PendingAuditEvent original = event();
         PendingAuditEvent model = new PendingAuditEvent(original.id(), original.tenantId(), null,
@@ -444,7 +463,7 @@ class AuditEventDeliveryTest {
 
     /** 固定历史发生时刻，验证重放不以当前时间覆盖统计归属日期。 */
     private PendingAuditEvent event() {
-        return new PendingAuditEvent(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), AnalyticsEventType.APP_VISIT,
+        return new PendingAuditEvent(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), AnalyticsEventType.RESULT_EXPORTED,
                 Map.of("requestId", "safe-test-request", "deviceType", "DESKTOP"),
                 OffsetDateTime.of(2026, 1, 1, 8, 0, 0, 0, ZoneOffset.ofHours(8)));
     }

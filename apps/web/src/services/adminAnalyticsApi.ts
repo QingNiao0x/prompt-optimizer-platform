@@ -72,14 +72,14 @@ export const getAnalyticsOperations = async (
 
 /** 将无自由文本的浏览器事件加入可恢复队列；完成入队不代表服务端已经落库。 */
 export const reportClientAnalyticsEvent = async (
-  eventType: Extract<AnalyticsEventType, 'APP_VISIT' | 'RESULT_EXPORTED'>,
+  eventType: Extract<AnalyticsEventType, 'RESULT_EXPORTED'>,
 ): Promise<void> => {
   useAnalyticsDeliveryStore().enqueue(eventType);
 };
 
-/** 路由与导出主业务只负责入队；失败由账号隔离队列重试，保留稳定事件 ID。 */
+/** 导出主业务只负责入队；失败由账号隔离队列重试，保留稳定事件 ID。 */
 export const reportClientAnalyticsEventBestEffort = (
-  eventType: Extract<AnalyticsEventType, 'APP_VISIT' | 'RESULT_EXPORTED'>,
+  eventType: Extract<AnalyticsEventType, 'RESULT_EXPORTED'>,
 ): void => {
   useAnalyticsDeliveryStore().enqueue(eventType);
 };

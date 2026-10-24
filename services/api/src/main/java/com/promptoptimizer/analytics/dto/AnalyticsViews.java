@@ -31,7 +31,7 @@ public final class AnalyticsViews {
     }
 
     /**
-     * 仪表盘主数据及各图表序列。
+     * 仪表盘主数据及各图表序列；已停用的 accessCount、uniqueVisitorCount 兼容字段固定为零。
      */
     public record DashboardView(
             PeriodView period,
@@ -61,6 +61,7 @@ public final class AnalyticsViews {
 
     /**
      * 统计时区某日的账号指标及功能事件次数；直接增强按提交计，Plan 按完成计，历史通用事件不反推细分。
+     * accessCount、uniqueVisitors 为停用页面统计的兼容字段，固定为零。
      */
     public record DailyMetric(
             LocalDate date,

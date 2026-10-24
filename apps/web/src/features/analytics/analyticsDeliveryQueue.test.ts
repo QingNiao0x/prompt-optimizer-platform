@@ -55,7 +55,7 @@ describe('analytics durable browser delivery', () => {
     state.send.mockRejectedValueOnce(503);
     const queue = state.create();
     queue.activateAccount(firstAccount);
-    queue.enqueue('APP_VISIT');
+    queue.enqueue('RESULT_EXPORTED');
     expect(state.storage.length).toBe(1);
     await vi.advanceTimersByTimeAsync(0);
     expect(state.storage.length).toBe(1);
@@ -65,6 +65,31 @@ describe('analytics durable browser delivery', () => {
     expect(state.send).toHaveBeenCalledTimes(2);
     expect(state.send.mock.calls[0]![0]).toEqual(state.send.mock.calls[1]![0]);
     expect(state.storage.length).toBe(0);
+  });
+
+  it('retires persisted visits without sending them and still delivers adjacent export events', async () => {
+    const state = fixture();
+    for (const [index, owner] of [firstAccount, firstAccount, secondAccount].entries()) {
+      const eventId = `00000000-0000-4000-8000-00000000099${index}`;
+      state.storage.setItem(`${ANALYTICS_PENDING_PREFIX}${owner}:${eventId}`, JSON.stringify({
+        eventId, eventType: 'APP_VISIT', occurredAt: '2026-10-02T00:00:00Z', expectedUserId: owner,
+        expectedLoginSessionId: sessionId,
+      }));
+    }
+    const queue = state.create();
+    queue.activateAccount(firstAccount);
+    // 旧 JavaScript 调用也不能绕过运行时白名单，TypeScript 的新契约仅允许导出。
+    Reflect.apply(queue.enqueue, undefined, ['APP_VISIT']);
+    queue.enqueue('RESULT_EXPORTED');
+    await vi.advanceTimersByTimeAsync(0);
+    expect(state.send).toHaveBeenCalledOnce();
+    expect(state.send.mock.calls[0]![0].eventType).toBe('RESULT_EXPORTED');
+    expect(state.storage.length).toBe(1);
+    expect(state.warning).not.toHaveBeenCalled();
+    queue.activateAccount(secondAccount);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(state.storage.length).toBe(0);
+    expect(state.send).toHaveBeenCalledOnce();
   });
 
   it('restores offline pending events after reload without inventing a new login location', async () => {
@@ -93,9 +118,9 @@ describe('analytics durable browser delivery', () => {
     state.setOnline(false);
     const queue = state.create();
     queue.activateAccount(firstAccount);
-    queue.enqueue('APP_VISIT');
+    queue.enqueue('RESULT_EXPORTED');
     queue.activateAccount(undefined);
-    queue.enqueue('APP_VISIT');
+    queue.enqueue('RESULT_EXPORTED');
     queue.activateAccount(secondAccount);
     queue.enqueue('RESULT_EXPORTED');
     state.setOnline(true);
@@ -114,7 +139,7 @@ describe('analytics durable browser delivery', () => {
     state.send.mockRejectedValueOnce(409);
     const queue = state.create();
     queue.activateAccount(firstAccount);
-    queue.enqueue('APP_VISIT');
+    queue.enqueue('RESULT_EXPORTED');
     await vi.advanceTimersByTimeAsync(0);
     queue.resume();
     await vi.advanceTimersByTimeAsync(120_000);
@@ -132,7 +157,7 @@ describe('analytics durable browser delivery', () => {
     state.send.mockRejectedValue(503);
     const queue = state.create();
     queue.activateAccount(firstAccount);
-    queue.enqueue('APP_VISIT');
+    queue.enqueue('RESULT_EXPORTED');
     await vi.advanceTimersByTimeAsync(300_000);
     expect(state.storage.length).toBe(1);
     expect(state.send.mock.calls.length).toBeGreaterThan(6);
@@ -147,7 +172,7 @@ describe('analytics durable browser delivery', () => {
     const secondTab = state.create();
     firstTab.activateAccount(firstAccount);
     secondTab.activateAccount(firstAccount);
-    firstTab.enqueue('APP_VISIT');
+    firstTab.enqueue('RESULT_EXPORTED');
     secondTab.enqueue('RESULT_EXPORTED');
     expect(state.storage.length).toBe(2);
     vi.spyOn(state.storage, 'setItem').mockImplementation(() => { throw new Error('quota'); });
@@ -167,7 +192,7 @@ describe('analytics durable browser delivery', () => {
     vi.spyOn(state.storage, 'removeItem').mockImplementation(() => { throw new Error('read only'); });
     const queue = state.create();
     queue.activateAccount(firstAccount);
-    queue.enqueue('APP_VISIT');
+    queue.enqueue('RESULT_EXPORTED');
     await vi.advanceTimersByTimeAsync(120_000);
     expect(state.send).toHaveBeenCalledOnce();
     expect(state.storage.length).toBe(1);

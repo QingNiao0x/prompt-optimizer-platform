@@ -30,7 +30,7 @@ public class AnalyticsEventController {
         this.analyticsEventService = analyticsEventService;
     }
 
-    /** 接收一次页面访问或结果导出事件；访客身份不能由客户端指定。 */
+    /** 接收结果导出事件；旧页面访问请求由应用服务校验后忽略，身份不能由客户端指定。 */
     @PostMapping("/events")
     public ApiResponse<Void> record(
             @Valid @RequestBody ClientAnalyticsEventRequest event,

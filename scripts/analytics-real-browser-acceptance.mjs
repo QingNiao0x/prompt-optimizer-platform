@@ -72,6 +72,11 @@ const login = async (page, email) => {
 const sendEvent = async (page, event, headers = {}) => page.request.post(`${base}/api/v1/analytics/events`, {
   headers: { 'X-XSRF-TOKEN': await csrf(page.context()), ...headers }, data: event,
 });
+// 通过真实页面的可靠导出队列注入故障；页面访问已停用，不能再用刷新来制造待补写事件。
+const enqueueExport = async (page) => page.evaluate(async () => {
+  const { reportClientAnalyticsEvent } = await import('/src/services/adminAnalyticsApi.ts');
+  await reportClientAnalyticsEvent('RESULT_EXPORTED');
+});
 const dashboard = async (page, range = 'TODAY') => data(await page.request.get(`${base}/api/v1/admin/analytics/dashboard`, {
   params: { range, userId: fixture.memberId, ...(range === 'CUSTOM' ? { fromDate: today, toDate: today } : {}) },
 }));
@@ -105,32 +110,33 @@ try {
 
   stage = 'real_browser_login';
   await login(member, fixture.memberEmail);
-  await poll(inspect, (value) => value.visits >= 1 && value.pending === 0, stage);
+  await poll(inspect, (value) => value.events >= 1 && value.pending === 0, stage);
+  expect((await inspect()).visits).toBe(0);
   expect((await inspect()).directEnhancementCount).toBe(0);
   expect((await inspect()).planCompletedCount).toBe(0);
   for (const path of adminPaths) expect((await member.request.get(base + path)).status()).toBe(403);
   report.checks.push({ name: stage, status: 200, ordinaryAdminStatus: 403, permissionEndpoints: 4 });
 
   stage = 'home_identity_restore_and_refresh';
-  let count = (await inspect()).visits;
   await member.goto(base);
-  await poll(inspect, (value) => value.visits === count + 1 && value.pending === 0, stage);
-  count++;
+  await expect(member.locator('.home-page')).toBeVisible();
   await member.reload();
-  await poll(inspect, (value) => value.visits === count + 1 && value.pending === 0, stage);
-  count++;
-  report.checks.push({ name: stage, extraVisits: 2, duplicateVisitsPerDocument: 0 });
+  await expect(member.locator('.home-page')).toBeVisible();
+  expect((await inspect()).visits).toBe(0);
+  expect((await inspect()).pending).toBe(0);
+  report.checks.push({ name: stage, extraVisits: 0 });
 
   stage = 'database_failure_durable_replay';
+  let count = (await inspect()).exports;
   await command('OUTAGE_ON');
-  await member.reload();
-  await poll(inspect, (value) => value.pending >= 1 && value.databaseFailures >= 1 && value.visits === count, stage);
+  await enqueueExport(member);
+  await poll(inspect, (value) => value.pending >= 1 && value.databaseFailures >= 1 && value.exports === count, stage);
   // 数据库写入失败时主页仍可正常渲染；确认已持久接收的事件在恢复后真正进入 PostgreSQL。
   await expect(member.locator('.home-page')).toBeVisible();
   await command('OUTAGE_OFF');
-  await poll(inspect, (value) => value.pending === 0 && value.visits === count + 1, stage);
+  await poll(inspect, (value) => value.pending === 0 && value.exports === count + 1, stage);
   count++;
-  report.checks.push({ name: stage, businessPageAvailable: true, recoveredVisits: 1, pendingAfterRecovery: 0 });
+  report.checks.push({ name: stage, businessPageAvailable: true, recoveredExports: 1, pendingAfterRecovery: 0 });
 
   stage = 'browser_network_retry';
   let aborted = false;
@@ -138,21 +144,23 @@ try {
     if (!aborted && route.request().method() === 'POST') { aborted = true; await route.abort('failed'); }
     else await route.continue();
   });
-  await member.reload();
-  await poll(inspect, (value) => aborted && value.visits === count + 1 && value.pending === 0, stage);
+  await enqueueExport(member);
+  await poll(inspect, (value) => aborted && value.exports === count + 1 && value.pending === 0, stage);
   count++;
   await member.unroute('**/api/v1/analytics/events');
-  report.checks.push({ name: stage, injectedNetworkFailures: 1, recoveredVisits: 1 });
+  report.checks.push({ name: stage, injectedNetworkFailures: 1, recoveredExports: 1 });
 
   stage = 'client_event_idempotency_and_proxy';
   const identity = await data(await member.request.get(base + '/api/v1/analytics/context'));
-  const event = { eventType: 'APP_VISIT', eventId: randomUUID(), occurredAt: new Date().toISOString(),
+  const event = { eventType: 'RESULT_EXPORTED', eventId: randomUUID(), occurredAt: new Date().toISOString(),
     expectedUserId: fixture.memberId, expectedLoginSessionId: identity.loginSessionId };
   expect((await sendEvent(member, event, { 'X-Forwarded-For': '203.0.113.71' })).status()).toBe(200);
   expect((await sendEvent(member, event, { 'X-Forwarded-For': '203.0.113.71' })).status()).toBe(200);
-  await poll(inspect, (value) => value.visits === count + 1 && value.pending === 0, stage);
+  await poll(inspect, (value) => value.exports === count + 1 && value.pending === 0, stage);
   count++;
-  report.checks.push({ name: stage, duplicateRequests: 2, persistedVisits: 1 });
+  expect((await sendEvent(member, { ...event, eventType: 'APP_VISIT' })).status()).toBe(200);
+  expect((await inspect()).visits).toBe(0);
+  report.checks.push({ name: stage, duplicateRequests: 2, persistedExports: 1, persistedVisits: 0 });
 
   stage = 'existing_business_compatibility';
   const contextInput = { customDescription: 'Java 21 验收用用户服务', files: [] };
@@ -265,7 +273,7 @@ try {
     actualUserCount: metrics.actualUserCount, averageDailyActiveUsers: metrics.averageDailyActiveUsers,
     rechargeStatisticsAvailable: metrics.rechargeStatisticsAvailable };
   expect(metrics.accessCount).toBe(count);
-  expect(metrics.uniqueVisitorCount).toBe(1);
+  expect(metrics.uniqueVisitorCount).toBe(0);
   expect(metrics.activeUserCount).toBe(1);
   expect(metrics.actualUserCount).toBe(1);
   expect(metrics.averageDailyActiveUsers).toBe(1);
@@ -291,7 +299,7 @@ try {
     params: { fromDate: today, toDate: today, userId: fixture.memberId, size: '100' },
   }));
   // 服务端把客户端 UUID 与账号/租户/事件类型一起生成持久化 ID；按本次专用时间戳定位，不假定两个 ID 相同。
-  const forwarded = logs.records.filter((row) => row.eventType === 'APP_VISIT'
+  const forwarded = logs.records.filter((row) => row.eventType === 'RESULT_EXPORTED'
     && Date.parse(row.occurredAt) === Date.parse(event.occurredAt));
   report.logObservation = { total: logs.total, records: logs.records.length, matchedEventCount: forwarded.length,
     loopbackIp: forwarded.length === 1 && ['127.0.0.1', '0:0:0:0:0:0:0:1', '::1'].includes(forwarded[0].clientIp),
@@ -308,10 +316,10 @@ try {
   expect((await admin.request.get(`${base}/api/v1/admin/analytics/dashboard?range=ILLEGAL`)).status()).toBe(400);
   stage = 'admin_chart_page';
   await admin.goto(`${base}/admin/analytics`);
-  await expect(admin.getByRole('heading', { name: '使用与访问', exact: true })).toBeVisible();
+  await expect(admin.getByRole('heading', { name: '使用与审计', exact: true })).toBeVisible();
   const chartNames = [
     '直接增强提交次数与 Plan 完成次数每日折线图',
-    '每日访问、去重访问、活跃、实际使用与新增账号折线图',
+    '每日活跃、实际使用与新增账号折线图',
     '按小时汇总的关键操作柱状图',
     '按月份汇总的关键操作柱状图',
     '手机、平板、电脑和未知设备登录分布图',
@@ -327,7 +335,7 @@ try {
   const filteredResponse = admin.waitForResponse((response) => response.url().includes('/admin/analytics/dashboard?') && response.request().method() === 'GET');
   await admin.getByRole('button', { name: '查询', exact: true }).click();
   const filtered = await data(await filteredResponse);
-  expect(filtered.uniqueVisitorCount).toBe(1);
+  expect(filtered.uniqueVisitorCount).toBe(0);
   await expect(admin.getByTestId('direct-enhancement-count').locator('strong')).toHaveText('2');
   await expect(admin.getByTestId('plan-completed-count').locator('strong')).toHaveText('2');
   expect(filtered.registeredAccountCount).toBe(1);
@@ -336,7 +344,7 @@ try {
   expect(health.pendingEvents).toBe(0);
   expect(health.healthy).toBe(true);
   expect(browserErrors).toBe(0);
-  report.checks.push({ name: stage, presetAndCustomRanges: 6, visitCount: count, uniqueVisitors: 1,
+  report.checks.push({ name: stage, presetAndCustomRanges: 6, visitCount: count, uniqueVisitors: 0,
     activeUsers: 1, charts: chartNames.length, geoIpMissingReturnsNull: true,
     untrustedForwardedIpIgnored: true, invalidRangeStatus: 400, browserErrors });
 

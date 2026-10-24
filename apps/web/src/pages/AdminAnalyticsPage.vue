@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {
   Calendar, CirclePlus, Clock, DataLine, Filter, List, Lock,
-  MagicStick, Monitor, Mouse, RefreshRight, Search, TrendCharts, Trophy, User, UserFilled, View, Wallet,
+  MagicStick, Monitor, RefreshRight, Search, TrendCharts, Trophy, User, UserFilled, Wallet,
 } from '@element-plus/icons-vue';
 import {
   BarChart,
@@ -126,7 +126,6 @@ const { activeThemeId } = useUiTheme();
 const eventTypes: Array<{ value: AnalyticsEventType; label: string }> = [
   { value: 'LOGIN', label: '登录' },
   { value: 'LOGOUT', label: '退出' },
-  { value: 'APP_VISIT', label: '页面访问' },
   { value: 'OPTIMIZATION_SUBMITTED', label: '提交优化' },
   { value: 'DIRECT_OPTIMIZATION_SUBMITTED', label: '直接增强提交' },
   { value: 'PLAN_COMPLETED', label: 'Plan 完成' },
@@ -169,11 +168,10 @@ const eventTone = (eventType: AnalyticsEventType): string => {
   if (eventType === 'LOGIN' || eventType === 'LOGOUT') return 'session';
   if (eventType === 'RECHARGE_PAID') return 'payment';
   if (eventType === 'ADMIN_MODEL_CHANGED') return 'admin';
-  if (eventType === 'APP_VISIT') return 'visit';
   return 'usage';
 };
 
-/** 页内定位不更改路由，避免一次滚动被访问采集当成页面进入。 */
+/** 通过页内定位浏览趋势、排行与日志，保留当前筛选条件。 */
 const scrollToSection = (section: 'analytics-trends' | 'analytics-ranking' | 'analytics-operations'): void => {
   document.getElementById(section)?.scrollIntoView({
     behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
@@ -528,7 +526,7 @@ const loginLocationFor = (item: AnalyticsOperationLog): string => (
 
 onMounted(() => {
   window.addEventListener('resize', resizeCharts, { passive: true });
-  // 只轮询轻量实例状态；后台补写不会触发全量统计查询或额外页面访问事件。
+  // 只轮询轻量实例状态；后台补写不会触发全量统计查询。
   deliveryTimer = window.setInterval(() => { void loadDeliveryStatus(); }, 10_000);
   void refresh();
 });
@@ -548,8 +546,8 @@ onBeforeUnmount(() => {
     <header class="analytics-heading">
       <div class="heading-copy">
         <p class="eyebrow"><span class="eyebrow-mark" aria-hidden="true"></span> 平台运营 <span class="eyebrow-divider">/</span> 统计日志</p>
-        <h1>使用与访问</h1>
-        <p>按登录账号汇总访问、关键操作与所在地审计记录。</p>
+        <h1>使用与审计</h1>
+        <p>按登录账号汇总活跃情况、关键操作与所在地审计记录。</p>
       </div>
       <div class="heading-side">
         <span class="admin-badge"><ElIcon aria-hidden="true"><Lock /></ElIcon> 平台管理员视图</span>
@@ -645,16 +643,6 @@ onBeforeUnmount(() => {
           <small>按账号创建时间</small>
         </article>
         <article class="metric">
-          <div class="metric-label"><span>页面访问</span><ElIcon aria-hidden="true"><Mouse /></ElIcon></div>
-          <strong>{{ dashboard.accessCount.toLocaleString() }}</strong>
-          <small>页面进入次数，刷新会增加</small>
-        </article>
-        <article class="metric">
-          <div class="metric-label"><span>去重访问账号</span><ElIcon aria-hidden="true"><View /></ElIcon></div>
-          <strong>{{ dashboard.uniqueVisitorCount.toLocaleString() }}</strong>
-          <small>所选区间内按账号去重</small>
-        </article>
-        <article class="metric">
           <div class="metric-label"><span>实际使用账号</span><ElIcon aria-hidden="true"><MagicStick /></ElIcon></div>
           <strong>{{ dashboard.actualUserCount.toLocaleString() }}</strong>
           <small>优化、上下文、导出或充值关键操作</small>
@@ -680,7 +668,7 @@ onBeforeUnmount(() => {
       </section>
       <p class="panel-caption feature-usage-note">细分次数自本功能启用后记录；旧通用优化记录无法区分这两种使用路径。</p>
 
-      <div id="analytics-trends" class="section-heading"><h2>使用趋势</h2><span>访问、活跃与使用习惯</span></div>
+      <div id="analytics-trends" class="section-heading"><h2>使用趋势</h2><span>活跃账号与使用习惯</span></div>
       <section class="charts-grid" aria-label="使用统计图表">
         <article class="chart-panel feature-usage-panel">
           <div class="panel-heading">
@@ -692,11 +680,11 @@ onBeforeUnmount(() => {
         </article>
         <article class="chart-panel chart-wide">
           <div class="panel-heading">
-            <div class="panel-title"><span class="panel-icon"><ElIcon aria-hidden="true"><TrendCharts /></ElIcon></span><div><h2>每日访问与活跃</h2><span class="panel-kicker">账号行为的每日变化</span></div></div>
+            <div class="panel-title"><span class="panel-icon"><ElIcon aria-hidden="true"><TrendCharts /></ElIcon></span><div><h2>每日活跃与使用</h2><span class="panel-kicker">账号行为的每日变化</span></div></div>
             <span class="panel-badge">按日汇总</span>
           </div>
-          <div v-show="hasDailyData" ref="dailyChart" class="chart chart-tall" role="img" aria-label="每日访问、去重访问、活跃、实际使用与新增账号折线图"></div>
-          <div v-if="!hasDailyData" class="chart-empty chart-tall">所选范围内暂无每日访问数据。</div>
+          <div v-show="hasDailyData" ref="dailyChart" class="chart chart-tall" role="img" aria-label="每日活跃、实际使用与新增账号折线图"></div>
+          <div v-if="!hasDailyData" class="chart-empty chart-tall">所选范围内暂无每日活跃或使用数据。</div>
         </article>
 
         <article class="chart-panel hourly-panel">
@@ -985,7 +973,7 @@ onBeforeUnmount(() => {
 
 .metric-strip {
   display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 30px;
 }
@@ -1141,7 +1129,7 @@ code { color: var(--text-secondary); font-family: var(--font-mono); font-size: 1
 .event-badge--admin { color: var(--orange); background: var(--orange-soft); }
 
 @media (max-width: 1599px) {
-  .metric-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .metric-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 1100px) {

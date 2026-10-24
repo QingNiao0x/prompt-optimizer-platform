@@ -50,6 +50,16 @@ class AnalyticsClientEventServiceTest {
     private final AnalyticsEventServiceImpl service = service(actor);
 
     @Test
+    void retiredPageVisitsDoNotResolveMetadataCreateSessionsOrEnterDelivery() {
+        MockHttpServletRequest request = request();
+        service.recordClientEvent(event(ClientAnalyticsEventType.APP_VISIT, UUID.randomUUID(), historicalTime(),
+                actor.userId(), null), request);
+        service.record(AnalyticsEventType.APP_VISIT, request);
+        verifyNoInteractions(delivery, geo);
+        assertThat(request.getSession(false)).isNull();
+    }
+
+    @Test
     void accountChangeRejectsBeforeReadingCurrentLocationOrAcceptingOldEvent() {
         var event = event(ClientAnalyticsEventType.APP_VISIT, UUID.randomUUID(), historicalTime(), UUID.randomUUID(), null);
         assertThatThrownBy(() -> service.recordClientEvent(event, request()))
@@ -75,7 +85,7 @@ class AnalyticsClientEventServiceTest {
     @Test
     void historicalReplayKeepsOriginalInstantAndDoesNotInventNewSessionLocation() {
         for (UUID oldSession : new UUID[]{null, UUID.randomUUID()}) {
-            service.recordClientEvent(event(ClientAnalyticsEventType.APP_VISIT, UUID.randomUUID(), historicalTime(),
+            service.recordClientEvent(event(ClientAnalyticsEventType.RESULT_EXPORTED, UUID.randomUUID(), historicalTime(),
                     actor.userId(), oldSession), request());
         }
         var accepted = ArgumentCaptor.forClass(PendingAuditEvent.class);
@@ -114,30 +124,29 @@ class AnalyticsClientEventServiceTest {
     }
 
     @Test
-    void stableClientIdIsScopedByServerAccountTenantAndEventType() {
+    void stableClientIdIsScopedByServerAccountAndTenant() {
         UUID clientId = UUID.randomUUID();
-        service.recordClientEvent(event(ClientAnalyticsEventType.APP_VISIT, clientId, historicalTime(), actor.userId(), null), request());
-        service.recordClientEvent(event(ClientAnalyticsEventType.APP_VISIT, clientId, historicalTime().plusDays(1), actor.userId(), null), request());
         service.recordClientEvent(event(ClientAnalyticsEventType.RESULT_EXPORTED, clientId, historicalTime(), actor.userId(), null), request());
+        service.recordClientEvent(event(ClientAnalyticsEventType.RESULT_EXPORTED, clientId, historicalTime().plusDays(1), actor.userId(), null), request());
         ActorIdentity otherUser = new ActorIdentity(UUID.randomUUID(), actor.tenantId(), actor.workspaceId(), "other@example.test", "Other");
-        service(otherUser).recordClientEvent(event(ClientAnalyticsEventType.APP_VISIT, clientId, historicalTime(), otherUser.userId(), null), request());
+        service(otherUser).recordClientEvent(event(ClientAnalyticsEventType.RESULT_EXPORTED, clientId, historicalTime(), otherUser.userId(), null), request());
         ActorIdentity otherTenant = new ActorIdentity(actor.userId(), UUID.randomUUID(), actor.workspaceId(), "other@example.test", "Other");
-        service(otherTenant).recordClientEvent(event(ClientAnalyticsEventType.APP_VISIT, clientId, historicalTime(), otherTenant.userId(), null), request());
+        service(otherTenant).recordClientEvent(event(ClientAnalyticsEventType.RESULT_EXPORTED, clientId, historicalTime(), otherTenant.userId(), null), request());
         var accepted = ArgumentCaptor.forClass(PendingAuditEvent.class);
-        verify(delivery, times(5)).accept(accepted.capture(), eq(true));
+        verify(delivery, times(4)).accept(accepted.capture(), eq(true));
         var ids = accepted.getAllValues().stream().map(PendingAuditEvent::id).toList();
         assertThat(ids.get(0)).isEqualTo(ids.get(1)).isNotEqualTo(clientId);
-        assertThat(ids.subList(1, 5)).doesNotHaveDuplicates();
+        assertThat(ids.subList(1, 4)).doesNotHaveDuplicates();
     }
 
     @Test
     void legacyRealtimeEventRemainsCompatibleAndUsesServerTime() {
         MockHttpServletRequest request = request();
         OffsetDateTime before = OffsetDateTime.now(ZoneOffset.UTC);
-        service.recordClientEvent(ClientAnalyticsEventType.APP_VISIT, request);
+        service.recordClientEvent(ClientAnalyticsEventType.RESULT_EXPORTED, request);
         var accepted = ArgumentCaptor.forClass(PendingAuditEvent.class);
         verify(delivery).accept(accepted.capture(), eq(true));
-        assertThat(accepted.getValue().eventType()).isEqualTo(AnalyticsEventType.APP_VISIT);
+        assertThat(accepted.getValue().eventType()).isEqualTo(AnalyticsEventType.RESULT_EXPORTED);
         assertThat(accepted.getValue().occurredAt()).isAfterOrEqualTo(before).isBeforeOrEqualTo(OffsetDateTime.now(ZoneOffset.UTC));
         assertThat(accepted.getValue().details()).containsEntry("clientIp", "198.51.100.24");
     }
@@ -147,7 +156,7 @@ class AnalyticsClientEventServiceTest {
         doThrow(new AnalyticsDeliveryUnavailableException(new IllegalStateException("private details")))
                 .when(delivery).accept(any(), eq(true));
         assertThatThrownBy(() -> service.recordClientEvent(
-                event(ClientAnalyticsEventType.APP_VISIT, UUID.randomUUID(), historicalTime(), actor.userId(), null), request()))
+                event(ClientAnalyticsEventType.RESULT_EXPORTED, UUID.randomUUID(), historicalTime(), actor.userId(), null), request()))
                 .isInstanceOf(AnalyticsDeliveryUnavailableException.class)
                 .hasMessage("统计事件暂未接收，请稍后重试。");
     }

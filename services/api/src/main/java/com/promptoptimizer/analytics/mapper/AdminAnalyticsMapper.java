@@ -37,7 +37,8 @@ public interface AdminAnalyticsMapper {
     AccountCounts accountCounts(@Param("period") AnalyticsPeriod period, @Param("account") AnalyticsAccountFilter account);
 
     /**
-     * 汇总期间事件：页面访问按事件计数，访问账号按 ID 去重，活跃账号包含任一事件，实际使用限关键操作。
+     * 汇总期间登录与操作：排除历史页面事件，活跃按账号去重，实际使用限关键操作。
+     * accessCount、uniqueVisitors 仅为兼容旧客户端保留，固定为零且不执行页面访问聚合。
      *
      * @param period 事件发生时刻的左闭右开区间
      * @param account 账号组合条件；邮箱匹配使用 EXISTS，多个邮箱身份不会放大事件计数
@@ -59,7 +60,7 @@ public interface AdminAnalyticsMapper {
     );
 
     /**
-     * 按统计时区生成每日访问、去重访问、活跃、实际使用及新增账号序列，缺少数据的日期补零。
+     * 按统计时区生成每日活跃、实际使用及新增账号序列，缺少数据的日期补零；页面统计兼容字段固定为零。
      * generate_series 生成日历日骨架，事件先转为本地日期再聚合，供平均日活使用完整日数作为分母。
      *
      * @param period 已通过自然日上限校验的查询范围
@@ -102,7 +103,7 @@ public interface AdminAnalyticsMapper {
 
     /**
      * 按关键操作次数、登录次数及账号 ID 稳定排序，只有至少一次关键操作的账号入榜。
-     * 活跃天数从该账号期间全部事件计算，包含仅访问或退出的日期。
+     * 活跃天数从该账号期间登录或操作计算，包含仅退出的日期，排除历史页面访问。
      *
      * @param period 完整的日、周或月排行周期
      * @param account 账号组合条件，不排除平台管理员

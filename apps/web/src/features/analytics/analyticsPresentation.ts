@@ -42,13 +42,13 @@ export const findUsagePeak = <T extends { operationCount: number }>(items: reado
 
 /** 后端会补齐零值日桶，不能用数组长度判断有无行为或新增账号。 */
 export const hasDailyActivity = (metrics: readonly AnalyticsDailyMetric[]): boolean => metrics.some((item) => (
-  item.accessCount > 0 || item.uniqueVisitors > 0 || item.activeUsers > 0 || item.actualUsers > 0 || item.newAccounts > 0
+  item.activeUsers > 0 || item.actualUsers > 0 || item.newAccounts > 0
 ));
 
-/** 五个每日指标使用同一日序列，单日查询必须绘制标记，避免只有一个不可见线段。 */
+/** 活跃、使用与新增账号共用日序列，单日查询绘制标记；停用的页面指标不参与展示。 */
 export const dailyMetricSeries = (metrics: readonly AnalyticsDailyMetric[]): LineSeriesOption[] => {
   const dimensions: Array<[string, keyof Omit<AnalyticsDailyMetric, 'date'>]> = [
-    ['页面访问', 'accessCount'], ['去重访问账号', 'uniqueVisitors'], ['活跃账号', 'activeUsers'],
+    ['活跃账号', 'activeUsers'],
     ['实际使用账号', 'actualUsers'], ['新增账号', 'newAccounts'],
   ];
   return dimensions.map(([name, field]) => ({

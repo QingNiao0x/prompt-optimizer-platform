@@ -56,8 +56,8 @@ export const createAnalyticsDeliveryQueue = (dependencies: AnalyticsDeliveryDepe
 
   const accountPrefix = (owner: string): string => `${ANALYTICS_PENDING_PREFIX}${encodeURIComponent(owner)}:`;
 
-  /** 存储只接受固定事件结构；损坏记录保留原键以便排查，不执行自由文本或冒用其他账号。 */
-  const decode = (raw: string, owner: string): AnalyticsClientEvent | undefined => {
+  /** 损坏记录保留；合法旧页面事件只供本机确认退役，不再恢复为待发送事件。 */
+  const decode = (raw: string, owner: string): AnalyticsClientEvent | { eventId: string; eventType: 'APP_VISIT' } | undefined => {
     try {
       const value: unknown = JSON.parse(raw);
       if (typeof value !== 'object' || value === null) return undefined;
@@ -68,6 +68,7 @@ export const createAnalyticsDeliveryQueue = (dependencies: AnalyticsDeliveryDepe
           || !Number.isFinite(Date.parse(event.occurredAt))
           || (event.expectedLoginSessionId !== null && event.expectedLoginSessionId !== undefined
             && (typeof event.expectedLoginSessionId !== 'string' || !EVENT_ID_PATTERN.test(event.expectedLoginSessionId)))) return undefined;
+      if (event.eventType === 'APP_VISIT') return { eventId: event.eventId, eventType: 'APP_VISIT' };
       return {
         eventId: event.eventId, eventType: event.eventType,
         occurredAt: event.occurredAt, expectedUserId: owner,
@@ -84,14 +85,18 @@ export const createAnalyticsDeliveryQueue = (dependencies: AnalyticsDeliveryDepe
     try {
       const storage = dependencies.storage;
       if (storage) {
-        for (let index = 0; index < storage.length; index += 1) {
-          const key = storage.key(index);
+        // 退役确认会删除存储键，先取键快照，避免删除后索引移动漏掉相邻的导出事件。
+        const keys = Array.from({ length: storage.length }, (_, index) => storage.key(index));
+        for (const key of keys) {
           if (!key?.startsWith(prefix)) continue;
+          if (acknowledged.has(key)) continue;
           const raw = storage.getItem(key);
           if (!raw) continue;
           const event = decode(raw, owner);
-          if (event && key === `${prefix}${event.eventId}`) events.set(key, event);
-          else dependencies.warning('INVALID_PENDING_EVENT');
+          if (event && key === `${prefix}${event.eventId}`) {
+            if (event.eventType === 'APP_VISIT') acknowledge(key);
+            else events.set(key, event);
+          } else dependencies.warning('INVALID_PENDING_EVENT');
         }
       }
     } catch {
@@ -182,7 +187,7 @@ export const createAnalyticsDeliveryQueue = (dependencies: AnalyticsDeliveryDepe
 
   /** 事件不包含文件正文、邮箱、密码或认证令牌；落盘完成后再尝试发送。 */
   const enqueue = (eventType: AnalyticsClientEventType): void => {
-    if (!accountId) return;
+    if (!accountId || eventType !== 'RESULT_EXPORTED') return;
     let event: AnalyticsClientEvent;
     try {
       event = {

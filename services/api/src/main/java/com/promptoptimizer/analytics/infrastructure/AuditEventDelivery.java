@@ -125,6 +125,8 @@ public class AuditEventDelivery {
      * 主业务不因遥测失败而失败；浏览器遥测必须在 strict=true 时收到可重试 503。
      */
     public void accept(PendingAuditEvent event, boolean strict) {
+        // 页面访问已停止采集：不写 journal、不排队，旧请求可得到兼容确认。
+        if (!event.eventType().isRecordable()) return;
         try {
             PendingAuditEvent stored = journal.append(event);
             journalAvailable = true;
@@ -162,22 +164,27 @@ public class AuditEventDelivery {
         batch.sort(Comparator.comparing(PendingAuditEvent::occurredAt));
         int attempted = 0;
         for (PendingAuditEvent event : batch) {
+            boolean recordable = event.eventType().isRecordable();
             Retry retry = retries.get(event.id());
             if (retry != null && retry.notBeforeMillis() > now) continue;
             if (++attempted > batchSize) break;
             try {
-                // writer 的 REQUIRES_NEW 代理返回后事务已经提交。不能在提交前确认，否则退出会永久漏计。
-                writer.write(event);
-                // 数据库提交成功与文件确认是两个独立事实；确认失败不能继续把已恢复的数据库标为不可用。
-                databaseAvailable = true;
-                databaseRetryMillis = 0;
-                databaseNotBeforeMillis = 0;
+                if (recordable) {
+                    // writer 的 REQUIRES_NEW 代理返回后事务已经提交，才能确认仍有效的操作事实。
+                    writer.write(event);
+                    databaseAvailable = true;
+                    databaseRetryMillis = 0;
+                    databaseNotBeforeMillis = 0;
+                }
+                // 升级前的页面事件仅确认退役，保留原 journal 文件，不补写数据库、不算成功投递。
                 journal.acknowledge(event.id());
                 pending.remove(event.id(), event);
                 retries.remove(event.id());
-                recoveredEvents.incrementAndGet();
                 journalAvailable = true;
-                lastDeliveredAt = clock.instant();
+                if (recordable) {
+                    recoveredEvents.incrementAndGet();
+                    lastDeliveredAt = clock.instant();
+                }
             } catch (IOException failure) {
                 recordJournalFailure(failure, "acknowledge");
                 defer(event.id(), retry, false);

@@ -138,6 +138,7 @@ class AnalyticsRealBrowserAcceptanceTest {
                         case "INSPECTION" -> {
                             List<String> events = inspection.eventTypes(member.userId());
                             write(output, Map.of("visits", events.stream().filter("APP_VISIT"::equals).count(),
+                                    "exports", events.stream().filter("RESULT_EXPORTED"::equals).count(),
                                     "events", events.size(), "pending", delivery.status().pendingEvents(),
                                     "directEnhancementCount", events.stream().filter("DIRECT_OPTIMIZATION_SUBMITTED"::equals).count(),
                                     "planCompletedCount", events.stream().filter("PLAN_COMPLETED"::equals).count(),

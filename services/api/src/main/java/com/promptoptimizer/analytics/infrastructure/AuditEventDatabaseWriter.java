@@ -47,6 +47,8 @@ public class AuditEventDatabaseWriter {
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 5)
     public void write(PendingAuditEvent event) {
+        // 写库边界再次保护旧 journal 和内部调用，退役事件即使在数据库不可用时也无需重试写入。
+        if (!event.eventType().isRecordable()) return;
         if (mapper == null) throw new DataAccessResourceFailureException("Audit mapper unavailable");
         int inserted = mapper.insert(event.id(), event.tenantId(), event.actorUserId(), event.eventType(), event.details(), event.occurredAt());
         recordFeatureAfterCommit(event, inserted);

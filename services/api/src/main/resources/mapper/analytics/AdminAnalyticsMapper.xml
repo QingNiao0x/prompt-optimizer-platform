@@ -144,11 +144,10 @@
         <!-- 先按账号聚合一次，再计账号行；多项 DISTINCT 无需各自排序全部原始事件，去重口径保持账号 ID。 -->
         WITH account_activity AS (
         SELECT actor_user_id,
-               COUNT(*) FILTER (WHERE event_type = 'APP_VISIT') AS access_count,
-               BOOL_OR(event_type = 'APP_VISIT') AS visited,
                BOOL_OR(<include refid="usageEventPredicate"/>) AS used
           FROM audit_event
          WHERE actor_user_id IS NOT NULL
+           AND event_type &lt;&gt; 'APP_VISIT'
            AND occurred_at &gt;= #{period.fromInclusive}
            AND occurred_at &lt; #{period.toExclusive}
            AND (CAST(#{account.userId} AS uuid) IS NULL OR actor_user_id = #{account.userId})
@@ -157,8 +156,8 @@
         </if>
          GROUP BY actor_user_id
         )
-        SELECT COALESCE(SUM(access_count), 0) AS access_count,
-               COUNT(*) FILTER (WHERE visited) AS unique_visitors,
+        <!-- 页面统计已停用；两个旧协议字段固定为零，不扫描或推算历史访问。 -->
+        SELECT 0::bigint AS access_count, 0::bigint AS unique_visitors,
                COUNT(*) AS active_users,
                COUNT(*) FILTER (WHERE used) AS actual_users
           FROM account_activity
@@ -174,7 +173,6 @@
             SELECT e.actor_user_id,
                    (e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text))::date AS activity_day,
                    EXTRACT(HOUR FROM (e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text)))::integer AS activity_hour,
-                   e.event_type = 'APP_VISIT' AS visited,
                    (<include refid="usageEventPredicate"/>) AS used,
                    e.event_type = 'LOGIN' AS logged_in,
                    e.event_type = 'DIRECT_OPTIMIZATION_SUBMITTED' AS direct_submitted,
@@ -183,6 +181,7 @@
                         THEN COALESCE(e.details-&gt;&gt;'deviceType', 'UNKNOWN') END AS device_type
               FROM audit_event e
              WHERE e.actor_user_id IS NOT NULL
+               AND e.event_type &lt;&gt; 'APP_VISIT'
                AND e.occurred_at &gt;= #{period.fromInclusive}
                AND e.occurred_at &lt; #{period.toExclusive}
                AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})
@@ -190,24 +189,20 @@
                AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
             </if>
         ), account_days AS MATERIALIZED (
-            <!-- 任一事件构成活跃账号日；去重粒度为账号 ID + 本地自然日，不仅限关键使用。 -->
+            <!-- 排除已停用页面事件后，登录或操作构成活跃账号日；粒度为账号 ID + 本地自然日。 -->
             SELECT activity_day, actor_user_id,
-                   COUNT(*) FILTER (WHERE visited) AS access_count,
-                   BOOL_OR(visited) AS visited,
                    BOOL_OR(used) AS used,
                    COUNT(*) FILTER (WHERE direct_submitted) AS direct_enhancement_count,
                    COUNT(*) FILTER (WHERE plan_completed) AS plan_completed_count
               FROM local_events GROUP BY activity_day, actor_user_id
         ), account_activity AS (
-            <!-- 区间人数再次按账号归并，不能把每日去重人数相加；访问次数才可以相加。 -->
-            SELECT actor_user_id, SUM(access_count) AS access_count,
-                   BOOL_OR(visited) AS visited, BOOL_OR(used) AS used,
+            <!-- 区间人数再次按账号归并，不能把每日去重人数相加。 -->
+            SELECT actor_user_id, BOOL_OR(used) AS used,
                    SUM(direct_enhancement_count) AS direct_enhancement_count,
                    SUM(plan_completed_count) AS plan_completed_count
               FROM account_days GROUP BY actor_user_id
         ), daily_activity AS (
-            SELECT activity_day, SUM(access_count) AS access_count,
-                   COUNT(*) FILTER (WHERE visited) AS unique_visitors,
+            SELECT activity_day,
                    COUNT(*) AS active_users, COUNT(*) FILTER (WHERE used) AS actual_users,
                    SUM(direct_enhancement_count) AS direct_enhancement_count,
                    SUM(plan_completed_count) AS plan_completed_count
@@ -246,8 +241,7 @@
         )
         <!-- 固定维度代码匹配 Java 枚举。无关字段为零，组装器验证缺行/重复/越界而非伪造零数据。 -->
         SELECT 'SUMMARY' AS metric_kind, NULL::text AS bucket,
-               COALESCE(SUM(access_count), 0) AS access_count,
-               COUNT(*) FILTER (WHERE visited) AS unique_visitors,
+               0::bigint AS access_count, 0::bigint AS unique_visitors,
                COUNT(*) AS active_users, COUNT(*) FILTER (WHERE used) AS actual_users,
                0 AS new_accounts, 0 AS operation_count, 0 AS login_count, 0 AS unique_users,
                COALESCE(SUM(direct_enhancement_count), 0) AS direct_enhancement_count,
@@ -255,7 +249,7 @@
           FROM account_activity
         UNION ALL
         SELECT 'DAILY', to_char(days.activity_day, 'YYYY-MM-DD'),
-               COALESCE(daily_activity.access_count, 0), COALESCE(daily_activity.unique_visitors, 0),
+               0, 0,
                COALESCE(daily_activity.active_users, 0), COALESCE(daily_activity.actual_users, 0),
                COALESCE(new_accounts.new_accounts, 0), 0, 0, 0,
                COALESCE(daily_activity.direct_enhancement_count, 0), COALESCE(daily_activity.plan_completed_count, 0)
@@ -282,8 +276,6 @@
         ), account_days AS (
             <!-- 时区转换只出现一次。同一表达式在 SELECT 和 GROUP BY 各写一遍会变成两个绑定参数，PostgreSQL 视为不同列并报 42803。 -->
             SELECT activity_day, actor_user_id,
-                   COUNT(*) FILTER (WHERE event_type = 'APP_VISIT') AS access_count,
-                   BOOL_OR(event_type = 'APP_VISIT') AS visited,
                    BOOL_OR(<include refid="usageEventPredicate"/>) AS used,
                    COUNT(*) FILTER (WHERE event_type = 'DIRECT_OPTIMIZATION_SUBMITTED') AS direct_enhancement_count,
                    COUNT(*) FILTER (WHERE event_type = 'PLAN_COMPLETED') AS plan_completed_count
@@ -293,6 +285,7 @@
                            e.actor_user_id
                       FROM audit_event e
                      WHERE e.actor_user_id IS NOT NULL
+                       AND e.event_type &lt;&gt; 'APP_VISIT'
                        AND e.occurred_at &gt;= #{period.fromInclusive}
                        AND e.occurred_at &lt; #{period.toExclusive}
                        AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})
@@ -302,9 +295,8 @@
                    ) local_event
              GROUP BY activity_day, actor_user_id
         ), activity AS (
-            <!-- 每个账号每日已归并成一行；COUNT 行即每日去重账号数，访问次数仍按原始事件求和。 -->
-            SELECT activity_day, SUM(access_count) AS access_count,
-                   COUNT(*) FILTER (WHERE visited) AS unique_visitors,
+            <!-- 每个账号每日已归并成一行；排除页面访问后，COUNT 行即当日活跃账号数。 -->
+            SELECT activity_day,
                    COUNT(*) AS active_users,
                    COUNT(*) FILTER (WHERE used) AS actual_users,
                    SUM(direct_enhancement_count) AS direct_enhancement_count,
@@ -326,8 +318,7 @@
              GROUP BY activity_day
         )
         SELECT days.activity_day,
-               COALESCE(activity.access_count, 0) AS access_count,
-               COALESCE(activity.unique_visitors, 0) AS unique_visitors,
+               0::bigint AS access_count, 0::bigint AS unique_visitors,
                COALESCE(activity.active_users, 0) AS active_users,
                COALESCE(activity.actual_users, 0) AS actual_users,
                COALESCE(accounts.new_accounts, 0) AS new_accounts,
@@ -422,9 +413,10 @@
                COUNT(*) FILTER (WHERE e.event_type = 'LOGIN') AS login_count
           FROM audit_event e
          WHERE e.actor_user_id IS NOT NULL
+           AND e.event_type &lt;&gt; 'APP_VISIT'
            AND e.occurred_at &gt;= #{period.fromInclusive}
            AND e.occurred_at &lt; #{period.toExclusive}
-           <!-- 活跃天数涵盖任一审计行为；排行入选及排序仍由关键操作的 FILTER/HAVING 决定。 -->
+           <!-- 活跃天数只涵盖登录和仍有效的操作；旧页面访问日不再增加活跃天数。 -->
            AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})
         <if test="account.email != null or account.displayName != null">
            AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
@@ -434,7 +426,7 @@
             SELECT actor_user_id, SUM(operation_count) AS operation_count,
                    SUM(login_count) AS login_count, COUNT(*) AS active_days
               FROM account_days GROUP BY actor_user_id
-            <!-- 仅访问/退出的日仍累计到活跃天数，最终至少一次关键使用的账号才入榜。 -->
+            <!-- 仅退出的日仍累计到活跃天数，最终至少一次关键使用的账号才入榜。 -->
             HAVING SUM(operation_count) &gt; 0
         )
         SELECT a.actor_user_id AS user_id, COALESCE(u.display_name, '') AS display_name,
@@ -447,6 +439,8 @@
     <!-- 列表和计数复用同一 WHERE，避免新增邮箱/名称/事件筛选时总数与分页明细漂移。 -->
     <sql id="operationLogPredicate">
          WHERE e.actor_user_id IS NOT NULL
+           <!-- 列表与计数一并排除历史页面事件；即使显式筛选 APP_VISIT 也不能重新查询出来。 -->
+           AND e.event_type &lt;&gt; 'APP_VISIT'
            AND e.occurred_at &gt;= #{fromInclusive}
            AND e.occurred_at &lt; #{toExclusive}
            AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})

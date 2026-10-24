@@ -83,7 +83,7 @@ class AdminAnalyticsQueryDatabaseTest {
         );
 
         assertThat(analyticsMapper.dailyMetrics(period, AnalyticsAccountFilter.forUser(userId)))
-                .containsExactly(new DailyMetric(day, 1, 1, 1, 1, 1, 0, 0));
+                .containsExactly(new DailyMetric(day, 0, 0, 1, 1, 1, 0, 0));
         assertThat(analyticsMapper.monthlyUsage(period, day, AnalyticsAccountFilter.forUser(userId)))
                 .containsExactly(new MonthlyMetric("2026-09", 1));
         assertThat(analyticsMapper.hourlyUsage(period, AnalyticsAccountFilter.forUser(userId)))
@@ -111,24 +111,24 @@ class AdminAnalyticsQueryDatabaseTest {
         assertThat(accounts.registeredAccounts()).isEqualTo(1);
         assertThat(accounts.newAccounts()).isEqualTo(1);
         AdminAnalyticsMapper.UsageCounts usage = analyticsMapper.usageCounts(period, AnalyticsAccountFilter.forUser(userId));
-        assertThat(usage.accessCount()).isEqualTo(1);
-        assertThat(usage.uniqueVisitors()).isEqualTo(1);
+        assertThat(usage.accessCount()).isZero();
+        assertThat(usage.uniqueVisitors()).isZero();
         assertThat(usage.activeUsers()).isEqualTo(1);
         assertThat(usage.actualUsers()).isEqualTo(1);
 
-        // 仅访问和仅退出的日期也属于活跃日，关键操作数与登录次数保持各自口径。
+        // 历史页面访问日不再活跃；仅退出的日期仍属于操作日。
         insertEvent(jdbc, tenantId, userId, "APP_VISIT", "{}", at(day.plusDays(1), 10));
         insertEvent(jdbc, tenantId, userId, "APP_VISIT", "{}", at(day.plusDays(1), 11));
         insertEvent(jdbc, tenantId, userId, "LOGOUT", "{}", at(day.plusDays(2), 12));
         AnalyticsPeriod threeDays = new AnalyticsPeriod(day, day.plusDays(3), ZONE,
                 day.atStartOfDay(ZONE).toOffsetDateTime(), day.plusDays(3).atStartOfDay(ZONE).toOffsetDateTime());
         assertThat(analyticsMapper.usageRanking(threeDays, AnalyticsAccountFilter.forUser(userId), 20)).singleElement().satisfies(rank -> {
-            assertThat(rank.activeDays()).isEqualTo(3);
+            assertThat(rank.activeDays()).isEqualTo(2);
             assertThat(rank.operationCount()).isEqualTo(1);
             assertThat(rank.loginCount()).isEqualTo(1);
         });
         assertThat(analyticsMapper.dailyMetrics(threeDays, AnalyticsAccountFilter.forUser(userId)))
-                .extracting(DailyMetric::activeUsers).containsExactly(1L, 1L, 1L);
+                .extracting(DailyMetric::activeUsers).containsExactly(1L, 0L, 1L);
     }
 
     @Test
@@ -163,8 +163,8 @@ class AdminAnalyticsQueryDatabaseTest {
         // 大小写与空白归一化；名字包含 %/_ 时仍只匹配字面字符，不扩大到 Beta 账号。
         AnalyticsAccountFilter filter = new AnalyticsAccountFilter(null, " " + tag.toUpperCase() + "+ ", " ALPHA_100% ");
         assertThat(analyticsMapper.accountCounts(period, filter)).isEqualTo(new AdminAnalyticsMapper.AccountCounts(1, 1));
-        assertThat(analyticsMapper.usageCounts(period, filter)).isEqualTo(new AdminAnalyticsMapper.UsageCounts(2, 1, 1, 1));
-        assertThat(analyticsMapper.dailyMetrics(period, filter)).containsExactly(new DailyMetric(day, 2, 1, 1, 1, 1, 0, 0));
+        assertThat(analyticsMapper.usageCounts(period, filter)).isEqualTo(new AdminAnalyticsMapper.UsageCounts(0, 0, 1, 1));
+        assertThat(analyticsMapper.dailyMetrics(period, filter)).containsExactly(new DailyMetric(day, 0, 0, 1, 1, 1, 0, 0));
         assertThat(analyticsMapper.hourlyUsage(period, filter)).filteredOn(item -> item.hour() == 11)
                 .containsExactly(new HourlyMetric(11, 1));
         assertThat(analyticsMapper.monthlyUsage(period, day, filter)).containsExactly(new MonthlyMetric("2026-09", 2));
@@ -180,23 +180,23 @@ class AdminAnalyticsQueryDatabaseTest {
         Page<OperationLog> page = new Page<>(1, 2);
         page.setCountId("countOperationLogs");
         var operations = analyticsMapper.selectOperationLogs(page, period.fromInclusive(), period.toExclusive(), filter, null);
-        assertThat(operations.getTotal()).isEqualTo(5);
+        assertThat(operations.getTotal()).isEqualTo(3);
         assertThat(operations.getRecords()).hasSize(2).allSatisfy(item -> assertThat(item.userId()).isEqualTo(first));
         Page<OperationLog> next = new Page<>(2, 2);
         next.setCountId("countOperationLogs");
         var nextOperations = analyticsMapper.selectOperationLogs(next, period.fromInclusive(), period.toExclusive(), filter, null);
-        assertThat(nextOperations.getTotal()).isEqualTo(5);
+        assertThat(nextOperations.getTotal()).isEqualTo(3);
         assertThat(nextOperations.getRecords())
-                .hasSize(2).allSatisfy(item -> assertThat(item.userId()).isEqualTo(first));
+                .hasSize(1).allSatisfy(item -> assertThat(item.userId()).isEqualTo(first));
 
         // 显示名称改为分页后的标量投影，不能改变顺序、跨页唯一性或安全字段的空值语义。
         var returnedLogs = Stream.concat(operations.getRecords().stream(), nextOperations.getRecords().stream()).toList();
         assertThat(returnedLogs).extracting(OperationLog::eventId).doesNotHaveDuplicates();
         assertThat(returnedLogs).extracting(item -> item.occurredAt().toInstant())
-                .containsExactly(at(day, 13).toInstant(), at(day, 12).toInstant(),
-                        at(day, 11).toInstant(), at(day, 10).toInstant());
+                .containsExactly(at(day, 13).toInstant(), at(day, 12).toInstant(), at(day, 11).toInstant());
         assertThat(returnedLogs).extracting(OperationLog::eventType)
-                .containsExactly("LOGIN", "CONTEXT_ANALYZED", "OPTIMIZATION_SUBMITTED", "APP_VISIT");
+                .containsExactly("LOGIN", "CONTEXT_ANALYZED", "OPTIMIZATION_SUBMITTED");
+        assertThat(analyticsMapper.countOperationLogs(period.fromInclusive(), period.toExclusive(), filter, "APP_VISIT")).isZero();
         assertThat(returnedLogs).allSatisfy(item -> {
             assertThat(item.userId()).isEqualTo(first);
             assertThat(item.displayName()).isEqualTo("分析小组 Alpha_100%");
@@ -234,7 +234,7 @@ class AdminAnalyticsQueryDatabaseTest {
         assertThat(analyticsMapper.accountCounts(period, new AnalyticsAccountFilter(null, null, "分析小组 Alpha_100%"))
                 .registeredAccounts()).isEqualTo(2);
         assertThat(analyticsMapper.usageCounts(period, new AnalyticsAccountFilter(first, "   ", "   ")))
-                .isEqualTo(new AdminAnalyticsMapper.UsageCounts(2, 1, 1, 1));
+                .isEqualTo(new AdminAnalyticsMapper.UsageCounts(0, 0, 1, 1));
     }
 
     private static void seedAccount(JdbcTemplate jdbc, UUID tenant, UUID user, String displayName, LocalDate day) {

@@ -31,6 +31,16 @@ import static org.mockito.Mockito.*;
 @ExtendWith(OutputCaptureExtension.class)
 class AuditEventDatabaseWriterTest {
     @Test
+    void retiredPageVisitNeverReachesTheMapperEvenWhenCalledDirectly() {
+        AuditEventMapper mapper = mock(AuditEventMapper.class);
+        PlanQualityMetrics metrics = mock(PlanQualityMetrics.class);
+        new AuditEventDatabaseWriter(provider(mapper), metrics).write(event(AnalyticsEventType.APP_VISIT));
+        verifyNoInteractions(mapper, metrics);
+        assertThatCode(() -> new AuditEventDatabaseWriter(provider(null)).write(event(AnalyticsEventType.APP_VISIT)))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
     void incrementsAfterCommitOnlyAndDoesNotCountReplayOrGenericEvents() {
         AuditEventMapper mapper = mock(AuditEventMapper.class);
         PlanQualityMetrics metrics = mock(PlanQualityMetrics.class);

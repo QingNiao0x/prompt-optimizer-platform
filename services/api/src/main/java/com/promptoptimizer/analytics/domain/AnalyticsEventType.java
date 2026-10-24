@@ -9,6 +9,7 @@ package com.promptoptimizer.analytics.domain;
 public enum AnalyticsEventType {
     LOGIN,
     LOGOUT,
+    /** 已停用，仅兼容旧客户端和历史 journal 的反序列化；不采集、不入库、不参与查询。 */
     APP_VISIT,
     OPTIMIZATION_SUBMITTED,
     /** 无 Plan 的增强提交尝试；作为细分事实，不再次累计通用关键操作次数。 */
@@ -22,5 +23,10 @@ public enum AnalyticsEventType {
     RECHARGE_PAID,
     ADMIN_MODEL_CHANGED,
     /** 匿名租户级模型调用尝试对账；不进入账号活跃与业务使用次数统计。 */
-    MODEL_CALL_RECORDED
+    MODEL_CALL_RECORDED;
+
+    /** 统一采集及投递边界，防止旧客户端或待恢复队列重新写入已停用的页面事件。 */
+    public boolean isRecordable() {
+        return this != APP_VISIT;
+    }
 }

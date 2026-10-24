@@ -17,6 +17,25 @@ const period: AnalyticsPeriodView = {
   zoneId: 'Asia/Shanghai',
 };
 const longName = '用于验证超长显示名称不会撑开统计表格的测试账号'.repeat(6);
+
+test('页面访问采集停用后导航刷新均不上报，访问指标和筛选不再展示', async ({ page }) => {
+  await mockAnalytics(page);
+  const pageEvents: string[] = [];
+  page.on('request', (request) => {
+    if (request.url().includes('/api/v1/analytics/events') && request.postData()?.includes('APP_VISIT')) {
+      pageEvents.push(request.url());
+    }
+  });
+  await page.goto('/admin/analytics');
+  await expect(page.locator('.metric-strip .metric')).toHaveCount(5);
+  await expect(page.getByText('页面访问', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('去重访问账号', { exact: true })).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByRole('heading', { name: '使用与审计', exact: true })).toBeVisible();
+  await expect(page.locator('.metric-strip .metric')).toHaveCount(5);
+  expect(pageEvents).toEqual([]);
+});
+
 /** 新对账仅模拟前端契约，真实数字聚合与匿名写入由后端 PostgreSQL 用例验证。 */
 test('模型对账独立筛选、精确 Token 展示与生效范围分页', async ({ page }) => {
   await mockAnalytics(page);
@@ -248,7 +267,7 @@ test('日期范围、排行日期弹层和分页选项使用中文', async ({ pa
   await expect(rangePicker).toContainText('年');
   await expect(rangePicker).toContainText('月');
   await expect(rangePicker.locator('.el-date-table th').first()).toHaveText('日');
-  await page.getByRole('heading', { name: '使用与访问', exact: true }).click();
+  await page.getByRole('heading', { name: '使用与审计', exact: true }).click();
   await page.locator('.rank-date input').click();
   // 日期范围面板离场动画期间仍可见；排行只定位单日选择器，避免短暂的两个面板命中。
   const rankPicker = page.locator('.el-picker-panel.el-date-picker:visible');
@@ -321,7 +340,7 @@ test('宽屏充分利用宽度，平板与手机不溢出；主题切换保留�
 
 test('长文本与多行记录限制在表格内，切页及每页 50 条保持原查询契约', async ({ page, isMobile }) => {
   const { dashboard, requests } = await mockAnalytics(page);
-  dashboard.accessCount = 9999999999999;
+  dashboard.activeUserCount = 9999999999999;
   await page.goto('/admin/analytics');
   await expect(page.locator('.ranking-panel .el-table__body .el-table__row')).toHaveCount(20);
   await expect(page.locator('.operations-panel .el-table__body .el-table__row')).toHaveCount(10);
@@ -357,11 +376,11 @@ test('空数据保留筛选和明确空状态，后续查询可恢复图表', as
   const { dashboard } = await mockAnalytics(page, true);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/admin/analytics');
-  await expect(page.getByText('所选范围内暂无每日访问数据。')).toBeVisible();
+  await expect(page.getByText('所选范围内暂无每日活跃或使用数据。')).toBeVisible();
   await expect(page.getByText('所选周期内没有关键使用操作。')).toBeVisible();
   await expect(page.getByText('所选范围内没有关键操作日志。')).toBeVisible();
   await expect(page.getByText('充值图表尚无数据源')).toBeVisible();
-  await expect(page.locator('.metric strong')).toHaveText(['0', '0', '0', '0', '0', '0', '0', '0', '0']);
+  await expect(page.locator('.metric strong')).toHaveText(['0', '0', '0', '0', '0', '0', '0']);
   await expect(page.getByText('所选范围内暂无增强功能细分记录。')).toBeVisible();
   await expect(page.locator('.chart canvas')).toHaveCount(0);
   await expect(page.getByText(/^峰值 /)).toHaveCount(0);
@@ -392,7 +411,7 @@ test('手机自定义日期弹层可操作，账号和操作筛选仍由查询�
   expect(bounds!.width).toBeLessThanOrEqual(366);
   expect(bounds!.x).toBeGreaterThanOrEqual(0);
   expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(390);
-  await page.getByRole('heading', { name: '使用与访问' }).click();
+  await page.getByRole('heading', { name: '使用与审计' }).click();
   await page.getByRole('button', { name: '查询', exact: true }).click();
   await expect(page.getByText('请选择完整的自定义开始和结束日期。')).toBeVisible();
   expect(requests.dashboard).toHaveLength(1);
@@ -401,7 +420,7 @@ test('手机自定义日期弹层可操作，账号和操作筛选仍由查询�
   await page.getByPlaceholder('开始日期').press('Tab');
   await page.getByPlaceholder('结束日期').fill('2026-09-08');
   await page.getByPlaceholder('结束日期').press('Tab');
-  await page.getByRole('heading', { name: '使用与访问' }).click();
+  await page.getByRole('heading', { name: '使用与审计' }).click();
   await page.getByRole('textbox', { name: '按登录账号 ID 筛选' }).fill('00000000-0000-0000-0000-000000000001');
   await page.locator('.event-select .el-select__wrapper').click();
   await page.getByRole('option', { name: '提交优化', exact: true }).click();
@@ -459,7 +478,7 @@ test('清空自定义日期后查询给出提示，不抛出页面异常或发�
   await page.getByPlaceholder('开始日期').press('Tab');
   await page.getByPlaceholder('结束日期').fill('2026-09-08');
   await page.getByPlaceholder('结束日期').press('Tab');
-  await page.getByRole('heading', { name: '使用与访问' }).click();
+  await page.getByRole('heading', { name: '使用与审计' }).click();
   await page.locator('.custom-dates').hover();
   await page.locator('.custom-dates .el-range__close-icon').click();
   await page.getByRole('button', { name: '查询', exact: true }).click();
@@ -490,7 +509,9 @@ test('单日图表显示数据点，日志使用统计时区而非浏览器时�
       const option = echarts.getInstanceByDom(element)?.getOption();
       return option?.series as Array<{ showSymbol: boolean; data: number[]; name: string }> | undefined;
     });
-    expect(series).toHaveLength(5);
+    expect(series).toHaveLength(3);
+    expect(series?.map((item) => item.name)).not.toContain('页面访问');
+    expect(series?.map((item) => item.name)).not.toContain('去重访问账号');
     expect(series?.every((item) => item.showSymbol && item.data.length === 1)).toBe(true);
     expect(series?.map((item) => item.name)).toContain('实际使用账号');
     expect(series?.map((item) => item.name)).toContain('新增账号');

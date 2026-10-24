@@ -106,7 +106,6 @@ export type AnalyticsRankingPeriod = 'DAY' | 'WEEK' | 'MONTH';
 export type AnalyticsEventType =
   | 'LOGIN'
   | 'LOGOUT'
-  | 'APP_VISIT'
   | 'OPTIMIZATION_SUBMITTED'
   | 'DIRECT_OPTIMIZATION_SUBMITTED'
   | 'PLAN_COMPLETED'
@@ -117,7 +116,7 @@ export type AnalyticsEventType =
   | 'RECHARGE_PAID'
   | 'ADMIN_MODEL_CHANGED';
 
-export type AnalyticsClientEventType = Extract<AnalyticsEventType, 'APP_VISIT' | 'RESULT_EXPORTED'>;
+export type AnalyticsClientEventType = Extract<AnalyticsEventType, 'RESULT_EXPORTED'>;
 
 /** 浏览器事件固定元数据；账号由服务端身份决定，expectedUserId 只阻止切换账号时错误重放。 */
 export interface AnalyticsClientEvent {
@@ -166,6 +165,7 @@ export interface AnalyticsPeriodView {
 
 export interface AnalyticsDailyMetric {
   date: string;
+  /** 页面统计已停用；后端仅保留值为零的兼容字段。 */
   accessCount: number;
   uniqueVisitors: number;
   activeUsers: number;
@@ -213,6 +213,7 @@ export interface AnalyticsDashboard {
   registeredAccountCount: number;
   newAccountCount: number;
   actualUserCount: number;
+  /** 页面统计已停用；后端仅保留值为零的兼容字段。 */
   accessCount: number;
   uniqueVisitorCount: number;
   activeUserCount: number;

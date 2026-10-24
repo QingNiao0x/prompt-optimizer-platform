@@ -31,10 +31,12 @@ describe('统计筛选与展示口径', () => {
   it('单日数据可见，新增账号或实际使用账号独立出现时仍展示图表', () => {
     const zero = { date: '2026-10-01', accessCount: 0, uniqueVisitors: 0, activeUsers: 0, actualUsers: 0, newAccounts: 0, directEnhancementCount: 0, planCompletedCount: 0 };
     expect(hasDailyActivity([zero])).toBe(false);
+    expect(hasDailyActivity([{ ...zero, accessCount: 99, uniqueVisitors: 8 }])).toBe(false);
     expect(hasDailyActivity([{ ...zero, newAccounts: 1 }])).toBe(true);
     expect(hasDailyActivity([{ ...zero, actualUsers: 1 }])).toBe(true);
     const series = dailyMetricSeries([{ ...zero, actualUsers: 2, newAccounts: 1 }]);
-    expect(series).toHaveLength(5);
+    expect(series).toHaveLength(3);
+    expect(series.map((item) => item.name)).toEqual(['活跃账号', '实际使用账号', '新增账号']);
     expect(series.every((item) => item.showSymbol)).toBe(true);
     expect(series.find((item) => item.name === '实际使用账号')?.data).toEqual([2]);
     expect(dailyMetricSeries([zero, { ...zero, date: '2026-10-02' }]).every((item) => !item.showSymbol)).toBe(true);
@@ -51,7 +53,7 @@ describe('统计筛选与展示口径', () => {
     const multi = featureUsageSeries([day, { ...day, date: '2026-10-02', directEnhancementCount: 0, planCompletedCount: 0 }]);
     expect(multi.map((series) => series.data)).toEqual([[3, 0], [1, 0]]);
     expect(multi.every((series) => !series.showSymbol)).toBe(true);
-    expect(dailyMetricSeries([day])).toHaveLength(5);
+    expect(dailyMetricSeries([day])).toHaveLength(3);
   });
 
   it('使用统计时区显示跨午夜与夏令时回拨事件', () => {

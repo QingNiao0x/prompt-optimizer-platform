@@ -84,6 +84,8 @@ public class AnalyticsEventServiceImpl implements AnalyticsEventService {
 
     /** 记录服务端确认的关键行为；优化提交表示请求尝试，不能用来推断模型执行成功。 */
     public void record(AnalyticsEventType eventType, HttpServletRequest request) {
+        if (eventType == null) throw new InvalidOptimizationRequestException("统计事件类型不能为空");
+        if (!eventType.isRecordable()) return;
         String clientIp = clientIpResolver.resolve(request);
         GeoLocation location = locate(clientIp);
         AnalyticsDeviceType deviceType = deviceTypeResolver.resolve(request.getHeader("User-Agent"));
@@ -148,6 +150,8 @@ public class AnalyticsEventServiceImpl implements AnalyticsEventService {
             case APP_VISIT -> AnalyticsEventType.APP_VISIT;
             case RESULT_EXPORTED -> AnalyticsEventType.RESULT_EXPORTED;
         };
+        // 完成身份和时间校验后兼容确认旧页面上报；不读取位置、不创建会话，也不进入持久队列。
+        if (!mapped.isRecordable()) return;
         AnalyticsSessionContext.Snapshot snapshot = sessionContext.currentOrCreate(request);
         boolean hasOriginalContext = event.expectedLoginSessionId() != null
                 && event.expectedLoginSessionId().equals(snapshot.loginSessionId());
