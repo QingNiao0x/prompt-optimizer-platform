@@ -83,6 +83,12 @@
             <artifactId>geoip2</artifactId>
             <version>5.2.0</version>
         </dependency>
+        <!-- 随包城市库在本机完成 IPv4/IPv6 解析；运行期不向第三方发送用户 IP。 -->
+        <dependency>
+            <groupId>org.lionsoul</groupId>
+            <artifactId>ip2region</artifactId>
+            <version>3.3.7</version>
+        </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
