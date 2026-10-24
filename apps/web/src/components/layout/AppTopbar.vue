@@ -8,12 +8,16 @@ import AccountMenu from '@/components/layout/AccountMenu.vue';
 import { formatModelVersion } from '@/features/models/modelVersion';
 import { useAuthStore } from '@/stores/auth';
 import { useOptimizationStore } from '@/stores/optimization';
+import { useImagePromptStore } from '@/stores/imagePrompt';
 
 const auth = useAuthStore();
 const route = useRoute();
 const optimization = useOptimizationStore();
+const imagePrompt = useImagePromptStore();
 // 顶栏与选择器共用展示短名；管理员名称和调用路由不变。
-const selectedModelVersion = computed(() => formatModelVersion(optimization.availableModels.find(
+const selectedModelVersion = computed(() => route.name === 'image-to-prompt'
+  ? formatModelVersion(imagePrompt.selectedModel?.displayName, '未选择模型')
+  : formatModelVersion(optimization.availableModels.find(
   (model) => model.id === optimization.selectedModelId,
 )?.displayName, '平台模型'));
 
@@ -59,8 +63,8 @@ const navigation = [
 
     <div class="topbar-tools">
       <AccountMenu />
-      <!-- 说明页尚未调用视觉模型，隐藏文本任务的模型状态以免误导。 -->
-      <div v-if="route.name !== 'image-to-prompt'" class="provider-status" :title="`模型版本：${selectedModelVersion}（由平台管理员维护）`">
+      <!-- 两个工作台分别展示本任务的模型，不把文本模型误示为视觉调用模型。 -->
+      <div v-if="route.name !== 'image-to-prompt' || imagePrompt.selectedModel" class="provider-status" :title="`模型版本：${selectedModelVersion}（由平台管理员维护）`">
         <span class="status-dot" aria-hidden="true"></span>
         <span>{{ selectedModelVersion }}</span>
       </div>

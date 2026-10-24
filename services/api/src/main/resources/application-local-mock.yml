@@ -6,6 +6,8 @@ spring:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 
 app:
+  image-prompt:
+    store-mode: MEMORY
   provider:
     concurrency:
       store-mode: MEMORY

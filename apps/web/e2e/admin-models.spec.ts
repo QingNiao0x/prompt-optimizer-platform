@@ -70,3 +70,41 @@ test('管理员可发布、修改和移除用户可选模型', async ({ page }) 
   await page.getByRole('button', { name: '移除', exact: true }).last().click();
   await expect(page.getByRole('row').filter({ hasText: 'Kimi 新版' })).toHaveCount(0);
 });
+
+test('在统一目录的已停用模型行配置图像能力，不改变模型发布状态', async ({ page }, testInfo) => {
+  await page.route('**/api/**', route => route.fulfill({ status: 501, json: { error: { message: '未登记测试请求' } } }));
+  await mockAuthentication(page, true, true);
+  const model: AdminModel = { id: 'disabled-model', publicId: 'fixture:vision/model', routeKey: 'fixture', upstreamModel: 'vision/model',
+    displayName: '待启用视觉模型', enabled: false, defaultModel: false, sortOrder: 2 };
+  let capability = { id: model.publicId, displayName: model.displayName, vision: false, maxImages: 1, evidence: '原有依据', mock: false };
+  let catalogWrites = 0, capabilityWrites = 0;
+  await page.route('**/api/v1/admin/models**', route => {
+    if (route.request().method() !== 'GET') catalogWrites++;
+    const data = new URL(route.request().url()).pathname.endsWith('/routes') ? [{ key: 'fixture', providerName: '测试路由' }] : [model];
+    return route.fulfill({ json: { data } });
+  });
+  await page.route('**/api/v1/admin/image-prompt-models**', route => {
+    if (route.request().method() === 'PUT') {
+      const url = new URL(route.request().url()); expect(url.searchParams.get('modelId')).toBe(model.publicId);
+      const body = route.request().postDataJSON() as { enabled: boolean; maxImages: number; evidence: string };
+      capability = { ...capability, vision: body.enabled, maxImages: body.maxImages, evidence: body.evidence }; capabilityWrites++;
+      return route.fulfill({ json: { data: null } });
+    }
+    return route.fulfill({ json: { data: [capability] } });
+  });
+  await page.goto('/admin/models', { waitUntil: 'domcontentloaded' });
+  const row = page.getByRole('row').filter({ hasText: model.displayName });
+  await row.getByRole('button', { name: '图像能力', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: `图像输入能力：${model.displayName}`, exact: true });
+  await expect(dialog.getByText('该模型当前已停用。可先配置图像能力，启用后再供两个工作台选择。')).toBeVisible();
+  await dialog.locator('.el-switch').click();
+  await dialog.getByRole('textbox', { name: '视觉能力依据' }).fill('官方测试依据：支持单图');
+  await dialog.getByRole('button', { name: '保存图像能力' }).click();
+  await expect(dialog).not.toBeVisible(); expect(capabilityWrites).toBe(1); expect(catalogWrites).toBe(0);
+  await expect(row).toContainText('已停用');
+  await row.getByRole('button', { name: '图像能力', exact: true }).click();
+  await expect(dialog.getByRole('switch', { name: '允许图片输入' })).toBeChecked();
+  await expect(dialog.getByRole('textbox', { name: '视觉能力依据' })).toHaveValue('官方测试依据：支持单图');
+  await expect(dialog.locator('.el-loading-mask')).not.toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath('unified-model-vision.png'), fullPage: true, animations: 'disabled' });
+});

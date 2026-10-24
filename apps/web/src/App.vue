@@ -7,7 +7,7 @@ import WorkbenchTopBar from '@/components/layout/WorkbenchTopBar.vue';
 import { useUiTheme } from '@/composables/useUiTheme';
 
 const route = useRoute();
-const isWorkbench = computed(() => route.name === 'workbench');
+const isWorkbench = computed(() => route.name === 'workbench' || route.name === 'image-to-prompt');
 // 统计表格需要完整可用宽度，其余页面继续使用原有居中容器。
 const isAnalytics = computed(() => route.name === 'admin-analytics');
 // 独立布局页面自带顶栏与页脚，不再叠加应用内 WorkbenchTopBar。

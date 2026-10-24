@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.imageprompt.mapper.ImagePromptMapper">
+    <resultMap id="record" type="com.promptoptimizer.imageprompt.domain.ImagePromptRecordRow">
+        <constructor>
+            <idArg column="id" javaType="java.util.UUID"/>
+            <arg column="tenant_id" javaType="java.util.UUID"/>
+            <arg column="workspace_id" javaType="java.util.UUID"/>
+            <arg column="user_id" javaType="java.util.UUID"/>
+            <arg column="payload" javaType="java.lang.String"/>
+            <arg column="optimized_prompt" javaType="java.lang.String"/>
+            <arg column="edit_revision" javaType="_long"/>
+            <arg column="created_at" javaType="java.time.OffsetDateTime"/>
+        </constructor>
+    </resultMap>
+    <resultMap id="capability" type="com.promptoptimizer.imageprompt.domain.ImagePromptModels$VisionCapability">
+        <constructor>
+            <idArg column="model_id" javaType="java.lang.String"/>
+            <arg column="enabled" javaType="_boolean"/>
+            <arg column="max_images" javaType="_int"/>
+            <arg column="evidence" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+    <sql id="columns">id, tenant_id, workspace_id, user_id, payload::text AS payload, optimized_prompt, edit_revision, created_at</sql>
+    <!-- 三个范围由 CurrentActor 创建；管理员统计权限也不放宽私有正文读取。 -->
+    <sql id="scope">tenant_id = #{a.tenantId} AND workspace_id = #{a.workspaceId} AND user_id = #{a.userId} AND deleted_at IS NULL</sql>
+    <insert id="insertRecord">
+        INSERT INTO image_prompt_record (id, tenant_id, workspace_id, user_id, mode, payload, optimized_prompt, edit_revision, created_at)
+        VALUES (#{r.id}, #{r.tenantId}, #{r.workspaceId}, #{r.userId}, #{mode}, CAST(#{r.payload} AS JSONB), #{r.optimizedPrompt}, #{r.editRevision}, #{r.createdAt})
+        ON CONFLICT (id) DO NOTHING
+    </insert>
+    <select id="find" resultMap="record">
+        SELECT <include refid="columns"/> FROM image_prompt_record WHERE id = #{id} AND <include refid="scope"/>
+    </select>
+    <select id="list" resultMap="record">
+        SELECT <include refid="columns"/> FROM image_prompt_record WHERE <include refid="scope"/>
+        <if test="mode != null">AND mode = #{mode}</if>
+        ORDER BY created_at DESC, id DESC
+    </select>
+    <update id="edit">
+        UPDATE image_prompt_record SET optimized_prompt = #{text}, edit_revision = edit_revision + 1, updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id} AND edit_revision = #{revision} AND <include refid="scope"/>
+    </update>
+    <update id="delete">
+        UPDATE image_prompt_record SET deleted_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id} AND <include refid="scope"/>
+    </update>
+    <select id="capabilities" resultMap="capability">
+        SELECT c.model_id, c.enabled, c.max_images, c.evidence FROM image_prompt_model_capability c
+        JOIN platform_model m ON m.public_id = c.model_id WHERE m.deleted_at IS NULL
+    </select>
+    <insert id="setCapability">
+        INSERT INTO image_prompt_model_capability (model_id, enabled, max_images, evidence)
+        VALUES (#{c.modelId}, #{c.enabled}, #{c.maxImages}, #{c.evidence})
+        ON CONFLICT (model_id) DO UPDATE SET enabled = EXCLUDED.enabled, max_images = EXCLUDED.max_images,
+            evidence = EXCLUDED.evidence, updated_at = CURRENT_TIMESTAMP
+    </insert>
+</mapper>

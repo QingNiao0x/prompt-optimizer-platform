@@ -6,6 +6,11 @@ decorator:
 spring:
   application:
     name: prompt-optimizer-api
+  servlet:
+    multipart:
+      # 图像单张10MiB；文档上传仍由其既有业务上限控制，传输层保留50MiB兼容空间。
+      max-file-size: 50MB
+      max-request-size: 51MB
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/prompt_optimizer}
     username: ${DB_USERNAME:prompt_optimizer}

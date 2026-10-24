@@ -17,6 +17,7 @@ import {
 } from 'element-plus';
 import { onMounted, reactive, ref } from 'vue';
 import { formatModelVersion } from '@/features/models/modelVersion';
+import ImagePromptModelSettings from '@/components/imageprompt/ImagePromptModelSettings.vue';
 
 import { getApiErrorMessage } from '@/services/http';
 import {
@@ -35,6 +36,7 @@ const isSaving = ref(false);
 const errorMessage = ref('');
 const dialogVisible = ref(false);
 const editingId = ref<string>();
+const visionModel = ref<AdminModel>();
 const form = reactive<AdminModelChange>({
   routeKey: '', upstreamModel: '', displayName: '',
   enabled: true, defaultModel: false, sortOrder: 0,
@@ -139,7 +141,7 @@ onMounted(() => { void refresh(); });
       <div>
         <p class="eyebrow">PLATFORM ADMIN</p>
         <h1>用户可选模型</h1>
-        <p>在已配置的供应商路由下发布模型。用户只能选择已启用的模型；端点与密钥不会显示在这里。</p>
+        <p>统一配置提示词增强与图像转提示词的模型目录。用户只能选择已启用项；带图调用还需在对应模型的“图像能力”中开放视觉输入。</p>
       </div>
       <ElButton type="primary" :disabled="routes.length === 0" @click="openCreate">添加模型</ElButton>
     </div>
@@ -169,9 +171,10 @@ onMounted(() => { void refresh(); });
         <ElTableColumn label="默认" width="90">
           <template #default="{ row }">{{ row.defaultModel ? '是' : '—' }}</template>
         </ElTableColumn>
-        <ElTableColumn label="操作" min-width="225" fixed="right">
+        <ElTableColumn label="操作" min-width="290" fixed="right">
           <template #default="{ row }">
             <ElButton link type="primary" @click="openEdit(row as AdminModel)">编辑</ElButton>
+            <ElButton link type="primary" @click="visionModel = row as AdminModel">图像能力</ElButton>
             <ElButton v-if="!row.defaultModel" link type="primary" @click="setDefault(row as AdminModel)">设为默认</ElButton>
             <ElButton v-if="!row.defaultModel" link type="danger" @click="remove(row as AdminModel)">移除</ElButton>
           </template>
@@ -180,6 +183,7 @@ onMounted(() => { void refresh(); });
       <ElEmpty v-else-if="!isLoading" description="尚无模型，请添加首个可用模型。" />
     </div>
 
+    <ImagePromptModelSettings :model="visionModel" @close="visionModel = undefined" />
     <ElDialog v-model="dialogVisible" :title="editingId ? '编辑模型' : '添加模型'" width="min(520px, 94vw)">
       <div class="model-form">
         <label>供应商路由

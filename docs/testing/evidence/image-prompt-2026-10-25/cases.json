@@ -1,0 +1,630 @@
+[
+  {
+    "id": "reference",
+    "input": {
+      "mode": "REFERENCE_RECONSTRUCTION",
+      "modelId": "tokenhub:minimax-m3",
+      "images": [
+        {
+          "file": "synthetic-reference.png",
+          "role": "GENERAL"
+        }
+      ],
+      "creationIntent": "",
+      "exactText": "",
+      "context": "",
+      "language": "ZH",
+      "targetTool": "通用文生图"
+    },
+    "questions": [],
+    "answers": [],
+    "analysis": [
+      {
+        "category": "主体",
+        "description": "画面中下部有两个并列的纯色几何图形，左侧为蓝色实心圆形，右侧为黄色实心正方形。",
+        "status": "OBSERVED"
+      },
+      {
+        "category": "文字",
+        "description": "上方居中清晰显示大写文字“SPRING 2026”，为深蓝灰色无衬线字体。",
+        "status": "OBSERVED"
+      },
+      {
+        "category": "构图",
+        "description": "采用横向画幅，标题居上，两个几何主体在中下部左右排列，页面留白充足。",
+        "status": "OBSERVED"
+      },
+      {
+        "category": "配色",
+        "description": "背景为纯白，主体使用饱和蓝色与暖黄色，标题文字为深蓝灰色。",
+        "status": "OBSERVED"
+      },
+      {
+        "category": "风格",
+        "description": "整体为极简平面设计，图形边缘利落，无明显纹理、阴影或渐变。",
+        "status": "OBSERVED"
+      }
+    ],
+    "warnings": [],
+    "optimizedPrompt": "以参考图为准进行图像重建：保持900×600的横向画幅与大面积纯白背景。画面上方居中放置大号深蓝灰色无衬线大写文字“SPRING 2026”，字体简洁规整，单行排版，不添加其他文字。画面中下部左右并列两个纯色几何图形：左侧为饱和蓝色实心圆形，右侧为暖黄色实心正方形；两者尺寸与视觉重量接近，垂直中心基本对齐，之间保留明显间隔。整体采用极简、扁平化、现代编辑设计风格，不添加阴影、纹理、渐变、边框、人物、场景装饰或其他元素。准确保留圆形与正方形的形状、色彩、相对位置、留白比例及标题排版。",
+    "elapsedMs": 6312
+  },
+  {
+    "id": "text-plan",
+    "input": {
+      "mode": "CUSTOM_CREATION",
+      "modelId": "tokenhub:minimax-m3",
+      "images": [],
+      "creationIntent": "为社区读书会创作一张新的招募海报，主题是窗边阅读。主标题固定为周末读书会，不出现品牌、价格或地址。画风和版式由你设计，其他必要信息先向我确认。",
+      "exactText": "周末读书会",
+      "context": "",
+      "language": "ZH",
+      "targetTool": "通用文生图"
+    },
+    "summary": "为社区读书会设计一张全新招募海报，主题为窗边阅读。固定主标题为“周末读书会”，不出现品牌、价格或地址；画风、版式及除主标题外的必要信息待确认。",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "SINGLE_CHOICE",
+        "question": "海报中除固定主标题“周末读书会”外，还需要呈现哪些必要信息？",
+        "options": [
+          {
+            "id": "o1",
+            "label": "活动日期与开始时间"
+          },
+          {
+            "id": "o2",
+            "label": "活动时长"
+          },
+          {
+            "id": "o3",
+            "label": "报名方式"
+          },
+          {
+            "id": "o4",
+            "label": "仅保留主标题，其他信息由执行者合理设计"
+          }
+        ],
+        "required": true
+      },
+      {
+        "id": "q2",
+        "type": "SINGLE_CHOICE",
+        "question": "你偏好的整体视觉风格是什么？",
+        "options": [
+          {
+            "id": "o1",
+            "label": "温暖手绘插画"
+          },
+          {
+            "id": "o2",
+            "label": "清新水彩"
+          },
+          {
+            "id": "o3",
+            "label": "复古印刷海报"
+          },
+          {
+            "id": "o4",
+            "label": "极简扁平设计"
+          },
+          {
+            "id": "o5",
+            "label": "由执行者根据窗边阅读主题决定"
+          }
+        ],
+        "required": true
+      },
+      {
+        "id": "q3",
+        "type": "SINGLE_CHOICE",
+        "question": "希望海报采用哪种版式？",
+        "options": [
+          {
+            "id": "o1",
+            "label": "竖版居中构图"
+          },
+          {
+            "id": "o2",
+            "label": "竖版上下分区"
+          },
+          {
+            "id": "o3",
+            "label": "横版大场景构图"
+          },
+          {
+            "id": "o4",
+            "label": "由执行者根据招募海报需求决定"
+          }
+        ],
+        "required": true
+      },
+      {
+        "id": "q4",
+        "type": "SINGLE_CHOICE",
+        "question": "画面中的窗边阅读氛围应如何表现？",
+        "options": [
+          {
+            "id": "o1",
+            "label": "明亮清晨，柔和自然光"
+          },
+          {
+            "id": "o2",
+            "label": "温暖午后，安静惬意"
+          },
+          {
+            "id": "o3",
+            "label": "柔和傍晚，温馨宁静"
+          },
+          {
+            "id": "o4",
+            "label": "由执行者选择最符合读书会招募主题的氛围"
+          }
+        ],
+        "required": true
+      }
+    ],
+    "analysis": [],
+    "warnings": [
+      "主标题“周末读书会”必须逐字出现，不得翻译、润色或增删。",
+      "不得出现品牌、价格或地址。",
+      "当前暂无参考图片，因此将按全新创作处理。"
+    ],
+    "elapsedMs": 9061
+  },
+  {
+    "id": "image-plan",
+    "input": {
+      "mode": "CUSTOM_CREATION",
+      "modelId": "tokenhub:minimax-m3",
+      "images": [
+        {
+          "file": "synthetic-reference.png",
+          "role": "STYLE"
+        }
+      ],
+      "creationIntent": "创作一张全新的社区植物展海报，只借鉴参考图的平面几何风格与明快配色，不复用图中主体、标题或相同布局。新图主体是一盆薄荷。标题逐字为春日植物展。不要品牌、价格、日期或地址。希望先确认尚未确定的画面细节。",
+      "exactText": "春日植物展",
+      "context": "",
+      "language": "ZH",
+      "targetTool": "通用文生图"
+    },
+    "summary": "创作全新社区植物展海报，以一盆薄荷为主体，标题为“春日植物展”，仅借鉴参考图的平面几何风格与明快配色。",
+    "questions": [
+      {
+        "id": "q1",
+        "type": "MULTIPLE_CHOICE",
+        "question": "薄荷在海报中希望采用哪种表现形式？",
+        "options": [
+          {
+            "id": "o1",
+            "label": "写实薄荷盆栽"
+          },
+          {
+            "id": "o2",
+            "label": "几何化薄荷盆栽"
+          },
+          {
+            "id": "o3",
+            "label": "扁平插画风薄荷盆栽"
+          },
+          {
+            "id": "o4",
+            "label": "极简剪影风薄荷盆栽"
+          }
+        ],
+        "required": true
+      },
+      {
+        "id": "q2",
+        "type": "SINGLE_CHOICE",
+        "question": "海报希望采用哪种画面氛围？",
+        "options": [
+          {
+            "id": "o1",
+            "label": "清新自然"
+          },
+          {
+            "id": "o2",
+            "label": "活泼明快"
+          },
+          {
+            "id": "o3",
+            "label": "温暖春日"
+          },
+          {
+            "id": "o4",
+            "label": "现代简约"
+          }
+        ],
+        "required": true
+      },
+      {
+        "id": "q3",
+        "type": "SINGLE_CHOICE",
+        "question": "标题“春日植物展”应如何呈现？",
+        "options": [
+          {
+            "id": "o1",
+            "label": "作为画面主标题，突出醒目"
+          },
+          {
+            "id": "o2",
+            "label": "作为顶部标题，主体更突出"
+          },
+          {
+            "id": "o3",
+            "label": "作为底部标题，形成稳定收束"
+          }
+        ],
+        "required": true
+      },
+      {
+        "id": "q4",
+        "type": "SINGLE_CHOICE",
+        "question": "除标题和薄荷盆栽外，是否需要加入社区植物展相关的简化装饰图形？",
+        "options": [
+          {
+            "id": "o1",
+            "label": "加入叶片与花朵等简化几何装饰"
+          },
+          {
+            "id": "o2",
+            "label": "仅加入少量叶片装饰"
+          },
+          {
+            "id": "o3",
+            "label": "不加入其他装饰，保持极简"
+          }
+        ],
+        "required": true
+      }
+    ],
+    "analysis": [
+      {
+        "category": "风格",
+        "description": "采用简洁的平面几何视觉语言，以纯色圆形和方形搭配留白，边缘清晰、无纹理。",
+        "status": "OBSERVED"
+      },
+      {
+        "category": "配色",
+        "description": "整体使用明亮蓝、暖黄与深蓝灰，并搭配大面积白色背景。",
+        "status": "OBSERVED"
+      },
+      {
+        "category": "构图",
+        "description": "画面元素彼此分离，以宽阔留白和清晰的上下、左右层级组织内容。",
+        "status": "OBSERVED"
+      },
+      {
+        "category": "光线",
+        "description": "整体呈现均匀、明亮的无影平面效果，没有明显写实光影。",
+        "status": "INTERPRETATION"
+      }
+    ],
+    "warnings": [
+      "参考图仅用于借鉴平面几何风格与明快配色；新图不得复用其中的圆形、方形主体实例、“SPRING 2026”文字或相同布局。",
+      "必须逐字呈现标题“春日植物展”，不得添加品牌、价格、日期、地址或其他文案。"
+    ],
+    "elapsedMs": 12861
+  },
+  {
+    "id": "image-confirm",
+    "input": {
+      "mode": "CUSTOM_CREATION",
+      "modelId": "tokenhub:minimax-m3",
+      "images": [
+        {
+          "file": "synthetic-reference.png",
+          "role": "STYLE"
+        }
+      ],
+      "creationIntent": "创作一张全新的社区植物展海报，只借鉴参考图的平面几何风格与明快配色，不复用图中主体、标题或相同布局。新图主体是一盆薄荷。标题逐字为春日植物展。不要品牌、价格、日期或地址。希望先确认尚未确定的画面细节。",
+      "exactText": "春日植物展",
+      "context": "",
+      "language": "ZH",
+      "targetTool": "通用文生图"
+    },
+    "questions": [
+      {
+        "id": "q1",
+        "type": "MULTIPLE_CHOICE",
+        "question": "薄荷在海报中希望采用哪种表现形式？",
+        "options": [
+          {
+            "id": "o1",
+            "label": "写实薄荷盆栽"
+          },
+          {
+            "id": "o2",
+            "label": "几何化薄荷盆栽"
+          },
+          {
+            "id": "o3",
+            "label": "扁平插画风薄荷盆栽"
+          },
+          {
+            "id": "o4",
+            "label": "极简剪影风薄荷盆栽"
+          }
+        ],
+        "required": true
+      },
+      {
+        "id": "q2",
+        "type": "SINGLE_CHOICE",
+        "question": "海报希望采用哪种画面氛围？",
+        "options": [
+          {
+            "id": "o1",
+            "label": "清新自然"
+          },
+          {
+            "id": "o2",
+            "label": "活泼明快"
+          },
+          {
+            "id": "o3",
+            "label": "温暖春日"
+          },
+          {
+            "id": "o4",
+            "label": "现代简约"
+          }
+        ],
+        "required": true
+      },
+      {
+        "id": "q3",
+        "type": "SINGLE_CHOICE",
+        "question": "标题“春日植物展”应如何呈现？",
+        "options": [
+          {
+            "id": "o1",
+            "label": "作为画面主标题，突出醒目"
+          },
+          {
+            "id": "o2",
+            "label": "作为顶部标题，主体更突出"
+          },
+          {
+            "id": "o3",
+            "label": "作为底部标题，形成稳定收束"
+          }
+        ],
+        "required": true
+      },
+      {
+        "id": "q4",
+        "type": "SINGLE_CHOICE",
+        "question": "除标题和薄荷盆栽外，是否需要加入社区植物展相关的简化装饰图形？",
+        "options": [
+          {
+            "id": "o1",
+            "label": "加入叶片与花朵等简化几何装饰"
+          },
+          {
+            "id": "o2",
+            "label": "仅加入少量叶片装饰"
+          },
+          {
+            "id": "o3",
+            "label": "不加入其他装饰，保持极简"
+          }
+        ],
+        "required": true
+      }
+    ],
+    "answers": [
+      {
+        "questionId": "q1",
+        "optionIds": [
+          "o2"
+        ],
+        "customText": "保持用户已指定的平面几何风格，主体是一盆薄荷。"
+      },
+      {
+        "questionId": "q2",
+        "optionIds": [
+          "o1"
+        ],
+        "customText": ""
+      },
+      {
+        "questionId": "q3",
+        "optionIds": [
+          "o1"
+        ],
+        "customText": "标题逐字为春日植物展。"
+      },
+      {
+        "questionId": "q4",
+        "optionIds": [
+          "o3"
+        ],
+        "customText": "竖版海报，不复用蓝圆、黄方或原布局；不要品牌、价格、日期、地址或其他文案。未指定细节委托AI设计。"
+      }
+    ],
+    "analysis": [
+      {
+        "category": "风格",
+        "description": "采用简洁的平面几何视觉语言，以纯色圆形和方形搭配留白，边缘清晰、无纹理。",
+        "status": "OBSERVED"
+      },
+      {
+        "category": "配色",
+        "description": "整体使用明亮蓝、暖黄与深蓝灰，并搭配大面积白色背景。",
+        "status": "OBSERVED"
+      },
+      {
+        "category": "构图",
+        "description": "画面元素彼此分离，以宽阔留白和清晰的上下、左右层级组织内容。",
+        "status": "OBSERVED"
+      },
+      {
+        "category": "光线",
+        "description": "整体呈现均匀、明亮的无影平面效果，没有明显写实光影。",
+        "status": "INTERPRETATION"
+      }
+    ],
+    "warnings": [
+      "必须逐字呈现标题“春日植物展”，不得添加其他文字。",
+      "不得复用参考图的蓝圆、黄方、主体对象或相同布局。",
+      "薄荷需保持可辨识特征，同时以几何化平面方式表现。"
+    ],
+    "optimizedPrompt": "创作一张全新的竖版社区植物展海报。画面主体是一盆薄荷，将薄荷盆栽处理为简洁、平整、轮廓清晰的几何化造型：叶片由少量自然舒展的绿色几何形状组成，茎秆与花盆结构明确，保留薄荷容易辨认的卵形叶片与轻微锯齿边缘特征；花盆可用明快、柔和的纯色塑造，不加入写实纹理、复杂阴影或过多细节。整体视觉呈现清新自然的社区活动氛围，明亮、轻盈、亲切，但避免幼稚卡通感。\n\n采用平面几何视觉语言，以纯色块、清晰轮廓和宽阔留白组织画面，呈现均匀明亮、无明显投影的平面效果。配色以清新绿色为视觉重点，搭配柔和浅色背景和少量明快辅助色，使薄荷主体与标题清楚易读；色彩对比应保持柔和协调，不照搬参考图中的蓝色圆形、暖黄色方形或深蓝灰色组合。\n\n竖版构图需为全新设计，不复用参考图的相同布局。将薄荷盆栽安排为画面主要视觉焦点，完整可见且比例自然；标题“春日植物展”作为醒目的画面主标题，与薄荷主体形成清晰的视觉层级。标题必须逐字准确呈现为“春日植物展”，不得翻译、改写、增删、拆分或添加标点。可采用现代、简洁且具有春日气息的中文字体排版，标题清晰易辨，并与主体保持适度留白。\n\n除标题和这一盆薄荷外，不加入其他植物、花朵、叶片装饰、人物、手部、社区建筑、标志或装饰图形，以保持画面极简。背景保持干净平整，可使用非常浅的暖白或淡绿纯色，不设置复杂场景。不要出现品牌、价格、日期、地址、日期补充、地址补充、活动说明、副标题、标语、落款、水印、署名或任何其他文案。",
+    "elapsedMs": 6636
+  },
+  {
+    "id": "text-confirm",
+    "input": {
+      "mode": "CUSTOM_CREATION",
+      "modelId": "tokenhub:minimax-m3",
+      "images": [],
+      "creationIntent": "为社区读书会创作一张新的招募海报，主题是窗边阅读。主标题固定为周末读书会，不出现品牌、价格或地址。画风和版式由你设计，其他必要信息先向我确认。",
+      "exactText": "周末读书会",
+      "context": "",
+      "language": "ZH",
+      "targetTool": "通用文生图"
+    },
+    "questions": [
+      {
+        "id": "q1",
+        "type": "SINGLE_CHOICE",
+        "question": "海报中除固定主标题“周末读书会”外，还需要呈现哪些必要信息？",
+        "options": [
+          {
+            "id": "o1",
+            "label": "活动日期与开始时间"
+          },
+          {
+            "id": "o2",
+            "label": "活动时长"
+          },
+          {
+            "id": "o3",
+            "label": "报名方式"
+          },
+          {
+            "id": "o4",
+            "label": "仅保留主标题，其他信息由执行者合理设计"
+          }
+        ],
+        "required": true
+      },
+      {
+        "id": "q2",
+        "type": "SINGLE_CHOICE",
+        "question": "你偏好的整体视觉风格是什么？",
+        "options": [
+          {
+            "id": "o1",
+            "label": "温暖手绘插画"
+          },
+          {
+            "id": "o2",
+            "label": "清新水彩"
+          },
+          {
+            "id": "o3",
+            "label": "复古印刷海报"
+          },
+          {
+            "id": "o4",
+            "label": "极简扁平设计"
+          },
+          {
+            "id": "o5",
+            "label": "由执行者根据窗边阅读主题决定"
+          }
+        ],
+        "required": true
+      },
+      {
+        "id": "q3",
+        "type": "SINGLE_CHOICE",
+        "question": "希望海报采用哪种版式？",
+        "options": [
+          {
+            "id": "o1",
+            "label": "竖版居中构图"
+          },
+          {
+            "id": "o2",
+            "label": "竖版上下分区"
+          },
+          {
+            "id": "o3",
+            "label": "横版大场景构图"
+          },
+          {
+            "id": "o4",
+            "label": "由执行者根据招募海报需求决定"
+          }
+        ],
+        "required": true
+      },
+      {
+        "id": "q4",
+        "type": "SINGLE_CHOICE",
+        "question": "画面中的窗边阅读氛围应如何表现？",
+        "options": [
+          {
+            "id": "o1",
+            "label": "明亮清晨，柔和自然光"
+          },
+          {
+            "id": "o2",
+            "label": "温暖午后，安静惬意"
+          },
+          {
+            "id": "o3",
+            "label": "柔和傍晚，温馨宁静"
+          },
+          {
+            "id": "o4",
+            "label": "由执行者选择最符合读书会招募主题的氛围"
+          }
+        ],
+        "required": true
+      }
+    ],
+    "answers": [
+      {
+        "questionId": "q1",
+        "optionIds": [
+          "o4"
+        ],
+        "customText": "仅保留周末读书会标题，不添加日期、时间、地址、价格、品牌或报名方式；不编造事实。"
+      },
+      {
+        "questionId": "q2",
+        "optionIds": [
+          "o5"
+        ],
+        "customText": "画风已经委托设计。"
+      },
+      {
+        "questionId": "q3",
+        "optionIds": [
+          "o4"
+        ],
+        "customText": "版式已经委托设计。"
+      },
+      {
+        "questionId": "q4",
+        "optionIds": [
+          "o4"
+        ],
+        "customText": "营造窗边阅读氛围，其余画面细节交由设计。"
+      }
+    ],
+    "analysis": [],
+    "warnings": [
+      "仅允许出现指定主标题“周末读书会”，不得添加日期、时间、地址、价格、品牌、报名方式、二维码或其他文案。",
+      "当前没有参考图片；画风、版式与光线由执行者围绕窗边阅读主题统一设计。"
+    ],
+    "optimizedPrompt": "创作一张社区读书会招募海报，主题为窗边阅读。画面必须清晰呈现且仅呈现主标题“周末读书会”，保持逐字准确，不添加任何其他文字、标志、日期、时间、地点、地址、价格、品牌、机构名称、报名方式、二维码或说明性文案，不编造活动事实。\n\n采用竖版海报构图，以窗边阅读场景作为视觉中心：室内靠窗设置一把舒适的阅读椅，旁边有小桌、摊开的书和自然形成的阅读氛围；窗外景物适度虚化，避免喧宾夺主。画面可包含一位正在安静阅读的人物，侧身或背影皆可，不强调真实身份。整体视觉语言温暖、克制、亲切、富有社区感，同时具有清晰招募海报的视觉吸引力；允许采用细腻的温暖手绘插画或清新水彩式质感，并可通过纸张颗粒、柔和边缘和自然纹理增强亲近感。\n\n光线采用柔和傍晚的暖调自然光，从窗外斜向照入室内，形成安静、温馨、宁静的窗边阅读氛围；保留适度明亮区域以确保主标题清晰易读。配色以米白、暖木色、柔和植物绿和低饱和暖黄为主，层次柔和，不过度复古。\n\n版式上让窗边阅读场景占据主要视觉区域，主标题“周末读书会”以醒目但不过度装饰的中文字体呈现，置于画面上方或光线较充足的留白区域，保持字形完整、拼写准确、对比清晰。整体信息层级简洁，除“周末读书会”外不出现任何其他可辨认文字。输出精致、协调、适合社区宣传使用的完整海报画面。",
+    "elapsedMs": 6557
+  }
+]
