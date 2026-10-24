@@ -1,0 +1,40 @@
+{
+  "status": "QUOTES_MATCH_BUT_SEMANTIC_REVIEW_HAS_ERRORS",
+  "reviewer": "内部匿名AI辅助评审，同一执行模型；没有外部人工或专家评审。",
+  "issues": [
+    {
+      "caseId": "N01",
+      "affected": [
+        "V41/R1",
+        "V41/R2",
+        "V31/R2"
+      ],
+      "reviewClaim": "同一作品包含两份高度重复的完整报告。",
+      "verification": "逐份原件只有一套报告结构，所引标题各出现一次；两次独立执行不应被当成同一作品内重复。",
+      "disposition": "不采用这三项重复报告判断；保留原始评审和原件。"
+    },
+    {
+      "caseId": "N02",
+      "reviewClaim": "四组邮件可以直接使用，未列出字数违约。",
+      "verification": "实际汉字分别为原始116、31为94、41为87、42为92，均未达到明确150—180要求。",
+      "disposition": "独立字数检查优先，四组均需修改；不能接受模型自报可直接使用。"
+    },
+    {
+      "caseId": "N01",
+      "affected": [
+        "ORIGINAL/R1"
+      ],
+      "reviewClaim": "未显式写80%列为必要修改。",
+      "verification": "原任务未强制列出回收率；答案卡只提供可复算依据，不能把合理省略计为硬要求遗漏。",
+      "disposition": "按可选完善处理，不计必要修改。"
+    },
+    {
+      "caseId": "N03",
+      "reviewClaim": "preferredLabels同时包含四组，但正文指出原始R1有严重计算错误。",
+      "verification": "原始R1把1200+0.04×100×24写成1392，正确为1296；其约5个月回本也与材料不符。",
+      "disposition": "不直接汇总preferredLabels为胜负；逐作品核对，保留其余正常重复。"
+    }
+  ],
+  "unresolvedDisagreement": "培训反馈的匿名整体偏好为31和原始；内部复核观察到42减少资料清单并保留可执行建议。偏好分歧未由独立评审解决，不把更有利于候选的判断当作已确认胜出。",
+  "boundary": "本文件纠正评测依据，不改变任何冻结题目、阈值、原作品或历史失败。"
+}

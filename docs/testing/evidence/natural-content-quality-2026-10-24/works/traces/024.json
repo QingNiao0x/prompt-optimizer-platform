@@ -1,0 +1,52 @@
+{
+  "batch" : "natural-content-quality42-works-2026-10-24",
+  "jobId" : "Q01_ORIGINAL_EXEC_R1",
+  "phase" : "EXECUTION",
+  "caseId" : "Q01",
+  "request" : {
+    "model" : "deepseek-flash",
+    "stream" : false,
+    "temperature" : 0.2,
+    "max_tokens" : 4096,
+    "thinking" : {
+      "type" : "disabled"
+    },
+    "messages" : [ {
+      "role" : "system",
+      "content" : "完成用户当前请求，遵守用户明确的输出范围、输出形式与阶段边界。仅使用本次提供的材料；无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+    }, {
+      "role" : "user",
+      "content" : "请帮我查询全球使用AI最多的职业/行业\n\n执行本次任务时用户提供的材料（完整正文）：\n--- 公开来源摘录；仅执行阶段提供，非穷尽性资料 ---\n来源A：OECD Artificial intelligence，https://www.oecd.org/en/topics/artificial-intelligence.html ，本轮2026-10-24核对的2025年数据：OECD企业采用AI比例20.2%；信息通信业57.3%，专业和科研服务36.8%。这是企业采用指标，覆盖OECD，不是全球所有从业者。\n来源B：Anthropic The Anthropic Economic Index，2025-02-10，https://www.anthropic.com/research/the-anthropic-economic-index ：分析约100万次Claude.ai免费及Pro对话，将任务映射到O*NET职业；计算机与数学类占对话37.2%，艺术与媒体10.3%，教育与图书馆9.3%，办公行政7.9%，生命科学6.4%，商业金融5.9%。这些比例是该平台对话分布，不是职业内人员渗透率。报告指出使用集中于软件开发和技术写作，使用方式约57%是辅助增强、43%是自动执行。"
+    } ]
+  },
+  "httpStatus" : 200,
+  "responseBytes" : 1587,
+  "responseSha256" : "34cc646f68908544ef17232bfd55df15bf5ac7836122cfb919e44e8b852bc725",
+  "elapsedMs" : 2374,
+  "response" : {
+    "id" : "fb2dce44-941e-4329-9c6f-3d0f3d706a3c",
+    "object" : "chat.completion",
+    "created" : 1792831709,
+    "model" : "deepseek-flash",
+    "choices" : [ {
+      "index" : 0,
+      "message" : {
+        "role" : "assistant",
+        "content" : "根据你提供的材料，无法直接得出“全球使用AI最多的职业/行业”这一结论；现有数据只能支持以下有限判断：\n\n1. **按企业采用率看行业**：OECD 2025年数据显示，OECD范围内企业采用AI比例整体为20.2%；其中信息通信业为57.3%，专业和科研服务为36.8%。在这两个口径下，信息通信业采用率最高。但这是OECD企业采用指标，不是全球所有从业者口径。\n\n2. **按平台对话任务分布看职业类别**：Anthropic 2025年对约100万次Claude.ai免费及Pro对话的分析显示，映射到O*NET职业后，计算机与数学类占37.2%，艺术与媒体10.3%，教育与图书馆9.3%，办公行政7.9%，生命科学6.4%，商业金融5.9%。这反映的是该平台对话分布，不是职业内人员渗透率，也不能代表全球使用情况。\n\n因此，严格按现有材料，能说的是：**在OECD企业口径下，信息通信业AI采用率最高；在Anthropic平台对话口径下，计算机与数学类任务占比最高。** 但两者都不能直接回答“全球使用AI最多的职业/行业”。"
+      },
+      "logprobs" : null,
+      "finish_reason" : "stop"
+    } ],
+    "usage" : {
+      "prompt_tokens" : 300,
+      "completion_tokens" : 264,
+      "total_tokens" : 564,
+      "prompt_tokens_details" : {
+        "cached_tokens" : 0
+      },
+      "prompt_cache_hit_tokens" : 0,
+      "prompt_cache_miss_tokens" : 300
+    },
+    "system_fingerprint" : "e72d3c7f663d3e1383b00b3884cb4501"
+  }
+}

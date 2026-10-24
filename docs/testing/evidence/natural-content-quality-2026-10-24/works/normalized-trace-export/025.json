@@ -1,0 +1,52 @@
+{
+  "batch" : "natural-content-quality42-works-2026-10-24",
+  "jobId" : "Q01_ORIGINAL_EXEC_R2",
+  "phase" : "EXECUTION",
+  "caseId" : "Q01",
+  "request" : {
+    "model" : "deepseek-flash",
+    "stream" : false,
+    "temperature" : 0.2,
+    "max_tokens" : 4096,
+    "thinking" : {
+      "type" : "disabled"
+    },
+    "messages" : [ {
+      "role" : "system",
+      "content" : "完成用户当前请求，遵守用户明确的输出范围、输出形式与阶段边界。仅使用本次提供的材料；无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+    }, {
+      "role" : "user",
+      "content" : "请帮我查询全球使用AI最多的职业/行业\n\n执行本次任务时用户提供的材料（完整正文）：\n--- 公开来源摘录；仅执行阶段提供，非穷尽性资料 ---\n来源A：OECD Artificial intelligence，https://www.oecd.org/en/topics/artificial-intelligence.html ，本轮2026-10-24核对的2025年数据：OECD企业采用AI比例20.2%；信息通信业57.3%，专业和科研服务36.8%。这是企业采用指标，覆盖OECD，不是全球所有从业者。\n来源B：Anthropic The Anthropic Economic Index，2025-02-10，https://www.anthropic.com/research/the-anthropic-economic-index ：分析约100万次Claude.ai免费及Pro对话，将任务映射到O*NET职业；计算机与数学类占对话37.2%，艺术与媒体10.3%，教育与图书馆9.3%，办公行政7.9%，生命科学6.4%，商业金融5.9%。这些比例是该平台对话分布，不是职业内人员渗透率。报告指出使用集中于软件开发和技术写作，使用方式约57%是辅助增强、43%是自动执行。"
+    } ]
+  },
+  "httpStatus" : 200,
+  "responseBytes" : 2005,
+  "responseSha256" : "16d39575571807828b6671a16dc772dfc1cf025cf165c648f6b5397c6842e5e4",
+  "elapsedMs" : 2766,
+  "response" : {
+    "id" : "54284688-b8aa-4afb-b410-9f3be53a815b",
+    "object" : "chat.completion",
+    "created" : 1792831711,
+    "model" : "deepseek-flash",
+    "choices" : [ {
+      "index" : 0,
+      "message" : {
+        "role" : "assistant",
+        "content" : "根据你提供的材料，无法直接得出“全球使用AI最多的职业/行业”这一结论，因为两份来源衡量的是不同口径，且都不是全球职业内人员渗透率：\n\n1. **OECD企业采用指标（2025年数据，覆盖OECD，不是全球所有从业者）**\n   - 企业采用AI比例：20.2%\n   - 信息通信业：57.3%\n   - 专业和科研服务：36.8%\n   - 这是“企业采用”指标，不能等同于职业内从业者使用AI的比例。\n\n2. **Anthropic Economic Index（2025-02-10，分析约100万次Claude.ai免费及Pro对话）**\n   - 计算机与数学类：37.2%\n   - 艺术与媒体：10.3%\n   - 教育与图书馆：9.3%\n   - 办公行政：7.9%\n   - 生命科学：6.4%\n   - 商业金融：5.9%\n   - 这些比例是该平台对话分布，不是职业内人员渗透率；报告指出使用集中于软件开发和技术写作，使用方式约57%为辅助增强、43%为自动执行。\n\n**基于所给材料的谨慎回答：**\n- 若看**OECD企业采用率**，材料中最高的是**信息通信业（57.3%）**，其次是**专业和科研服务（36.8%）**。\n- 若看**Anthropic平台对话分布**，占比最高的是**计算机与数学类（37.2%）**，且使用集中于软件开发和技术写作。\n- 因此，按现有材料只能说明：**信息通信/计算机相关领域在两类指标中都表现突出**；但不能据此宣称它是“全球使用AI最多的职业/行业”，因为材料不覆盖全球所有从业者，也不是职业内渗透率。"
+      },
+      "logprobs" : null,
+      "finish_reason" : "stop"
+    } ],
+    "usage" : {
+      "prompt_tokens" : 300,
+      "completion_tokens" : 384,
+      "total_tokens" : 684,
+      "prompt_tokens_details" : {
+        "cached_tokens" : 128
+      },
+      "prompt_cache_hit_tokens" : 128,
+      "prompt_cache_miss_tokens" : 172
+    },
+    "system_fingerprint" : "e72d3c7f663d3e1383b00b3884cb4501"
+  }
+}

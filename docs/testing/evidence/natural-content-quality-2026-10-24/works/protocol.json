@@ -1,0 +1,184 @@
+{
+  "batch": "natural-content-quality42-works-2026-10-24",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 96,
+  "maximumNewActualCalls": 66,
+  "taskPreviouslyActual": 30,
+  "authorizedMaximumActualCalls": 100,
+  "previousClosedActualCalls": 2034,
+  "oldClosedBalanceTransferred": 0,
+  "versions": [
+    "31",
+    "41",
+    "42"
+  ],
+  "candidateVersions": [
+    "42"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 4096,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 26,
+    "PLAN": 0,
+    "EXECUTION": 32,
+    "REVIEW": 8
+  },
+  "generation": [
+    "N01",
+    "N02",
+    "N03",
+    "N04"
+  ],
+  "generationVersions": [
+    "31",
+    "41",
+    "42"
+  ],
+  "regressionGeneration": [],
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "41": [
+      "41"
+    ],
+    "42": [
+      "42"
+    ]
+  },
+  "plan": [],
+  "confirmedPlanGeneration": [],
+  "execution": [
+    "Q01",
+    "N01",
+    "N02",
+    "N03",
+    "N04"
+  ],
+  "executionArms": [
+    "ORIGINAL",
+    "V31",
+    "V41",
+    "V42"
+  ],
+  "executionRepeats": 1,
+  "executionRepeatsByCase": {
+    "Q01": 2,
+    "N01": 2,
+    "N03": 2,
+    "N02": 1,
+    "N04": 1
+  },
+  "allowedJobs": [
+    "N01_V31_GEN",
+    "N01_V41_GEN",
+    "N01_V42_GEN",
+    "N02_V31_GEN",
+    "N02_V41_GEN",
+    "N02_V42_GEN",
+    "N03_V31_GEN",
+    "N03_V41_GEN",
+    "N03_V42_GEN",
+    "N04_V31_GEN",
+    "N04_V41_GEN",
+    "N04_V42_GEN",
+    "Q01_ORIGINAL_EXEC_R1",
+    "Q01_ORIGINAL_EXEC_R2",
+    "Q01_V31_EXEC_R1",
+    "Q01_V31_EXEC_R2",
+    "Q01_V41_EXEC_R1",
+    "Q01_V41_EXEC_R2",
+    "Q01_V42_EXEC_R1",
+    "Q01_V42_EXEC_R2",
+    "N01_ORIGINAL_EXEC_R1",
+    "N01_ORIGINAL_EXEC_R2",
+    "N01_V31_EXEC_R1",
+    "N01_V31_EXEC_R2",
+    "N01_V41_EXEC_R1",
+    "N01_V41_EXEC_R2",
+    "N01_V42_EXEC_R1",
+    "N01_V42_EXEC_R2",
+    "N02_ORIGINAL_EXEC_R1",
+    "N02_V31_EXEC_R1",
+    "N02_V41_EXEC_R1",
+    "N02_V42_EXEC_R1",
+    "N03_ORIGINAL_EXEC_R1",
+    "N03_ORIGINAL_EXEC_R2",
+    "N03_V31_EXEC_R1",
+    "N03_V31_EXEC_R2",
+    "N03_V41_EXEC_R1",
+    "N03_V41_EXEC_R2",
+    "N03_V42_EXEC_R1",
+    "N03_V42_EXEC_R2",
+    "N04_ORIGINAL_EXEC_R1",
+    "N04_V31_EXEC_R1",
+    "N04_V41_EXEC_R1",
+    "N04_V42_EXEC_R1",
+    "REVIEW_Q01",
+    "REVIEW_N01",
+    "REVIEW_N02",
+    "REVIEW_N03",
+    "REVIEW_N04"
+  ],
+  "prerequisiteStages": [
+    "development"
+  ],
+  "reviews": [
+    {
+      "id": "REVIEW_Q01",
+      "caseIds": [
+        "Q01"
+      ]
+    },
+    {
+      "id": "REVIEW_N01",
+      "caseIds": [
+        "N01"
+      ]
+    },
+    {
+      "id": "REVIEW_N02",
+      "caseIds": [
+        "N02"
+      ]
+    },
+    {
+      "id": "REVIEW_N03",
+      "caseIds": [
+        "N03"
+      ]
+    },
+    {
+      "id": "REVIEW_N04",
+      "caseIds": [
+        "N04"
+      ]
+    }
+  ],
+  "reviewSystem": "你是内部AI辅助作品评审，不是外部用户或领域专家。只评实际作品，不能因为篇幅长、表格多而加分。\n每题提供原始需求、同样的执行材料和匿名outputs。你不知道各匿名标签的版本；不得猜测。对每份作品按其repeat逐一检查。\n原始要求是硬边界；答案卡中列出的数值用于核对出现的计算，并非要求逐项补齐所有数值或写出唯一范文。\n合理的设计与表达变体允许。没有依据的事实、错误计算、要求遗漏、格式违约及大量空泛重复会增加用户修改量。\n分别说明哪些具体内容有用、哪些必须修改。没有问题可用空数组；不能把偏好措辞当成严重错误。\n缺失或截断的作品单独记为交付失败，不给对手自动判语义胜利。两份作品同样可用可以持平，双方有错也必须保留。\n只返回JSON：{\"cases\":[{\"id\":\"题号\",\"evaluations\":[{\"label\":\"匿名标签\",\"repeat\":1,\n\"usableWithoutSubstantiveEdits\":true,\"usefulContent\":[\"具体帮助\"],\n\"requiredEdits\":[{\"severity\":\"MAJOR或MINOR\",\"issue\":\"问题\",\"quote\":\"该作品中的连续原句\",\"change\":\"必要改动\"}],\n\"unnecessaryContent\":[\"可删的冗余\"]}],\"preferredLabels\":[\"可并列\"],\"reason\":\"比较完整性、准确性与实际修改量\"}]}。\n每个outputs标签和实际repeat都必须覆盖。quote必须来自对应作品，不能从材料或其他标签拼凑；无法定位则不作该项断言。\n结论仅适用于本题实际作品，不宣称通用提升。",
+  "blindSeed": "content-quality42-2026-10-24-frozen-order",
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false,
+  "criteria": [
+    "任何确定的严重任务、事实、授权或明确格式退步均不采用。",
+    "Q01/N01/N03三项内容补全任务中，至少两项相对31和41减少实质必要编辑，其余不得有明确严重退步；重复作品不得出现反向的严重错误。",
+    "充分需求和只阅读等待允许持平，但不能将持平计为正文增强收益。",
+    "检查明确字数、日期、复算结果及来源；语义判断须引用具体作品与必要修改，不用篇幅或自报检查通过计分。",
+    "匿名AI辅助复核与实现者复核分别披露；无外部用户或领域专家参与，不宣称跨场景稳定胜率。"
+  ],
+  "limitations": [
+    "四个新任务由实现者编写，是内部新题，不声称独立外部留出。",
+    "开发回归只证明无新增严重范围错误；Q01与M01内容短板保持未解决，不冒充正文质量通过。",
+    "本阶段先比较实际作品，未满足原质量条件则继续保留31。"
+  ]
+}

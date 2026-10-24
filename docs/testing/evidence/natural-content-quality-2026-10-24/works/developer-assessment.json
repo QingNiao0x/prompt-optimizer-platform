@@ -1,0 +1,55 @@
+{
+  "type": "内部AI复核，评估者参与实现，非独立人工。",
+  "candidate": "42",
+  "cases": [
+    {
+      "id": "Q01",
+      "outcome": "NO_CONFIRMED_NET_GAIN",
+      "observations": [
+        "42两份比31/41短，但仍围绕比较口径和局限展开。",
+        "仅基于两份冻结公开摘录，不能代表真实联网调研报告质量。",
+        "匿名AI四组并列，不能据此确认升级胜出。"
+      ]
+    },
+    {
+      "id": "N01",
+      "outcome": "LOCAL_GAIN_WITH_UNRESOLVED_REVIEW_DISAGREEMENT",
+      "observations": [
+        "42实际经过正文生成后保留原提示词，两份仍给出优先级及具体动作。",
+        "31一份错误声称多选分母未知，并按额外主题展开大量资料缺口；41反复要求进一步确认具体改法。",
+        "42减少此类内容，属于局部收益；原始也已可用，不能证明原始到增强的普遍收益。",
+        "匿名评审偏好与内部复核未完全一致，采用判定保留未决。"
+      ]
+    },
+    {
+      "id": "N03",
+      "outcome": "NO_CONFIRMED_WIN_OVER_BOTH_BASELINES",
+      "observations": [
+        "42两份主要成本计算正确，41也正确；未证明42相对41有实质编辑量净收益。",
+        "原始R1有计算及回本期错误，R2正常，单次错误不作为稳定胜率。",
+        "42仍存在重复论述，R2把约208页门槛简化为约200页，需谨慎表述。"
+      ]
+    },
+    {
+      "id": "N02",
+      "outcome": "ALL_ARMS_DELIVERY_FAILURE",
+      "observations": [
+        "日期、歉意及不新增赔偿/功能等要求保留。",
+        "四组均未达到明确汉字范围；增强提示词保留字数，作品才出现违约，支持共同下游执行问题，但不因此算合格。"
+      ]
+    },
+    {
+      "id": "N04",
+      "outcome": "TIE_ALLOWED",
+      "observations": [
+        "四组均理解后等待，未新增文件修改、独立文档、状态写入方或补偿行为。",
+        "持平符合边界要求，不计实质补全收益。"
+      ]
+    }
+  ],
+  "frozenAdoptionCriterion": "Q01/N01/N03至少两项相对31和41减少实质必要编辑，其余无新增严重退步；充分需求允许持平。",
+  "atLeastTwoConfirmedWins": false,
+  "newSevereIntentOrAuthorizationErrorObserved": false,
+  "candidateAdopted": false,
+  "reason": "定向局部收益不足以建立两项明确升级收益；字数交付失败及评审分歧仍保留，不降低原作品质量门槛。"
+}
