@@ -1,0 +1,98 @@
+{
+  "status": "DRAFT_NOT_AUTHORIZED_TO_EXECUTE",
+  "createdAt": "2026-10-23T20:38:10.702890+00:00",
+  "candidateVersion": "38",
+  "taskMaximumActualCalls": 128,
+  "taskActualBeforeCandidate": 87,
+  "maximumAdditionalActualCalls": 41,
+  "plannedPrimaryActualCalls": 38,
+  "sharedProtocolRepairReservation": 3,
+  "qualityRetriesAllowed": false,
+  "candidate37ClosedEvidenceImmutable": true,
+  "productionSourceNotFrozenYet": true,
+  "internalHoldoutNotOpened": true,
+  "hypothesis": "Clarify the boundary between adding a new independent deliverable and concretizing useful contents within the original deliverable; retain sufficient-input zero-expansion and all intent/fact/authority protections.",
+  "parametersUnchanged": {
+    "modelId": "deepseek:deepseek-flash",
+    "upstreamModel": "deepseek-flash",
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "primaryPlan": [
+    {
+      "stage": "boundary38-regression",
+      "primaryCalls": 14,
+      "initialStageMaximum": 17,
+      "jobs": [
+        {
+          "purpose": "Three original severe failures; candidate enhancement only",
+          "logicalJobs": 3,
+          "calls": 6
+        },
+        {
+          "purpose": "Both GC gap cases; candidate enhancement only",
+          "logicalJobs": 2,
+          "calls": 4
+        },
+        {
+          "purpose": "Fresh Plan with material user-reserved decision",
+          "logicalJobs": 1,
+          "calls": 2
+        },
+        {
+          "purpose": "Enhancement after the actual Plan answer",
+          "logicalJobs": 1,
+          "calls": 2
+        }
+      ]
+    },
+    {
+      "stage": "boundary38-heldout",
+      "primaryCalls": 8,
+      "initialStageMaximum": 8,
+      "requires": "Candidate frozen and targeted regression semantic PASS before opening two new CS cases",
+      "jobs": [
+        {
+          "purpose": "Two sealed CS cases; versions31/38 enhancement",
+          "logicalJobs": 4,
+          "calls": 8
+        }
+      ]
+    },
+    {
+      "stage": "boundary38-works",
+      "primaryCalls": 16,
+      "initialStageMaximum": 16,
+      "requires": "Final enhancement semantic PASS and frozen same-information execution inputs",
+      "jobs": [
+        {
+          "purpose": "Two CS cases; ORIGINAL/31/38 each repeated twice",
+          "logicalJobs": 12,
+          "calls": 12
+        },
+        {
+          "purpose": "Both GC cases; version38 repeated twice, exact prior ORIGINAL/31 artifacts reused",
+          "logicalJobs": 4,
+          "calls": 4
+        }
+      ]
+    }
+  ],
+  "reallocationRule": "Initial reservations17+8+16 equal remaining41. Close each stage and lock its original files before reallocating unused reservation to a later stage that has not yet been frozen. Actual attempts and retries across all stages must remain at most128 for the task. A closed stage cannot be reopened.",
+  "reuseConditions": [
+    "Candidate37 evidence remains historically unchanged and is not relabelled as candidate38.",
+    "GC ORIGINAL/31 executions may be reused only after exact case/material/model/parameter and original artifact hashes are rechecked; all two repeats remain included.",
+    "Prior31 enhancement and actual Plan answer references retain complete source and scope; no copied traces are counted as new calls.",
+    "New CS cases remain sealed until source, candidate hypothesis, selection, criteria, and stage limits have been frozen."
+  ],
+  "pendingBeforeExecution": [
+    "Complete GC version-blind artifact review and retain candidate37 decision separately.",
+    "Freeze candidate38 source and affected offline checks; document the exact one-boundary change.",
+    "Freeze concrete source cases, Plan answer facts, adoption criteria, allowed job IDs, and source hashes.",
+    "Review the minimal outbound synthetic/user-provided data scope and start a separately owned temporary9003 process only after freeze."
+  ],
+  "modelCallsForThisDraft": 0
+}

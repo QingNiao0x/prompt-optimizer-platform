@@ -73,6 +73,10 @@ public final class NaturalPromptInstructions {
                     -> NaturalPromptStageInstructions.enhancementInstruction(version);
             case NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION -> ENHANCE;
             case NaturalPromptExecutionBoundaryInstructions.VERSION -> NaturalPromptExecutionBoundaryInstructions.ENHANCE;
+            case NaturalPromptMaterialInstructions.VERSION -> NaturalPromptMaterialInstructions.ENHANCE;
+            case NaturalPromptPreparationRoutingInstructions.VERSION -> NaturalPromptPreparationRoutingInstructions.ENHANCE;
+            case NaturalPromptIntentCompletionInstructions.VERSION -> NaturalPromptIntentCompletionInstructions.ENHANCE;
+            case NaturalPromptContentScopeInstructions.VERSION -> NaturalPromptContentScopeInstructions.ENHANCE;
             case NaturalPromptRelationalInstructions.VERSION, NaturalPromptRelationalInstructions.SUPPLEMENT_VERSION
                     -> NaturalPromptRelationalInstructions.ENHANCE;
             default -> throw new IllegalArgumentException("自然增强版本不受支持");
@@ -110,6 +114,10 @@ public final class NaturalPromptInstructions {
                     -> NaturalPromptStageInstructions.planningInstruction(version);
             case NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION -> NaturalPromptScopedInstructions.PLAN;
             case NaturalPromptExecutionBoundaryInstructions.VERSION -> NaturalPromptExecutionBoundaryInstructions.PLAN;
+            case NaturalPromptMaterialInstructions.VERSION -> NaturalPromptMaterialInstructions.PLAN;
+            case NaturalPromptPreparationRoutingInstructions.VERSION -> NaturalPromptPreparationRoutingInstructions.PLAN;
+            case NaturalPromptIntentCompletionInstructions.VERSION -> NaturalPromptIntentCompletionInstructions.PLAN;
+            case NaturalPromptContentScopeInstructions.VERSION -> NaturalPromptContentScopeInstructions.PLAN;
             case NaturalPromptRelationalInstructions.VERSION, NaturalPromptRelationalInstructions.SUPPLEMENT_VERSION
                     -> NaturalPromptScopedInstructions.PLAN;
             default -> throw new IllegalArgumentException("自然增强版本不受支持");

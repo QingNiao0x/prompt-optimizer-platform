@@ -1,0 +1,1379 @@
+{
+  "status": "PASSED",
+  "modelCalls": 0,
+  "contractSha256": "f43132f64764ca727a97f531ace1a180980a0c87486abde4c3b0253bf83b4dc2",
+  "reference": {
+    "sourceSha256": "42476919c7a50a0433d30be83704f787ee223f504b0aefcd312a74e0de589cc1",
+    "contractRounds": 32,
+    "passed": true
+  },
+  "legacyBehaviorCasesUnchanged": [
+    "L01_default",
+    "L02_shrink_last_page",
+    "L03_single_result",
+    "L04_no_matches",
+    "L05_middle_page"
+  ],
+  "deliberatelyBrokenFixtureCount": 12,
+  "failures": [
+    {
+      "id": "wrong_total_uses_unfiltered_rows",
+      "codeSha256": "66e68840b99f5b839214ded2305a179b4bc3a38b28ea327b2e97e725a13891bb",
+      "rejected": true,
+      "failedChecks": [
+        {
+          "check": "L01_default",
+          "frozenInput": false,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "L01_default",
+          "frozenInput": true,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "L02_shrink_last_page",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "L02_shrink_last_page",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "L03_single_result",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "L03_single_result",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "L04_no_matches",
+          "frozenInput": false,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "L04_no_matches",
+          "frozenInput": true,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "L05_middle_page",
+          "frozenInput": false,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "L05_middle_page",
+          "frozenInput": true,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A06_omitted_options",
+          "frozenInput": false,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A06_omitted_options",
+          "frozenInput": true,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A08_blank_keyword",
+          "frozenInput": false,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A08_blank_keyword",
+          "frozenInput": true,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A09_exact_active",
+          "frozenInput": false,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A09_exact_active",
+          "frozenInput": true,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A11_case_insensitive",
+          "frozenInput": false,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A11_case_insensitive",
+          "frozenInput": true,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A12_page_size_one",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A12_page_size_one",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A13_falsy_keyword",
+          "frozenInput": false,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A13_falsy_keyword",
+          "frozenInput": true,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A14_keyword_string_coercion",
+          "frozenInput": false,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A14_keyword_string_coercion",
+          "frozenInput": true,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A15_exact_page_multiple",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A15_exact_page_multiple",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A16_large_page_size",
+          "frozenInput": false,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A16_large_page_size",
+          "frozenInput": true,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "last_page_is_not_clamped",
+      "codeSha256": "88bb4e368fc60e31c9216724b8965e9ee8af9e87889cd330d65f500dd0d75334",
+      "rejected": true,
+      "failedChecks": [
+        {
+          "check": "L02_shrink_last_page",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "L02_shrink_last_page",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "L03_single_result",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "L03_single_result",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A12_page_size_one",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A12_page_size_one",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A15_exact_page_multiple",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A15_exact_page_multiple",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A16_large_page_size",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A16_large_page_size",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "empty_result_has_page_zero",
+      "codeSha256": "670c26d7a0cc50240befa19b4665810ff128adfbd9e727b7b239a31aa67eee63",
+      "rejected": true,
+      "failedChecks": [
+        {
+          "check": "L04_no_matches",
+          "frozenInput": false,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "L04_no_matches",
+          "frozenInput": true,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A07_empty_rows",
+          "frozenInput": false,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A07_empty_rows",
+          "frozenInput": true,
+          "failures": [
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mutates_array",
+      "codeSha256": "20fa694ed91408393f709345b8c49b0a0a8ce1befbad61481c055742a9de8c42",
+      "rejected": true,
+      "failedChecks": [
+        {
+          "check": "L01_default",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变",
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "L01_default",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property '0' of object '[object Array]'"
+          ]
+        },
+        {
+          "check": "L02_shrink_last_page",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变",
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "L02_shrink_last_page",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property '0' of object '[object Array]'"
+          ]
+        },
+        {
+          "check": "L03_single_result",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变"
+          ]
+        },
+        {
+          "check": "L03_single_result",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property '0' of object '[object Array]'"
+          ]
+        },
+        {
+          "check": "L04_no_matches",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变"
+          ]
+        },
+        {
+          "check": "L04_no_matches",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property '0' of object '[object Array]'"
+          ]
+        },
+        {
+          "check": "L05_middle_page",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变",
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "L05_middle_page",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property '0' of object '[object Array]'"
+          ]
+        },
+        {
+          "check": "A06_omitted_options",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变",
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A06_omitted_options",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property '0' of object '[object Array]'"
+          ]
+        },
+        {
+          "check": "A08_blank_keyword",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变",
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A08_blank_keyword",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property '0' of object '[object Array]'"
+          ]
+        },
+        {
+          "check": "A09_exact_active",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变"
+          ]
+        },
+        {
+          "check": "A09_exact_active",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property '0' of object '[object Array]'"
+          ]
+        },
+        {
+          "check": "A10_input_order",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变",
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A10_input_order",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property '0' of object '[object Array]'"
+          ]
+        },
+        {
+          "check": "A11_case_insensitive",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变"
+          ]
+        },
+        {
+          "check": "A11_case_insensitive",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property '0' of object '[object Array]'"
+          ]
+        },
+        {
+          "check": "A12_page_size_one",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变",
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A12_page_size_one",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property '0' of object '[object Array]'"
+          ]
+        },
+        {
+          "check": "A13_falsy_keyword",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变",
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A13_falsy_keyword",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property '0' of object '[object Array]'"
+          ]
+        },
+        {
+          "check": "A14_keyword_string_coercion",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变"
+          ]
+        },
+        {
+          "check": "A14_keyword_string_coercion",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property '0' of object '[object Array]'"
+          ]
+        },
+        {
+          "check": "A15_exact_page_multiple",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变",
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A15_exact_page_multiple",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property '0' of object '[object Array]'"
+          ]
+        },
+        {
+          "check": "A16_large_page_size",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变",
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A16_large_page_size",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property '0' of object '[object Array]'"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mutates_element_in_place",
+      "codeSha256": "1ec56d0369173edfa2a8b73e26c164df7323cbd37a9cb25761e4e733e10d42e0",
+      "rejected": true,
+      "failedChecks": [
+        {
+          "check": "L01_default",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变",
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "L01_default",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property 'name' of object '#<Object>'"
+          ]
+        },
+        {
+          "check": "L02_shrink_last_page",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变"
+          ]
+        },
+        {
+          "check": "L02_shrink_last_page",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property 'name' of object '#<Object>'"
+          ]
+        },
+        {
+          "check": "L03_single_result",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变"
+          ]
+        },
+        {
+          "check": "L03_single_result",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property 'name' of object '#<Object>'"
+          ]
+        },
+        {
+          "check": "L04_no_matches",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变"
+          ]
+        },
+        {
+          "check": "L04_no_matches",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property 'name' of object '#<Object>'"
+          ]
+        },
+        {
+          "check": "L05_middle_page",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变"
+          ]
+        },
+        {
+          "check": "L05_middle_page",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property 'name' of object '#<Object>'"
+          ]
+        },
+        {
+          "check": "A06_omitted_options",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变",
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A06_omitted_options",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property 'name' of object '#<Object>'"
+          ]
+        },
+        {
+          "check": "A08_blank_keyword",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变",
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A08_blank_keyword",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property 'name' of object '#<Object>'"
+          ]
+        },
+        {
+          "check": "A09_exact_active",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property 'name' of object '#<Object>'"
+          ]
+        },
+        {
+          "check": "A10_input_order",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变",
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A10_input_order",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property 'name' of object '#<Object>'"
+          ]
+        },
+        {
+          "check": "A11_case_insensitive",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变"
+          ]
+        },
+        {
+          "check": "A11_case_insensitive",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property 'name' of object '#<Object>'"
+          ]
+        },
+        {
+          "check": "A12_page_size_one",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变"
+          ]
+        },
+        {
+          "check": "A12_page_size_one",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property 'name' of object '#<Object>'"
+          ]
+        },
+        {
+          "check": "A13_falsy_keyword",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变",
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A13_falsy_keyword",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property 'name' of object '#<Object>'"
+          ]
+        },
+        {
+          "check": "A15_exact_page_multiple",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变"
+          ]
+        },
+        {
+          "check": "A15_exact_page_multiple",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property 'name' of object '#<Object>'"
+          ]
+        },
+        {
+          "check": "A16_large_page_size",
+          "frozenInput": false,
+          "failures": [
+            "输入数组、顺序及元素值保持不变",
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A16_large_page_size",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot assign to read only property 'name' of object '#<Object>'"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "changes_returned_element_but_not_ids",
+      "codeSha256": "cb96440e1572c0693b07134a68cc38c51546d9cbd569e125d58eba23bdc0170b",
+      "rejected": true,
+      "failedChecks": [
+        {
+          "check": "L01_default",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "L01_default",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A06_omitted_options",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A06_omitted_options",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A08_blank_keyword",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A08_blank_keyword",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A10_input_order",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A10_input_order",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A13_falsy_keyword",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A13_falsy_keyword",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A16_large_page_size",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A16_large_page_size",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "changes_active_filter",
+      "codeSha256": "adf52372f51b4105135197a342060f69840d574efbd57d502636a4d5217b815e",
+      "rejected": true,
+      "failedChecks": [
+        {
+          "check": "A09_exact_active",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A09_exact_active",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "drops_keyword_normalization",
+      "codeSha256": "0b59c3de98e212ad2f47d0cc3ad1cf325476cc79ec8e1cc050f7283ace98f926",
+      "rejected": true,
+      "failedChecks": [
+        {
+          "check": "L02_shrink_last_page",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "L02_shrink_last_page",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "L03_single_result",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "L03_single_result",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A08_blank_keyword",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A08_blank_keyword",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A11_case_insensitive",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A11_case_insensitive",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A12_page_size_one",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A12_page_size_one",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "breaks_falsy_keyword_semantics",
+      "codeSha256": "8563166cd1ae7336d04b209f1d3960e8c663f82a200f68144040696daf260865",
+      "rejected": true,
+      "failedChecks": [
+        {
+          "check": "A13_falsy_keyword",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        },
+        {
+          "check": "A13_falsy_keyword",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确",
+            "页码、pageSize、命中总数及总页数正确"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "changes_return_shape",
+      "codeSha256": "4185f9a2240732fcfc3e0a36f25da718d8390a3c617dbb821b65a4567505e3c8",
+      "rejected": true,
+      "failedChecks": [
+        {
+          "check": "L01_default",
+          "frozenInput": false,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "L01_default",
+          "frozenInput": true,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "L02_shrink_last_page",
+          "frozenInput": false,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "L02_shrink_last_page",
+          "frozenInput": true,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "L03_single_result",
+          "frozenInput": false,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "L03_single_result",
+          "frozenInput": true,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "L04_no_matches",
+          "frozenInput": false,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "L04_no_matches",
+          "frozenInput": true,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "L05_middle_page",
+          "frozenInput": false,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "L05_middle_page",
+          "frozenInput": true,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A06_omitted_options",
+          "frozenInput": false,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A06_omitted_options",
+          "frozenInput": true,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A07_empty_rows",
+          "frozenInput": false,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A07_empty_rows",
+          "frozenInput": true,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A08_blank_keyword",
+          "frozenInput": false,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A08_blank_keyword",
+          "frozenInput": true,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A09_exact_active",
+          "frozenInput": false,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A09_exact_active",
+          "frozenInput": true,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A10_input_order",
+          "frozenInput": false,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A10_input_order",
+          "frozenInput": true,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A11_case_insensitive",
+          "frozenInput": false,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A11_case_insensitive",
+          "frozenInput": true,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A12_page_size_one",
+          "frozenInput": false,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A12_page_size_one",
+          "frozenInput": true,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A13_falsy_keyword",
+          "frozenInput": false,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A13_falsy_keyword",
+          "frozenInput": true,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A14_keyword_string_coercion",
+          "frozenInput": false,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A14_keyword_string_coercion",
+          "frozenInput": true,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A15_exact_page_multiple",
+          "frozenInput": false,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A15_exact_page_multiple",
+          "frozenInput": true,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A16_large_page_size",
+          "frozenInput": false,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        },
+        {
+          "check": "A16_large_page_size",
+          "frozenInput": true,
+          "failures": [
+            "保持固定返回字段items/page/pageSize/total/totalPages"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "drops_options_default",
+      "codeSha256": "c91602679ef6208952d0c87412f90d87e8616149ee0dba79fa110f65629f9e37",
+      "rejected": true,
+      "failedChecks": [
+        {
+          "check": "A06_omitted_options",
+          "frozenInput": false,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot read properties of undefined (reading 'keyword')"
+          ]
+        },
+        {
+          "check": "A06_omitted_options",
+          "frozenInput": true,
+          "failures": [
+            "实现未能按原同步函数契约执行：Cannot read properties of undefined (reading 'keyword')"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sorts_filtered_rows",
+      "codeSha256": "0d936c164122ac854c0886edf2592ebd4f0840cdbdb80cdb2eea08ee3c95c899",
+      "rejected": true,
+      "failedChecks": [
+        {
+          "check": "L01_default",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "L01_default",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "L05_middle_page",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "L05_middle_page",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A06_omitted_options",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A06_omitted_options",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A08_blank_keyword",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A08_blank_keyword",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A10_input_order",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A10_input_order",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A13_falsy_keyword",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A13_falsy_keyword",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A15_exact_page_multiple",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A15_exact_page_multiple",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A16_large_page_size",
+          "frozenInput": false,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        },
+        {
+          "check": "A16_large_page_size",
+          "frozenInput": true,
+          "failures": [
+            "筛选后分页返回完整原记录且顺序正确"
+          ]
+        }
+      ]
+    }
+  ],
+  "limits": "检查器自检只证明这些契约错误可以检出；故障fixture不是候选作品，不能计入产品收益或真实模型调用。",
+  "checkedBeforeReadingCandidateWorks": true
+}

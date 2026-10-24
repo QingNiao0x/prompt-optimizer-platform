@@ -46,6 +46,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     private final ObjectReader diagnosticEnhancementReader;
     private final ObjectReader diagnosticPlanningReader;
     private final ObjectReader scopeReader;
+    private final ObjectReader materialPreparationReader;
     private final ObjectReader responseReader;
     private final OpenAiCompatibleProperties properties;
     private final PlatformModelCatalog catalog;
@@ -85,6 +86,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         this.diagnosticEnhancementReader = diagnostics.readerFor(NaturalPromptPhasePayloads.Enhancement.class);
         this.diagnosticPlanningReader = diagnostics.readerFor(NaturalPromptPhasePayloads.Planning.class);
         this.scopeReader = phases.readerFor(NaturalTaskScope.class);
+        this.materialPreparationReader = phases.readerFor(NaturalTaskPreparation.class);
         // 在转为树之前拒绝重复键，避免后一个questions空数组静默覆盖前面真实题目；不改变全局Jackson配置。
         this.responseReader = json.copy().enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY,
                 DeserializationFeature.FAIL_ON_TRAILING_TOKENS).readerFor(JsonNode.class);
@@ -95,6 +97,24 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     @Override
     public <T> T enhance(NaturalPromptInput input, Function<NaturalPromptDraft, T> validation) {
         if (!NaturalPromptInstructions.supports(input.strategyVersion())) throw invalid("自然链路版本不受支持");
+        if (usesAdvisoryScope(input.strategyVersion())) {
+            var prepared = prepareScope(input, "prompt.optimize");
+            // response只描述回应范围，不描述执行就绪度。即使准备错分，也继续依据完整原文写作并校验覆盖。
+            // 最终task由正文阶段统一形成，避免把准备误判强制覆盖回正确的成果及要求。
+            return invoke(input, NaturalPromptInstructions.enhancementInstruction(input.strategyVersion()), "prompt.optimize", null, null, null,
+                    false, prepared.scope(), (body, metadata) -> validation.apply(readEnhancementPhase(body, input, metadata)));
+        }
+        if (NaturalPromptMaterialInstructions.VERSION.equals(input.strategyVersion())) {
+            var prepared = prepareMaterials(input, "prompt.optimize");
+            var task = prepared.preparation();
+            if (task.taskScope().response().basis() != NaturalTaskScope.ResponseBasis.EXPLICIT) {
+                return validation.apply(NaturalPreservedRequest.create(input, task.taskScope(), prepared.metadata()));
+            }
+            // 35不再递归到丢失准备结果的第四版：同一范围和责任记录随完整原输入传给写作阶段。
+            return invoke(input, NaturalPromptMaterialInstructions.ENHANCE, "prompt.optimize", null, null, null,
+                    false, task.taskScope(), task, (body, metadata) -> validation.apply(readEnhancementPhase(
+                            bindMaterialResponsibilities(body, task, input, false), input, metadata)));
+        }
         if (NaturalPromptScopedInstructions.supports(input.strategyVersion())) {
             ScopePreparation prepared = prepareScope(input, "prompt.optimize");
             NaturalTaskScope scope = prepared.scope();
@@ -236,6 +256,17 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     @Override
     public <T> T plan(NaturalPromptInput input, Function<PlanningProviderResponse, T> validation) {
         if (!NaturalPromptInstructions.supports(input.strategyVersion())) throw invalid("自然链路版本不受支持");
+        if (usesAdvisoryScope(input.strategyVersion())) {
+            var prepared = prepareScope(input, "plan.generate");
+            return invoke(input, NaturalPromptInstructions.planningInstruction(input.strategyVersion()), "plan.generate", null, null, null,
+                    false, prepared.scope(), (body, metadata) -> validation.apply(readPlanningPhase(body, input, metadata)));
+        }
+        if (NaturalPromptMaterialInstructions.VERSION.equals(input.strategyVersion())) {
+            var task = prepareMaterials(input, "plan.generate").preparation();
+            return invoke(input, NaturalPromptMaterialInstructions.PLAN, "plan.generate", null, null, null,
+                    false, task.taskScope(), task, (body, metadata) -> validation.apply(readPlanningPhase(
+                            bindMaterialResponsibilities(body, task, input, true), input, metadata)));
+        }
         if (NaturalPromptScopedInstructions.supports(input.strategyVersion())) {
             NaturalTaskScope scope = prepareScope(input, "plan.generate").scope();
             return invoke(input, NaturalPromptInstructions.planningInstruction(input.strategyVersion()), "plan.generate", null, null, null, false, scope,
@@ -258,10 +289,19 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         });
     }
 
-    /** 独立识别范围，复用同一受控传输和逐次计量；语义失败不能当作免费质量重试。 */
+    /** 36—38只将准备结果作为解释候选，正文始终按完整原始输入生成并校验，不硬绑定准备误判。 */
+    private static boolean usesAdvisoryScope(String version) {
+        return NaturalPromptPreparationRoutingInstructions.VERSION.equals(version)
+                || NaturalPromptIntentCompletionInstructions.VERSION.equals(version)
+                || NaturalPromptContentScopeInstructions.VERSION.equals(version);
+    }
+
+    /** 独立识别范围并逐次计量；36—38共用冻结准备指导，当前实验只改变后续正文指导。 */
     private ScopePreparation prepareScope(NaturalPromptInput input, String operation) {
-        String instruction = NaturalPromptExecutionBoundaryInstructions.VERSION.equals(input.strategyVersion())
-                ? NaturalPromptExecutionBoundaryInstructions.PREPARE : NaturalPromptScopedInstructions.PREPARE;
+        String instruction = usesAdvisoryScope(input.strategyVersion())
+                ? NaturalPromptPreparationRoutingInstructions.PREPARE
+                : NaturalPromptExecutionBoundaryInstructions.VERSION.equals(input.strategyVersion())
+                        ? NaturalPromptExecutionBoundaryInstructions.PREPARE : NaturalPromptScopedInstructions.PREPARE;
         return invoke(input, instruction, operation, (body, metadata) -> {
             try {
                 NaturalTaskScope scope = scopeReader.readValue(body);
@@ -274,6 +314,102 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
 
     /** 准备调用的模型身份仍随确定性结果返回；不伪造第二次调用或额外用量。 */
     private record ScopePreparation(NaturalTaskScope scope, ProviderMetadata metadata) { }
+
+    /** 35沿用现有准备次数；新增责任只引用原输入，不加入事实来源或持久化用户资料。 */
+    private MaterialPreparation prepareMaterials(NaturalPromptInput input, String operation) {
+        return invoke(input, NaturalPromptMaterialInstructions.PREPARE, operation, (body, metadata) -> {
+            try {
+                NaturalTaskPreparation task = materialPreparationReader.readValue(body);
+                return new MaterialPreparation(task.resolve(input), metadata);
+            } catch (IOException | IllegalArgumentException failure) {
+                throw invalid("任务范围与执行责任协议无效");
+            }
+        });
+    }
+
+    /** 准备阶段身份随保留原文的结果传递，不伪造后续调用。 */
+    private record MaterialPreparation(NaturalTaskPreparation preparation, ProviderMetadata metadata) { }
+
+    /**
+     * 未决事项只能引用准备中确需用户决定的依赖，执行者工作不能在写作/Plan阶段再转交用户。
+     * 只检查责任引用，不凭分类枚举宣称语义正确；正文要求、真实题答及覆盖仍由阶段校验核对。
+     */
+    private JsonNode bindMaterialResponsibilities(JsonNode body, NaturalTaskPreparation preparation, NaturalPromptInput input, boolean planning) {
+        JsonNode bound = bindScope(body, preparation.taskScope());
+        JsonNode task = bound.path("task");
+        var referenced = new java.util.HashSet<String>();
+        validateDecisionReferences(task.path(planning ? "unaskedDecisions" : "openDecisions"), preparation, input, referenced);
+        if (planning && bound.path("questions").isArray()) {
+            for (JsonNode question : bound.path("questions")) {
+                validateDecisionReferences(question.path("decisionBasis"), preparation, input, referenced);
+            }
+        }
+        if (task.has("resolvedDecisions")) {
+            if (!task.path("resolvedDecisions").isArray()) throw invalid("责任纠正列表无效");
+            var resolved = new java.util.HashSet<String>();
+            for (JsonNode decision : task.path("resolvedDecisions")) {
+                String id = materialDependencyId(decision);
+                // 同一决定不能同时已解决和仍待回答；重复解决也不能掩盖响应记录冲突。
+                if (!resolved.add(id) || referenced.contains(id)) throw invalid("责任纠正状态冲突或重复");
+                var evidence = correctionEvidence(decision, true);
+                preparation.validateResolvedDecision(id, evidence, input);
+                referenced.add(id);
+            }
+            ((com.fasterxml.jackson.databind.node.ObjectNode) task).remove("resolvedDecisions");
+        }
+        // 已识别决定要保留或以原来源显式纠正；不能仅凭模型首阶段分类锁死后续正确理解。
+        if (preparation.dependencies().stream().anyMatch(dependency -> dependency.owner() == NaturalTaskPreparation.Owner.USER_DECISION
+                && !referenced.contains(dependency.id()))) throw invalid("用户决定未完整保留");
+        return bound;
+    }
+
+    /** 校验并消费35专用关联字段，再交给严格旧阶段DTO；未知/执行责任引用不通过静默删字段放行。 */
+    private void validateDecisionReferences(JsonNode entries, NaturalTaskPreparation preparation, NaturalPromptInput input,
+            java.util.Set<String> referenced) {
+        if (!entries.isArray()) throw invalid("未决事项缺少责任列表");
+        for (JsonNode entry : entries) {
+            if (!(entry instanceof com.fasterxml.jackson.databind.node.ObjectNode object)) throw invalid("未决事项缺少责任依据");
+            String id = materialDependencyId(entry);
+            if (entry.has("correction")) {
+                preparation.validateDecisionCorrection(correctionEvidence(entry.path("correction"), false), input);
+                object.remove("correction");
+            } else preparation.validateDecisionReference(id);
+            referenced.add(id);
+            object.remove("dependencyId");
+        }
+    }
+
+    /** 正常引用与纠正引用使用同一编号边界，不能因纠正路径消费字段而跳过容量及凭据校验。 */
+    private String materialDependencyId(JsonNode entry) {
+        JsonNode value = entry.path("dependencyId");
+        if (!value.isTextual() || value.asText().isBlank() || value.asText().length() > 128
+                || new com.promptoptimizer.common.security.SensitiveValueScanner().containsCredential(value.asText())) {
+            throw invalid("执行责任编号无效");
+        }
+        return value.asText();
+    }
+
+    /** 显式纠正必须给出原始用户来源；不能把准备分类当权威，也不接受无依据的新标签。 */
+    private java.util.List<NaturalTaskScope.Evidence> correctionEvidence(JsonNode correction, boolean resolved) {
+        var allowed = resolved ? java.util.Set.of("dependencyId", "reason", "evidence")
+                : java.util.Set.of("reason", "evidence");
+        if (!correction.isObject() || correction.size() != allowed.size() || !correction.path("evidence").isArray()) {
+            throw invalid("责任纠正依据无效");
+        }
+        for (var names = correction.fieldNames(); names.hasNext();) {
+            if (!allowed.contains(names.next())) throw invalid("责任纠正包含未知字段");
+        }
+        String reason = requiredText(correction, "reason");
+        if (reason.length() > 20_000 || new com.promptoptimizer.common.security.SensitiveValueScanner().containsCredential(reason)) {
+            throw invalid("责任纠正说明无效");
+        }
+        try {
+            return json.convertValue(correction.path("evidence"), json.getTypeFactory()
+                    .constructCollectionType(java.util.List.class, NaturalTaskScope.Evidence.class));
+        } catch (IllegalArgumentException failure) {
+            throw invalid("责任纠正出处无效");
+        }
+    }
 
     /**
      * 后续阶段只填写正文/提问及其证据，不重复生成目标和成果；服务端带入同一范围记录。
@@ -338,12 +474,28 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     private <T> T invoke(NaturalPromptInput input, String instruction, String operation,
             NaturalTaskUnderstanding suggestions, NaturalPromptDraft fidelityDraft, NaturalPromptFidelityFindings findings,
             boolean preparation, NaturalTaskScope scope, ResponseReader<T> reader) {
+        return invoke(input, instruction, operation, suggestions, fidelityDraft, findings, preparation, scope, null, reader);
+    }
+
+    /** 35的执行责任与增强可见范围是独立辅助输入，不替换原始资料或建立新来源。 */
+    private <T> T invoke(NaturalPromptInput input, String instruction, String operation,
+            NaturalTaskUnderstanding suggestions, NaturalPromptDraft fidelityDraft, NaturalPromptFidelityFindings findings,
+            boolean preparation, NaturalTaskScope scope, NaturalTaskPreparation materialPreparation, ResponseReader<T> reader) {
         var selection = resolve(input.modelId());
         var route = selection.route();
         String modelVersion = catalog == null ? "" : catalog.resolve(selection.publicModelId()).displayName();
         String user;
         try {
             var payload = json.valueToTree(input);
+            if ((NaturalPromptMaterialInstructions.VERSION.equals(input.strategyVersion())
+                    || usesAdvisoryScope(input.strategyVersion()))
+                    && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode layered) {
+                layered.putObject("inputBoundary").put("stage", "PROMPT_OPTIMIZATION")
+                        .put("contextMeaning", "本次增强可见的材料，不是下游执行现场的完整资料或工具清单");
+                if (materialPreparation != null) {
+                    layered.set("executionResponsibilities", json.valueToTree(materialPreparation.dependencies()));
+                }
+            }
             if (scope != null && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode scoped) {
                 scoped.set("taskScope", json.valueToTree(scope));
             }

@@ -1,0 +1,31 @@
+{
+  "status": "FROZEN",
+  "authorizationQuote": "真实评测自行选择次数",
+  "selectedMaximumActualCalls": 48,
+  "previousClosedActual": 1828,
+  "oldReleasedBalanceTransferred": 0,
+  "baseline": "31",
+  "candidate": "36",
+  "stages": [
+    {
+      "name": "development",
+      "maximum": 24
+    },
+    {
+      "name": "heldout",
+      "maximum": 24
+    }
+  ],
+  "hypothesis": "保留现有taskScope准备但移除response.basis门控和直接透传；正文与Plan依据完整原始输入修正准备误判，取消35资料责任清单并保持执行资料/用户保留决定边界。",
+  "adoptionCriteria": [
+    "工程完成、局部错误修复、候选采用、默认切换分别报告。",
+    "回归先修复并核对正常变体；冻结候选后才能开启独立内部留出，使用同信息作品比较错误与必要修改。",
+    "无新增严重意图/事实/权限违约，并且目标错误和用户修改负担有实际下降才考虑采用；充分需求持平可接受。"
+  ],
+  "stopConditions": [
+    "所有失败、协议修复、增强、Plan、下游作品与评审计数；不做质量重试。",
+    "任务48与两阶段各24同时限制；闭批余额不转用、不重开。",
+    "开发出现未解决严重失败则不打开留出；停止采样后保留默认31，不能把工程通过写成质量通过。"
+  ],
+  "frozenAt": "2026-10-23T18:36:28.893335+00:00"
+}

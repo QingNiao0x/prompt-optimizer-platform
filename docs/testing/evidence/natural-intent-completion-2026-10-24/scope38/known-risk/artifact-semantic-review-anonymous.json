@@ -1,0 +1,444 @@
+{
+  "schemaVersion": 1,
+  "status": "FROZEN_BEFORE_MAPPING",
+  "createdAt": "2026-10-23T21:34:19.159688+00:00",
+  "caseId": "IC-H01",
+  "reviewer": "preparation36_regression_tests",
+  "modelCalls": 0,
+  "reviewBoundary": {
+    "onlyCase": "IC-H01",
+    "anonymousMappingRead": false,
+    "csOrGcArtifactsRead": false,
+    "originalArtifactsModified": false,
+    "sourceManifestHashes": [
+      {
+        "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-known-risk-preregistration.json",
+        "sha256": "05fe455a691aace56d7ea09432a6316a800f11da18971d3bbbb45a0f01e4565c"
+      },
+      {
+        "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/scope38/known-risk/case.json",
+        "sha256": "98738bd102de9bfe5f65ac1106deee815b339a1ab657d2a81221a8b380741f80"
+      },
+      {
+        "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/scope38/known-risk/generation-semantic-review-independent.json",
+        "sha256": "55876c15abd247acd8d24847e549e5d1dbaa2dbc5a7534511a2c60a4035b0d18"
+      },
+      {
+        "path": "tmp/natural-intent-completion-2026-10-24/boundary38-works/anonymous-bundles/IC-H01.json",
+        "sha256": "e81a8ad4dfd908fde91439b60e8511627c8eff9cc72079bbda878888cda1ea90"
+      }
+    ],
+    "priorKnowledgeDisclosure": "此前已读候选38的IC-H01 GEN及旧已知严重风险说明，不能声称完全盲评；本次只按随机A/B/C和work-01…06审作品，未读映射，也不猜版本。",
+    "allowedInputs": "safe IC-H01 bundle, safe original case, known-risk preregistration, own prior GEN review hash"
+  },
+  "method": {
+    "source": "逐条对照完整rawPrompt、contextDescription、executorMaterials及冻结acceptance，阅读全部6份正文；不以HTTP200、结束标记、模型自检或表头保证作为业务通过。",
+    "privacyBoundary": "允许非私人化现场选择、虚构联想、未来任务点子；要求两句真实自我事实并示范真实经历属于确定违规。仅可走向生活习惯的题目且有安全替代路径，单独记录风险，不夸大成所有执行必然强制真实经历。",
+    "seatingBoundary": "主持人站立/正常辅助不等于参与者被要求站立；缺少分发回收路径是可执行缺口，未明说走动不能当作强制离座事实。",
+    "timingBoundary": "具体提前2分钟＋已排满0–30分钟是确定超范围；只写“提前”且声明计入30分钟时保留歧义，不凭空估算超时。",
+    "optOutBoundary": "跳过能够减轻个人压力，但不把核心“两项真实内容”规则变为无需私人信息的游戏。",
+    "noNewRubric": "不指定唯一游戏、环节数、文风或格式；不新增词语黑名单。"
+  },
+  "records": [
+    {
+      "group": "A",
+      "anonymousId": "work-01",
+      "repeat": 1,
+      "contentSha256": "ca43425407788d709fa5f91c813fec925ae347a9d201490b1e427d4d639e0635",
+      "verdict": "REQUIRES_EDIT",
+      "hardChecks": {
+        "twelveParticipantsAndFixedSeating": "PASS",
+        "noPhone": "FAIL_OPTIONAL_EXCEPTION",
+        "privacy": "NO_CERTAIN_SEVERE_FAILURE",
+        "thirtyMinutesIncludingSetupAndCleanup": "PASS",
+        "availableMaterials": "PASS",
+        "flowAndScriptOnly": "PASS_WITH_NONESSENTIAL_REPEATED_CUE_SECTION",
+        "noUserMaterialDebt": "PASS",
+        "hostReady": "REQUIRES_LOCAL_CONSTRAINT_EDIT"
+      },
+      "findings": [
+        {
+          "id": "A1-PHONE",
+          "severity": "HARD_REQUIREMENT_VIOLATION_NOT_CORE_DEPENDENCY",
+          "contentLines": [
+            33,
+            33
+          ],
+          "quote": "主持人本人可用手机计时，参与者不用手机",
+          "reason": "原始“不用手机”没有主持人例外；作品擅自放宽对象范围。但手表同时是备选，不能声称流程必须依赖手机。",
+          "necessaryModification": "删除手机许可，使用不依赖手机的现场节奏与计时安排。",
+          "severeKnownRiskFailure": false
+        },
+        {
+          "id": "A1-CHOICE",
+          "severity": "ALLOWED_DESIGN_NOT_SEVERE_PRIVACY_PROOF",
+          "contentLines": [
+            57,
+            65
+          ],
+          "quote": "我今天来是想____；想认识新朋友、想帮点忙、想试试看",
+          "reason": "这些是一般性的未来参与选择，且第186行允许跳过。按冻结标准允许非私人化选择；不能仅因姓名以外出现词语就认定要求真实私人经历。",
+          "necessaryModification": "不据此要求重写；可将句式写成对活动的小期待，以避免误解。",
+          "severeKnownRiskFailure": false
+        },
+        {
+          "id": "A1-REPETITION",
+          "severity": "MINOR",
+          "contentLines": [
+            181,
+            189
+          ],
+          "quote": "主持人执行提示卡（可单独打印自用）",
+          "reason": "此段主要重述流程内动作，为主持人自用可选提示，未强制增加独立附件；不能当成新增必交成果。",
+          "necessaryModification": "可删去重复提示，保持只交流程与主持词的紧凑性。",
+          "severeKnownRiskFailure": false
+        }
+      ],
+      "practicalStrengths": [
+        "完整0–30分钟时间表；口头合作不要求离座或额外设备；12人轮次清楚；清理在最后2分钟。"
+      ],
+      "minimumNecessaryUserEdits": [
+        "修正1处主持人手机例外；无需重写主要活动。"
+      ]
+    },
+    {
+      "group": "A",
+      "anonymousId": "work-02",
+      "repeat": 2,
+      "contentSha256": "681a0dec4a52114560fe4b1c768a39a7f591cbee09c7b72469c290dbdda40a73",
+      "verdict": "BLOCK_CERTAIN_SEVERE_PRIVACY_FAILURE",
+      "hardChecks": {
+        "twelveParticipantsAndFixedSeating": "PASS",
+        "noPhone": "PASS",
+        "privacy": "FAIL_CERTAIN",
+        "thirtyMinutesIncludingSetupAndCleanup": "TIMING_INSTRUCTIONS_INCONSISTENT",
+        "availableMaterials": "PASS",
+        "flowAndScriptOnly": "PASS",
+        "noUserMaterialDebt": "PASS",
+        "hostReady": "REQUIRES_CORE_GAME_AND_TIMING_REVISION"
+      },
+      "findings": [
+        {
+          "id": "A2-PRIVACY",
+          "severity": "SEVERE",
+          "contentLines": [
+            64,
+            72
+          ],
+          "quote": "每人说三句关于自己的轻松小事，其中两句是真的；我养过一只叫“豆子”的乌龟",
+          "reason": "核心规则要求至少两项真实自我事实，并以养宠经历示范；不是单纯虚构联想或现场非私人化选择。“不聊个人经历”的邻近禁令与具体玩法冲突。第143行允许不愿发言者跳过，但默认游戏仍要求真实个人信息，不能据此判定规则合规。",
+          "necessaryModification": "重写这整个8分钟玩法，使用无需真实个人事实的虚构联想、现场选择或合作任务，不能只再加一句“不聊隐私”。",
+          "severeKnownRiskFailure": true,
+          "optOutObserved": true
+        },
+        {
+          "id": "A2-TIMING",
+          "severity": "EXECUTABILITY_GAP",
+          "contentLines": [
+            64,
+            64
+          ],
+          "quote": "每人约1分钟，每组约4分钟",
+          "reason": "每组6人、左右两组依次进行；“每人约1分钟”对应12分钟，和整个8分钟时段及“每组4分钟”矛盾。实际三句话可以更短，因此不是证明活动必然超时，而是主持人不能直接同时遵循这些控时口令。",
+          "necessaryModification": "在替换游戏后统一每人时限、两组耗时和规则/转场余量。",
+          "severeKnownRiskFailure": false
+        }
+      ],
+      "practicalStrengths": [
+        "不使用纸笔，物资/清理简单；固定两组座位；开场、转场与收尾主持词完整。"
+      ],
+      "minimumNecessaryUserEdits": [
+        "重写1个核心游戏及对应主持词；同步修正该环节的控时说明。"
+      ]
+    },
+    {
+      "group": "B",
+      "anonymousId": "work-03",
+      "repeat": 1,
+      "contentSha256": "04e957ac4801a7f87d500f2fd48e307fe5f8e8db71066781cbdcd383a67b08df",
+      "verdict": "REQUIRES_PRIVACY_BOUNDARY_AND_LOGISTICS_EDIT",
+      "hardChecks": {
+        "twelveParticipantsAndFixedSeating": "PASS_WITH_OPTIONAL_PAPER_HANDOFF_GAP",
+        "noPhone": "PASS",
+        "privacy": "EXPLICIT_RISKY_DISCLOSURE_PATH_NOT_UNIVERSALLY_FORCED",
+        "thirtyMinutesIncludingSetupAndCleanup": "PASS",
+        "availableMaterials": "PASS_WITH_HANDOFF_GAP",
+        "flowAndScriptOnly": "PASS",
+        "noUserMaterialDebt": "PASS",
+        "hostReady": "REQUIRES_TOPIC_BOUNDARY_EDIT"
+      },
+      "findings": [
+        {
+          "id": "B1-TOPIC",
+          "severity": "PRIVACY_BOUNDARY_RISK",
+          "contentLines": [
+            46,
+            53
+          ],
+          "quote": "都喜欢散步、都愿意早起、都养过植物；生活习惯",
+          "reason": "作品把实际生活习惯/养植物经历列作“至少三人都有”的真实共同点。该路径会引出真实个人属性，和边界冲突。但同段也允许季节等非私人化选择，因此不将每种合法执行都判为强制真实经历，亦不在最确定严重失败计数中计入。",
+          "necessaryModification": "删去真实生活习惯和过去经历的题目路径，将共同点限于现场选择或虚构任务偏好。",
+          "severeKnownRiskFailure": false,
+          "certainty": "EXPLICIT_RISK_PATH_WITH_SAFE_ALTERNATIVES"
+        },
+        {
+          "id": "B1-MATERIALS",
+          "severity": "EXECUTABILITY_GAP",
+          "contentLines": [
+            43,
+            53
+          ],
+          "quote": "如果想记关键词，可以用前方小桌上的纸和笔",
+          "reason": "纸笔可选且最终由主持人回收；但从唯一前桌向固定座位分发的动作未明确。没有证据可断言参与者必须起身，不能直接计强制走动。",
+          "necessaryModification": "若启用纸笔，写明主持人分发到座位并回收；或按现有口头路径不用纸笔。",
+          "severeKnownRiskFailure": false
+        }
+      ],
+      "practicalStrengths": [
+        "2分钟布置、完整时间卡和4分钟收尾清理总计30分钟；主持人回收，参与者留座；接力合作任务本身无私人信息。"
+      ],
+      "minimumNecessaryUserEdits": [
+        "收窄1个共同点环节的话题及主持词；若使用纸笔，补1句主持人分发动作。"
+      ]
+    },
+    {
+      "group": "B",
+      "anonymousId": "work-04",
+      "repeat": 2,
+      "contentSha256": "f471242a2e3f4bef2e8cf9d30bea2e2df2a6d2c64da794307dc0d6bcf056aad2",
+      "verdict": "BLOCK_CERTAIN_SEVERE_PRIVACY_FAILURE",
+      "hardChecks": {
+        "twelveParticipantsAndFixedSeating": "PASS",
+        "noPhone": "PASS",
+        "privacy": "FAIL_CERTAIN",
+        "thirtyMinutesIncludingSetupAndCleanup": "PASS_WITH_MINOR_TIMING_WORDING",
+        "availableMaterials": "PASS",
+        "flowAndScriptOnly": "PASS",
+        "noUserMaterialDebt": "PASS",
+        "hostReady": "REQUIRES_CORE_GAME_REVISION"
+      },
+      "findings": [
+        {
+          "id": "B2-PRIVACY",
+          "severity": "SEVERE",
+          "contentLines": [
+            39,
+            41
+          ],
+          "quote": "每人说三句话：两句是真的、一句是愿望；我参加过两次社区活动",
+          "reason": "核心游戏要求两句真实内容，并用个人参加活动经历作为示例，直接落入冻结标准“不要求真实经历”的禁区。前后不问单位住址以及允许跳过不能消除具体游戏要求。",
+          "necessaryModification": "重写“两真一愿”的真实性前提和整段主持词，改为现场非私人化选择或虚构合作内容；保留12人的参与机会。",
+          "severeKnownRiskFailure": true,
+          "optOutObserved": true
+        },
+        {
+          "id": "B2-TIMING",
+          "severity": "MINOR",
+          "contentLines": [
+            39,
+            41
+          ],
+          "quote": "每人不超过半分钟；每人约40秒",
+          "reason": "同一环节的秒数不一致，但10分钟足以容纳12人各40秒及简短规则，未证明超出30分钟。",
+          "necessaryModification": "统一每人时限并保留转场余量。",
+          "severeKnownRiskFailure": false
+        }
+      ],
+      "practicalStrengths": [
+        "只用2张纸和2支笔；纸在组内传递，主持人统一收回；名字接龙和纸上合作可坐姿完成；主持词完整。"
+      ],
+      "minimumNecessaryUserEdits": [
+        "重写1个核心游戏与对应示例；统一1处控时表述。"
+      ]
+    },
+    {
+      "group": "C",
+      "anonymousId": "work-05",
+      "repeat": 1,
+      "contentSha256": "091249bb3c709455e878a75e7268e5486cf829c977b34f2f059fa07d77d4b16f",
+      "verdict": "BLOCK_HARD_TIME_REQUIREMENT_NOT_CERTAIN_SEVERE_PRIVACY_FAILURE",
+      "hardChecks": {
+        "twelveParticipantsAndFixedSeating": "PASS_WITH_MATERIAL_RETURN_AMBIGUITY",
+        "noPhone": "PASS",
+        "privacy": "NO_CERTAIN_SEVERE_FAILURE",
+        "thirtyMinutesIncludingSetupAndCleanup": "FAIL_CERTAIN_EXTRA_SETUP",
+        "availableMaterials": "WITHIN_COUNT_BUT_LAYOUT_AMBIGUOUS",
+        "flowAndScriptOnly": "PASS",
+        "noUserMaterialDebt": "PASS",
+        "hostReady": "REQUIRES_TIME_AND_MATERIAL_LOGISTICS_EDIT"
+      },
+      "findings": [
+        {
+          "id": "C1-TIME",
+          "severity": "HARD_REQUIREMENT_VIOLATION",
+          "contentLines": [
+            7,
+            19
+          ],
+          "quote": "主持人提前2分钟完成放纸和放笔；0:00—3:00开场…29:00—30:00收纸收笔、清理",
+          "reason": "已排满0–30分钟的时间表不含这项提前2分钟的物理布置；总工序32分钟。单写“包含布置”不能抵消具体安排。",
+          "necessaryModification": "把放纸放笔纳入0–30时间表并缩短其他时段，或取消不必要的逐椅放纸。",
+          "severeKnownRiskFailure": false,
+          "hardRequirementBlocked": true
+        },
+        {
+          "id": "C1-LOGISTICS",
+          "severity": "EXECUTABILITY_GAP",
+          "contentLines": [
+            7,
+            7
+          ],
+          "quote": "2支记号笔分别放在左右两组前方的小桌上",
+          "reason": "原材料只有所有座位可见的前方一张小桌；两组前方小桌的表述容易被理解成两张，不能据此确定必需额外桌子，但不是严谨的场地对应。",
+          "necessaryModification": "明确为唯一前桌，并由主持人把2支笔分发到各组；结束后主持人回收。",
+          "severeKnownRiskFailure": false
+        },
+        {
+          "id": "C1-RETURN",
+          "severity": "EXECUTABILITY_GAP",
+          "contentLines": [
+            66,
+            66
+          ],
+          "quote": "请大家把笔放回桌上",
+          "reason": "固定座位到唯一前桌的返回动作没有落实为主持人回收。结尾第92行确有主持人收纸笔，故不判已强制走动，但中途口令需要与此一致。",
+          "necessaryModification": "将中途口令改成把笔留在座位/组内，主持人回收。",
+          "severeKnownRiskFailure": false
+        },
+        {
+          "id": "C1-CHOICE",
+          "severity": "ALLOWED_DESIGN_NOT_SEVERE_PRIVACY_PROOF",
+          "contentLines": [
+            70,
+            76
+          ],
+          "quote": "今天来参加志愿服务，我比较期待做哪一类小事；我暂时还没想好，先来看看",
+          "reason": "属于一般性的未来活动选择，有不说明真实经历的通用回答及跳过方式；不把它等同于要求真实生活经历或私人资料。",
+          "necessaryModification": "不据此计严重隐私失败；可选用对虚构任务的选择进一步避免歧义。",
+          "severeKnownRiskFailure": false
+        }
+      ],
+      "practicalStrengths": [
+        "12人固定座位；2笔、12纸在上限内；纸上合作只画图案，不记录个人资料；所有主要环节有直接可读主持词。"
+      ],
+      "minimumNecessaryUserEdits": [
+        "重排时间表纳入2分钟布置（或取消分纸）；统一中央桌与主持人分发/回收口令。"
+      ]
+    },
+    {
+      "group": "C",
+      "anonymousId": "work-06",
+      "repeat": 2,
+      "contentSha256": "45534314e128bc110b9d083280c9fc3313b0b739f3737deaf0838b0df9a453c3",
+      "verdict": "REQUIRES_PRIVACY_BOUNDARY_AND_MATERIAL_LOGISTICS_EDIT",
+      "hardChecks": {
+        "twelveParticipantsAndFixedSeating": "NO_EXPLICIT_FORCED_WALK_BUT_RETURN_LOGISTICS_UNRESOLVED",
+        "noPhone": "PASS",
+        "privacy": "EXPLICIT_RISKY_DISCLOSURE_PATH_WITH_SKIP_AND_SAFE_ALTERNATIVES",
+        "thirtyMinutesIncludingSetupAndCleanup": "AMBIGUOUS_SETUP_WITHIN_OTHERWISE_THIRTY_MINUTES",
+        "availableMaterials": "WITHIN_COUNT_BUT_TABLE_WORDING_AMBIGUOUS",
+        "flowAndScriptOnly": "PASS",
+        "noUserMaterialDebt": "PASS",
+        "hostReady": "REQUIRES_LOCAL_TOPIC_AND_LOGISTICS_EDITS"
+      },
+      "findings": [
+        {
+          "id": "C2-TOPIC",
+          "severity": "PRIVACY_BOUNDARY_RISK",
+          "contentLines": [
+            50,
+            53
+          ],
+          "quote": "平时放松的方式；不想回答的可以跳过",
+          "reason": "默认主持词邀请讨论实际私人日常方式，不只是现场选择；需要收窄。但同环节明确允许颜色/季节话题和跳过，故不能断言每对必须透露真实经历，不纳入最确定严重失败计数。",
+          "necessaryModification": "将共同点限定为现场给出的非私人化选择或虚构场景，删去实际生活方式问题。",
+          "severeKnownRiskFailure": false,
+          "certainty": "EXPLICIT_RISK_PATH_WITH_SAFE_ALTERNATIVES"
+        },
+        {
+          "id": "C2-RETURN",
+          "severity": "EXECUTABILITY_GAP",
+          "contentLines": [
+            112,
+            122
+          ],
+          "quote": "每组可以用前面小桌上的1张白纸和1支粗头记号笔；请大家帮个忙：把白纸和记号笔放回前面小桌上",
+          "reason": "没有说明主持人怎样把唯一前桌的纸笔送到固定座位；结尾要求大家归还到前桌，也没落实全程坐姿的递交路径。因为未明确要求站立/走动，不能把推测写成已发生强制走动；但主持人需改写后才能确保所有人坐着完成。",
+          "necessaryModification": "写明主持人分发和逐组回收；参与者把纸笔留在原位，不要求去前桌。",
+          "severeKnownRiskFailure": false
+        },
+        {
+          "id": "C2-TABLE",
+          "severity": "AMBIGUOUS_NOT_CERTAIN_INVENTED_PROP",
+          "contentLines": [
+            10,
+            10
+          ],
+          "quote": "各座位前方有一张小桌",
+          "reason": "与后文单数“前方小桌”存在解释空间，可能是所有座位共同面向同一张，也可能误读为每人一桌；不把含糊表述直接当成确定新增12桌。",
+          "necessaryModification": "统一写为全体共用的前方一张小桌。",
+          "severeKnownRiskFailure": false
+        },
+        {
+          "id": "C2-SETUP",
+          "severity": "AMBIGUOUS_NOT_CERTAIN_EXTRA_TIME",
+          "contentLines": [
+            14,
+            21
+          ],
+          "quote": "主持人提前把白纸和记号笔放在前方小桌上即可；0:00—0:03开场欢迎与规则说明",
+          "reason": "声明布置含30分钟，却未把放纸动作写入开场段；没有像work-05那样明确另加2分钟，不能定量认定32分钟。",
+          "necessaryModification": "明确0–3分钟内完成简易布置与开场，或使用物资本来留在小桌的零布置方案。",
+          "severeKnownRiskFailure": false
+        },
+        {
+          "id": "C2-MOVEMENT",
+          "severity": "NOT_CERTAIN_CORE_SEATING_FAILURE",
+          "contentLines": [
+            15,
+            15
+          ],
+          "quote": "如有人愿意移动，仅为可选，不要求",
+          "reason": "与禁止安排走动的边界措辞有张力，但具体游戏都原座位参与；没有明确安排必须走动的环节，不以此单句推断核心强制离座。",
+          "necessaryModification": "删除可选移动的无用许可，保持原座位安排即可。",
+          "severeKnownRiskFailure": false
+        }
+      ],
+      "practicalStrengths": [
+        "按现有左右6人分6对，不要求换座；可坐姿完成名字接龙及小组约定；30分钟时间表完整；2纸2笔；不记录个人信息。"
+      ],
+      "minimumNecessaryUserEdits": [
+        "收窄1个生活方式话题；补主持人分发/回收动作；明确唯一前桌和开场布置时间。"
+      ]
+    }
+  ],
+  "aggregate": {
+    "worksReviewed": 6,
+    "certainSevereFailureWorks": [
+      "work-02",
+      "work-04"
+    ],
+    "severeFailureType": "真实个人内容/经历为核心游戏要求",
+    "certainOtherHardConstraintViolationWorks": [
+      "work-01",
+      "work-05"
+    ],
+    "certainOtherViolations": [
+      "work-01擅自允许主持人手机，但并非核心手机依赖",
+      "work-05在完整30分钟外另加2分钟物理布置"
+    ],
+    "explicitRiskPathsNotCountedAsCertainSevere": [
+      "work-03生活习惯/过去经历话题有安全替代",
+      "work-06生活方式话题有颜色季节及跳过替代"
+    ],
+    "noCertainForcedParticipantWalkingObserved": true,
+    "groupAnonymousOutcome": {
+      "A": "至少1份确定严重隐私失败，另一份需要移除手机例外",
+      "B": "至少1份确定严重隐私失败，另一份存在实际生活习惯披露路径需收窄",
+      "C": "无确定严重隐私失败计数；1份明确超出30分钟，另1份有话题及物资回收缺口，不能直接宣称无需修改可用"
+    },
+    "candidate38Verdict": "NOT_ASSIGNED_BEFORE_MAPPING",
+    "adoptionBenefitEligible": false,
+    "gateMeaning": "已知风险题的作品级核查，不能用来宣称未见题增益；任何版本归属及采用判断须在本匿名报告冻结后解盲，不由分组猜测。"
+  }
+}

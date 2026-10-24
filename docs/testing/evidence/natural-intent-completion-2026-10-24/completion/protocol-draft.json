@@ -1,0 +1,142 @@
+{
+  "batch": "natural-intent-completion-cold-gap-2026-10-24",
+  "status": "DRAFT",
+  "authorizationQuote": "用户自主次数授权总128内，事前登记专项32，从已关闭阶段释放预留重分配。",
+  "taskMaximumActualCalls": 128,
+  "taskPreviouslyActual": 66,
+  "maximumNewActualCalls": 32,
+  "previousClosedActualCalls": 1848,
+  "oldClosedBalanceTransferred": 0,
+  "baselineVersion": "31",
+  "candidateVersions": [
+    "37"
+  ],
+  "versions": [
+    "31",
+    "37"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 12,
+    "PLAN": 0,
+    "EXECUTION": 20,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 8,
+    "PLAN": 0,
+    "EXECUTION": 12,
+    "REVIEW": 0
+  },
+  "generation": [
+    "GC-H01",
+    "GC-H02"
+  ],
+  "regressionGeneration": [],
+  "plan": [],
+  "confirmedPlanGeneration": [],
+  "execution": [
+    "GC-H01",
+    "GC-H02"
+  ],
+  "executionRepeats": 2,
+  "executionIncludeOriginal": true,
+  "confirmationMode": "PER_VERSION",
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "37": [
+      "37"
+    ]
+  },
+  "allowedJobs": [
+    "GC-H01_V31_GEN",
+    "GC-H01_V37_GEN",
+    "GC-H01_ORIGINAL_EXEC_R1",
+    "GC-H01_ORIGINAL_EXEC_R2",
+    "GC-H01_V31_EXEC_R1",
+    "GC-H01_V31_EXEC_R2",
+    "GC-H01_V37_EXEC_R1",
+    "GC-H01_V37_EXEC_R2",
+    "GC-H02_V31_GEN",
+    "GC-H02_V37_GEN",
+    "GC-H02_ORIGINAL_EXEC_R1",
+    "GC-H02_ORIGINAL_EXEC_R2",
+    "GC-H02_V31_EXEC_R1",
+    "GC-H02_V31_EXEC_R2",
+    "GC-H02_V37_EXEC_R1",
+    "GC-H02_V37_EXEC_R2"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "order": "先四个增强逻辑作业，暂停语义审查；generation-semantic-gate PASS后才执行十二份作品。",
+  "informationPolicy": "增强仅见原始提示词、普通context与实际绑定答复，不见executorMaterials或评分卡。ORIGINAL/31/37执行逐字接收相同普通背景和executorMaterials；复用作品必须核对完整原件、同题资料及模型参数。评分卡仅供内部逐源复核，本阶段REVIEW=0，不调用模型评审。增强阶段未附资料不等于执行阶段没有资料。",
+  "criteria": [
+    "两题全部使用，31/37增强后暂停独立语义审查；PASS才执行原始/31/37各两份作品。",
+    "两题都必须在两次重复中相对31有清楚实质收益，原始无严重退步，方可支持补全收益与采用；仅一题收益只算局部发现。",
+    "主四题结论独立保留，不用专项抵消严重退步或回算主实验通过；充分需求持平不计收益。"
+  ],
+  "stopConditions": [
+    "任务128次、本专项32次及GEN12/EXEC20同时执行；失败、协议修复计数，不做质量重试。",
+    "相同失败假设不靠更换版本号、同义指令或重复采样续跑；出现严重退步先定位责任与依据。",
+    "已关闭任务或阶段不得重新执行；是否采用独立根据目标收益与严重退步判断。"
+  ],
+  "reviews": [],
+  "reviewSystem": "",
+  "generationVersions": [
+    "31",
+    "37"
+  ],
+  "planVersions": [
+    "31",
+    "37"
+  ],
+  "executionArms": [
+    "ORIGINAL",
+    "V31",
+    "V37"
+  ],
+  "draftNotes": [
+    "独立冷作者未见代码、候选、旧题或输出；题面在专项假设和阈值冻结后才打开。",
+    "正常20调用，硬上限32，不以用满为目标；37不因新题改变。"
+  ],
+  "generationVersionsByCase": {
+    "GC-H01": [
+      "31",
+      "37"
+    ],
+    "GC-H02": [
+      "31",
+      "37"
+    ]
+  },
+  "prerequisiteStages": [
+    "regression"
+  ],
+  "preparationInstructionClass": "com.promptoptimizer.provider.domain.NaturalPromptIntentCompletionInstructions",
+  "requiredGenerationVersionsByCase": {
+    "GC-H01": [
+      "31",
+      "37"
+    ],
+    "GC-H02": [
+      "31",
+      "37"
+    ]
+  },
+  "adoptionCriteriaRef": "../completion-preregistration.json",
+  "freezeRevision": 2,
+  "budgetAllocationRef": "../budget-reallocation-completion.json"
+}

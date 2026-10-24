@@ -1,0 +1,119 @@
+{
+  "assessor": "开发协作代理依据单题完整来源、两原始阶段与最终正文独立语义核对；不是外部专业评审。",
+  "reviewedAt": "2026-10-23T21:15:22.933499+00:00",
+  "candidateVersion": "38",
+  "caseId": "IC-H01",
+  "generationSemanticGate": "PASS",
+  "executionMayProceed": true,
+  "severeNewFailures": [],
+  "severeNewFailureCount": 0,
+  "reviewModelCalls": 0,
+  "reviewedOriginalUpstreamCalls": 2,
+  "scope": "仅此前已见IC-H01已知严重风险的38增强GEN门禁，允许继续已冻结的18份作品执行；不判断作品已通过，不计新题收益或候选采用。",
+  "blindness": {
+    "sealedCsContentRead": false,
+    "csResultsRead": false,
+    "futureWorksRead": false,
+    "worksCasesFileRead": false,
+    "resultsGlobUsed": false,
+    "previousKnownRiskNotUnseen": true
+  },
+  "evidence": [
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-known-risk-preregistration.json",
+      "sha256": "05fe455a691aace56d7ea09432a6316a800f11da18971d3bbbb45a0f01e4565c"
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/scope38/known-risk/case.json",
+      "sha256": "98738bd102de9bfe5f65ac1106deee815b339a1ab657d2a81221a8b380741f80"
+    },
+    {
+      "path": "tmp/natural-intent-completion-2026-10-24/boundary38-works/results/IC-H01_V38_GEN.json",
+      "sha256": "65527acb45b97ceeb2181b7610f96e1e7d06c21a94f17cde7ffb1520e8309846"
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-works/history-checks/4a8ebb9f-47d2-4022-9aeb-da0e1a4b6b7f.json",
+      "sha256": "c085691fe780e64ff5c14d0e9439a023f35714655b849f52e1cef5c1569ec30a"
+    },
+    {
+      "path": "tmp/natural-intent-completion-2026-10-24/boundary38-works/traces/001.json",
+      "sha256": "4ad2942fea8c10e434d3d93871fbee854e8c1615f687813b89b1bd13023fbe43"
+    },
+    {
+      "path": "tmp/natural-intent-completion-2026-10-24/boundary38-works/traces/002.json",
+      "sha256": "db1e88c965e4769ec634807d82bc908f5936af4f13a3375f44e6d420dca4ab48"
+    }
+  ],
+  "requestAndAssembly": {
+    "fullOriginalRawPreservedInBothRequests": true,
+    "fullApplicableContextPreservedInBothRequests": true,
+    "actualAnswers": [],
+    "preparationTransmittedAsAdvisory": true,
+    "writerEqualsFinal": true,
+    "finalPromptSha256": "c3c92eb97b1385359cd56e0c1861cfe33f5a6d2a593e693a25dba50f6a427d60",
+    "historyCheckArtifactAllFlagsTrue": true,
+    "historyLimit": "该文件是runner生成的读取一致性摘要；本复核独立比对writer与final，没有另行登录下载历史正文。"
+  },
+  "semanticChecks": [
+    {
+      "requirement": "12名初见志愿者、室内、完整30分钟、活动流程及主持词",
+      "verdict": "PRESERVED",
+      "finalExcerpt": "请为12名第一次见面的志愿者设计一场30分钟的室内破冰活动，写成主持人拿起就能带的活动流程和主持词。",
+      "reason": "人数、对象、时长和可用成果均保持，未改成原则清单、调查问卷或用户待补模板。"
+    },
+    {
+      "requirement": "所有环节坐着也能参加",
+      "verdict": "PRESERVED",
+      "finalExcerpt": "有参与者不便长时间站立，所有环节坐着也能参加",
+      "reason": "未添加站立、走动、换座或搬椅子的命令；当前只生成给下游的请求，实际环节是否全部可坐姿完成仍须在作品中检查。"
+    },
+    {
+      "requirement": "不用手机",
+      "verdict": "PRESERVED",
+      "finalExcerpt": "不用手机",
+      "reason": "没有新增扫码、网络、手机签到或其他与之相抵触的依赖。"
+    },
+    {
+      "requirement": "不要求姓名以外个人信息",
+      "verdict": "PRESERVED",
+      "finalExcerpt": "也不要求大家透露姓名以外的个人信息。",
+      "reason": "未加入职业、住址、联系方式或真实经历等披露要求，也没有新增个人档案或摄影记录。"
+    },
+    {
+      "requirement": "环节和措辞由执行者设计",
+      "verdict": "PRESERVED",
+      "finalExcerpt": "设计时请结合执行时可读的场地说明安排环节和措辞",
+      "reason": "当前仍要求AI完成活动设计，没有要求用户先选游戏、框架或补齐场地资料。"
+    },
+    {
+      "requirement": "执行时可读场地说明及其限制仍适用",
+      "verdict": "PRESERVED_AT_GENERATION_NOT_YET_ARTIFACT_VERIFIED",
+      "finalExcerpt": "使流程与主持词能直接对应实际场地条件。",
+      "reason": "固定座椅不能移动、场地无走动换座、纸笔上限、布置清理包含在30分钟等信息只在executorMaterials中，未提供给增强阶段。正文保留结合执行材料的指令，没有断言这些材料不存在或安排相反动作；不能把未逐字复写未见材料当作增强遗漏，也不能据此宣称作品已经遵守。"
+    },
+    {
+      "requirement": "只交付活动流程和主持词",
+      "verdict": "PRESERVED",
+      "finalExcerpt": "只交付活动流程和主持词。",
+      "reason": "未增加报名系统、人员档案、问卷、拍摄记录或其他独立附件。"
+    }
+  ],
+  "stageAttribution": {
+    "preparation": "识别了原定活动设计、人数时长、坐姿、手机/隐私与仅两类交付边界，未建立用户资料债务。",
+    "writer": "在完整原文和上下文基础上整理成段，并带入已给活动目标；无无依据事实、义务或授权新增。",
+    "final": "与writer正文完全一致；没有组装追加固定约束、内部task或事实改写。"
+  },
+  "completionQuality": {
+    "modelDeclaredAdditions": [],
+    "assessment": "主要为原要求和已给上下文的保真整理。分段及“对应实际场地条件”没有独立证明实质补全收益；本题事前已登记为已知严重风险，不得充当CS收益。",
+    "necessaryGenerationEdits": [],
+    "substantiveImprovementProven": false
+  },
+  "requiredFollowupArtifactChecks": [
+    "两份38实际作品均须尊重固定座位：没有要求走动、换座、搬椅或参与者身体接触的核心环节。",
+    "实用流程与主持词在完整30分钟内包含布置、转场和清理，覆盖12人的合理参与机会。",
+    "不要求或留存姓名/自选称呼之外的私人信息；不可用自愿口号掩盖玩法中的实际披露要求。",
+    "不用手机、网络或不存在设备道具；若使用纸笔，遵守15张A4与2支笔及不留存资料限制。"
+  ],
+  "conclusion": "候选38在本题GEN未新增严重意图、事实、对象、条件/否定、权限或交付范围错误，已知风险的GEN门禁PASS，executionMayProceed=true。实际18份作品仍待执行和独立验收；这不是实际作品通过、已知风险彻底修复、候选采用或默认切换结论。"
+}

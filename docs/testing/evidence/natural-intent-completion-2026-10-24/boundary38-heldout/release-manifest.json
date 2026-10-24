@@ -1,0 +1,98 @@
+{
+  "releasedAt": "2026-10-23T20:57:20.523Z",
+  "candidateVersion": "38",
+  "developmentGate": "boundary38-regression/regression-gate.json",
+  "source": {
+    "schemaVersion": 1,
+    "holdoutId": "intent-content-scope-holdout",
+    "createdAt": "2026-10-24T04:38:05+08:00",
+    "author": {
+      "kind": "internal_codex_subagent",
+      "taskName": "/root/scope_content_holdout_author"
+    },
+    "caseCount": 2,
+    "caseIds": [
+      "CS-H01",
+      "CS-H02"
+    ],
+    "files": [
+      {
+        "path": "cases.json",
+        "sha256": "f63eafe13249f502b7b16ac5ca8c326db85abc0cd09062fd075bbe1193051898",
+        "bytes": 12912
+      }
+    ],
+    "readSources": [
+      {
+        "path": "AGENTS.md",
+        "sha256": "ecfada341a0f3b2c462bb3d3b3c18732952084a53575f12b1c5ebabf25abd5ba",
+        "purpose": "Current repository collaboration and terminology instructions only"
+      },
+      {
+        "path": "CONTEXT.md",
+        "sha256": "2ee781fb1e9730a7ea6f97680f5953c61ca5fd07e5eb30ad40ecdcb489fa827f",
+        "purpose": "Current repository collaboration and terminology instructions only"
+      }
+    ],
+    "independenceAssertions": {
+      "authoredWithoutReadingCandidate": true,
+      "authoredWithoutReadingProductionCode": true,
+      "authoredWithoutReadingPreviousEvaluationCases": true,
+      "authoredWithoutReadingEvaluationOrExecutionModelOutputs": true,
+      "authoredWithoutReadingOtherAuthorsFiles": true,
+      "materialsAreAuthorCreatedSyntheticFacts": true,
+      "taskContentNotDisclosedToRoot": true,
+      "noWebOrExternalSourceAccess": true,
+      "additionalModelCalls": 0
+    },
+    "certificationBoundary": {
+      "kind": "internal_holdout",
+      "externalIndependentCertification": false,
+      "statement": "Internal independently authored holdout material; not external independent certification."
+    },
+    "sealing": {
+      "status": "sealed_not_authorized_to_open",
+      "selectionDecision": "not_selected",
+      "openingAuthorized": false,
+      "evaluationAuthorized": false,
+      "candidateFreeze": null,
+      "criteriaFreeze": {
+        "frozenAt": "2026-10-24T04:38:05+08:00",
+        "sourceFile": "cases.json",
+        "sourceFileSha256": "f63eafe13249f502b7b16ac5ca8c326db85abc0cd09062fd075bbe1193051898",
+        "canonicalAcceptanceSha256": "297664c84979987f64531bac61f0fd12e3fa183bc0c0766c72f1a0c2a8d4674b",
+        "canonicalization": "UTF-8 JSON array of id and acceptance, sort_keys=True, separators=(',', ':'), ensure_ascii=False"
+      },
+      "openingPreconditions": [
+        "The exact candidate and its configuration have been frozen and recorded before case content is opened.",
+        "The acceptance criteria have been frozen and their hash verified before case content is opened.",
+        "A later explicit decision selects this holdout and authorizes opening; creation and sealing alone do not grant permission."
+      ],
+      "usageBoundary": [
+        "Do not expose case prompts, executor materials or acceptance criteria to candidate authors before opening is authorized.",
+        "Do not execute enhancement, downstream generation or paid evaluation while openingAuthorized or evaluationAuthorized is false.",
+        "Retain the original cases and criteria; later changes require a separately identified version and new hashes."
+      ]
+    },
+    "checks": {
+      "jsonParsed": true,
+      "schemaFieldsChecked": true,
+      "exactlyTwoUniqueCases": true,
+      "acceptanceMirrorsCaseRequirementsAndDimensions": true,
+      "noRepositorySourceOrConfigurationEdits": true,
+      "onlyRequestedDirectoryWritten": true,
+      "additionalModelCalls": 0
+    },
+    "manifestHashPolicy": "The manifest SHA-256 is reported separately after writing; this file does not embed its own hash."
+  },
+  "openingAuthorized": true,
+  "openingAuthorization": "Root explicitly selected both CS cases before access; frozen38 and regression semantic PASS are required and checked by this release.",
+  "sealedManifest": {
+    "path": "tmp/intent-content-scope-holdout/manifest.json",
+    "sha256": "fb472ac7fe0cac1001556f27a2d7888fbe18c148cc117e4c7a2aa2ddb40a9193"
+  },
+  "sourceSha256": "f63eafe13249f502b7b16ac5ca8c326db85abc0cd09062fd075bbe1193051898",
+  "caseCount": 2,
+  "modelCalls": 0,
+  "caseTextsPrinted": false
+}

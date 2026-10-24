@@ -1,0 +1,43 @@
+{
+  "status": "FROZEN",
+  "frozenAt": "2026-10-23T21:20:52.953425+00:00",
+  "classification": "TOOL_REUSE_ORDERING_CORRECTION",
+  "actualStageCallsBeforeCorrection": 16,
+  "actualTaskCallsBeforeCorrection": 131,
+  "noUpstreamAttemptForRejectedReuse": true,
+  "remainingActualJobs": [
+    "GC-H02_V38_EXEC_R1",
+    "GC-H02_V38_EXEC_R2",
+    "IC-H01_V38_EXEC_R1",
+    "IC-H01_V38_EXEC_R2"
+  ],
+  "modelInputOrCriteriaChanged": false,
+  "originalFrozenFilesModified": false,
+  "reason": "Original runner checks new-call allowedJobs before reading copied closed results. New companion runner validates strict closed reuse first and returns it without transport; new calls retain the original guard and server-side frozen scope.",
+  "files": [
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/run-boundary38-works-resume.mjs",
+      "sha256": "06e13010fb380e67a5db922c62bbc449f9fb302c338609514a15b4f31aa64917"
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/invoke-boundary38-works-resume.ps1",
+      "sha256": "bd50d3e00a7b2fc8dbd0744ea8c11e0a8461e49aebc7cd889da139333336df39"
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/run-boundary38-works-evaluation.mjs",
+      "sha256": "2ae5c47d22528b4ee6245c4626e5e30467aad4e14868a663e734e8cf32952966"
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/invoke-boundary38-works.ps1",
+      "sha256": "6fa3d7a680251483c7bb74282be08af3b7f852930c2ab7d9de08aed521feb865"
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-works/protocol.json",
+      "sha256": "67f9392fb7f6fbd63e17fe61f26bd89bee230e78fbc1a14b5dfd5007a8384763"
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-works/source-manifest.json",
+      "sha256": "a24120ebcc398fb17a5b9695b84bccaadb46c48fa6bc8ddadee178eb946444ee"
+    }
+  ]
+}

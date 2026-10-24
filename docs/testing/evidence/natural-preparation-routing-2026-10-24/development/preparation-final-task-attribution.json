@@ -1,0 +1,1524 @@
+{
+  "checkedAt": "2026-10-23T18:46:15.928589+00:00",
+  "sourceManifestVerified": true,
+  "all20UpstreamTransportsComplete": true,
+  "generationRecords": 8,
+  "planRecords": 2,
+  "rawInputsPreserved": true,
+  "all8GeneratedBodiesMatchAssembly": true,
+  "newExecutionCalls": 0,
+  "protocolChecksAreNotSemanticProof": true,
+  "checks": [
+    {
+      "caseId": "D01",
+      "jobId": "D01_V36_GEN",
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "preparationTrace": "001.json",
+      "bodyOrPlanTrace": "002.json",
+      "preparation": {
+        "actions": [
+          {
+            "text": "查询全球使用AI最多的职业/行业",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请帮我查询全球使用AI最多的职业/行业"
+              }
+            ]
+          }
+        ],
+        "response": {
+          "basis": "EXPLICIT",
+          "description": "给出全球范围内AI使用最多的职业/行业的查询结果",
+          "evidence": [
+            {
+              "sourceId": "rawPrompt",
+              "quote": "请帮我查询全球使用AI最多的职业/行业"
+            }
+          ]
+        }
+      },
+      "finalTask": {
+        "goal": "查询全球使用AI最多的职业/行业",
+        "deliverable": "全球范围内AI使用最多的职业/行业的查询结果",
+        "inputReadiness": "SUFFICIENT",
+        "requirements": [
+          {
+            "text": "查询全球使用AI最多的职业/行业",
+            "dimensions": [
+              "GOAL",
+              "OBJECT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请帮我查询全球使用AI最多的职业/行业"
+              }
+            ],
+            "bodyQuotes": [
+              "请查询全球范围内使用AI最多的职业或行业，并给出查询结果。"
+            ]
+          }
+        ],
+        "additions": [
+          {
+            "text": "说明“使用AI最多”的比较口径（采用率、使用频率、使用深度或用户规模等）",
+            "gap": "原提示未定义排名口径，不同口径会得出不同职业/行业排名，影响结果的可比性与可信度",
+            "benefit": "使查询结果有明确比较基础，避免排名歧义",
+            "bodyQuotes": [
+              "由于“使用AI最多”可能按采用率、使用频率、使用深度或用户规模等不同口径衡量，请说明所依据的比较口径"
+            ]
+          },
+          {
+            "text": "给出支撑判断的调查、报告或统计数据及来源、统计口径和时间范围",
+            "gap": "原提示未要求证据来源，缺少依据会使排名结果无法核实",
+            "benefit": "提升结果的可验证性和可信度",
+            "bodyQuotes": [
+              "并尽量给出支撑判断的依据，例如相关调查、报告或统计数据及其来源、统计口径和时间范围"
+            ]
+          },
+          {
+            "text": "不同来源排名或口径存在差异时分别呈现并注明",
+            "gap": "全球AI使用统计来源多样，排名可能不一致，单一结论易失真",
+            "benefit": "如实反映证据分歧，避免误导",
+            "bodyQuotes": [
+              "若不同来源的排名或口径存在差异，请分别呈现并注明"
+            ]
+          },
+          {
+            "text": "资料不足或无法核实的部分明确说明，不编造来源、数据或结论",
+            "gap": "原提示未设事实边界，查询类任务存在编造风险",
+            "benefit": "保证结果诚实可靠",
+            "bodyQuotes": [
+              "资料不足或无法核实的部分请明确说明，不要编造来源、数据或结论"
+            ]
+          }
+        ],
+        "openDecisions": [],
+        "inputReadiness_note": ""
+      },
+      "rawPromptIdenticallyForwarded": true,
+      "preparationSolelyDiagnostic": true,
+      "bodyGeneratedAfterPreparation": true,
+      "modelBodyEqualsAssembledBody": true,
+      "questions": null,
+      "optimizedPrompt": "请查询全球范围内使用AI最多的职业或行业，并给出查询结果。结果应说明哪些职业或行业在AI使用上位居前列，并尽量给出支撑判断的依据，例如相关调查、报告或统计数据及其来源、统计口径和时间范围。由于“使用AI最多”可能按采用率、使用频率、使用深度或用户规模等不同口径衡量，请说明所依据的比较口径；若不同来源的排名或口径存在差异，请分别呈现并注明。资料不足或无法核实的部分请明确说明，不要编造来源、数据或结论。",
+      "newDownstreamWorkPerformed": false
+    },
+    {
+      "caseId": "D02",
+      "jobId": "D02_V36_GEN",
+      "rawPrompt": "我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:\n1.时间序列的长期趋势和季节性趋势\n2.分性别\\地区\\分人群\\分亚类去进行比较\n3.进行减寿分析:年度的\\性别的yll和yll率\n4.采用Arriaga分解方法去分析",
+      "preparationTrace": "003.json",
+      "bodyOrPlanTrace": "004.json",
+      "preparation": {
+        "actions": [
+          {
+            "text": "撰写2015-2025年某地区心脑血管疾病死亡率特征分析",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析"
+              }
+            ]
+          },
+          {
+            "text": "分析时间序列的长期趋势和季节性趋势",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "1.时间序列的长期趋势和季节性趋势"
+              }
+            ]
+          },
+          {
+            "text": "分性别、地区、分人群、分亚类进行比较",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "2.分性别\\地区\\分人群\\分亚类去进行比较"
+              }
+            ]
+          },
+          {
+            "text": "进行减寿分析：年度的、性别的YLL和YLL率",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "3.进行减寿分析:年度的\\性别的yll和yll率"
+              }
+            ]
+          },
+          {
+            "text": "采用Arriaga分解方法进行分析",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "4.采用Arriaga分解方法去分析"
+              }
+            ]
+          }
+        ],
+        "response": {
+          "basis": "EXPLICIT",
+          "description": "2015-2025年某地区心脑血管疾病死亡率特征分析文稿，涵盖时间序列长期趋势与季节性趋势、分性别/地区/人群/亚类比较、年度及性别的YLL和YLL率减寿分析、Arriaga分解分析。",
+          "evidence": [
+            {
+              "sourceId": "rawPrompt",
+              "quote": "我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析"
+            }
+          ]
+        }
+      },
+      "finalTask": {
+        "goal": "撰写2015-2025年某地区心脑血管疾病死亡率特征分析",
+        "deliverable": "涵盖时间序列长期趋势与季节性趋势、分性别/地区/人群/亚类比较、年度及性别YLL和YLL率减寿分析、Arriaga分解分析的科研分析文稿",
+        "inputReadiness": "NEEDS_COMPLETION",
+        "requirements": [
+          {
+            "text": "撰写2015-2025年某地区心脑血管疾病死亡率特征分析",
+            "dimensions": [
+              "GOAL",
+              "OBJECT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析"
+              }
+            ],
+            "bodyQuotes": [
+              "请撰写一篇题为《2015—2025年某地区心脑血管疾病死亡率特征分析》的科研分析文稿"
+            ]
+          },
+          {
+            "text": "分析时间序列的长期趋势和季节性趋势",
+            "dimensions": [
+              "OBJECT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "1.时间序列的长期趋势和季节性趋势"
+              }
+            ],
+            "bodyQuotes": [
+              "描述死亡率的长期变化趋势，并识别季节性波动特征"
+            ]
+          },
+          {
+            "text": "分性别、地区、分人群、分亚类去进行比较",
+            "dimensions": [
+              "OBJECT",
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "2.分性别\\地区\\分人群\\分亚类去进行比较"
+              }
+            ],
+            "bodyQuotes": [
+              "分别按性别、地区、人群（如年龄组）和疾病亚类（如缺血性心脏病、脑卒中等）比较死亡率水平与变化差异"
+            ]
+          },
+          {
+            "text": "进行减寿分析：年度的、性别的YLL和YLL率",
+            "dimensions": [
+              "OBJECT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "3.进行减寿分析:年度的\\性别的yll和yll率"
+              }
+            ],
+            "bodyQuotes": [
+              "计算并报告年度及分性别的YLL（减寿年数）和YLL率"
+            ]
+          },
+          {
+            "text": "采用Arriaga分解方法去分析",
+            "dimensions": [
+              "OBJECT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "4.采用Arriaga分解方法去分析"
+              }
+            ],
+            "bodyQuotes": [
+              "采用Arriaga分解方法分析各因素（如年龄结构、分死因死亡率等）对死亡率变化的贡献"
+            ]
+          }
+        ],
+        "additions": [
+          {
+            "text": "方法交代清楚，含指标定义、计算口径与分解模型设定",
+            "gap": "原文未说明方法呈现程度，影响分析的可复现性与可信度",
+            "benefit": "使趋势、YLL与分解结果有明确计算依据",
+            "bodyQuotes": [
+              "方法交代清楚（含指标定义、计算口径与分解模型设定）"
+            ]
+          },
+          {
+            "text": "比较与贡献判断说明比较基准和口径",
+            "gap": "原文要求比较和分解但未要求说明基准，影响结论可解释性",
+            "benefit": "避免比较与贡献结论口径不明",
+            "bodyQuotes": [
+              "涉及比较与贡献判断时说明比较基准和口径"
+            ]
+          },
+          {
+            "text": "未确定的地区名称、数据或口径标注待定，不虚构",
+            "gap": "原文以“某地区”指代且未提供数据，存在编造风险",
+            "benefit": "保证文稿不虚构数据与结果",
+            "bodyQuotes": [
+              "若某地区名称、具体数据或指标口径尚未确定，请在相应位置明确标注为待定，不虚构数据或结果"
+            ]
+          }
+        ],
+        "openDecisions": [
+          {
+            "issue": "具体地区名称",
+            "impact": "仅影响标题与地区表述部分",
+            "kind": "USER_INFORMATION"
+          },
+          {
+            "issue": "2015-2025年死亡率、人口及死亡数据",
+            "impact": "影响全部定量分析与结果呈现",
+            "kind": "USER_INFORMATION"
+          },
+          {
+            "issue": "YLL计算口径（如期望寿命表、年龄上限、贴现）",
+            "impact": "影响减寿分析结果",
+            "kind": "USER_INFORMATION"
+          },
+          {
+            "issue": "Arriaga分解的因素设定",
+            "impact": "影响分解结果与贡献解释",
+            "kind": "EXECUTION_CHOICE"
+          }
+        ]
+      },
+      "rawPromptIdenticallyForwarded": true,
+      "preparationSolelyDiagnostic": true,
+      "bodyGeneratedAfterPreparation": true,
+      "modelBodyEqualsAssembledBody": true,
+      "questions": null,
+      "optimizedPrompt": "请撰写一篇题为《2015—2025年某地区心脑血管疾病死亡率特征分析》的科研分析文稿，围绕该地区2015—2025年心脑血管疾病死亡数据展开，按以下四部分组织正文：\n\n1. 时间序列分析：描述死亡率的长期变化趋势，并识别季节性波动特征，说明趋势方向、变化幅度及季节高发时段。\n2. 分组比较：分别按性别、地区、人群（如年龄组）和疾病亚类（如缺血性心脏病、脑卒中等）比较死亡率水平与变化差异，指出主要差异所在。\n3. 减寿分析：计算并报告年度及分性别的YLL（减寿年数）和YLL率，比较其时间变化与性别差异。\n4. Arriaga分解：采用Arriaga分解方法分析各因素（如年龄结构、分死因死亡率等）对死亡率变化的贡献，量化各因素的贡献方向与大小。\n\n写作要求：以数据结果为依据，方法交代清楚（含指标定义、计算口径与分解模型设定），结论与数据对应；涉及比较与贡献判断时说明比较基准和口径。若某地区名称、具体数据或指标口径尚未确定，请在相应位置明确标注为待定，不虚构数据或结果，其余部分照常完成。文稿应结构完整、层次清晰，符合科研论文的分析性表达。",
+      "newDownstreamWorkPerformed": false
+    },
+    {
+      "caseId": "D03",
+      "jobId": "D03_V36_GEN",
+      "rawPrompt": "请修复现有JavaScript分页函数，筛选后的页码和总页数要正确，翻到末页再更改筛选也不能越界。保留现有筛选方式、函数签名和返回结构，不改输入数组，给出可替换的完整实现。",
+      "preparationTrace": "005.json",
+      "bodyOrPlanTrace": "006.json",
+      "preparation": {
+        "actions": [
+          {
+            "text": "修复现有JavaScript分页函数，使筛选后的页码和总页数正确，并保证翻到末页再更改筛选时不越界",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请修复现有JavaScript分页函数，筛选后的页码和总页数要正确，翻到末页再更改筛选也不能越界。"
+              }
+            ]
+          },
+          {
+            "text": "保留现有筛选方式、函数签名和返回结构，不改输入数组",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "保留现有筛选方式、函数签名和返回结构，不改输入数组"
+              }
+            ]
+          },
+          {
+            "text": "给出可替换的完整实现",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "给出可替换的完整实现"
+              }
+            ]
+          }
+        ],
+        "response": {
+          "basis": "EXPLICIT",
+          "description": "可替换的完整JavaScript分页函数实现，修复筛选后页码与总页数计算及末页更改筛选的越界问题，并保留现有筛选方式、函数签名和返回结构且不修改输入数组",
+          "evidence": [
+            {
+              "sourceId": "rawPrompt",
+              "quote": "请修复现有JavaScript分页函数，筛选后的页码和总页数要正确，翻到末页再更改筛选也不能越界。保留现有筛选方式、函数签名和返回结构，不改输入数组，给出可替换的完整实现。"
+            }
+          ]
+        }
+      },
+      "finalTask": {
+        "goal": "修复现有JavaScript分页函数，使筛选后的页码和总页数正确，翻到末页再更改筛选也不能越界，保留现有筛选方式、函数签名和返回结构，不改输入数组",
+        "deliverable": "可替换的完整JavaScript分页函数实现",
+        "inputReadiness": "NEEDS_COMPLETION",
+        "requirements": [
+          {
+            "text": "修复现有JavaScript分页函数，筛选后的页码和总页数要正确，翻到末页再更改筛选也不能越界",
+            "dimensions": [
+              "GOAL",
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请修复现有JavaScript分页函数，筛选后的页码和总页数要正确，翻到末页再更改筛选也不能越界。"
+              }
+            ],
+            "bodyQuotes": [
+              "筛选后的当前页码和总页数计算正确",
+              "当用户已翻到末页后再更改筛选条件时，页码不能越界"
+            ]
+          },
+          {
+            "text": "保留现有筛选方式、函数签名和返回结构，不改输入数组",
+            "dimensions": [
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "保留现有筛选方式、函数签名和返回结构，不改输入数组"
+              }
+            ],
+            "bodyQuotes": [
+              "保留现有筛选方式、函数签名和返回结构，不要修改传入的输入数组"
+            ]
+          },
+          {
+            "text": "给出可替换的完整实现",
+            "dimensions": [
+              "FORMAT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "给出可替换的完整实现"
+              }
+            ],
+            "bodyQuotes": [
+              "给出可直接替换原函数的完整实现"
+            ]
+          }
+        ],
+        "additions": [
+          {
+            "text": "在未提供现有源码时，先按常见分页函数形态给出拟议实现，并标注需按实际签名和返回结构对齐的部分",
+            "gap": "用户未提供现有函数源码、筛选方式、函数签名和返回结构，直接实现可能偏离实际代码",
+            "benefit": "使交付物仍可落地，同时不臆造用户现有代码细节",
+            "bodyQuotes": [
+              "请先按常见分页函数形态给出一个完整可替换的拟议实现，并明确标注哪些部分需要按我的实际签名和返回结构对齐"
+            ]
+          },
+          {
+            "text": "处理空结果集、筛选后结果数减少、页码超出新总页数等边界情况，并说明页码收敛逻辑",
+            "gap": "原提示词只点出末页改筛选越界，未覆盖空结果集等同类边界",
+            "benefit": "保证分页函数在筛选变化时稳定不越界",
+            "bodyQuotes": [
+              "实现中请处理空结果集、筛选后结果数减少、页码超出新总页数等边界情况，并简要说明页码收敛逻辑"
+            ]
+          }
+        ],
+        "openDecisions": [
+          {
+            "issue": "现有分页函数的源码、筛选方式、函数签名和返回结构",
+            "impact": "只影响最终实现与用户现有代码的精确对齐，不影响拟议实现的给出",
+            "kind": "USER_INFORMATION"
+          }
+        ]
+      },
+      "rawPromptIdenticallyForwarded": true,
+      "preparationSolelyDiagnostic": true,
+      "bodyGeneratedAfterPreparation": true,
+      "modelBodyEqualsAssembledBody": true,
+      "questions": null,
+      "optimizedPrompt": "请修复我现有的 JavaScript 分页函数，并给出可直接替换原函数的完整实现。修复后要满足：筛选后的当前页码和总页数计算正确；当用户已翻到末页后再更改筛选条件时，页码不能越界，应自动收敛到新结果集的有效范围内。保留现有筛选方式、函数签名和返回结构，不要修改传入的输入数组。由于我尚未提供现有函数源码、筛选方式、函数签名和返回结构，请先按常见分页函数形态给出一个完整可替换的拟议实现，并明确标注哪些部分需要按我的实际签名和返回结构对齐；不要臆造我的现有代码细节。实现中请处理空结果集、筛选后结果数减少、页码超出新总页数等边界情况，并简要说明页码收敛逻辑。",
+      "newDownstreamWorkPerformed": false
+    },
+    {
+      "caseId": "D04",
+      "jobId": "D04_V36_GEN",
+      "rawPrompt": "请把以下内容整理成一段不超过90字的中文通知，只输出通知正文，不加标题或说明：培训改为线上；原线下教室不再开放；新日期尚未确定，不能承诺具体日期或称已确认；已报名的同事不用重复报名，未报名的先等后续通知。",
+      "preparationTrace": "007.json",
+      "bodyOrPlanTrace": "008.json",
+      "preparation": {
+        "actions": [
+          {
+            "text": "把指定内容整理成一段不超过90字的中文通知",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请把以下内容整理成一段不超过90字的中文通知"
+              }
+            ]
+          },
+          {
+            "text": "通知中说明培训改为线上、原线下教室不再开放、新日期尚未确定且不能承诺具体日期或称已确认、已报名同事不用重复报名、未报名者等后续通知",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "培训改为线上；原线下教室不再开放；新日期尚未确定，不能承诺具体日期或称已确认；已报名的同事不用重复报名，未报名的先等后续通知。"
+              }
+            ]
+          }
+        ],
+        "response": {
+          "basis": "EXPLICIT",
+          "description": "只输出不超过90字的中文通知正文，不加标题或说明",
+          "evidence": [
+            {
+              "sourceId": "rawPrompt",
+              "quote": "只输出通知正文，不加标题或说明"
+            }
+          ]
+        }
+      },
+      "finalTask": {
+        "goal": "把指定内容整理成一段不超过90字的中文通知",
+        "deliverable": "不超过90字的中文通知正文，只输出正文，不加标题或说明",
+        "inputReadiness": "SUFFICIENT",
+        "requirements": [
+          {
+            "text": "整理成一段不超过90字的中文通知",
+            "dimensions": [
+              "GOAL",
+              "FORMAT",
+              "LENGTH"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请把以下内容整理成一段不超过90字的中文通知"
+              }
+            ],
+            "bodyQuotes": [
+              "请把以下内容整理成一段不超过90字的中文通知"
+            ]
+          },
+          {
+            "text": "只输出通知正文，不加标题或说明",
+            "dimensions": [
+              "FORMAT",
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "只输出通知正文，不加标题或说明"
+              }
+            ],
+            "bodyQuotes": [
+              "只输出通知正文，不加标题或说明"
+            ]
+          },
+          {
+            "text": "通知须包含：培训改为线上、原线下教室不再开放、新日期尚未确定且不能承诺具体日期或称已确认、已报名同事不用重复报名、未报名者等后续通知",
+            "dimensions": [
+              "OBJECT",
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "培训改为线上；原线下教室不再开放；新日期尚未确定，不能承诺具体日期或称已确认；已报名的同事不用重复报名，未报名的先等后续通知。"
+              }
+            ],
+            "bodyQuotes": [
+              "培训改为线上；原线下教室不再开放；新日期尚未确定，不能承诺具体日期或称已确认；已报名的同事不用重复报名，未报名的先等后续通知。"
+            ]
+          }
+        ],
+        "additions": [],
+        "openDecisions": []
+      },
+      "rawPromptIdenticallyForwarded": true,
+      "preparationSolelyDiagnostic": true,
+      "bodyGeneratedAfterPreparation": true,
+      "modelBodyEqualsAssembledBody": true,
+      "questions": null,
+      "optimizedPrompt": "请把以下内容整理成一段不超过90字的中文通知，只输出通知正文，不加标题或说明：培训改为线上；原线下教室不再开放；新日期尚未确定，不能承诺具体日期或称已确认；已报名的同事不用重复报名，未报名的先等后续通知。",
+      "newDownstreamWorkPerformed": false
+    },
+    {
+      "caseId": "MR-D05",
+      "jobId": "MR-D05_V36_GEN",
+      "rawPrompt": "请写一份设备停机原因调查报告。已经确认现场监控录像没有保存，现有维修记录可在执行时读取。报告要说明已查明的原因与仍需核实的部分，不要把没有录像说成有录像，也不要仅给调查提纲。",
+      "preparationTrace": "009.json",
+      "bodyOrPlanTrace": "010.json",
+      "preparation": {
+        "actions": [
+          {
+            "text": "写一份设备停机原因调查报告，说明已查明的原因与仍需核实的部分，不把没有录像说成有录像，也不仅给调查提纲",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请写一份设备停机原因调查报告。"
+              },
+              {
+                "sourceId": "rawPrompt",
+                "quote": "报告要说明已查明的原因与仍需核实的部分，不要把没有录像说成有录像，也不要仅给调查提纲。"
+              }
+            ]
+          },
+          {
+            "text": "在执行时读取现有维修记录",
+            "timing": "CONDITIONAL",
+            "condition": "执行报告撰写时",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "现有维修记录可在执行时读取。"
+              }
+            ]
+          }
+        ],
+        "response": {
+          "basis": "EXPLICIT",
+          "description": "一份设备停机原因调查报告，包含已查明的原因与仍需核实的部分，如实说明现场监控录像没有保存，且不是仅给调查提纲",
+          "evidence": [
+            {
+              "sourceId": "rawPrompt",
+              "quote": "请写一份设备停机原因调查报告。"
+            },
+            {
+              "sourceId": "rawPrompt",
+              "quote": "已经确认现场监控录像没有保存"
+            },
+            {
+              "sourceId": "rawPrompt",
+              "quote": "报告要说明已查明的原因与仍需核实的部分，不要把没有录像说成有录像，也不要仅给调查提纲。"
+            }
+          ]
+        }
+      },
+      "finalTask": {
+        "goal": "撰写一份设备停机原因调查报告，说明已查明的原因与仍需核实的部分",
+        "deliverable": "设备停机原因调查报告正文，包含已查明原因、仍需核实部分，并如实说明现场监控录像没有保存",
+        "inputReadiness": "SUFFICIENT",
+        "requirements": [
+          {
+            "text": "写一份设备停机原因调查报告",
+            "dimensions": [
+              "GOAL",
+              "FORMAT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请写一份设备停机原因调查报告。"
+              }
+            ],
+            "bodyQuotes": [
+              "请撰写一份设备停机原因调查报告，直接交付完整报告正文"
+            ]
+          },
+          {
+            "text": "报告要说明已查明的原因与仍需核实的部分",
+            "dimensions": [
+              "OBJECT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "报告要说明已查明的原因与仍需核实的部分"
+              }
+            ],
+            "bodyQuotes": [
+              "并据此梳理停机经过、已查明的原因和仍需核实的部分"
+            ]
+          },
+          {
+            "text": "已经确认现场监控录像没有保存，不要把没有录像说成有录像",
+            "dimensions": [
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "已经确认现场监控录像没有保存"
+              },
+              {
+                "sourceId": "rawPrompt",
+                "quote": "不要把没有录像说成有录像"
+              }
+            ],
+            "bodyQuotes": [
+              "现场监控录像已确认没有保存，报告中必须如实说明这一情况，不得写成有录像或暗示已查看录像"
+            ]
+          },
+          {
+            "text": "现有维修记录可在执行时读取",
+            "dimensions": [
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "现有维修记录可在执行时读取。"
+              }
+            ],
+            "bodyQuotes": [
+              "执行时请读取现有维修记录"
+            ]
+          },
+          {
+            "text": "不要仅给调查提纲",
+            "dimensions": [
+              "FORMAT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "也不要仅给调查提纲"
+              }
+            ],
+            "bodyQuotes": [
+              "不要只给调查提纲"
+            ]
+          }
+        ],
+        "additions": [
+          {
+            "text": "对已查明原因结合维修记录具体条目说明判断依据",
+            "gap": "原提示词未说明已查明原因如何呈现证据支撑，易使报告结论缺乏依据",
+            "benefit": "使报告中的原因判断可追溯、可核查",
+            "bodyQuotes": [
+              "对已查明的原因，请结合维修记录中的具体条目说明判断依据"
+            ]
+          },
+          {
+            "text": "对仍需核实部分写明待核实事项、现有证据支持程度及需补充的信息或检查",
+            "gap": "原提示词只要求说明仍需核实部分，未明确其应包含的实质内容",
+            "benefit": "使待核实部分具体可操作，而非空泛罗列",
+            "bodyQuotes": [
+              "对仍需核实的部分，请写明待核实事项、现有证据能支持到什么程度，以及需要补充哪些信息或检查才能确认"
+            ]
+          },
+          {
+            "text": "维修记录未涉及或无法支持的内容明确标为待核实，不编造来源、参数或结论",
+            "gap": "原提示词未规定资料不足时的处理方式，存在编造风险",
+            "benefit": "保证报告事实边界清晰、不虚构",
+            "bodyQuotes": [
+              "维修记录中未涉及或无法支持的内容，请明确标为待核实，不要编造来源、参数或结论"
+            ]
+          }
+        ],
+        "openDecisions": [
+          {
+            "issue": "维修记录的实际内容与设备具体信息",
+            "impact": "只影响报告中已查明原因的具体结论和证据引用",
+            "kind": "USER_INFORMATION"
+          }
+        ]
+      },
+      "rawPromptIdenticallyForwarded": true,
+      "preparationSolelyDiagnostic": true,
+      "bodyGeneratedAfterPreparation": true,
+      "modelBodyEqualsAssembledBody": true,
+      "questions": null,
+      "optimizedPrompt": "请撰写一份设备停机原因调查报告，直接交付完整报告正文，不要只给调查提纲。执行时请读取现有维修记录，并据此梳理停机经过、已查明的原因和仍需核实的部分。现场监控录像已确认没有保存，报告中必须如实说明这一情况，不得写成有录像或暗示已查看录像。对已查明的原因，请结合维修记录中的具体条目说明判断依据；对仍需核实的部分，请写明待核实事项、现有证据能支持到什么程度，以及需要补充哪些信息或检查才能确认。维修记录中未涉及或无法支持的内容，请明确标为待核实，不要编造来源、参数或结论。",
+      "newDownstreamWorkPerformed": false
+    },
+    {
+      "caseId": "PR-D06",
+      "jobId": "PR-D06_V36_GEN",
+      "rawPrompt": "请写一份仓库停运情况说明。现已确认仓库昨日上午因进水暂停收发货，下午恢复。没有现场照片，也没有保存水位或货损记录；不要编造进水来源、货损金额或恢复时间点。请基于这些已知情况写出可用正文，未核实的原因和损失集中说明一次，不要只给填写模板。",
+      "preparationTrace": "011.json",
+      "bodyOrPlanTrace": "012.json",
+      "preparation": {
+        "actions": [
+          {
+            "text": "撰写一份仓库停运情况说明的可用正文",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请写一份仓库停运情况说明。"
+              },
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请基于这些已知情况写出可用正文"
+              }
+            ]
+          },
+          {
+            "text": "在正文中写明仓库昨日上午因进水暂停收发货、下午恢复",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "现已确认仓库昨日上午因进水暂停收发货，下午恢复。"
+              }
+            ]
+          },
+          {
+            "text": "不编造进水来源、货损金额或恢复时间点",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "不要编造进水来源、货损金额或恢复时间点。"
+              }
+            ]
+          },
+          {
+            "text": "将未核实的原因和损失集中说明一次，不采用填写模板形式",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "未核实的原因和损失集中说明一次，不要只给填写模板。"
+              }
+            ]
+          }
+        ],
+        "response": {
+          "basis": "EXPLICIT",
+          "description": "一份仓库停运情况说明的可用正文，包含已确认的停运与恢复情况，并集中说明未核实的原因和损失，不编造进水来源、货损金额或恢复时间点，不以填写模板代替正文。",
+          "evidence": [
+            {
+              "sourceId": "rawPrompt",
+              "quote": "请基于这些已知情况写出可用正文，未核实的原因和损失集中说明一次，不要只给填写模板。"
+            }
+          ]
+        }
+      },
+      "finalTask": {
+        "goal": "撰写一份仓库停运情况说明的可用正文",
+        "deliverable": "仓库停运情况说明正文",
+        "inputReadiness": "SUFFICIENT",
+        "requirements": [
+          {
+            "text": "撰写一份仓库停运情况说明",
+            "dimensions": [
+              "GOAL",
+              "FORMAT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请写一份仓库停运情况说明。"
+              }
+            ],
+            "bodyQuotes": [
+              "请撰写一份仓库停运情况说明的可用正文。"
+            ]
+          },
+          {
+            "text": "写明仓库昨日上午因进水暂停收发货、下午恢复",
+            "dimensions": [
+              "OBJECT",
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "现已确认仓库昨日上午因进水暂停收发货，下午恢复。"
+              }
+            ],
+            "bodyQuotes": [
+              "已知情况为：仓库昨日上午因进水暂停收发货，当日下午恢复。"
+            ]
+          },
+          {
+            "text": "不编造进水来源、货损金额或恢复时间点",
+            "dimensions": [
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "不要编造进水来源、货损金额或恢复时间点。"
+              }
+            ],
+            "bodyQuotes": [
+              "正文中不要编造进水来源、货损金额或具体恢复时间点"
+            ]
+          },
+          {
+            "text": "未核实的原因和损失集中说明一次，不要只给填写模板",
+            "dimensions": [
+              "CONDITION",
+              "FORMAT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "未核实的原因和损失集中说明一次，不要只给填写模板。"
+              }
+            ],
+            "bodyQuotes": [
+              "凡涉及进水原因、货损情况等尚未核实的内容，集中在一处说明其待核实状态，只说明一次，不要分散重复。",
+              "请直接给出可用的说明正文，不要只提供填写模板或占位表格。"
+            ]
+          }
+        ],
+        "additions": [],
+        "openDecisions": []
+      },
+      "rawPromptIdenticallyForwarded": true,
+      "preparationSolelyDiagnostic": true,
+      "bodyGeneratedAfterPreparation": true,
+      "modelBodyEqualsAssembledBody": true,
+      "questions": null,
+      "optimizedPrompt": "请撰写一份仓库停运情况说明的可用正文。已知情况为：仓库昨日上午因进水暂停收发货，当日下午恢复。请围绕这两项已确认事实组织正文，说明停运时段与恢复情况。\n\n正文中不要编造进水来源、货损金额或具体恢复时间点；凡涉及进水原因、货损情况等尚未核实的内容，集中在一处说明其待核实状态，只说明一次，不要分散重复。请直接给出可用的说明正文，不要只提供填写模板或占位表格。",
+      "newDownstreamWorkPerformed": false
+    },
+    {
+      "caseId": "PR-D07",
+      "jobId": "PR-D07_V36_GEN",
+      "rawPrompt": "先熟悉这个项目的结构和已有约定，当前只需要阅读并理解；暂时不用改代码，也不用写项目说明文档，等我下一条具体任务。",
+      "preparationTrace": "013.json",
+      "bodyOrPlanTrace": "014.json",
+      "preparation": {
+        "actions": [
+          {
+            "text": "阅读并理解项目结构和已有约定",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "先熟悉这个项目的结构和已有约定，当前只需要阅读并理解"
+              }
+            ]
+          },
+          {
+            "text": "暂不改代码，也不写项目说明文档，等待下一条具体任务",
+            "timing": "CONDITIONAL",
+            "condition": "在下一条具体任务到来之前",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "暂时不用改代码，也不用写项目说明文档，等我下一条具体任务"
+              }
+            ]
+          }
+        ],
+        "response": {
+          "basis": "UNSPECIFIED",
+          "description": "",
+          "evidence": []
+        }
+      },
+      "finalTask": {
+        "goal": "阅读并理解项目结构和已有约定，暂不改代码、不写项目说明文档，等待下一条具体任务",
+        "deliverable": "对项目结构、关键约定和主要模块的理解说明",
+        "inputReadiness": "SUFFICIENT",
+        "requirements": [
+          {
+            "text": "先熟悉这个项目的结构和已有约定，当前只需要阅读并理解",
+            "dimensions": [
+              "GOAL",
+              "OBJECT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "先熟悉这个项目的结构和已有约定，当前只需要阅读并理解"
+              }
+            ],
+            "bodyQuotes": [
+              "请先熟悉这个项目的结构和已有约定，当前阶段只需要阅读并理解"
+            ]
+          },
+          {
+            "text": "暂时不用改代码，也不用写项目说明文档，等我下一条具体任务",
+            "dimensions": [
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "暂时不用改代码，也不用写项目说明文档，等我下一条具体任务"
+              }
+            ],
+            "bodyQuotes": [
+              "不要修改任何代码，也不要撰写项目说明文档",
+              "然后等待我的下一条具体任务"
+            ]
+          },
+          {
+            "text": "项目目录和规则可在下游执行时读取",
+            "dimensions": [
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "context.customDescription",
+                "quote": "项目目录和规则可在下游执行时读取。"
+              }
+            ],
+            "bodyQuotes": [
+              "项目目录和规则可在执行时直接读取"
+            ]
+          }
+        ],
+        "additions": [
+          {
+            "text": "完成阅读后简要说明已了解的项目结构、关键约定和主要模块",
+            "gap": "原提示词只要求阅读理解，未说明如何体现理解结果",
+            "benefit": "让执行者以简短说明证明已熟悉项目，便于后续任务衔接",
+            "bodyQuotes": [
+              "完成阅读后，请简要说明你已了解的项目结构、关键约定和主要模块"
+            ]
+          }
+        ],
+        "openDecisions": []
+      },
+      "rawPromptIdenticallyForwarded": true,
+      "preparationSolelyDiagnostic": true,
+      "bodyGeneratedAfterPreparation": true,
+      "modelBodyEqualsAssembledBody": true,
+      "questions": null,
+      "optimizedPrompt": "请先熟悉这个项目的结构和已有约定，当前阶段只需要阅读并理解，不要修改任何代码，也不要撰写项目说明文档。项目目录和规则可在执行时直接读取。完成阅读后，请简要说明你已了解的项目结构、关键约定和主要模块，然后等待我的下一条具体任务。",
+      "newDownstreamWorkPerformed": false
+    },
+    {
+      "caseId": "MR-P01",
+      "jobId": "MR-P01_V36_PLAN",
+      "rawPrompt": "请查询并比较三种常见离线笔记软件，重点说明全文搜索、导出格式和跨平台支持，写成便于选型的简短比较。无需询问我的设备与偏好，按通用用途整理即可。",
+      "preparationTrace": "015.json",
+      "bodyOrPlanTrace": "016.json",
+      "preparation": {
+        "actions": [
+          {
+            "text": "查询并比较三种常见离线笔记软件，重点说明全文搜索、导出格式和跨平台支持",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请查询并比较三种常见离线笔记软件，重点说明全文搜索、导出格式和跨平台支持"
+              }
+            ]
+          },
+          {
+            "text": "写成便于选型的简短比较，按通用用途整理，无需询问设备与偏好",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "写成便于选型的简短比较。无需询问我的设备与偏好，按通用用途整理即可。"
+              }
+            ]
+          }
+        ],
+        "response": {
+          "basis": "EXPLICIT",
+          "description": "三种常见离线笔记软件的简短比较，覆盖全文搜索、导出格式和跨平台支持，便于选型，按通用用途整理",
+          "evidence": [
+            {
+              "sourceId": "rawPrompt",
+              "quote": "请查询并比较三种常见离线笔记软件，重点说明全文搜索、导出格式和跨平台支持，写成便于选型的简短比较。"
+            }
+          ]
+        }
+      },
+      "finalTask": {
+        "goal": "查询并比较三种常见离线笔记软件，重点说明全文搜索、导出格式和跨平台支持，形成便于选型的简短比较",
+        "deliverable": "三种常见离线笔记软件的简短比较（覆盖全文搜索、导出格式、跨平台支持，按通用用途整理，便于选型）",
+        "inputReadiness": "SUFFICIENT",
+        "requirements": [
+          {
+            "text": "查询并比较三种常见离线笔记软件",
+            "dimensions": [
+              "GOAL",
+              "OBJECT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请查询并比较三种常见离线笔记软件"
+              }
+            ]
+          },
+          {
+            "text": "重点说明全文搜索、导出格式和跨平台支持",
+            "dimensions": [
+              "GOAL",
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "重点说明全文搜索、导出格式和跨平台支持"
+              }
+            ]
+          },
+          {
+            "text": "写成便于选型的简短比较",
+            "dimensions": [
+              "FORMAT",
+              "LENGTH"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "写成便于选型的简短比较"
+              }
+            ]
+          },
+          {
+            "text": "无需询问设备与偏好，按通用用途整理",
+            "dimensions": [
+              "CONDITION",
+              "USER_CONFIRMATION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "无需询问我的设备与偏好，按通用用途整理即可。"
+              }
+            ]
+          }
+        ],
+        "unaskedDecisions": []
+      },
+      "rawPromptIdenticallyForwarded": true,
+      "preparationSolelyDiagnostic": true,
+      "bodyGeneratedAfterPreparation": true,
+      "modelBodyEqualsAssembledBody": null,
+      "questions": [],
+      "optimizedPrompt": null,
+      "newDownstreamWorkPerformed": false
+    },
+    {
+      "caseId": "MR-P02",
+      "jobId": "MR-P02_V36_PLAN",
+      "rawPrompt": "请写一封活动地点变更通知发给报名成员。日期仍是2027年5月9日10点，原地点松石楼一层不再使用。新地点必须先问我确认，不能自行选择；措辞与段落安排由你决定，不编造变更原因。",
+      "preparationTrace": "017.json",
+      "bodyOrPlanTrace": "018.json",
+      "preparation": {
+        "actions": [
+          {
+            "text": "写一封活动地点变更通知发给报名成员",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请写一封活动地点变更通知发给报名成员。"
+              }
+            ]
+          },
+          {
+            "text": "通知中保留日期为2027年5月9日10点",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "日期仍是2027年5月9日10点"
+              }
+            ]
+          },
+          {
+            "text": "通知中说明原地点松石楼一层不再使用",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "原地点松石楼一层不再使用。"
+              }
+            ]
+          },
+          {
+            "text": "新地点须先向用户询问确认，不得自行选择",
+            "timing": "CONDITIONAL",
+            "condition": "新地点内容须经用户确认后方可写入通知",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "新地点必须先问我确认，不能自行选择"
+              }
+            ]
+          },
+          {
+            "text": "措辞与段落安排由写作者决定",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "措辞与段落安排由你决定"
+              }
+            ]
+          },
+          {
+            "text": "不编造变更原因",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "不编造变更原因。"
+              }
+            ]
+          }
+        ],
+        "response": {
+          "basis": "EXPLICIT",
+          "description": "一封发给报名成员的活动地点变更通知，包含日期2027年5月9日10点、原地点松石楼一层不再使用，新地点待用户确认后填入，不编造变更原因。",
+          "evidence": [
+            {
+              "sourceId": "rawPrompt",
+              "quote": "请写一封活动地点变更通知发给报名成员。"
+            }
+          ]
+        }
+      },
+      "finalTask": {
+        "goal": "撰写一封发给报名成员的活动地点变更通知",
+        "deliverable": "活动地点变更通知正文（含日期2027年5月9日10点、原地点松石楼一层不再使用、经用户确认的新地点，不编造变更原因）",
+        "inputReadiness": "NEEDS_COMPLETION",
+        "requirements": [
+          {
+            "text": "写一封活动地点变更通知发给报名成员",
+            "dimensions": [
+              "GOAL",
+              "OBJECT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请写一封活动地点变更通知发给报名成员。"
+              }
+            ]
+          },
+          {
+            "text": "日期仍是2027年5月9日10点",
+            "dimensions": [
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "日期仍是2027年5月9日10点"
+              }
+            ]
+          },
+          {
+            "text": "原地点松石楼一层不再使用",
+            "dimensions": [
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "原地点松石楼一层不再使用。"
+              }
+            ]
+          },
+          {
+            "text": "新地点必须先问用户确认，不能自行选择",
+            "dimensions": [
+              "CONDITION",
+              "USER_CONFIRMATION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "新地点必须先问我确认，不能自行选择"
+              }
+            ]
+          },
+          {
+            "text": "措辞与段落安排由写作者决定",
+            "dimensions": [
+              "FORMAT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "措辞与段落安排由你决定"
+              }
+            ]
+          },
+          {
+            "text": "不编造变更原因",
+            "dimensions": [
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "不编造变更原因。"
+              }
+            ]
+          }
+        ],
+        "unaskedDecisions": []
+      },
+      "rawPromptIdenticallyForwarded": true,
+      "preparationSolelyDiagnostic": true,
+      "bodyGeneratedAfterPreparation": true,
+      "modelBodyEqualsAssembledBody": null,
+      "questions": [
+        {
+          "id": "newLocation",
+          "question": "请确认活动的新地点（具体名称/地址），通知中将按您确认的内容填写。",
+          "hint": "新地点是通知的核心变更信息，用户已明确要求必须先确认、不得自行选择；未确认前该字段无法写入正文。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [],
+          "allowCustomAnswer": true,
+          "decisionBasis": [
+            {
+              "issue": "新地点的具体名称或地址",
+              "kind": "USER_INFORMATION",
+              "whyAsk": "用户明确保留新地点的选择权，要求先询问确认，执行者不得自行选择或编造。",
+              "answerDifference": "用户给出新地点后，通知可完整写明变更后的地点；若用户暂不提供，通知只能保留新地点待定，无法形成完整可发送的变更通知。"
+            }
+          ]
+        }
+      ],
+      "optimizedPrompt": null,
+      "newDownstreamWorkPerformed": false
+    },
+    {
+      "caseId": "MR-P02",
+      "jobId": "MR-P02_V36_PLAN_GEN",
+      "rawPrompt": "请写一封活动地点变更通知发给报名成员。日期仍是2027年5月9日10点，原地点松石楼一层不再使用。新地点必须先问我确认，不能自行选择；措辞与段落安排由你决定，不编造变更原因。",
+      "preparationTrace": "019.json",
+      "bodyOrPlanTrace": "020.json",
+      "preparation": {
+        "actions": [
+          {
+            "text": "写一封活动地点变更通知发给报名成员，日期仍为2027年5月9日10点，原地点松石楼一层不再使用，新地点按用户确认的青禾中心二层会议室填写，措辞与段落安排由写作者决定，不编造变更原因",
+            "timing": "CURRENT",
+            "condition": "",
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请写一封活动地点变更通知发给报名成员。日期仍是2027年5月9日10点，原地点松石楼一层不再使用。"
+              },
+              {
+                "sourceId": "rawPrompt",
+                "quote": "措辞与段落安排由你决定，不编造变更原因。"
+              },
+              {
+                "sourceId": "actualAnswers.0",
+                "quote": "新地点确定为青禾中心二层会议室。"
+              }
+            ]
+          }
+        ],
+        "response": {
+          "basis": "EXPLICIT",
+          "description": "一封发给报名成员的活动地点变更通知，包含日期2027年5月9日10点、原地点松石楼一层不再使用、新地点青禾中心二层会议室，不编造变更原因",
+          "evidence": [
+            {
+              "sourceId": "rawPrompt",
+              "quote": "请写一封活动地点变更通知发给报名成员。"
+            },
+            {
+              "sourceId": "actualAnswers.0",
+              "quote": "新地点确定为青禾中心二层会议室。"
+            }
+          ]
+        }
+      },
+      "finalTask": {
+        "goal": "写一封发给报名成员的活动地点变更通知",
+        "deliverable": "活动地点变更通知",
+        "inputReadiness": "SUFFICIENT",
+        "requirements": [
+          {
+            "text": "写一封活动地点变更通知发给报名成员",
+            "dimensions": [
+              "GOAL",
+              "OBJECT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "请写一封活动地点变更通知发给报名成员。"
+              }
+            ],
+            "bodyQuotes": [
+              "请写一封活动地点变更通知，发给已报名的活动成员。"
+            ]
+          },
+          {
+            "text": "日期仍是2027年5月9日10点",
+            "dimensions": [
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "日期仍是2027年5月9日10点"
+              }
+            ],
+            "bodyQuotes": [
+              "活动日期仍为2027年5月9日10点"
+            ]
+          },
+          {
+            "text": "原地点松石楼一层不再使用",
+            "dimensions": [
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "原地点松石楼一层不再使用。"
+              }
+            ],
+            "bodyQuotes": [
+              "原地点松石楼一层不再使用"
+            ]
+          },
+          {
+            "text": "新地点必须先问用户确认，不能自行选择；已确认的新地点为青禾中心二层会议室",
+            "dimensions": [
+              "CONDITION",
+              "USER_CONFIRMATION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "新地点必须先问我确认，不能自行选择"
+              },
+              {
+                "sourceId": "actualAnswers.0",
+                "quote": "新地点确定为青禾中心二层会议室。"
+              }
+            ],
+            "bodyQuotes": [
+              "新地点为青禾中心二层会议室"
+            ]
+          },
+          {
+            "text": "措辞与段落安排由执行者决定",
+            "dimensions": [
+              "FORMAT"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "措辞与段落安排由你决定"
+              }
+            ],
+            "bodyQuotes": [
+              "措辞和段落安排由你决定"
+            ]
+          },
+          {
+            "text": "不编造变更原因",
+            "dimensions": [
+              "CONDITION"
+            ],
+            "evidence": [
+              {
+                "sourceId": "rawPrompt",
+                "quote": "不编造变更原因。"
+              }
+            ],
+            "bodyQuotes": [
+              "不要编造地点变更的原因"
+            ]
+          }
+        ],
+        "additions": [
+          {
+            "text": "不添加未经提供的其他活动信息",
+            "gap": "原文只限制不编造变更原因，未明确禁止补充其他活动细节，执行者可能自行添加时间安排、联系人等内容",
+            "benefit": "确保通知只包含已确认的日期、原地点和新地点信息，避免虚构内容",
+            "bodyQuotes": [
+              "也不要添加未经提供的其他活动信息"
+            ]
+          }
+        ],
+        "openDecisions": []
+      },
+      "rawPromptIdenticallyForwarded": true,
+      "preparationSolelyDiagnostic": true,
+      "bodyGeneratedAfterPreparation": true,
+      "modelBodyEqualsAssembledBody": true,
+      "questions": null,
+      "optimizedPrompt": "请写一封活动地点变更通知，发给已报名的活动成员。通知中写明：活动日期仍为2027年5月9日10点；原地点松石楼一层不再使用；新地点为青禾中心二层会议室。措辞和段落安排由你决定，但不要编造地点变更的原因，也不要添加未经提供的其他活动信息。",
+      "newDownstreamWorkPerformed": false
+    }
+  ],
+  "severeRegressions": [
+    {
+      "caseId": "D03",
+      "severity": "SEVERE",
+      "responsibility": "增强正文模型及其最终task新增缺口判断；形式来源/覆盖校验未识别冲突。",
+      "firstMeaningfulChange": "006.json 的additions/gap与optimizedPrompt；准备005.json准确保留现有签名/结构及可替换实现，原始输入继续完整可见。",
+      "source": "保留现有筛选方式、函数签名和返回结构，不改输入数组，给出可替换的完整实现。",
+      "changed": "由于我尚未提供现有函数源码、筛选方式、函数签名和返回结构，请先按常见分页函数形态给出一个完整可替换的拟议实现",
+      "effect": "把增强阶段未附代码扩大为执行者无法取得既有契约，授权通用实现替代现有函数；与保留要求冲突。",
+      "downstreamAttribution": "未执行候选作品，不推断实际函数一定失败。"
+    },
+    {
+      "caseId": "PR-D06",
+      "severity": "SEVERE",
+      "responsibility": "最终任务要求提取及正文遗漏明确客观限制；仅有部分引用存在不能证明要求已完整。",
+      "firstMeaningfulChange": "012.json 最终task/optimizedPrompt均未保留无照片、无水位/货损记录；准备011.json只识别动作并非完整事实载体，原文仍传入，不能把scope未列出事实单独认定为数据已被删除。",
+      "source": "没有现场照片，也没有保存水位或货损记录",
+      "changed": "最终正文只保留原因/损失待核实和不编造，没有明确记录不存在的状态。",
+      "effect": "丢失用户明确限制，不能把不编造原因/金额当作等价保留无记录。",
+      "downstreamAttribution": "未执行候选作品，保留事实遗漏的增强层归因，不外推下游行为。"
+    },
+    {
+      "caseId": "PR-D07",
+      "severity": "SEVERE",
+      "responsibility": "正文模型将如何体现理解视为必须补全的交付缺口，新增实质汇报。",
+      "firstMeaningfulChange": "014.json finalTask.deliverable和additions；准备013.json response=UNSPECIFIED且当前只阅读理解/等待，原始边界完整送达。",
+      "source": "当前只需要阅读并理解；暂时不用改代码，也不用写项目说明文档，等我下一条具体任务。",
+      "changed": "完成阅读后，请简要说明你已了解的项目结构、关键约定和主要模块",
+      "effect": "本可简短确认并等待，却新增结构/约定/模块理解说明，扩大成果要求。",
+      "downstreamAttribution": "未执行候选作品，不认定下游已交付额外文档。"
+    }
+  ],
+  "limitedPositiveResults": [
+    "已保存35科研误判在本轮确实进入正文生成，无依据准备分类透传路径已移除。",
+    "Plan委托查询零问题、保留地点单问题、真实答复后生成路径通过本轮定向验证。",
+    "充分通知正文经模型生成后保留有效表达，不能计为实质扩写收益。"
+  ],
+  "adoption": "NOT_ADOPTED",
+  "semanticGoalComplete": false,
+  "note": "准备与最终task是模型产生的证据线索；根因结合原始来源和实际正文核实，不以自报风险或覆盖通过代替语义判断。"
+}

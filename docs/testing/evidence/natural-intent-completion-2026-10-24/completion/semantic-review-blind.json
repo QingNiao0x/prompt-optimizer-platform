@@ -1,0 +1,517 @@
+{
+  "status": "BLIND_REVIEW_FROZEN",
+  "reviewedAt": "2026-10-24T04:39:02.8618871+08:00",
+  "assessor": "assess_validation_strategy",
+  "paidModelCalls": 0,
+  "candidateMappingRead": false,
+  "generationOutputsRead": false,
+  "otherAuthorReviewsRead": false,
+  "methodology": "内部AI逐源盲审：原始需求、普通背景、完整执行材料及全部12份匿名实际作品。逐份检查保留要求、事实和范围、库存及执行一致性；不以篇幅、品牌或模板多少计收益。不称外部专家认证。",
+  "criteriaSource": {
+    "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/completion-preregistration.json",
+    "sha256": "cf1f8c5453a87437b5e826c7593477187a41aa600ee2a9d7ed41b3148dd264b2",
+    "requirement": "两题各两次重复均须清楚实质优于31，且对原始无严重退步。专项不能覆盖主实验NOT_MET。"
+  },
+  "sourceFiles": [
+    {
+      "caseId": "GC-H01",
+      "path": "tmp/natural-intent-completion-2026-10-24/completion/anonymous-bundles/GC-H01.json",
+      "sha256": "45ba9f74c29191a8cf7ee2ad25cd4f8fd41aaffef97e54dfe726ad9be35ea0dd"
+    },
+    {
+      "caseId": "GC-H02",
+      "path": "tmp/natural-intent-completion-2026-10-24/completion/anonymous-bundles/GC-H02.json",
+      "sha256": "95b6ce8456e352c300abf25ede3fa30c2d8c93ee4027d871b3fde78cf9c575e6"
+    }
+  ],
+  "definitions": {
+    "USABLE": "按相同材料可直接使用，未发现必要内容修正；仍可有不计收益的文风偏好。",
+    "LOCAL_REQUIRED": "任务主体和硬边界仍保留，但须修正一处具体执行、库存或总结不一致；不把它称为直接可用。",
+    "SEVERE": "原任务、明确事实/范围/权限或确定硬限制违约。不能忽略正文明确纠错或因偏好差异强判严重。"
+  },
+  "sourceInterpretation": [
+    "GC-H01是已经确定活动的群通知；执行材料完整，增强输入短不意味着实际作品必须有缺口。通知措辞、标题、emoji或Markdown本身没有指定唯一形式。",
+    "GC-H02允许自主菜式、饭面选择和合理剩余；不要求把所有主食/鸡蛋/胡萝卜/土豆清空，也不规定唯一菜单或精准营养。未做外部营养或家电性能测试。",
+    "可确定检查是库存总量、既定使用先后和有无新增主料；30—40分钟是希望的约数，电饭煲具体耗时未提供，不据普通估计直接判定严重超时。",
+    "全文末尾的明确纠错不能被忽略；若末尾修正主菜单过量，记录用户仍需同步主步骤的成本，不直接认定最终要求额外采购。",
+    "使用原料与食用熟食是否同一截止未进一步定义；不能擅自断言熟食留到次日必然违反原料使用期限或存在安全后果。"
+  ],
+  "records": [
+    {
+      "caseId": "GC-H01",
+      "group": "A",
+      "anonymousId": "work-01",
+      "status": "USABLE",
+      "positiveEvidence": [
+        {
+          "finding": "日期、起止、入场时间、具体活动室与指示牌均正确",
+          "line": 9,
+          "excerpt": "时间2026年11月7日14:30—16:00、14:20入场"
+        },
+        {
+          "finding": "人数上限、报名截止、群内回复方式和按序登记均正确",
+          "line": 22,
+          "excerpt": "11月6日20:00前……参加＋人数……20名"
+        },
+        {
+          "finding": "免费、不卖书、1至3本整洁完整可换书、排除旧练习册/盗版、自愿一对一、可仅分享、不保证换出均保留"
+        },
+        {
+          "finding": "联系直接在原群，无新增链接/联系人/付费/必须交换；正文亲切可发布，不是填空模板"
+        }
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": [
+        "标题、Markdown与emoji及长短属于可接受表达差异；所有内容已齐全，不能据此计实质补全收益。"
+      ]
+    },
+    {
+      "caseId": "GC-H01",
+      "group": "A",
+      "anonymousId": "work-02",
+      "status": "USABLE",
+      "positiveEvidence": [
+        {
+          "finding": "日期、起止、入场时间、具体活动室与指示牌均正确",
+          "line": 9,
+          "excerpt": "时间2026年11月7日14:30—16:00、14:20入场"
+        },
+        {
+          "finding": "人数上限、报名截止、群内回复方式和按序登记均正确",
+          "line": 23,
+          "excerpt": "11月6日20:00前……参加＋人数……20名"
+        },
+        {
+          "finding": "免费、不卖书、1至3本整洁完整可换书、排除旧练习册/盗版、自愿一对一、可仅分享、不保证换出均保留"
+        },
+        {
+          "finding": "联系直接在原群，无新增链接/联系人/付费/必须交换；正文亲切可发布，不是填空模板"
+        }
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": [
+        "标题、Markdown与emoji及长短属于可接受表达差异；所有内容已齐全，不能据此计实质补全收益。"
+      ]
+    },
+    {
+      "caseId": "GC-H01",
+      "group": "B",
+      "anonymousId": "work-03",
+      "status": "USABLE",
+      "positiveEvidence": [
+        {
+          "finding": "日期、起止、入场时间、具体活动室与指示牌均正确",
+          "line": 7,
+          "excerpt": "时间2026年11月7日14:30—16:00、14:20入场"
+        },
+        {
+          "finding": "人数上限、报名截止、群内回复方式和按序登记均正确",
+          "line": 13,
+          "excerpt": "11月6日20:00前……参加＋人数……20名"
+        },
+        {
+          "finding": "免费、不卖书、1至3本整洁完整可换书、排除旧练习册/盗版、自愿一对一、可仅分享、不保证换出均保留"
+        },
+        {
+          "finding": "联系直接在原群，无新增链接/联系人/付费/必须交换；正文亲切可发布，不是填空模板"
+        }
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": [
+        "标题、Markdown与emoji及长短属于可接受表达差异；所有内容已齐全，不能据此计实质补全收益。"
+      ]
+    },
+    {
+      "caseId": "GC-H01",
+      "group": "B",
+      "anonymousId": "work-04",
+      "status": "USABLE",
+      "positiveEvidence": [
+        {
+          "finding": "日期、起止、入场时间、具体活动室与指示牌均正确",
+          "line": 5,
+          "excerpt": "活动定在2026年11月7日（周六）14:30—16:00……14:20起可以入场"
+        },
+        {
+          "finding": "人数上限、报名截止、群内回复方式和按序登记均正确",
+          "line": 9,
+          "excerpt": "11月6日20:00前……参加＋人数……20名"
+        },
+        {
+          "finding": "免费、不卖书、1至3本整洁完整可换书、排除旧练习册/盗版、自愿一对一、可仅分享、不保证换出均保留"
+        },
+        {
+          "finding": "联系直接在原群，无新增链接/联系人/付费/必须交换；正文亲切可发布，不是填空模板"
+        }
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": [
+        "标题、Markdown与emoji及长短属于可接受表达差异；所有内容已齐全，不能据此计实质补全收益。"
+      ]
+    },
+    {
+      "caseId": "GC-H01",
+      "group": "C",
+      "anonymousId": "work-05",
+      "status": "USABLE",
+      "positiveEvidence": [
+        {
+          "finding": "日期、起止、入场时间、具体活动室与指示牌均正确",
+          "line": 6,
+          "excerpt": "时间2026年11月7日14:30—16:00、14:20入场"
+        },
+        {
+          "finding": "人数上限、报名截止、群内回复方式和按序登记均正确",
+          "line": 14,
+          "excerpt": "11月6日20:00前……参加＋人数……20名"
+        },
+        {
+          "finding": "免费、不卖书、1至3本整洁完整可换书、排除旧练习册/盗版、自愿一对一、可仅分享、不保证换出均保留"
+        },
+        {
+          "finding": "联系直接在原群，无新增链接/联系人/付费/必须交换；正文亲切可发布，不是填空模板"
+        }
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": [
+        "标题、Markdown与emoji及长短属于可接受表达差异；所有内容已齐全，不能据此计实质补全收益。"
+      ]
+    },
+    {
+      "caseId": "GC-H01",
+      "group": "C",
+      "anonymousId": "work-06",
+      "status": "USABLE",
+      "positiveEvidence": [
+        {
+          "finding": "日期、起止、入场时间、具体活动室与指示牌均正确",
+          "line": 5,
+          "excerpt": "时间2026年11月7日14:30—16:00、14:20入场"
+        },
+        {
+          "finding": "人数上限、报名截止、群内回复方式和按序登记均正确",
+          "line": 17,
+          "excerpt": "11月6日20:00前……参加＋人数……20名"
+        },
+        {
+          "finding": "免费、不卖书、1至3本整洁完整可换书、排除旧练习册/盗版、自愿一对一、可仅分享、不保证换出均保留"
+        },
+        {
+          "finding": "联系直接在原群，无新增链接/联系人/付费/必须交换；正文亲切可发布，不是填空模板"
+        }
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": [
+        "标题、Markdown与emoji及长短属于可接受表达差异；所有内容已齐全，不能据此计实质补全收益。"
+      ]
+    },
+    {
+      "caseId": "GC-H02",
+      "group": "A",
+      "anonymousId": "work-01",
+      "status": "LOCAL_REQUIRED",
+      "positiveEvidence": [
+        "三天均给出两人主食与菜式、用量和操作顺序；没有另买清单外主料。",
+        "鸡腿350克第1天、豆腐400克与蘑菇150克第2天安排处理，明确顺序保留。",
+        "有可执行菜单而非让用户先补充信息；未强制把耐放库存全部塞进三天。"
+      ],
+      "necessaryEdits": [
+        {
+          "severity": "LOCAL_REQUIRED",
+          "sourceQuote": "约30至40分钟开饭，做法省事",
+          "outputQuote": "把炒好的鸡肉蔬菜连汁倒进电饭煲……按煮饭键",
+          "outputLine": 33,
+          "reason": "末尾第122行又要求回家先按电饭煲再炒料倒入，和主步骤的开煮时点不同；读者须自行决定流程，35分钟估时依赖该决定。",
+          "requiredCorrection": "统一成一条明确顺序，并让并行说明对应同一开煮时点；不据未知电饭煲性能直接认定超时。"
+        }
+      ],
+      "optionalNotes": [
+        "50克西红柿搭配4个鸡蛋可能不是个人偏好的比例，但库存正确且可添面汤，不据此判不合格。"
+      ]
+    },
+    {
+      "caseId": "GC-H02",
+      "group": "A",
+      "anonymousId": "work-02",
+      "status": "LOCAL_REQUIRED",
+      "positiveEvidence": [
+        "三天均给出两人主食与菜式、用量和操作顺序；没有另买清单外主料。",
+        "鸡腿350克第1天、豆腐400克与蘑菇150克第2天安排处理，明确顺序保留。",
+        "有可执行菜单而非让用户先补充信息；未强制把耐放库存全部塞进三天。"
+      ],
+      "necessaryEdits": [
+        {
+          "severity": "LOCAL_REQUIRED",
+          "sourceQuote": "大米总量450克，给出可照做安排",
+          "outputQuote": "大米450克分三天用约360克，剩约90克",
+          "outputLine": 8,
+          "reason": "具体菜单仅第1天150克+第3天150克=300克；第2天150克挂面无米饭。总览又给300—360克，缺乏60克来源，使剩余量不一致。",
+          "requiredCorrection": "将总量与菜单同步为300克、剩150克，或明确新增的合法分配；不需要额外扩充菜谱。"
+        }
+      ],
+      "optionalNotes": [
+        "剩饭为条件性选项，明确同时提供现煮途径；不能把它当作虚构现有剩饭。",
+        "开头第2天前用完措辞可改为最迟第2天，具体菜单已正确安排第2天，不作独立严重失败。"
+      ]
+    },
+    {
+      "caseId": "GC-H02",
+      "group": "B",
+      "anonymousId": "work-03",
+      "status": "LOCAL_REQUIRED",
+      "positiveEvidence": [
+        "三天均给出两人主食与菜式、用量和操作顺序；没有另买清单外主料。",
+        "鸡腿350克第1天、豆腐400克与蘑菇150克第2天安排处理，明确顺序保留。",
+        "有可执行菜单而非让用户先补充信息；未强制把耐放库存全部塞进三天。"
+      ],
+      "necessaryEdits": [
+        {
+          "severity": "LOCAL_REQUIRED",
+          "sourceQuote": "西红柿、西兰花、卷心菜可以三天内安排，尽量吃掉；减少浪费",
+          "outputQuote": "西红柿、西兰花、卷心菜基本吃掉",
+          "outputLine": 106,
+          "reason": "西兰花仅第2天用200克，尚余150克；剩余安排中漏记这150克，最后笼统称基本吃掉。并非必须吃光，但执行者需知道剩什么及如何处理。",
+          "requiredCorrection": "在总览明确余150克；可任选在第3天搭配或说明保留，不必为了清空新增一道菜。"
+        }
+      ],
+      "optionalNotes": [
+        "每天约100克干米两人份可随主菜与个人饭量变化，材料没有精确能量约束；不能凭份量直觉判严重不足。"
+      ]
+    },
+    {
+      "caseId": "GC-H02",
+      "group": "B",
+      "anonymousId": "work-04",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "三天均给出两人主食与菜式、用量和操作顺序；没有另买清单外主料。",
+        "鸡腿350克第1天、豆腐400克与蘑菇150克第2天安排处理，明确顺序保留。",
+        "有可执行菜单而非让用户先补充信息；未强制把耐放库存全部塞进三天。",
+        "大米350克、挂面200克、鸡蛋3个，西红柿600克、卷心菜500克；西兰花200克并清楚记录150克剩余及可第3天顺手使用。",
+        "余量和可选分配没有超出库存，不要求无库存的新食材。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": [
+        "第2天豆腐全部烹调后可留熟食次日的建议，对原料使用截止与食用截止的理解有歧义；按材料现有表述不能确定为严重违约。若要更贴合三天晚饭目标，可不展开次日午饭分支。",
+        "电饭煲正常煮饭的35分钟估算未实测；属于可用性边界，不因品牌未知判定硬失败。"
+      ]
+    },
+    {
+      "caseId": "GC-H02",
+      "group": "C",
+      "anonymousId": "work-05",
+      "status": "LOCAL_REQUIRED",
+      "positiveEvidence": [
+        "三天均给出两人主食与菜式、用量和操作顺序；没有另买清单外主料。",
+        "鸡腿350克第1天、豆腐400克与蘑菇150克第2天安排处理，明确顺序保留。",
+        "有可执行菜单而非让用户先补充信息；未强制把耐放库存全部塞进三天。"
+      ],
+      "necessaryEdits": [
+        {
+          "severity": "LOCAL_REQUIRED",
+          "sourceQuote": "胡萝卜总量200克，不买新主料",
+          "outputQuote": "第3天：卷心菜约200克手撕，胡萝卜约100克切薄片",
+          "outputLine": 49,
+          "reason": "第1天100克+第2天100克已用完；主步骤第三次写100克。第69/74行已明确纠正第3天可不用胡萝卜，因此不判最终硬越库，但需将主菜单/用掉清单同步才便于直接照做。",
+          "requiredCorrection": "把第3天菜名和步骤改为卷心菜快炒，或同步重新分配三天总量不超200克；删去矛盾的第3天用掉100克。"
+        }
+      ],
+      "optionalNotes": [
+        "蘑菇豆腐烧鸡汁味标题容易误导，但紧接无鸡肉版且做法未添加鸡汁；可改为蘑菇烧豆腐，不算已使用不存在的食材。",
+        "第3天多一道快炒可合并以更省事，但不是用户明确规定的菜数违约。"
+      ]
+    },
+    {
+      "caseId": "GC-H02",
+      "group": "C",
+      "anonymousId": "work-06",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "三天均给出两人主食与菜式、用量和操作顺序；没有另买清单外主料。",
+        "鸡腿350克第1天、豆腐400克与蘑菇150克第2天安排处理，明确顺序保留。",
+        "有可执行菜单而非让用户先补充信息；未强制把耐放库存全部塞进三天。",
+        "鸡蛋3+2+1=6、米180+180=360、面200；西红柿300+300=600、西兰花200+150=350、卷心菜350+150=500、胡萝卜100+100=200，均不超库存。",
+        "第3天明确推荐200克面，两人若改90克米饭偏少也有说明；方案不依赖没有的剩饭。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": [
+        "每天菜数较多，可以合并焯西兰花与主食来进一步省事；现有双灶/同锅接续仍可执行，不按个人菜数偏好判失败。",
+        "结尾笼统说米饭或挂面略加时，挂面已用完；可补一句只在剩余库存内调整，但主方案本身没有超量，未计新增严重失败。"
+      ]
+    }
+  ],
+  "deterministicInventoryAudit": [
+    {
+      "caseId": "GC-H02",
+      "group": "A",
+      "anonymousId": "work-01",
+      "totals": {
+        "riceG": 360,
+        "noodlesG": 200,
+        "chickenG": 350,
+        "tofuG": 400,
+        "eggs": "4或6（第2天2个可选）",
+        "tomatoG": 600,
+        "broccoliG": 350,
+        "cabbageG": 500,
+        "mushroomG": 150,
+        "carrotG": 0,
+        "potatoG": 0
+      },
+      "exceedsInventory": false
+    },
+    {
+      "caseId": "GC-H02",
+      "group": "A",
+      "anonymousId": "work-02",
+      "totals": {
+        "riceG": 300,
+        "noodlesG": 150,
+        "chickenG": 350,
+        "tofuG": 400,
+        "eggs": 3,
+        "tomatoG": 600,
+        "broccoliG": 350,
+        "cabbageG": 500,
+        "mushroomG": 150,
+        "carrotG": 130,
+        "potatoG": 150
+      },
+      "exceedsInventory": false,
+      "internalSummaryMismatch": "第8行360克米与每日菜单300克不一致；第111行300—360范围未解释。"
+    },
+    {
+      "caseId": "GC-H02",
+      "group": "B",
+      "anonymousId": "work-03",
+      "totals": {
+        "riceG": "300—320（炒饭）或200（拌面）",
+        "noodlesG": "0（炒饭）或150（拌面）",
+        "chickenG": 350,
+        "tofuG": 400,
+        "eggs": 4,
+        "tomatoG": 600,
+        "broccoliG": 200,
+        "cabbageG": 500,
+        "mushroomG": 150,
+        "carrotG": 100,
+        "potatoG": 200
+      },
+      "exceedsInventory": false,
+      "remainingNotAccounted": "西兰花150克未进入余量说明。"
+    },
+    {
+      "caseId": "GC-H02",
+      "group": "B",
+      "anonymousId": "work-04",
+      "totals": {
+        "riceG": 350,
+        "noodlesG": 200,
+        "chickenG": 350,
+        "tofuG": 400,
+        "eggs": 3,
+        "tomatoG": 600,
+        "broccoliG": "200或350（可选第3天追加）",
+        "cabbageG": 500,
+        "mushroomG": 150,
+        "carrotG": 0,
+        "potatoG": 0
+      },
+      "exceedsInventory": false
+    },
+    {
+      "caseId": "GC-H02",
+      "group": "C",
+      "anonymousId": "work-05",
+      "totals": {
+        "riceG": 330,
+        "noodlesG": 200,
+        "chickenG": 350,
+        "tofuG": 400,
+        "eggs": 6,
+        "tomatoG": 600,
+        "broccoliG": 350,
+        "cabbageG": 500,
+        "mushroomG": 150,
+        "carrotG": "200（第74行最终说明）/300（未同步的主步骤）",
+        "potatoG": 200
+      },
+      "exceedsInventory": false,
+      "internalSummaryMismatch": "末尾明确撤销第3天额外胡萝卜，主步骤和用量仍有矛盾；局部必改而非忽略最终修正后判100克严重越库。"
+    },
+    {
+      "caseId": "GC-H02",
+      "group": "C",
+      "anonymousId": "work-06",
+      "totals": {
+        "riceG": 360,
+        "noodlesG": 200,
+        "chickenG": 350,
+        "tofuG": 400,
+        "eggs": 6,
+        "tomatoG": 600,
+        "broccoliG": 350,
+        "cabbageG": 500,
+        "mushroomG": 150,
+        "carrotG": 200,
+        "potatoG": 200
+      },
+      "exceedsInventory": false
+    }
+  ],
+  "anonymousComparisons": [
+    {
+      "caseId": "GC-H01",
+      "groups": {
+        "A": {
+          "usable": 2,
+          "localRequired": 0,
+          "severe": 0
+        },
+        "B": {
+          "usable": 2,
+          "localRequired": 0,
+          "severe": 0
+        },
+        "C": {
+          "usable": 2,
+          "localRequired": 0,
+          "severe": 0
+        }
+      },
+      "decision": "USABLE_TIE_ALL_GROUPS",
+      "substantiveBenefitObserved": false,
+      "reason": "每一臂均完整组织活动事实，可直接发群；更多标题、短些或emoji并未减少必要修改。"
+    },
+    {
+      "caseId": "GC-H02",
+      "groups": {
+        "A": {
+          "usable": 0,
+          "localRequired": 2,
+          "severe": 0
+        },
+        "B": {
+          "usable": 1,
+          "localRequired": 1,
+          "severe": 0
+        },
+        "C": {
+          "usable": 1,
+          "localRequired": 1,
+          "severe": 0
+        }
+      },
+      "decision": "LOCAL_DIFFERENCES_NO_STABLE_TWO_REPEAT_SUPERIORITY",
+      "substantiveBenefitObserved": "局部不一致不同，B/C各有一份无需必改；不能称任何组两次都明确更好。",
+      "reason": "A有流程时点/米量总结错误，B余量漏记一份，C主步骤和末尾纠错未同步一份；没有发现严重超库存或擅改任务的最终安排。"
+    }
+  ],
+  "frozenConclusion": "GC-H01六份全部可用持平，无法支持任何匿名组在该题两次均有实质收益。GC-H02主要差异是局部库存/执行一致性，未发现可确定严重错误；各组都有可改进空间，不能仅因内容更长宣称补全收益。无论解盲如何，专项要求两题均稳定改善的条件已经缺少GC-H01支持。",
+  "causalLimit": "未读取GEN，故只证明实际作品是否改善，不能把不同作品差异直接归因某一补全字段。解盲与提示词归因须另文，不能回改本盲审结论。",
+  "limitations": [
+    "每臂仅两次，不能声称统计显著或覆盖所有提问。",
+    "未烹饪实测；份量接受合理家庭变体，不把个人口味或锅具估时当确定错误。",
+    "未观察到严重问题不等于已证明任意隐含风险不存在。"
+  ]
+}

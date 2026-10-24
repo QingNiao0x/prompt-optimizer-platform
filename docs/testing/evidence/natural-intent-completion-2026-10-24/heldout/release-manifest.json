@@ -1,0 +1,32 @@
+{
+  "releasedAt": "2026-10-23T19:57:34.503Z",
+  "candidateVersion": "37",
+  "developmentGate": "regression/regression-gate.json",
+  "source": {
+    "status": "SEALED",
+    "caseCount": 2,
+    "files": [
+      {
+        "path": "tmp/intent37-holdout/cases.json",
+        "sha256": "06554897c95f78b87769ee13713c5a7c6a7886310065edca8b69ba551692c528"
+      }
+    ],
+    "author": "/root/assess_validation_strategy",
+    "authoredAt": "2026-10-24",
+    "accessBoundary": "Root freezes candidate and passes regression before opening; implementation and harness agents receive only manifest, hashes and count until then.",
+    "independentExternalAssessment": false,
+    "paidCalls": 0,
+    "authorDisclosure": "Author reviewed common mechanism, known failures and candidate37 guidance before drafting; internal holdout only. The older preparation36 sealed cases were not opened.",
+    "executionBoundary": "Only rawPrompt/contextDescription/files enter enhancement; executorMaterials are provided verbatim to all original,31,candidate downstream arms. Acceptance is evaluator-only, never sent to enhancement or execution models.",
+    "dataScope": "Entirely synthetic task descriptions, materials and acceptance; no real personal or business records.",
+    "samplingBoundary": "First responses retained. No quality retries; freeze protocol and model parameters before opening."
+  },
+  "sealedManifest": {
+    "path": "tmp/intent37-holdout/manifest.json",
+    "sha256": "868769ac8f67f7bf9b856a513fccb4bafe5ed06f6e81d317a7cd7c8ed182689a"
+  },
+  "sourceSha256": "06554897c95f78b87769ee13713c5a7c6a7886310065edca8b69ba551692c528",
+  "caseCount": 2,
+  "modelCalls": 0,
+  "caseTextsPrinted": false
+}

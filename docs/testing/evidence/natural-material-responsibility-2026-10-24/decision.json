@@ -1,0 +1,48 @@
+{
+  "status": "NOT_ADOPTED",
+  "engineering": "候选实现和受影响验证完成",
+  "productGoal": "材料责任误判仍存在，尚未完成可靠修复；未证明整体提示词质量提升",
+  "defaultVersion": "31",
+  "candidateVersion": "35",
+  "tests": 210,
+  "testFailures": 0,
+  "actualCalls": 39,
+  "authorizedMaximum": 48,
+  "phaseCounts": {
+    "GENERATION": 19,
+    "PLAN": 4,
+    "EXECUTION": 16
+  },
+  "protocolRetries": 0,
+  "qualityRetries": 0,
+  "heldoutGenerationCost": {
+    "v31": 6321,
+    "v35": 8883,
+    "increasePercent": 40.5
+  },
+  "rationale": [
+    "未见两题作品核心交付持平，候选有局部无用占位。",
+    "科研原题错误进入UNSPECIFIED保留原文分支，责任准备仍将执行资料扩成用户决定。",
+    "同题增强总token增加40.5%，没有对应质量收益，不切默认。"
+  ],
+  "sourceManifestChecks": [
+    {
+      "stage": "development",
+      "files": 1270,
+      "passed": true
+    },
+    {
+      "stage": "heldout",
+      "files": 1247,
+      "passed": true
+    },
+    {
+      "stage": "repair-reserve",
+      "files": 1273,
+      "passed": true
+    }
+  ],
+  "productionDeployment": false,
+  "dailyBackendRestarted": false,
+  "futureDirection": "保留原范围识别，不再以任务所需资料清单建立用户决定；先界定增强可见输入和执行现场，用户决定由原意与重要影响共同支持。不得继续扩大责任枚举、关键词或逐题禁令。"
+}

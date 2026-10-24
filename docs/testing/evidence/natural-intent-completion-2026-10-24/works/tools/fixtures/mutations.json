@@ -1,0 +1,53 @@
+{
+  "origin": "Independent reference plus deliberate faults, not candidate outputs",
+  "fixtures": [
+    {
+      "id": "wrong_total_uses_unfiltered_rows",
+      "code": "// 根据D03原契约独立编写，仅用于校验检查器；不是任何候选的下游作品。\nexport function paginateRows(rows, options = {}) {\n  const needle = String(options.keyword || '').trim().toLowerCase();\n  const selected = [];\n  for (const row of rows) {\n    if (row.status === 'ACTIVE' && row.name.toLowerCase().includes(needle)) selected.push(row);\n  }\n  const pageSize = options.pageSize ?? 3;\n  const total = rows.length;\n  const totalPages = Math.ceil(total / pageSize);\n  const page = totalPages === 0 ? 1 : Math.min(options.page ?? 1, totalPages);\n  return { items: selected.slice((page - 1) * pageSize, page * pageSize), page, pageSize, total, totalPages };\n}\n"
+    },
+    {
+      "id": "last_page_is_not_clamped",
+      "code": "// 根据D03原契约独立编写，仅用于校验检查器；不是任何候选的下游作品。\nexport function paginateRows(rows, options = {}) {\n  const needle = String(options.keyword || '').trim().toLowerCase();\n  const selected = [];\n  for (const row of rows) {\n    if (row.status === 'ACTIVE' && row.name.toLowerCase().includes(needle)) selected.push(row);\n  }\n  const pageSize = options.pageSize ?? 3;\n  const total = selected.length;\n  const totalPages = Math.ceil(total / pageSize);\n  const page = totalPages === 0 ? 1 : (options.page ?? 1);\n  return { items: selected.slice((page - 1) * pageSize, page * pageSize), page, pageSize, total, totalPages };\n}\n"
+    },
+    {
+      "id": "empty_result_has_page_zero",
+      "code": "// 根据D03原契约独立编写，仅用于校验检查器；不是任何候选的下游作品。\nexport function paginateRows(rows, options = {}) {\n  const needle = String(options.keyword || '').trim().toLowerCase();\n  const selected = [];\n  for (const row of rows) {\n    if (row.status === 'ACTIVE' && row.name.toLowerCase().includes(needle)) selected.push(row);\n  }\n  const pageSize = options.pageSize ?? 3;\n  const total = selected.length;\n  const totalPages = Math.ceil(total / pageSize);\n  const page = totalPages === 0 ? 0 : Math.min(options.page ?? 1, totalPages);\n  return { items: selected.slice((page - 1) * pageSize, page * pageSize), page, pageSize, total, totalPages };\n}\n"
+    },
+    {
+      "id": "mutates_array",
+      "code": "// 根据D03原契约独立编写，仅用于校验检查器；不是任何候选的下游作品。\nexport function paginateRows(rows, options = {}) {\n  const needle = String(options.keyword || '').trim().toLowerCase();\n  rows.reverse();\n  const selected = [];\n  for (const row of rows) {\n    if (row.status === 'ACTIVE' && row.name.toLowerCase().includes(needle)) selected.push(row);\n  }\n  const pageSize = options.pageSize ?? 3;\n  const total = selected.length;\n  const totalPages = Math.ceil(total / pageSize);\n  const page = totalPages === 0 ? 1 : Math.min(options.page ?? 1, totalPages);\n  return { items: selected.slice((page - 1) * pageSize, page * pageSize), page, pageSize, total, totalPages };\n}\n"
+    },
+    {
+      "id": "mutates_element_in_place",
+      "code": "// 根据D03原契约独立编写，仅用于校验检查器；不是任何候选的下游作品。\nexport function paginateRows(rows, options = {}) {\n  const needle = String(options.keyword || '').trim().toLowerCase();\n  rows[2] && (rows[2].name = rows[2].name.trim());\n  const selected = [];\n  for (const row of rows) {\n    if (row.status === 'ACTIVE' && row.name.toLowerCase().includes(needle)) selected.push(row);\n  }\n  const pageSize = options.pageSize ?? 3;\n  const total = selected.length;\n  const totalPages = Math.ceil(total / pageSize);\n  const page = totalPages === 0 ? 1 : Math.min(options.page ?? 1, totalPages);\n  return { items: selected.slice((page - 1) * pageSize, page * pageSize), page, pageSize, total, totalPages };\n}\n"
+    },
+    {
+      "id": "changes_returned_element_but_not_ids",
+      "code": "// 根据D03原契约独立编写，仅用于校验检查器；不是任何候选的下游作品。\nexport function paginateRows(rows, options = {}) {\n  const needle = String(options.keyword || '').trim().toLowerCase();\n  const selected = [];\n  for (const row of rows) {\n    if (row.status === 'ACTIVE' && row.name.toLowerCase().includes(needle)) selected.push(row);\n  }\n  const pageSize = options.pageSize ?? 3;\n  const total = selected.length;\n  const totalPages = Math.ceil(total / pageSize);\n  const page = totalPages === 0 ? 1 : Math.min(options.page ?? 1, totalPages);\n  return { items: selected.slice((page - 1) * pageSize, page * pageSize).map(row => ({...row, name: row.name.trim()})), page, pageSize, total, totalPages };\n}\n"
+    },
+    {
+      "id": "changes_active_filter",
+      "code": "// 根据D03原契约独立编写，仅用于校验检查器；不是任何候选的下游作品。\nexport function paginateRows(rows, options = {}) {\n  const needle = String(options.keyword || '').trim().toLowerCase();\n  const selected = [];\n  for (const row of rows) {\n    if (row.status.startsWith('ACTIVE') && row.name.toLowerCase().includes(needle)) selected.push(row);\n  }\n  const pageSize = options.pageSize ?? 3;\n  const total = selected.length;\n  const totalPages = Math.ceil(total / pageSize);\n  const page = totalPages === 0 ? 1 : Math.min(options.page ?? 1, totalPages);\n  return { items: selected.slice((page - 1) * pageSize, page * pageSize), page, pageSize, total, totalPages };\n}\n"
+    },
+    {
+      "id": "drops_keyword_normalization",
+      "code": "// 根据D03原契约独立编写，仅用于校验检查器；不是任何候选的下游作品。\nexport function paginateRows(rows, options = {}) {\n  const needle = String(options.keyword || '');\n  const selected = [];\n  for (const row of rows) {\n    if (row.status === 'ACTIVE' && row.name.toLowerCase().includes(needle)) selected.push(row);\n  }\n  const pageSize = options.pageSize ?? 3;\n  const total = selected.length;\n  const totalPages = Math.ceil(total / pageSize);\n  const page = totalPages === 0 ? 1 : Math.min(options.page ?? 1, totalPages);\n  return { items: selected.slice((page - 1) * pageSize, page * pageSize), page, pageSize, total, totalPages };\n}\n"
+    },
+    {
+      "id": "breaks_falsy_keyword_semantics",
+      "code": "// 根据D03原契约独立编写，仅用于校验检查器；不是任何候选的下游作品。\nexport function paginateRows(rows, options = {}) {\n  const needle = String(options.keyword ?? '').trim().toLowerCase();\n  const selected = [];\n  for (const row of rows) {\n    if (row.status === 'ACTIVE' && row.name.toLowerCase().includes(needle)) selected.push(row);\n  }\n  const pageSize = options.pageSize ?? 3;\n  const total = selected.length;\n  const totalPages = Math.ceil(total / pageSize);\n  const page = totalPages === 0 ? 1 : Math.min(options.page ?? 1, totalPages);\n  return { items: selected.slice((page - 1) * pageSize, page * pageSize), page, pageSize, total, totalPages };\n}\n"
+    },
+    {
+      "id": "changes_return_shape",
+      "code": "// 根据D03原契约独立编写，仅用于校验检查器；不是任何候选的下游作品。\nexport function paginateRows(rows, options = {}) {\n  const needle = String(options.keyword || '').trim().toLowerCase();\n  const selected = [];\n  for (const row of rows) {\n    if (row.status === 'ACTIVE' && row.name.toLowerCase().includes(needle)) selected.push(row);\n  }\n  const pageSize = options.pageSize ?? 3;\n  const total = selected.length;\n  const totalPages = Math.ceil(total / pageSize);\n  const page = totalPages === 0 ? 1 : Math.min(options.page ?? 1, totalPages);\n  return { extra: true, items: selected.slice((page - 1) * pageSize, page * pageSize), page, pageSize, total, totalPages };\n}\n"
+    },
+    {
+      "id": "drops_options_default",
+      "code": "// 根据D03原契约独立编写，仅用于校验检查器；不是任何候选的下游作品。\nexport function paginateRows(rows, options) {\n  const needle = String(options.keyword || '').trim().toLowerCase();\n  const selected = [];\n  for (const row of rows) {\n    if (row.status === 'ACTIVE' && row.name.toLowerCase().includes(needle)) selected.push(row);\n  }\n  const pageSize = options.pageSize ?? 3;\n  const total = selected.length;\n  const totalPages = Math.ceil(total / pageSize);\n  const page = totalPages === 0 ? 1 : Math.min(options.page ?? 1, totalPages);\n  return { items: selected.slice((page - 1) * pageSize, page * pageSize), page, pageSize, total, totalPages };\n}\n"
+    },
+    {
+      "id": "sorts_filtered_rows",
+      "code": "// 根据D03原契约独立编写，仅用于校验检查器；不是任何候选的下游作品。\nexport function paginateRows(rows, options = {}) {\n  const needle = String(options.keyword || '').trim().toLowerCase();\n  const selected = [];\n  for (const row of rows) {\n    if (row.status === 'ACTIVE' && row.name.toLowerCase().includes(needle)) selected.push(row);\n  }\n  selected.sort((a, b) => a.name.localeCompare(b.name));\n  const pageSize = options.pageSize ?? 3;\n  const total = selected.length;\n  const totalPages = Math.ceil(total / pageSize);\n  const page = totalPages === 0 ? 1 : Math.min(options.page ?? 1, totalPages);\n  return { items: selected.slice((page - 1) * pageSize, page * pageSize), page, pageSize, total, totalPages };\n}\n"
+    }
+  ]
+}

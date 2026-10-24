@@ -1,0 +1,61 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-10-23T20:36:34.370647+00:00",
+  "stages": [
+    {
+      "stage": "regression",
+      "actualCalls": 24,
+      "sourceFilesVerified": 1292,
+      "transportExportsEqual": true,
+      "historyChecks": 13,
+      "sameInformationChecks": 10,
+      "sourceDrift": []
+    },
+    {
+      "stage": "heldout",
+      "actualCalls": 10,
+      "sourceFilesVerified": 1255,
+      "transportExportsEqual": true,
+      "historyChecks": 4,
+      "sameInformationChecks": 2,
+      "sourceDrift": []
+    },
+    {
+      "stage": "works",
+      "actualCalls": 32,
+      "sourceFilesVerified": 1303,
+      "transportExportsEqual": true,
+      "historyChecks": 10,
+      "sameInformationChecks": 10,
+      "sourceDrift": []
+    },
+    {
+      "stage": "completion",
+      "actualCalls": 21,
+      "sourceFilesVerified": 1267,
+      "transportExportsEqual": true,
+      "historyChecks": 4,
+      "sameInformationChecks": 4,
+      "sourceDrift": []
+    }
+  ],
+  "taskActual": 87,
+  "previousCumulative": 1848,
+  "cumulativeActual": 1935,
+  "phaseCounts": {
+    "GENERATION": 41,
+    "PLAN": 4,
+    "EXECUTION": 42
+  },
+  "taskMaximum": 128,
+  "unusedReservationReleased": 41,
+  "publicCredentialScan": {
+    "status": "NO_PATTERN_MATCHES",
+    "filesScanned": 280,
+    "matches": 0,
+    "paths": [],
+    "matchContentsPrinted": false,
+    "limitation": "Finite pattern scan; not a proof of absence of all sensitive data."
+  },
+  "modelCallsForAudit": 0
+}

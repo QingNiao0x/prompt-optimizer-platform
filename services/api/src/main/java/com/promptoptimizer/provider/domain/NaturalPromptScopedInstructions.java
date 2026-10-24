@@ -20,7 +20,8 @@ public final class NaturalPromptScopedInstructions {
     public static boolean supports(String version) {
         return VERSION.equals(version) || PRESERVED_VERSION.equals(version) || CONSERVATIVE_VERSION.equals(version)
                 || GUARDED_FOURTH_VERSION.equals(version) || NaturalPromptRelationalInstructions.supports(version)
-                || NaturalPromptExecutionBoundaryInstructions.VERSION.equals(version);
+                || NaturalPromptExecutionBoundaryInstructions.VERSION.equals(version)
+                || NaturalPromptMaterialInstructions.VERSION.equals(version);
     }
 
     public static final String PREPARE = NaturalPromptInstructions.COMMON + """

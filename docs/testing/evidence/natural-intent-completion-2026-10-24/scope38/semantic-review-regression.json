@@ -1,0 +1,461 @@
+{
+  "assessor": "开发协作代理按原始来源、真实题答及各阶段原件独立复核；不是外部专业用户评审。",
+  "reviewedAt": "2026-10-23T20:55:50.627184+00:00",
+  "candidateVersion": "38",
+  "regressionGate": "PASS",
+  "regressionSemanticPass": true,
+  "candidateAdoption": "NOT_DECIDED",
+  "defaultVersion": "31",
+  "newModelCallsForReview": 0,
+  "reviewedLiveCaseCount": 9,
+  "reviewedLiveResults": 10,
+  "reviewedLiveUpstreamCalls": 20,
+  "reviewedCallBreakdown": {
+    "GENERATION": 18,
+    "PLAN": 2
+  },
+  "severeRegressionCount": 0,
+  "protocolAndQuotesAreNotSemanticProof": true,
+  "preregisteredEvidence": [
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-hypothesis.json",
+      "sha256": "afe295b7b52a4d3d50305b674910fd7ddfc1a99d71c55c2f6d00d7ac04330b93"
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-adoption-preregistration.json",
+      "sha256": "30071cee0d372540001002a443a51d6be2ad1939b4be46dd508a6bfdf311b9a7"
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-regression/protocol.json",
+      "sha256": "10de6b71dc32c3a291cec4a728f18119a7ae28850125fd42a69a4976d5d293b1"
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-regression/cases.json",
+      "sha256": "83b2da1d75bef992fa21367ff9c3cd42d421076d0a98fe89960dd682bfda0527"
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-regression/source-manifest.json",
+      "sha256": "a7af1c7ce98b63a1acfe3e31f35766113e1114661eba6f1392addfa8280c4f8c"
+    }
+  ],
+  "productionSourceFreezeMatches": {
+    "checkedMainFiles": 477,
+    "allMatched": true
+  },
+  "requestAndAssemblyChecks": {
+    "fullOriginalPromptAndContextPreservedInAll20Requests": true,
+    "allActualAnswersEqualServerBoundConfirmation": true,
+    "actualPlanQuestionAndContextVerified": true,
+    "writerBodyEqualsFinalBodyInAllNineEnhancements": true
+  },
+  "coverage": {
+    "oldThreeFailuresLive": [
+      "D03",
+      "PR-D06",
+      "PR-D07"
+    ],
+    "normalOppositeVariantsLive": [
+      "IC-R02",
+      "IC-R03",
+      "IC-R04"
+    ],
+    "visibleDevelopmentCasesLive": [
+      "GC-H01",
+      "GC-H02"
+    ],
+    "freshPlanAndConfirmedGenerationLive": [
+      "MR-P02"
+    ],
+    "D04": "Not run live38; relevant offline checks and old37 evidence are separate and were not recounted as live38 proof.",
+    "sealedCsContentRead": false,
+    "futureActualWorksRead": false
+  },
+  "records": [
+    {
+      "caseId": "D03",
+      "evidenceKind": "LIVE_38",
+      "verdict": "PASS_NO_NEW_SEVERE_REGRESSION",
+      "originalMeaning": "修复现有JavaScript分页函数，保持筛选方式、签名和返回结构；不改输入数组；筛选收缩后页码与总页数正确，交付可替换完整实现。",
+      "stageObservations": [
+        "准备识别明确修复与完整实现，无资料欠账。",
+        "writer保留全部原始目标与边界，没有把增强未见代码写成项目没有契约，也没有要求先设计新接口。",
+        "final与writer正文完全一致。"
+      ],
+      "completionAssessment": "additions为空，主要是标点和表达整理；原需求充分，计保真持平，不算实质增强。",
+      "requiredUserEdits": [],
+      "excerpts": [
+        "保留现有筛选方式、函数签名和返回结构，不改输入数组，给出可替换的完整实现。"
+      ],
+      "severeViolations": [],
+      "actualAnswersReviewed": 0,
+      "writerToFinalSemanticChanges": [],
+      "evidence": [
+        {
+          "kind": "result",
+          "jobId": "D03_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/results/D03_V38_GEN.json",
+          "sha256": "ca80764352811bada85996e8e8d8775b0f2149b70f3f942a7a65c81001df8565"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "D03_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/001.json",
+          "sha256": "f8a9759b3ecc607f32afb2bc20d206e3807904ba05f7b7ffc91bb84fbff326d5"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "D03_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/002.json",
+          "sha256": "e0ef6e03511ede50a61c7400fdbbec9f283ed2df72d3f56365c67b23cc5206b3"
+        }
+      ]
+    },
+    {
+      "caseId": "PR-D06",
+      "evidenceKind": "LIVE_38",
+      "verdict": "PASS_NO_NEW_SEVERE_REGRESSION",
+      "originalMeaning": "已确认仓库昨日上午因进水停收发货、下午恢复；明确无现场照片、无水位或货损记录；不得编造来源、金额或恢复时点；交付可用说明正文，未核实原因和损失只集中说明一次。",
+      "stageObservations": [
+        "准备动作/response未单列“无照片、无水位/货损记录”，是准备摘要不完备。",
+        "完整raw仍在writer输入，writer逐项补回明确无记录的状态及既有时间事实，未要求从不存在资料取证，也未阻断正文。",
+        "final与writer一致，无新的原因、金额、恢复时刻或用户补齐义务。"
+      ],
+      "completionAssessment": "原表达充分，最终为保真整理；不能因准备漏项后正文恢复就把它算作有用新增。",
+      "requiredUserEdits": [],
+      "excerpts": [
+        "没有现场照片，也没有保存水位或货损记录；不要编造进水来源、货损金额或恢复时间点。",
+        "未核实的原因和损失在正文中集中说明一次，不要只给填写模板。"
+      ],
+      "severeViolations": [],
+      "actualAnswersReviewed": 0,
+      "writerToFinalSemanticChanges": [],
+      "evidence": [
+        {
+          "kind": "result",
+          "jobId": "PR-D06_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/results/PR-D06_V38_GEN.json",
+          "sha256": "4e56215fb578a1b0f33514a654ca1b32563155b55a119b1bdcece1719019cec3"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "PR-D06_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/003.json",
+          "sha256": "bd5e31f406cc3ef6e9ae4cd3768a0cc9bd150c34b551a30abc40fce7a60f3455"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "PR-D06_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/004.json",
+          "sha256": "c6e352a6044c0a4abf4cca373d9d551552cc4a7acee7c39903cd94922d7fcbd9"
+        }
+      ]
+    },
+    {
+      "caseId": "PR-D07",
+      "evidenceKind": "LIVE_38",
+      "verdict": "PASS_NO_NEW_SEVERE_REGRESSION",
+      "originalMeaning": "当前阅读理解项目结构与约定，暂不改代码、不写说明文档，等待用户下一条任务；目录和规则可在下游执行时读取。",
+      "stageObservations": [
+        "准备把等待列为CONDITIONAL，未准确区分当前等待与未来任务条件；response为UNSPECIFIED。",
+        "writer没有被分类关闭，仍生成最终请求，保留阅读理解、不改代码、不写文档和等待边界，并带入已有执行可读目录/规则事实。",
+        "最终task.goal纠正为当前理解与等待，deliverable为空；final没有新增独立作品。"
+      ],
+      "completionAssessment": "无新增阅读清单或交付，属于适合本充分需求的保真持平，不算实质补全。",
+      "requiredUserEdits": [],
+      "excerpts": [
+        "当前只需要阅读并理解；暂时不用改代码，也不用写项目说明文档，等我下一条具体任务。",
+        "项目目录和规则可在下游执行时读取。"
+      ],
+      "severeViolations": [],
+      "actualAnswersReviewed": 0,
+      "writerToFinalSemanticChanges": [],
+      "evidence": [
+        {
+          "kind": "result",
+          "jobId": "PR-D07_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/results/PR-D07_V38_GEN.json",
+          "sha256": "21b2490ce12f537adf0a495e3c16c000e385f68bc8b5f625dd8ebcada0b903d6"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "PR-D07_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/005.json",
+          "sha256": "678bb1098af34d87c70dc79557e29f7f167a588a113ed8a56421aa532dfa37ec"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "PR-D07_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/006.json",
+          "sha256": "2dc09653cc6c8f9856aeadbca7ce759357d8f250b6f6389fd0c2b3dd26e0f670"
+        }
+      ]
+    },
+    {
+      "caseId": "IC-R02",
+      "evidenceKind": "LIVE_38",
+      "verdict": "PASS_NO_NEW_SEVERE_REGRESSION",
+      "originalMeaning": "维修记录和照片已保存，本消息没附但执行时能读取；利用资料交付调查报告正文，区分已知原因和待核实部分；不得改成资料不存在或仅调查提纲。",
+      "stageObservations": [
+        "准备保留已保存且执行可读，不把可读材料变成用户前置上传要求。",
+        "writer与原文相同，明确保留资料存在、执行可读取及报告目标；没有冒充已查看图像或调查完成。",
+        "final与writer一致。"
+      ],
+      "completionAssessment": "additions为空，保真持平。保留原文不是旧跳过生成分支：本题确有PREPARE和writer两个原始响应；仍不据此声称质量增益。",
+      "requiredUserEdits": [],
+      "excerpts": [
+        "维修记录和现场照片都已保存，这条消息暂未附上，执行时可以读取。",
+        "不要把尚未上传说成资料不存在，也不要只给调查提纲。"
+      ],
+      "severeViolations": [],
+      "actualAnswersReviewed": 0,
+      "writerToFinalSemanticChanges": [],
+      "evidence": [
+        {
+          "kind": "result",
+          "jobId": "IC-R02_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/results/IC-R02_V38_GEN.json",
+          "sha256": "834a471e63400c6906268382052fbc8f6f691f9e5c39fcb7fc4ee924c79a35bc"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "IC-R02_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/007.json",
+          "sha256": "763335f7f6d53e257b6bbcf355430712657877466a9c919c37a5cb4f3fc6b43a"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "IC-R02_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/008.json",
+          "sha256": "c12b5d2a29d8bbb4d6e7b2434d80648d7a83f4287900e932eb751454ed233c92"
+        }
+      ]
+    },
+    {
+      "caseId": "IC-R03",
+      "evidenceKind": "LIVE_38",
+      "verdict": "PASS_NO_NEW_SEVERE_REGRESSION",
+      "originalMeaning": "阅读演练项目目录和规则后交付简短摘要，覆盖模块、调用关系、约定；当前不改代码，用户确认摘要后才开发。",
+      "stageObservations": [
+        "准备识别明确摘要成果，没有把熟悉动作一律归为仅等待。",
+        "writer保留摘要三项内容与简短要求，增加基于实际材料、围绕三项组织；这是原成果内部组织，不是新增独立交付。",
+        "不改代码与确认后开发的条件完整保留，final未变更正文。"
+      ],
+      "completionAssessment": "增加的组织与实际材料依据有合理用途，但原文已经列明三项且要求阅读资料，属于轻度具体化/重复，不单独认定显著增益。",
+      "requiredUserEdits": [],
+      "excerpts": [
+        "提交一份简短的项目熟悉摘要，说明主要模块、调用关系和后续修改应遵守的约定。",
+        "暂不改代码，等我确认摘要后再开始具体开发。"
+      ],
+      "severeViolations": [],
+      "actualAnswersReviewed": 0,
+      "writerToFinalSemanticChanges": [],
+      "evidence": [
+        {
+          "kind": "result",
+          "jobId": "IC-R03_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/results/IC-R03_V38_GEN.json",
+          "sha256": "0450860b7c41e355ba3501c5cdc81760a492eb0d1eab69501f1fe12e140c5317"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "IC-R03_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/009.json",
+          "sha256": "31d603e58b06b01a26b90f507e9429ac2f5af445ca03b71d9116f68c6c08dba3"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "IC-R03_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/010.json",
+          "sha256": "5ab4763c7597f678fa370154864ef5994251965b83acb8d09de9d6e3c7932615"
+        }
+      ]
+    },
+    {
+      "caseId": "IC-R04",
+      "evidenceKind": "LIVE_38",
+      "verdict": "PASS_NO_NEW_SEVERE_REGRESSION",
+      "originalMeaning": "交付上线检查记录模板，允许空白项；明确无生产数据库访问权、不能取得真实部署日志；不得声称已核查或已部署；覆盖发布前中后和负责人确认，字段排版交给AI。",
+      "stageObservations": [
+        "准备response与内部deliverable把不能获取日志压缩为“无日志访问权”，对不能获取的原因作了未明示归因；不作为新增事实依据。",
+        "writer正文和requirements分别原样保留数据库权限与日志无法取得两项限制，没有将模板改成已完成的检查报告。",
+        "模板空白项被保留，字段/排版仍由执行者设计，没有索要资料或授权访问；final与writer一致。"
+      ],
+      "completionAssessment": "主要整理原有四部分与限制，允许原成果内字段设计；不把合法空白模板当作空泛降级，也不把持平记收益。",
+      "requiredUserEdits": [],
+      "excerpts": [
+        "模板允许保留空白填写项",
+        "本人无权访问生产数据库，也不能获取真实部署日志，因此模板中不得声称已核查生产数据或已经部署。"
+      ],
+      "severeViolations": [],
+      "actualAnswersReviewed": 0,
+      "writerToFinalSemanticChanges": [],
+      "evidence": [
+        {
+          "kind": "result",
+          "jobId": "IC-R04_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/results/IC-R04_V38_GEN.json",
+          "sha256": "a5f1db1d89f1632b1ce77ad376a6e55f90b88d49253a70a45b24096ac1c74cd0"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "IC-R04_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/011.json",
+          "sha256": "5c7b44954ac59dec3604cf20e563b762325a7cb35e9fc232dd0862d2350e59a5"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "IC-R04_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/012.json",
+          "sha256": "762e06bd807828c0b5ca7d96107ecf9b234c3448484b2b4e79a66dd85a302c9b"
+        }
+      ]
+    },
+    {
+      "caseId": "GC-H01",
+      "evidenceKind": "LIVE_38",
+      "verdict": "PASS_NO_NEW_SEVERE_REGRESSION",
+      "originalMeaning": "按活动记录交付直接可发群通知，轻松亲切；上下文已给旧书交换活动、组织者身份及内容顺序/标题/措辞委托，具体事实执行时读取。",
+      "stageObservations": [
+        "准备利用适用上下文识别原通知对象与成果，没有从材料主题另建任务。",
+        "writer将群名、地点、活动安排等零散事实组织进通知，仍依据执行材料；没有新增活动时地、报名渠道、奖品或保证。",
+        "内容顺序/标题/措辞委托保留，未改成活动策划或用户填表，final与writer一致。"
+      ],
+      "completionAssessment": "增加应组织的事实类别，属于原通知内部合理内容，不能当独立交付扩张；补充仍较一般，未证明相对31或实际作品有增益。",
+      "requiredUserEdits": [],
+      "excerpts": [
+        "把活动记录中的群名、地点和活动安排等零散事实组织进去",
+        "内容顺序、标题和具体措辞由你合理设计，最终给出一份可直接发送的通知正文。"
+      ],
+      "severeViolations": [],
+      "actualAnswersReviewed": 0,
+      "writerToFinalSemanticChanges": [],
+      "evidence": [
+        {
+          "kind": "result",
+          "jobId": "GC-H01_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/results/GC-H01_V38_GEN.json",
+          "sha256": "e1aded08cc841a2e67a425e8e803b16e4cfa906b5070f3bc17c6cc30ded9d4ca"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "GC-H01_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/013.json",
+          "sha256": "c72f06d6f1e859fba647e1a4cc49542e09764acae67455b1b31f53d4b9ff1ac7"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "GC-H01_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/014.json",
+          "sha256": "0564021a71afef0efc12bc21f03631747198746b0e8c33427b8e53234ab4af06"
+        }
+      ]
+    },
+    {
+      "caseId": "GC-H02",
+      "evidenceKind": "LIVE_38",
+      "verdict": "PASS_NO_NEW_SEVERE_REGRESSION",
+      "originalMeaning": "按现有食材安排两人三日晚饭，省事、减少浪费；上下文已委托菜式搭配顺序，完整库存设备偏好留给下游读取，不为家常选择额外追问。",
+      "stageObservations": [
+        "准备保留晚饭安排及委托，没有从没见完整库存推断现实缺料。",
+        "writer带入已有设备/偏好材料引用、两人三天和自主设计，不增加采购、营养咨询、清空全部库存或用户选菜前置条件。",
+        "没有编造具体保质期、菜谱或用户口味；final与writer一致。"
+      ],
+      "completionAssessment": "additions为空，基本重述原需求与上下文，未具体化每日材料分配、顺序或完成条件；属可用性待作品验证的保真，不证明实质补全改善。",
+      "requiredUserEdits": [],
+      "excerpts": [
+        "菜式、搭配和使用顺序由你自行设计，不需要额外询问普通家常选择。",
+        "安排要省事，并尽量利用现有食材、减少浪费。"
+      ],
+      "severeViolations": [],
+      "actualAnswersReviewed": 0,
+      "writerToFinalSemanticChanges": [],
+      "evidence": [
+        {
+          "kind": "result",
+          "jobId": "GC-H02_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/results/GC-H02_V38_GEN.json",
+          "sha256": "392561dced824faf2996ae13be8bbba2c17fdaa2309e470aae9bde0546ab30ac"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "GC-H02_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/015.json",
+          "sha256": "4525c1270e960a40588c13ab7bec0ba40c83cd8509e8436a35219958ac98e9b6"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "GC-H02_V38_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/016.json",
+          "sha256": "6964c841b41e68ed7b3c28c4ca55aa951bc8a350b2aa0329e87794a87f7b6fbc"
+        }
+      ]
+    },
+    {
+      "caseId": "MR-P02",
+      "evidenceKind": "LIVE_38",
+      "verdict": "PASS_NO_NEW_SEVERE_REGRESSION",
+      "originalMeaning": "写活动地点变更通知给报名成员；2027年5月9日10点不变，松石楼一层停用；新地点只能用户确认；AI决定措辞段落，不编原因。",
+      "stageObservations": [
+        "fresh Plan实际仅q1询问新地点，确为用户保留且会改变通知的关键未知，没有询问已委托的措辞/段落或常规执行材料。",
+        "实际planId、planningContext和q1题干与确认请求一致；绑定答案是“新地点确定为青禾中心二层会议室。”，不是评审伪造问答。",
+        "回答后PREPARE和writer均收到同一actualAnswers.0，最终采用青禾中心二层会议室，保留时间、旧址停用、受众、委托及不编原因，没有重写新地点待定或再选址。",
+        "Plan内部unaskedDecisions与实际q1重复登记同一未知，属内部记录冗余；实际只问一题且回答后openDecisions为空，没有最终违约。"
+      ],
+      "completionAssessment": "这是关键决定保真及真实Plan路径通过，不是创造新的补全质量收益；新地点已真实确认，不要求最终正文继续写“先问”或“待定”。",
+      "requiredUserEdits": [],
+      "excerpts": [
+        "请确认活动的新地点（具体名称或地址）是什么？",
+        "新地点确定为青禾中心二层会议室。",
+        "活动日期仍为2027年5月9日10点；原地点松石楼一层不再使用；新地点为青禾中心二层会议室。"
+      ],
+      "severeViolations": [],
+      "actualAnswersReviewed": 1,
+      "writerToFinalSemanticChanges": [],
+      "evidence": [
+        {
+          "kind": "result",
+          "jobId": "MR-P02_V38_PLAN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/results/MR-P02_V38_PLAN.json",
+          "sha256": "f512928f73f42b7e3018c09155ebd8adb869e109d62c75eb4cce11666a10221f"
+        },
+        {
+          "kind": "result",
+          "jobId": "MR-P02_V38_PLAN_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/results/MR-P02_V38_PLAN_GEN.json",
+          "sha256": "29550fce3e2ff554b62c3a3d903d0c607fd51dce31363206bb1739d2551c86bd"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "MR-P02_V38_PLAN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/017.json",
+          "sha256": "f43657428c404c09be010d5980608aad1561c82d20b1bb4571470a5051eb2de5"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "MR-P02_V38_PLAN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/018.json",
+          "sha256": "2c63a571888f2138ec07afc471dd3d251644c369d9f077ac6f6a53634956b6a4"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "MR-P02_V38_PLAN_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/019.json",
+          "sha256": "806a8e7e51ff4bbf504ac6ccee13b79d818458d1baa77bb72a643506e760ba2e"
+        },
+        {
+          "kind": "raw-model-trace",
+          "jobId": "MR-P02_V38_PLAN_GEN",
+          "path": "tmp/natural-intent-completion-2026-10-24/boundary38-regression/traces/020.json",
+          "sha256": "683c99c82a43e2c2c80537f7fe0ad1b9d8099bb9b597a8b804c0e477fc3bc92c"
+        }
+      ]
+    }
+  ],
+  "remainingObservations": [
+    "准备摘要仍可能漏事实或误分等待；本批完整原文继续传递且最终保留，但不能宣称准备理解完全可靠。",
+    "IC-R04内部记录对日志不可得原因存在压缩，最终正文两项事实限制保持。",
+    "Plan同一未知存在内部重复登记，未增加实际问题，也未污染回答后正文。",
+    "GC开发题主要保真或轻度组织，未证明38实质补全收益；此回归PASS不得替代已冻结CS及实际作品验收。"
+  ],
+  "conclusion": "本批旧三失败与三正常反向变体未见最终新增严重意图、事实、否定/条件或授权违约，实际Plan关键问题及回答后的状态转换正确，回归门禁PASS。仅允许进入后续已授权且已冻结验证，不构成候选采用、默认切换或部署结论。"
+}

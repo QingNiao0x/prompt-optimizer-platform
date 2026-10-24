@@ -1,0 +1,188 @@
+{
+  "batch": "natural-intent-completion-works-2026-10-24",
+  "status": "FROZEN",
+  "authorizationQuote": "用户明确授权实施并自主选择真实评测次数；执行者新增总上限128，回归阶段40。",
+  "taskMaximumActualCalls": 128,
+  "taskPreviouslyActual": 34,
+  "maximumNewActualCalls": 48,
+  "previousClosedActualCalls": 1848,
+  "oldClosedBalanceTransferred": 0,
+  "baselineVersion": "31",
+  "candidateVersions": [
+    "37"
+  ],
+  "versions": [
+    "31",
+    "37"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 16,
+    "PLAN": 0,
+    "EXECUTION": 32,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 2,
+    "PLAN": 0,
+    "EXECUTION": 30,
+    "REVIEW": 0
+  },
+  "generation": [
+    "PR-D06",
+    "D03",
+    "IC-H01",
+    "IC-H02",
+    "D02"
+  ],
+  "regressionGeneration": [],
+  "plan": [],
+  "confirmedPlanGeneration": [],
+  "execution": [
+    "PR-D06",
+    "D03",
+    "IC-H01",
+    "IC-H02",
+    "D02"
+  ],
+  "executionRepeats": 2,
+  "executionIncludeOriginal": true,
+  "confirmationMode": "PER_VERSION",
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "37": [
+      "37"
+    ]
+  },
+  "allowedJobs": [
+    "PR-D06_V31_GEN",
+    "PR-D06_ORIGINAL_EXEC_R1",
+    "PR-D06_ORIGINAL_EXEC_R2",
+    "PR-D06_V31_EXEC_R1",
+    "PR-D06_V31_EXEC_R2",
+    "PR-D06_V37_EXEC_R1",
+    "PR-D06_V37_EXEC_R2",
+    "D03_ORIGINAL_EXEC_R1",
+    "D03_ORIGINAL_EXEC_R2",
+    "D03_V31_EXEC_R1",
+    "D03_V31_EXEC_R2",
+    "D03_V37_EXEC_R1",
+    "D03_V37_EXEC_R2",
+    "IC-H01_ORIGINAL_EXEC_R1",
+    "IC-H01_ORIGINAL_EXEC_R2",
+    "IC-H01_V31_EXEC_R1",
+    "IC-H01_V31_EXEC_R2",
+    "IC-H01_V37_EXEC_R1",
+    "IC-H01_V37_EXEC_R2",
+    "IC-H02_ORIGINAL_EXEC_R1",
+    "IC-H02_ORIGINAL_EXEC_R2",
+    "IC-H02_V31_EXEC_R1",
+    "IC-H02_V31_EXEC_R2",
+    "IC-H02_V37_EXEC_R1",
+    "IC-H02_V37_EXEC_R2",
+    "D02_ORIGINAL_EXEC_R1",
+    "D02_ORIGINAL_EXEC_R2",
+    "D02_V31_EXEC_R1",
+    "D02_V31_EXEC_R2",
+    "D02_V37_EXEC_R1",
+    "D02_V37_EXEC_R2"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "order": "复用已有增强，补齐事前未生成的31基线；随后原始/31/37同信息三臂各两份作品，不按质量重试。",
+  "informationPolicy": "增强仅见原始提示词、普通context与实际绑定答复，不见executorMaterials或评分卡。ORIGINAL/31/37执行逐字接收相同普通背景和executorMaterials；复用作品必须核对完整原件、同题资料及模型参数。评分卡仅供内部逐源复核，本阶段REVIEW=0，不调用模型评审。增强阶段未附资料不等于执行阶段没有资料。",
+  "criteria": [
+    "回归三项已知严重错误D03/PR-D06/PR-D07及相反正常变体零严重失败。",
+    "独立内部留出零新增严重失败。",
+    "同信息实际作品相对31至少两题有清楚改善，改善须体现在必要修改项减少或交付完整性/可执行性提高，其中至少一题来自内部留出。",
+    "相对原始提示词无严重退步，产品收益与相对31升级收益分别报告。",
+    "充分需求持平允许但不计为收益；任一严重意图、事实、授权或硬要求退步不能由其他得分抵消。",
+    "不满足则不切默认，不事后修改采用门槛；真实调用数、作品与全部失败原件完整保留，不做质量重试。",
+    "D02仅为预登记方法对象诊断，不能计入主四题的两题收益或替换留出收益要求。"
+  ],
+  "stopConditions": [
+    "任务128次、本阶段48次和各phase上限同时执行；所有失败、协议修复和作品计数，禁止质量重试。",
+    "相同失败假设不靠更换版本号、同义指令或重复采样续跑；出现严重退步先定位责任与依据。",
+    "已关闭任务或阶段不得重新执行；是否采用独立根据目标收益与严重退步判断。"
+  ],
+  "reviews": [],
+  "reviewSystem": "",
+  "generationVersions": [
+    "31"
+  ],
+  "planVersions": [
+    "37"
+  ],
+  "executionArms": [
+    "ORIGINAL",
+    "V31",
+    "V37"
+  ],
+  "draftNotes": [
+    "相对31至少两题清楚改善，其中至少一留出；原始产品收益另列，严重退步不能抵消。",
+    "本批最多选择四题，全部重复作品均保留，不挑最优样本。除填补确实未生成过的31外不重新增强。",
+    "任何评审仅作证据线索；来源、完整交付与必要修改项由独立复核核实，不把得分当事实。",
+    "主四题同期24作品＋D02同期诊断6作品＋PR-D06缺失31增强2次＝正常32调用；上限48。旧D02实际8192，重新诊断是隔离跨日期/采样差异，不是参数不一致。"
+  ],
+  "generationVersionsByCase": {
+    "PR-D06": [
+      "31"
+    ],
+    "D03": [],
+    "IC-H01": [],
+    "IC-H02": [],
+    "D02": []
+  },
+  "prerequisiteStages": [
+    "regression",
+    "heldout"
+  ],
+  "preparationInstructionClass": "com.promptoptimizer.provider.domain.NaturalPromptIntentCompletionInstructions",
+  "requiredGenerationVersionsByCase": {
+    "PR-D06": [
+      "31",
+      "37"
+    ],
+    "D03": [
+      "31",
+      "37"
+    ],
+    "IC-H01": [
+      "31",
+      "37"
+    ],
+    "IC-H02": [
+      "31",
+      "37"
+    ],
+    "D02": [
+      "31",
+      "37"
+    ]
+  },
+  "adoptionCriteriaRef": "../adoption-preregistration.json",
+  "freezeRevision": 2,
+  "adoptionEligibleCaseIds": [
+    "PR-D06",
+    "D03",
+    "IC-H01",
+    "IC-H02"
+  ],
+  "diagnosticCaseIds": [
+    "D02"
+  ],
+  "frozenAt": "2026-10-23T20:09:23.449414+00:00"
+}

@@ -1,0 +1,39 @@
+{
+  "modelCalls" : 0,
+  "results" : [ {
+    "trace" : "004.json",
+    "jobId" : "IC-H01_V37_GEN",
+    "deserialization" : "FAIL",
+    "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+    "message" : "Unrecognized field \"framework\" (class com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$EnhancementTask), not marked as ignorable (6 known properties: \"inputReadiness\", \"goal\", \"additions\", \"openDecisions\", \"deliverable\", \"requirements\"])\n at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 1958] (through reference chain: com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$Enhancement[\"task\"]->com.promptoptimizer.provider.domain.NaturalPromptPhasePayloads$EnhancementTask[\"framework\"])"
+  }, {
+    "trace" : "006.json",
+    "jobId" : "IC-H02_V37_GEN",
+    "deserialization" : "PASS",
+    "actionSources" : [ {
+      "index" : 0,
+      "timing" : "CURRENT",
+      "sourceIds" : [ "rawPrompt" ],
+      "hasRequiredUserSource" : true
+    }, {
+      "index" : 1,
+      "timing" : "CURRENT",
+      "sourceIds" : [ "rawPrompt" ],
+      "hasRequiredUserSource" : true
+    }, {
+      "index" : 2,
+      "timing" : "CURRENT",
+      "sourceIds" : [ "rawPrompt" ],
+      "hasRequiredUserSource" : true
+    }, {
+      "index" : 3,
+      "timing" : "CURRENT",
+      "sourceIds" : [ "context.customDescription" ],
+      "hasRequiredUserSource" : false
+    } ],
+    "scopeResolve" : "FAIL",
+    "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+    "message" : "任务动作与回应边界无效"
+  } ],
+  "status" : "OFFLINE_REPLAY_COMPLETE"
+}

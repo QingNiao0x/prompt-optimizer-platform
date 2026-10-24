@@ -1,0 +1,194 @@
+{
+  "checks": [
+    {
+      "caseId": "D01",
+      "stage": "GENERATION",
+      "complete": true,
+      "executorMaterialsAbsent": true,
+      "equal": true,
+      "independentActualPlans": false,
+      "availableResults": 2,
+      "newResults": 1,
+      "reusedResults": 1,
+      "resultOrigins": {
+        "31": {
+          "stage": "development",
+          "path": "tmp/natural-execution-boundary-2026-10-23/development/results/D01_V31_GEN.json",
+          "sha256": "23d79d63eb779a775ac10d15b4d063964eafe12a788b7ebd9a1dc15cfb24d1ba"
+        },
+        "36": {
+          "stage": "development",
+          "newResult": true
+        }
+      },
+      "answerFactIdsByVersion": {},
+      "note": "直接增强输入逐字一致。"
+    },
+    {
+      "caseId": "D02",
+      "stage": "GENERATION",
+      "complete": true,
+      "executorMaterialsAbsent": true,
+      "equal": true,
+      "independentActualPlans": false,
+      "availableResults": 2,
+      "newResults": 1,
+      "reusedResults": 1,
+      "resultOrigins": {
+        "31": {
+          "stage": "capacity",
+          "path": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V31_GEN.json",
+          "sha256": "8c5072843547c080634127da89e402ac6b0da2b8daab04600e204b57e7fe3ecf"
+        },
+        "36": {
+          "stage": "development",
+          "newResult": true
+        }
+      },
+      "answerFactIdsByVersion": {},
+      "note": "直接增强输入逐字一致。"
+    },
+    {
+      "caseId": "D03",
+      "stage": "GENERATION",
+      "complete": true,
+      "executorMaterialsAbsent": true,
+      "equal": true,
+      "independentActualPlans": false,
+      "availableResults": 2,
+      "newResults": 1,
+      "reusedResults": 1,
+      "resultOrigins": {
+        "31": {
+          "stage": "development",
+          "path": "tmp/natural-execution-boundary-2026-10-23/development/results/D03_V31_GEN.json",
+          "sha256": "16339136306dda901fbb4059afdf2a415fe83fc5ff127afacd5fd05341dff35b"
+        },
+        "36": {
+          "stage": "development",
+          "newResult": true
+        }
+      },
+      "answerFactIdsByVersion": {},
+      "note": "直接增强输入逐字一致。"
+    },
+    {
+      "caseId": "D04",
+      "stage": "GENERATION",
+      "complete": true,
+      "executorMaterialsAbsent": true,
+      "equal": true,
+      "independentActualPlans": false,
+      "availableResults": 2,
+      "newResults": 1,
+      "reusedResults": 1,
+      "resultOrigins": {
+        "31": {
+          "stage": "development",
+          "path": "tmp/natural-execution-boundary-2026-10-23/development/results/D04_V31_GEN.json",
+          "sha256": "6bb0b00c1a4e029bfbdb837bd9dc983fdf0d9f56919e5f30d26e81699ebf31fa"
+        },
+        "36": {
+          "stage": "development",
+          "newResult": true
+        }
+      },
+      "answerFactIdsByVersion": {},
+      "note": "直接增强输入逐字一致。"
+    },
+    {
+      "caseId": "MR-P02",
+      "stage": "GENERATION",
+      "complete": false,
+      "executorMaterialsAbsent": true,
+      "equal": true,
+      "independentActualPlans": true,
+      "availableResults": 1,
+      "newResults": 1,
+      "reusedResults": 0,
+      "resultOrigins": {
+        "36": {
+          "stage": "development",
+          "newResult": true
+        }
+      },
+      "answerFactIdsByVersion": {
+        "36": [
+          "NEW_LOCATION"
+        ]
+      },
+      "note": "Plan各臂原始输入一致；真实提问和绑定事实覆盖可能不同，单独报告，不混称全部增强输入相同。"
+    },
+    {
+      "caseId": "D02",
+      "stage": "EXECUTION",
+      "equal": true,
+      "complete": false,
+      "availableResults": 4,
+      "newResults": 0,
+      "reusedResults": 4,
+      "expected": 6,
+      "sameMaterial": true,
+      "executorMaterialsIdentical": true,
+      "resultOrigins": {
+        "D02_ORIGINAL_EXEC_R1": {
+          "stage": "capacity",
+          "path": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_ORIGINAL_EXEC_R1.json",
+          "sha256": "c673f21830c9db2ceb27c31797f7e19ad26dd668348ad5709914dd5e545209de"
+        },
+        "D02_ORIGINAL_EXEC_R2": {
+          "stage": "capacity",
+          "path": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_ORIGINAL_EXEC_R2.json",
+          "sha256": "9f48597f08ddbe0831498bca9c1a73795abf01976ff250185be44dfda8f17d01"
+        },
+        "D02_V31_EXEC_R1": {
+          "stage": "capacity",
+          "path": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V31_EXEC_R1.json",
+          "sha256": "99ed31c06ee3841882eef9a68f7a7299ff89bda92b4c20d2c22a626e664fc56b"
+        },
+        "D02_V31_EXEC_R2": {
+          "stage": "capacity",
+          "path": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V31_EXEC_R2.json",
+          "sha256": "36b5ab694eabc44742fb38fa0bb3e87e49493f0b47f10d398237395eb8a140e8"
+        }
+      }
+    },
+    {
+      "caseId": "D03",
+      "stage": "EXECUTION",
+      "equal": true,
+      "complete": false,
+      "availableResults": 4,
+      "newResults": 0,
+      "reusedResults": 4,
+      "expected": 6,
+      "sameMaterial": true,
+      "executorMaterialsIdentical": true,
+      "resultOrigins": {
+        "D03_ORIGINAL_EXEC_R1": {
+          "stage": "development",
+          "path": "tmp/natural-execution-boundary-2026-10-23/development/results/D03_ORIGINAL_EXEC_R1.json",
+          "sha256": "c7af7f360c61e1131cc4ddf2b46cc0493f726623e35e1f30a586ef47fb1f1144"
+        },
+        "D03_ORIGINAL_EXEC_R2": {
+          "stage": "development",
+          "path": "tmp/natural-execution-boundary-2026-10-23/development/results/D03_ORIGINAL_EXEC_R2.json",
+          "sha256": "3ce67faef2e7f033c689e0632d166ec605a6e95544b6b0be215b10d4d270f5e7"
+        },
+        "D03_V31_EXEC_R1": {
+          "stage": "development",
+          "path": "tmp/natural-execution-boundary-2026-10-23/development/results/D03_V31_EXEC_R1.json",
+          "sha256": "55834352614622faa23769235e74f72b1b16f4968f7b4113b16a4210c9c9a29d"
+        },
+        "D03_V31_EXEC_R2": {
+          "stage": "development",
+          "path": "tmp/natural-execution-boundary-2026-10-23/development/results/D03_V31_EXEC_R2.json",
+          "sha256": "6a48da7fcedd295d59f700fc500295ba560a999de3303ab5dbc3113dd68ddfb6"
+        }
+      }
+    }
+  ],
+  "historyPassed": 12,
+  "newHistoryPassed": 8,
+  "reusedHistoryPassed": 4
+}

@@ -1,0 +1,60 @@
+{
+  "status": "KNOWN_CASE_AUXILIARY_REVIEW_NOT_COLD_BLIND",
+  "reviewer": "root, internal AI; current mappings read before these six V38 works",
+  "paidEvaluationCalls": 0,
+  "scope": "Two new V38 works each for GC-H01, GC-H02 and IC-H01; prior original/31 findings reused, not regenerated or rescored as new calls",
+  "records": [
+    {
+      "caseId": "GC-H01", "version": "V38", "repeats": [1, 2],
+      "verdict": "USABLE_TIE",
+      "basis": "Both keep the stated date, start/end and arrival times, location, free/no-selling rule, 1-3 eligible books, voluntary exchange/no guarantee, 20-person cap, deadline, group reply and same-group questions. No necessary edit established. Original/31 previously also both usable."
+    },
+    {
+      "caseId": "GC-H02", "version": "V38", "repeat": 1,
+      "verdict": "LOCAL_REQUIRED",
+      "basis": "The day2 ingredient list and final accounting use two eggs, but the recipe only optionally adds one egg when the rice is dry; no step uses the planned two. This makes the claim of all six eggs consumed inconsistent with actual instructions.",
+      "minimumEdit": "Either explicitly cook the planned two eggs in day2 fried rice, or revise the optional egg use and final remaining count. Finishing all six eggs is not itself required.",
+      "uncertaintiesNotPromotedToHardFailure": [
+        "The 200g dry-rice batch is shared across two dinners without a clear reserved amount. Clarifying the split would help, but the source gives no mandatory grams per person, and the second meal also contains substantial tofu and other ingredients; do not invent a nutrition minimum or assert definite starvation.",
+        "Day2 cabbage can be split between soup and stir-fry within the stated 250g; do not treat the word remaining as definitely using all 500g despite the day3 allocation.",
+        "Small optional carrot use does not require a compulsory exact nutrition/gram table."
+      ]
+    },
+    {
+      "caseId": "GC-H02", "version": "V38", "repeat": 2,
+      "verdict": "USABLE_WITH_UNMEASURED_COOKING_TIME",
+      "arithmetic": {
+        "riceUsed": "200+150=350g; 450-350=100g left",
+        "noodles": "200g used",
+        "chicken": "350g on day1",
+        "tofu": "400g on day2",
+        "mushrooms": "100+50=150g by day2",
+        "eggs": "2+2+2=6",
+        "tomatoes": "300+200+100=600g",
+        "broccoli": "200+150=350g",
+        "cabbage": "300+200=500g",
+        "carrot": "100g used, 100g left",
+        "potatoes": "300g left"
+      },
+      "basis": "Quantities stay within the complete food inventory, known priority dates are met, ordinary dishes and parallel equipment use are described. No necessary edit established from supplied facts.",
+      "limit": "Cooking was not performed. A particular rice cooker's cycle time is unknown; do not assert either universal 40-minute success or definite failure from an invented minimum cycle."
+    },
+    {
+      "caseId": "IC-H01", "version": "V38", "repeat": 1,
+      "verdict": "PRIVACY_BOUNDARY_CONFLICT_OR_UNRESOLVED_RISK",
+      "evidence": ["每人用称呼＋一个今天愿意分享的小偏好介绍自己", "找出本组三个人以上都有的一个共同点", "喜欢的活动、生活习惯、喜欢的季节"],
+      "basis": "The default script asks for real preferences/habits beyond a name while the opening says no other personal information is needed. The word willing can be read as voluntary, but no explicit name-only/fictional alternative is supplied for these activities. Do not report this as a clearly privacy-safe closure.",
+      "severityBoundary": "Whether willing sharing satisfies the original non-compulsion boundary is a semantic disagreement, not a server-proved violation. Preserve the competing interpretation; no new blanket ban on voluntary conversation follows.",
+      "otherChecks": "The detailed table totals 2+8+10+6+4=30 minutes. It includes host setup/cleanup; host movement is not automatically participant movement. Optional front-table materials have a delivery ambiguity but do not expressly require a participant to leave a fixed seat."
+    },
+    {
+      "caseId": "IC-H01", "version": "V38", "repeat": 2,
+      "verdict": "LOCAL_CLARIFICATION_AND_PRIVACY_INTERPRETATION_REMAIN",
+      "evidence": ["如果有人不想回答某个问题，就说跳过……不追问", "不想说的人说跳过", "两句是真的、一句是愿望", "布置与清理各约1分钟，已含在开场前和收束内"],
+      "basis": "Explicit opt-out must be considered: do not call this definitely forced disclosure by ignoring it. The default game still requests real personal statements, so suitability to a name-only activity remains disputed. Setup described as before the opening needs an explicit slot within the full 0-30 schedule; it is not already proved outside the budget in every reading.",
+      "minimumEdit": "Clarify that setup occupies part of the opening allocation and that every person can complete the game using names or fictional/common task content without personal disclosure, if that is the intended privacy reading.",
+      "limit": "No physical event was run; seating transmission distances and exact speaking speeds were not supplied and are not invented as proof of impossibility."
+    }
+  ],
+  "conclusion": "GC38 has a notice tie and a meal pair with one local correction, matching the prior31 usability pattern rather than demonstrating stable gain. H01 does not establish a reliably closed privacy/time risk. These known cases cannot replace the failed CS adoption benefit criterion."
+}

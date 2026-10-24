@@ -1,0 +1,30 @@
+{
+  "status": "NO_ACTIONABLE_ENGINEERING_FINDINGS",
+  "reviewedAt": "2026-10-23T20:43:12.490897+00:00",
+  "reviewScope": [
+    "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptContentScopeInstructions.java",
+    "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptIntentCompletionInstructions.java",
+    "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+    "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptStageInstructions.java",
+    "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+    "services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/NaturalIntentCompletionProviderTest.java"
+  ],
+  "modelCalls": 0,
+  "findings": [],
+  "verifiedInvariants": [
+    "38 ENHANCE replaces exactly one overbroad37 review boundary; no task-first order or new response fields.",
+    "38 PREPARE and PLAN are byte-identical to37.",
+    "Both public instruction factories route38 to its actual expected constants.",
+    "38 support/review/framework/diagnostic flags retain the prior stage protocol.",
+    "38 advisory preparation is sent before writing and Plan; UNSPECIFIED does not skip writing.",
+    "Complete raw input, context, taskSources, actualAnswers and version remain in both outbound model requests.",
+    "A source-valid later task understanding may correct the preparation explanation; no bindScope override.",
+    "Default remains31; 31/36/37 guidance hashes are unchanged.",
+    "No other production source was edited by this testing agent."
+  ],
+  "openRisks": [
+    "The narrower content boundary may or may not improve useful completion. Only a frozen same-information real-work comparison can decide this.",
+    "Mock correct responses and valid source/body quotes prove routing and referential protection, not completeness or semantic equivalence."
+  ],
+  "changedTestSource": "services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/NaturalIntentCompletionProviderTest.java"
+}

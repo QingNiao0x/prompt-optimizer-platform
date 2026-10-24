@@ -1,0 +1,127 @@
+{
+  "batch": "natural-intent-completion-heldout-2026-10-24",
+  "status": "DRAFT",
+  "authorizationQuote": "用户授权真实评测自行选择次数；本任务新增128内留出封顶40。",
+  "taskMaximumActualCalls": 128,
+  "taskPreviouslyActual": 24,
+  "maximumNewActualCalls": 40,
+  "previousClosedActualCalls": 1848,
+  "oldClosedBalanceTransferred": 0,
+  "baselineVersion": "31",
+  "candidateVersions": [
+    "37"
+  ],
+  "versions": [
+    "31",
+    "37"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 40,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 8,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "generation": [
+    "IC-H01",
+    "IC-H02"
+  ],
+  "regressionGeneration": [],
+  "plan": [],
+  "confirmedPlanGeneration": [],
+  "execution": [],
+  "executionRepeats": 2,
+  "executionIncludeOriginal": true,
+  "confirmationMode": "PER_VERSION",
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "37": [
+      "37"
+    ]
+  },
+  "allowedJobs": [
+    "IC-H01_V31_GEN",
+    "IC-H01_V37_GEN",
+    "IC-H02_V31_GEN",
+    "IC-H02_V37_GEN"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "order": "候选冻结并通过回归后开启内部独立封存两题；31/37同期增强，本阶段只检验增强；作品留到works阶段同信息三臂。",
+  "informationPolicy": "增强仅见原始提示词、普通context与实际绑定答复，不见executorMaterials或评分卡。ORIGINAL/31/37执行逐字接收相同普通背景和executorMaterials；复用作品必须核对完整原件、同题资料及模型参数。评分卡仅供内部逐源复核，本阶段REVIEW=0，不调用模型评审。增强阶段未附资料不等于执行阶段没有资料。",
+  "criteria": [
+    "三臂执行收到相同材料，不以准备分类自报或HTTP成功作为语义正确。",
+    "比较目标/事实/要求保留、执行资料职责、是否存在整任务阻塞与用户必要修改；持平如实报告。",
+    "候选无新增严重意图/事实/授权退步，且相对于原始与31存在可核查作品收益，才考虑默认切换。",
+    "独立内部留出由本团队作者封存，不称外部专业认证；全部失败、正常变体与作品一并保留。"
+  ],
+  "stopConditions": [
+    "任务128次、本阶段40次和各phase上限同时执行；所有失败、协议修复和作品计数，禁止质量重试。",
+    "相同失败假设不靠更换版本号、同义指令或重复采样续跑；出现严重退步先定位责任与依据。",
+    "已关闭任务或阶段不得重新执行；是否采用独立根据目标收益与严重退步判断。"
+  ],
+  "reviews": [],
+  "reviewSystem": "",
+  "generationVersions": [
+    "31",
+    "37"
+  ],
+  "planVersions": [
+    "31",
+    "37"
+  ],
+  "executionArms": [
+    "ORIGINAL",
+    "V31",
+    "V37"
+  ],
+  "draftNotes": [
+    "正常计划8次；上限40不指示用满。失败/协议修复计数，禁止质量重试。",
+    "题面在开发关闭且回归PASS后才读取；候选不再根据留出结果继续同义调整。"
+  ],
+  "generationVersionsByCase": {
+    "IC-H01": [
+      "31",
+      "37"
+    ],
+    "IC-H02": [
+      "31",
+      "37"
+    ]
+  },
+  "prerequisiteStages": [
+    "regression"
+  ],
+  "preparationInstructionClass": "com.promptoptimizer.provider.domain.NaturalPromptIntentCompletionInstructions",
+  "requiredGenerationVersionsByCase": {
+    "IC-H01": [
+      "31",
+      "37"
+    ],
+    "IC-H02": [
+      "31",
+      "37"
+    ]
+  },
+  "adoptionCriteriaRef": "../adoption-preregistration.json",
+  "freezeRevision": 2
+}

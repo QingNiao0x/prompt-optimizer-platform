@@ -1,0 +1,73 @@
+{
+  "checks": [
+    {
+      "caseId": "D02",
+      "stage": "GENERATION",
+      "complete": true,
+      "executorMaterialsAbsent": true,
+      "equal": true,
+      "independentActualPlans": false,
+      "availableResults": 2,
+      "newResults": 1,
+      "reusedResults": 1,
+      "resultOrigins": {
+        "31": {
+          "stage": "development",
+          "path": "tmp/natural-execution-boundary-2026-10-23/development/results/D02_V31_GEN.json",
+          "sha256": "b2292b418e432949318284aa6e86df72fc59e62d073140bbbe2c75daa02bdbbc"
+        },
+        "35": {
+          "stage": "repair-reserve",
+          "newResult": true
+        }
+      },
+      "answerFactIdsByVersion": {},
+      "note": "直接增强输入逐字一致。"
+    },
+    {
+      "caseId": "D02",
+      "stage": "EXECUTION",
+      "equal": true,
+      "complete": true,
+      "availableResults": 6,
+      "newResults": 2,
+      "reusedResults": 4,
+      "expected": 6,
+      "sameMaterial": true,
+      "executorMaterialsIdentical": true,
+      "resultOrigins": {
+        "D02_ORIGINAL_EXEC_R1": {
+          "stage": "capacity",
+          "path": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_ORIGINAL_EXEC_R1.json",
+          "sha256": "c673f21830c9db2ceb27c31797f7e19ad26dd668348ad5709914dd5e545209de"
+        },
+        "D02_ORIGINAL_EXEC_R2": {
+          "stage": "capacity",
+          "path": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_ORIGINAL_EXEC_R2.json",
+          "sha256": "9f48597f08ddbe0831498bca9c1a73795abf01976ff250185be44dfda8f17d01"
+        },
+        "D02_V31_EXEC_R1": {
+          "stage": "capacity",
+          "path": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V31_EXEC_R1.json",
+          "sha256": "99ed31c06ee3841882eef9a68f7a7299ff89bda92b4c20d2c22a626e664fc56b"
+        },
+        "D02_V31_EXEC_R2": {
+          "stage": "capacity",
+          "path": "tmp/natural-execution-boundary-2026-10-23/capacity/results/D02_V31_EXEC_R2.json",
+          "sha256": "36b5ab694eabc44742fb38fa0bb3e87e49493f0b47f10d398237395eb8a140e8"
+        },
+        "D02_V35_EXEC_R1": {
+          "stage": "repair-reserve",
+          "newResult": true
+        },
+        "D02_V35_EXEC_R2": {
+          "stage": "repair-reserve",
+          "newResult": true
+        }
+      }
+    }
+  ],
+  "historyPassed": 2,
+  "newHistoryPassed": 1,
+  "reusedHistoryPassed": 1
+}

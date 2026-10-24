@@ -1,0 +1,112 @@
+{
+  "status": "CLOSED_EVALUATION_NOT_ADOPTED",
+  "decidedAt": "2026-10-23T21:39:24.895801+00:00",
+  "decisionAuthority": "Root confirmed final quality decision after frozen CS blind reviews/calibration.",
+  "engineering": {
+    "status": "COMPLETED_FOR_CANDIDATE_SCOPE",
+    "latestAffectedTests": 247,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "routingScope": "Candidate37 task/response separation and advisory preparation; candidate38 single internal-content boundary clarification. Default31 was not replaced."
+  },
+  "candidateDecisions": {
+    "37": "NOT_ADOPTED",
+    "38": "NOT_ADOPTED"
+  },
+  "defaultVersion": "31",
+  "productQualityGoal": {
+    "status": "NOT_MET",
+    "unfinished": true,
+    "semanticGoalComplete": false,
+    "userQualityTaskComplete": false,
+    "reason": "Neither candidate demonstrated the frozen practical quality gains. Both new CS cases did not show clear improvement over31 in both repeats; sufficient ties and protocol success are not substantive gain."
+  },
+  "decisionBoundaries": [
+    "Engineering test success, valid HTTP/JSON and final-source fidelity do not prove actual-work quality.",
+    "Closed37 main and completion findings remain historically unchanged; later calibrations are separate.",
+    "CS adoption NOT_MET does not depend on disputed auxiliary privacy/timing interpretations.",
+    "GC is already-seen development evidence. H01 is mandatory known-risk evidence, not new holdout gain; explicit skip is not automatically certain forced disclosure.",
+    "Anonymous H01 initial review, pre-unblind calibration and later unblinded review remain separate, without rewriting original findings."
+  ],
+  "actualCalls": 135,
+  "selectedMaximumActualCalls": 144,
+  "previousCumulativeActual": 1848,
+  "cumulativeActual": 1983,
+  "unusedReservationReleased": 9,
+  "qualityRetries": 0,
+  "protocolRetries": 3,
+  "toolingInterruptions": 1,
+  "extraModelCallsForToolError": 0,
+  "phaseCounts": {
+    "GENERATION": 69,
+    "PLAN": 6,
+    "EXECUTION": 60
+  },
+  "productionDeploymentPerformed": false,
+  "defaultSwitched": false,
+  "gitCommitPerformed": false,
+  "report": "docs/testing/自然增强指令一致性与实际作品验收-2026-10-24.md",
+  "evidence": [
+    {
+      "path": "regression/semantic-review-independent.json",
+      "sha256": "010f119ee85de04e117fd30337741dac400234a172802c5d138988fa7419336d"
+    },
+    {
+      "path": "heldout/semantic-review-independent.json",
+      "sha256": "9d619061ea0446aa3a6b11e92ee520a8501f6f8decd211c6049b266a37317e02"
+    },
+    {
+      "path": "works/semantic-review-unblinded.json",
+      "sha256": "496d6d821530ea12c586e5ffef2db936ea3f519e7f3025b685f68f2b677db39e"
+    },
+    {
+      "path": "completion/semantic-review-unblinded.json",
+      "sha256": "57131729284405c6c9ca88d7dba7685ebb7fa9ccf4fbc4d817b18285c1d1762b"
+    },
+    {
+      "path": "scope38/semantic-review-regression.json",
+      "sha256": "838a420243c090b9be403ca904a6d8e53061febf081670e5ef8270b0577f3768"
+    },
+    {
+      "path": "boundary38-heldout/generation-semantic-review-independent.json",
+      "sha256": "89e629537c5378ec7f0874aeffb04763e10fe19c85c63904efcef19c20e5ef1b"
+    },
+    {
+      "path": "boundary38-works/semantic-review-cs-unblinded.json",
+      "sha256": "3f06684ca7ac6cb746f74d5da9d0ab715a3e20a5a83167210b6a7f761f116e08"
+    },
+    {
+      "path": "boundary38-works/semantic-review-cs-calibration-attribution.json",
+      "sha256": "624d5746ebf42c53aad3fdd4f369a2396763cfa3718dc3b276e0acbb29d9c779"
+    },
+    {
+      "path": "scope38/root-cs-blind-review.json",
+      "sha256": "b69157e9c51ec5e46851bdde591b1df8a3a9bd03e6010658e481789acd550824"
+    },
+    {
+      "path": "scope38/root-auxiliary-review.json",
+      "sha256": "c21c1bd4e0219b64291ad5e846a4d58c7b529d96b88fe3a2e5594ea81c23e42c"
+    },
+    {
+      "path": "scope38/known-risk/artifact-semantic-review-anonymous.json",
+      "sha256": "b0289973b06738c58919f5c809e3eba7b1b9db2aba1e69860ea583e18eb25015"
+    },
+    {
+      "path": "scope38/known-risk/artifact-semantic-review-anonymous-calibration.json",
+      "sha256": "fd5ee7c0879cfa80848a55ee8bbf4d86103b253d3412c0976bb84d212d43bbd6"
+    },
+    {
+      "path": "final-boundary38-audit.json",
+      "sha256": "66036092eee6bf49b792b7ecd128174f5d52bc6edb48113fc39d8b396eddc5e2"
+    },
+    {
+      "path": "runtime-after-boundary38.json",
+      "sha256": "07add9bc8e61335b8792b4bb39017d520542983c60c1853461efdbd1197d2101"
+    },
+    {
+      "path": "evaluation-budget-settlement.json",
+      "sha256": "5f616ddeb81ebc4718ef0050fedd213f95585d48a0f7735b218052755f3a545b"
+    }
+  ]
+}

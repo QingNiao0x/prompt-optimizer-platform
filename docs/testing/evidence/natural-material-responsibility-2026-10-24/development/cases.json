@@ -1,0 +1,201 @@
+{
+  "cases": [
+    {
+      "id": "D01",
+      "category": "RETRIEVAL_EXECUTION_MATERIALS",
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": [
+        {
+          "name": "2025跨地区工作场景AI调查_合成资料说明.txt",
+          "content": "【合成演练资料，不是现实调查或全球事实】档案编号SIM-AI-2025。假定研究对象为模拟的10个地区的在业成年人，数据采集时间均为2025年。共5000名不同受访者，每人归入且仅归入一个行业和一种职业。以下两张表来自同一受访总体，均完整列出本演练的五个分类；每类样本数1000，总使用者数均为3000。使用AI定义为过去7天至少一次为工作使用生成式AI工具；使用率=该组使用人数/该组受访人数。表内无各组全球人口总量或抽样权重，不能从本表推算全球使用AI的绝对总人数。行业与职业是不同分类维度。应用字段是本组受访使用者勾选的常见用途，允许多选，没有应用比例数据。"
+        },
+        {
+          "name": "2025行业调查_合成.csv",
+          "content": "industry,respondents,ai_users,use_rate_percent,reported_applications\n信息技术与软件服务,1000,820,82,代码辅助；技术文档；资料检索\n专业与商务服务,1000,710,71,材料整理；草稿撰写；信息归纳\n教育与培训,1000,620,62,教学材料；练习草稿；内容改写\n制造与物流,1000,510,51,流程文档；信息抽取；数据摘要\n零售与生活服务,1000,340,34,商品文案；问答草稿；资料分类"
+        },
+        {
+          "name": "2025职业调查_合成.csv",
+          "content": "occupation,respondents,ai_users,use_rate_percent,reported_applications\n软件开发人员,1000,860,86,代码辅助；排错思路；技术说明\n内容与设计人员,1000,740,74,文案草稿；视觉构思；内容改写\n教学人员,1000,610,61,教学材料；练习草稿；反馈整理\n运营与行政人员,1000,470,47,表格摘要；通知草稿；文档归类\n现场服务人员,1000,320,32,问答草稿；说明材料；信息检索"
+        }
+      ],
+      "unambiguousHardRequirements": [
+        "围绕全球AI使用职业/行业查询给出有依据的实际回答",
+        "区分行业与职业分类，不用统计口径说明代替查询结果",
+        "合成数据明确标注，结论受调查覆盖范围与指标限制"
+      ],
+      "qualityDimensions": [
+        "利用执行阶段提供的资料形成清楚的比较和应用概况",
+        "不把优化阶段未附资料推断成执行者没有资料或工具",
+        "不强制用户预先选择所有统计细节，不凭空增加报告篇幅或流程"
+      ],
+      "intendedResult": "有依据的职业/行业查询结果",
+      "acceptance": {
+        "hardRequirements": [
+          "应实际回答哪些职业/行业在所给调查中使用率较高，指出所用指标与来源",
+          "不能把演练合成调查冒充真实2025全球调查，也不能推算未给出的全球绝对人数",
+          "优化阶段不见executorMaterials，不能因此预先断言研究来源/字段/工具不存在"
+        ],
+        "qualityDimensions": [
+          "结论优先、依据清楚，相关口径和局限服务于结果",
+          "职业与行业分别比较，常见用途可帮助理解但不新增应用份额"
+        ],
+        "allowedVariants": [
+          "简洁文字、表格或其他清楚的组织均可，不固定榜单条数或标题数",
+          "可以区分使用率与绝对人数的含义；绝对人数不能确定只限制相应判断，不应取消已有使用率比较",
+          "报告式回答允许，但用户只要求查询，不以长报告或专业统计方案作为必要标准"
+        ],
+        "severeRegressions": [
+          "只交付检索/统计方案、来源清单或一连串问题而不给已有数据支持的结果",
+          "以优化时没有资料为由直接写成无数据/无法查询/只能给模板",
+          "虚构真实机构、网址、全球代表性、使用人数或AI应用效果"
+        ]
+      }
+    },
+    {
+      "id": "D03",
+      "category": "CODE_EXISTING_CONTRACT",
+      "rawPrompt": "请修复现有JavaScript分页函数，筛选后的页码和总页数要正确，翻到末页再更改筛选也不能越界。保留现有筛选方式、函数签名和返回结构，不改输入数组，给出可替换的完整实现。",
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": [
+        {
+          "name": "paginateRows现有契约.txt",
+          "content": "【本地合成代码夹具】函数签名paginateRows(rows, options = {})。rows元素含id、name、status；先保留status恰好为ACTIVE的记录，再按name包含keyword进行不区分大小写的子串筛选，keyword按String(options.keyword || emptyString).trim().toLowerCase()归一化。筛选后的顺序沿用输入顺序。options.page与options.pageSize若给出则是有限正整数；默认page=1、pageSize=3，无需设计新的输入协议。返回结构固定{items,page,pageSize,total,totalPages}，total是全部筛选命中数，totalPages是其向上取整的页数。请求page超出最后一页时收敛至最后一页。无命中时items=[]、page=1、total=0、totalPages=0。不能修改rows或元素，不新增依赖/API或返回字段。"
+        },
+        {
+          "name": "paginateRows.js",
+          "content": "export function paginateRows(rows, options = {}) {\n  const keyword = String(options.keyword || '').trim().toLowerCase();\n  const page = options.page || 1;\n  const pageSize = options.pageSize || 3;\n  const total = rows.length;\n  const totalPages = Math.ceil(total / pageSize);\n  const items = rows.slice((page - 1) * pageSize, page * pageSize)\n    .filter(row => row.status === 'ACTIVE' && row.name.toLowerCase().includes(keyword));\n  return { items, page, pageSize, total, totalPages };\n}\n"
+        },
+        {
+          "name": "rows_合成.json",
+          "content": "[\n  {\n    \"id\": \"r1\",\n    \"name\": \"Alpha\",\n    \"status\": \"ACTIVE\"\n  },\n  {\n    \"id\": \"r2\",\n    \"name\": \"Beta\",\n    \"status\": \"INACTIVE\"\n  },\n  {\n    \"id\": \"r3\",\n    \"name\": \" Alpine \",\n    \"status\": \"ACTIVE\"\n  },\n  {\n    \"id\": \"r4\",\n    \"name\": \"Gamma\",\n    \"status\": \"ACTIVE\"\n  },\n  {\n    \"id\": \"r5\",\n    \"name\": \"Alto\",\n    \"status\": \"ACTIVE\"\n  },\n  {\n    \"id\": \"r6\",\n    \"name\": \"Delta\",\n    \"status\": \"ACTIVE\"\n  },\n  {\n    \"id\": \"r7\",\n    \"name\": \"Alphabet\",\n    \"status\": \"INACTIVE\"\n  }\n]"
+        }
+      ],
+      "unambiguousHardRequirements": [
+        "完整可替换JavaScript实现，保留既有函数签名/返回结构和筛选语义",
+        "先筛选再按命中结果计算总数/页数/边界与切片",
+        "筛选收缩后的末页及空结果处理正确",
+        "输入数组和元素不变"
+      ],
+      "qualityDimensions": [
+        "复用执行材料中的代码与契约，不发明缺失接口或迫使用户重设计",
+        "最小修复、代码清楚，可用本地夹具验证",
+        "不声称完成实际未运行的测试"
+      ],
+      "intendedResult": "分页函数完整修复实现",
+      "acceptance": {
+        "hardRequirements": [
+          "依据提供代码修复筛选顺序、命中总数和页码边界，保持现有签名、字段、筛选方式",
+          "无结果时page=1且totalPages=0；超出末页时选择有效末页；不改原数组与元素",
+          "交付完整可替换实现，不只给定位说明或方案，不增加API/依赖"
+        ],
+        "qualityDimensions": [
+          "能通过正常分页、筛选收缩、空结果、大小写及空白keyword、默认参数等受影响行为检查",
+          "代码与解释简洁，不以大改筛选规则解决页码问题"
+        ],
+        "allowedVariants": [
+          "实现可使用多个局部变量或等价的函数式写法",
+          "可以附简短说明；不要求新增框架、前端页面、数据库、权限机制或测试文件"
+        ],
+        "severeRegressions": [
+          "把优化阶段未见代码当作当前项目没有契约，要求先重新设计接口才修复",
+          "分页后再筛选，使用未筛选总数，空结果页码不合法或改变返回字段",
+          "修改输入、删掉ACTIVE筛选或大小写/trim处理、新增依赖或只交付伪代码"
+        ]
+      }
+    },
+    {
+      "id": "D04",
+      "category": "SUFFICIENT_EXPLICIT_UNKNOWN",
+      "rawPrompt": "请把以下内容整理成一段不超过90字的中文通知，只输出通知正文，不加标题或说明：培训改为线上；原线下教室不再开放；新日期尚未确定，不能承诺具体日期或称已确认；已报名的同事不用重复报名，未报名的先等后续通知。",
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": [],
+      "unambiguousHardRequirements": [
+        "只输出一段中文通知正文，不加标题或说明",
+        "不超过90个非空白字符",
+        "线上培训、原教室不开放、新日期未定且不能承诺、已报名不重报、未报名等通知均保留"
+      ],
+      "qualityDimensions": [
+        "充分需求只作必要组织，不升级为方案/模板或额外确认流程",
+        "显式未知仍未知，不虚构日期、链接、原因或下一次通知时限"
+      ],
+      "intendedResult": "90字内单段通知正文",
+      "acceptance": {
+        "hardRequirements": [
+          "只输出一段通知正文，不加标题、说明或问卷，非空白字符数不超过90",
+          "线上培训、原线下教室不开放、日期未确定、已报名不重报、未报名等待通知均不遗漏",
+          "不能把未知日期改成确定日期或承诺具体公布时限"
+        ],
+        "qualityDimensions": [
+          "语言自然紧凑，足够可直接使用",
+          "不因没有日期而停止整个通知，也不把明确未知假装成执行工具能查到的已确认事实"
+        ],
+        "allowedVariants": [
+          "可换用等价短句或调整提醒顺序",
+          "日期另行通知或日期待定等不带具体时限的写法可用，不强制重复全部禁令原句",
+          "此任务只需保留未知，不要求为日期先发起Plan问题"
+        ],
+        "severeRegressions": [
+          "新增日期/会议链接/变更原因或承诺某时通知",
+          "遗漏条件或超90字/额外标题说明",
+          "把整段通知转为问卷或大面积占位符模板"
+        ]
+      }
+    },
+    {
+      "id": "MR-D05",
+      "rawPrompt": "请写一份设备停机原因调查报告。已经确认现场监控录像没有保存，现有维修记录可在执行时读取。报告要说明已查明的原因与仍需核实的部分，不要把没有录像说成有录像，也不要仅给调查提纲。",
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": [
+        {
+          "name": "维修记录.txt",
+          "content": "合成记录：2027年3月2日生产线停机18分钟。维护人员现场检查发现送料口被包装碎片堵塞；清理后恢复运转。尚未查明碎片进入送料口的具体时间与来源。现场没有保存监控录像。"
+        }
+      ],
+      "acceptance": {
+        "mustPreserve": [
+          "已确认无录像保持不存在；维修记录由执行者读取；报告交付不降级；未确认碎片来源不能编造。"
+        ]
+      }
+    },
+    {
+      "id": "MR-P01",
+      "rawPrompt": "请查询并比较三种常见离线笔记软件，重点说明全文搜索、导出格式和跨平台支持，写成便于选型的简短比较。无需询问我的设备与偏好，按通用用途整理即可。",
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": [],
+      "planExpectation": "ZERO_QUESTIONS",
+      "answerFacts": [],
+      "acceptance": {
+        "mustPreserve": [
+          "查询比较由执行者完成；不因未上传官方资料要求用户补齐；用户已经委托通用设计，不问设备偏好。"
+        ]
+      }
+    },
+    {
+      "id": "MR-P02",
+      "rawPrompt": "请写一封活动地点变更通知发给报名成员。日期仍是2027年5月9日10点，原地点松石楼一层不再使用。新地点必须先问我确认，不能自行选择；措辞与段落安排由你决定，不编造变更原因。",
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": [],
+      "planExpectation": "IMPORTANT_UNKNOWN",
+      "answerFacts": [
+        {
+          "id": "NEW_LOCATION",
+          "answer": "新地点确定为青禾中心二层会议室。"
+        }
+      ],
+      "answerBundle": "新地点确定为青禾中心二层会议室。",
+      "acceptance": {
+        "mustPreserve": [
+          "Plan应问新地点，不问委托AI处理的措辞或段落；回答后保留新地点和时间，不再称新地点待定。"
+        ]
+      }
+    }
+  ],
+  "origin": "D01/D03/D04完整复用旧闭批；MR-D05/P01/P02是共同状态开发回归，不作为独立未见题。"
+}

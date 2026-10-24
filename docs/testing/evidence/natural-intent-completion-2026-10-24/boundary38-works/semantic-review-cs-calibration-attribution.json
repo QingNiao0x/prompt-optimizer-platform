@@ -1,0 +1,211 @@
+{
+  "status": "POST_FREEZE_CALIBRATION_AND_STAGE_ATTRIBUTION",
+  "assessor": "assess_validation_strategy with root calibration agreement",
+  "paidModelCalls": 0,
+  "scope": "Only CS-H01/CS-H02. GC auxiliary and previously seen H01 risk are excluded.",
+  "reviewOrder": [
+    "Both reviewers independently froze all12 anonymous work findings before reading each other or mappings.",
+    "Harness verified both hashes and released mappings.",
+    "Version-specific conclusions saved separately; then reviewers compared disputed interpretations.",
+    "Only after blind/unblinded reports were fixed, CS four final GEN plus eight PREPARE/writer responses were inspected for first observable problem positions."
+  ],
+  "immutableReviews": [
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/scope38/root-cs-blind-review.json",
+      "sha256": "b69157e9c51ec5e46851bdde591b1df8a3a9bd03e6010658e481789acd550824"
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-works/semantic-review-cs-blind.json",
+      "sha256": "2eae4739d3e58127aeb59790e802d82563aa47621eec5cff8f6c7b29a237548d"
+    }
+  ],
+  "calibration": [
+    {
+      "caseId": "CS-H02",
+      "anonymousIds": [
+        "work-05",
+        "work-06"
+      ],
+      "version": "V31",
+      "topic": "同卡日期姓名和异常记录是否确定属于禁止的另交台账",
+      "rootOriginal": "SUBSTANTIVE_SCOPE_VIOLATION",
+      "independentOriginal": "work-05 LOCAL_REQUIRED due to concrete operation/pocket defects; work-06 USABLE with optional simplification",
+      "resolution": "原要求沿用群登记且不另交台账，同时明确委托纸质标记，并允许同卡清单/状态；没有同卡不得记姓名日期的明文。额外重复记录有使用成本，但不足以确定这两份已违反硬范围。保留root原判为有争议，不新增禁止某类字段的产品规则。",
+      "necessaryEditsAfterCalibration": {
+        "work05": [
+          "借出步骤不应要求把包放回后标已借出。",
+          "把四配件具体分配到大格/两网袋，不要求初学者遵守尚未设计的固定位置。"
+        ],
+        "work06": []
+      },
+      "optionalSimplification": "删减重复纸面历史记录，保留当前状态和群消息，属于可改进设计而非确定严重违约。"
+    },
+    {
+      "caseId": "CS-H01",
+      "anonymousIds": [
+        "work-03",
+        "work-05"
+      ],
+      "topic": "两张/四张标签",
+      "resolution": "最终四区分书能够执行；两张分栏也可表示四区。统一标签数更清楚，但不能仅据未指明每张内容把它计成实质损失或新严重退步。root原稿对此已注明必要性有争议。"
+    },
+    {
+      "caseId": "CS-H02",
+      "anonymousIds": [
+        "work-01"
+      ],
+      "version": "V38",
+      "topic": "先发已放回后实际放柜",
+      "resolution": "独立审阅指出而root初稿漏列：步骤44先发已放回、45再放柜，消息与实际动作不同步。另文补充这一局部必改，原盲稿不改。"
+    },
+    {
+      "caseId": "CS-H02",
+      "anonymousIds": [
+        "work-03"
+      ],
+      "version": "ORIGINAL",
+      "topic": "等群确认后恢复可借",
+      "resolution": "须澄清实际补齐/修复和核对即可更新并告知，不必等待他人批准；全文仍有不审批原则，不能断言每一种阅读都已引入审批，因此按局部边界歧义处理。"
+    }
+  ],
+  "calibratedOutcome": {
+    "CS_H01": "V38第一重复有边桌尺寸误写，另一次可用；V31和原始没有确定必要修改。没有两重复实质收益。",
+    "CS_H02": "三臂各有一份可用与一份局部必改；V31第一份归位和借出动作问题较多，但另一重复与38可用持平，未达到38两次都明确改善。",
+    "adoption": "NOT_MET",
+    "criterionChanged": false,
+    "main37AndCompletionOutcomesUnchanged": true,
+    "noNewGlobalBan": "不禁止所有卡片记录/姓名日期，不把每个实际执行错误变成新增全局模板指令。"
+  },
+  "sourceChain": {
+    "requestAndFinal": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-heldout/http-results.json",
+    "prepareAndWriter": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-heldout/transports.jsonl",
+    "transportLineMapping": {
+      "CS_H01_V31": {
+        "prepare": 1,
+        "writer": 2
+      },
+      "CS_H01_V38": {
+        "prepare": 3,
+        "writer": 4
+      },
+      "CS_H02_V38": {
+        "prepare": 5,
+        "writer": 6
+      },
+      "CS_H02_V31": {
+        "prepare": 7,
+        "writer": 8
+      }
+    },
+    "inputBoundary": "四个增强请求仅含原始提示词、普通context.customDescription，files为空；具体尺寸、包内格和配件等完整executorMaterials不进入增强，实际作品三臂同信息读取。",
+    "writerFinalCheck": [
+      {
+        "id": "CS-H01_V31_GEN",
+        "writerChars": 201,
+        "writerEqualsFinal": true
+      },
+      {
+        "id": "CS-H01_V38_GEN",
+        "writerChars": 98,
+        "writerEqualsFinal": true
+      },
+      {
+        "id": "CS-H02_V31_GEN",
+        "writerChars": 392,
+        "writerEqualsFinal": true
+      },
+      {
+        "id": "CS-H02_V38_GEN",
+        "writerChars": 91,
+        "writerEqualsFinal": true
+      }
+    ],
+    "structuralObservation": "四份PREPARE均正确识别当前设计/交付动作和主要限制；V38两份writer additions为空且正文基本整理原意。V31增加原交付内部组织方向。零扩写在充分输入上允许，本身不证明错误；此次作品也没有证明38的边界澄清带来了更多有用补全。"
+  },
+  "firstObservableLocations": [
+    {
+      "issue": "边桌60×40写成60×30",
+      "caseId": "CS-H01",
+      "work": "V38 R1 / A work-01 line23",
+      "source": "executorMaterials明确60×40",
+      "prepare": "未包含边桌尺寸；增强未获得尺寸明细。",
+      "writer": "没有30或40厘米的细节",
+      "final": "与writer相同，无尺寸篡改",
+      "firstSeen": "DOWNSTREAM_WORK",
+      "confidence": "HIGH_FOR_FIRST_LOCATION",
+      "causalAttribution": "目前无证据将10厘米误写归于组装或准备阶段；具体原因未定，不等于证明下游能力不足或无需平台评估。"
+    },
+    {
+      "issue": "收纳包本体归入自身大格",
+      "caseId": "CS-H02",
+      "work": "V38 R1 / A work-01 lines42,55",
+      "source": "包内大格+两网袋，收纳包本身是容器",
+      "prepare": "要求设计核对顺序/纸质标记，没有规定容器塞入自身",
+      "writer": "仅委托核对顺序和标记，不给错误归位",
+      "final": "与writer相同",
+      "firstSeen": "DOWNSTREAM_WORK",
+      "confidence": "HIGH_FOR_FIRST_LOCATION",
+      "causalAttribution": "具体错误归位第一次由作品提出；暂无直接生产组装篡改证据。"
+    },
+    {
+      "issue": "先发送已放回再实际入柜",
+      "caseId": "CS-H02",
+      "work": "V38 R1 / A work-01 lines44-45",
+      "source": "归还时在同群告知已放回及异常",
+      "prepare": "保留群登记，不含错误动作顺序",
+      "writer": "没有规定先报后放",
+      "final": "与writer相同",
+      "firstSeen": "DOWNSTREAM_WORK",
+      "confidence": "HIGH_FOR_FIRST_LOCATION",
+      "causalAttribution": "属作品动作/消息次序未闭合；不能只因首次在作品出现而声称唯一根因已证明。"
+    },
+    {
+      "issue": "借出步骤把包放回柜内后标已借出",
+      "caseId": "CS-H02",
+      "work": "V31 R1 / C work-05 line34",
+      "source": "整套借出/整套归还，现有群记录",
+      "prepare": "正确要求设计并写出借还卡",
+      "writer": "按实际借出归还安排核对，不要求借出时放回",
+      "final": "与writer相同",
+      "firstSeen": "DOWNSTREAM_WORK",
+      "confidence": "HIGH_FOR_FIRST_LOCATION",
+      "causalAttribution": "具体逆序动作在作品新增；V31指导未直接要求此动作。"
+    },
+    {
+      "issue": "反复要求固定归位却未设计配件对应",
+      "caseId": "CS-H02",
+      "work": "V31 R1 / C work-05 lines45-50,101",
+      "source": "归位方法尚未选定，委托AI设计",
+      "prepare": "保留委托核对和标记",
+      "writer": "提出包体/清单/配件/存放条件方向，但不代替实际归位设计",
+      "final": "与writer相同",
+      "firstSeen": "DOWNSTREAM_WORK_OMISSION",
+      "confidence": "HIGH_FOR_OBSERVATION",
+      "causalAttribution": "下游最终未落实具体位置设计；增强是否给了不均衡的栏目指导可能影响注意力，仅属待证解释。"
+    },
+    {
+      "issue": "同卡重复纸质勾选和记录",
+      "caseId": "CS-H02",
+      "work": "V31 R1/R2 / C work-05/work-06",
+      "prepare": "用户已委托纸质标记",
+      "writer": "首次增加例如在卡上设置可勾选或可写标记的栏位，同时明确不依赖新表格",
+      "final": "与writer相同",
+      "firstSeen": "WRITER_GUIDANCE_THEN_DOWNSTREAM_EXPANSION",
+      "confidence": "HIGH_FOR_TEXT_SEQUENCE_LOW_FOR_CAUSALITY",
+      "causalAttribution": "可追溯到V31正文栏位建议，作品进一步展开重复日期姓名记录；并不能据文本先后证明该建议必然导致复杂化，更不能据此禁止所有合理同卡标记。"
+    },
+    {
+      "issue": "异常修复后等群确认",
+      "caseId": "CS-H02",
+      "work": "ORIGINAL R1 / B work-03 line59",
+      "source": "原始与材料明确无审批",
+      "prepare": "无增强路径",
+      "writer": "无增强路径",
+      "final": "直接原始提示词加相同执行信息",
+      "firstSeen": "DOWNSTREAM_WORK",
+      "confidence": "HIGH_FOR_FIRST_LOCATION",
+      "causalAttribution": "原始臂也出现边界歧义，不能归因增强组件。"
+    }
+  ],
+  "conclusion": "工程的候选边界调整与实际作品收益分开报告。此CS证据没有出现writer到final的正文改写，也没有证明PREPARE吞掉设计任务；可确定的问题主要出现在具体作品执行，V31的栏位指导与较多记录存在文本链路但因果未证。保持默认31、保留所有失败与争议，不把校准误判转换成产品禁令。"
+}

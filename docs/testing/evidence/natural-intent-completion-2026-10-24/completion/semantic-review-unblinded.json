@@ -1,0 +1,106 @@
+{
+  "status": "UNBLINDED_AFTER_FROZEN_REVIEW",
+  "assessor": "assess_validation_strategy",
+  "paidModelCalls": 0,
+  "blindReview": {
+    "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/completion/semantic-review-blind.json",
+    "sha256": "2b5aadf7dfe4c3531efd76c4ad3d2654724a5dcb727a89756c4cf8c3408ebc77",
+    "unchanged": true
+  },
+  "mappingSource": "tmp/natural-intent-completion-2026-10-24/completion/anonymous-maps",
+  "generationOutputsRead": false,
+  "comparisons": [
+    {
+      "caseId": "GC-H01",
+      "mapping": {
+        "A": "V37",
+        "B": "V31",
+        "C": "ORIGINAL"
+      },
+      "workCounts": {
+        "V37": {
+          "usable": 2,
+          "localRequired": 0,
+          "severe": 0
+        },
+        "V31": {
+          "usable": 2,
+          "localRequired": 0,
+          "severe": 0
+        },
+        "ORIGINAL": {
+          "usable": 2,
+          "localRequired": 0,
+          "severe": 0
+        }
+      },
+      "versus31": "USABLE_TIE",
+      "versusOriginal": "USABLE_TIE",
+      "substantiveGainInBothRepeats": false,
+      "reason": "三臂都完整保留材料事实并写出可直接发群的亲切通知。37更长、分段更多未减少用户必要修改，不能计为收益。"
+    },
+    {
+      "caseId": "GC-H02",
+      "mapping": {
+        "A": "V37",
+        "B": "ORIGINAL",
+        "C": "V31"
+      },
+      "workCounts": {
+        "V37": {
+          "usable": 0,
+          "localRequired": 2,
+          "severe": 0
+        },
+        "V31": {
+          "usable": 1,
+          "localRequired": 1,
+          "severe": 0
+        },
+        "ORIGINAL": {
+          "usable": 1,
+          "localRequired": 1,
+          "severe": 0
+        }
+      },
+      "versus31": "NO_STABLE_BENEFIT_LOCAL_CORRECTIONS_MORE_FREQUENT",
+      "versusOriginal": "NO_PRODUCT_GAIN",
+      "substantiveGainInBothRepeats": false,
+      "reason": "37两份分别须统一电饭煲开煮时点、米量摘要与菜单；31一份胡萝卜最终纠错未同步主步骤、另一份可执行；原始一份余量漏记、另一份可执行。所有最终方案主体仍可执行，没有确定严重越库，但37并未降低必要修改量。"
+    }
+  ],
+  "aggregate": {
+    "cases": 2,
+    "worksPerArm": 4,
+    "V37": {
+      "usable": 2,
+      "localRequired": 2,
+      "severe": 0
+    },
+    "V31": {
+      "usable": 3,
+      "localRequired": 1,
+      "severe": 0
+    },
+    "ORIGINAL": {
+      "usable": 3,
+      "localRequired": 1,
+      "severe": 0
+    }
+  },
+  "specialGate": {
+    "decision": "NOT_MET",
+    "requiredCasesImprovingInBothRepeats": 2,
+    "observedCasesImprovingInBothRepeats": 0,
+    "severeRegressionObserved": false,
+    "defaultSwitchSupported": false,
+    "reasons": [
+      "GC-H01无论臂身份如何都为可用持平，已经不能满足两题都改善。",
+      "GC-H02的37作品未减少局部修正，不能用更详尽的库存和步骤篇幅替代实际一致性。",
+      "原始prompt虽短，执行阶段资料充分；本次结果只说明没有测得额外增强收益，不能据此断言增强对所有短需求无效。"
+    ],
+    "mainExperimentOutcome": "NOT_MET保持独立，专项不覆盖IC-H01主实验硬限制失败。"
+  },
+  "recommendedDisposition": "保留冻结37及全部作品作为工程/回归证据，不切默认。不要为翻转结果重复采样或事后修改判据；若有新机制假设，必须独立说明其依据和验证范围。",
+  "attributionBoundary": "只完成作品盲审与解盲，未查看GEN，故不能推定具体哪条生成指导导致锅序/用量矛盾。内部AI评审，不是外部专家或实做烹饪认证。"
+}

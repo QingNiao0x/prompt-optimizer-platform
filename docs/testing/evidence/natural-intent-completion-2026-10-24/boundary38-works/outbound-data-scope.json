@@ -1,0 +1,39 @@
+{
+  "status": "MINIMAL_SCOPE_REVIEWED",
+  "checkedAt": "2026-10-23T21:10:28.499629+00:00",
+  "enhancementNewJobs": [
+    "IC-H01_V38_GEN"
+  ],
+  "executionNewJobs": [
+    "CS-H01_ORIGINAL_EXEC_R1",
+    "CS-H01_ORIGINAL_EXEC_R2",
+    "CS-H01_V31_EXEC_R1",
+    "CS-H01_V31_EXEC_R2",
+    "CS-H01_V38_EXEC_R1",
+    "CS-H01_V38_EXEC_R2",
+    "CS-H02_ORIGINAL_EXEC_R1",
+    "CS-H02_ORIGINAL_EXEC_R2",
+    "CS-H02_V31_EXEC_R1",
+    "CS-H02_V31_EXEC_R2",
+    "CS-H02_V38_EXEC_R1",
+    "CS-H02_V38_EXEC_R2",
+    "GC-H01_V38_EXEC_R1",
+    "GC-H01_V38_EXEC_R2",
+    "GC-H02_V38_EXEC_R1",
+    "GC-H02_V38_EXEC_R2",
+    "IC-H01_V38_EXEC_R1",
+    "IC-H01_V38_EXEC_R2"
+  ],
+  "provenance": "All cases author-created synthetic fixtures; CS primary, known GC auxiliary, old H01 serious-risk regression.",
+  "notSentToEnhancement": [
+    "executorMaterials",
+    "acceptance"
+  ],
+  "model": "Same frozen default DeepSeek route,8192tokens,temp0.2",
+  "reuse": "21 exact closed logical results, including12 old ORIGINAL/31 work results. Full reused execution requests matched byte-equivalent new assembly; no copied transport or new baseline calls.",
+  "newCallsNormal": 20,
+  "maximum": 29,
+  "totalTaskMaximum": 144,
+  "qualityRetries": false,
+  "gates": "CS enhancement gate PASS; then H01 GEN gate PASS required before any EXEC."
+}

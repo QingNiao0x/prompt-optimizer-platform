@@ -1,0 +1,102 @@
+{
+  "reviewer": "/root/assess_validation_strategy",
+  "reviewedAt": "2026-10-24",
+  "role": "Internal source-linked review; author of the sealed cases and reader of candidate guidance, not a blind or external expert reviewer. No production edits or paid review calls.",
+  "candidate": "37",
+  "baseline": "31",
+  "scope": "Two heldout tasks, four final enhancement outputs. Enhancement was assessed against original request and ordinary context only; executorMaterials have not been treated as information the enhancement model saw.",
+  "heldoutSemanticGate": "PASS",
+  "severeNewRegressions": 0,
+  "executionMayProceed": true,
+  "adoption": "PENDING_ACTUAL_WORKS",
+  "substantiveGainProven": false,
+  "cases": [
+    {
+      "caseId": "IC-H01",
+      "candidateResult": "FIDELITY_PASS_NO_PROVEN_GAIN",
+      "candidateQuote": "有参与者不便长时间站立，所有环节坐着也能参加；全程不用手机；不要求大家透露姓名以外的个人信息。",
+      "finding": "37 retains12participants, first meeting,30minutes, seated accessibility, no phones, privacy limit, delegated activity/wording design, execution-readable venue instructions, and only flow/script deliverables. Sourced group-meeting goal is incorporated. No request for user to supply missing venue data, no invented venue facts or added standalone deliverable.",
+      "additionAssessment": "Reference to venue factors such as seating, space and circulation is a suggestion to use actual venue information, not a requirement for people to move. Direct-readable script restates the existing ready-to-host requirement. Neither is enough to prove substantive quality gain.",
+      "baselineAssessment": "31 also retains all visible hard requirements and gives more concrete timing/transitions/script organization. Optional movement remains compatible with visible original requirement that seated participation be possible; actual no-movement venue restriction is execution-only and must be respected by every downstream arm. Neither prompt is declared better solely from length.",
+      "necessaryPromptEditsIdentified": [],
+      "workChecks": "Frozen original acceptance remains unchanged: actual venue seating/material limits,30minute feasibility, privacy, accessible participation, ready-to-read script and no extra independent deliverable."
+    },
+    {
+      "caseId": "IC-H02",
+      "candidateResult": "FIDELITY_PASS_NO_PROVEN_GAIN",
+      "candidateQuote": "总费用不能超过180元，周二18点前必须收到，电子稿周一10点才定稿、不能提前交。",
+      "finding": "37 retains72books, full known print specification from ordinary context,180budget, Tuesday18receipt, Monday10file readiness, existing three quotations, no spec/count changes, no other channel/budget, one table plus<=80character conclusion and recommendation-only/no ordering. No fabricated prices, missing-data facts or alternate template.",
+      "additionAssessment": "Both versions incorporate sourced ordinary context;37 is near-original with reorganization. No material completion advantage has been demonstrated.",
+      "baselineAssessment": "31 retains the same hard requirements and adds a clear instruction to compare the execution-readable actual quotations. No severe prompt-level regression observed in either arm.",
+      "necessaryPromptEditsIdentified": [],
+      "workChecks": "The execution-only bids determine actual totals, deadline compatibility and recommendation; do not require enhancement to know these prices or choose a supplier before seeing the bids."
+    }
+  ],
+  "protocolReliability": {
+    "source": "docs/testing/evidence/natural-intent-completion-2026-10-24/heldout/cost-and-delivery.json",
+    "actualCalls": 10,
+    "logicalJobs": 4,
+    "finalSuccesses": 4,
+    "qualityRetries": 0,
+    "candidate37": {
+      "actualCalls": 6,
+      "logicalJobs": 2,
+      "protocolRetries": 2,
+      "totalTokens": 13124,
+      "firstAttemptWithoutProtocolRepair": 0
+    },
+    "baseline31": {
+      "actualCalls": 4,
+      "logicalJobs": 2,
+      "protocolRetries": 0,
+      "totalTokens": 7487,
+      "firstAttemptWithoutProtocolRepair": 2
+    },
+    "findings": [
+      "H01 first37body response004has an additional task.framework field; the legal retry005delivered final body. This is a protocol failure rather than demonstrated semantic failure.",
+      "H02 required a retry in scope preparation006to007before body008. The exact rejection cause was not independently verified here; keep it as a preparation protocol/protection failure, not a quality retry.",
+      "Both retries are explicitly prompted as protocol/protection repair in system instructions and count against budget. FinalHTTP200does not erase reduced first-attempt reliability in this tiny sample.",
+      "No claim of lower cost, better reliability, or general stability for37from these outputs."
+    ]
+  },
+  "limits": [
+    "Two internally authored heldout cases do not establish cross-domain generalization.",
+    "No downstream works reviewed at this stage; reduced user editing or superior work quality remains unproven.",
+    "Prior D02 method-object risk remains pending work validation and is not cleared by this heldout semantic pass.",
+    "Preserve all initial failed responses and final responses, and do not modify prompts, cases or criteria after outcomes."
+  ],
+  "deliveryChecks": [
+    {
+      "jobId": "IC-H02_V37_GEN",
+      "resultSha256": "32491eaa832da9753b688bf02a976b4274f9e4522f494afac65a792a81911855",
+      "lastBodyTrace": "tmp/natural-intent-completion-2026-10-24/heldout/traces\\008.json",
+      "traceSha256": "e682fd95bc776db1b20dc4089b1328687e01de14791779c37dcd81f65dc1812c",
+      "modelBodyEqualsFinal": true,
+      "status": 200
+    },
+    {
+      "jobId": "IC-H02_V31_GEN",
+      "resultSha256": "39f6c155da9eda5e7a0cc1c011efe9532b4e34dc741ed95935aaa1cdc1b9eda1",
+      "lastBodyTrace": "tmp/natural-intent-completion-2026-10-24/heldout/traces\\010.json",
+      "traceSha256": "b13ff3aaeab6dd0ad78359c63e5736129972a5f91c47b15f508f97ca84dc8c7a",
+      "modelBodyEqualsFinal": true,
+      "status": 200
+    },
+    {
+      "jobId": "IC-H01_V37_GEN",
+      "resultSha256": "58dfb05c8975e952c3d941248b9d2b7f13154e2466e072ec5091cb77630ddc73",
+      "lastBodyTrace": "tmp/natural-intent-completion-2026-10-24/heldout/traces\\005.json",
+      "traceSha256": "3578d3a590f0792d52781e7ee7cb33126db6ea4f5aab2c55c6f3b3a18547dbe0",
+      "modelBodyEqualsFinal": true,
+      "status": 200
+    },
+    {
+      "jobId": "IC-H01_V31_GEN",
+      "resultSha256": "1e28cd7289c2599318d24f953e4cdb58d622a27e5b4066d1788f10d7a2906e8c",
+      "lastBodyTrace": "tmp/natural-intent-completion-2026-10-24/heldout/traces\\002.json",
+      "traceSha256": "35be4e09631ac7a21cf64814dab66753bf4b752ef73079bb3c6d53f21fb8e2e5",
+      "modelBodyEqualsFinal": true,
+      "status": 200
+    }
+  ]
+}

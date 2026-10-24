@@ -1,0 +1,125 @@
+{
+  "batch": "natural-preparation-routing-development-2026-10-24",
+  "status": "FROZEN",
+  "authorizationQuote": "用户本轮授权真实评测自行选择次数，执行者选定新增总上限48；开发阶段24。",
+  "taskMaximumActualCalls": 48,
+  "taskPreviouslyActual": 0,
+  "maximumNewActualCalls": 24,
+  "previousClosedActualCalls": 1828,
+  "oldClosedBalanceTransferred": 0,
+  "baselineVersion": "31",
+  "candidateVersions": [
+    "36"
+  ],
+  "versions": [
+    "31",
+    "36"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 4096,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 16,
+    "PLAN": 4,
+    "EXECUTION": 4,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 16,
+    "PLAN": 4,
+    "EXECUTION": 4,
+    "REVIEW": 0
+  },
+  "generation": [
+    "D01",
+    "D02",
+    "D03",
+    "D04"
+  ],
+  "regressionGeneration": [
+    "MR-D05",
+    "PR-D06",
+    "PR-D07"
+  ],
+  "plan": [
+    "MR-P01",
+    "MR-P02"
+  ],
+  "confirmedPlanGeneration": [
+    "MR-P02"
+  ],
+  "execution": [
+    "D02",
+    "D03"
+  ],
+  "executionRepeats": 2,
+  "executionIncludeOriginal": true,
+  "confirmationMode": "PER_VERSION",
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "36": [
+      "36"
+    ]
+  },
+  "allowedJobs": [
+    "D01_V36_GEN",
+    "D02_V36_GEN",
+    "D03_V36_GEN",
+    "D04_V36_GEN",
+    "MR-D05_V36_GEN",
+    "PR-D06_V36_GEN",
+    "PR-D07_V36_GEN",
+    "MR-P01_V36_PLAN",
+    "MR-P02_V36_PLAN",
+    "MR-P02_V36_PLAN_GEN",
+    "D02_V36_EXEC_R1",
+    "D02_V36_EXEC_R2",
+    "D03_V36_EXEC_R1",
+    "D03_V36_EXEC_R2"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "order": "先复用闭批31及原始作品，随后36回归生成和Plan；核对实际题号绑定冻结事实，确认后生成；最后D02/D03同信息作品。旧题修复且无严重退步后方可开启独立留出。",
+  "informationPolicy": "增强仅见原始提示词、普通context与实际绑定答复，不见executorMaterials或评分卡。ORIGINAL/31/35执行逐字接收相同普通背景和executorMaterials；复用作品必须核对完整原件、同题资料及模型参数。评分卡仅供内部逐源复核，本阶段REVIEW=0，不调用模型评审。增强阶段未附资料不等于执行阶段没有资料。",
+  "criteria": [
+    "明确写作/分析/交付动作不因增强阶段资料未附而停止正文生成；充分需求保真可持平。",
+    "执行者承担任务内检索、阅读、分析、设计；未上传不等于不存在，明确无资料/无权访问保持原状态。",
+    "Plan只询问重要用户保留决定；已委托的通用设计不追问，实际答复写入正文且不残留已解决待确认。",
+    "科研保留四方面实质分析；缺口仅限制依赖该资料的结论，不能生成以待填项为主的模板。",
+    "代码与科研作品只比较同信息输入；旧模型日期不同如实披露，不把历史对照称同期随机实验。"
+  ],
+  "stopConditions": [
+    "任务48次、本阶段24次和各phase上限同时执行；所有失败、协议修复和作品计数，禁止质量重试。",
+    "相同失败假设不靠更换版本号、同义指令或重复采样续跑；出现严重退步先定位责任与依据。",
+    "已关闭任务或阶段不得重新执行；是否采用独立根据目标收益与严重退步判断。"
+  ],
+  "reviews": [],
+  "reviewSystem": "",
+  "generationVersions": [
+    "36"
+  ],
+  "planVersions": [
+    "36"
+  ],
+  "executionArms": [
+    "V36"
+  ],
+  "draftNotes": [
+    "D01全球查询只检验增强内容，不用离线执行器证明实时全球报告质量。",
+    "7次直接增强最多14次；2次Plan最多4次；回答后增强2次；4份作品4次，共24，协议修复与失败占同一额度，不另增重试。",
+    "候选36始终进入正文/Plan，不允许准备阶段response.basis产生直透成功；scope仅辅助，正文以完整原始输入为准。",
+    "两个作品任务由已有31与原始各两份闭批结果比较；留出阶段再做同期三臂对照。"
+  ],
+  "frozenAt": "2026-10-23T18:36:28.893335+00:00"
+}

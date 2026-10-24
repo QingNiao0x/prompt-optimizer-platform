@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 1,
+  "reviewType": "independent_source_comparison_generation_only",
+  "createdAtUtc": "2026-10-23T20:31:11.2573411Z",
+  "reviewer": {
+    "agent": "/root/completion_holdout_author",
+    "authoredTheseCases": true,
+    "participatedInCandidateImplementation": false,
+    "generationVersionBlind": false,
+    "disclosure": "本审阅者是两题的原创内部留出作者，未参与候选实现；此次读取的GEN原件可见V31/V37标签，因此生成阶段审阅不盲版本，也不是外部独立评审。未读取生产代码、其他题目或旧模型输出；不据候选名称预设优劣。",
+    "externalModelCallsForThisReview": 0
+  },
+  "sourceCasesPath": "docs/testing/evidence/natural-intent-completion-2026-10-24/completion/cases.json",
+  "integrity": {
+    "originalSealedCasesSha256": "374ba4461281b3c623c8dc68625de78c614bf6193831d9d631f89ac737b0b236",
+    "currentCasesSha256": "374ba4461281b3c623c8dc68625de78c614bf6193831d9d631f89ac737b0b236",
+    "casesMatchOriginalSeal": true,
+    "inputFileHashes": [
+      {
+        "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/completion/cases.json",
+        "sha256": "374ba4461281b3c623c8dc68625de78c614bf6193831d9d631f89ac737b0b236"
+      },
+      {
+        "path": "tmp/natural-intent-completion-2026-10-24/completion/results/GC-H01_V31_GEN.json",
+        "sha256": "9193d4afce289df36b104b4eb851fc2d47c0a581ad3354f20930b8e68cbbc733"
+      },
+      {
+        "path": "tmp/natural-intent-completion-2026-10-24/completion/results/GC-H01_V37_GEN.json",
+        "sha256": "ace2e073fa1ee60834de943f3839cb043344be41cb58c68869ce59cca1087997"
+      },
+      {
+        "path": "tmp/natural-intent-completion-2026-10-24/completion/results/GC-H02_V31_GEN.json",
+        "sha256": "455028e04abd0a7e8292a20cd82fe03ffcd69d01fec6cc3aa8c749594cae7169"
+      },
+      {
+        "path": "tmp/natural-intent-completion-2026-10-24/completion/results/GC-H02_V37_GEN.json",
+        "sha256": "4858fda2b4dbb451bb1d9cbfe8d27c02f38affe06f0818dbbb5d33cd14246ed0"
+      }
+    ]
+  },
+  "reviewBoundary": [
+    "仅审原始提示词、上下文描述、合成执行材料与四份GEN优化提示词之间的语义关系，不读取生产代码或既有实验输出，不改题目、判据、候选指令或模型原件。",
+    "沿用cases.json已封存的hardRequirements、qualityDimensions、allowedVariants与severeRegressions，不新增唯一范文、固定字数、固定菜式或固定结构要求。篇幅、HTTP成功和重排本身均不构成质量收益。",
+    "GEN是给下游执行者的优化提示词，不是活动通知或三日晚饭成品。判断是否允许进入作品执行，不把GEN无严重问题写成作品已经满足全部硬约束。",
+    "四份可见request只带原始提示词和contextDescription，context.files均为空；完整活动事实和食材库存保存在cases.json的executorMaterials中。优化提示词明确指向执行材料时，不因其未提前复述这些具体数字而判定事实遗漏；具体事实与独立条件能否正确落实，仍须对下游作品逐项检查。",
+    "未发现违约只表示本次源对照未观察到相应问题，不证明所有后续执行一定正确。通过此GEN门禁不新增打开、模型调用、计费或变更既有实验的授权。"
+  ],
+  "sourceConditionCoverage": [
+    {
+      "caseId": "GC-H01",
+      "conditionsToPreserveAtExecution": [
+        "成品群通知、轻松亲切，内容顺序、标题和措辞可自行设计。",
+        "2026年11月7日14:30至16:00、青禾小区南门旁一楼共享活动室；14:20可入场是可酌情安排的辅助细节。",
+        "免费、无售书；最多20人，11月6日20:00前群内回复参加及人数，按回复顺序登记。",
+        "交换者带1至3本整洁完整闲置书，不收旧练习册和盗版书；一对一自愿交换，也允许只分享，不保证每本换出。",
+        "不增加报名链接、联系方式、礼品或其他实际安排。"
+      ],
+      "generationObservation": "V31与V37均以执行材料为活动事实来源，未显式删改这些并列或有条件的参与安排。V37进一步明确事实以材料记录为准。数字与具体限制未写入GEN，但它们仍需在相同执行材料下落实，不据此提前判作品通过。"
+    },
+    {
+      "caseId": "GC-H02",
+      "conditionsToPreserveAtExecution": [
+        "连续三天、两人晚饭，只用现有主料和调味，不依赖采购。",
+        "库存是三天可用总量；鸡腿肉第1天用掉，豆腐与鲜蘑菇最迟第2天用完，各自期限不能合并为模糊的三天内处理。",
+        "其余蔬菜尽量用；米面、鸡蛋、胡萝卜、土豆可留用，不强制清空全部库存。",
+        "约30至40分钟开饭是期望，结合电饭煲与双灶省事安排；不强制固定菜数或逐分钟排程。",
+        "普通饭量、无忌口、不需精确营养数据；允许执行者决定菜式与搭配，无需为普通家常选择再问用户。"
+      ],
+      "generationObservation": "两版本均要求先看完整库存、设备与偏好，并保留两人三日晚饭和自主设计。V37没有新增采购路径或把材料未给出的状态当成事实；V31附加清单中的采购表述存在来源支持不足的范围漂移风险，详见对应记录。具体库存和独立期限尚待作品核实。"
+    }
+  ],
+  "reviews": [
+    {
+      "recordId": "GC-H01_V31_GEN",
+      "caseId": "GC-H01",
+      "version": "31",
+      "sourcePath": "tmp/natural-intent-completion-2026-10-24/completion/results/GC-H01_V31_GEN.json",
+      "checks": {
+        "goalAndDeliverable": "保留：可直接发到邻里书友群的旧书交换活动通知正文，语气轻松亲切。没有改为活动方案、提纲、教程或待填模板。",
+        "factsAndIndependentConditions": "未见矛盾：已确定活动这一状态来自上下文；群名、地点和安排指向执行材料，未新增具体事实或删除特定条件。",
+        "unknownTreatedAsNonexistent": "未发现。没有因为GEN阶段未附具体活动记录而断言记录不存在、活动未定或要求先补齐才能写。",
+        "inventedState": "未发现。一次已经确定的活动与上下文一致。",
+        "authorizationAndDesignSpace": "保留内容顺序、标题和措辞的设计空间；没有扩大到代发消息或组织活动的实际操作。"
+      },
+      "usefulCompletion": {
+        "assessment": "保真并有轻量交付澄清，尚不能证明实质质量收益。",
+        "specificAdditions": [
+          "把群明确为上下文中的邻里书友群，把通知对象明确为已确定的旧书交换活动。",
+          "把直接可用落实为通知正文，并提醒不要写成提纲或说明，降低交付形式偏移风险。"
+        ],
+        "limit": "主要是将contextDescription整理进优化提示词，没有进一步具体化读者需要知道的参与步骤或信息取舍。不能仅凭这些澄清宣称优于原始组或V37。"
+      },
+      "quotedEvidence": [
+        {
+          "source": "optimizedPrompt",
+          "quote": "请根据这份活动记录，写一则可以直接发到邻里书友群里的通知，语气轻松亲切。",
+          "finding": "原目标与语气保留。"
+        },
+        {
+          "source": "optimizedPrompt",
+          "quote": "群名、地点和活动安排等零散事实见执行材料。",
+          "finding": "事实继续由材料支持，未自行补造。"
+        },
+        {
+          "source": "optimizedPrompt",
+          "quote": "请直接给出可用的通知正文，内容顺序、标题和措辞由你合理设计，不要写成提纲或说明。",
+          "finding": "成品交付与合理设计空间均保留。"
+        }
+      ],
+      "issues": [],
+      "severeRegressionObserved": false,
+      "generationSemanticDisposition": "no_severe_regression_observed",
+      "artifactQualityStatus": "not_evaluated_pending_execution"
+    },
+    {
+      "recordId": "GC-H01_V37_GEN",
+      "caseId": "GC-H01",
+      "version": "37",
+      "sourcePath": "tmp/natural-intent-completion-2026-10-24/completion/results/GC-H01_V37_GEN.json",
+      "checks": {
+        "goalAndDeliverable": "保留：直接可发的邻里书友群旧书交换活动通知正文，语气轻松亲切。没有改交付或推迟成品。",
+        "factsAndIndependentConditions": "未见矛盾：明确以执行材料中的记录为群名、地点和活动安排的依据。没有把交换与分享、名额与报名截止等独立条件混成新的规则。",
+        "unknownTreatedAsNonexistent": "未发现。材料按已提供的执行依据引用，没有把GEN未附细节转成现实不存在。",
+        "inventedState": "未发现。没有新增活动确认、报名开放、已满员等状态。",
+        "authorizationAndDesignSpace": "内容顺序、标题、措辞仍可合理设计，没有将文案委托扩大为发布、报名登记或执行活动。"
+      },
+      "usefulCompletion": {
+        "assessment": "保真、材料依据更明确；新增执行帮助有限，作品收益待定。",
+        "specificAdditions": [
+          "将含糊的群通知落实为上下文中的旧书交换活动通知，并要求给成品正文。",
+          "明确群名、地点和活动安排以材料记录为准，合理约束事实引用。",
+          "保留标题与组织方式的自主设计，不强塞唯一通知结构。"
+        ],
+        "limit": "这些多数来自已有上下文。没有补出具体的读者行动信息覆盖要求，但也没有删除材料中的内容。生成阶段不能据此宣称参与说明更完整或通知更好用。"
+      },
+      "quotedEvidence": [
+        {
+          "source": "optimizedPrompt",
+          "quote": "写一则可以直接发到邻里书友群里的旧书交换活动通知，语气轻松亲切一些。",
+          "finding": "原目标、对象、活动类型与语气均保留。"
+        },
+        {
+          "source": "optimizedPrompt",
+          "quote": "通知要写成可直接使用的正文，内容顺序、标题和措辞由你合理设计",
+          "finding": "仍要求真正成品，保留合理变体。"
+        },
+        {
+          "source": "optimizedPrompt",
+          "quote": "群名、地点和活动安排等零散事实以执行材料中的记录为准。",
+          "finding": "明确材料是事实依据；没有新增具体状态或事实。"
+        }
+      ],
+      "issues": [],
+      "severeRegressionObserved": false,
+      "generationSemanticDisposition": "no_severe_regression_observed",
+      "artifactQualityStatus": "not_evaluated_pending_execution"
+    },
+    {
+      "recordId": "GC-H02_V31_GEN",
+      "caseId": "GC-H02",
+      "version": "31",
+      "sourcePath": "tmp/natural-intent-completion-2026-10-24/completion/results/GC-H02_V31_GEN.json",
+      "checks": {
+        "goalAndDeliverable": "保留主体：两人三日晚饭菜单，做法省事、减少浪费；没有直接用问卷或纯营养咨询代替。",
+        "factsAndIndependentConditions": "主体按材料：先看完整库存、设备与偏好，菜式可自主设计；容易变质食材优先是相关提醒，但不得代替材料已给出的各自截止日。附加清单中的采购表述与库存任务存在不必要的范围张力。",
+        "unknownTreatedAsNonexistent": "未发现。没有把未出现的库存或口味假定为不存在，也没有宣称未列主料已在家中。",
+        "inventedState": "未发现具体虚构事实。没有新增实际食材、数量或既定菜谱。",
+        "authorizationAndDesignSpace": "保留菜式和顺序的委托选择；采购或使用顺序给了一个来源未支持的采购表述，但没有明确要求实际购买或调用采购工具，不能仅凭该词判成已发生越权操作。"
+      },
+      "usefulCompletion": {
+        "assessment": "存在更具体的做法、时间与库存分配补充，同时带来一个非必需的范围漂移风险。",
+        "specificAdditions": [
+          "要求说明每道菜的大致做法与所需时间，有助于把菜单变成可照做的晚饭安排。",
+          "要求说明食材在哪天使用、有无剩余与处理方式，与减少浪费有关。"
+        ],
+        "limit": "按每道菜逐项说明或另附完整清单可能增加输出负担；它们是否帮助本题需看作品。材料不要求清空耐放库存，尽量用上不能解释成强制全部消耗。"
+      },
+      "quotedEvidence": [
+        {
+          "source": "optimizedPrompt",
+          "quote": "请先查看执行材料中列出的完整库存、可用设备和用餐偏好，再据此设计三天的晚餐菜单。",
+          "finding": "库存、设备与偏好继续作为设计依据。"
+        },
+        {
+          "source": "optimizedPrompt",
+          "quote": "并说明每道菜的大致做法和所需时间",
+          "finding": "具体执行帮助，不以更长自动计收益。"
+        },
+        {
+          "source": "optimizedPrompt",
+          "quote": "最后附一份按三天采购或使用顺序整理的简要清单",
+          "finding": "采购表述并非原任务需要，存在范围漂移风险。"
+        },
+        {
+          "source": "executorMaterials",
+          "quote": "三天都没有买菜的打算，只用下面列出的食材。",
+          "finding": "执行材料只支持库存使用，不能据优化提示词新增实际采购需要。"
+        }
+      ],
+      "issues": [
+        {
+          "id": "H02-V31-PROCUREMENT-AMBIGUITY",
+          "severity": "non_severe_scope_drift_risk",
+          "observedProblem": "把额外清单写成采购或使用顺序，采购这一替代项缺少原任务和材料支持。",
+          "whyNotConfirmedSevere": "该句是采购或使用的析取表述，仍可完全按使用顺序完成；未明确要求购买新主料，未把三日晚饭替换为购物方案，也未实际执行采购。不能为制造基线失败而扩大解释。",
+          "executionRisk": "若下游据此依赖新增采购，则违反冻结硬要求；若只给库存使用清单，则不由该表述自动判作品失败。"
+        }
+      ],
+      "severeRegressionObserved": false,
+      "generationSemanticDisposition": "non_severe_risk_requires_artifact_check",
+      "artifactQualityStatus": "not_evaluated_pending_execution"
+    },
+    {
+      "recordId": "GC-H02_V37_GEN",
+      "caseId": "GC-H02",
+      "version": "37",
+      "sourcePath": "tmp/natural-intent-completion-2026-10-24/completion/results/GC-H02_V37_GEN.json",
+      "checks": {
+        "goalAndDeliverable": "保留：现有食材、两个人、三天晚饭、省事与尽量不浪费。仍要求实际菜式、搭配与使用顺序，没有替换为购物、营养咨询或模板。",
+        "factsAndIndependentConditions": "未见矛盾：要求先看完整库存、设备和偏好，再据此设计；没有新增食材、数字或保质期，也没有把不同截止日或可留用库存改成全清空。",
+        "unknownTreatedAsNonexistent": "未发现。按已有执行材料行动，没有把GEN中缺少库存细目当成家里没有食材或不得继续。",
+        "inventedState": "未发现。没有把设计菜单当成用户已定菜单，也没有假定额外食材、设备或饮食禁忌。",
+        "authorizationAndDesignSpace": "菜谱与菜单自行安排、普通家常选择无需追问，直接来自上下文中的委托设计；未扩大为代购，也未对其他重要未知添加全局不许提问的禁令。"
+      },
+      "usefulCompletion": {
+        "assessment": "有有限而相关的执行澄清；不构成已证实的作品收益。",
+        "specificAdditions": [
+          "要求先依据库存、设备与偏好设计，避免脱离可用材料凭空开菜单。",
+          "明确每天吃什么、如何搭配、如何安排现有食材使用顺序，给出与原任务相关的完成方向。",
+          "把上下文中的普通家常设计委托带入优化提示词，避免不必要地把菜名选择退还用户。"
+        ],
+        "limit": "补充仍较概括，未明确主要用量或简便操作顺序；这些属于既有落地性质量维度，应按实际作品判断，不能据GEN缺少固定句式直接判失败，也不能提前认定已补全。比V31少了做法和时间的显式要求，是否影响照做性仍待对照作品。"
+      },
+      "quotedEvidence": [
+        {
+          "source": "optimizedPrompt",
+          "quote": "请按家里现有食材，为两个人安排三天的晚饭，要求做法省事，并尽量不浪费。",
+          "finding": "主体目标与软性省事、减少浪费目标完整保留。"
+        },
+        {
+          "source": "optimizedPrompt",
+          "quote": "请先查看执行材料中的完整库存、可用设备和用餐偏好，再据此设计三天的菜式、搭配和食材使用顺序",
+          "finding": "明确设计依据，保留已知条件的入口。"
+        },
+        {
+          "source": "optimizedPrompt",
+          "quote": "菜谱和菜单由你自行安排，不需要为普通家常选择额外询问用户。",
+          "finding": "来自上下文的已委托设计，并非凭空扩大授权。"
+        },
+        {
+          "source": "contextDescription",
+          "quote": "菜式、搭配和使用顺序由执行者自行设计，没有指定菜谱或唯一菜单；不需要为普通家常选择额外询问用户。",
+          "finding": "自行设计与普通选择不追问有直接来源支持。"
+        },
+        {
+          "source": "optimizedPrompt",
+          "quote": "安排应说明每天晚饭吃什么、如何搭配，以及怎样优先使用现有食材来减少浪费。",
+          "finding": "相关的执行澄清，具体是否有用仍需看完成品。"
+        }
+      ],
+      "issues": [],
+      "severeRegressionObserved": false,
+      "generationSemanticDisposition": "no_severe_regression_observed",
+      "artifactQualityStatus": "not_evaluated_pending_execution"
+    }
+  ],
+  "crossVersionObservations": [
+    {
+      "caseId": "GC-H01",
+      "observation": "两版本都基本整理了上下文，V37更明确材料事实依据，未见严重新退步；没有依据单凭GEN断言V37比V31更能写好通知。"
+    },
+    {
+      "caseId": "GC-H02",
+      "observation": "V37没有V31的采购或使用表述，但也不再显式要求每道菜做法、所需时间和剩余处理清单。前者降低潜在范围漂移，后者对作品落地性可能有利或无益，需对照成品判断，不能自动判成V37质量胜出。"
+    }
+  ],
+  "candidate37GenerationGate": {
+    "requiredCases": [
+      "GC-H01",
+      "GC-H02"
+    ],
+    "reviewedCases": 2,
+    "casesWithSevereNewRegression": [],
+    "bothCasesWithoutSevereNewRegression": true,
+    "decision": "可通过GEN语义门禁进入已获授权范围内的作品执行阶段；未宣布质量收益。"
+  },
+  "executionMayProceed": true,
+  "executionMayProceedScope": "仅表示V37两题在本次生成阶段源对照中均无观察到的严重新退步；不替代执行授权、预算边界或既有主实验门禁。",
+  "qualityStatus": "pending_downstream_artifacts_and_original_frozen_criteria",
+  "unchangedBoundaries": [
+    "原题、合成材料、冻结判据、GEN原件和源码未被本审修改。",
+    "旧结果、原失败与既有标准继续保留，本审不将任何历史失败改标通过。",
+    "没有为推进执行放宽判据，也没有将新增具体要求反向设为本题必选范文。"
+  ]
+}

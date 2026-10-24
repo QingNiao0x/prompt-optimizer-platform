@@ -1,0 +1,130 @@
+{
+  "batch": "natural-intent-boundary38-heldout-2026-10-24",
+  "status": "DRAFT",
+  "authorizationQuote": "用户授权真实评测自行选择次数；修订任务144内留出封顶12。",
+  "taskMaximumActualCalls": 144,
+  "taskPreviouslyActual": 107,
+  "maximumNewActualCalls": 12,
+  "previousClosedActualCalls": 1848,
+  "oldClosedBalanceTransferred": 0,
+  "baselineVersion": "31",
+  "candidateVersions": [
+    "38"
+  ],
+  "versions": [
+    "31",
+    "38"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 12,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 8,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "generation": [
+    "CS-H01",
+    "CS-H02"
+  ],
+  "regressionGeneration": [],
+  "plan": [],
+  "confirmedPlanGeneration": [],
+  "execution": [],
+  "executionRepeats": 2,
+  "executionIncludeOriginal": true,
+  "confirmationMode": "PER_VERSION",
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "38": [
+      "38"
+    ]
+  },
+  "allowedJobs": [
+    "CS-H01_V31_GEN",
+    "CS-H01_V37_GEN",
+    "CS-H02_V31_GEN",
+    "CS-H02_V37_GEN"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "order": "候选冻结并通过回归后开启内部独立封存两题；31/38同期增强，本阶段只检验增强；作品留到works阶段同信息三臂。",
+  "informationPolicy": "Enhancement sees exact raw/context/actual bound answers, never executorMaterials or acceptance. Execution later receives identical full supplied materials in all arms. GC is development, CS stays sealed until38 freeze and regression semantic PASS.",
+  "criteria": [
+    "旧三严重失败和已冻结正常反向变体无新增严重意图、事实、授权或硬要求违约；充分D04以受影响离线检查及既有37证据单列，不冒充38真实结果。",
+    "fresh Plan实际提问及真实回答后正文保留用户保留决定、全部实际题答和原始要求，不增加用户前置资料义务。",
+    "新CS两题都必须在38两次作品中相对31有可核查实质收益，且相对原始提示词无严重退步；全部胜平负和必要修改项完整报告。",
+    "GC题已公开开发使用，允许辅助定位机制，但不能伪称未见题、代替CS或抵消已知严重失败。",
+    "充分需求持平允许但不计收益；篇幅、HTTP200、框架标签或模型自检不单独证明增强收益。",
+    "只证明局部收益不能切默认；旧主实验失败和37专项结论独立保留，不事后改门槛。"
+  ],
+  "stopConditions": [
+    "Total144 and each frozen stage/phase maximum are enforced together.",
+    "Keep every old128 protocol, closed original and conclusion immutable; the revision does not restore any old closed-batch balance.",
+    "Unused reservations may move only after closure to a later not-yet-frozen stage; no closed stage may reopen.",
+    "Regression and then CS enhancement semantic PASS precede actual works; no quality retry or case-dependent candidate patch."
+  ],
+  "reviews": [],
+  "reviewSystem": "",
+  "generationVersions": [
+    "31",
+    "38"
+  ],
+  "planVersions": [
+    "31",
+    "38"
+  ],
+  "executionArms": [
+    "ORIGINAL",
+    "V31",
+    "V37"
+  ],
+  "draftNotes": [
+    "正常计划8次；上限12不指示用满。失败/协议修复计数，禁止质量重试。",
+    "题面在开发关闭且回归PASS后才读取；候选不再根据留出结果继续同义调整。"
+  ],
+  "generationVersionsByCase": {
+    "CS-H01": [
+      "31",
+      "38"
+    ],
+    "CS-H02": [
+      "31",
+      "38"
+    ]
+  },
+  "prerequisiteStages": [
+    "boundary38-regression"
+  ],
+  "preparationInstructionClass": "com.promptoptimizer.provider.domain.NaturalPromptContentScopeInstructions",
+  "requiredGenerationVersionsByCase": {
+    "CS-H01": [
+      "31",
+      "38"
+    ],
+    "CS-H02": [
+      "31",
+      "38"
+    ]
+  },
+  "adoptionCriteriaRef": "../boundary38-adoption-preregistration.json",
+  "freezeRevision": 1
+}

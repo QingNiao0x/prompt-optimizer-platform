@@ -1,0 +1,188 @@
+{
+  "batch": "natural-intent-completion-regression-2026-10-24",
+  "status": "DRAFT",
+  "authorizationQuote": "用户明确授权实施并自主选择真实评测次数；执行者新增总上限128，回归阶段40。",
+  "taskMaximumActualCalls": 128,
+  "taskPreviouslyActual": 0,
+  "maximumNewActualCalls": 40,
+  "previousClosedActualCalls": 1848,
+  "oldClosedBalanceTransferred": 0,
+  "baselineVersion": "31",
+  "candidateVersions": [
+    "37"
+  ],
+  "versions": [
+    "31",
+    "37"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 4096,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 32,
+    "PLAN": 8,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 20,
+    "PLAN": 4,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "generation": [
+    "D02",
+    "D03",
+    "D04",
+    "PR-D06",
+    "PR-D07",
+    "IC-R01",
+    "IC-R02",
+    "IC-R03",
+    "IC-R04"
+  ],
+  "regressionGeneration": [],
+  "plan": [
+    "MR-P01",
+    "MR-P02"
+  ],
+  "confirmedPlanGeneration": [
+    "MR-P02"
+  ],
+  "execution": [],
+  "executionRepeats": 2,
+  "executionIncludeOriginal": true,
+  "confirmationMode": "PER_VERSION",
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "37": [
+      "37"
+    ]
+  },
+  "allowedJobs": [
+    "D02_V37_GEN",
+    "D03_V37_GEN",
+    "D04_V37_GEN",
+    "PR-D06_V37_GEN",
+    "PR-D07_V37_GEN",
+    "IC-R01_V37_GEN",
+    "IC-R02_V37_GEN",
+    "IC-R03_V37_GEN",
+    "IC-R04_V37_GEN",
+    "MR-P01_V37_PLAN",
+    "MR-P02_V37_PLAN",
+    "MR-P02_V37_PLAN_GEN"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "order": "先复用旧31增强和原始作品，不重开闭批；36三失败原题及相反正常变体回归，Plan零问/真未知/实际回答后生成；本阶段不执行作品。",
+  "informationPolicy": "增强仅见原始提示词、普通context与实际绑定答复，不见executorMaterials或评分卡。ORIGINAL/31/35执行逐字接收相同普通背景和executorMaterials；复用作品必须核对完整原件、同题资料及模型参数。评分卡仅供内部逐源复核，本阶段REVIEW=0，不调用模型评审。增强阶段未附资料不等于执行阶段没有资料。",
+  "criteria": [
+    "D03执行时可获得既有契约，不因增强时未附代码改成通用拟议实现；明确从零设计时允许自主决定。",
+    "PR-D06明确无照片/水位/货损记录须保留；相反存在但未附记录不能改成不存在。",
+    "PR-D07只阅读理解并等待时不新增实质汇报；明确要求摘要时保留摘要交付。",
+    "原始完整要求与真实题答保持，Plan只问实质用户保留决定，充分需求可持平。",
+    "回归修复后才开启新封存题，不使用旧未开启36留出题；质量结论须等待同信息作品。",
+    "回归三项已知严重错误D03/PR-D06/PR-D07及相反正常变体零严重失败。",
+    "本阶段只证明针对性回归与正常变体，候选采用须再满足留出和作品冻结标准。"
+  ],
+  "stopConditions": [
+    "任务48次、本阶段24次和各phase上限同时执行；所有失败、协议修复和作品计数，禁止质量重试。",
+    "相同失败假设不靠更换版本号、同义指令或重复采样续跑；出现严重退步先定位责任与依据。",
+    "已关闭任务或阶段不得重新执行；是否采用独立根据目标收益与严重退步判断。"
+  ],
+  "reviews": [],
+  "reviewSystem": "",
+  "generationVersions": [
+    "37"
+  ],
+  "planVersions": [
+    "37"
+  ],
+  "executionArms": [
+    "ORIGINAL",
+    "V31",
+    "V37"
+  ],
+  "draftNotes": [
+    "正常24调用：9题候选18＋Plan4＋确认后增强2；上限40，余量仅失败/协议修复，不做质量重试。",
+    "D02/D03/D04旧31对照逐字复用；其他回归只检验37共同机制，不能伪称均完成31同期比较。作品阶段按实际冻结选题补必要31对照。",
+    "直接回归含3失败/3相反正常表达、科研、充分通知及明确模板+无权限限制，不扩大成每职业题集。",
+    "37为PREPARE+正文/Plan各2调用，无新增字段/模型审阅阶段；形式检查不宣称证明语义。"
+  ],
+  "generationVersionsByCase": {
+    "D02": [
+      "37"
+    ],
+    "D03": [
+      "37"
+    ],
+    "D04": [
+      "37"
+    ],
+    "PR-D06": [
+      "37"
+    ],
+    "PR-D07": [
+      "37"
+    ],
+    "IC-R01": [
+      "37"
+    ],
+    "IC-R02": [
+      "37"
+    ],
+    "IC-R03": [
+      "37"
+    ],
+    "IC-R04": [
+      "37"
+    ]
+  },
+  "prerequisiteStages": [],
+  "preparationInstructionClass": "com.promptoptimizer.provider.domain.NaturalPromptIntentCompletionInstructions",
+  "requiredGenerationVersionsByCase": {
+    "D02": [
+      "31",
+      "37"
+    ],
+    "D03": [
+      "31",
+      "37"
+    ],
+    "D04": [
+      "31",
+      "37"
+    ],
+    "PR-D06": [
+      "37"
+    ],
+    "PR-D07": [
+      "37"
+    ],
+    "IC-R01": [
+      "37"
+    ],
+    "IC-R02": [
+      "37"
+    ],
+    "IC-R03": [
+      "37"
+    ],
+    "IC-R04": [
+      "37"
+    ]
+  },
+  "adoptionCriteriaRef": "../adoption-preregistration.json"
+}

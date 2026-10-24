@@ -1,0 +1,20 @@
+{
+  "status": "FROZEN_TOOL_CORRECTION",
+  "frozenAt": "2026-10-24T01:53:42.1800252+08:00",
+  "stage": "development",
+  "reason": "确认入口寻找31的Plan上下文，但本阶段仅运行35，因此生成新contextId被冻结检查正确拒绝。修正为查找实际planVersions首个版本，复用原Plan；已有模型结果全部保留。",
+  "newModelCallsCausedByToolFailure": 0,
+  "modelSourceChanged": false,
+  "modelInputChanged": false,
+  "budgetChanged": false,
+  "files": [
+    {
+      "path": "run-evaluation-r2.mjs",
+      "sha256": "f26d6ebf537da188be25c839d1678a635691beefe97aa526857f85ea0327eb46"
+    },
+    {
+      "path": "invoke-evaluation-r2.ps1",
+      "sha256": "1632fd7e63991677e0831765fab810b617f434578c55c5d17ff23c9a8f0de9b4"
+    }
+  ]
+}

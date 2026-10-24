@@ -1,0 +1,86 @@
+{
+  "status": "FROZEN_BEFORE_MAPPING_AND_OTHER_REVIEW",
+  "reviewer": "root, internal AI; implemented candidate, did not read CS generation, mappings or other CS work review",
+  "paidEvaluationCalls": 0,
+  "scope": "All 12 CS works, original requests, context and identical execution materials only",
+  "limitations": [
+    "Internal semantic review, not human or domain-expert certification.",
+    "Physical layout was read for consistency, not rendered or physically measured. No unsupported reach-distance or shelf-capacity failures are inferred.",
+    "Repeat pairing is reported explicitly; style, length and extra sections do not count as benefit."
+  ],
+  "cases": [
+    {
+      "caseId": "CS-H01",
+      "requirements": "One weekend reading-corner plan using existing items, adult and 9-year-old child, no purchase, sofa fixed, separate 80cm balcony route retained, book organization delegated.",
+      "works": [
+        {
+          "id": "work-01", "group": "A", "repeat": 1,
+          "verdict": "LOCAL_REQUIRED",
+          "evidence": "小边桌（60×30 厘米）",
+          "reason": "The supplied side table is 60x40cm. A proposed layout cannot change this existing item's depth.",
+          "minimumEdit": "Correct 30 to 40 and ensure the chosen placement uses the actual footprint; no new furniture is needed."
+        },
+        {"id": "work-02", "group": "A", "repeat": 2, "verdict": "USABLE", "minimumEdit": "None established from supplied facts."},
+        {"id": "work-03", "group": "B", "repeat": 1, "verdict": "USABLE", "minimumEdit": "None established; seated reach promises remain an on-site ergonomic check, not a proven hard violation."},
+        {"id": "work-04", "group": "B", "repeat": 2, "verdict": "USABLE", "minimumEdit": "None established. The listed 110-minute steps fit the stated 1.5-2h estimate."},
+        {
+          "id": "work-05", "group": "C", "repeat": 1,
+          "verdict": "LOCAL_WORDING_INCONSISTENCY",
+          "evidence": ["用纸笔写两张简单标签", "写……四张标签"],
+          "reason": "The detailed text and final steps disagree about two versus four labels. Final four-label steps remain executable; this is a small count clarification, not a severe task failure.",
+          "minimumEdit": "Use one consistent label count. Whether this is necessary editing or optional clarification may require calibration; it cannot support a strong quality claim either way."
+        },
+        {"id": "work-06", "group": "C", "repeat": 2, "verdict": "USABLE", "minimumEdit": "None established; invalid optional cabinet-door label location can be ignored in favor of the valid open-shelf-edge option."}
+      ],
+      "calibration": [
+        "Several works choose only 160cm of the available 240cm while retaining the route. Underusing available space alone is not violating the separate exterior 80cm route.",
+        "Two pairs of bookends provide four ends; do not assume every compartment needs a complete extra pair when a cabinet side can support the other end.",
+        "Furniture positions are delegated proposals, not fabricated already-existing positions. No demand for a unique floor plan is imposed."
+      ],
+      "anonymousComparison": "B has fewer clear local errors than A's first repeat; second repeats are usable ties. C's first label-count inconsistency is minor and disputed in editing significance. No group establishes clear substantive superiority in both repetitions over both other groups."
+    },
+    {
+      "caseId": "CS-H02",
+      "requirements": "One directly postable kit borrowing/return card; existing group registration, no approval or purchase, five supplied items including the bag, explicit abnormal/not-ready state; marking and order delegated, no additional ledger/training.",
+      "works": [
+        {
+          "id": "work-01", "group": "A", "repeat": 1,
+          "verdict": "LOCAL_REQUIRED",
+          "evidence": ["大格放收纳包主体", "大格：收纳包主体 + 桌面三脚架"],
+          "reason": "The main compartment is inside the single bag. Literally storing the bag body inside itself is a confusing physical instruction for a first-time user.",
+          "minimumEdit": "Say the tripod goes in the main compartment and the bag body/zipper is checked as the container; retain the valid two mesh-pocket assignments and group procedure."
+        },
+        {"id": "work-02", "group": "A", "repeat": 2, "verdict": "USABLE", "minimumEdit": "No hard edit established: the parenthetical main-compartment tripod instruction disambiguates the bag-body label; no extra ledger or approval."},
+        {
+          "id": "work-03", "group": "B", "repeat": 1,
+          "verdict": "LOCAL_AMBIGUITY",
+          "evidence": "缺件或有异常……等群里确认后再改",
+          "reason": "Waiting for group confirmation can introduce an unnecessary release gate after an abnormal return. Earlier text still requires actual completeness, so this does not license making an unrepaired kit available and is not automatically an approval violation in every reading.",
+          "minimumEdit": "Clarify that repair/completeness is checked and announced; routine registration does not require another person's reply."
+        },
+        {"id": "work-04", "group": "B", "repeat": 2, "verdict": "USABLE", "minimumEdit": "None established: a current-status card with borrower/expected return is an allowed visible marker, not necessarily a historical ledger."},
+        {
+          "id": "work-05", "group": "C", "repeat": 1,
+          "verdict": "SUBSTANTIVE_SCOPE_VIOLATION",
+          "evidence": ["在卡上借出勾选栏逐项打勾", "借出勾选栏（每次借出可写日期/姓名，逐项打勾）", "归还勾选栏", "缺件/待补记录"],
+          "reason": "Mandatory duplicate paper borrowing, return and incident records create ledger duties alongside the existing group. Embedding the ledger in the same card does not remove that process expansion. Borrow step5 also says put the bag back before marking it borrowed, and fixed pocket assignment is not concretely designed.",
+          "minimumEdit": "Remove the dated transaction/incident ledger duties and related repeated recording steps; retain only current visible status and group messages; correct the borrowing action and specify a workable pocket assignment."
+        },
+        {
+          "id": "work-06", "group": "C", "repeat": 2,
+          "verdict": "SUBSTANTIVE_SCOPE_VIOLATION",
+          "evidence": ["在卡上待补栏写明缺什么、谁发现的、日期", "缺件/异常记录：日期、发现人、缺件或异常内容、待补、已补齐"],
+          "reason": "Besides permissible current-status marking, this requires another dated incident ledger and recording duty. That exceeds the requested card using group registration.",
+          "minimumEdit": "Remove historical incident/duplicate-record fields and instructions; keep concise status markers, fixed item locations and existing group registration."
+        }
+      ],
+      "calibration": [
+        "Do not treat every checkbox or current-state label as a prohibited ledger. Repeated dated/person-specific transaction or incident records are the relevant distinction.",
+        "All six enumerate the bag and four accessories, retain group messages, no purchase, and forbid making an incomplete kit available. Those correct statements do not cancel the later duplicate ledger duties in C.",
+        "No exact A4 size or maximum word count was supplied; length alone is not a hard format failure."
+      ],
+      "anonymousComparison": "A/B avoid C's substantive additional recording duties in both repetitions, but each has a local first-repeat ambiguity. No version conclusion is made before mapping."
+    }
+  ],
+  "blindConclusion": "There are usable works, local defects and a substantive process-scope violation. Neither case proves universal improvement; version-specific adoption must wait for mapping, the other independent review and the known-risk H01 check. Do not use added length or more headings as quality gain."
+}

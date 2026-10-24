@@ -1,0 +1,113 @@
+{
+  "batch": "natural-material-responsibility-development-2026-10-24",
+  "status": "DRAFT",
+  "authorizationQuote": "用户本轮新增48授权，开发阶段封顶24。",
+  "taskMaximumActualCalls": 48,
+  "taskPreviouslyActual": 0,
+  "maximumNewActualCalls": 24,
+  "previousClosedActualCalls": 1789,
+  "oldClosedBalanceTransferred": 0,
+  "baselineVersion": "31",
+  "candidateVersions": [
+    "35"
+  ],
+  "versions": [
+    "31",
+    "35"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 4096,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 14,
+    "PLAN": 6,
+    "EXECUTION": 4,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 10,
+    "PLAN": 4,
+    "EXECUTION": 2,
+    "REVIEW": 0
+  },
+  "generation": [
+    "D01",
+    "D03",
+    "D04"
+  ],
+  "regressionGeneration": [
+    "MR-D05"
+  ],
+  "plan": [
+    "MR-P01",
+    "MR-P02"
+  ],
+  "confirmedPlanGeneration": [
+    "MR-P02"
+  ],
+  "execution": [
+    "D03"
+  ],
+  "executionRepeats": 2,
+  "executionIncludeOriginal": true,
+  "confirmationMode": "PER_VERSION",
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "35": [
+      "35"
+    ]
+  },
+  "allowedJobs": [
+    "D01_V35_GEN",
+    "D03_V35_GEN",
+    "D04_V35_GEN",
+    "MR-D05_V35_GEN",
+    "MR-P01_V35_PLAN",
+    "MR-P02_V35_PLAN",
+    "MR-P02_V35_PLAN_GEN",
+    "D03_V35_EXEC_R1",
+    "D03_V35_EXEC_R2"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "order": "复用闭批基线；先35直接增强与Plan，再按实际问题绑定冻结事实，最后同信息实际作品；全部失败保留。",
+  "informationPolicy": "增强仅见原始提示词、普通context与实际绑定答复，不见executorMaterials或评分卡。ORIGINAL/31/35执行逐字接收相同普通背景和executorMaterials；复用作品必须核对完整原件、同题资料及模型参数。评分卡仅供内部逐源复核，本阶段REVIEW=0，不调用模型评审。增强阶段未附资料不等于执行阶段没有资料。",
+  "criteria": [
+    "未上传的普通执行资料不被断言不存在或强制用户先补。",
+    "明确不存在的材料和用户保留选择不被模型自行补造。",
+    "充分要求可零扩写；问题只问重要用户保留决定；实际回答后不残留待确认。",
+    "D03作品与旧原始/31在相同材料参数下对照，只声称定向回归，不伪称新全量对照。"
+  ],
+  "stopConditions": [
+    "任务48次、本阶段24次和各phase上限同时执行；所有失败、协议修复和作品计数，禁止质量重试。",
+    "相同失败假设不靠更换版本号、同义指令或重复采样续跑；出现严重退步先定位责任与依据。",
+    "已关闭任务或阶段不得重新执行；是否采用独立根据目标收益与严重退步判断。"
+  ],
+  "reviews": [],
+  "reviewSystem": "",
+  "generationVersions": [
+    "35"
+  ],
+  "planVersions": [
+    "35"
+  ],
+  "executionArms": [
+    "V35"
+  ],
+  "draftNotes": [
+    "D01只检查增强表达与任务保真，不用无联网作品宣称全球查询收益。",
+    "开发阶段不是未见题；零问题、真未知、确认后生成分别记录。",
+    "新增14+6+4阶段计数上限合计24，正常计划16，其余仅容纳失败修复，不做质量重试。"
+  ]
+}

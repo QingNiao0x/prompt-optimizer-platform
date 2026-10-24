@@ -1,0 +1,51 @@
+{
+  "status": "FROZEN",
+  "candidateVersion": "38",
+  "baselineVersion": "31",
+  "selectedMaximumActualCalls": 144,
+  "frozenAt": "2026-10-23T20:43:46.735315+00:00",
+  "criteria": [
+    "旧三严重失败和已冻结正常反向变体无新增严重意图、事实、授权或硬要求违约；充分D04以受影响离线检查及既有37证据单列，不冒充38真实结果。",
+    "fresh Plan实际提问及真实回答后正文保留用户保留决定、全部实际题答和原始要求，不增加用户前置资料义务。",
+    "新CS两题都必须在38两次作品中相对31有可核查实质收益，且相对原始提示词无严重退步；全部胜平负和必要修改项完整报告。",
+    "GC题已公开开发使用，允许辅助定位机制，但不能伪称未见题、代替CS或抵消已知严重失败。",
+    "充分需求持平允许但不计收益；篇幅、HTTP200、框架标签或模型自检不单独证明增强收益。",
+    "只证明局部收益不能切默认；旧主实验失败和37专项结论独立保留，不事后改门槛。"
+  ],
+  "hypothesisRef": "boundary38-hypothesis.json",
+  "singleVariable": "Clarify original-deliverable internal completion versus new independent delivery obligations; no other guidance/protocol/model-stage change.",
+  "qualityEvidence": {
+    "sameInformationRequired": true,
+    "executionRepeatsPerArm": 2,
+    "arms": [
+      "ORIGINAL",
+      "V31",
+      "V38"
+    ],
+    "minimumImprovedCasesVersus31": 2,
+    "minimumImprovedHeldoutCasesVersus31": 2,
+    "eachCandidateRepeatMustImprove": true,
+    "severeRegressionsAllowed": 0,
+    "allRepeatsMustBeConsidered": true,
+    "reportOriginalAnd31Separately": true,
+    "requireSourceLinkedReasons": true,
+    "excludedAsSoleBenefit": [
+      "HTTP200",
+      "longer output",
+      "framework label",
+      "model self-report",
+      "sufficient-request tie"
+    ]
+  },
+  "sealedHoldout": {
+    "manifestSha256": "fb472ac7fe0cac1001556f27a2d7888fbe18c148cc117e4c7a2aa2ddb40a9193",
+    "casesSha256": "f63eafe13249f502b7b16ac5ca8c326db85abc0cd09062fd075bbe1193051898",
+    "caseCount": 2,
+    "caseContentsReadByRunner": false,
+    "independentExternalAssessment": false
+  },
+  "noPostHocRelaxation": true,
+  "defaultVersion": "31",
+  "modelCallsBeforeFreeze": 0,
+  "sourceFreezePreparedAt": "2026-10-23T20:46:06.883417+00:00"
+}

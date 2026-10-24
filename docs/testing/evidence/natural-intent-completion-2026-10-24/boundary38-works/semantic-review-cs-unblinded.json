@@ -1,0 +1,110 @@
+{
+  "status": "UNBLINDED_AFTER_DUAL_FREEZE",
+  "assessor": "assess_validation_strategy",
+  "paidModelCalls": 0,
+  "blindReview": {
+    "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-works/semantic-review-cs-blind.json",
+    "sha256": "2eae4739d3e58127aeb59790e802d82563aa47621eec5cff8f6c7b29a237548d",
+    "unchanged": true
+  },
+  "mappingReleasedAfterBothReviewsFrozen": true,
+  "mappingDirectory": "tmp/natural-intent-completion-2026-10-24/boundary38-works/anonymous-maps",
+  "generationOutputsRead": false,
+  "otherReviewersFindingsReadBeforeFreeze": false,
+  "comparisons": [
+    {
+      "caseId": "CS-H01",
+      "mapping": {
+        "A": "V38",
+        "B": "V31",
+        "C": "ORIGINAL"
+      },
+      "counts": {
+        "V38": {
+          "usable": 1,
+          "localRequired": 1,
+          "severe": 0
+        },
+        "V31": {
+          "usable": 2,
+          "localRequired": 0,
+          "severe": 0
+        },
+        "ORIGINAL": {
+          "usable": 2,
+          "localRequired": 0,
+          "severe": 0
+        }
+      },
+      "versus31": "NO_CLEAR_GAIN",
+      "versusOriginal": "NO_PRODUCT_GAIN_LOCAL_FACT_EDIT",
+      "bothRepeatsImprove": false,
+      "reason": "三臂均做出实际布置和书分类；38第一份把现有边桌60×40写成60×30，需纠正。另一份同样可用不构成两次都优于31；其他尺寸/人体工学潜在歧义另列，不伪造实地确定失败。"
+    },
+    {
+      "caseId": "CS-H02",
+      "mapping": {
+        "A": "V38",
+        "B": "ORIGINAL",
+        "C": "V31"
+      },
+      "counts": {
+        "V38": {
+          "usable": 1,
+          "localRequired": 1,
+          "severe": 0
+        },
+        "V31": {
+          "usable": 1,
+          "localRequired": 1,
+          "severe": 0
+        },
+        "ORIGINAL": {
+          "usable": 1,
+          "localRequired": 1,
+          "severe": 0
+        }
+      },
+      "versus31": "LOCAL_PARTIAL_DIFFERENCE_NOT_TWO_REPEAT_GAIN",
+      "versusOriginal": "NO_STABLE_PRODUCT_GAIN",
+      "bothRepeatsImprove": false,
+      "reason": "38第一份须纠正包体放自身大格和先发已放回后入柜的顺序；31第一份须纠正借出时放回柜内并补具体配件归位。38可观察到部分设计更具体，但两者另一次均可用，没有两次都减少必改的清楚收益。原始一份恢复状态的群确认边界需澄清，另份可用。"
+    }
+  ],
+  "aggregate": {
+    "cases": 2,
+    "worksPerArm": 4,
+    "V38": {
+      "usable": 2,
+      "localRequired": 2,
+      "severe": 0
+    },
+    "V31": {
+      "usable": 3,
+      "localRequired": 1,
+      "severe": 0
+    },
+    "ORIGINAL": {
+      "usable": 3,
+      "localRequired": 1,
+      "severe": 0
+    }
+  },
+  "csAdoptionGate": {
+    "decision": "NOT_MET",
+    "requiredImprovedCases": 2,
+    "requiredCandidateImprovingRepeatsPerCase": 2,
+    "observedCasesWithBothRepeatsClearlyImproved": 0,
+    "rationale": [
+      "CS-H01没有补全收益；38一份还出现现有物品尺寸误写。",
+      "CS-H02有局部设计和表达差异，未构成两次作品均明确优于31。",
+      "不能以正文更短、标题更多或纸表更少代替用户必要修改/可执行性的证据。",
+      "此结论不依赖把所有潜在几何或流程歧义升级为严重；即按本审阅较保守的严重性判断也未达到收益门槛。"
+    ],
+    "defaultSwitchSupported": false,
+    "previous37OutcomesUnchanged": true,
+    "other38Gates": "GC辅助与已知H01风险由各自记录决定，不能抵消CS缺少收益或任一严重违约。"
+  },
+  "calibrationPolicy": "root独立盲稿已在映射前冻结；若存在必要修改/严重性分歧，解盲后另写校准，保留双方原稿与本解盲结果。不能为采用38改判据或删掉不利重复。",
+  "limitations": "内部AI审阅，不是实体家具试摆或实际团队试用。没有读取GEN，因果归属和局部指导影响需另外核对。"
+}

@@ -1,0 +1,168 @@
+{
+  "caseId": "D02",
+  "rawPrompt": "我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:\n1.时间序列的长期趋势和季节性趋势\n2.分性别\\地区\\分人群\\分亚类去进行比较\n3.进行减寿分析:年度的\\性别的yll和yll率\n4.采用Arriaga分解方法去分析",
+  "preparation": {
+    "taskScope": {
+      "actions": [
+        {
+          "text": "撰写2015-2025年某地区心脑血管疾病死亡率特征分析",
+          "timing": "CURRENT",
+          "condition": "",
+          "evidence": [
+            {
+              "sourceId": "rawPrompt",
+              "quote": "我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析"
+            }
+          ]
+        },
+        {
+          "text": "分析时间序列的长期趋势和季节性趋势",
+          "timing": "CURRENT",
+          "condition": "",
+          "evidence": [
+            {
+              "sourceId": "rawPrompt",
+              "quote": "1.时间序列的长期趋势和季节性趋势"
+            }
+          ]
+        },
+        {
+          "text": "分性别、地区、分人群、分亚类进行比较",
+          "timing": "CURRENT",
+          "condition": "",
+          "evidence": [
+            {
+              "sourceId": "rawPrompt",
+              "quote": "2.分性别\\地区\\分人群\\分亚类去进行比较"
+            }
+          ]
+        },
+        {
+          "text": "进行减寿分析：年度的、性别的YLL和YLL率",
+          "timing": "CURRENT",
+          "condition": "",
+          "evidence": [
+            {
+              "sourceId": "rawPrompt",
+              "quote": "3.进行减寿分析:年度的\\性别的yll和yll率"
+            }
+          ]
+        },
+        {
+          "text": "采用Arriaga分解方法进行分析",
+          "timing": "CURRENT",
+          "condition": "",
+          "evidence": [
+            {
+              "sourceId": "rawPrompt",
+              "quote": "4.采用Arriaga分解方法去分析"
+            }
+          ]
+        }
+      ],
+      "response": {
+        "basis": "UNSPECIFIED",
+        "description": "",
+        "evidence": []
+      }
+    },
+    "dependencies": [
+      {
+        "id": "region",
+        "subject": "研究地区",
+        "owner": "USER_DECISION",
+        "action": "确定具体研究地区",
+        "reason": "原文仅称“某地区”，地区范围决定数据来源、人群构成与全部分析结果，执行者无法合理确定",
+        "evidence": [
+          {
+            "sourceId": "rawPrompt",
+            "quote": "我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析"
+          }
+        ]
+      },
+      {
+        "id": "data",
+        "subject": "心脑血管疾病死亡率数据及人口数据",
+        "owner": "USER_DECISION",
+        "action": "提供或授权获取2015-2025年该地区死亡监测数据与人口数据",
+        "reason": "趋势、分组比较、YLL与Arriaga分解均依赖原始死亡与人口数据，缺失则无法完成分析",
+        "evidence": [
+          {
+            "sourceId": "rawPrompt",
+            "quote": "我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析"
+          }
+        ]
+      },
+      {
+        "id": "subtypes",
+        "subject": "心脑血管疾病亚类划分",
+        "owner": "USER_DECISION",
+        "action": "确定亚类划分口径（如ICD编码范围）",
+        "reason": "原文要求“分亚类去进行比较”，亚类定义直接决定分组与分解结果",
+        "evidence": [
+          {
+            "sourceId": "rawPrompt",
+            "quote": "2.分性别\\地区\\分人群\\分亚类去进行比较"
+          }
+        ]
+      },
+      {
+        "id": "population",
+        "subject": "分人群维度",
+        "owner": "USER_DECISION",
+        "action": "确定“分人群”的具体划分维度（如年龄组、城乡等）",
+        "reason": "原文未明确人群划分标准，不同划分改变比较结果",
+        "evidence": [
+          {
+            "sourceId": "rawPrompt",
+            "quote": "2.分性别\\地区\\分人群\\分亚类去进行比较"
+          }
+        ]
+      },
+      {
+        "id": "yll",
+        "subject": "YLL计算方法与期望寿命参数",
+        "owner": "USER_DECISION",
+        "action": "确定YLL计算所用期望寿命表及标准",
+        "reason": "YLL和YLL率数值取决于所选期望寿命参数，执行者不能自行假定",
+        "evidence": [
+          {
+            "sourceId": "rawPrompt",
+            "quote": "3.进行减寿分析:年度的\\性别的yll和yll率"
+          }
+        ]
+      },
+      {
+        "id": "arriaga",
+        "subject": "Arriaga分解的分解对象与维度",
+        "owner": "USER_DECISION",
+        "action": "确定分解的因变量（如期望寿命或死亡率差异）及分组维度",
+        "reason": "原文仅要求采用Arriaga分解方法，未指明分解目标，方法应用方式影响结论",
+        "evidence": [
+          {
+            "sourceId": "rawPrompt",
+            "quote": "4.采用Arriaga分解方法去分析"
+          }
+        ]
+      },
+      {
+        "id": "analysis",
+        "subject": "数据分析与结果计算",
+        "owner": "EXECUTOR_WORK",
+        "action": "基于所获数据完成趋势、季节性、分组比较、YLL及Arriaga分解计算",
+        "reason": "属执行性分析工作，不应转交用户",
+        "evidence": [
+          {
+            "sourceId": "rawPrompt",
+            "quote": "1.时间序列的长期趋势和季节性趋势"
+          }
+        ]
+      }
+    ]
+  },
+  "tracePath": "tmp/natural-material-responsibility-2026-10-24/repair-reserve/traces/001.json",
+  "outputEqualsOriginal": true,
+  "bodyGenerationCalls": 0,
+  "finding": "原文已要求撰写分析，准备却给UNSPECIFIED；仍列6项用户决定。正文无缺资料断言来自原文保留分支，不能计为责任机制修复或实质增强收益。",
+  "actualPlanOnThisCaseTested": false
+}

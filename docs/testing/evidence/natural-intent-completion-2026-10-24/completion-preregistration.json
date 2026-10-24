@@ -1,0 +1,51 @@
+{
+  "status": "FROZEN",
+  "registeredAt": "2026-10-23T20:08:19.911341+00:00",
+  "candidateVersion": "37",
+  "mandatoryRegardlessOfMainWorksOutcome": true,
+  "independentHypothesis": "Same frozen37 can fill real expression gaps in short requests and thereby improve actual works; existing sufficiently specified tasks continue to test fidelity.",
+  "caseSource": "new cold author; has not read candidate, code, earlier cases or outputs",
+  "sealedCasesDirectory": "tmp/intent-completion-gap-holdout",
+  "casesOpened": false,
+  "stage": "completion",
+  "maximumActualCalls": 32,
+  "phaseLimits": {
+    "GENERATION": 12,
+    "PLAN": 0,
+    "EXECUTION": 20,
+    "REVIEW": 0
+  },
+  "normalPlannedCalls": 20,
+  "caseCount": 2,
+  "allCasesRequired": true,
+  "arms": [
+    "ORIGINAL",
+    "V31",
+    "V37"
+  ],
+  "executionRepeatsPerArm": 2,
+  "currentCriterion": "Both cases must show clear substantive benefit versus31 in both repetitions, with no severe regressions versus original, to support adoption; one case benefit is local evidence only and cannot justify overall success/default switch.",
+  "criterionRevisionHistory": [
+    {
+      "revision": 1,
+      "statement": "At least one of two cases improves versus31 in both repeats.",
+      "state": "SUPERSEDED_BEFORE_FREEZE_BEFORE_CASE_ACCESS_BEFORE_MODEL_CALLS"
+    },
+    {
+      "revision": 2,
+      "recordedAt": "2026-10-23T20:08:19.911341+00:00",
+      "statement": "Both cases improve versus31 in both repeats; original no severe regressions.",
+      "reason": "Root tightened before any case access or calls to preserve at-least-two-work-gains quality requirement."
+    }
+  ],
+  "noThresholdChangeAfterFreeze": true,
+  "mainExperimentCriteriaAndCasesUnchanged": true,
+  "mainExperimentOutcomeRetainedSeparately": true,
+  "noScoreCompensationForMainSevereFailure": true,
+  "actualCallsAtRegistration": 0,
+  "mainTaskAlreadyActual": 34,
+  "totalTaskMaximumUnchanged": 128,
+  "frozenAt": "2026-10-23T20:20:10.485716+00:00",
+  "minimumImprovedCases": 2,
+  "repeatsEachMustImprove": 2
+}

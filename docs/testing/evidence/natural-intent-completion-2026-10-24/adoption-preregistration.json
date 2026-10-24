@@ -1,0 +1,59 @@
+{
+  "status": "FROZEN",
+  "candidateVersion": "37",
+  "baselineVersion": "31",
+  "selectedMaximumActualCalls": 128,
+  "criteria": [
+    "回归三项已知严重错误D03/PR-D06/PR-D07及相反正常变体零严重失败。",
+    "独立内部留出零新增严重失败。",
+    "同信息实际作品相对31至少两题有清楚改善，改善须体现在必要修改项减少或交付完整性/可执行性提高，其中至少一题来自内部留出。",
+    "相对原始提示词无严重退步，产品收益与相对31升级收益分别报告。",
+    "充分需求持平允许但不计为收益；任一严重意图、事实、授权或硬要求退步不能由其他得分抵消。",
+    "不满足则不切默认，不事后修改采用门槛；真实调用数、作品与全部失败原件完整保留，不做质量重试。"
+  ],
+  "nonCompensableSevereFailures": [
+    "原任务或交付类型改变",
+    "明确事实、限制或独立条件遗漏/反转",
+    "用户保留决定被自行确认或授权越界",
+    "可确定硬要求违约"
+  ],
+  "qualityEvidence": {
+    "sameInformationRequired": true,
+    "executionRepeatsPerArm": 2,
+    "arms": [
+      "ORIGINAL",
+      "V31",
+      "V37"
+    ],
+    "minimumImprovedCasesVersus31": 2,
+    "minimumImprovedHeldoutCasesVersus31": 1,
+    "severeRegressionsAllowed": 0,
+    "improvementDimensions": [
+      "必要修改项减少",
+      "交付完整性提高",
+      "可执行性提高"
+    ],
+    "excludedAsSoleBenefit": [
+      "HTTP200",
+      "JSON字段合法",
+      "模型自报检查通过",
+      "正文更长",
+      "组织框架命中",
+      "充分需求持平"
+    ],
+    "reportOriginalAnd31Separately": true,
+    "allRepeatsMustBeConsidered": true,
+    "requireSourceLinkedReasons": true
+  },
+  "evaluationBoundary": "内部独立作者封存及独立复核，不称外部专业认证。程序可验证来源/请求一致性/格式或可执行夹具，不能证明任意语义正确。",
+  "freezePolicy": "根代理完成受影响绿测后冻结本文件和任务/阶段协议；候选/题目/参数冻结后不随结果调门槛。",
+  "sealedHoldout": {
+    "manifestPath": "tmp/intent37-holdout/manifest.json",
+    "manifestSha256": "868769ac8f67f7bf9b856a513fccb4bafe5ed06f6e81d317a7cd7c8ed182689a",
+    "casesSha256": "06554897c95f78b87769ee13713c5a7c6a7886310065edca8b69ba551692c528",
+    "caseCount": 2,
+    "caseContentsReadByRunner": false,
+    "independentExternalAssessment": false
+  },
+  "frozenAt": "2026-10-23T19:43:43.414945+00:00"
+}

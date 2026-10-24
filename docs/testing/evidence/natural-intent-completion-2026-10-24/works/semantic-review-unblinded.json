@@ -1,0 +1,105 @@
+{
+  "status": "UNBLINDED_AFTER_FROZEN_REVIEW",
+  "blindReviewPath": "docs/testing/evidence/natural-intent-completion-2026-10-24/works/semantic-review-blind.json",
+  "blindReviewSha256": "a47d6c9a1a84b1bb72cc80a25a0c9c80ee5002e1f71b6d7cd522d5ab159337cf",
+  "blindReviewUnchanged": true,
+  "paidModelCalls": 0,
+  "primaryCaseCount": 4,
+  "repeatsPerArm": 2,
+  "comparisons": [
+    {
+      "caseId": "PR-D06",
+      "mapping": {
+        "A": "ORIGINAL",
+        "B": "V31",
+        "C": "V37"
+      },
+      "versus31": "MIXED_LOCAL_IMPROVEMENT_NOT_STABLE_USABILITY",
+      "versusOriginal": "NO_PRODUCT_GAIN",
+      "reason": "37两次均未虚构31其中一次的现场查看，但两次均新增未确认的安全动机，仍须用户修改；原始提示词一份可用、一份照片状态局部误细化。可报告减少一项严重事实新增，不能报告37稳定可直接使用。"
+    },
+    {
+      "caseId": "D03",
+      "mapping": {
+        "A": "V31",
+        "B": "V37",
+        "C": "ORIGINAL"
+      },
+      "versus31": "USABLE_TIE",
+      "versusOriginal": "USABLE_TIE",
+      "reason": "三臂各两份全部合同内行为通过，无必要修改；不计升级或产品实质收益。"
+    },
+    {
+      "caseId": "IC-H01",
+      "mapping": {
+        "A": "ORIGINAL",
+        "B": "V31",
+        "C": "V37"
+      },
+      "versus31": "LOCAL_EDIT_ADVANTAGE_WITH_NONCOMPENSABLE_FAILURE",
+      "versusOriginal": "FEWER_FAILED_WORKS_BUT_NEW_HARD_CONSTRAINT_FAILURE",
+      "reason": "37一份可用、一份要求披露过去经历并指派参与者到前方取物。31一份额外布置超时、一份回收脚本歧义；原始两份分别手机例外和真实信息/超时。37少一些局部必改不抵消其新出现的固定座位取物违约；不能把它计为无严重退步的留出采用收益。"
+    },
+    {
+      "caseId": "IC-H02",
+      "mapping": {
+        "A": "V31",
+        "B": "V37",
+        "C": "ORIGINAL"
+      },
+      "versus31": "USABLE_TIE",
+      "versusOriginal": "USABLE_TIE",
+      "reason": "三臂全部费用、时限、建议授权和80字格式正确，无必要修改；是充分需求保真，不是补全收益。"
+    }
+  ],
+  "primaryWorkCounts": {
+    "ORIGINAL": {
+      "works": 8,
+      "usable": 5,
+      "localRequired": 1,
+      "severe": 2
+    },
+    "V31": {
+      "works": 8,
+      "usable": 5,
+      "localRequired": 1,
+      "severe": 2
+    },
+    "V37": {
+      "works": 8,
+      "usable": 5,
+      "localRequired": 2,
+      "severe": 1
+    }
+  },
+  "adoptionGate": {
+    "decision": "NOT_MET_KEEP_CURRENT_DEFAULT",
+    "clearNonSevereImprovedHeldoutCases": 0,
+    "requiredImprovedHeldoutCases": 1,
+    "sufficientTaskTies": 2,
+    "severeCandidateWorkObserved": true,
+    "reasons": [
+      "IC-H01两次37作品中一次违背明确坐姿/固定座位限制且询问真实个人经历，不能用另一份可用作品抵消。",
+      "IC-H02可用持平，不计收益。因此没有达到至少一题留出的无严重退步收益要求。",
+      "PR-D06存在减少严重新增动作的观察，但两份37仍需改动且不优于原始稳定性；不得以错误总量下降替代原定逐案例门禁。",
+      "主四题不足以支持相对31至少两题明确改善且无新增严重退步的采用结论。"
+    ],
+    "interpretation": "这是本冻结题集的候选采用未通过，不是工程没有完成，也不证明策略对所有用户无效。保持31默认不等于31质量已经满足全部产品发布要求。"
+  },
+  "diagnosticD02": {
+    "countsTowardPrimaryQualityGain": false,
+    "mapping": {
+      "A": "V31",
+      "B": "V37",
+      "C": "ORIGINAL"
+    },
+    "methodObjectResult": "6/6在相同完整执行材料下正确解释e0差异、2025减2015与年单位。对本组实际作品的Arriaga对象风险验证通过，但不得推断缺少材料时同样稳定。",
+    "numericFindings": "31两份摘要将0.80年误写1.05年，与自身正文矛盾；37两份未复现此错误，但另见亚类率不可相加的错误说明和所有组均下降的过度概括。原始方法诊断未发现同类错误。",
+    "limit": "不将37未复现31摘要算术错误计入主四题收益；不称37整篇研究报告专业正确。"
+  },
+  "attribution": {
+    "observation": "37增强阶段此前逐源核对保留H01不用手机、坐着参与和个人信息限制；作品中出现取物/真实经历错误，需要区分增强提示词与下游执行。",
+    "boundary": "已有证据不支持仅凭作品错误就修改生产或再叠加特殊禁令。首次出现于作品不排除指导权重/冗余的诱因，保留混合或待定因果。",
+    "suggestedAction": "保持冻结候选和原件，按授权范围完成尚未做的补全定向验证；不要为翻转本次门禁重试这组题或改判据。"
+  }
+}

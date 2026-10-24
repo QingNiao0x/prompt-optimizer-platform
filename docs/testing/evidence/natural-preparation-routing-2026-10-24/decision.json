@@ -1,0 +1,69 @@
+{
+  "status": "NOT_ADOPTED",
+  "candidate": "36",
+  "defaultVersion": "31",
+  "routingBugEngineeringFixed": true,
+  "engineeringTests": {
+    "tests": 230,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "semanticGoalComplete": false,
+  "actualCalls": 20,
+  "maximumActualCalls": 48,
+  "phaseCounts": {
+    "GENERATION": 16,
+    "PLAN": 4
+  },
+  "newExecutionCalls": 0,
+  "releasedUnused": 28,
+  "cumulativeActual": 1848,
+  "severeRegressions": [
+    {
+      "caseId": "D03",
+      "severity": "SEVERE",
+      "responsibility": "增强正文模型及其最终task新增缺口判断；形式来源/覆盖校验未识别冲突。",
+      "firstMeaningfulChange": "006.json 的additions/gap与optimizedPrompt；准备005.json准确保留现有签名/结构及可替换实现，原始输入继续完整可见。",
+      "source": "保留现有筛选方式、函数签名和返回结构，不改输入数组，给出可替换的完整实现。",
+      "changed": "由于我尚未提供现有函数源码、筛选方式、函数签名和返回结构，请先按常见分页函数形态给出一个完整可替换的拟议实现",
+      "effect": "把增强阶段未附代码扩大为执行者无法取得既有契约，授权通用实现替代现有函数；与保留要求冲突。",
+      "downstreamAttribution": "未执行候选作品，不推断实际函数一定失败。"
+    },
+    {
+      "caseId": "PR-D06",
+      "severity": "SEVERE",
+      "responsibility": "最终任务要求提取及正文遗漏明确客观限制；仅有部分引用存在不能证明要求已完整。",
+      "firstMeaningfulChange": "012.json 最终task/optimizedPrompt均未保留无照片、无水位/货损记录；准备011.json只识别动作并非完整事实载体，原文仍传入，不能把scope未列出事实单独认定为数据已被删除。",
+      "source": "没有现场照片，也没有保存水位或货损记录",
+      "changed": "最终正文只保留原因/损失待核实和不编造，没有明确记录不存在的状态。",
+      "effect": "丢失用户明确限制，不能把不编造原因/金额当作等价保留无记录。",
+      "downstreamAttribution": "未执行候选作品，保留事实遗漏的增强层归因，不外推下游行为。"
+    },
+    {
+      "caseId": "PR-D07",
+      "severity": "SEVERE",
+      "responsibility": "正文模型将如何体现理解视为必须补全的交付缺口，新增实质汇报。",
+      "firstMeaningfulChange": "014.json finalTask.deliverable和additions；准备013.json response=UNSPECIFIED且当前只阅读理解/等待，原始边界完整送达。",
+      "source": "当前只需要阅读并理解；暂时不用改代码，也不用写项目说明文档，等我下一条具体任务。",
+      "changed": "完成阅读后，请简要说明你已了解的项目结构、关键约定和主要模块",
+      "effect": "本可简短确认并等待，却新增结构/约定/模块理解说明，扩大成果要求。",
+      "downstreamAttribution": "未执行候选作品，不认定下游已交付额外文档。"
+    }
+  ],
+  "heldoutOpened": false,
+  "deploymentPerformed": false,
+  "commitPerformed": false,
+  "pushPerformed": false,
+  "positiveEvidence": "Preparation response.basis no longer prevents the writer from running; Plan question/answer path worked in this targeted batch. These are limited engineering/behavior findings.",
+  "qualityEvidenceLimit": "No new downstream works were generated because regression gate failed. Reused original/31 works are historical references and cannot establish candidate36 gain.",
+  "stopReason": "开发回归发现三项严重退步，按门禁停止作品与留出；不靠同义模板候选或质量重试续跑。",
+  "evidence": [
+    "development/preparation-final-task-attribution.json",
+    "development/cost-and-delivery.json",
+    "development/transports.jsonl",
+    "development/http-results.json",
+    "development/same-information-checks.json"
+  ],
+  "closedAt": "2026-10-23T18:46:15.928589+00:00"
+}

@@ -1,0 +1,690 @@
+{
+  "status": "BLIND_REVIEW_FROZEN",
+  "assessor": "assess_validation_strategy",
+  "reviewedAt": "2026-10-24T04:24:49.7092037+08:00",
+  "paidModelCalls": 0,
+  "versionMappingRead": false,
+  "optimizedPromptsReadDuringWorkReview": false,
+  "scope": {
+    "primaryCases": [
+      "PR-D06",
+      "D03",
+      "IC-H01",
+      "IC-H02"
+    ],
+    "primaryWorkCount": 24,
+    "diagnosticCases": [
+      "D02"
+    ],
+    "diagnosticWorkCount": 6,
+    "allRepeatsRetained": true
+  },
+  "limits": [
+    "内部代理人工语义复核；留出作者同时担任本次作品审阅者，不能称外部独立专业认证。",
+    "只依据原始提示词、普通背景、相同执行材料及匿名作品评判；未读取匿名映射。较早增强审阅已见过31/37提示词，不据此猜测组别。",
+    "严重错误和局部必改分开记录；修改字数少不代表事实错误不严重，篇幅、品牌、免责声明和字段完整不构成质量收益。",
+    "主持人递物或走近不等于参与者必须离座；不把坐着也能参与扩大为所有人不得移动。",
+    "D02仅诊断方法对象、方向、单位及已发现的核心核算矛盾，不将未全面复核的其他统计段落判为通过。",
+    "两次重复和两道内部留出不足以证明普遍泛化或统计显著收益。"
+  ],
+  "sourceFiles": [
+    {
+      "caseId": "PR-D06",
+      "path": "tmp/natural-intent-completion-2026-10-24/works/anonymous-bundles/PR-D06.json",
+      "sha256": "c2615d0f62c2fc04ec92ccb3c1f4d115cd1071dbcdee66ecb04b87c30c2b79a1"
+    },
+    {
+      "caseId": "D03",
+      "path": "tmp/natural-intent-completion-2026-10-24/works/anonymous-bundles/D03.json",
+      "sha256": "b2bdf3fbd9065a35a89052cee2d58525b6644a074783b69ea4271a2451fd70f4"
+    },
+    {
+      "caseId": "IC-H01",
+      "path": "tmp/natural-intent-completion-2026-10-24/works/anonymous-bundles/IC-H01.json",
+      "sha256": "61dad8879b8ed24222d096ebac70c735c350e46c321e87db8f897ae022ed6664"
+    },
+    {
+      "caseId": "IC-H02",
+      "path": "tmp/natural-intent-completion-2026-10-24/works/anonymous-bundles/IC-H02.json",
+      "sha256": "1ccd2b7995236abd7a3839e5525d15e5251311cd21d20a8d2431bb1bdddc973f"
+    },
+    {
+      "caseId": "D02",
+      "path": "tmp/natural-intent-completion-2026-10-24/works/anonymous-bundles/D02.json",
+      "sha256": "518faf8610a73851eefaeb73d4b0c65a1eb690f426b75865383d47b041010461"
+    }
+  ],
+  "severityDefinitions": {
+    "SEVERE": "改变明确硬限制、任务或授权，虚构已完成的关键事实，或者核心结论与可确定执行数据矛盾。",
+    "LOCAL_REQUIRED": "交付主体仍可用但须局部纠正无依据的细化、事实动机或执行歧义；不声称其为可直接采用。",
+    "OPTIONAL": "措辞、布局或冗余整理，不改变交付结果，不计为增强收益或必改项。"
+  },
+  "records": [
+    {
+      "caseId": "PR-D06",
+      "group": "A",
+      "anonymousId": "work-01",
+      "status": "LOCAL_REQUIRED",
+      "positiveEvidence": [
+        "上午因进水暂停收发货、下午恢复均保留；未编造具体进水来源、货损金额或恢复时点。",
+        "交付为可读说明正文，不是让用户补齐材料后才开始的问卷或填空。"
+      ],
+      "necessaryEdits": [
+        {
+          "severity": "LOCAL_REQUIRED",
+          "sourceQuote": "没有现场照片",
+          "outputQuote": "本次事件未拍摄现场照片",
+          "outputLine": 9,
+          "reason": "没有可用照片不证明从未拍摄；补写了没有依据的事件过程。",
+          "requiredCorrection": "改为没有/未留存现场照片，保留未知的形成原因。"
+        }
+      ],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "PR-D06",
+      "group": "A",
+      "anonymousId": "work-02",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "上午因进水暂停收发货、下午恢复均保留；未编造具体进水来源、货损金额或恢复时点。",
+        "交付为可读说明正文，不是让用户补齐材料后才开始的问卷或填空。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "PR-D06",
+      "group": "B",
+      "anonymousId": "work-03",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "上午因进水暂停收发货、下午恢复均保留；未编造具体进水来源、货损金额或恢复时点。",
+        "交付为可读说明正文，不是让用户补齐材料后才开始的问卷或填空。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "PR-D06",
+      "group": "B",
+      "anonymousId": "work-04",
+      "status": "SEVERE",
+      "positiveEvidence": [
+        "上午因进水暂停收发货、下午恢复均保留；未编造具体进水来源、货损金额或恢复时点。",
+        "交付为可读说明正文，不是让用户补齐材料后才开始的问卷或填空。"
+      ],
+      "necessaryEdits": [
+        {
+          "severity": "SEVERE",
+          "sourceQuote": "请基于这些已知情况写出可用正文",
+          "outputQuote": "并对现场情况进行了初步查看",
+          "outputLine": 3,
+          "reason": "原始来源未提供任何现场查看已完成事实；正式情况说明虚构了已发生处置动作。",
+          "requiredCorrection": "删除现场查看断言；如需建议核查，仅作为以后可做的建议且不冒充完成。"
+        }
+      ],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "PR-D06",
+      "group": "C",
+      "anonymousId": "work-05",
+      "status": "LOCAL_REQUIRED",
+      "positiveEvidence": [
+        "上午因进水暂停收发货、下午恢复均保留；未编造具体进水来源、货损金额或恢复时点。",
+        "交付为可读说明正文，不是让用户补齐材料后才开始的问卷或填空。"
+      ],
+      "necessaryEdits": [
+        {
+          "severity": "LOCAL_REQUIRED",
+          "sourceQuote": "现已确认仓库昨日上午因进水暂停收发货，下午恢复",
+          "outputQuote": "仓库出现进水情况，为确保人员及货物安全，仓库暂停收发货作业",
+          "outputLine": 5,
+          "reason": "给出了原文未确认的决策目的；虽然合理，不应在已知事实说明中擅自确认为当时的动机。",
+          "requiredCorrection": "删去动机说明，保留因进水暂停和下午恢复。"
+        }
+      ],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "PR-D06",
+      "group": "C",
+      "anonymousId": "work-06",
+      "status": "LOCAL_REQUIRED",
+      "positiveEvidence": [
+        "上午因进水暂停收发货、下午恢复均保留；未编造具体进水来源、货损金额或恢复时点。",
+        "交付为可读说明正文，不是让用户补齐材料后才开始的问卷或填空。"
+      ],
+      "necessaryEdits": [
+        {
+          "severity": "LOCAL_REQUIRED",
+          "sourceQuote": "现已确认仓库昨日上午因进水暂停收发货，下午恢复",
+          "outputQuote": "仓库出现进水情况，为确保人员、货物及作业安全，仓库暂停收发货作业",
+          "outputLine": 5,
+          "reason": "给出了原文未确认的决策目的；虽然合理，不应在已知事实说明中擅自确认为当时的动机。",
+          "requiredCorrection": "删去动机说明，保留因进水暂停和下午恢复。"
+        }
+      ],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "D03",
+      "group": "A",
+      "anonymousId": "work-01",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "先按既有ACTIVE和名称规则过滤，再计算total/totalPages并裁剪当前页，然后slice；保留全部返回字段。",
+        "零匹配时items=[]、page=1、total=0、totalPages=0；未修改输入数组或行对象。",
+        "独立匿名行为验证32/32通过，见pagination-anonymous-checks.json和pagination-anonymous-review.json；6份共192轮不是192独立样本。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "D03",
+      "group": "A",
+      "anonymousId": "work-02",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "先按既有ACTIVE和名称规则过滤，再计算total/totalPages并裁剪当前页，然后slice；保留全部返回字段。",
+        "零匹配时items=[]、page=1、total=0、totalPages=0；未修改输入数组或行对象。",
+        "独立匿名行为验证32/32通过，见pagination-anonymous-checks.json和pagination-anonymous-review.json；6份共192轮不是192独立样本。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": [
+        "toPositiveInt对合法正整数输入无行为变化；额外兜底可简化但不算必须修改或质量收益。"
+      ]
+    },
+    {
+      "caseId": "D03",
+      "group": "B",
+      "anonymousId": "work-03",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "先按既有ACTIVE和名称规则过滤，再计算total/totalPages并裁剪当前页，然后slice；保留全部返回字段。",
+        "零匹配时items=[]、page=1、total=0、totalPages=0；未修改输入数组或行对象。",
+        "独立匿名行为验证32/32通过，见pagination-anonymous-checks.json和pagination-anonymous-review.json；6份共192轮不是192独立样本。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "D03",
+      "group": "B",
+      "anonymousId": "work-04",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "先按既有ACTIVE和名称规则过滤，再计算total/totalPages并裁剪当前页，然后slice；保留全部返回字段。",
+        "零匹配时items=[]、page=1、total=0、totalPages=0；未修改输入数组或行对象。",
+        "独立匿名行为验证32/32通过，见pagination-anonymous-checks.json和pagination-anonymous-review.json；6份共192轮不是192独立样本。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "D03",
+      "group": "C",
+      "anonymousId": "work-05",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "先按既有ACTIVE和名称规则过滤，再计算total/totalPages并裁剪当前页，然后slice；保留全部返回字段。",
+        "零匹配时items=[]、page=1、total=0、totalPages=0；未修改输入数组或行对象。",
+        "独立匿名行为验证32/32通过，见pagination-anonymous-checks.json和pagination-anonymous-review.json；6份共192轮不是192独立样本。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "D03",
+      "group": "C",
+      "anonymousId": "work-06",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "先按既有ACTIVE和名称规则过滤，再计算total/totalPages并裁剪当前页，然后slice；保留全部返回字段。",
+        "零匹配时items=[]、page=1、total=0、totalPages=0；未修改输入数组或行对象。",
+        "独立匿名行为验证32/32通过，见pagination-anonymous-checks.json和pagination-anonymous-review.json；6份共192轮不是192独立样本。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "IC-H01",
+      "group": "A",
+      "anonymousId": "work-01",
+      "status": "SEVERE",
+      "positiveEvidence": [
+        "30分钟内含最后2分钟清理，活动主体允许原位参与。"
+      ],
+      "necessaryEdits": [
+        {
+          "severity": "SEVERE",
+          "sourceQuote": "不用手机",
+          "outputQuote": "主持人可看自己的手表或手机计时（主持人本人可用手机计时，参与者不用手机）",
+          "outputLine": 33,
+          "reason": "自行给主持人增加原任务没有的手机使用例外；和正文全程不用手机的声明冲突。",
+          "requiredCorrection": "删除手机例外，使用不依赖手机且场地可用的控时安排。"
+        }
+      ],
+      "optionalNotes": [
+        "独立打印提示卡与正文重复，可以并回流程；不据此制造另一项严重错误。"
+      ]
+    },
+    {
+      "caseId": "IC-H01",
+      "group": "A",
+      "anonymousId": "work-02",
+      "status": "SEVERE",
+      "positiveEvidence": [
+        "坐着参与、名字或自选称呼及不用手机的规则文字存在，但不能抵消具体玩法冲突。"
+      ],
+      "necessaryEdits": [
+        {
+          "severity": "SEVERE",
+          "sourceQuote": "也不要求大家透露姓名以外的个人信息",
+          "outputQuote": "每个人说三句关于自己的轻松小事……其中两句是真的",
+          "outputLine": 68,
+          "reason": "核心玩法要求真实个人偏好或经历；例子还包含养过乌龟。只说不涉及隐私不能把真实经历变成非个人信息。",
+          "requiredCorrection": "将玩法改为共同虚构/选择的任务，或不要求任何个人真实信息的合作环节。"
+        },
+        {
+          "severity": "SEVERE",
+          "sourceQuote": "30分钟；场地完整30分钟，布置清理包含其中",
+          "outputQuote": "每人约1分钟，每组约4分钟",
+          "outputLine": 64,
+          "reason": "12人按左右组先后发言，单人1分钟已需约12分钟而该环节仅8分钟，另含猜测和主持；时序计划无法按给出的节奏完成。",
+          "requiredCorrection": "明确两组并行且主持可执行，或缩短每人额度并留出主持时间，整体仍不超30分钟。"
+        }
+      ],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "IC-H01",
+      "group": "B",
+      "anonymousId": "work-03",
+      "status": "SEVERE",
+      "positiveEvidence": [
+        "活动主体按座位参与，29—30分钟安排主持人清理。"
+      ],
+      "necessaryEdits": [
+        {
+          "severity": "SEVERE",
+          "sourceQuote": "使用时间完整30分钟，布置和清理均须包含在这30分钟内",
+          "outputQuote": "主持人提前2分钟完成放纸和放笔",
+          "outputLine": 9,
+          "reason": "随后0—30分钟已经完整占满，提前2分钟布置未计入，实际占用至少32分钟。",
+          "requiredCorrection": "将布置写入0—30分钟之内并相应压缩活动，不仅保留总时长声明。"
+        }
+      ],
+      "optionalNotes": [
+        "放笔位置和请大家把笔放回桌上应统一为主持人分发/回收，避免固定座位参与者误解。主持人走动本身不违规。"
+      ]
+    },
+    {
+      "caseId": "IC-H01",
+      "group": "B",
+      "anonymousId": "work-04",
+      "status": "LOCAL_REQUIRED",
+      "positiveEvidence": [
+        "有明确的参与者可跳过私人问题安排；未强制透露职业、住址或经历，不能仅因举了喜好例子断定强迫披露。",
+        "总体0—30分钟安排及最后3分钟清理可行。"
+      ],
+      "necessaryEdits": [
+        {
+          "severity": "LOCAL_REQUIRED",
+          "sourceQuote": "所有环节坐着也能参加；固定座椅；活动不应安排走动",
+          "outputQuote": "最后请大家帮个忙：把白纸和记号笔放回前面小桌上",
+          "outputLine": 122,
+          "reason": "流程另称主持人收回，但直接照读主持词又要求参与者放回前方桌；缺少可在座位完成的递交方式，主持人需临场改词。",
+          "requiredCorrection": "统一为主持人到组边回收，或清楚写出不需离座的递交方式。"
+        }
+      ],
+      "optionalNotes": [
+        "共同点可设计为当场共同选择而非真实偏好，降低压力，但已有跳过选项，不能认定为确定的强制个人信息违约。",
+        "提前放纸未写具体时长，与显式提前2分钟不同；可澄清在开场内完成，不能据此直接认定超时。"
+      ]
+    },
+    {
+      "caseId": "IC-H01",
+      "group": "C",
+      "anonymousId": "work-05",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "流程0—30分钟，28—30分钟由主持人收纸笔；参与者不需走动或换座。",
+        "纸笔由主持人送到组边；仅书写共同活动想法，不记录个人资料。",
+        "姓名或自选称呼以及今天希望共同完成什么，未要求真实个人经历；保留用户委托的活动设计空间。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": [
+        "第三块主持人检查清单可并入流程以减少重复；内容仍是本次主持执行提示，不足以认定另换交付物。",
+        "开场前30秒扫读不必占场地，未把它额外计为30分钟外的场地时间。"
+      ]
+    },
+    {
+      "caseId": "IC-H01",
+      "group": "C",
+      "anonymousId": "work-06",
+      "status": "SEVERE",
+      "positiveEvidence": [
+        "作品开头声明全程坐着和不要求额外信息，但后续具体行为没有贯彻。"
+      ],
+      "necessaryEdits": [
+        {
+          "severity": "SEVERE",
+          "sourceQuote": "不要求大家透露姓名以外的个人信息",
+          "outputQuote": "过去一年里，你做过至少一次志愿服务吗？做过的请举手",
+          "outputLine": 55,
+          "reason": "核心环节直接收集真实过去经历；不是单纯共同设计一个未来活动。",
+          "requiredCorrection": "改为非个人事实的团队选择或虚构情境。"
+        },
+        {
+          "severity": "SEVERE",
+          "sourceQuote": "所有环节坐着也能参加；活动不应安排走动",
+          "outputQuote": "每队派一位离小桌最近的伙伴来拿，写完放回小桌就好",
+          "outputLine": 77,
+          "reason": "直接指派参与者离开固定座位取物，违反场地限制；另有开头全程坐着声明不能抵消。",
+          "requiredCorrection": "改为主持人分发和回收，参与者原位完成。"
+        }
+      ],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "IC-H02",
+      "group": "A",
+      "anonymousId": "work-01",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "甲178.40元、乙169.20元、丙186.20元，正确包含配送费并按72本计算。",
+        "甲交稿早于周一10点定稿且周三到货超时；丙超180元预算；乙周一12点收稿、周二16点到货，唯一满足全部条件。",
+        "一张比较表和结论；结论含标点和结论标签共55字符，不超过80字；只推荐，未下单或凭空补质量差异。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "IC-H02",
+      "group": "A",
+      "anonymousId": "work-02",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "甲178.40元、乙169.20元、丙186.20元，正确包含配送费并按72本计算。",
+        "甲交稿早于周一10点定稿且周三到货超时；丙超180元预算；乙周一12点收稿、周二16点到货，唯一满足全部条件。",
+        "一张比较表和结论；结论含标点和结论标签共49字符，不超过80字；只推荐，未下单或凭空补质量差异。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "IC-H02",
+      "group": "B",
+      "anonymousId": "work-03",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "甲178.40元、乙169.20元、丙186.20元，正确包含配送费并按72本计算。",
+        "甲交稿早于周一10点定稿且周三到货超时；丙超180元预算；乙周一12点收稿、周二16点到货，唯一满足全部条件。",
+        "一张比较表和结论；结论含标点和结论标签共61字符，不超过80字；只推荐，未下单或凭空补质量差异。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "IC-H02",
+      "group": "B",
+      "anonymousId": "work-04",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "甲178.40元、乙169.20元、丙186.20元，正确包含配送费并按72本计算。",
+        "甲交稿早于周一10点定稿且周三到货超时；丙超180元预算；乙周一12点收稿、周二16点到货，唯一满足全部条件。",
+        "一张比较表和结论；结论含标点和结论标签共63字符，不超过80字；只推荐，未下单或凭空补质量差异。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "IC-H02",
+      "group": "C",
+      "anonymousId": "work-05",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "甲178.40元、乙169.20元、丙186.20元，正确包含配送费并按72本计算。",
+        "甲交稿早于周一10点定稿且周三到货超时；丙超180元预算；乙周一12点收稿、周二16点到货，唯一满足全部条件。",
+        "一张比较表和结论；结论含标点和结论标签共71字符，不超过80字；只推荐，未下单或凭空补质量差异。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "IC-H02",
+      "group": "C",
+      "anonymousId": "work-06",
+      "status": "USABLE",
+      "positiveEvidence": [
+        "甲178.40元、乙169.20元、丙186.20元，正确包含配送费并按72本计算。",
+        "甲交稿早于周一10点定稿且周三到货超时；丙超180元预算；乙周一12点收稿、周二16点到货，唯一满足全部条件。",
+        "一张比较表和结论；结论含标点和结论标签共58字符，不超过80字；只推荐，未下单或凭空补质量差异。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": []
+    },
+    {
+      "caseId": "D02",
+      "group": "A",
+      "anonymousId": "work-01",
+      "status": "METHOD_OBJECT_PASS_CORE_NUMERIC_FAILURE",
+      "positiveEvidence": [
+        "方法对象为2015与2025全死因寿命表e0差异，方向2025减2015、单位年；未把粗死亡率差直接换算为年数。",
+        "Arriaga正文正确给出全人群+2.00=0.80+1.20年，男性+2.20=0.90+1.30年，女性+1.80=0.70+1.10年。"
+      ],
+      "necessaryEdits": [
+        {
+          "severity": "SEVERE",
+          "sourceQuote": "全人群cardio年龄贡献0.05、0.25、0.50年，合计0.80；e0总增2.00年",
+          "outputQuote": "心脑血管疾病死亡变化贡献1.05年（约52.5%）",
+          "outputLine": 7,
+          "reason": "摘要的关键贡献与数据及自身正文矛盾；1.05+1.20也不等于2.00。",
+          "requiredCorrection": "摘要改为0.80年、40%，复核结论与正文一致；不能用正文正确掩盖摘要错误。"
+        }
+      ],
+      "optionalNotes": [],
+      "countsTowardPrimaryQualityGain": false,
+      "methodObjectGate": "PASS_WITH_EXECUTOR_MATERIALS",
+      "additionalObservedError": {
+        "quote": "各性别、地区、年龄组和疾病亚类死亡率均下降",
+        "line": 7,
+        "reason": "0—44岁恒定，该总括过宽；仅记录已发现问题，不声称其余统计已全面审计。",
+        "requiredCorrection": "摘要与分组证据保持一致。"
+      }
+    },
+    {
+      "caseId": "D02",
+      "group": "A",
+      "anonymousId": "work-02",
+      "status": "METHOD_OBJECT_PASS_CORE_NUMERIC_FAILURE",
+      "positiveEvidence": [
+        "方法对象为2015与2025全死因寿命表e0差异，方向2025减2015、单位年；未把粗死亡率差直接换算为年数。",
+        "Arriaga正文正确给出全人群+2.00=0.80+1.20年，男性+2.20=0.90+1.30年，女性+1.80=0.70+1.10年。"
+      ],
+      "necessaryEdits": [
+        {
+          "severity": "SEVERE",
+          "sourceQuote": "全人群cardio年龄贡献0.05、0.25、0.50年，合计0.80；e0总增2.00年",
+          "outputQuote": "心脑血管疾病死亡变化贡献1.05年（0.05+0.25+0.50）",
+          "outputLine": 7,
+          "reason": "摘要的关键贡献与数据及自身正文矛盾；1.05+1.20也不等于2.00。",
+          "requiredCorrection": "摘要改为0.80年、40%，复核结论与正文一致；不能用正文正确掩盖摘要错误。"
+        }
+      ],
+      "optionalNotes": [],
+      "countsTowardPrimaryQualityGain": false,
+      "methodObjectGate": "PASS_WITH_EXECUTOR_MATERIALS",
+      "additionalObservedError": {
+        "quote": "各性别、地区、年龄组和疾病亚类死亡率均下降",
+        "line": 7,
+        "reason": "0—44岁恒定，该总括过宽；仅记录已发现问题，不声称其余统计已全面审计。",
+        "requiredCorrection": "摘要与分组证据保持一致。"
+      }
+    },
+    {
+      "caseId": "D02",
+      "group": "B",
+      "anonymousId": "work-03",
+      "status": "METHOD_OBJECT_PASS_OTHER_SECTIONS_NOT_CERTIFIED",
+      "positiveEvidence": [
+        "方法对象为2015与2025全死因寿命表e0差异，方向2025减2015、单位年；未把粗死亡率差直接换算为年数。",
+        "Arriaga正文正确给出全人群+2.00=0.80+1.20年，男性+2.20=0.90+1.30年，女性+1.80=0.70+1.10年。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": [],
+      "countsTowardPrimaryQualityGain": false,
+      "methodObjectGate": "PASS_WITH_EXECUTOR_MATERIALS",
+      "additionalObservedError": {
+        "quote": "因此两个亚类的率不能相加作为总率",
+        "line": 17,
+        "reason": "相同分母且互斥、穷尽的两亚类率可以相加；2015年210/10万+90/10万=300/10万。该错误不属于Arriaga对象，但不能称整篇报告正确。",
+        "requiredCorrection": "改正亚类率可加关系，勿把不能相加人口误写为不能相加率。"
+      }
+    },
+    {
+      "caseId": "D02",
+      "group": "B",
+      "anonymousId": "work-04",
+      "status": "METHOD_OBJECT_PASS_OTHER_SECTIONS_NOT_CERTIFIED",
+      "positiveEvidence": [
+        "方法对象为2015与2025全死因寿命表e0差异，方向2025减2015、单位年；未把粗死亡率差直接换算为年数。",
+        "Arriaga正文正确给出全人群+2.00=0.80+1.20年，男性+2.20=0.90+1.30年，女性+1.80=0.70+1.10年。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": [],
+      "countsTowardPrimaryQualityGain": false,
+      "methodObjectGate": "PASS_WITH_EXECUTOR_MATERIALS",
+      "additionalObservedError": {
+        "quote": "各维度组内均呈下降趋势",
+        "line": 105,
+        "reason": "执行材料0—44岁组死亡率保持25/10万，不是所有组均下降；其他正文部分已经指出恒定。",
+        "requiredCorrection": "限定为大部分组下降并明确0—44岁恒定；不据此改变方法对象PASS。"
+      }
+    },
+    {
+      "caseId": "D02",
+      "group": "C",
+      "anonymousId": "work-05",
+      "status": "METHOD_OBJECT_PASS_OTHER_SECTIONS_NOT_CERTIFIED",
+      "positiveEvidence": [
+        "方法对象为2015与2025全死因寿命表e0差异，方向2025减2015、单位年；未把粗死亡率差直接换算为年数。",
+        "Arriaga正文正确给出全人群+2.00=0.80+1.20年，男性+2.20=0.90+1.30年，女性+1.80=0.70+1.10年。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": [],
+      "countsTowardPrimaryQualityGain": false,
+      "methodObjectGate": "PASS_WITH_EXECUTOR_MATERIALS"
+    },
+    {
+      "caseId": "D02",
+      "group": "C",
+      "anonymousId": "work-06",
+      "status": "METHOD_OBJECT_PASS_OTHER_SECTIONS_NOT_CERTIFIED",
+      "positiveEvidence": [
+        "方法对象为2015与2025全死因寿命表e0差异，方向2025减2015、单位年；未把粗死亡率差直接换算为年数。",
+        "Arriaga正文正确给出全人群+2.00=0.80+1.20年，男性+2.20=0.90+1.30年，女性+1.80=0.70+1.10年。"
+      ],
+      "necessaryEdits": [],
+      "optionalNotes": [],
+      "countsTowardPrimaryQualityGain": false,
+      "methodObjectGate": "PASS_WITH_EXECUTOR_MATERIALS"
+    }
+  ],
+  "anonymousCaseComparisons": [
+    {
+      "caseId": "PR-D06",
+      "groups": {
+        "A": {
+          "usable": 1,
+          "localRequired": 1,
+          "severe": 0
+        },
+        "B": {
+          "usable": 1,
+          "localRequired": 0,
+          "severe": 1
+        },
+        "C": {
+          "usable": 0,
+          "localRequired": 2,
+          "severe": 0
+        }
+      },
+      "judgment": "A比B避免一份虚构已完成动作，A比C局部必改较少；C也避免B的严重事实新增，但两次均须删去无依据动机，不能称稳定可直接使用。样本小，尚不对应版本。"
+    },
+    {
+      "caseId": "D03",
+      "groups": {
+        "A": {
+          "usable": 2
+        },
+        "B": {
+          "usable": 2
+        },
+        "C": {
+          "usable": 2
+        }
+      },
+      "judgment": "三组全部32/32行为通过且无必要修改，可用持平；不能按篇幅或额外解释宣称收益。"
+    },
+    {
+      "caseId": "IC-H01",
+      "groups": {
+        "A": {
+          "usable": 0,
+          "localRequired": 0,
+          "severe": 2
+        },
+        "B": {
+          "usable": 0,
+          "localRequired": 1,
+          "severe": 1
+        },
+        "C": {
+          "usable": 1,
+          "localRequired": 0,
+          "severe": 1
+        }
+      },
+      "judgment": "A两次严重失败；B、C各有一次严重失败，C另一次可用而B需局部纠正。C有局部修改量优势，但B/C严重错误类型不同，仍不能形成无严重退步、稳定更好用的留出采用证据；不得丢弃任一重复。"
+    },
+    {
+      "caseId": "IC-H02",
+      "groups": {
+        "A": {
+          "usable": 2
+        },
+        "B": {
+          "usable": 2
+        },
+        "C": {
+          "usable": 2
+        }
+      },
+      "judgment": "三组同样可用持平；充分需求没有被误改是保真证据，不计实质提升。"
+    },
+    {
+      "caseId": "D02",
+      "countsTowardPrimaryQualityGain": false,
+      "groups": {
+        "A": {
+          "methodObjectPass": 2,
+          "coreNumericFailures": 2
+        },
+        "B": {
+          "methodObjectPass": 2,
+          "otherObservedErrors": 2
+        },
+        "C": {
+          "methodObjectPass": 2
+        }
+      },
+      "judgment": "六份均按执行材料正确处理Arriaga对象/方向/单位；A两次摘要核心核算错，B另有已观察到的非Arriaga统计表述错。C的方法对象诊断通过不等于整篇专业正确。"
+    }
+  ],
+  "frozenConclusion": "两个充分任务D03与IC-H02全部可用持平；PR-D06存在局部事实细化与一份虚构现场查看；IC-H01所有匿名组均有至少一份严重硬限制违约，不能选择最好的一份覆盖另一份失败。未见可以据此认定稳定整体收益的匿名组。具体版本采用结论须在本报告锁定后解盲，并沿用预注册门槛。",
+  "attributionBoundary": "本报告仅定位作品违约；增强正文是否诱发、遗漏约束或已正确保留应解盲后逐源核对。不能把作品首次出错位置当唯一根因，也不能直接归为模型太弱或新增逐题禁令。"
+}

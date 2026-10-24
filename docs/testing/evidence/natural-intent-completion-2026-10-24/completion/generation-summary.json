@@ -1,0 +1,27 @@
+{
+  "status": "GENERATION_COMPLETE_AWAITING_SEMANTIC_REVIEW",
+  "checkedAt": "2026-10-23T20:27:49.912407+00:00",
+  "actualCalls": 9,
+  "taskActual": 75,
+  "taskMaximum": 128,
+  "stageMaximum": 32,
+  "generationCalls": 9,
+  "executionCalls": 0,
+  "logicalJobs": 4,
+  "finalHTTP200": 4,
+  "protocolRetries": 1,
+  "qualityRetries": 0,
+  "sourceManifestVerified": true,
+  "protocolFailure": {
+    "caseId": "GC-H01",
+    "version": "37",
+    "trace": "004.json",
+    "classification": "MODEL_DUPLICATE_JSON_PROPERTY",
+    "field": "task.inputReadiness",
+    "exactFirstRejector": "responseReader FAIL_ON_READING_DUP_TREE_KEY",
+    "replay": "protocol-failure-replay-complete.json",
+    "note": "Earlier reader-only replay skipped the tree check; retained separately as protocol-failure-reader-only.json, not the first runtime rejection."
+  },
+  "semanticStatus": "Pending; final200does not establish completion gain.",
+  "temporaryService": "Idle gated9003PID25884; no execution before generation-semantic-gate PASS."
+}

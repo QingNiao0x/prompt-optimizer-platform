@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "status": "FROZEN_AFTER_MAPPING_NO_REGRADING",
+  "createdAt": "2026-10-23T21:40:48.902995+00:00",
+  "caseId": "IC-H01",
+  "modelCalls": 0,
+  "scope": "仅按已冻结H01匿名初评与解盲前校准关联版本；未读CS/GC或其他映射，不新增评分、不改旧稿。",
+  "priorKnowledgeDisclosure": "本代理此前已读38版H01增强结果，故仅作品分组匿名，不声称全盲评。",
+  "frozenReviews": [
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/scope38/known-risk/artifact-semantic-review-anonymous.json",
+      "sha256": "b0289973b06738c58919f5c809e3eba7b1b9db2aba1e69860ea583e18eb25015",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/scope38/known-risk/artifact-semantic-review-anonymous-calibration.json",
+      "sha256": "fd5ee7c0879cfa80848a55ee8bbf4d86103b253d3412c0976bb84d212d43bbd6",
+      "unchanged": true
+    }
+  ],
+  "mapping": {
+    "path": "tmp/natural-intent-completion-2026-10-24/boundary38-works/anonymous-maps/IC-H01.json",
+    "sha256": "76e674cff292c43c9877faa49ac9a663e9d288f39edbfca20a14a83c4abf21c4",
+    "groups": {
+      "A": "ORIGINAL",
+      "B": "V38",
+      "C": "V31"
+    }
+  },
+  "records": [
+    {
+      "version": "ORIGINAL",
+      "group": "A",
+      "repeat": 1,
+      "anonymousId": "work-01",
+      "sourceId": "IC-H01_ORIGINAL_EXEC_R1",
+      "hardViolation": "主持人手机例外；不是核心流程必须依赖手机。",
+      "privacy": "一般未来参与选择，不计确定严重隐私失败。",
+      "other": "完整0–30分钟，默认不用物资；无确定强制走动。"
+    },
+    {
+      "version": "ORIGINAL",
+      "group": "A",
+      "repeat": 2,
+      "anonymousId": "work-02",
+      "sourceId": "IC-H01_ORIGINAL_EXEC_R2",
+      "hardViolation": null,
+      "privacy": "两真游戏要求默认真实事实，但明确可跳过；按解盲前校准只记设计风险，不计确定强制披露。",
+      "other": "每人约1分钟与两组8分钟安排不一致，需统一控时。"
+    },
+    {
+      "version": "V38",
+      "group": "B",
+      "repeat": 1,
+      "anonymousId": "work-03",
+      "sourceId": "IC-H01_V38_EXEC_R1",
+      "hardViolation": null,
+      "privacy": "真实共同点涉及生活习惯/养植物经历，缺少明确通用退出；保留较高话题风险，有非私人化安全话题可选，不计确定强制披露。",
+      "other": "可选纸笔的座位分发动作未明确；主持人回收已写，无确定强制走动。"
+    },
+    {
+      "version": "V38",
+      "group": "B",
+      "repeat": 2,
+      "anonymousId": "work-04",
+      "sourceId": "IC-H01_V38_EXEC_R2",
+      "hardViolation": null,
+      "privacy": "两真一愿默认真实经历，但明确可跳过；按解盲前校准只记设计风险，不计确定强制披露。",
+      "other": "30秒/40秒控时措辞不一致；不是已证实超出30分钟。"
+    },
+    {
+      "version": "V31",
+      "group": "C",
+      "repeat": 1,
+      "anonymousId": "work-05",
+      "sourceId": "IC-H01_V31_EXEC_R1",
+      "hardViolation": "提前2分钟布置，另有完整0–30分钟时间表，具体工序32分钟。",
+      "privacy": "一般未来任务选择且可跳过，不计确定严重隐私失败。",
+      "other": "中央桌与笔中途归还路径需明确，不能凭缺口断言强制走动。"
+    },
+    {
+      "version": "V31",
+      "group": "C",
+      "repeat": 2,
+      "anonymousId": "work-06",
+      "sourceId": "IC-H01_V31_EXEC_R2",
+      "hardViolation": null,
+      "privacy": "日常放松方式有话题风险，同时可选颜色/季节且可跳过；不计确定强制披露。",
+      "other": "主持人分发/回收和唯一前桌表述需明确；布置时间有歧义，不估算确定超时。"
+    }
+  ],
+  "conclusion": {
+    "candidate38": "两份作品均没有按既有校准认定的确定强制站立/换座或强制私人披露；真实共同点和两真玩法仍存在参与/隐私设计风险，不能仅靠泛化禁令算已修复；纸笔路径/控时局部仍需要修改。",
+    "original": "第一份擅加主持人手机例外；第二份真实事实默认玩法带明确跳过，只记风险，控时需统一。",
+    "v31": "第一份明确在30分钟之外安排2分钟布置；第二份话题与物资回收有局部缺口。",
+    "certainForcedPrivateDisclosureCount": 0,
+    "certainForcedParticipantWalkingCount": 0,
+    "certainOtherHardViolations": [
+      {
+        "version": "ORIGINAL",
+        "anonymousId": "work-01",
+        "type": "主持人手机例外"
+      },
+      {
+        "version": "V31",
+        "anonymousId": "work-05",
+        "type": "提前布置2分钟＋完整30分钟流程"
+      }
+    ],
+    "adoptionBenefitEligible": false,
+    "noOverallCandidateAdoptionClaim": true,
+    "interpretation": "此题是已见严重风险回归，只说明对应已知风险与必要修改；不能算CS新题收益，也不能用其他版本错误抵消38自身风险或宣称整体采用通过。"
+  }
+}

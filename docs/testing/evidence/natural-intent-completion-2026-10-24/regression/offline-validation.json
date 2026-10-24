@@ -1,0 +1,133 @@
+{
+  "status": "PASSED",
+  "checkedAt": "2026-10-23T19:42:16.448470+00:00",
+  "tests": 238,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "suites": [
+    {
+      "name": "com.promptoptimizer.enhancement.service.impl.NaturalEnhancementServiceTest",
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/regression/offline-green/TEST-com.promptoptimizer.enhancement.service.impl.NaturalEnhancementServiceTest.xml",
+      "sha256": "51e908233e79a49096126d64edfc671914a76c79961d505d89ebfa35da5c0ab1"
+    },
+    {
+      "name": "com.promptoptimizer.provider.domain.NaturalPromptPhaseInstructionsTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/regression/offline-green/TEST-com.promptoptimizer.provider.domain.NaturalPromptPhaseInstructionsTest.xml",
+      "sha256": "eb017b990c27a9c986d25c75eca208b80d9ca5d8975c82290a352493d8c0e531"
+    },
+    {
+      "name": "com.promptoptimizer.provider.domain.NaturalTaskPreparationTest",
+      "tests": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/regression/offline-green/TEST-com.promptoptimizer.provider.domain.NaturalTaskPreparationTest.xml",
+      "sha256": "8ead90752f47f5667eacfc27cd72b96a0817937c0a15ec8af4c2e06b5eb096ab"
+    },
+    {
+      "name": "com.promptoptimizer.provider.domain.NaturalTaskScopeTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/regression/offline-green/TEST-com.promptoptimizer.provider.domain.NaturalTaskScopeTest.xml",
+      "sha256": "3cc32ba9bc7161e3bd8dfef410c87388cce5a40d1af5f408aa9e04e9e1ca36d2"
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.MockNaturalPromptProviderTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/regression/offline-green/TEST-com.promptoptimizer.provider.infrastructure.MockNaturalPromptProviderTest.xml",
+      "sha256": "814d7188bbb8870c3110588acc7e74b648165c80b2620a4ed7173cf309b3117d"
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.openai.NaturalMaterialResponsibilityProviderTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/regression/offline-green/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalMaterialResponsibilityProviderTest.xml",
+      "sha256": "ee0127d43dd427b02325dbfa4406dcf1d43a99b66344d15c962e7e1894ffa5ce"
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.openai.NaturalPreparationRoutingProviderTest",
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/regression/offline-green/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalPreparationRoutingProviderTest.xml",
+      "sha256": "9798444fb181b7e0472c6076f34eb4d52e8c5c8f56c08fb54dcb8c20f79401c3"
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleNaturalPhaseProtocolTest",
+      "tests": 122,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/regression/offline-green/TEST-com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleNaturalPhaseProtocolTest.xml",
+      "sha256": "c6dcf088b9190dd07724311254a8a6ec122336e3e2bd5ba9d41d08dbb7c5f2bd"
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.openai.NaturalIntentCompletionProviderTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/regression/offline-green/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalIntentCompletionProviderTest.xml",
+      "sha256": "9d14cdaa885604d48559f36c741ba5754d3032fb9547f2843e2c2088328be048"
+    }
+  ],
+  "modelCalls": 0,
+  "redRegression": {
+    "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/regression/offline-red/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalIntentCompletionProviderTest.xml",
+    "sha256": "08dd0038a2e428baa828ea749c5909f77d6985e97ae6e9c705dab0c13f6b98c1",
+    "tests": 8,
+    "failures": 6,
+    "errors": 0,
+    "skipped": 0,
+    "attribution": "Before the 37 provider branch was connected, direct enhancement and Plan calls skipped scope preparation and omitted the input boundary. All six failures were routing/input-contract regressions; field consistency and frozen 31/36 guidance hashes passed."
+  },
+  "greenLog": {
+    "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/regression/offline-green/maven.log",
+    "sha256": "b77e7efc455d626025a1755836f88fad5a089b244c842aefa24824cc606d47dd"
+  },
+  "environmentAttempt": {
+    "status": "INCOMPLETE_TOOL_ENVIRONMENT",
+    "log": "tmp/intent37-affected-green.log",
+    "reason": "Sandbox attempt stopped after Mockito/ByteBuddy attach stalled; it is neither a business failure nor a pass. The same nine suites subsequently passed outside sandbox with the explicit local JDK21."
+  },
+  "testedSourceFiles": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptIntentCompletionInstructions.java",
+      "sha256": "fa7ffda0568dd7618b69f0b1aa20a0dcb74625042c8e20ea0b682d7543a0f445"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "fff61e8194241de125f2f972dfea4f0f4f86f849c5a159ab6d49bed677677fec"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptStageInstructions.java",
+      "sha256": "f4a6033177612c8d8436ead262dd9842a5ba9556882fcd78e7880db03c19303f"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "2d5cf55cbf7134d89de8ed280b0bbe0fceb34b5efc72b0962e0e651df752f5d7"
+    },
+    {
+      "path": "services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/NaturalIntentCompletionProviderTest.java",
+      "sha256": "e2c91e2258bceb4a1841f0c0de466e6452626a7038206d93ed01d77faffad1d7"
+    }
+  ],
+  "scope": "Engineering verification of the natural provider routing, stage protocol, source and actual-answer preservation, final coverage, and frozen prior guidance. The eight new tests and single-class green run overlap this 238-test run and must not be added to its count. Mock transport and static guidance checks do not establish semantic quality, downstream quality, candidate adoption, deployment, or full-repository validation."
+}

@@ -1,0 +1,102 @@
+{
+  "assessor": "本次实现者逐源内部复核，不是外部专业盲评；未调用模型评审。",
+  "scope": "本次材料责任、原要求、Plan路径、同信息实际作品；不是全部自然增强能力或医疗专业验证。",
+  "development": {
+    "sufficientPromptPreserved": true,
+    "explicitNoVideoPreserved": true,
+    "delegatedPlanQuestions": 0,
+    "reservedLocationQuestions": 1,
+    "confirmedLocationRetained": true,
+    "codeContractChecks": "30/30；三臂各两份作品功能持平",
+    "issues": [
+      {
+        "jobId": "D01_V35_GEN",
+        "finding": "仍集中列举多种口径；未证明已改善用户批评的正文重心。"
+      },
+      {
+        "jobId": "D03_V35_EXEC_R2",
+        "finding": "重复旧代码并增加契约外异常参数说明，原契约行为通过，但未带来可核查收益。"
+      }
+    ]
+  },
+  "heldout": {
+    "cases": 2,
+    "works": 12,
+    "materialFactsAndCoreDeliveryPreserved": true,
+    "substantiveWorkBenefitDemonstrated": false,
+    "handoverLengthChecks": [
+      {
+        "jobId": "MR-H01_ORIGINAL_EXEC_R1",
+        "nonWhitespaceCharacters": 149,
+        "withinLimit": true
+      },
+      {
+        "jobId": "MR-H01_ORIGINAL_EXEC_R2",
+        "nonWhitespaceCharacters": 149,
+        "withinLimit": true
+      },
+      {
+        "jobId": "MR-H01_V31_EXEC_R1",
+        "nonWhitespaceCharacters": 151,
+        "withinLimit": true
+      },
+      {
+        "jobId": "MR-H01_V31_EXEC_R2",
+        "nonWhitespaceCharacters": 153,
+        "withinLimit": true
+      },
+      {
+        "jobId": "MR-H01_V35_EXEC_R1",
+        "nonWhitespaceCharacters": 175,
+        "withinLimit": true
+      },
+      {
+        "jobId": "MR-H01_V35_EXEC_R2",
+        "nonWhitespaceCharacters": 173,
+        "withinLimit": true
+      }
+    ],
+    "issues": [
+      {
+        "jobId": "MR-H02_V35_EXEC_R1",
+        "quote": "（通知落款及日期待补充）",
+        "finding": "新增不必要的局部待补项；不是整篇空模板，但至少需要删除一处。",
+        "severity": "MINOR"
+      },
+      {
+        "jobId": "MR-H02_V35_EXEC_R2",
+        "quote": "[学校名称]\n[日期]",
+        "finding": "新增局部落款占位；原始及31作品未添加这种待填区域。",
+        "severity": "MINOR"
+      }
+    ]
+  },
+  "research": {
+    "bodyEqualsOriginal": true,
+    "enhancementBenefitNotDemonstrated": true,
+    "downstreamIssues": [
+      {
+        "jobId": "D02_V35_EXEC_R1",
+        "quote": "其他死因贡献在各人群、各年龄组均高于心脑血管贡献",
+        "finding": "资料中男性65岁及以上两项贡献均为0.55；应为不低于或单列相等组。",
+        "severity": "MINOR"
+      },
+      {
+        "jobId": "D02_V35_EXEC_R2",
+        "quote": "分年龄别死亡率完整序列",
+        "finding": "开头将其列为未提供，但四维比较表包含2015至2025全部年龄组序列。",
+        "severity": "MAJOR"
+      },
+      {
+        "jobId": "D02_V35_EXEC_R2",
+        "quote": "标准化率每年减少约7.05/10万",
+        "finding": "2015至2025有10个年度间隔，77.5/10=7.75；误除以11。",
+        "severity": "MAJOR"
+      }
+    ],
+    "attribution": "该题35正文逐字等于原始提示词，不能把新增作品的好坏归功于新增增强正文；具体数值/缺失断言首次出现在下游作品，因果占比未隔离。",
+    "reviewNotExhaustive": true
+  },
+  "decision": "NOT_ADOPTED",
+  "defaultVersion": "31"
+}

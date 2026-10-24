@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "status": "FROZEN_BEFORE_MAPPING",
+  "createdAt": "2026-10-23T21:35:19.611698+00:00",
+  "caseId": "IC-H01",
+  "modelCalls": 0,
+  "anonymousMappingRead": false,
+  "csOrGcArtifactsRead": false,
+  "originalIndependentReview": {
+    "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/scope38/known-risk/artifact-semantic-review-anonymous.json",
+    "sha256": "b0289973b06738c58919f5c809e3eba7b1b9db2aba1e69860ea583e18eb25015",
+    "modified": false
+  },
+  "reason": "独立原报告冻结后、解盲前，root指出旧37作品已采用的严重性校准：明确允许跳过的自愿个人话题，不能直接等同于强制披露。这里先校准对“不要求”的解释，再看分组映射，避免按版本选判据。",
+  "sourceOfHistoricalCalibration": "root本回合消息提供；本代理未为此打开旧整阶段作品、映射或CS，故不声称独立复核了旧37校准原件。当前原始用户要求及作品中的明确跳过条文已逐字复核。",
+  "independentReasoning": "用户原话是“不要求大家透露姓名以外的个人信息”。明确而实际可用的跳过机制使参与者不必披露；不能把“不要求”扩展成“不得自愿提供任何个人话题”。默认两项真实内容的游戏仍有设计风险：唯一完整玩法是私人事实披露，不愿披露者只能退出发言，因此不如非私人化选择/虚构联想稳妥。但这个质量风险不能自动升级为确定的强制披露。",
+  "changesToCertaintyOnly": [
+    {
+      "anonymousId": "work-02",
+      "originalClassification": "确定严重隐私失败",
+      "calibratedClassification": "默认真实事实玩法的设计风险，不计确定强制披露",
+      "explicitExitEvidence": {
+        "contentLine": 143,
+        "quote": "猜谜、汇总、发言均可自愿；如有人不想说，主持人说“没关系，听着就好”，直接到下一位。"
+      },
+      "confirmedContentRisk": "第64–72行要求每人两项真实小事，并示范养宠经历。不能用“不聊经历”的抽象禁令修复具体玩法冲突。",
+      "necessaryModification": "建议改无私人信息的可参与玩法，让不披露者也有完整参与路径；这是设计质量修正，不是已证实强制披露。"
+    },
+    {
+      "anonymousId": "work-04",
+      "originalClassification": "确定严重隐私失败",
+      "calibratedClassification": "默认真实事实玩法的设计风险，不计确定强制披露",
+      "explicitExitEvidence": {
+        "contentLine": 39,
+        "quote": "不想说的人说“跳过”，我们直接下一位。"
+      },
+      "confirmedContentRisk": "两句真实内容并以参加过两次社区活动示范；默认玩法涉及真实个人经历。",
+      "necessaryModification": "建议修改真实性前提，保留参与者不披露个人信息也可参与的路径；不因明确跳过而声称强制披露。"
+    },
+    {
+      "anonymousId": "work-03",
+      "originalClassification": "存在真实生活习惯披露路径，不计确定严重",
+      "calibratedClassification": "维持；因共同点环节没有明确退出/虚构替代，隐私边界风险高于明确可跳过的版本，但未证明必须选真实经历而不能选允许的非私人化选择。",
+      "explicitEvidence": {
+        "contentLines": [
+          46,
+          53
+        ],
+        "quote": "至少三个人都有的一个共同点；都愿意早起、都养过植物；生活习惯"
+      },
+      "necessaryModification": "收窄为现场非私人化选择或虚构共同点，并给出不披露的正常参与路径。"
+    }
+  ],
+  "unchangedConfirmedFacts": [
+    {
+      "anonymousId": "work-01",
+      "fact": "第33行明确主持人可用手机计时，扩大“不用手机”例外；并非核心流程必须依赖手机。",
+      "severity": "明确硬要求边界需修；不称核心手机依赖的严重失败"
+    },
+    {
+      "anonymousId": "work-05",
+      "fact": "第9行提前2分钟布置，另有完整0–30分钟时间表，具体工序32分钟。",
+      "severity": "明确30分钟硬要求违约，需要压缩或纳入布置时间"
+    },
+    {
+      "anonymousIds": [
+        "work-01",
+        "work-02",
+        "work-03",
+        "work-04",
+        "work-05",
+        "work-06"
+      ],
+      "fact": "未见明确要求参与者站立/走动/换座的核心环节；物资回收脚本存在不同程度的实现缺口，不能把缺口等同于确定强制走动。"
+    }
+  ],
+  "calibratedAggregate": {
+    "certainForcedPrivateDisclosureWorks": [],
+    "privacyDesignRiskWorks": [
+      "work-02",
+      "work-03",
+      "work-04",
+      "work-06"
+    ],
+    "certainOtherHardConstraintViolationWorks": [
+      "work-01",
+      "work-05"
+    ],
+    "groupMappingKnown": false,
+    "candidate38Verdict": "NOT_ASSIGNED_BEFORE_MAPPING",
+    "adoptionBenefitEligible": false,
+    "notAReversalToFullPass": "降低过强严重性断言不等于作品全部通过；手机例外、32分钟和具体参与/回收缺口仍按匿名原件记录。"
+  },
+  "integrity": "原独立意见与校准并列保留，不覆盖原报告、不修改作品、不靠解盲后选择有利口径。"
+}

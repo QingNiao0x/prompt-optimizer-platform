@@ -1,0 +1,95 @@
+{
+  "batch": "natural-material-responsibility-research-regression-2026-10-24",
+  "status": "DRAFT",
+  "authorizationQuote": "使用本轮48授权中原预留4次，冻结为原反馈科研样本定向回归，不扩大总额。",
+  "taskMaximumActualCalls": 48,
+  "taskPreviouslyActual": 36,
+  "maximumNewActualCalls": 4,
+  "previousClosedActualCalls": 1789,
+  "oldClosedBalanceTransferred": 0,
+  "baselineVersion": "31",
+  "candidateVersions": [
+    "35"
+  ],
+  "versions": [
+    "31",
+    "35"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 2,
+    "EXECUTION": 2,
+    "PLAN": 0,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 2,
+    "EXECUTION": 2,
+    "PLAN": 0,
+    "REVIEW": 0
+  },
+  "generation": [
+    "D02"
+  ],
+  "regressionGeneration": [],
+  "plan": [],
+  "confirmedPlanGeneration": [],
+  "execution": [
+    "D02"
+  ],
+  "executionRepeats": 2,
+  "executionIncludeOriginal": true,
+  "confirmationMode": "PER_VERSION",
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "35": [
+      "35"
+    ]
+  },
+  "allowedJobs": [
+    "D02_V35_GEN",
+    "D02_V35_EXEC_R1",
+    "D02_V35_EXEC_R2"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "order": "35保持开发及留出冻结实现不变；复用capacity闭批原始/31实际作品，检查原用户研究反馈。",
+  "informationPolicy": "增强仅见原始提示词、普通context与实际绑定答复，不见executorMaterials或评分卡。ORIGINAL/31/35执行逐字接收相同普通背景和executorMaterials；复用作品必须核对完整原件、同题资料及模型参数。评分卡仅供内部逐源复核，本阶段REVIEW=0，不调用模型评审。增强阶段未附资料不等于执行阶段没有资料。",
+  "criteria": [
+    "检查增强是否仍断言地区/来源未定，四项原分析要求不遗漏、不退回问卷或模板。",
+    "复用基线明确为历史同信息同模型参数的作品，不冒充同时新采样。",
+    "已有未见题持平和新增局部占位保留，不能用单个反馈题通过覆盖其他问题。"
+  ],
+  "stopConditions": [
+    "本阶段4次，失败和修复计数；不做质量重试。",
+    "无新候选或调参；只补核对尚未覆盖的原反馈样本。"
+  ],
+  "reviews": [],
+  "reviewSystem": "",
+  "generationVersions": [
+    "35"
+  ],
+  "planVersions": [
+    "35"
+  ],
+  "executionArms": [
+    "V35"
+  ],
+  "draftNotes": [
+    "留出两题的核心交付持平；候选还出现落款占位，当前不宣称整体提升。",
+    "此处仅验证原症状是否被责任传递修复，不以扩大采样凑采用。"
+  ]
+}

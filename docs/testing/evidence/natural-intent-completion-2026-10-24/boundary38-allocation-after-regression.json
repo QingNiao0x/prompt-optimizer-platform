@@ -1,0 +1,25 @@
+{
+  "status": "FROZEN",
+  "frozenAt": "2026-10-23T20:54:57.102325+00:00",
+  "taskMaximum": 144,
+  "closedTaskActual": 107,
+  "closedBoundary38RegressionActual": 20,
+  "closedBoundary38RegressionCap": 26,
+  "initialRegressionReservation": 29,
+  "releasedStageReservation": 6,
+  "releasedUnassignedReservation": 3,
+  "stageReservations": [
+    {
+      "name": "boundary38-heldout",
+      "maximum": 12,
+      "normal": 8
+    },
+    {
+      "name": "boundary38-works",
+      "maximum": 25,
+      "normal": 16
+    }
+  ],
+  "reason": "After regression closure, its9 unspent initial reservation moves to future works (16→25); next phases were not frozen. Total107+12+25=144. Old revision and regression originals remain unchanged.",
+  "qualityRetriesAllowed": false
+}

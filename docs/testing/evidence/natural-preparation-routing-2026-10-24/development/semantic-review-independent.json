@@ -1,0 +1,140 @@
+{
+  "reviewer": "/root/preparation_evidence_audit",
+  "role": "内部逐源复核；未参与36生产代码实现，读过历史失败并编写过尚未开启的内部留出题，不是外部人工或领域专家评测",
+  "reviewedAt": "2026-10-24",
+  "candidate": "36",
+  "baseline": "31",
+  "scope": "7份直接增强、2份Plan及1份回答后增强；不含下游实际作品；未打开留出",
+  "modelReviewCalls": 0,
+  "regressionGate": "BLOCKED",
+  "adoption": "NOT_READY",
+  "basis": "D03出现原交付降级与无依据资料状态断言；PR-D06遗漏明确资料限制；PR-D07新增超出当前只读等待范围的内容汇报义务。HTTP成功及引文关联通过不能抵消这些语义问题。",
+  "cases": [
+    {
+      "jobId": "D01_V36_GEN",
+      "result": "NO_DEMONSTRATED_GAIN",
+      "severity": "QUALITY_NOT_PROVEN",
+      "finding": "保留全球查询、职业/行业及有依据结论；没有要求用户先补资料。但仍把多种指标与来源差异写成主要补充，未证实用户批评的正文重心已改善。",
+      "quote": "由于“使用AI最多”可能按采用率、使用频率、使用深度或用户规模等不同口径衡量，请说明所依据的比较口径",
+      "editingBurden": "若下游仍围绕口径组织全文，需要收敛相关展开；本轮未执行该题作品，不能据此直接判作品不可用。",
+      "attribution": "增强正文；不是直接缺资料断言或整篇空模板"
+    },
+    {
+      "jobId": "D02_V36_GEN",
+      "result": "ROUTING_REPAIRED_FOR_THIS_CASE_QUALITY_NOT_PROVEN",
+      "severity": "SHARED_METHOD_TARGET_RISK",
+      "finding": "本次准备为EXPLICIT并实际生成四方面文稿指令，没有透传原文；条件式缺口标注不是已断言资料不存在。仍将Arriaga对象限定成死亡率变化贡献，与执行夹具明确的e0差异对象不一致；31亦有此表达，不能计为36新增退步。未运行作品，不宣称专业质量或收益通过。",
+      "quotes": [
+        "采用Arriaga分解方法分析各因素（如年龄结构、分死因死亡率等）对死亡率变化的贡献",
+        "若某地区名称、具体数据或指标口径尚未确定，请在相应位置明确标注为待定"
+      ],
+      "baselineQuote": "采用Arriaga分解方法分析死亡率变化的贡献因素，说明各因素对总体死亡率变化的贡献程度",
+      "editingBurden": "按执行时实际资料确定分解对象，不应预先固定成与材料不一致的对象。",
+      "firstNode": "trace003已正确识别当前文稿成果；trace004生成四部分及方法对象限定",
+      "tracePaths": [
+        "tmp/natural-preparation-routing-2026-10-24/development/traces/003.json",
+        "tmp/natural-preparation-routing-2026-10-24/development/traces/004.json"
+      ]
+    },
+    {
+      "jobId": "D03_V36_GEN",
+      "result": "BLOCKING_REGRESSION",
+      "severity": "MAJOR",
+      "originalRequirement": "保留现有筛选方式、函数签名和返回结构，不改输入数组，给出可替换的完整实现",
+      "quote": "由于我尚未提供现有函数源码、筛选方式、函数签名和返回结构，请先按常见分页函数形态给出一个完整可替换的拟议实现，并明确标注哪些部分需要按我的实际签名和返回结构对齐",
+      "finding": "把增强阶段未见代码推导为用户尚未提供，并授权按常见形态另做拟议实现；与原定保留现有契约、直接替换的要求冲突。31原件直接要求现有契约修复，没有这段降级。",
+      "editingBurden": "需要删除假定用户欠资料及常见形态拟议实现整段，恢复依据执行时现有代码及契约修复；无需先运行作品才确认提示词自身已改变约束。",
+      "firstNode": "trace005准备正确保留既有契约；trace006正文及additions首次新增资料欠缺与通用拟议实现",
+      "tracePaths": [
+        "tmp/natural-preparation-routing-2026-10-24/development/traces/005.json",
+        "tmp/natural-preparation-routing-2026-10-24/development/traces/006.json"
+      ]
+    },
+    {
+      "jobId": "D04_V36_GEN",
+      "result": "FIDELITY_TIE",
+      "severity": "NONE",
+      "finding": "逐字保留充分原始提示词，90字、一段、只输出正文、线上变更、原教室停用、日期未定、两类报名状态均保留。属保真持平，不计实质增强收益。",
+      "editingBurden": "未发现新增必要修改；未实际生成通知作品。"
+    },
+    {
+      "jobId": "MR-D05_V36_GEN",
+      "result": "TARGET_BEHAVIOR_PRESERVED",
+      "severity": "NONE",
+      "quotes": [
+        "执行时请读取现有维修记录",
+        "现场监控录像已确认没有保存",
+        "直接交付完整报告正文，不要只给调查提纲"
+      ],
+      "finding": "明确无录像与执行时可读维修记录分开处理，保持报告交付，未把读取资料转派为用户先补齐。",
+      "editingBurden": "未发现新增严重修改；尚无作品收益验证。"
+    },
+    {
+      "jobId": "PR-D06_V36_GEN",
+      "result": "BLOCKING_REQUIREMENT_OMISSION",
+      "severity": "MAJOR",
+      "originalQuote": "没有现场照片，也没有保存水位或货损记录",
+      "candidateQuote": "凡涉及进水原因、货损情况等尚未核实的内容，集中在一处说明其待核实状态",
+      "finding": "候选保留停运恢复、不得编造及集中说明要求，但省略无照片、无水位记录、无货损记录三项明确事实限制。未核实原因/损失不能等价替代资料不存在；这里是遗漏，没有直接写成资料存在。",
+      "editingBurden": "需补回三项原始资料限制，防止下游改变取证边界。",
+      "firstNode": "trace011准备先漏上述事实；trace012仍收到完整原文，但requirements及正文均未恢复。不能把唯一责任归为准备摘要传输。",
+      "tracePaths": [
+        "tmp/natural-preparation-routing-2026-10-24/development/traces/011.json",
+        "tmp/natural-preparation-routing-2026-10-24/development/traces/012.json"
+      ]
+    },
+    {
+      "jobId": "PR-D07_V36_GEN",
+      "result": "BLOCKING_SCOPE_EXPANSION",
+      "severity": "MAJOR",
+      "originalQuote": "当前只需要阅读并理解；暂时不用改代码，也不用写项目说明文档，等我下一条具体任务",
+      "candidateQuote": "完成阅读后，请简要说明你已了解的项目结构、关键约定和主要模块",
+      "finding": "将只读理解与等待变成还需交付结构/约定/模块的内容说明；这超出简单确认已准备好的回应。不能说已经要求完整项目文档，但新增实质汇报义务仍违背当前只需要阅读理解。",
+      "editingBurden": "需删除新增说明义务，保留阅读目标、原限制及等待动作。",
+      "firstNode": "trace013准备正确为UNSPECIFIED；trace014将未要求体现理解结果认作gap，并新增理解说明deliverable。",
+      "tracePaths": [
+        "tmp/natural-preparation-routing-2026-10-24/development/traces/013.json",
+        "tmp/natural-preparation-routing-2026-10-24/development/traces/014.json"
+      ]
+    },
+    {
+      "jobId": "MR-P01_V36_PLAN",
+      "result": "ZERO_QUESTION_PATH_PASSED",
+      "severity": "NONE",
+      "questionCount": 0,
+      "finding": "用户已委托通用比较，未追加设备、偏好、官方资料等问题。只证明该路径局部行为符合要求，不计作品收益。"
+    },
+    {
+      "jobId": "MR-P02_V36_PLAN",
+      "result": "IMPORTANT_USER_DECISION_PATH_PASSED",
+      "severity": "NONE",
+      "questionCount": 1,
+      "quote": "请确认活动的新地点（具体名称/地址），通知中将按您确认的内容填写",
+      "finding": "仅询问用户明确保留的新地点，没有询问已委托的措辞与段落，也未擅选地点。"
+    },
+    {
+      "jobId": "MR-P02_V36_PLAN_GEN",
+      "result": "CONFIRMED_ANSWER_PATH_PASSED",
+      "severity": "NONE",
+      "quote": "活动日期仍为2027年5月9日10点；原地点松石楼一层不再使用；新地点为青禾中心二层会议室",
+      "finding": "正文保留真实绑定答复及日期/旧地点；没有残留新地点待定，没有编造变更原因或新增活动事实。"
+    }
+  ],
+  "measuredScope": {
+    "candidateLogicalResults": 10,
+    "candidateActualCallsObserved": 20,
+    "candidateDirectGenerationResults": 7,
+    "candidatePlanningResults": 2,
+    "candidateConfirmedGenerationResults": 1,
+    "newWorksReviewed": 0,
+    "newHeldoutOpened": false
+  },
+  "frozenManifestVerification": {
+    "manifest": "docs/testing/evidence/natural-preparation-routing-2026-10-24/development/source-manifest.json",
+    "checkedFiles": 1289,
+    "changedOrMissingFiles": 0,
+    "gitHead": "fff01bafa6c2b8ccbfaf8666848be3d4a03e2074",
+    "scope": "逐一重新计算清单中源码、冻结输入、指导、执行入口及运行副本文件的SHA-256；审阅时未发现其他会话改变冻结内容"
+  },
+  "recommendation": "保持默认31，停止36的作品与留出采样；保存本次失败，按正文阶段新增/遗漏的共同机制审查后再决定是否有实质不同的修复假设。不要把同义指导或继续采样当新方案。"
+}

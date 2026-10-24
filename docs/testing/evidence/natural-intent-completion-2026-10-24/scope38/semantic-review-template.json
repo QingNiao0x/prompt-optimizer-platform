@@ -1,0 +1,73 @@
+{
+  "status": "TEMPLATE_NOT_ASSESSED",
+  "scope": "Only root-authorized old failures, R02/R03/R04 opposite variants, GC development cases and actual Plan-confirmed38 output. No sealed CS cases or future works.",
+  "modelCalls": 0,
+  "requiredPrerequisites": [
+    "Final frozen hypothesis and regression protocol paths plus hashes",
+    "Explicit allowed caseId list and exact source/answer/preparation/writer/final paths",
+    "Evidence provenance for every reviewed path: fresh live, saved-response offline replay or reused closed baseline"
+  ],
+  "perCaseFields": {
+    "identity": [
+      "caseId",
+      "evidenceKind",
+      "sourcePathsAndHashes",
+      "preregisteredChecksApplicable"
+    ],
+    "originalTask": [
+      "currentActionsAndObjects",
+      "requiredDeliverableOrNoIndependentArtifact",
+      "conditionalOrFutureActions",
+      "explicitFormatLengthRange",
+      "factStatusAndRestrictions",
+      "userReservedChoicesAndAuthority"
+    ],
+    "actualAnswers": [
+      "fullQuestionAndAnswerPerSource",
+      "subjectPropertyConditionAndCertainty",
+      "unknownVersusConfirmedVersusDelegated",
+      "allRealAnswerIdentitiesRetained"
+    ],
+    "stageReview": [
+      "preparationCandidateInterpretation",
+      "rawWriterBodyMeaning",
+      "finalAssemblyBodyMeaning",
+      "exactSemanticChangeAndFirstAppearance",
+      "laterCorrectionOrAmplification",
+      "mixedOrUndeterminedResponsibility"
+    ],
+    "completionReview": [
+      "concreteAddedInstruction",
+      "specificExecutionGapAddressed",
+      "useWithinOriginalDeliverable",
+      "newIndependentDeliverableOrUserPrerequisite",
+      "unsupportedFactOrAuthorization",
+      "isOnlyQualityWishRestatement"
+    ],
+    "verdict": [
+      "severeViolationWithOriginalAndChangedExcerpts",
+      "normalOppositeStatePreserved",
+      "minimalNecessaryUserCorrection",
+      "resolvedKnownFailureOrRemainingIssue",
+      "caseVerdictAndEvidenceLimits"
+    ]
+  },
+  "regressionGateFields": [
+    "PASS_OR_BLOCK",
+    "requiredCasesReviewedAndMissing",
+    "liveVersusOfflineCoverage",
+    "knownSevereFailuresResolvedOrRemaining",
+    "oppositeVariantRegressions",
+    "actualPlanQuestionAndBoundAnswerPath",
+    "newSevereIntentFactConditionAuthorityFailure",
+    "reasonsAndEvidencePaths",
+    "notAQualityAdoptionDecision"
+  ],
+  "principles": [
+    "Quoted-source matching and model self-check are locators, not semantic proof.",
+    "Use the whole original source and all actual answers, including independent restrictions, before judging any generated clause.",
+    "A wrong preparation corrected in the writer is recorded separately from an error surviving final assembly.",
+    "Useful internal completion, factual assumptions, user prerequisites and new independent artifacts are judged separately.",
+    "Missing evidence cannot be recorded as a pass. Regression PASS does not establish unseen quality, downstream gains, adoption or deployment."
+  ]
+}

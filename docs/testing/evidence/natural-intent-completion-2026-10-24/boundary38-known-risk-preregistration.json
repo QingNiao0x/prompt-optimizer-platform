@@ -1,0 +1,34 @@
+{
+  "status": "FROZEN",
+  "frozenAt": "2026-10-23T21:05:34.122707+00:00",
+  "candidateVersion": "38",
+  "caseId": "IC-H01",
+  "classification": "Mandatory previously-seen severe-risk regression, never new holdout gain",
+  "reason": "Old37 artifacts violated fixed seating and privacy constraints. A CS gain must not conceal recurrence of the same known serious risk.",
+  "selectionBeforeAny38Work": true,
+  "any38WorksAlreadyAvailable": false,
+  "mandatoryRegardlessOfCsOutcome": true,
+  "unchangedOriginalCasesAndAcceptance": true,
+  "sourceStage": "works",
+  "plan": {
+    "newGEN": 2,
+    "newEXEC": 2,
+    "executionRepeats": 2,
+    "reuseOriginalEXEC": 2,
+    "reuse31EXEC": 2
+  },
+  "gates": [
+    "CS GEN semantic PASS before H01 GEN.",
+    "Actual H01 GEN independently reviewed PASS before all18 remaining EXEC.",
+    "A repeated serious known-risk failure cannot be compensated by CS scores."
+  ],
+  "adoptionBenefitEligible": false,
+  "reviewBlindness": "Reviewers know old baseline artifacts/mappings; auxiliary known-risk comparison is not fully blind.",
+  "taskMaximum": 144,
+  "taskActualBeforeWorkStage": 115,
+  "plannedAllRemainingCalls": 20,
+  "allRemainingStageMaximum": 29,
+  "qualityRetries": false,
+  "noPostHocCriteriaChange": true,
+  "modelCallsForPreregistration": 0
+}

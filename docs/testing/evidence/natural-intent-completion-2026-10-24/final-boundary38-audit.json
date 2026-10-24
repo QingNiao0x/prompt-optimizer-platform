@@ -1,0 +1,124 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-10-23T21:23:51.398022+00:00",
+  "stages": [
+    {
+      "stage": "regression",
+      "actualCalls": 24,
+      "transportExportsEqual": true,
+      "sourceEntries": 1292,
+      "unchangedRuntimeEntries": 748,
+      "currentSourceDriftPaths": [
+        "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+        "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptStageInstructions.java",
+        "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java"
+      ],
+      "sourceInterpretation": "Expected registration changes between closed37 and38; frozen runtime entries are unchanged. The earlier87-call audit remains a historical snapshot.",
+      "historiesVerified": 13,
+      "sameInformationChecks": 10
+    },
+    {
+      "stage": "heldout",
+      "actualCalls": 10,
+      "transportExportsEqual": true,
+      "sourceEntries": 1255,
+      "unchangedRuntimeEntries": 748,
+      "currentSourceDriftPaths": [
+        "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+        "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptStageInstructions.java",
+        "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java"
+      ],
+      "sourceInterpretation": "Expected registration changes between closed37 and38; frozen runtime entries are unchanged. The earlier87-call audit remains a historical snapshot.",
+      "historiesVerified": 4,
+      "sameInformationChecks": 2
+    },
+    {
+      "stage": "works",
+      "actualCalls": 32,
+      "transportExportsEqual": true,
+      "sourceEntries": 1303,
+      "unchangedRuntimeEntries": 748,
+      "currentSourceDriftPaths": [
+        "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+        "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptStageInstructions.java",
+        "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java"
+      ],
+      "sourceInterpretation": "Expected registration changes between closed37 and38; frozen runtime entries are unchanged. The earlier87-call audit remains a historical snapshot.",
+      "historiesVerified": 10,
+      "sameInformationChecks": 10
+    },
+    {
+      "stage": "completion",
+      "actualCalls": 21,
+      "transportExportsEqual": true,
+      "sourceEntries": 1267,
+      "unchangedRuntimeEntries": 748,
+      "currentSourceDriftPaths": [
+        "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+        "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptStageInstructions.java",
+        "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java"
+      ],
+      "sourceInterpretation": "Expected registration changes between closed37 and38; frozen runtime entries are unchanged. The earlier87-call audit remains a historical snapshot.",
+      "historiesVerified": 4,
+      "sameInformationChecks": 4
+    },
+    {
+      "stage": "boundary38-regression",
+      "actualCalls": 20,
+      "transportExportsEqual": true,
+      "sourceEntries": 1311,
+      "unchangedRuntimeEntries": 749,
+      "currentSourceDriftPaths": [],
+      "sourceInterpretation": "All frozen entries match current files.",
+      "historiesVerified": 9,
+      "sameInformationChecks": 9
+    },
+    {
+      "stage": "boundary38-heldout",
+      "actualCalls": 8,
+      "transportExportsEqual": true,
+      "sourceEntries": 1284,
+      "unchangedRuntimeEntries": 749,
+      "currentSourceDriftPaths": [],
+      "sourceInterpretation": "All frozen entries match current files.",
+      "historiesVerified": 4,
+      "sameInformationChecks": 2
+    },
+    {
+      "stage": "boundary38-works",
+      "actualCalls": 20,
+      "transportExportsEqual": true,
+      "sourceEntries": 1370,
+      "unchangedRuntimeEntries": 749,
+      "currentSourceDriftPaths": [],
+      "sourceInterpretation": "All frozen entries match current files.",
+      "historiesVerified": 10,
+      "sameInformationChecks": 10
+    }
+  ],
+  "taskActual": 135,
+  "taskMaximum": 144,
+  "cumulativeActual": 1983,
+  "previousCumulative": 1848,
+  "unusedReservationReleased": 9,
+  "phaseCounts": {
+    "GENERATION": 69,
+    "PLAN": 6,
+    "EXECUTION": 60
+  },
+  "previous87AuditUnchanged": true,
+  "previous128ProtocolUnchanged": true,
+  "toolingInterruptions": 1,
+  "extraModelCallsForToolInterruption": 0,
+  "supplementaryResumeFilesVerified": 6,
+  "modelCallsForAudit": 0,
+  "semanticDecision": "Separate frozen artifact reviews; engineering integrity is not adoption.",
+  "publicCredentialScan": {
+    "status": "NO_PATTERN_MATCHES",
+    "filesScanned": 521,
+    "matches": 0,
+    "paths": [],
+    "matchContentsPrinted": false,
+    "limitation": "Finite pattern scan, not proof of absence of all sensitive data."
+  }
+}

@@ -73,26 +73,39 @@ public final class NaturalPromptStageInstructions {
 
     /** 仅服务端显式选择的候选采用新协议，旧历史继续使用原指导。 */
     public static boolean supports(String version) {
-        return VERSION.equals(version) || OPTIONAL_FRAMEWORK_VERSION.equals(version) || NO_FRAMEWORK_VERSION.equals(version)
+        return NaturalPromptPreparationRoutingInstructions.VERSION.equals(version)
+                || NaturalPromptIntentCompletionInstructions.VERSION.equals(version)
+                || NaturalPromptContentScopeInstructions.VERSION.equals(version)
+                || VERSION.equals(version) || OPTIONAL_FRAMEWORK_VERSION.equals(version) || NO_FRAMEWORK_VERSION.equals(version)
                 || DIAGNOSTIC_COMPATIBILITY_VERSION.equals(version) || NaturalPromptActionContractInstructions.VERSION.equals(version)
                 || NaturalPromptScopedInstructions.supports(version);
     }
 
     /** 21/24仍校验原十二框架标记，22/23将其降为不影响正文交付的可选诊断。 */
     public static boolean requiresFramework(String version) {
+        // 35只保留组织参考；未选择框架不阻断合法正文，旧版本必填契约不变。
+        if (NaturalPromptMaterialInstructions.VERSION.equals(version)
+                || NaturalPromptPreparationRoutingInstructions.VERSION.equals(version)
+                || NaturalPromptIntentCompletionInstructions.VERSION.equals(version)
+                || NaturalPromptContentScopeInstructions.VERSION.equals(version)) return false;
         return VERSION.equals(version) || DIAGNOSTIC_COMPATIBILITY_VERSION.equals(version)
                 || NaturalPromptActionContractInstructions.VERSION.equals(version) || NaturalPromptScopedInstructions.supports(version);
     }
 
     /** 24及其动作契约候选沿用相同诊断兼容；已知语义字段、来源和跨阶段字段仍严格校验。 */
     public static boolean acceptsDiagnosticFields(String version) {
-        return DIAGNOSTIC_COMPATIBILITY_VERSION.equals(version) || NaturalPromptActionContractInstructions.VERSION.equals(version)
+        return NaturalPromptPreparationRoutingInstructions.VERSION.equals(version)
+                || NaturalPromptIntentCompletionInstructions.VERSION.equals(version)
+                || NaturalPromptContentScopeInstructions.VERSION.equals(version)
+                || DIAGNOSTIC_COMPATIBILITY_VERSION.equals(version) || NaturalPromptActionContractInstructions.VERSION.equals(version)
                 || NaturalPromptScopedInstructions.supports(version);
     }
 
     /** 21—23逐一消融协议、框架必填及框架指导；24必须逐字复用21，兼容处理仅发生在读取端。 */
     public static String enhancementInstruction(String version) {
         if (!supports(version)) throw new IllegalArgumentException("分阶段自然增强版本不受支持");
+        if (NaturalPromptContentScopeInstructions.VERSION.equals(version)) return NaturalPromptContentScopeInstructions.ENHANCE;
+        if (NaturalPromptIntentCompletionInstructions.VERSION.equals(version)) return NaturalPromptIntentCompletionInstructions.ENHANCE;
         if (NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION.equals(version)) return NaturalPromptInstructions.ENHANCE;
         if (NaturalPromptScopedInstructions.PRESERVED_VERSION.equals(version)
                 || NaturalPromptScopedInstructions.CONSERVATIVE_VERSION.equals(version)) return NaturalPromptScopedInstructions.PRESERVED_ENHANCE;
@@ -108,6 +121,8 @@ public final class NaturalPromptStageInstructions {
     /** 阶段候选使用同一Plan协议，解析兼容和框架消融不改变提问要求或真实题答绑定。 */
     public static String planningInstruction(String version) {
         if (!supports(version)) throw new IllegalArgumentException("分阶段自然Plan版本不受支持");
+        if (NaturalPromptContentScopeInstructions.VERSION.equals(version)) return NaturalPromptContentScopeInstructions.PLAN;
+        if (NaturalPromptIntentCompletionInstructions.VERSION.equals(version)) return NaturalPromptIntentCompletionInstructions.PLAN;
         if (NaturalPromptScopedInstructions.supports(version)) return NaturalPromptScopedInstructions.PLAN;
         if (NaturalPromptActionContractInstructions.VERSION.equals(version)) return NaturalPromptActionContractInstructions.PLAN;
         return PLANNING_GUIDANCE + PLANNING_PROTOCOL;

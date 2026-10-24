@@ -1,0 +1,452 @@
+{
+  "schemaVersion": 1,
+  "status": "PASS",
+  "reviewType": "CS_GENERATION_SEMANTIC_GATE_ONLY",
+  "executionMayProceed": true,
+  "severeNewFailures": [],
+  "newModelCalls": 0,
+  "reviewer": {
+    "taskName": "/root/scope_content_holdout_author",
+    "isCaseAuthor": true,
+    "versionBlinded": false,
+    "versionsSeen": [
+      "31",
+      "38"
+    ],
+    "futureWorksRead": false,
+    "productionCodeRead": false,
+    "oldEvaluationOutputsRead": false,
+    "externalIndependentCertification": false,
+    "disclosure": "本题作者在合法释放后审GEN；已知版本，因此仅承担GEN门禁，不承担后续完全盲作品评阅。"
+  },
+  "criteria": {
+    "preregistration": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-adoption-preregistration.json",
+    "acceptance": "tmp/intent-content-scope-holdout/cases.json",
+    "frozenCriteriaUnchanged": true,
+    "rule": "逐源检查原目标、成果、事实状态、独立条件、否定和委托边界；原成果内的必要组织不是独立交付。没有新增补全可保真持平，但不计收益；不依赖唯一范文、篇幅或HTTP200评分。",
+    "informationBoundary": "增强实际只见rawPrompt及context.customDescription，actualAnswers/conversation/mandatoryRules为空；executorMaterials和acceptance未送增强。不得倒推要求GEN写出其未见的尺寸、数量或具体制度。",
+    "gateBoundary": "只解除CS GEN语义前置门禁。当前GEN protocol的EXECUTION上限仍为0；作品执行需要适用阶段冻结及既有授权预算，本报告不新增调用授权。",
+    "adoptionBoundary": "38须按原预注册在两题各两次作品中相对31有可核查实质收益，且相对原始需求无严重退步；本GEN PASS不能替代作品收益或采用结论。"
+  },
+  "releaseChecks": {
+    "sealedManifestAndCasesHashesMatch": true,
+    "releasedCasesByteIdenticalToSealedOriginal": true,
+    "acceptanceCanonicalHashMatchesSeal": true,
+    "candidateAndCriteriaFrozenBeforeRelease": true,
+    "releaseExplicitlyAuthorized": true,
+    "regressionBoundary": "harness报告旧回归独立PASS，释放清单记载gate；本作者未越出只读范围重读旧回归原件，不冒称独立复核了回归内容。"
+  },
+  "reviews": [
+    {
+      "jobId": "CS-H01_V31_GEN",
+      "status": "PASS",
+      "factsAndBoundaries": [
+        {
+          "source": "rawPrompt",
+          "sourceQuote": "我想把客厅空着的一角改成我和孩子能一起用的阅读角。",
+          "finalQuote": "我想把客厅空着的一角改成我和9岁孩子能一起用的阅读角。",
+          "conclusion": "目标、对象和共同使用保留；年龄来自上下文，非编造事实。"
+        },
+        {
+          "source": "rawPrompt",
+          "sourceQuote": "帮我设计一份周末照着就能布置的方案，摆法和书怎么整理你来定",
+          "finalQuote": "设计一份周末照着就能动手布置的方案。摆法由你决定，书怎么整理也由你决定。",
+          "conclusion": "保留可执行布置方案及两项设计委托，没有改为问卷、空模板或要求用户先决定。"
+        },
+        {
+          "source": "rawPrompt",
+          "sourceQuote": "不买东西，不挪沙发，去阳台的路要留着。",
+          "finalQuote": "不买任何东西，只使用现有物品；不移动沙发；保留通往阳台的过道，不能堵住。",
+          "conclusion": "三项独立边界均保留。"
+        },
+        {
+          "source": "context.customDescription",
+          "sourceQuote": "家具位置、选用哪些物品以及书的具体整理方式均未确定，已委托AI设计。",
+          "finalQuote": "摆法由你决定，书怎么整理也由你决定。",
+          "conclusion": "仍要求拟议设计，未宣称已布置；物品选用自由存在下列非阻断措辞歧义。"
+        }
+      ],
+      "usefulAdditions": [
+        {
+          "quote": "说明每件现有物品放在哪里、书按什么方式分类和摆放、成人和孩子各自怎么坐和取书",
+          "gap": "把可照做方案展开为位置、整理与两人使用的实际关系。",
+          "assessment": "同一布置方案内的有用组织方向，非独立交付；未证明实际作品收益。"
+        },
+        {
+          "quote": "并给出布置步骤和完成后的检查要点。",
+          "gap": "从现状到可用状态的动作顺序及原边界检查。",
+          "assessment": "同一方案的步骤与完成条件，非额外独立报告；未证明实际作品收益。"
+        }
+      ],
+      "nonblockingIssues": [
+        {
+          "id": "H01_V31_ITEM_SELECTION_AMBIGUITY",
+          "quote": "说明每件现有物品放在哪里",
+          "reason": "每件措辞可能被误读为全部摆入；也允许未选物品保持原处，未明确强制全用，故不据此判严重越界。后续仍允许选部分物品，不以未用完扣分。"
+        }
+      ],
+      "newIndependentObligation": false,
+      "newUserPreconditionOrQuestionnaire": false,
+      "severeNewFailures": [],
+      "inputs": {
+        "result": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/results/CS-H01_V31_GEN.json",
+        "prepareTrace": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/001.json",
+        "writerTrace": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/002.json"
+      },
+      "optimizedPromptSha256": "25437f527878c9a27628f4f27d7b45de4e95c81dba42897cc810e0ee18450b95",
+      "writerAssemblyExactlyEqual": true
+    },
+    {
+      "jobId": "CS-H01_V38_GEN",
+      "status": "PASS",
+      "factsAndBoundaries": [
+        {
+          "source": "rawPrompt",
+          "sourceQuote": "我想把客厅空着的一角改成我和孩子能一起用的阅读角。",
+          "finalQuote": "我想把客厅空着的一角改成我和孩子能一起用的阅读角。",
+          "conclusion": "共同阅读角目标保持。"
+        },
+        {
+          "source": "rawPrompt",
+          "sourceQuote": "帮我设计一份周末照着就能布置的方案，摆法和书怎么整理你来定",
+          "finalQuote": "设计一份周末照着就能布置的方案；摆法和书怎么整理由你来定。",
+          "conclusion": "成果、时机及设计委托均保留，没有退回用户设计或追加资料义务。"
+        },
+        {
+          "source": "rawPrompt",
+          "sourceQuote": "不买东西，不挪沙发，去阳台的路要留着。",
+          "finalQuote": "方案中不买东西、不挪沙发，并保留去阳台的路。",
+          "conclusion": "三项独立边界均保留。"
+        },
+        {
+          "source": "context.customDescription",
+          "sourceQuote": "使用者是一位成人和一位9岁孩子",
+          "finalQuote": "我和孩子能一起用的阅读角",
+          "conclusion": "正文没有显式带入9岁，不能说覆盖引文已完整表达年龄；没有改写为相反事实。原样contextReport及后续各臂相同材料保留年龄，本配置下不构成严重误指令。"
+        }
+      ],
+      "usefulAdditions": [],
+      "substantiveBenefitObservedAtGeneration": false,
+      "fidelityOnly": true,
+      "nonblockingIssues": [
+        {
+          "id": "H01_V38_CONTEXT_NOT_FULLY_RESTATED",
+          "reason": "writer把含年龄及物品选择自由的整句上下文挂到较窄正文片段；引用存在不证明所有细节已写入正文。保留结果信封上下文不等于单独复制正文完整，结论仅适用于既定同材料执行配置。"
+        },
+        {
+          "id": "H01_V38_NO_GAIN_CREDIT",
+          "reason": "基本为原需求的同义整理，additions为空；保真通过不计内容补全收益。"
+        }
+      ],
+      "newIndependentObligation": false,
+      "newUserPreconditionOrQuestionnaire": false,
+      "severeNewFailures": [],
+      "inputs": {
+        "result": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/results/CS-H01_V38_GEN.json",
+        "prepareTrace": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/003.json",
+        "writerTrace": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/004.json"
+      },
+      "optimizedPromptSha256": "2ca7b5cae847a0dacd3b6d2fef2a27c613b8c810d821bb6c6b34c9b11bdaaf83",
+      "writerAssemblyExactlyEqual": true
+    },
+    {
+      "jobId": "CS-H02_V31_GEN",
+      "status": "PASS",
+      "factsAndBoundaries": [
+        {
+          "source": "rawPrompt",
+          "sourceQuote": "帮我写一张能贴在柜门上的借还操作卡。",
+          "finalQuote": "设计一张可直接打印并贴在存放柜门上的拍摄包借还操作卡。",
+          "conclusion": "仍交付一张操作卡完整正文；不是写作方案或其他作品。"
+        },
+        {
+          "source": "rawPrompt",
+          "sourceQuote": "核对顺序和标记办法你来设计，让第一次用的人也能照着做",
+          "finalQuote": "请自行设计核对顺序和标记办法",
+          "conclusion": "落实设计委托，正文同时明确新使用者可独立借还，没有将委托退回用户。"
+        },
+        {
+          "source": "rawPrompt",
+          "sourceQuote": "沿用群里登记，不增加采购，也别把登记变成审批。",
+          "finalQuote": "不要另建系统、不增加采购，也不要把群里的登记变成审批。",
+          "conclusion": "沿用群登记、不采购及不审批均保留，未增加审批权限。"
+        },
+        {
+          "source": "context.customDescription",
+          "sourceQuote": "附件给出了共享拍摄包的完整清单、存放条件和现有借还约定",
+          "finalQuote": "附件已给出完整清单、存放条件和现有借还约定；请以这些资料为准",
+          "conclusion": "以现有资料为准，没有编造器材数量或现有制度。"
+        },
+        {
+          "source": "context.customDescription",
+          "sourceQuote": "不要求另建系统、另交登记表或操作设备。",
+          "finalQuote": "不依赖额外设备或新表格",
+          "conclusion": "未追加系统或独立表格；当前命令仍是写卡，没有要求实际操作设备。卡片内动态标记不等于另交台账。"
+        }
+      ],
+      "usefulAdditions": [
+        {
+          "quote": "先确认包体与清单，再逐项核对配件，最后确认存放条件",
+          "gap": "把设计核对顺序落实为新使用者能照做的动作组织。",
+          "assessment": "属于已委托的卡片内拟议设计，不是虚构现有规定或新增独立成果；未证明实际作品收益。"
+        },
+        {
+          "quote": "例如在卡上设置可勾选或可写标记的栏位，让使用者能标出缺件、待补和已归位状态",
+          "gap": "具体化纸质标记与状态识别关系。",
+          "assessment": "例示而非唯一范文，可以嵌入原卡片，不能因有动态栏位就判空模板；未证明实际作品收益。"
+        },
+        {
+          "quote": "借出时的核对步骤、归还时的核对步骤、配件缺失或异常时的标记与处理提示、群内登记的入口说明",
+          "gap": "串联借还、异常与群登记。",
+          "assessment": "均服务同一操作卡，没有增加独立交付或审批；未证明实际作品收益。"
+        }
+      ],
+      "nonblockingIssues": [],
+      "newIndependentObligation": false,
+      "newUserPreconditionOrQuestionnaire": false,
+      "severeNewFailures": [],
+      "inputs": {
+        "result": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/results/CS-H02_V31_GEN.json",
+        "prepareTrace": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/007.json",
+        "writerTrace": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/008.json"
+      },
+      "optimizedPromptSha256": "6d32221a096c81743f6482b7cf619235abc27c8bbc14845f7218aa881a84603e",
+      "writerAssemblyExactlyEqual": true
+    },
+    {
+      "jobId": "CS-H02_V38_GEN",
+      "status": "PASS",
+      "factsAndBoundaries": [
+        {
+          "source": "rawPrompt",
+          "sourceQuote": "团队共用的拍摄包归还时常少配件，帮我写一张能贴在柜门上的借还操作卡。",
+          "finalQuote": "团队共用的拍摄包归还时常少配件，请帮我写一张能贴在柜门上的借还操作卡。",
+          "conclusion": "原问题、对象及一张操作卡成果保留，没有改成果。"
+        },
+        {
+          "source": "rawPrompt",
+          "sourceQuote": "核对顺序和标记办法你来设计，让第一次用的人也能照着做",
+          "finalQuote": "核对顺序和标记办法由你来设计，要让第一次用的人也能照着做。",
+          "conclusion": "具体设计委托及新使用者可照做均保留。"
+        },
+        {
+          "source": "rawPrompt",
+          "sourceQuote": "沿用群里登记，不增加采购，也别把登记变成审批。",
+          "finalQuote": "操作卡沿用群里登记，不增加采购，也不要把登记变成审批。",
+          "conclusion": "三项独立边界均在正文。"
+        },
+        {
+          "source": "context.customDescription",
+          "sourceQuote": "不要求另建系统、另交登记表或操作设备。",
+          "finalQuote": "请帮我写一张能贴在柜门上的借还操作卡。",
+          "conclusion": "正文未逐项复写上下文排除内容，不能声称引文已显式覆盖；实际只要求写同一卡片，未追加系统、独立表格或设备操作。原样contextReport及各臂同材料仍保留范围，本配置下无严重范围扩大。"
+        }
+      ],
+      "usefulAdditions": [],
+      "substantiveBenefitObservedAtGeneration": false,
+      "fidelityOnly": true,
+      "nonblockingIssues": [
+        {
+          "id": "H02_V38_CONTEXT_NOT_FULLY_RESTATED",
+          "reason": "writer只记录三项raw要求；人数、附件为准、纸质方式和上下文排除内容未逐项落到正文。未复写与主动新增相反任务应分开判断；本GEN没有新增独立义务，但不证明单独复制正文已保全所有上下文。"
+        },
+        {
+          "id": "H02_V38_NO_GAIN_CREDIT",
+          "reason": "基本为原需求的同义整理，additions为空；没有可核查的新操作关系或状态重点，不能以保真本身记收益。"
+        }
+      ],
+      "newIndependentObligation": false,
+      "newUserPreconditionOrQuestionnaire": false,
+      "severeNewFailures": [],
+      "inputs": {
+        "result": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/results/CS-H02_V38_GEN.json",
+        "prepareTrace": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/005.json",
+        "writerTrace": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/006.json"
+      },
+      "optimizedPromptSha256": "04b4b059e55ac4e3ea17dc326ad13f285cbbc0f761962c841e4a712bb8bf1332",
+      "writerAssemblyExactlyEqual": true
+    }
+  ],
+  "assembly": {
+    "genCount": 4,
+    "traceCount": 8,
+    "allWriterPromptsExactlyEqualFinalAssembly": true,
+    "allResultContextReportsRetainExactContextDescription": true,
+    "allActualSourcesMatchFrozenRawAndContext": true,
+    "allSourceEvidenceQuotesVerbatim": true,
+    "allDeclaredBodyQuotesPresent": true,
+    "quoteValidationDoesNotProveSemanticCompleteness": true,
+    "noObservedQualityRetryInReviewedEightTraces": true,
+    "stageLabelBoundary": "原件generationStage均为DIRECT；本报告以响应结构识别PREPARE与writer，未改写原件。",
+    "payloadVersionBoundary": "31两阶段payload版本为31/4，与冻结protocol一致；38两阶段均38。",
+    "traceChecks": [
+      {
+        "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/001.json",
+        "jobId": "CS-H01_V31_GEN",
+        "derivedStage": "PREPARE",
+        "recordedGenerationStage": "DIRECT",
+        "sourceQuotesValidated": 3,
+        "bodyQuotesValidated": 0
+      },
+      {
+        "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/002.json",
+        "jobId": "CS-H01_V31_GEN",
+        "derivedStage": "WRITER",
+        "recordedGenerationStage": "DIRECT",
+        "sourceQuotesValidated": 7,
+        "bodyQuotesValidated": 9
+      },
+      {
+        "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/003.json",
+        "jobId": "CS-H01_V38_GEN",
+        "derivedStage": "PREPARE",
+        "recordedGenerationStage": "DIRECT",
+        "sourceQuotesValidated": 5,
+        "bodyQuotesValidated": 0
+      },
+      {
+        "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/004.json",
+        "jobId": "CS-H01_V38_GEN",
+        "derivedStage": "WRITER",
+        "recordedGenerationStage": "DIRECT",
+        "sourceQuotesValidated": 5,
+        "bodyQuotesValidated": 5
+      },
+      {
+        "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/005.json",
+        "jobId": "CS-H02_V38_GEN",
+        "derivedStage": "PREPARE",
+        "recordedGenerationStage": "DIRECT",
+        "sourceQuotesValidated": 4,
+        "bodyQuotesValidated": 0
+      },
+      {
+        "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/006.json",
+        "jobId": "CS-H02_V38_GEN",
+        "derivedStage": "WRITER",
+        "recordedGenerationStage": "DIRECT",
+        "sourceQuotesValidated": 3,
+        "bodyQuotesValidated": 3
+      },
+      {
+        "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/007.json",
+        "jobId": "CS-H02_V31_GEN",
+        "derivedStage": "PREPARE",
+        "recordedGenerationStage": "DIRECT",
+        "sourceQuotesValidated": 4,
+        "bodyQuotesValidated": 0
+      },
+      {
+        "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/008.json",
+        "jobId": "CS-H02_V31_GEN",
+        "derivedStage": "WRITER",
+        "recordedGenerationStage": "DIRECT",
+        "sourceQuotesValidated": 5,
+        "bodyQuotesValidated": 9
+      }
+    ]
+  },
+  "conclusion": {
+    "executionMayProceed": true,
+    "severeNewFailureCount": 0,
+    "candidateBenefitEstablished": false,
+    "candidateAdopted": false,
+    "noDefaultChangeConclusion": true,
+    "rationale": "四份GEN均保留原成果与明确raw边界；新增31内容处于原成果内，未见新增独立义务、资料问卷或事实升级。38两题仅保真持平且上下文未完整显式复写；这些局部问题单列，不能计收益，也不凭此虚构严重违约。后续作品须按原判据评全部重复。",
+    "noNewModelCalls": true,
+    "noSourceCodeEdits": true
+  },
+  "inputFiles": [
+    {
+      "path": "tmp/intent-content-scope-holdout/manifest.json",
+      "sha256": "fb472ac7fe0cac1001556f27a2d7888fbe18c148cc117e4c7a2aa2ddb40a9193",
+      "bytes": 3456
+    },
+    {
+      "path": "tmp/intent-content-scope-holdout/cases.json",
+      "sha256": "f63eafe13249f502b7b16ac5ca8c326db85abc0cd09062fd075bbe1193051898",
+      "bytes": 12912
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-heldout/cases.json",
+      "sha256": "f63eafe13249f502b7b16ac5ca8c326db85abc0cd09062fd075bbe1193051898",
+      "bytes": 12912
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-heldout/protocol.json",
+      "sha256": "dd01217a2e41e53ba030c6ce5180b6716224a460da11492e7c46d32c22b6158a",
+      "bytes": 4505
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-heldout/release-manifest.json",
+      "sha256": "6539cf6953959a9e637fdd256e3c9b2c7bd8f25cedf0c23469d3e40f313d8dc5",
+      "bytes": 4289
+    },
+    {
+      "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/boundary38-adoption-preregistration.json",
+      "sha256": "30071cee0d372540001002a443a51d6be2ad1939b4be46dd508a6bfdf311b9a7",
+      "bytes": 2417
+    },
+    {
+      "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/results/CS-H01_V31_GEN.json",
+      "sha256": "195429e0fd704984b029a4ce7198714e605d2ef448eceff03ce06821e1ab47bc",
+      "bytes": 3139
+    },
+    {
+      "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/results/CS-H01_V38_GEN.json",
+      "sha256": "c8a0db63cfc2d7eb8ac826d2fb9f5c991cab2a4f4426099d75f19ee7e6d9b87a",
+      "bytes": 2832
+    },
+    {
+      "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/results/CS-H02_V31_GEN.json",
+      "sha256": "446bf1a97989f1c0f3124a7b336244eb3c854d3d2000f5c77bac3ce041b5115f",
+      "bytes": 3798
+    },
+    {
+      "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/results/CS-H02_V38_GEN.json",
+      "sha256": "549febcb6f289f568698ebb8012966b6a8b10f3757aa5c68e89013e2472c27ea",
+      "bytes": 2899
+    },
+    {
+      "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/001.json",
+      "sha256": "641091bc92fee13b2cace0f19715f29941a163455490301cc4fbe130d39c8ac5",
+      "bytes": 6282
+    },
+    {
+      "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/002.json",
+      "sha256": "355f1972e1f15035e00f569c57f7f029c6f887cda96292fa85d7087f06e0b37a",
+      "bytes": 12580
+    },
+    {
+      "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/003.json",
+      "sha256": "3c0fafdee2ac5b5e0562c39856425510244699e677c5e3ddd396b9cb8c6cf5d2",
+      "bytes": 6868
+    },
+    {
+      "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/004.json",
+      "sha256": "883b095f1ccd431d20ded8e06ad92d5ae57fd785ebc63d88f21e3c537ef3dc65",
+      "bytes": 14125
+    },
+    {
+      "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/005.json",
+      "sha256": "3f1680abb6df2addfca6010a61411501942dc002086f71a37caaf1b982142274",
+      "bytes": 6746
+    },
+    {
+      "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/006.json",
+      "sha256": "267d49cf186dfdc5f27d19c0270784223e0e3d0c609aeffcfd69a9ccd0748e96",
+      "bytes": 13228
+    },
+    {
+      "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/007.json",
+      "sha256": "303abc945b1d0779e8334d9b367d0d53ca45f13ccfa5c14b31cb6f8d0c76165d",
+      "bytes": 6409
+    },
+    {
+      "path": "tmp/natural-intent-completion-2026-10-24/boundary38-heldout/traces/008.json",
+      "sha256": "359f9ca7910cc971ee5b76527b50ec68586140e28c6148848cf005fca0783d41",
+      "bytes": 14222
+    }
+  ],
+  "reviewedAt": "2026-10-24T05:09:05+08:00"
+}

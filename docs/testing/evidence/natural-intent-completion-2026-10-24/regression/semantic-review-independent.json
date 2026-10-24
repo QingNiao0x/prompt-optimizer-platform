@@ -1,0 +1,269 @@
+{
+  "reviewer": "/root/assess_validation_strategy",
+  "reviewedAt": "2026-10-24",
+  "role": "Internal source-linked review. Did not edit production code or perform model calls; reviewed mechanism and37guidance and authored sealed holdout. This regression review is not blinded or external expert certification.",
+  "candidate": "37",
+  "baseline": "31",
+  "scope": "9 direct generation,2 Plan,1 confirmed-answer generation; no new downstream works and no heldout outputs reviewed here.",
+  "paidReviewCalls": 0,
+  "targetRegressionGate": "PASS",
+  "regressionGate": "PASS",
+  "severeRegressions": 0,
+  "productQuality": "NOT_ESTABLISHED",
+  "adoption": "PENDING_HELDOUT_AND_SAME_INFORMATION_WORKS",
+  "gateBasis": "Frozen regression protocol requires the three known severe errors D03/PR-D06/PR-D07 and their opposite normal variants to have zero severe failures. These targeted requirements hold in observed outputs. This is not a declaration that all semantic issues are solved; D02 remains pending work validation.",
+  "targetCases": [
+    {
+      "caseId": "D03",
+      "trace": "004.json",
+      "result": "TARGET_ERROR_NOT_REPRODUCED",
+      "severity": "NONE",
+      "sourceQuote": "保留现有筛选方式、函数签名和返回结构，不改输入数组，给出可替换的完整实现。",
+      "outputQuote": "保留现有筛选方式、函数签名和返回结构，不修改输入数组。请给出可直接替换原函数的完整实现。",
+      "finding": "No invented missing-code fact, generic implementation substitute, or contradictory addition. Task and whole body retain the existing contract; additions/openDecisions empty. This fixes the observed36regression, not proven superiority to31or actual function success.",
+      "editingBurden": "No necessary prompt correction identified; downstream code has not been executed for37in this stage."
+    },
+    {
+      "caseId": "PR-D06",
+      "trace": "008.json",
+      "result": "TARGET_ERROR_NOT_REPRODUCED",
+      "severity": "NONE",
+      "sourceQuote": "没有现场照片，也没有保存水位或货损记录",
+      "outputQuote": "没有现场照片，也没有保存水位或货损记录",
+      "finding": "All three absent-record facts are preserved in requirements and whole body, with known morning stop/afternoon recovery and no invented cause/amount/time. Request for usable text remains. The repeated-concentration addition restates existing intent, so do not count it as substantive completion gain.",
+      "editingBurden": "The36need to restore absent-record facts is removed in this output."
+    },
+    {
+      "caseId": "PR-D07",
+      "trace": "010.json",
+      "result": "TARGET_ERROR_NOT_REPRODUCED",
+      "severity": "NONE",
+      "sourceQuote": "当前只需要阅读并理解；暂时不用改代码，也不用写项目说明文档，等我下一条具体任务。",
+      "outputQuote": "当前只需要阅读并理解；暂时不用改代码，也不用写项目说明文档，等我下一条具体任务。",
+      "finding": "No substantive report, summary, proof-of-understanding obligation or premature development added. task.deliverable is empty; adds only sourced statement that project directory/rules can be read at execution. Full scope retained.",
+      "editingBurden": "The36need to delete an unsolicited understanding report is removed."
+    }
+  ],
+  "normalVariants": [
+    {
+      "caseId": "IC-R01",
+      "trace": "012.json",
+      "result": "FIDELITY_PASS",
+      "finding": "From-scratch design remains authorized, with no invented legacy code obligation. Names/parameters/return structure delegated; all requested algorithm features and runnable implementation preserved. Near-original wording is fidelity tie, not substantive gain."
+    },
+    {
+      "caseId": "IC-R02",
+      "trace": "014.json",
+      "result": "FIDELITY_PASS",
+      "finding": "Saved records/photos remain existent but not attached, readable at execution. Whole report retained, no user-upload prerequisite. Verbatim preservation is a tie."
+    },
+    {
+      "caseId": "IC-R03",
+      "trace": "016.json",
+      "result": "FIDELITY_PASS",
+      "finding": "Explicit project summary preserved with modules/call relations/conventions. No code changes and user confirmation before development remain. Three-focus organization reiterates existing requirements; not strong substantive gain."
+    },
+    {
+      "caseId": "IC-R04",
+      "trace": "018.json",
+      "result": "FIDELITY_PASS",
+      "finding": "Legal requested template and blank fields remain; no production DB access and no real deployment logs remain distinct. Pre/during/post checks and responsible-person confirmation remain, fields/layout delegated. Related checks marked pending is compatible with requested template and no completed-check claims; not a proof of work quality."
+    },
+    {
+      "caseId": "D04",
+      "trace": "006.json",
+      "result": "FIDELITY_TIE",
+      "finding": "Original complete request unchanged:90characters, one paragraph, no title/explanation, online change, closed old room, unknown date, two enrollment conditions. No expansion benefit."
+    }
+  ],
+  "planning": [
+    {
+      "caseId": "MR-P01",
+      "trace": "020.json",
+      "result": "ZERO_QUESTION_PATH_PASSED",
+      "questionCount": 0,
+      "finding": "Delegated retrieval/comparison and generic use remain executor work; no device/preference question."
+    },
+    {
+      "caseId": "MR-P02",
+      "trace": "022.json",
+      "result": "IMPORTANT_USER_DECISION_PATH_PASSED",
+      "questionCount": 1,
+      "finding": "Only new venue asked, explicitly user-reserved and changes notice content; no wording/layout questions.",
+      "internalConsistencyRisk": "The same already-asked venue also appears in task.unaskedDecisions, inconsistent with that field's label. It did not produce an extra user question and is cleared after confirmation. Record as internal redundancy risk, not a severe user-facing regression or reason to modify production mid-experiment."
+    },
+    {
+      "caseId": "MR-P02",
+      "trace": "024.json",
+      "result": "CONFIRMED_ANSWER_PATH_PASSED",
+      "answerQuote": "新地点确定为青禾中心二层会议室。",
+      "outputQuote": "活动日期仍为2027年5月9日10点；原地点松石楼一层不再使用；新地点为青禾中心二层会议室",
+      "finding": "Actual bound answer source visible and used in whole body. Date/time, obsolete venue and no invented cause preserved; wording delegated. No stale new-venue question, unknown marker or pending item."
+    }
+  ],
+  "sharedRisks": [
+    {
+      "caseId": "D02",
+      "trace": "002.json",
+      "status": "PENDING_WORK_VALIDATION",
+      "riskType": "METHOD_OBJECT_AND_INTERNAL_UNKNOWN_CLASSIFICATION",
+      "candidateQuote": "采用Arriaga分解方法分析死亡率变化的贡献因素，说明各因素对总体变化的贡献。",
+      "baseline31Quote": "采用Arriaga分解方法分析死亡率变化的贡献因素，说明各因素对总体死亡率变化的贡献程度。",
+      "rawQuote": "4.采用Arriaga分解方法去分析",
+      "executionMaterialQuote": "本表对象是预期寿命差异，不是把粗死亡率差直接分解成年数",
+      "finding": "Candidate repeats an unqualified method-object narrowing already present in31/36. It is not established as correct: actual execution data define2015to2025e0difference and age/cause contributions in years. Enhancement did not see this data, so it should leave the actual object to applicable execution evidence rather than pre-fix a rate-change decomposition. At the prompt stage this is an existing potentially misleading method-object risk; no new numerical work was produced, so no claim of observed year-to-rate-unit violation.",
+      "whyNotARegressionGatePassForResearch": "Target regression pass does not imply this research task passed or that a shared defect is acceptable. A work that treats year contributions as mortality-rate differences, drops a required analysis, invents values or is unusable remains a serious failure under frozen acceptance and cannot be offset by other wins.",
+      "requiredWorkCheck": "At same-information execution, check2015to2025e0direction, years unit, all-cause versus cardio-cerebrovascular contribution, actual data-supported four analyses and minimum edits. Review all repetitions for original/31/37; a stronger downstream response correcting the ambiguity does not prove enhancement wording precise.",
+      "internalRisk": "task.openDecisions labels region/group definitions/data source USER_INFORMATION despite no express user ownership; whole prompt does not assert absence or require user to supply them. Keep as unresolved classification concern; do not count internal field presence as completeness or evidence of an actual blocking question.",
+      "positiveBoundary": "Four requested analysis areas including annual and sexYLL/rate remain. No statement that region/source do not exist or cannot be determined; conditional definitions/source explanation does not itself establish missing-data hallucination."
+    }
+  ],
+  "limits": [
+    "No general proof of semantic correctness. Source quotes and body quotations were used as anchors, then full inputs and whole outputs were read.",
+    "No37actual works in this regression stage; no claim of fewer work edits, lower factual error rates across populations, or improved downstream delivery.",
+    "Three corrected36failures demonstrate local repair; all normal ties must not be counted as quality improvement against31.",
+    "New sealed holdout remains unopened by implementation/runner at review time; author has seen the cases as author, not as a blind reviewer.",
+    "Do not change frozen thresholds, add scenario-specific rules, or selectively rerun generation to erase residual issues."
+  ],
+  "evidence": {
+    "cases": "docs/testing/evidence/natural-intent-completion-2026-10-24/regression/cases.json",
+    "frozenProtocol": "docs/testing/evidence/natural-intent-completion-2026-10-24/regression/protocol.json",
+    "adoptionCriteria": "docs/testing/evidence/natural-intent-completion-2026-10-24/adoption-preregistration.json",
+    "resultDirectory": "tmp/natural-intent-completion-2026-10-24/regression/results",
+    "traceDirectory": "tmp/natural-intent-completion-2026-10-24/regression/traces"
+  },
+  "deliveryChecks": [
+    {
+      "jobId": "D02_V37_GEN",
+      "tracePath": "tmp/natural-intent-completion-2026-10-24/regression/traces\\002.json",
+      "traceSha256": "a45d944310664f18f0afd7ccee51672ecec6d5decda853927ce79f13d69fe02f",
+      "resultPath": "tmp/natural-intent-completion-2026-10-24/regression/results/D02_V37_GEN.json",
+      "resultSha256": "1fe8c7435f03234ecff2f8d2ddac4ce7b4ab0d261cbeeeb2a2b3971841620df9",
+      "rawInputPreserved": true,
+      "modelBodyEqualsFinal": true,
+      "httpStatus": 200,
+      "actualAnswerCount": 0
+    },
+    {
+      "jobId": "D03_V37_GEN",
+      "tracePath": "tmp/natural-intent-completion-2026-10-24/regression/traces\\004.json",
+      "traceSha256": "f243ca5ed3d4bb943d8cdc66bc52ed204cd8878ab1c80ab6ddf5060d48049170",
+      "resultPath": "tmp/natural-intent-completion-2026-10-24/regression/results/D03_V37_GEN.json",
+      "resultSha256": "6eb03af7ade30ffc9722692e5c261631b0422af4aee5f330196f4a3fdaf3df54",
+      "rawInputPreserved": true,
+      "modelBodyEqualsFinal": true,
+      "httpStatus": 200,
+      "actualAnswerCount": 0
+    },
+    {
+      "jobId": "D04_V37_GEN",
+      "tracePath": "tmp/natural-intent-completion-2026-10-24/regression/traces\\006.json",
+      "traceSha256": "88a8fe76a694b54ba74c2da33e7a652166418b1451bed7b9f9b5ff5530b61fd3",
+      "resultPath": "tmp/natural-intent-completion-2026-10-24/regression/results/D04_V37_GEN.json",
+      "resultSha256": "1cfbb9ba6607da447b3a06ad39ac66a2d7f5976e60159ce41d755d51f3f447e3",
+      "rawInputPreserved": true,
+      "modelBodyEqualsFinal": true,
+      "httpStatus": 200,
+      "actualAnswerCount": 0
+    },
+    {
+      "jobId": "PR-D06_V37_GEN",
+      "tracePath": "tmp/natural-intent-completion-2026-10-24/regression/traces\\008.json",
+      "traceSha256": "d445a852f0b780f918341157aafe7a880693db68888ce5d9e934b0f0afbb7ee1",
+      "resultPath": "tmp/natural-intent-completion-2026-10-24/regression/results/PR-D06_V37_GEN.json",
+      "resultSha256": "8d0ec346a5e71bfab3d5f60f403cb51ce19e842e6471bce5ae6f1cb0d880889d",
+      "rawInputPreserved": true,
+      "modelBodyEqualsFinal": true,
+      "httpStatus": 200,
+      "actualAnswerCount": 0
+    },
+    {
+      "jobId": "PR-D07_V37_GEN",
+      "tracePath": "tmp/natural-intent-completion-2026-10-24/regression/traces\\010.json",
+      "traceSha256": "4f55a20c4856339cdd094c38e828840b12744bdbb3bbfc1ef7a49da1f6869f1f",
+      "resultPath": "tmp/natural-intent-completion-2026-10-24/regression/results/PR-D07_V37_GEN.json",
+      "resultSha256": "65de2f3892caac171668091cdadcfae61b233fe36dfaa124cba7ff60426afef5",
+      "rawInputPreserved": true,
+      "modelBodyEqualsFinal": true,
+      "httpStatus": 200,
+      "actualAnswerCount": 0
+    },
+    {
+      "jobId": "IC-R01_V37_GEN",
+      "tracePath": "tmp/natural-intent-completion-2026-10-24/regression/traces\\012.json",
+      "traceSha256": "35bbb56f8a8b64c2eb9f7cf6806a70d77f80c8916f089a994dae03a1cbf881c9",
+      "resultPath": "tmp/natural-intent-completion-2026-10-24/regression/results/IC-R01_V37_GEN.json",
+      "resultSha256": "575d2cd6f1bcadba73607952851598d1d0ff8514c0b5b4a2b0af5c68e59796de",
+      "rawInputPreserved": true,
+      "modelBodyEqualsFinal": true,
+      "httpStatus": 200,
+      "actualAnswerCount": 0
+    },
+    {
+      "jobId": "IC-R02_V37_GEN",
+      "tracePath": "tmp/natural-intent-completion-2026-10-24/regression/traces\\014.json",
+      "traceSha256": "62c56096c3190b972068e325b3621490b81b54cb9ca016d9221e0c18b19629d2",
+      "resultPath": "tmp/natural-intent-completion-2026-10-24/regression/results/IC-R02_V37_GEN.json",
+      "resultSha256": "649a57b3f94bbd89e40bb3664ce6ac816c6f7bcedeaa691cf19ef14a8f2c2f98",
+      "rawInputPreserved": true,
+      "modelBodyEqualsFinal": true,
+      "httpStatus": 200,
+      "actualAnswerCount": 0
+    },
+    {
+      "jobId": "IC-R03_V37_GEN",
+      "tracePath": "tmp/natural-intent-completion-2026-10-24/regression/traces\\016.json",
+      "traceSha256": "a0a30bbf3e23b20c8fe85c2346a7fd21d8806e4f166229f669b4d7ed26a6752f",
+      "resultPath": "tmp/natural-intent-completion-2026-10-24/regression/results/IC-R03_V37_GEN.json",
+      "resultSha256": "a91466011bb30f786bfbcc37e18b441a6e2139f67eb13d5b4a1d6677e250b1cc",
+      "rawInputPreserved": true,
+      "modelBodyEqualsFinal": true,
+      "httpStatus": 200,
+      "actualAnswerCount": 0
+    },
+    {
+      "jobId": "IC-R04_V37_GEN",
+      "tracePath": "tmp/natural-intent-completion-2026-10-24/regression/traces\\018.json",
+      "traceSha256": "5e31701138f87ed9364957e47deefd3fd7e1f7162e853719183dfcab4a925ff4",
+      "resultPath": "tmp/natural-intent-completion-2026-10-24/regression/results/IC-R04_V37_GEN.json",
+      "resultSha256": "f1c4bf331c057583416a08a5c1ca93a80d6b423123fd5d42214b256adf82db10",
+      "rawInputPreserved": true,
+      "modelBodyEqualsFinal": true,
+      "httpStatus": 200,
+      "actualAnswerCount": 0
+    },
+    {
+      "jobId": "MR-P01_V37_PLAN",
+      "tracePath": "tmp/natural-intent-completion-2026-10-24/regression/traces\\020.json",
+      "traceSha256": "e979f1c5957034be86aa9e0a2ed081b6f0982b1e96e35b6dafe384d98b9b417d",
+      "resultPath": "tmp/natural-intent-completion-2026-10-24/regression/results/MR-P01_V37_PLAN.json",
+      "resultSha256": "1a9bd232c69fc80e37b0d1c65fe30d668907c0902d3839c35df4b5e5e7ba81b7",
+      "rawInputPreserved": true,
+      "modelBodyEqualsFinal": null,
+      "httpStatus": 200,
+      "actualAnswerCount": 0
+    },
+    {
+      "jobId": "MR-P02_V37_PLAN",
+      "tracePath": "tmp/natural-intent-completion-2026-10-24/regression/traces\\022.json",
+      "traceSha256": "bb533072dd5769d7f1500832ba58ba9168b99bd23c3384b0d73bcc8f627d4814",
+      "resultPath": "tmp/natural-intent-completion-2026-10-24/regression/results/MR-P02_V37_PLAN.json",
+      "resultSha256": "51ab3e325b7e6a958e16cc7816d44c2a61d8646401e06b1b2f93a90540ca803a",
+      "rawInputPreserved": true,
+      "modelBodyEqualsFinal": null,
+      "httpStatus": 200,
+      "actualAnswerCount": 0
+    },
+    {
+      "jobId": "MR-P02_V37_PLAN_GEN",
+      "tracePath": "tmp/natural-intent-completion-2026-10-24/regression/traces\\024.json",
+      "traceSha256": "89a0718cad9d5ba32e3807225c1ab4e71b31701a6f1d177c9f4fcceec3e24439",
+      "resultPath": "tmp/natural-intent-completion-2026-10-24/regression/results/MR-P02_V37_PLAN_GEN.json",
+      "resultSha256": "432aa84caeec6e66b22c580715710f96a318e5d2901ef9c10526441735f2c4c8",
+      "rawInputPreserved": true,
+      "modelBodyEqualsFinal": true,
+      "httpStatus": 200,
+      "actualAnswerCount": 1
+    }
+  ]
+}

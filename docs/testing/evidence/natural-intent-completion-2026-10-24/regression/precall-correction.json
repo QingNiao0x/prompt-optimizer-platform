@@ -1,0 +1,28 @@
+{
+  "status": "CORRECTED_BEFORE_FIRST_MODEL_CALL",
+  "correctedAt": "2026-10-23T19:46:40.099266+00:00",
+  "actualCallsBeforeCorrection": 0,
+  "activeModelJobs": 0,
+  "nodeCaptchaWaitCancelled": true,
+  "approvedBy": "root explicit pre-call correction instruction",
+  "changes": [
+    {
+      "field": "stopConditions[0]",
+      "old": "任务48次、本阶段24次和各phase上限同时执行；所有失败、协议修复和作品计数，禁止质量重试。",
+      "new": "任务128次、本阶段40次和各phase上限同时执行；所有失败、协议修复和作品计数，禁止质量重试。"
+    },
+    {
+      "field": "informationPolicy",
+      "old": "增强仅见原始提示词、普通context与实际绑定答复，不见executorMaterials或评分卡。ORIGINAL/31/35执行逐字接收相同普通背景和executorMaterials；复用作品必须核对完整原件、同题资料及模型参数。评分卡仅供内部逐源复核，本阶段REVIEW=0，不调用模型评审。增强阶段未附资料不等于执行阶段没有资料。",
+      "new": "增强仅见原始提示词、普通context与实际绑定答复，不见executorMaterials或评分卡。ORIGINAL/31/37执行逐字接收相同普通背景和executorMaterials；复用作品必须核对完整原件、同题资料及模型参数。评分卡仅供内部逐源复核，本阶段REVIEW=0，不调用模型评审。增强阶段未附资料不等于执行阶段没有资料。"
+    }
+  ],
+  "criteriaChanged": false,
+  "sourceOrModelParametersChanged": false,
+  "originalDraftPreserved": true,
+  "originalFrozenArtifactsArchived": [
+    "precall-correction-001/protocol.json",
+    "precall-correction-001/source-manifest.json"
+  ],
+  "runtimeHandling": "Existing loopback server is idle; server reads protocol and source manifest for every transport. Cancelled Node process held old constants; a fresh Node process will load corrected protocol. No runtime class or production source was modified."
+}

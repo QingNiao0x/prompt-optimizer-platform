@@ -1,0 +1,175 @@
+{
+  "batch": "natural-intent-boundary38-regression-2026-10-24",
+  "status": "DRAFT",
+  "authorizationQuote": "用户本次授权自行选择次数；正式新增修订上限144，38剩余阶段57，回归29。",
+  "taskMaximumActualCalls": 144,
+  "taskPreviouslyActual": 87,
+  "maximumNewActualCalls": 26,
+  "previousClosedActualCalls": 1848,
+  "oldClosedBalanceTransferred": 0,
+  "baselineVersion": "31",
+  "candidateVersions": [
+    "38"
+  ],
+  "versions": [
+    "31",
+    "38"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 22,
+    "PLAN": 4,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 18,
+    "PLAN": 2,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "generation": [
+    "D03",
+    "PR-D06",
+    "PR-D07",
+    "IC-R02",
+    "IC-R03",
+    "IC-R04",
+    "GC-H01",
+    "GC-H02"
+  ],
+  "regressionGeneration": [],
+  "plan": [
+    "MR-P02"
+  ],
+  "confirmedPlanGeneration": [
+    "MR-P02"
+  ],
+  "execution": [],
+  "executionRepeats": 2,
+  "executionIncludeOriginal": true,
+  "confirmationMode": "PER_VERSION",
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "38": [
+      "38"
+    ]
+  },
+  "allowedJobs": [
+    "D03_V38_GEN",
+    "PR-D06_V38_GEN",
+    "PR-D07_V38_GEN",
+    "IC-R02_V38_GEN",
+    "IC-R03_V38_GEN",
+    "IC-R04_V38_GEN",
+    "GC-H01_V38_GEN",
+    "GC-H02_V38_GEN",
+    "MR-P02_V38_PLAN",
+    "MR-P02_V38_PLAN_GEN"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "order": "固定三旧失败及三正常反向题、两GC开发题；实际fresh Plan及回答后生成。本阶段不执行作品，不开CS。",
+  "informationPolicy": "Enhancement sees exact raw/context/actual bound answers, never executorMaterials or acceptance. Execution later receives identical full supplied materials in all arms. GC is development, CS stays sealed until38 freeze and regression semantic PASS.",
+  "criteria": [
+    "旧三严重失败和已冻结正常反向变体无新增严重意图、事实、授权或硬要求违约；充分D04以受影响离线检查及既有37证据单列，不冒充38真实结果。",
+    "fresh Plan实际提问及真实回答后正文保留用户保留决定、全部实际题答和原始要求，不增加用户前置资料义务。",
+    "新CS两题都必须在38两次作品中相对31有可核查实质收益，且相对原始提示词无严重退步；全部胜平负和必要修改项完整报告。",
+    "GC题已公开开发使用，允许辅助定位机制，但不能伪称未见题、代替CS或抵消已知严重失败。",
+    "充分需求持平允许但不计收益；篇幅、HTTP200、框架标签或模型自检不单独证明增强收益。",
+    "只证明局部收益不能切默认；旧主实验失败和37专项结论独立保留，不事后改门槛。"
+  ],
+  "stopConditions": [
+    "Total144 and each frozen stage/phase maximum are enforced together.",
+    "Keep every old128 protocol, closed original and conclusion immutable; the revision does not restore any old closed-batch balance.",
+    "Unused reservations may move only after closure to a later not-yet-frozen stage; no closed stage may reopen.",
+    "Regression and then CS enhancement semantic PASS precede actual works; no quality retry or case-dependent candidate patch."
+  ],
+  "reviews": [],
+  "reviewSystem": "",
+  "generationVersions": [
+    "38"
+  ],
+  "planVersions": [
+    "38"
+  ],
+  "executionArms": [
+    "ORIGINAL",
+    "V31",
+    "V38"
+  ],
+  "draftNotes": [
+    "Normal20 calls:8direct enhancements16, freshPlan2, actual-answer enhancement2. Actual cap26; no quality retry.",
+    "31/37 closed evidence remains historical. This stage checks38 targeted semantics; CS and actual works required for adoption.",
+    "D04 sufficient case uses affected offline verification and prior37 evidence only, explicitly not38 live evidence."
+  ],
+  "generationVersionsByCase": {
+    "D03": [
+      "38"
+    ],
+    "PR-D06": [
+      "38"
+    ],
+    "PR-D07": [
+      "38"
+    ],
+    "IC-R02": [
+      "38"
+    ],
+    "IC-R03": [
+      "38"
+    ],
+    "IC-R04": [
+      "38"
+    ],
+    "GC-H01": [
+      "38"
+    ],
+    "GC-H02": [
+      "38"
+    ]
+  },
+  "prerequisiteStages": [],
+  "preparationInstructionClass": "com.promptoptimizer.provider.domain.NaturalPromptContentScopeInstructions",
+  "requiredGenerationVersionsByCase": {
+    "D03": [
+      "38"
+    ],
+    "PR-D06": [
+      "38"
+    ],
+    "PR-D07": [
+      "38"
+    ],
+    "IC-R02": [
+      "38"
+    ],
+    "IC-R03": [
+      "38"
+    ],
+    "IC-R04": [
+      "38"
+    ],
+    "GC-H01": [
+      "38"
+    ],
+    "GC-H02": [
+      "38"
+    ]
+  },
+  "adoptionCriteriaRef": "../boundary38-adoption-preregistration.json",
+  "freezeRevision": 2
+}

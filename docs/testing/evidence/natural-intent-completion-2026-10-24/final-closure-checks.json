@@ -1,0 +1,76 @@
+{
+  "status": "PASS",
+  "checkedAt": "2026-10-23T21:42:05.905517+00:00",
+  "scope": "Final evidence plus current final report and two documentation indexes; no production code or actual model execution.",
+  "qualityGoalStatus": "NOT_MET",
+  "semanticGoalComplete": false,
+  "taskActual": 135,
+  "maximum": 144,
+  "unusedReservationReleased": 9,
+  "cumulativeActual": 1983,
+  "defaultVersion": "31",
+  "candidateDecisions": {
+    "37": "NOT_ADOPTED",
+    "38": "NOT_ADOPTED"
+  },
+  "entrypointChecks": [
+    {
+      "stage": "regression",
+      "validator": "validate-stage.mjs",
+      "closedExecutionRejected": true,
+      "modelCalls": 0
+    },
+    {
+      "stage": "heldout",
+      "validator": "validate-stage.mjs",
+      "closedExecutionRejected": true,
+      "modelCalls": 0
+    },
+    {
+      "stage": "works",
+      "validator": "validate-stage.mjs",
+      "closedExecutionRejected": true,
+      "modelCalls": 0
+    },
+    {
+      "stage": "completion",
+      "validator": "validate-completion-stage.mjs",
+      "closedExecutionRejected": true,
+      "modelCalls": 0
+    },
+    {
+      "stage": "boundary38-regression",
+      "validator": "validate-boundary38-stage.mjs",
+      "closedExecutionRejected": true,
+      "modelCalls": 0
+    },
+    {
+      "stage": "boundary38-heldout",
+      "validator": "validate-boundary38-next-stage.mjs",
+      "closedExecutionRejected": true,
+      "modelCalls": 0
+    },
+    {
+      "stage": "boundary38-works",
+      "validator": "validate-boundary38-works-stage.mjs",
+      "closedExecutionRejected": true,
+      "modelCalls": 0
+    }
+  ],
+  "traceCountBeforeAndAfter": 135,
+  "publicCredentialScan": {
+    "status": "NO_PATTERN_MATCHES",
+    "filesScanned": 540,
+    "matches": 0,
+    "paths": [],
+    "matchContentsPrinted": false,
+    "limitation": "Finite pattern scan, not a proof of absence of all sensitive data."
+  },
+  "h01UnblindedReview": {
+    "path": "docs/testing/evidence/natural-intent-completion-2026-10-24/scope38/known-risk/artifact-semantic-review-unblinded.json",
+    "sha256": "49e00622b9d327f486698b040adf66e3083dc338b154cbf8430ed91b6a4a3f59",
+    "originalAndPreUnblindCalibrationUnchanged": true
+  },
+  "modelCallsForClosureChecks": 0,
+  "repeatedProductTests": 0
+}

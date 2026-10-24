@@ -1,0 +1,92 @@
+{
+  "batch": "natural-material-responsibility-heldout-2026-10-24",
+  "status": "DRAFT",
+  "authorizationQuote": "用户本轮新增48次授权，留出阶段封顶20。",
+  "taskMaximumActualCalls": 48,
+  "taskPreviouslyActual": null,
+  "maximumNewActualCalls": 20,
+  "previousClosedActualCalls": 1789,
+  "oldClosedBalanceTransferred": 0,
+  "baselineVersion": "31",
+  "candidateVersions": [
+    "35"
+  ],
+  "versions": [
+    "31",
+    "35"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 8,
+    "PLAN": 0,
+    "EXECUTION": 12,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 8,
+    "PLAN": 0,
+    "EXECUTION": 12,
+    "REVIEW": 0
+  },
+  "generation": [],
+  "regressionGeneration": [],
+  "plan": [],
+  "confirmedPlanGeneration": [],
+  "execution": [],
+  "executionRepeats": 2,
+  "executionIncludeOriginal": true,
+  "confirmationMode": "PER_VERSION",
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "35": [
+      "35"
+    ]
+  },
+  "allowedJobs": [],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "order": "候选冻结后开启两道内部独立留出题，双版本增强后按同信息执行原始/31/35三臂，各两次；失败原件保留。",
+  "informationPolicy": "增强仅见原始提示词、普通context与实际绑定答复，不见executorMaterials或评分卡。ORIGINAL/31/35执行逐字接收相同普通背景和executorMaterials；复用作品必须核对完整原件、同题资料及模型参数。评分卡仅供内部逐源复核，本阶段REVIEW=0，不调用模型评审。增强阶段未附资料不等于执行阶段没有资料。",
+  "criteria": [
+    "原始/31/35逐字接收相同执行材料，比较事实、原要求、责任边界和必要修改。",
+    "增强不得将执行者可完成的查询或读取变成用户必须先补材料；也不能替用户决定保留事项。",
+    "三臂作品各两次，严重事实/意图/授权退步单列；持平不冒充收益，内部留出不冒充外部专业认证。"
+  ],
+  "stopConditions": [
+    "任务48次、本阶段20次和各phase上限同时执行；所有失败、协议修复和作品计数，禁止质量重试。",
+    "相同失败假设不靠更换版本号、同义指令或重复采样续跑；出现严重退步先定位责任与依据。",
+    "已关闭任务或阶段不得重新执行；是否采用独立根据目标收益与严重退步判断。"
+  ],
+  "reviews": [],
+  "reviewSystem": "",
+  "generationVersions": [
+    "31",
+    "35"
+  ],
+  "planVersions": [
+    "31",
+    "35"
+  ],
+  "executionArms": [
+    "ORIGINAL",
+    "V31",
+    "V35"
+  ],
+  "draftNotes": [
+    "独立代理先封存两题，候选冻结后才开启；两题双版本增强8次+三臂各两次作品12次。",
+    "候选正常生成和修复均计数；如失败触及上限立即停止，根预留4必须事先重新冻结分配，不自动扩大。"
+  ]
+}
