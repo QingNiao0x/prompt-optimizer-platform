@@ -1,0 +1,113 @@
+{
+  "batch": "natural-quality-state-2026-10-22",
+  "authorization": "USER_EXPLICIT_MAXIMUM_32_NEW_ACTUAL_CALLS",
+  "authorizationQuote": "授权新增最多32次实际调用",
+  "previousClosedActualCalls": 659,
+  "previousFormalLimits": {
+    "total": 682,
+    "baseline": 80,
+    "candidate": 602
+  },
+  "formalLimitsAfterAuthorization": {
+    "total": 714,
+    "baseline": 80,
+    "candidate": 634
+  },
+  "maximumNewActualCalls": 32,
+  "maximumCumulativeActualForThisBatch": 691,
+  "closedBalanceTransferred": 0,
+  "baselineCommit": "c77f63c8",
+  "baselineVersion": "4",
+  "candidateVersion": "6",
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 14,
+    "PLAN": 6,
+    "EXECUTION": 12,
+    "REVIEW": 0
+  },
+  "plannedPrimaryCalls": {
+    "GENERATION": 10,
+    "PLAN": 4,
+    "EXECUTION": 12,
+    "REVIEW": 0
+  },
+  "generation": [
+    "SUFFICIENT_JSON",
+    "VAGUE_REPORT",
+    "DELEGATED_PPT",
+    "MATERIAL_HANDOFF"
+  ],
+  "plan": [
+    "DELEGATED_PPT",
+    "PLAN_PURCHASE"
+  ],
+  "confirmedPlanGeneration": [
+    "PLAN_PURCHASE"
+  ],
+  "execution": [
+    "SUFFICIENT_JSON",
+    "VAGUE_REPORT",
+    "DELEGATED_PPT",
+    "PLAN_PURCHASE"
+  ],
+  "accountCreationAllowed": false,
+  "qualityRetriesAllowed": false,
+  "reviewJobs": [],
+  "criteria": [
+    "质量优先：完整保留目标、对象、格式、篇幅、并列否定条件、实际题答和明确权限；不添加固定条款或场景模板。",
+    "GENERATION的V4与V6采购对照复用同一份真实V4 Plan、同一题干及全部实际回答；完整答案/原始需求不删除，未知保持作用范围。",
+    "充分需求保留有效表达；开放需求补有帮助的具体内容/行动/交付，不用一般说明、额外作品或空模板充数。",
+    "委托设计不退回用户；已有回答落实到当前执行要求，未知只限制依赖部分，不将已完成澄清重新设为整体前提。",
+    "四类实际作品的RAW/V4/V6获得相同材料、模型、参数；采购RAW也获得完整相同用户答复。",
+    "从任务正确性、条件完整、事实边界、可执行性、编辑负担评价作品；有明确质量收益且无严重退步才采用，Token下降不抵消质量失败。",
+    "原件与所有失败保留，不按作品质量重试；同假设两候选仍有相同严重失败停止扩采，不叠加禁止词。",
+    "开发代理逐项核对，不宣称专业、双人或独立盲评，不关闭整体G1-G8。"
+  ],
+  "stopConditions": [
+    "总或阶段额度到达即停止，所有失败与重试计数，剩余次数闭批不转移",
+    "不按作品质量重试，不新增问法或模型采样到成功",
+    "相同严重失败若在同一假设两个候选持续出现，停止扩大采样并审查机制与证据",
+    "仅修改自然增强，本条完成后停止，不展开其他待办或发布操作"
+  ],
+  "status": "FROZEN",
+  "allowedJobs": [
+    "SUFFICIENT_JSON_V4_GEN",
+    "SUFFICIENT_JSON_V6_GEN",
+    "VAGUE_REPORT_V4_GEN",
+    "VAGUE_REPORT_V6_GEN",
+    "DELEGATED_PPT_V4_GEN",
+    "DELEGATED_PPT_V6_GEN",
+    "MATERIAL_HANDOFF_V4_GEN",
+    "MATERIAL_HANDOFF_V6_GEN",
+    "DELEGATED_PPT_V4_PLAN",
+    "DELEGATED_PPT_V6_PLAN",
+    "PLAN_PURCHASE_V4_PLAN",
+    "PLAN_PURCHASE_V6_PLAN",
+    "PLAN_PURCHASE_V4_PLAN_GEN",
+    "PLAN_PURCHASE_V6_PLAN_GEN",
+    "SUFFICIENT_JSON_RAW_EXEC",
+    "SUFFICIENT_JSON_V4_EXEC",
+    "SUFFICIENT_JSON_V6_EXEC",
+    "VAGUE_REPORT_RAW_EXEC",
+    "VAGUE_REPORT_V4_EXEC",
+    "VAGUE_REPORT_V6_EXEC",
+    "DELEGATED_PPT_RAW_EXEC",
+    "DELEGATED_PPT_V4_EXEC",
+    "DELEGATED_PPT_V6_EXEC",
+    "PLAN_PURCHASE_RAW_EXEC",
+    "PLAN_PURCHASE_V4_EXEC",
+    "PLAN_PURCHASE_V6_EXEC"
+  ],
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "commonPlanAnchorVersion": "4",
+  "qualityPriority": true
+}

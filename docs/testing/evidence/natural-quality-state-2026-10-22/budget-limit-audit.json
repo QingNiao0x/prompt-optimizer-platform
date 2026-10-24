@@ -1,0 +1,25 @@
+{
+  "priorAudit": "docs/testing/evidence/natural-utility-cost-2026-10-21/budget-limit-audit.json",
+  "priorAuditSha256": "0badda4e1a0cbfc33f5a4770062f35df381487d80ca511498f67a10610e5d735",
+  "authorizationQuote": "授权新增最多32次实际调用",
+  "priorFormal": {
+    "total": 682,
+    "baseline": 80,
+    "candidate": 602
+  },
+  "newMaximum": 32,
+  "formalAfter": {
+    "total": 714,
+    "baseline": 80,
+    "candidate": 634
+  },
+  "actualAfter": {
+    "total": 686,
+    "baseline": 70,
+    "candidate": 616
+  },
+  "currentBatchActual": 27,
+  "unusedClosed": 5,
+  "closedBalanceTransferred": 0,
+  "derivation": "682+32=714, candidate602+32=634; actual659+27=686, baseline actual70 fixed, candidate589+27=616."
+}

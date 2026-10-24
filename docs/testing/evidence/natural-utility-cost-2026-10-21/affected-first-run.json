@@ -1,0 +1,12 @@
+{
+  "source": "Observed Maven result in exec session 20373; original XML files were subsequently updated by the targeted rerun.",
+  "tests": 159,
+  "failures": 2,
+  "errors": 0,
+  "skipped": 0,
+  "realModelCalls": 0,
+  "failedCases": [
+    {"case": "NaturalEnhancementServiceTest.currentPlanAcceptsThreeQuestionsAndRejectsAFourthWithoutTruncating", "cause": "Existing baseline assertion required rejection at four, contradicting current eight-question generation guidance and unchanged 64-question protocol capacity."},
+    {"case": "OpenAiCompatibleNaturalPromptProviderTest.boundedRepairNamesMissingSourcesWithoutMergingSameTextAcrossDifferentQuestions", "cause": "Existing full V4 response fixture used the default version, which is now V5. Fixed the fixture version explicitly and added a separate V5 missing-source repair regression."}
+  ]
+}
