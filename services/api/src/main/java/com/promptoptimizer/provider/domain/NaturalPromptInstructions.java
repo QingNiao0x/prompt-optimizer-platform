@@ -9,7 +9,7 @@ package com.promptoptimizer.provider.domain;
 public final class NaturalPromptInstructions {
     /** 冻结第四版，供旧历史和明确成果的原始生成路径使用，不能随默认切换回改。 */
     public static final String VERSION = "4";
-    /** 默认版本在独立门控验收通过后切换；旧历史始终按保存版本重放。 */
+    /** 默认保留31，候选须先满足已确认的作品质量条件；旧历史始终按保存版本重放。 */
     public static final String CURRENT_VERSION = NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION;
 
     /** 已保存的自然版本继续使用各自冻结指导，不静默改换再次增强策略。 */
@@ -52,6 +52,7 @@ public final class NaturalPromptInstructions {
             case VERSION -> ENHANCE;
             case NaturalPromptRoutingRepairInstructions.VERSION, NaturalPromptRoutingRepairInstructions.ADVISORY_TIMING_VERSION,
                     NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION -> NaturalPromptRoutingRepairInstructions.ENHANCE;
+            case NaturalPromptContentQualityInstructions.VERSION -> NaturalPromptContentQualityInstructions.ENHANCE;
             case NaturalPromptCompletionGuidance.GUIDANCE_VERSION -> NaturalPromptCompletionGuidance.ENHANCE;
             case NaturalPromptCompletionGuidance.EXEMPLAR_VERSION -> NaturalPromptCompletionGuidance.ENHANCE_WITH_DEMONSTRATIONS;
             case NaturalPromptActionGuidance.GUIDANCE_VERSION -> NaturalPromptActionGuidance.ENHANCE;
@@ -93,7 +94,8 @@ public final class NaturalPromptInstructions {
             case "3" -> NaturalPromptInstructionsV3.PLAN;
             case VERSION -> PLAN;
             case NaturalPromptRoutingRepairInstructions.VERSION, NaturalPromptRoutingRepairInstructions.ADVISORY_TIMING_VERSION -> NaturalPromptRoutingRepairInstructions.PLAN;
-            case NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION -> NaturalPromptRoutingRepairInstructions.OWNED_PLAN;
+            case NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION, NaturalPromptContentQualityInstructions.VERSION
+                    -> NaturalPromptRoutingRepairInstructions.OWNED_PLAN;
             // 本轮只检验正文补全，不同时改变提问策略；已绑定题答仍进入同一生成和保护路径。
             case NaturalPromptCompletionGuidance.GUIDANCE_VERSION, NaturalPromptCompletionGuidance.EXEMPLAR_VERSION -> PLAN;
             case NaturalPromptActionGuidance.GUIDANCE_VERSION, NaturalPromptActionGuidance.EXEMPLAR_VERSION -> PLAN;

@@ -1,7 +1,7 @@
 {
   "engineering": "COMPLETED",
   "candidate": "41",
-  "candidateStatus": "READY_FOR_REVIEW_NOT_DEFAULT",
+  "candidateStatus": "NOT_ADOPTED_PENDING_QUALITY_EVIDENCE",
   "defaultVersion": "31",
   "defaultSwitched": false,
   "automaticApproval": {
@@ -10,7 +10,12 @@
     "reason": "现有评测只证明门控/状态修复，作品仍有术语和篇幅缺陷，未满足用户此前作品质量提升后再切默认条件。",
     "sourceChangedByRejectedAction": false
   },
-  "nextDecision": "用户可批准按门控和状态修复的独立范围切换，或继续保留31至作品质量达到原条件。",
+  "userDecision": {
+    "answer": "保留31，先满足原作品质量门槛",
+    "allowDefaultSwitch": false,
+    "acceptanceScope": "保留原作品质量门槛，门控与状态修复的定向验证不能替代实际作品质量验收。"
+  },
+  "nextDecision": "先在相同信息条件下证明实际作品质量提高、用户修改量减少且无新增严重退步，再评估默认切换；不按门控与状态修复的局部收益提前采用。",
   "productionDeployed": false,
   "realCalls": 51,
   "qualityGoalComplete": false

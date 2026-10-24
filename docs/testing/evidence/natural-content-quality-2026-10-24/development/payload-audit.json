@@ -1,0 +1,72 @@
+{
+  "purpose": "Risk evidence for the rejected command. Destination, entry point, cases and budgets are unchanged.",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "caseFileSha256": "2dac4ac7e291c55b7b55136abadc920895f2b6a19ed275fe29a00c6e03cce8f8",
+  "scope": "Development regression only, maximum 40 actual calls. Execution and model-review limits are zero.",
+  "cases": [
+    {
+      "id": "Q01",
+      "rawCharacters": 19,
+      "fileCount": 0,
+      "class": "Generic public AI-usage query; public extracts are executor-only."
+    },
+    {
+      "id": "E01",
+      "rawCharacters": 26,
+      "fileCount": 0,
+      "class": "Generic browser-cache explanation."
+    },
+    {
+      "id": "C01",
+      "rawCharacters": 26,
+      "fileCount": 0,
+      "class": "Generic backup comparison."
+    },
+    {
+      "id": "S01",
+      "rawCharacters": 35,
+      "fileCount": 0,
+      "class": "Three-number formatting task."
+    },
+    {
+      "id": "W01",
+      "rawCharacters": 46,
+      "fileCount": 0,
+      "class": "Synthetic read-and-wait task; no real source code."
+    },
+    {
+      "id": "M01",
+      "rawCharacters": 35,
+      "fileCount": 0,
+      "class": "Generic community-event design; no personal or organization data."
+    },
+    {
+      "id": "P01",
+      "rawCharacters": 72,
+      "fileCount": 0,
+      "class": "Synthetic event and meeting-room fixture."
+    },
+    {
+      "id": "R01",
+      "rawCharacters": 141,
+      "fileCount": 0,
+      "class": "Generic research-writing request; unspecified region, no patient or real research data."
+    }
+  ],
+  "checks": {
+    "allUploadedFilesEmpty": true,
+    "allContextDescriptionsEmpty": true,
+    "conversationDisabledAndEmpty": true,
+    "noActualPatientOrCustomerRecords": true,
+    "credentialPatternHits": 0,
+    "credentials": "Model credentials only in authentication headers. Synthetic-account password is used only for loopback login, never model JSON.",
+    "payloadConstruction": "Whitelisted business input only. Transport guard verifies the frozen cases and empty context; executor materials and acceptance cards are excluded."
+  },
+  "automaticApprovalPriorAttempt": {
+    "result": "REJECTED",
+    "actualCalls": 0,
+    "reason": "Concrete payload and external destination approval required."
+  },
+  "userAuthorization": "Real evaluations and self-selected counts previously authorized; explicit destination/payload confirmation is now pending after automatic rejection.",
+  "metadataCorrection": "Tool-written descriptive fields were corrected for console encoding; no frozen case or response was changed."
+}

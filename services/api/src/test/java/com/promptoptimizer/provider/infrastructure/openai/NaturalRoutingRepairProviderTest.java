@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.http.client.MockClientHttpRequest;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -69,9 +70,10 @@ class NaturalRoutingRepairProviderTest {
         server.verify();
     }
 
-    @Test
-    void zeroQuestionPlanStillGeneratesUsefulAdditions() throws Exception {
-        var input = input("请比较两种通勤方式。", List.of());
+    @ParameterizedTest
+    @ValueSource(strings = {"41", "42"})
+    void zeroQuestionPlanStillGeneratesUsefulAdditions(String version) throws Exception {
+        var input = input("请比较两种通勤方式。", List.of()).withStrategyVersion(version);
         expect(scope(input.rawPrompt(), "INHERENT"), NaturalPromptRoutingRepairInstructions.PREPARE, payload -> {});
         var plan = json.createObjectNode().put("summary", "按原范围比较，不需要用户决定检索步骤。");
         plan.set("questions", json.createArrayNode());
@@ -85,7 +87,7 @@ class NaturalRoutingRepairProviderTest {
                 .put("gap", "原文未说明比较结果包括什么").put("benefit", "让比较可直接使用");
         task.withObject("review").withArray("additionCoverage").addObject().put("index", 0)
                 .putArray("quotes").add("说明时间、换乘和费用方面的差异");
-        expect(writing, NaturalPromptRoutingRepairInstructions.ENHANCE, payload -> {});
+        expect(writing, NaturalPromptInstructions.enhancementInstruction(version), payload -> {});
         assertThat(provider.plan(input, result -> {
             result.taskUnderstanding().resolve(input).review().validatePlan(java.util.Set.of());
             return result;
@@ -94,26 +96,28 @@ class NaturalRoutingRepairProviderTest {
         server.verify();
     }
 
-    @Test
-    void allActualAnswersAndTheirBodyCoverageRemainMandatory() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"41", "42"})
+    void allActualAnswersAndTheirBodyCoverageRemainMandatory(String version) throws Exception {
         var answers = List.of(new PlanAnswer("place", "地点？", "青禾中心二层会议室"),
                 new PlanAnswer("date", "日期？", "日期保持原定，不能承诺提前"));
-        var input = input("请修改活动通知。", answers);
+        var input = input("请修改活动通知。", answers).withStrategyVersion(version);
         expect(scope(input.rawPrompt(), "INHERENT"), NaturalPromptRoutingRepairInstructions.PREPARE, payload -> {});
         String body = "请修改活动通知。地点为青禾中心二层会议室；日期保持原定，不能承诺提前。";
-        expect(writing(input, body), NaturalPromptRoutingRepairInstructions.ENHANCE, payload ->
+        expect(writing(input, body), NaturalPromptInstructions.enhancementInstruction(version), payload ->
                 assertThat(payload.path("actualAnswers").size()).isEqualTo(2));
         assertThat(provider.enhance(input, value -> checked(value, input)).optimizedPrompt()).contains(answers.get(1).answer());
         server.verify();
     }
 
-    @Test
-    void forgedEvidenceStillFailsInsteadOfFallingBackToRawText() throws Exception {
-        var input = input("请解释事务。", List.of());
+    @ParameterizedTest
+    @ValueSource(strings = {"41", "42"})
+    void forgedEvidenceStillFailsInsteadOfFallingBackToRawText(String version) throws Exception {
+        var input = input("请解释事务。", List.of()).withStrategyVersion(version);
         expect(scope(input.rawPrompt(), "INHERENT"), NaturalPromptRoutingRepairInstructions.PREPARE, payload -> {});
         var bad = writing(input, "请解释事务，并说明原子性。");
         ((ObjectNode) bad.path("taskUnderstanding").path("requirements").get(0).path("evidence").get(0)).put("quote", "未出现的原句");
-        expect(bad, NaturalPromptRoutingRepairInstructions.ENHANCE, payload -> {});
+        expect(bad, NaturalPromptInstructions.enhancementInstruction(version), payload -> {});
         expect(bad, null, payload -> {});
         assertThatThrownBy(() -> provider.enhance(input, value -> checked(value, input))).isInstanceOf(ProviderException.class);
         server.verify();
@@ -149,6 +153,22 @@ class NaturalRoutingRepairProviderTest {
     void planOwnershipChangeKeepsTheVerifiedBodyComponentIdentical() {
         assertThat(NaturalPromptInstructions.enhancementInstruction("41")).isEqualTo(NaturalPromptInstructions.enhancementInstruction("40"));
         assertThat(NaturalPromptInstructions.planningInstruction("41")).contains("决定权条件", "不足以提问");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"EXPLICIT", "INHERENT", "UNSPECIFIED"})
+    void contentCandidateUsesItsOwnWriterAndPreservesAdvisoryScope(String basis) throws Exception {
+        var input = input("请解释事务。", List.of()).withStrategyVersion("42");
+        var preparation = scope(input.rawPrompt(), basis);
+        ((ObjectNode) preparation.path("actions").get(0)).put("timing", "CONDITIONAL").put("condition", "得到后续指令时");
+        expect(preparation, NaturalPromptRoutingRepairInstructions.PREPARE, payload -> {});
+        expect(writing(input, "请解释事务，说明它怎样保证一组操作的一致执行。"), NaturalPromptContentQualityInstructions.ENHANCE,
+                payload -> assertThat(payload.path("rawPrompt").asText()).isEqualTo(input.rawPrompt()));
+        var draft = provider.enhance(input, value -> checked(value, input));
+        assertThat(draft.completedStages()).containsExactly(NaturalProcessing.Stage.SCOPE_ANALYSIS, NaturalProcessing.Stage.BODY_GENERATION);
+        assertThat(NaturalPromptInstructions.planningInstruction("42")).isEqualTo(NaturalPromptInstructions.planningInstruction("41"));
+        assertThat(NaturalPromptInstructions.CURRENT_VERSION).isEqualTo("31");
+        server.verify();
     }
 
     @ParameterizedTest

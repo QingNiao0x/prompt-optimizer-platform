@@ -1,0 +1,130 @@
+{
+  "batch": "natural-content-quality42-development-2026-10-24",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 96,
+  "maximumNewActualCalls": 40,
+  "taskPreviouslyActual": 0,
+  "previousClosedActualCalls": 2034,
+  "oldClosedBalanceTransferred": 0,
+  "versions": [
+    "31",
+    "41",
+    "42"
+  ],
+  "candidateVersions": [
+    "42"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 4096,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 32,
+    "PLAN": 8,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "generation": [
+    "Q01",
+    "E01",
+    "C01",
+    "S01",
+    "W01",
+    "M01",
+    "R01"
+  ],
+  "generationVersionsByCase": {
+    "Q01": [
+      "31",
+      "41",
+      "42"
+    ],
+    "E01": [
+      "42"
+    ],
+    "C01": [
+      "42"
+    ],
+    "S01": [
+      "42"
+    ],
+    "W01": [
+      "42"
+    ],
+    "M01": [
+      "42"
+    ],
+    "R01": [
+      "31",
+      "41",
+      "42"
+    ]
+  },
+  "regressionGeneration": [],
+  "plan": [
+    "Q01",
+    "P01"
+  ],
+  "planVersions": [
+    "42"
+  ],
+  "confirmedPlanGeneration": [
+    "Q01",
+    "P01"
+  ],
+  "execution": [],
+  "executionArms": [
+    "ORIGINAL",
+    "V31",
+    "V41",
+    "V42"
+  ],
+  "executionRepeats": 1,
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "41": [
+      "41"
+    ],
+    "42": [
+      "42"
+    ]
+  },
+  "allowedJobs": [
+    "Q01_V31_GEN",
+    "Q01_V41_GEN",
+    "Q01_V42_GEN",
+    "E01_V42_GEN",
+    "C01_V42_GEN",
+    "S01_V42_GEN",
+    "W01_V42_GEN",
+    "M01_V42_GEN",
+    "R01_V31_GEN",
+    "R01_V41_GEN",
+    "R01_V42_GEN",
+    "Q01_V42_PLAN",
+    "Q01_V42_PLAN_GEN",
+    "P01_V42_PLAN",
+    "P01_V42_PLAN_GEN"
+  ],
+  "prerequisiteStages": [],
+  "reviews": [],
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false,
+  "criteria": [
+    "充分需求及阅读后等待无新增成果，否定与真实题答完整保留",
+    "查询正文有实用的内容重点，局限和比较依据不压过任务内容",
+    "研究报告保留原任务，不因增强未见资料而断言资料不存在或改成填空方案",
+    "公开查询Plan零题；用户保留地点仅确认地点；回答后全部条件进入正文",
+    "失败及协议修复均计数，不做质量重试；先通过回归，再执行作品"
+  ]
+}

@@ -14,9 +14,10 @@ public final class NaturalPromptRoutingRepairInstructions {
     /** 41仅加强Plan对用户决定权的判断，正文与40逐字相同。 */
     public static final String OWNED_DECISIONS_VERSION = "41";
 
-    /** 两版共用同一正文与Plan指导，只隔离准备分类的路由处理。 */
+    /** 39—42复用范围路由；正文与Plan由各版本入口选择，旧版指导保持冻结。 */
     public static boolean supports(String version) {
-        return VERSION.equals(version) || ADVISORY_TIMING_VERSION.equals(version) || OWNED_DECISIONS_VERSION.equals(version);
+        return VERSION.equals(version) || ADVISORY_TIMING_VERSION.equals(version) || OWNED_DECISIONS_VERSION.equals(version)
+                || NaturalPromptContentQualityInstructions.VERSION.equals(version);
     }
 
     /** 准备分类继续描述回应范围；不再用该分类决定是否调用正文生成。 */

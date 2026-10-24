@@ -100,8 +100,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         if (!NaturalPromptInstructions.supports(input.strategyVersion())) throw invalid("自然链路版本不受支持");
         if (NaturalPromptRoutingRepairInstructions.supports(input.strategyVersion())) {
             var prepared = prepareScope(input, "prompt.optimize");
-            // 范围分类不再关闭正文生成。全文、实际题答和来源目录仍独立进入第四版协议并接受原覆盖保护。
-            return invoke(input, NaturalPromptRoutingRepairInstructions.ENHANCE, "prompt.optimize", null, null, null,
+            // 范围分类不再关闭正文生成。按版本选择正文指导，使42只改变写作方式；完整来源和原覆盖保护继续有效。
+            return invoke(input, NaturalPromptInstructions.enhancementInstruction(input.strategyVersion()), "prompt.optimize", null, null, null,
                     false, prepared.scope(), (body, metadata) -> {
                         try {
                             return validation.apply(new NaturalPromptDraft(requiredText(body, "optimizedPrompt"),
@@ -337,7 +337,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             try {
                 NaturalTaskScope scope = scopeReader.readValue(body);
                 return new ScopePreparation((NaturalPromptRoutingRepairInstructions.ADVISORY_TIMING_VERSION.equals(input.strategyVersion())
-                        || NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION.equals(input.strategyVersion()))
+                        || NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION.equals(input.strategyVersion())
+                        || NaturalPromptContentQualityInstructions.VERSION.equals(input.strategyVersion()))
                         ? scope.resolveAdvisory(input) : scope.resolve(input), metadata);
             } catch (IOException | IllegalArgumentException failure) {
                 throw invalid("任务动作与回应边界协议无效");
