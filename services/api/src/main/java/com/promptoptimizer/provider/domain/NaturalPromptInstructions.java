@@ -53,6 +53,7 @@ public final class NaturalPromptInstructions {
             case NaturalPromptRoutingRepairInstructions.VERSION, NaturalPromptRoutingRepairInstructions.ADVISORY_TIMING_VERSION,
                     NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION -> NaturalPromptRoutingRepairInstructions.ENHANCE;
             case NaturalPromptContentQualityInstructions.VERSION -> NaturalPromptContentQualityInstructions.ENHANCE;
+            case NaturalPromptGroundedCompletionInstructions.VERSION -> NaturalPromptGroundedCompletionInstructions.ENHANCE;
             case NaturalPromptCompletionGuidance.GUIDANCE_VERSION -> NaturalPromptCompletionGuidance.ENHANCE;
             case NaturalPromptCompletionGuidance.EXEMPLAR_VERSION -> NaturalPromptCompletionGuidance.ENHANCE_WITH_DEMONSTRATIONS;
             case NaturalPromptActionGuidance.GUIDANCE_VERSION -> NaturalPromptActionGuidance.ENHANCE;
@@ -94,7 +95,8 @@ public final class NaturalPromptInstructions {
             case "3" -> NaturalPromptInstructionsV3.PLAN;
             case VERSION -> PLAN;
             case NaturalPromptRoutingRepairInstructions.VERSION, NaturalPromptRoutingRepairInstructions.ADVISORY_TIMING_VERSION -> NaturalPromptRoutingRepairInstructions.PLAN;
-            case NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION, NaturalPromptContentQualityInstructions.VERSION
+            case NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION, NaturalPromptContentQualityInstructions.VERSION,
+                    NaturalPromptGroundedCompletionInstructions.VERSION
                     -> NaturalPromptRoutingRepairInstructions.OWNED_PLAN;
             // 本轮只检验正文补全，不同时改变提问策略；已绑定题答仍进入同一生成和保护路径。
             case NaturalPromptCompletionGuidance.GUIDANCE_VERSION, NaturalPromptCompletionGuidance.EXEMPLAR_VERSION -> PLAN;

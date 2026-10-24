@@ -104,10 +104,13 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             return invoke(input, NaturalPromptInstructions.enhancementInstruction(input.strategyVersion()), "prompt.optimize", null, null, null,
                     false, prepared.scope(), (body, metadata) -> {
                         try {
-                            return validation.apply(new NaturalPromptDraft(requiredText(body, "optimizedPrompt"),
-                                    NaturalPromptDraft.Framework.valueOf(requiredText(body, "framework")), metadata,
-                                    understanding(body, input)).withStages(List.of(
-                                            NaturalProcessing.Stage.SCOPE_ANALYSIS, NaturalProcessing.Stage.BODY_GENERATION)));
+                            String optimized = requiredText(body, "optimizedPrompt");
+                            var task = understanding(body, input);
+                            // 43在进入最终覆盖校验前拒绝待确认清单；旧版本不经过这一判断。
+                            MaterialVisibilityGuard.enforce(input, task, optimized);
+                            return validation.apply(new NaturalPromptDraft(optimized,
+                                    NaturalPromptDraft.Framework.valueOf(requiredText(body, "framework")), metadata, task)
+                                    .withStages(List.of(NaturalProcessing.Stage.SCOPE_ANALYSIS, NaturalProcessing.Stage.BODY_GENERATION)));
                         } catch (IllegalArgumentException failure) {
                             throw invalid("自然正文或框架标识无效");
                         }
@@ -338,7 +341,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 NaturalTaskScope scope = scopeReader.readValue(body);
                 return new ScopePreparation((NaturalPromptRoutingRepairInstructions.ADVISORY_TIMING_VERSION.equals(input.strategyVersion())
                         || NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION.equals(input.strategyVersion())
-                        || NaturalPromptContentQualityInstructions.VERSION.equals(input.strategyVersion()))
+                        || NaturalPromptContentQualityInstructions.VERSION.equals(input.strategyVersion())
+                        || NaturalPromptGroundedCompletionInstructions.VERSION.equals(input.strategyVersion()))
                         ? scope.resolveAdvisory(input) : scope.resolve(input), metadata);
             } catch (IOException | IllegalArgumentException failure) {
                 throw invalid("任务动作与回应边界协议无效");
@@ -533,6 +537,11 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             if (scope != null && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode scoped) {
                 scoped.set("taskScope", json.valueToTree(scope));
             }
+            // 资料状态只随43发送。它描述本次输入，不进入来源目录，也不改变31及更早版本的请求字节。
+            if (NaturalPromptGroundedCompletionInstructions.VERSION.equals(input.strategyVersion())
+                    && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode grounded) {
+                grounded.set("materialVisibility", json.valueToTree(MaterialVisibility.from(input)));
+            }
             if (suggestions != null && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode prepared) {
                 prepared.set("completionSuggestions", json.valueToTree(suggestions));
             }
@@ -625,6 +634,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                         else if ("plan.generate".equals(operation) && NaturalPromptStageInstructions.supports(input.strategyVersion())) {
                             repairHint = missing.phasePlanningRepairInstruction();
                         } else repairHint = missing.repairInstruction();
+                    } else if (retry && failure instanceof MaterialVisibilityGuard.UngroundedBody ungrounded) {
+                        repairHint = ungrounded.repairInstruction();
                     }
                     fail(operation, selection, failure, null, retry, attempt, started);
                     if (!retry) throw failure;
