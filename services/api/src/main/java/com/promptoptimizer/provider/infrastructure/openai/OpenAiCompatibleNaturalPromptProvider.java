@@ -106,8 +106,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                         try {
                             String optimized = requiredText(body, "optimizedPrompt");
                             var task = understanding(body, input);
-                            // 43在进入最终覆盖校验前拒绝待确认清单；旧版本不经过这一判断。
-                            MaterialVisibilityGuard.enforce(input, task, optimized);
+                            // 正文语义不由关键词或字符重合判定；继续交给原来源、题答和覆盖保护校验。
                             return validation.apply(new NaturalPromptDraft(optimized,
                                     NaturalPromptDraft.Framework.valueOf(requiredText(body, "framework")), metadata, task)
                                     .withStages(List.of(NaturalProcessing.Stage.SCOPE_ANALYSIS, NaturalProcessing.Stage.BODY_GENERATION)));
@@ -342,7 +341,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 return new ScopePreparation((NaturalPromptRoutingRepairInstructions.ADVISORY_TIMING_VERSION.equals(input.strategyVersion())
                         || NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION.equals(input.strategyVersion())
                         || NaturalPromptContentQualityInstructions.VERSION.equals(input.strategyVersion())
-                        || NaturalPromptGroundedCompletionInstructions.VERSION.equals(input.strategyVersion()))
+                        || NaturalPromptGroundedCompletionInstructions.VERSION.equals(input.strategyVersion())
+                        || NaturalPromptMultidimensionalInstructions.VERSION.equals(input.strategyVersion()))
                         ? scope.resolveAdvisory(input) : scope.resolve(input), metadata);
             } catch (IOException | IllegalArgumentException failure) {
                 throw invalid("任务动作与回应边界协议无效");
@@ -537,8 +537,9 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             if (scope != null && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode scoped) {
                 scoped.set("taskScope", json.valueToTree(scope));
             }
-            // 资料状态只随43发送。它描述本次输入，不进入来源目录，也不改变31及更早版本的请求字节。
-            if (NaturalPromptGroundedCompletionInstructions.VERSION.equals(input.strategyVersion())
+            // 只向43/44提供可确定的可见性和来源身份；不把语义猜测注册为用户事实。
+            if ((NaturalPromptGroundedCompletionInstructions.VERSION.equals(input.strategyVersion())
+                    || NaturalPromptMultidimensionalInstructions.VERSION.equals(input.strategyVersion()))
                     && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode grounded) {
                 grounded.set("materialVisibility", json.valueToTree(MaterialVisibility.from(input)));
             }
@@ -634,8 +635,6 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                         else if ("plan.generate".equals(operation) && NaturalPromptStageInstructions.supports(input.strategyVersion())) {
                             repairHint = missing.phasePlanningRepairInstruction();
                         } else repairHint = missing.repairInstruction();
-                    } else if (retry && failure instanceof MaterialVisibilityGuard.UngroundedBody ungrounded) {
-                        repairHint = ungrounded.repairInstruction();
                     }
                     fail(operation, selection, failure, null, retry, attempt, started);
                     if (!retry) throw failure;

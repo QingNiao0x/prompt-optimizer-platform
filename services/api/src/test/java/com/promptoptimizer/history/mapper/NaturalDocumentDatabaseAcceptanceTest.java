@@ -157,7 +157,8 @@ class NaturalDocumentDatabaseAcceptanceTest {
                 .andExpect(jsonPath("$.data.sections").doesNotExist())
                 .andExpect(jsonPath("$.data.confirmedPlanAnswers").doesNotExist())
                 .andExpect(jsonPath("$.data.taskUnderstanding").doesNotExist())
-                .andExpect(jsonPath("$.data.chainVersion").value("2"))
+                // 新请求按当前默认版本生成；旧版本兼容由本类保存版本的夹具单独验证。
+                .andExpect(jsonPath("$.data.chainVersion").value(com.promptoptimizer.provider.domain.NaturalPromptInstructions.CURRENT_VERSION))
                 .andReturn().getResponse().getContentAsString(java.nio.charset.StandardCharsets.UTF_8);
         var result = json.readTree(response).path("data");
         UUID id = UUID.fromString(result.path("recordId").asText());

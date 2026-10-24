@@ -24,7 +24,7 @@ class MaterialVisibilityTest {
 
         var absent = MaterialVisibility.from(input("没有相关资料，请写一份社区活动建议。", null, List.of()));
         assertThat(absent.requestMaterials()).isEqualTo(MaterialVisibility.State.EXECUTION_ONLY);
-        assertThat(absent.sources().getFirst().state()).isEqualTo(MaterialVisibility.State.USER_ABSENT);
+        assertThat(absent.sources().getFirst().state()).isEqualTo(MaterialVisibility.State.USER_STATED);
     }
 
     @Test
@@ -36,10 +36,33 @@ class MaterialVisibilityTest {
         assertThat(visibility.requestMaterials()).isEqualTo(MaterialVisibility.State.VISIBLE_NOW);
         assertThat(visibility.sources()).extracting(MaterialVisibility.SourceState::sourceId, MaterialVisibility.SourceState::state)
                 .contains(org.assertj.core.groups.Tuple.tuple("context.fileSnippets.0", MaterialVisibility.State.VISIBLE_NOW),
-                        org.assertj.core.groups.Tuple.tuple("actualAnswers.0", MaterialVisibility.State.USER_OPEN));
+                        org.assertj.core.groups.Tuple.tuple("actualAnswers.0", MaterialVisibility.State.BOUND_ANSWER));
     }
 
     private static NaturalPromptInput input(String raw, ContextSnapshot context, List<PlanAnswer> answers) {
         return new NaturalPromptInput(raw, context, answers, List.of(), List.of(), "fixture");
+    }
+
+    @Test
+    void absenceWordsDoNotEraseNegationOrConditionalScope() {
+        for (String raw : List.of("并非没有资料，请阅读后分析。", "如果无法访问，则只处理公开部分。")) {
+            assertThat(MaterialVisibility.from(input(raw, null, List.of())).sources().getFirst().state().name())
+                    .isEqualTo("USER_STATED");
+        }
+    }
+
+    @Test
+    void questionWordingCannotTurnAnAffirmativeAnswerIntoAbsence() {
+        var value = MaterialVisibility.from(input("请分析资料", null,
+                List.of(new PlanAnswer("access", "是否无权访问？", "有权限，资料在附件里"))));
+        assertThat(value.sources().getLast().state().name()).isEqualTo("BOUND_ANSWER");
+    }
+
+    @Test
+    void assistantSuggestionsNeverBecomeUserStatements() {
+        var input = new NaturalPromptInput("请整理需求", null, List.of(),
+                List.of(new com.promptoptimizer.enhancement.dto.ConversationMessage("assistant", "建议预算5000元")),
+                List.of(), "fixture");
+        assertThat(MaterialVisibility.from(input).sources().getLast().state().name()).isEqualTo("ASSISTANT_SUGGESTION");
     }
 }

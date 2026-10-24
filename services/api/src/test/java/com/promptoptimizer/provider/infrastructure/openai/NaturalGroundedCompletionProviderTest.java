@@ -89,7 +89,7 @@ class NaturalGroundedCompletionProviderTest {
             assertThat(payload.path("materialVisibility").path("requestMaterials").asText())
                     .isEqualTo(MaterialVisibility.State.VISIBLE_NOW.name());
             assertThat(states(payload)).containsEntry("context.fileSnippets.0", "VISIBLE_NOW")
-                    .containsEntry("actualAnswers.0", "USER_OPEN");
+                    .containsEntry("actualAnswers.0", "BOUND_ANSWER");
         });
         assertThat(provider.enhance(input, value -> checked(value, input)).optimizedPrompt()).contains("青禾中心二层会议室");
         server.verify();
@@ -100,44 +100,56 @@ class NaturalGroundedCompletionProviderTest {
         var absent = input("没有相关资料，请写一份社区活动建议。", null, List.of());
         String absentBody = "请写一份社区活动建议。目前没有相关资料，可提出拟议做法，不编造本社区现状。";
         expect(scope(absent.rawPrompt(), "UNSPECIFIED"), NaturalPromptRoutingRepairInstructions.PREPARE, payload ->
-                assertThat(states(payload)).containsEntry("rawPrompt", "USER_ABSENT"));
+                assertThat(states(payload)).containsEntry("rawPrompt", "USER_STATED"));
         expect(writing(absent, absentBody), NaturalPromptGroundedCompletionInstructions.ENHANCE, payload -> {});
         assertThat(provider.enhance(absent, value -> checked(value, absent)).optimizedPrompt()).contains("没有相关资料");
         server.verify();
     }
 
     @Test
-    void checklistLeadAndUngroundedAdditionAreRejectedWithoutChangingTheDefault() throws Exception {
-        var input = input("请帮我查询全球使用AI最多的职业/行业", null, List.of());
-        var checklist = writing(input, "请先补充统计口径。然后再查询职业和行业。");
-        expect(scope(input.rawPrompt(), "INHERENT"), NaturalPromptRoutingRepairInstructions.PREPARE, payload -> {});
-        expect(checklist, NaturalPromptGroundedCompletionInstructions.ENHANCE, payload -> {});
-        expect(checklist, null, payload -> {});
-        assertThatThrownBy(() -> provider.enhance(input, value -> checked(value, input))).isInstanceOf(ProviderException.class);
+    void unknownFromProjectContextCanRemainInThePrompt() throws Exception {
+        var context = new ContextSnapshot("数据保留期限待确认", List.of(), List.of(), List.of(),
+                List.of(), List.of(), List.of(), "1");
+        var input = input("请根据材料整理存储要求。", context, List.of());
+        String body = "请根据材料整理存储要求。数据保留期限待确认，保留其他已有要求。";
+        var response = writing(input, body);
+        ((ObjectNode) response.path("taskUnderstanding")).set("openDecisions", json.valueToTree(List.of(
+                new NaturalTaskUnderstanding.OpenDecision("数据保留期限待确认", "影响删除策略", ""))));
+        expect(scope(input.rawPrompt(), "INHERENT"), null, payload -> {});
+        expect(response, null, payload -> {});
+        assertThat(provider.enhance(input, value -> checked(value, input)).optimizedPrompt()).isEqualTo(body);
         server.verify();
     }
 
     @Test
-    void additionMustCiteAnObjectFromTheVisibleInput() throws Exception {
+    void forgedSourceStillFailsTheExistingProtection() throws Exception {
         var input = input("请比较两种通勤方式。", null, List.of());
-        var response = withAddition(writing(input, "请比较两种通勤方式，说明时间和费用。"), "明确统计口径和资料边界", "说明时间和费用");
-        expect(scope(input.rawPrompt(), "INHERENT"), NaturalPromptRoutingRepairInstructions.PREPARE, payload -> {});
-        expect(response, NaturalPromptGroundedCompletionInstructions.ENHANCE, payload -> {});
+        var response = writing(input, "请比较两种通勤方式，说明时间和费用。");
+        ((ObjectNode) response.path("taskUnderstanding").path("requirements").get(0).path("evidence").get(0))
+                .put("quote", "用户从未提供的授权");
+        expect(scope(input.rawPrompt(), "INHERENT"), null, payload -> {});
+        expect(response, null, payload -> {});
         expect(response, null, payload -> {});
         assertThatThrownBy(() -> provider.enhance(input, value -> checked(value, input))).isInstanceOf(ProviderException.class);
         server.verify();
     }
 
     @Test
-    void openDecisionThatTheUserDidNotWriteIsKeptOutOfTheCopiedPrompt() throws Exception {
-        var drifted = input("请比较两种通勤方式。", null, List.of());
-        var decision = writing(drifted, "请比较两种通勤方式。必须先选定唯一统计视角。");
-        ((ObjectNode) decision.path("taskUnderstanding")).set("openDecisions", json.valueToTree(List.of(
-                new NaturalTaskUnderstanding.OpenDecision("必须先选定唯一统计视角", "会改变比较范围", ""))));
-        expect(scope(drifted.rawPrompt(), "INHERENT"), NaturalPromptRoutingRepairInstructions.PREPARE, payload -> {});
-        expect(decision, null, payload -> {});
-        expect(decision, null, payload -> {});
-        assertThatThrownBy(() -> provider.enhance(drifted, value -> checked(value, drifted))).isInstanceOf(ProviderException.class);
+    void multidimensionalCandidateKeepsFullContextAndUsesTheSamePlanBoundary() throws Exception {
+        var context = new ContextSnapshot("附件包含设备报价", List.of(), List.of(), List.of(),
+                List.of(), List.of(), List.of(), "1");
+        var input = input("请比较方案。", context, List.of()).withStrategyVersion("44");
+        String body = "请比较方案，结合附件中的设备报价计算使用成本并给出建议。";
+        expect(scope(input.rawPrompt(), "INHERENT"), null, payload -> {});
+        expect(withAddition(writing(input, body), "结合报价计算使用成本", "计算使用成本"),
+                NaturalPromptInstructions.enhancementInstruction("44"), payload -> {
+                    assertThat(payload.path("context").path("customDescription").asText()).isEqualTo("附件包含设备报价");
+                    assertThat(payload.path("materialVisibility").path("requestMaterials").asText()).isEqualTo("VISIBLE_NOW");
+                });
+        assertThat(provider.enhance(input, value -> checked(value, input)).completedStages())
+                .containsExactly(NaturalProcessing.Stage.SCOPE_ANALYSIS, NaturalProcessing.Stage.BODY_GENERATION);
+        assertThat(NaturalPromptInstructions.planningInstruction("44")).isEqualTo(NaturalPromptInstructions.planningInstruction("41"));
+        assertThat(NaturalPromptInstructions.CURRENT_VERSION).isEqualTo("31");
         server.verify();
     }
 
@@ -146,6 +158,27 @@ class NaturalGroundedCompletionProviderTest {
         payload.path("materialVisibility").path("sources").forEach(source ->
                 states.put(source.path("sourceId").asText(), source.path("state").asText()));
         return states;
+    }
+
+    @Test
+    void legitimateComparisonLanguageIsNotAProtocolError() throws Exception {
+        var input = input("请比较两地就业情况。", null, List.of());
+        String body = "请比较两地就业情况并说明统计口径，给出有依据的主要差异。";
+        expect(scope(input.rawPrompt(), "INHERENT"), null, payload -> {});
+        expect(writing(input, body), null, payload -> {});
+        assertThat(provider.enhance(input, value -> checked(value, input)).optimizedPrompt()).isEqualTo(body);
+        server.verify();
+    }
+
+    @Test
+    void usefulParaphraseDoesNotNeedTwoLiteralCharactersInCommon() throws Exception {
+        var input = input("比选通勤方案", null, List.of());
+        String body = "比选通勤方案，核对单次收费与使用频次，计算全年总额。";
+        var response = withAddition(writing(input, body), "核对单次收费与使用频次，计算全年总额", "计算全年总额");
+        expect(scope(input.rawPrompt(), "INHERENT"), null, payload -> {});
+        expect(response, null, payload -> {});
+        assertThat(provider.enhance(input, value -> checked(value, input)).optimizedPrompt()).isEqualTo(body);
+        server.verify();
     }
 
     private NaturalPromptInput input(String raw, ContextSnapshot context, List<PlanAnswer> answers) {
@@ -201,9 +234,6 @@ class NaturalGroundedCompletionProviderTest {
             String user = requestJson.path("messages").get(1).path("content").asText();
             JsonNode payload = json.readTree(user.substring(user.indexOf('{')));
             String system = requestJson.path("messages").get(0).path("content").asText();
-            if (system.contains("上次响应未满足协议")) {
-                assertThat(system).contains("materialVisibility为EXECUTION_ONLY");
-            }
             check.accept(payload);
         }).andRespond(withSuccess(envelope, MediaType.APPLICATION_JSON));
     }

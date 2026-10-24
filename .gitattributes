@@ -1,5 +1,7 @@
 # 统一换行符，避免 Windows 与 Linux 之间的 CRLF/LF 差异造成噪音 diff。
 * text=auto
+# 随应用发布的离线 IP 城市库按原始二进制保存，避免换行转换损坏索引。
+services/api/src/main/resources/geoip/*.xdb binary
 *.bat text eol=crlf
 *.cmd text eol=crlf
 *.ps1 text eol=crlf
@@ -55,3 +57,4 @@ docs/testing/evidence/remove-example-reference-2026-10-22/*.dumpstream -text -wh
 docs/testing/evidence/remove-example-reference-2026-10-22/outdated-edit-expectation-*.md -text -whitespace
 # 自然增强42的调用、作品及冻结清单保留原始字节，避免提交转换换行后哈希失效。
 docs/testing/evidence/natural-content-quality-2026-10-24/** -text -whitespace
+docs/testing/evidence/natural-multidimensional-2026-10-24/** -text -whitespace

@@ -5,8 +5,8 @@ import java.util.List;
 
 /**
  * 本次优化请求的资料可见性，只由服务端根据已允许输入计算。
- * 没附文件表示优化时未见，不表示现实没有；用户明确写出的缺失或无权才标为用户缺失。
- * 模型只能读取该目录，不能改写状态或把未见材料登记成待确认事实。
+ * 没附文件只表示优化时未见；目录不解释否定、条件或题答含义，不推断现实缺失或确认。
+ * 来源身份来自服务端，事实状态仍须结合对应原文的对象、条件及确定程度理解。
  *
  * @author QingNiao
  * @since 0.1.0
@@ -21,12 +21,12 @@ public record MaterialVisibility(State requestMaterials, List<SourceState> sourc
         VISIBLE_NOW,
         /** 优化时没有项目上下文；下游执行时仍可能检索或阅读，不能写成现实缺失。 */
         EXECUTION_ONLY,
-        /** 用户原句已经写明没有、无权或不存在，只限制依赖该事实的部分。 */
-        USER_ABSENT,
-        /** 服务端绑定的真实题答，按原对象保留，不再打开为新的待确认。 */
-        USER_OPEN,
+        /** 服务端绑定的真实题答；回答可能是未知或部分确认，不代表参数已确定。 */
+        BOUND_ANSWER,
         /** 用户自己的原话或讨论，决定目标和限制，但没有另作缺失判定。 */
-        USER_STATED
+        USER_STATED,
+        /** 既有助手建议；不具有用户确认、事实或授权的效力。 */
+        ASSISTANT_SUGGESTION
     }
 
     /** 一条来源的服务端状态；不重复携带原文，避免目录本身变成第二份事实。 */
@@ -44,20 +44,13 @@ public record MaterialVisibility(State requestMaterials, List<SourceState> sourc
         for (NaturalTaskSource source : input.taskSources()) {
             labels.add(new SourceState(source.id(), switch (source.kind()) {
                 case PROJECT_CONTEXT -> State.VISIBLE_NOW;
-                case BOUND_PLAN_ANSWER -> explicitAbsence(source.text()) ? State.USER_ABSENT : State.USER_OPEN;
-                case ORIGINAL_REQUEST, USER_CONVERSATION -> explicitAbsence(source.text()) ? State.USER_ABSENT : State.USER_STATED;
-                case ASSISTANT_CONVERSATION -> State.USER_STATED;
+                // 完整题答包含题干，不能用其中的缺失词判断回答，更不能抹去条件或否定。
+                case BOUND_PLAN_ANSWER -> State.BOUND_ANSWER;
+                case ORIGINAL_REQUEST, USER_CONVERSATION -> State.USER_STATED;
+                case ASSISTANT_CONVERSATION -> State.ASSISTANT_SUGGESTION;
             }));
         }
         return new MaterialVisibility(visible ? State.VISIBLE_NOW : State.EXECUTION_ONLY, List.copyOf(labels));
     }
 
-    /**
-     * 只认用户已经写出的缺失或无权，不用“未上传”或“尚未确定”推断现实没有资料。
-     * 短语保持完整，避免把普通否定或“不存在唯一答案”误标成资料缺失。
-     */
-    static boolean explicitAbsence(String text) {
-        return text != null && (text.contains("没有相关资料") || text.contains("没有资料")
-                || text.contains("无权访问") || text.contains("无法访问") || text.contains("没有权限"));
-    }
 }
