@@ -80,11 +80,14 @@ test('直接模式：选择不上传，确认隐私后单图提取，编辑复�
   expect(state.uploads).toBe(0); expect(state.extracts).toBe(0);
   await pane(page, '设置');
   await expect(page.getByRole('button', { name: '提取参考图提示词' })).toBeDisabled();
-  await expect(page.getByText('请先勾选图片区的“我已检查图片隐私”确认框，再生成提示词。', { exact: true })).toBeVisible();
-  await pane(page, '图片');
+  await expect(page.getByText('请先勾选“我已检查图片隐私”确认框，再生成提示词。', { exact: true })).toBeVisible();
+  await expect(page.locator('[data-column="settings"] .consent-panel')).toContainText('待确认');
+  await page.screenshot({ path: testInfo.outputPath('image-consent-pending.png'), fullPage: true, animations: 'disabled' });
   await page.locator('.upload-consent').click();
-  await pane(page, '设置'); await expect(page.getByRole('button', { name: '提取参考图提示词' })).toBeEnabled();
-  await expect(page.getByText('请先勾选图片区的“我已检查图片隐私”确认框，再生成提示词。', { exact: true })).not.toBeVisible();
+  await expect(page.getByRole('button', { name: '提取参考图提示词' })).toBeEnabled();
+  await expect(page.locator('.consent-panel')).toContainText('已确认');
+  await expect(page.getByText('请先勾选“我已检查图片隐私”确认框，再生成提示词。', { exact: true })).not.toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath('image-consent-confirmed.png'), fullPage: true, animations: 'disabled' });
   await page.getByRole('button', { name: '提取参考图提示词' }).click();
   await expect(page.locator('.prompt-text')).toContainText('蓝色圆形');
   expect(state.plans).toBe(0); expect(state.uploads).toBe(1); expect(state.task.creationIntent).toBe('');

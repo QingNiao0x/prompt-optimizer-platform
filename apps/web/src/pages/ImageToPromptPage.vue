@@ -134,7 +134,6 @@ onBeforeUnmount(() => { active = false; store.cancelPending(); });
           <p v-if="file.asset" class="hint">{{ file.asset.processing.join('；') }}。临时图片保留约一小时。</p><p v-else class="hint">仅本地预览，尚未上传。</p>
         </article>
         <ElAlert v-if="!creation && files.length > 1" title="直接增强只使用一张图，请移除多余参考图。" type="warning" :closable="false" />
-        <ElCheckbox v-if="files.length" v-model="consent" :disabled="busy" class="upload-consent">我已检查图片隐私，同意点击操作后将所选图片发送至平台后端与所选模型服务。</ElCheckbox>
         <p class="hint">原图使用私有临时存储，不进入长期历史；历史中的文字与分析摘要也可能包含图片内容，请自行核对。无需单独 OCR 服务。</p>
         <div class="analysis-section"><h3>{{ plan ? '本次 Plan 的视觉分析' : result ? '已生成结果的视觉分析' : '视觉分析' }}</h3>
           <p v-if="!analysis.length" class="hint">{{ creation && !files.length ? '纯文字创作不进行图片分析。' : '实际分析结果返回后显示，文件预览不代表已识图。' }}</p>
@@ -155,6 +154,11 @@ onBeforeUnmount(() => { active = false; store.cancelPending(); });
         <label v-if="creation" class="field"><span>画面必须出现的文字（选填，逐字保留）</span><ElInput v-model="exactText" type="textarea" :rows="2" maxlength="2000" :disabled="busy" placeholder="单独填写标题、卡片文字等，不与风格选择混在一起。" aria-label="画面指定文案" /></label>
         <label v-if="creation" class="field"><span>主动补充项目上下文（选填）</span><ElInput v-model="context" type="textarea" :rows="2" maxlength="6000" :disabled="busy" placeholder="只填写本次需要的品牌规范、产品事实或设计约束；不会自动读取源码。" aria-label="图像项目上下文" /></label>
         <div class="output-fields"><label class="field"><span>提示词语言</span><ElSelect v-model="language" :disabled="busy" aria-label="提示词语言"><ElOption label="中文" value="ZH" /><ElOption label="英文" value="EN" /></ElSelect></label><label class="field"><span>下游绘图工具</span><ElInput v-model="targetTool" maxlength="100" :disabled="busy" aria-label="下游绘图工具" placeholder="通用文生图" /></label></div>
+        <!-- 确认与生成操作放在同一区域，桌面和窄屏都不必回到图片预览下寻找勾选项。 -->
+        <section v-if="files.length" class="consent-panel" :class="{ 'is-confirmed': consent }" aria-labelledby="image-consent-title">
+          <div class="consent-heading"><h3 id="image-consent-title">生成前请确认图片隐私</h3><ElTag size="small" :type="consent ? 'success' : 'warning'" effect="plain">{{ consent ? '已确认' : '待确认' }}</ElTag></div>
+          <ElCheckbox v-model="consent" :disabled="busy" class="upload-consent"><strong>我已检查图片隐私</strong>，同意点击操作后将所选图片发送至平台后端与所选模型服务。</ElCheckbox>
+        </section>
         <ElButton type="primary" class="primary-action" :loading="busy && phase !== 'SAVING'" :disabled="!canStart" @click="start">{{ creation ? '梳理创作意图' : '提取参考图提示词' }}</ElButton>
         <p v-if="phaseLabel" role="status" class="hint">{{ phaseLabel }}</p>
         <p v-if="!busy && startDisabledReason && startDisabledReason !== modelInputError" role="status" class="hint start-disabled-reason">{{ startDisabledReason }}</p>
@@ -203,8 +207,17 @@ p { margin: 8px 0; line-height: 1.8; overflow-wrap: anywhere; }
 .start-disabled-reason { color: var(--warning); }
 .reference-card { margin: 16px 0; padding: 10px; border: 1px solid var(--line-subtle); border-radius: var(--radius-sm); }
 .reference-card img { display: block; max-width: 100%; max-height: 260px; margin: auto; object-fit: contain; border-radius: var(--radius-sm); }
-.reference-meta span { overflow-wrap: anywhere; min-width: 0; } .upload-consent { height: auto; align-items: flex-start; white-space: normal; margin: 12px 0; }
-.upload-consent :deep(.el-checkbox__label) { white-space: normal; line-height: 1.6; } .upload-consent :deep(.el-checkbox__input) { margin-top: 4px; }
+.reference-meta span { overflow-wrap: anywhere; min-width: 0; }
+.consent-panel { margin-top: 18px; padding: 14px; border: 1px solid var(--warning); border-radius: var(--radius-sm); background: var(--orange-soft); }
+.consent-panel.is-confirmed { border-color: var(--success); background: var(--green-soft); }
+.consent-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.consent-heading h3 { margin: 0; color: var(--ink-strong); font-size: 14px; }
+.upload-consent { width: 100%; height: auto; align-items: flex-start; white-space: normal; margin: 12px 0 0; }
+.upload-consent :deep(.el-checkbox__label) { white-space: normal; line-height: 1.65; font-size: 14px; color: var(--ink-strong); padding-left: 10px; }
+.upload-consent :deep(.el-checkbox__input) { margin-top: 2px; }
+.upload-consent :deep(.el-checkbox__inner) { width: 20px; height: 20px; border-width: 2px; }
+.upload-consent :deep(.el-checkbox__inner::after) { left: 6px; top: 2px; }
+.upload-consent :deep(.el-checkbox__input:not(.is-checked):not(.is-disabled) .el-checkbox__inner) { border-color: var(--warning); background: var(--surface-elevated); }
 .analysis-section { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line-subtle); } .observation { margin-top: 12px; }
 .observation > div { display: flex; gap: 8px; align-items: center; } .observation small { color: var(--ink-muted); }
 .mode-descriptions { padding: 10px 12px; background: var(--accent-soft); border-radius: var(--radius-sm); font-size: 13px; }

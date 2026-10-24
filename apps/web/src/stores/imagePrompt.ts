@@ -61,7 +61,7 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
     if (modelInputError.value) return modelInputError.value;
     if (mode.value === 'REFERENCE_RECONSTRUCTION' && files.value.length !== 1) return '请先选择一张参考图片。';
     if (mode.value === 'CUSTOM_CREATION' && !creationIntent.value.trim()) return '请先填写新图创作构想。';
-    if (files.value.length && !consent.value) return '请先勾选图片区的“我已检查图片隐私”确认框，再生成提示词。';
+    if (files.value.length && !consent.value) return '请先勾选“我已检查图片隐私”确认框，再生成提示词。';
     return '';
   });
   const canStart = computed(() => !startDisabledReason.value);
