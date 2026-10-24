@@ -13,6 +13,7 @@ import com.promptoptimizer.common.logging.ModelCallLogger;
 import com.promptoptimizer.common.logging.ModelTokenUsageReader;
 import com.promptoptimizer.enhancement.domain.PlanQuestion;
 import com.promptoptimizer.enhancement.domain.ProviderMetadata;
+import com.promptoptimizer.enhancement.domain.NaturalProcessing;
 import com.promptoptimizer.provider.domain.*;
 import com.promptoptimizer.provider.service.NaturalPromptProvider;
 import com.promptoptimizer.provider.service.PlatformModelCatalog;
@@ -97,6 +98,21 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     @Override
     public <T> T enhance(NaturalPromptInput input, Function<NaturalPromptDraft, T> validation) {
         if (!NaturalPromptInstructions.supports(input.strategyVersion())) throw invalid("自然链路版本不受支持");
+        if (NaturalPromptRoutingRepairInstructions.supports(input.strategyVersion())) {
+            var prepared = prepareScope(input, "prompt.optimize");
+            // 范围分类不再关闭正文生成。全文、实际题答和来源目录仍独立进入第四版协议并接受原覆盖保护。
+            return invoke(input, NaturalPromptRoutingRepairInstructions.ENHANCE, "prompt.optimize", null, null, null,
+                    false, prepared.scope(), (body, metadata) -> {
+                        try {
+                            return validation.apply(new NaturalPromptDraft(requiredText(body, "optimizedPrompt"),
+                                    NaturalPromptDraft.Framework.valueOf(requiredText(body, "framework")), metadata,
+                                    understanding(body, input)).withStages(List.of(
+                                            NaturalProcessing.Stage.SCOPE_ANALYSIS, NaturalProcessing.Stage.BODY_GENERATION)));
+                        } catch (IllegalArgumentException failure) {
+                            throw invalid("自然正文或框架标识无效");
+                        }
+                    });
+        }
         if (usesAdvisoryScope(input.strategyVersion())) {
             var prepared = prepareScope(input, "prompt.optimize");
             // response只描述回应范围，不描述执行就绪度。即使准备错分，也继续依据完整原文写作并校验覆盖。
@@ -130,7 +146,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             }
             if (NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION.equals(input.strategyVersion())) {
                 // 明确成果没有新增写作变量：复用冻结4的全部业务输入、system、解析和保护，历史版本由应用层记录31。
-                return enhance(input.withStrategyVersion(NaturalPromptInstructions.VERSION), validation);
+                return enhance(input.withStrategyVersion(NaturalPromptInstructions.VERSION), draft -> validation.apply(
+                        draft.withStages(List.of(NaturalProcessing.Stage.SCOPE_ANALYSIS, NaturalProcessing.Stage.BODY_GENERATION))));
             }
             if (NaturalPromptRelationalInstructions.supports(input.strategyVersion())
                     || NaturalPromptExecutionBoundaryInstructions.VERSION.equals(input.strategyVersion())) {
@@ -175,7 +192,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             try {
                 return validation.apply(new NaturalPromptDraft(requiredText(body, "optimizedPrompt"),
                         NaturalPromptDraft.Framework.valueOf(requiredText(body, "framework")), metadata,
-                        understanding(body, input)));
+                        understanding(body, input)).withStages(List.of(NaturalProcessing.Stage.BODY_GENERATION)));
             } catch (IllegalArgumentException failure) {
                 throw invalid("自然正文或框架标识无效");
             }
@@ -256,6 +273,20 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     @Override
     public <T> T plan(NaturalPromptInput input, Function<PlanningProviderResponse, T> validation) {
         if (!NaturalPromptInstructions.supports(input.strategyVersion())) throw invalid("自然链路版本不受支持");
+        if (NaturalPromptRoutingRepairInstructions.supports(input.strategyVersion())) {
+            var scope = prepareScope(input, "plan.generate").scope();
+            return invoke(input, NaturalPromptInstructions.planningInstruction(input.strategyVersion()), "plan.generate", null, null, null, false, scope,
+                    (body, metadata) -> {
+                        if (!body.path("questions").isArray()) throw invalid("Plan问题列表无效");
+                        try {
+                            return validation.apply(new PlanningProviderResponse(requiredText(body, "summary"),
+                                    json.convertValue(body.get("questions"), json.getTypeFactory().constructCollectionType(List.class, PlanQuestion.class)),
+                                    metadata.provider(), metadata.model(), false, understanding(body, input)));
+                        } catch (IllegalArgumentException failure) {
+                            throw invalid("Plan问题协议无效");
+                        }
+                    });
+        }
         if (usesAdvisoryScope(input.strategyVersion())) {
             var prepared = prepareScope(input, "plan.generate");
             return invoke(input, NaturalPromptInstructions.planningInstruction(input.strategyVersion()), "plan.generate", null, null, null,
@@ -305,7 +336,9 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         return invoke(input, instruction, operation, (body, metadata) -> {
             try {
                 NaturalTaskScope scope = scopeReader.readValue(body);
-                return new ScopePreparation(scope.resolve(input), metadata);
+                return new ScopePreparation((NaturalPromptRoutingRepairInstructions.ADVISORY_TIMING_VERSION.equals(input.strategyVersion())
+                        || NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION.equals(input.strategyVersion()))
+                        ? scope.resolveAdvisory(input) : scope.resolve(input), metadata);
             } catch (IOException | IllegalArgumentException failure) {
                 throw invalid("任务动作与回应边界协议无效");
             }

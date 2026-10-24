@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { optimizationCompletionNotice } from '@/features/optimization/processingStatus';
 import { WarningFilled } from '@element-plus/icons-vue';
 import { ElAlert, ElMessage, ElMessageBox } from 'element-plus';
 import { storeToRefs } from 'pinia';
@@ -496,7 +497,7 @@ const runDirectEnhancement = async (): Promise<void> => {
   });
   if (succeeded) {
     planDialogVisible.value = false;
-    ElMessage.success('最终提示词已生成。');
+    ElMessage(optimizationCompletionNotice(result.value));
   }
 };
 
@@ -535,7 +536,7 @@ const generateFinalPrompt = async (confirmation: PlanConfirmation): Promise<void
   });
   if (succeeded) {
     planDialogVisible.value = false;
-    ElMessage.success('最终提示词已生成。');
+    ElMessage(optimizationCompletionNotice(result.value));
   } else if (store.planningSessionExpired) {
     await recoverExpiredPlan();
   }

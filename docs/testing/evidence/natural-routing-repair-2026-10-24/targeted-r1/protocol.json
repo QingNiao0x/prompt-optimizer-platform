@@ -1,0 +1,133 @@
+{
+  "batch": "natural-routing-repair-targeted-2026-10-24",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 40,
+  "maximumNewActualCalls": 40,
+  "taskPreviouslyActual": 0,
+  "previousClosedActualCalls": 1983,
+  "oldClosedBalanceTransferred": 0,
+  "versions": [
+    "31",
+    "39"
+  ],
+  "candidateVersions": [
+    "39"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 4096,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 28,
+    "PLAN": 6,
+    "EXECUTION": 6,
+    "REVIEW": 0
+  },
+  "generation": [
+    "Q01",
+    "E01",
+    "C01",
+    "S01",
+    "W01",
+    "M01"
+  ],
+  "regressionGeneration": [],
+  "generationVersionsByCase": {
+    "Q01": [
+      "31",
+      "39"
+    ],
+    "E01": [
+      "39"
+    ],
+    "C01": [
+      "39"
+    ],
+    "S01": [
+      "31",
+      "39"
+    ],
+    "W01": [
+      "31",
+      "39"
+    ],
+    "M01": [
+      "39"
+    ]
+  },
+  "plan": [
+    "Q01",
+    "P01"
+  ],
+  "planVersions": [
+    "39"
+  ],
+  "confirmedPlanGeneration": [
+    "Q01",
+    "P01"
+  ],
+  "execution": [
+    "E01",
+    "C01",
+    "W01"
+  ],
+  "executionArms": [
+    "ORIGINAL",
+    "V39"
+  ],
+  "executionRepeats": 1,
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "39": [
+      "39"
+    ]
+  },
+  "allowedJobs": [
+    "Q01_V31_GEN",
+    "Q01_V39_GEN",
+    "E01_V39_GEN",
+    "C01_V39_GEN",
+    "S01_V31_GEN",
+    "S01_V39_GEN",
+    "W01_V31_GEN",
+    "W01_V39_GEN",
+    "M01_V39_GEN",
+    "Q01_V39_PLAN",
+    "P01_V39_PLAN",
+    "Q01_V39_PLAN_GEN",
+    "P01_V39_PLAN_GEN",
+    "E01_ORIGINAL_EXEC_R1",
+    "E01_V39_EXEC_R1",
+    "C01_ORIGINAL_EXEC_R1",
+    "C01_V39_EXEC_R1",
+    "W01_ORIGINAL_EXEC_R1",
+    "W01_V39_EXEC_R1"
+  ],
+  "prerequisiteStages": [],
+  "reviews": [],
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false,
+  "criteria": [
+    "本轮独立验收门控修复，不以全部作品胜率判定所有能力。",
+    "39在EXPLICIT/INHERENT/UNSPECIFIED均完成正文阶段，历史31保留兼容；阶段与文本比较必须真实。",
+    "查询解释比较不因未决为空跳过生成；读后等待不增加独立成果；充分需求允许持平；明确无资料及真实回答不得改变。",
+    "零题Plan继续正文，有重要用户决定时提问；全部实际题答保持来源与正文覆盖。",
+    "先回归及正常变体人工语义核对为PASS，后执行同信息实际作品。",
+    "实际作品检查范围保持、可用补充及必要编辑；不把更多文本当收益，任何明确严重越界阻断对应能力。"
+  ],
+  "limits": [
+    "内部开发者评估；非独立留出、人工用户研究或专业认证。",
+    "32次正常预期调用，余8仅用于协议修复/失败预留，不做质量重试。",
+    "沿用用户持续授权自行选择真实评测次数；此处新设40，不挪用旧闭批额度。"
+  ]
+}

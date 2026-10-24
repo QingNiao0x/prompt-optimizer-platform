@@ -293,6 +293,26 @@ class MybatisOptimizationHistoryServiceTest {
     }
 
     @Test
+    void processingFactsSurviveSaveAndDetailWithoutInventingThemForOldHistory() {
+        var processing = new com.promptoptimizer.enhancement.domain.NaturalProcessing(
+                List.of(com.promptoptimizer.enhancement.domain.NaturalProcessing.Stage.SCOPE_ANALYSIS,
+                        com.promptoptimizer.enhancement.domain.NaturalProcessing.Stage.BODY_GENERATION), false);
+        var document = new PromptDocument("生成正文", PromptDocument.ResultKind.TEXT, null,
+                resultWithFileContent().contextReport(), List.of(), List.of(), TemplateCode.GENERAL,
+                new ProviderMetadata("fixture", "fixture", false), 1, List.of(), List.of(), PromptFormat.COMPACT,
+                null, "NATURAL", "39", "APE", null, 0).withProcessing(processing);
+        service.saveDocument(request(), document.withRecordId(UUID.randomUUID()));
+        var captured = ArgumentCaptor.forClass(OptimizationRecordEntity.class);
+        verify(persistenceService).persist(captured.capture(), eq(ACTOR));
+        var saved = captured.getValue();
+        when(recordMapper.selectByIdAndScope(saved.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(saved);
+        assertThat(service.getDocument(saved.getId()).processing()).isEqualTo(processing);
+        saved.getResultMetadata().remove("processing");
+        assertThat(service.getDocument(saved.getId()).processing()).isNull();
+        assertThat(saved.getOptimizedPrompt()).isEqualTo("生成正文");
+    }
+
+    @Test
     void naturalTextEditPreservesGenerationSnapshotAndUsesScopedVersionedWrite() {
         var record = naturalRecord();
         when(recordMapper.selectByIdAndScope(record.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(record);

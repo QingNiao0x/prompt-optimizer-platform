@@ -9,7 +9,22 @@ import com.promptoptimizer.enhancement.domain.ProviderMetadata;
  * @since 0.1.0
  */
 public record NaturalPromptDraft(String optimizedPrompt, Framework framework, ProviderMetadata provider,
-        NaturalTaskUnderstanding taskUnderstanding) {
+        NaturalTaskUnderstanding taskUnderstanding,
+        @com.fasterxml.jackson.annotation.JsonIgnore java.util.List<com.promptoptimizer.enhancement.domain.NaturalProcessing.Stage> completedStages) {
+    /** 旧Provider或历史夹具没有阶段记录时保持未知，不推定已执行正文生成。 */
+    public NaturalPromptDraft(String optimizedPrompt, Framework framework, ProviderMetadata provider,
+            NaturalTaskUnderstanding taskUnderstanding) {
+        this(optimizedPrompt, framework, provider, taskUnderstanding, null);
+    }
+
+    public NaturalPromptDraft {
+        completedStages = completedStages == null ? null : java.util.List.copyOf(completedStages);
+    }
+
+    /** 调用方在真实阶段完成后登记，不让模型填写处理状态。 */
+    public NaturalPromptDraft withStages(java.util.List<com.promptoptimizer.enhancement.domain.NaturalProcessing.Stage> stages) {
+        return new NaturalPromptDraft(optimizedPrompt, framework, provider, taskUnderstanding, stages);
+    }
     /** 兼容自然链第一版和离线夹具；旧协议没有任务理解记录。 */
     public NaturalPromptDraft(String optimizedPrompt, Framework framework, ProviderMetadata provider) {
         this(optimizedPrompt, framework, provider, null);

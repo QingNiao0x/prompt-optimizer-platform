@@ -624,6 +624,11 @@ export interface PromptDocumentMetadata {
   framework?: string | null;
   recordId?: string | null;
   editRevision?: number;
+  /** 服务端记录的生成阶段和原文比较，不表示语义质量或实质收益。旧历史可能缺失。 */
+  processing?: {
+    completedStages: ('SCOPE_ANALYSIS' | 'BODY_GENERATION')[];
+    originalPreserved: boolean;
+  } | null;
 }
 
 export interface OptimizationResult extends PromptDocumentMetadata {

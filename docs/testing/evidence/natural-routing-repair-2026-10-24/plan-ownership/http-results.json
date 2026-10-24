@@ -1,0 +1,758 @@
+[
+  {
+    "id": "C01_ORIGINAL_EXEC_R1",
+    "caseId": "C01",
+    "version": "ORIGINAL",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 4096,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "完成用户当前请求，遵守用户明确的输出范围、输出形式与阶段边界。仅使用本次提供的材料；无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "帮我比较全量备份和增量备份，方便决定日常该怎么安排。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "C01_ORIGINAL_EXEC_R1",
+      "data": {
+        "usage": {
+          "prompt_tokens": 62,
+          "completion_tokens": 837,
+          "total_tokens": 899,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 62
+        },
+        "content": "# 全量备份 vs 增量备份：日常安排怎么选\n\n## 一、核心区别\n\n| 维度 | 全量备份 | 增量备份 |\n|---|---|---|\n| 备份内容 | 每次都备份全部数据 | 只备份自**上一次备份**（无论全量还是增量）以来变化的数据 |\n| 备份速度 | 慢，数据越多越慢 | 快，只处理变化部分 |\n| 占用空间 | 大，每次都是完整副本 | 小，但会随增量链变长而累积 |\n| 恢复速度 | 快，一份即可恢复 | 慢，需要“全量 + 中间所有增量”依次回放 |\n| 恢复复杂度 | 低 | 高，链上任一环损坏都可能影响恢复 |\n| 对日常运行的影响 | 备份窗口长，可能影响业务 | 窗口短，影响小 |\n\n> 补充一个常被混淆的概念：**差异备份**只备份自上一次**全量**以来的变化。它介于两者之间——空间和恢复复杂度比增量低，但比全量高。日常方案里常把“全量 + 增量”或“全量 + 差异”搭配使用。\n\n## 二、各自的优缺点\n\n**全量备份**\n- 优点：恢复简单可靠；单份副本自包含，不依赖其他备份；管理直观。\n- 缺点：耗时耗空间；频繁做成本高；对业务窗口压力大。\n\n**增量备份**\n- 优点：省时省空间，适合高频备份；对业务影响小。\n- 缺点：恢复要按链回放，耗时长；**增量链越长，风险越大**（任一环节损坏可能导致后续无法恢复）；长期只做增量会让恢复变得不可控。\n\n## 三、日常安排建议（按场景）\n\n**1. 数据量小、恢复时间要求高（如个人电脑、小型服务器）**\n- 每周 1 次全量 + 每天增量，或直接每天全量。\n- 简单优先，恢复快。\n\n**2. 数据量大、业务不能长时间停（如生产数据库、文件服务器）**\n- 每周 1 次全量（放在业务低峰期）+ 每天增量。\n- 关键点：**定期做“合成全量”或周期性重新全量**，避免增量链无限变长。常见做法是每周全量、每天增量，增量链最多保留 6～7 个。\n\n**3. 变化频繁、要求恢复点目标（RPO）很短**\n- 每天多次增量 + 每周全量；配合日志/快照类机制。\n- 同时要定期**演练恢复**，验证增量链可用。\n\n**4. 合规或长期归档**\n- 定期全量归档 + 增量做日常；归档副本单独保存、定期校验。\n\n## 四、落地时的几个关键原则\n\n1. **不要只做增量。** 必须有周期性全量作为锚点，否则恢复链过长、风险过高。\n2. **控制增量链长度。** 建议增量链不超过一周（或按恢复时间承受度设定），到期做新全量。\n3. **3-2-1 原则**：至少 3 份副本、2 种介质、1 份异地。\n4. **定期恢复演练**：备份的价值只在能恢复时成立，尤其增量方案必须验证。\n5. **监控与校验**：检查备份任务是否成功、增量链是否完整、存储空间是否够。\n6. **保留策略**：明确保留多少份全量、多少天增量，避免空间失控。\n\n## 五、一句话结论\n\n- **追求恢复简单、数据量不大** → 以全量为主。\n- **数据量大、要高频备份** → “周期全量 + 日常增量”，并严格控制增量链长度、定期演练恢复。\n- 大多数日常场景的稳妥组合是：**每周全量 + 每天增量 + 定期验证恢复**。",
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "C01_V40_EXEC_R1",
+    "caseId": "C01",
+    "version": "V40",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 4096,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "完成用户当前请求，遵守用户明确的输出范围、输出形式与阶段边界。仅使用本次提供的材料；无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "帮我比较全量备份和增量备份，方便决定日常该怎么安排。请围绕备份速度与耗时、存储空间占用、恢复速度与恢复步骤复杂度、对源系统和网络带宽的压力、数据安全性与容错能力、管理和自动化难度等方面做对比，说明两者各自适合的场景和主要取舍。最后结合日常使用给出可执行的备份安排建议，例如全量与增量如何搭配、各自频率大致怎么定、保留多少份备份、恢复演练和校验应如何安排；建议要说明理由和适用前提，若某些安排取决于数据量、变更频率、可接受恢复时间或存储预算等具体条件，请指出这些条件会如何影响选择，不要编造具体数据或假定我的环境参数。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "C01_V40_EXEC_R1",
+      "data": {
+        "usage": {
+          "prompt_tokens": 196,
+          "completion_tokens": 2257,
+          "total_tokens": 2453,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 196
+        },
+        "content": "下面按你列出的维度做对比，并给出可执行的日常安排建议。先说明一个前提：全量/增量是备份策略的两种基本构件，实际选择取决于数据量、日变更比例、可接受恢复时间（RTO）、可接受数据丢失量（RPO）、存储预算和网络条件；以下不假定你的具体参数。\n\n## 一、逐维度对比\n\n### 1. 备份速度与耗时\n- **全量备份**：每次都要读取并写入全部数据，耗时与数据总量成正比。数据越大，单次备份窗口越长，且容易与业务高峰冲突。\n- **增量备份**：每次只处理自上次备份以来变化的数据（按文件变化或块变化），单次耗时通常远小于全量，且与“变更量”而非“总量”相关。但要注意：如果采用“差异备份”或“增量链”方式，链越长，管理越复杂；某些增量实现需要先扫描全量元数据，扫描开销仍与总量有关。\n- **取舍**：变更少、数据大时增量明显占优；数据小或变更比例很高时，增量的优势会缩小，甚至因链式管理增加额外开销。\n\n### 2. 存储空间占用\n- **全量备份**：每份备份都占完整数据量，保留多份时空间线性增长。优点是每份独立、无依赖。\n- **增量备份**：首份全量 + 后续增量，空间通常远小于“多份全量”。但增量链存在依赖：恢复某时间点需要“最近全量 + 其后的增量序列”，链越长，保留策略越要小心，不能随意删除中间增量。\n- **取舍**：存储预算紧张时增量更省；但若需要长期保留多个独立恢复点，全量的“独立性”有价值。实际中常用“定期全量 + 其间增量”的折中。\n\n### 3. 恢复速度与恢复步骤复杂度\n- **全量备份**：恢复只需取一份全量，步骤简单、速度快、失败点少，适合紧急恢复。\n- **增量备份**：恢复需要先恢复基准全量，再按顺序应用增量（或由备份软件自动合并）。步骤多、依赖链长，任一环节损坏都可能影响恢复；恢复耗时通常更长。若采用“合成全量”或“永久增量”技术，可缓解但依赖软件可靠性。\n- **取舍**：RTO 要求紧、恢复操作要简单可靠时，全量更稳；增量适合 RTO 较宽松、且备份软件支持可靠链式恢复的场景。\n\n### 4. 对源系统和网络带宽的压力\n- **全量备份**：每次全量读取全部数据，对源系统 I/O、CPU（压缩/加密）和网络带宽冲击大，尤其跨站点传输时明显。\n- **增量备份**：单次传输和读取量小，对生产系统和带宽压力小，更适合频繁执行和窄带宽链路。\n- **取舍**：生产系统敏感或带宽有限时，增量更友好；但定期全量仍不可避免，需安排在低峰窗口或采用限速、离线种子等方式。\n\n### 5. 数据安全性与容错能力\n- **全量备份**：每份独立，单份损坏不影响其他份；但若备份介质同时损坏或勒索软件加密了备份存储，多份全量也可能一起失效。全量备份的“独立性”在容错上更直观。\n- **增量备份**：依赖链是主要风险点——基准全量或中间增量损坏，会导致后续恢复点不可用；链越长风险累积越大。此外，若增量基于“变化块”且源端有静默损坏，可能把损坏带入后续备份。\n- **取舍**：增量需要更严格的校验、更短的链长和更可靠的介质；全量在容错上更简单，但仍需离线/异地/不可变副本防勒索和灾难。\n\n### 6. 管理和自动化难度\n- **全量备份**：策略简单，保留 N 份即可，恢复操作直观；但备份窗口和存储增长需要规划。\n- **增量备份**：需要管理备份链、基准全量和增量序列的保留关系，删除旧增量时不能破坏仍需要的链；对备份软件的调度、链合并、校验能力依赖更高。自动化程度高时两者都可管理，但增量的“链管理”是额外复杂度。\n- **取舍**：运维人力少、希望策略简单时，全量+少量保留更省心；有成熟备份软件和监控时，增量+定期全量更经济。\n\n## 二、各自适合的场景\n\n**全量备份更适合：**\n- 数据量不大，或备份窗口充足；\n- RTO 要求紧、恢复操作要简单可靠；\n- 需要多份独立恢复点、容错要求直观；\n- 备份软件链管理能力弱，或运维希望策略简单；\n- 定期做“基线”备份，作为增量链的可靠起点。\n\n**增量备份更适合：**\n- 数据量大但日变更比例小；\n- 需要较高备份频率（如每日多次）以降低 RPO；\n- 生产系统 I/O 敏感或网络带宽有限；\n- 存储预算有限，希望用较少空间保留较多恢复点；\n- 有可靠的备份软件支持链校验、合成全量和自动恢复。\n\n**主要取舍一句话**：全量用“空间和备份时间”换“恢复简单和容错直观”；增量用“恢复复杂度和链管理风险”换“备份快、省空间、对生产压力小”。实际几乎不会二选一，而是搭配使用。\n\n## 三、日常可执行的备份安排建议\n\n以下给的是“原则+可调参数”，具体频率和保留份数需按你的数据量、变更率、RTO/RPO 和预算调整。\n\n### 1. 全量与增量如何搭配\n- **推荐基线模式**：定期全量作为基准，其间按较高频率做增量。例如“每周一次全量 + 每日增量”是常见起点；若数据量很大、全量窗口不够，可改为“每两周或每月全量 + 每日增量”，但需控制增量链长度。\n- **控制链长**：不要让增量链无限延长。链越长，恢复越慢、单点损坏影响越大。可用“合成全量”（由备份软件把增量合并成新全量，避免重复全量传输）来兼顾。\n- **关键节点加全量**：在大变更前（如系统升级、批量导入）主动做一次全量，便于回退。\n- **理由**：全量提供可靠恢复基线和独立性，增量控制日常耗时和空间；链长控制是增量策略安全性的核心。\n- **适用前提**：备份软件支持可靠的增量链和校验；若不支持，应缩短链长或偏向全量。\n\n### 2. 各自频率大致怎么定\n- **增量频率**：由 RPO 决定。可接受丢失一天数据就每日一次；可接受丢失数小时就每日多次。变更频率高、RPO 紧，增量频率应提高。\n- **全量频率**：由数据量、备份窗口、存储预算和链长容忍度决定。数据量小、窗口充足可每周；数据量大、窗口紧张可降低全量频率但必须配合链长控制和校验。\n- **条件影响**：数据量越大、变更比例越高，全量越贵，越倾向拉长全量间隔并用合成全量；RTO 越紧，越倾向更频繁全量或更短链，以简化恢复。\n\n### 3. 保留多少份备份\n- **原则**：至少保留“一份近期全量 + 其所需增量链 + 若干历史恢复点”，并确保有一份**离线/异地/不可变**副本防勒索和灾难。\n- **按 RPO/RTO 定**：需要回退到多久以前，就保留覆盖该时间段的恢复点；常见做法是保留数周到数月，但具体取决于合规和业务要求。\n- **按存储预算定**：空间紧张时，可减少全量份数、缩短增量链、用去重/压缩；但不要牺牲“至少一份可独立恢复的全量”和“一份离线副本”。\n- **注意**：删除旧增量前必须确认不破坏仍需的链；保留策略应由备份软件按依赖关系执行，而非手工删文件。\n\n### 4. 恢复演练和校验如何安排\n- **定期校验**：每次备份后做完整性校验（如校验和、备份软件自带的验证）；定期做“可恢复性验证”，不只检查备份任务成功。\n- **恢复演练**：按业务重要性定期演练，至少覆盖“从最近全量+增量链恢复到目标时间点”的完整流程。频率可按季度/半年起步，关键系统更频繁；具体取决于 RTO 要求和系统数量。\n- **演练内容**：记录实际恢复耗时，验证是否满足 RTO；验证恢复后的数据一致性和应用可用性；验证离线副本可用。\n- **理由**：备份成功不等于可恢复，增量链的恢复复杂度更需要演练暴露问题；演练结果反过来调整全量频率和链长。\n- **前提**：演练需要隔离环境或低峰窗口，避免影响生产；若环境不足，至少做抽样文件恢复和链完整性检查。\n\n### 5. 其他可执行要点\n- **3-2-1 原则**：至少 3 份数据、2 种介质、1 份异地/离线，全量和增量都适用。\n- **监控与告警**：监控备份失败、链断裂、空间不足和校验失败；增量策略尤其需要链健康监控。\n- **文档化**：写清恢复步骤、依赖哪份全量和哪些增量、联系人；恢复步骤越复杂越要文档化。\n- **条件敏感点**：若数据量小且 RTO 很紧，可偏向“频繁全量+少增量”；若数据量大、带宽窄、RPO 紧，则“少全量+多增量+合成全量+严格校验”更合适；存储预算决定保留份数，但不应压缩到没有离线副本。\n\n**总结建议**：日常以“定期全量作基线 + 高频增量控 RPO + 控制链长 + 定期校验和恢复演练 + 至少一份离线/异地副本”为默认框架；再根据数据量、变更率、RTO/RPO 和预算，调整全量间隔、增量频率和保留份数。全量买的是恢复简单和容错直观，增量买的是备份效率和空间，两者搭配而非对立。",
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "C01_V40_GEN",
+    "caseId": "C01",
+    "version": "40",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "帮我比较全量备份和增量备份，方便决定日常该怎么安排。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "C01_V40_GEN",
+      "data": {
+        "optimizedPrompt": "帮我比较全量备份和增量备份，方便决定日常该怎么安排。请围绕备份速度与耗时、存储空间占用、恢复速度与恢复步骤复杂度、对源系统和网络带宽的压力、数据安全性与容错能力、管理和自动化难度等方面做对比，说明两者各自适合的场景和主要取舍。最后结合日常使用给出可执行的备份安排建议，例如全量与增量如何搭配、各自频率大致怎么定、保留多少份备份、恢复演练和校验应如何安排；建议要说明理由和适用前提，若某些安排取决于数据量、变更频率、可接受恢复时间或存储预算等具体条件，请指出这些条件会如何影响选择，不要编造具体数据或假定我的环境参数。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5897,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "40",
+        "framework": "APE",
+        "recordId": "449b3573-36c7-4928-aaa0-7f0755751075",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    },
+    "reusedFrom": {
+      "path": "tmp/natural-routing-repair-2026-10-24/timing-advisory/results/C01_V40_GEN.json",
+      "sha256": "430d43c16365a268d31e4cb4ce2f06f8fa4889056a494ef6cf9d4b0273674f6d"
+    }
+  },
+  {
+    "id": "E01_ORIGINAL_EXEC_R1",
+    "caseId": "E01",
+    "version": "ORIGINAL",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 4096,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "完成用户当前请求，遵守用户明确的输出范围、输出形式与阶段边界。仅使用本次提供的材料；无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "请解释一下浏览器缓存，帮我弄明白它怎么影响网页更新。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "E01_ORIGINAL_EXEC_R1",
+      "data": {
+        "usage": {
+          "prompt_tokens": 62,
+          "completion_tokens": 838,
+          "total_tokens": 900,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 62
+        },
+        "content": "# 浏览器缓存及其对网页更新的影响\n\n## 一、浏览器缓存是什么\n\n浏览器缓存是浏览器把从服务器获取的资源（HTML、CSS、JS、图片、字体等）**存一份在本地**，下次需要时优先从本地取，而不是重新向服务器请求。\n\n核心目的：**减少网络请求、加快加载速度、节省带宽**。\n\n## 二、缓存怎么判断“用旧的还是取新的”\n\n关键在 HTTP 响应头，分两大类：\n\n### 1. 强缓存（不发请求，直接用本地）\n\n- **`Cache-Control: max-age=3600`**：资源在 3600 秒内有效，期间浏览器直接用本地副本，**完全不问服务器**。\n- `Cache-Control: no-cache`：可以缓存，但每次使用前必须向服务器验证。\n- `Cache-Control: no-store`：完全不缓存。\n- 旧式 `Expires`：给一个绝对过期时间，已被 `Cache-Control` 取代。\n\n### 2. 协商缓存（发请求问服务器“变了吗”）\n\n强缓存过期后，浏览器带着标识去问服务器：\n\n- **`ETag` / `If-None-Match`**：服务器给资源一个版本标识，浏览器下次带上它问“还是这个吗”。\n- **`Last-Modified` / `If-Modified-Since`**：按最后修改时间判断。\n\n服务器若判断没变，返回 **304 Not Modified**（不带资源体），浏览器继续用本地副本；变了则返回 200 和新内容。\n\n## 三、它如何影响网页更新（重点）\n\n问题就出在：**用户看到的是旧版本，而不是你刚发布的新版本。**\n\n典型场景：\n\n1. **强缓存未过期**：你更新了 `app.js`，但用户浏览器里 `max-age` 还没到，它根本不去服务器，继续跑旧代码。用户“刷新也没用”（普通刷新可能仍走缓存）。\n2. **HTML 被缓存**：如果 HTML 本身被强缓存，用户连新的资源引用地址都拿不到，整个页面停留在旧版。\n3. **CDN / 代理缓存**：中间层也可能缓存旧资源。\n\n### 常见解决思路\n\n- **HTML 不缓存或短缓存**：`Cache-Control: no-cache`，保证每次拿到最新页面结构。\n- **静态资源加“指纹”**：文件名带内容哈希，如 `app.3f2a1b.js`。内容一变文件名就变，等于强制新 URL，天然绕过旧缓存。这是现代前端构建（Webpack/Vite 等）的默认做法。\n- **长缓存 + 指纹**：带哈希的资源设 `max-age=31536000, immutable`，因为文件名变了，旧缓存不会误用。\n- **主动失效**：发布时清理 CDN 缓存、改文件名、加版本查询串（`?v=2`，效果不如文件名哈希可靠）。\n- **用户侧**：强制刷新（Ctrl+F5 / Cmd+Shift+R）可绕过缓存，但不能要求所有用户这么做。\n\n### 一句话总结\n\n> 缓存让“没变的资源”复用本地副本以提速；而**网页更新出问题，通常是因为“变了的资源”仍被当成没变**。解决办法是让“会变的资源”拥有会变的 URL（文件名哈希），让“不变的资源”放心长缓存，并让 HTML 保持新鲜。\n\n## 四、排查小技巧\n\n- 打开开发者工具 → Network，看请求的 **Status**（200 / 304 / from disk cache / from memory cache）和 **Size** 列。\n- 勾选 **Disable cache** 对比行为。\n- 看响应头里的 `Cache-Control`、`ETag`、`Age`（CDN 缓存时长）。\n\n如果你愿意告诉我具体场景（比如是静态站点、SPA、还是某个框架的部署），我可以针对性地说明该怎么配置缓存头。",
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "E01_V40_EXEC_R1",
+    "caseId": "E01",
+    "version": "V40",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 4096,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "完成用户当前请求，遵守用户明确的输出范围、输出形式与阶段边界。仅使用本次提供的材料；无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "请解释浏览器缓存，帮我弄明白它怎么影响网页更新。说明时请讲清缓存的基本机制（浏览器把哪些资源、按什么依据存下来，再次访问时如何判断用本地副本还是重新请求），以及缓存对网页更新的实际影响：为什么改了文件用户却仍看到旧页面，缓存命中、过期与重新验证分别意味着什么。可结合常见缓存相关响应头（如 Cache-Control、ETag、Last-Modified）和强缓存、协商缓存的区别来说明，并给出让更新及时生效的常见做法（如文件名加版本号或哈希、合理设置缓存时长、必要时强制刷新）。用通俗易懂的语言面向非专业读者讲解，避免堆砌术语，篇幅适中。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "E01_V40_EXEC_R1",
+      "data": {
+        "usage": {
+          "prompt_tokens": 197,
+          "completion_tokens": 840,
+          "total_tokens": 1037,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 197
+        },
+        "content": "浏览器缓存可以理解成：浏览器把你上次访问网页时用到的一些文件，先存在本地。下次再打开同一个网页时，能直接用本地副本就不重新下载，这样页面打开更快、也更省流量。\n\n**一、浏览器缓存的基本机制**\n\n浏览器通常会缓存这些资源：图片、CSS 样式文件、JavaScript 脚本、字体、视频片段等。它们一般不是网页正文本身，而是让页面显示和运行的“零件”。\n\n浏览器决定要不要存、存多久，主要看服务器返回的缓存相关响应头，比如 `Cache-Control`、`ETag`、`Last-Modified`。同时也会参考资源地址、文件修改时间等信息。简单说：服务器告诉浏览器“这个文件可以存多久、以后怎么判断它有没有变”，浏览器就照这个规则办。\n\n再次访问时，浏览器大致会做两种判断：\n\n1. **直接用本地副本**：如果缓存还没到期，浏览器可能根本不问服务器，直接用本地文件。这叫“强缓存命中”。\n2. **问一下服务器有没有更新**：如果缓存过期了，或者规则要求每次确认，浏览器会带着本地副本的“身份证信息”去问服务器。服务器说“没变”，浏览器就继续用本地副本；服务器说“变了”，浏览器才重新下载。这叫“协商缓存”或“重新验证”。\n\n**二、缓存命中、过期、重新验证分别是什么意思**\n\n- **缓存命中**：浏览器发现本地有可用副本，直接拿来用，页面加载快。\n- **过期**：本地副本超过了服务器允许的保存时间，浏览器不敢直接用了，需要确认。\n- **重新验证**：浏览器向服务器询问“我这份还是最新的吗？”服务器根据 `ETag`（文件内容指纹）或 `Last-Modified`（最后修改时间）判断。没变就返回“继续用”，变了就返回新文件。\n\n**三、强缓存和协商缓存的区别**\n\n- **强缓存**：浏览器自己说了算，在有效期内直接使用本地文件，不联系服务器。速度快，但文件更新后，用户可能在有效期内一直看到旧版本。\n- **协商缓存**：浏览器每次或过期后都向服务器确认一下。更新更及时，但会多一次网络询问。\n\n**四、为什么改了文件，用户还看到旧页面**\n\n常见原因是：旧文件被浏览器强缓存了，而且缓存时间还没到。用户再次访问时，浏览器直接用了本地旧副本，根本没去服务器拿新文件。于是你明明改了 CSS 或 JS，用户看到的还是旧样式、旧功能。\n\n另一种情况是：HTML 页面本身被缓存了，页面里引用的还是旧文件名，也会导致用户继续加载旧资源。\n\n**五、让更新及时生效的常见做法**\n\n1. **给文件名加版本号或哈希**：比如把 `app.js` 改成 `app.abc123.js`。文件内容一变，文件名就变，浏览器会把它当成新资源重新下载。这是最常用、最有效的办法。\n2. **合理设置缓存时长**：对带哈希的静态资源可以设较长缓存时间，因为它们文件名变了就会自动更新；对 HTML 等入口文件设较短缓存，或要求每次重新验证，避免用户拿到旧入口。\n3. **用 `Cache-Control` 控制策略**：比如静态资源用较长 `max-age`，入口页面用 `no-cache` 让浏览器每次先确认。\n4. **配合 `ETag` 或 `Last-Modified`**：让服务器能判断文件有没有变，减少不必要的完整下载。\n5. **必要时强制刷新**：用户可以按 Ctrl+F5（Mac 上常用 Cmd+Shift+R）强制刷新，绕过本地缓存重新请求。但这只是临时办法，不能替代正确的缓存策略。\n\n一句话总结：缓存让网页更快，但更新时要让“文件名或缓存规则”跟着变。静态资源用“文件名带哈希 + 长缓存”，入口页面用“短缓存或每次确认”，就能既快又不容易让用户卡在旧版本。",
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "E01_V40_GEN",
+    "caseId": "E01",
+    "version": "40",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请解释一下浏览器缓存，帮我弄明白它怎么影响网页更新。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "E01_V40_GEN",
+      "data": {
+        "optimizedPrompt": "请解释浏览器缓存，帮我弄明白它怎么影响网页更新。说明时请讲清缓存的基本机制（浏览器把哪些资源、按什么依据存下来，再次访问时如何判断用本地副本还是重新请求），以及缓存对网页更新的实际影响：为什么改了文件用户却仍看到旧页面，缓存命中、过期与重新验证分别意味着什么。可结合常见缓存相关响应头（如 Cache-Control、ETag、Last-Modified）和强缓存、协商缓存的区别来说明，并给出让更新及时生效的常见做法（如文件名加版本号或哈希、合理设置缓存时长、必要时强制刷新）。用通俗易懂的语言面向非专业读者讲解，避免堆砌术语，篇幅适中。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 6303,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "40",
+        "framework": "APE",
+        "recordId": "f3a7cfff-3250-4fff-90cf-482e3a47a79a",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    },
+    "reusedFrom": {
+      "path": "tmp/natural-routing-repair-2026-10-24/timing-advisory/results/E01_V40_GEN.json",
+      "sha256": "26b66c174d6980bf4bd43497c9f0c5a0d9bdda5ad2c511b42f4a439a26fcec4f"
+    }
+  },
+  {
+    "id": "P01_V41_PLAN",
+    "caseId": "P01",
+    "version": "41",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "请替我修改活动通知：原定周六下午两点、地点旧活动室，现因旧活动室关闭需要换地点。新地点由我决定，修改前先问我，其他信息保持原样，不编造关闭原因。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "75035421-3bba-4b9c-a9ca-2bff482c02c2",
+        "version": "sha256:6f119da3bbe996502160369ebda82a8e76363a13526f1001232cff05d3fe1dca"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "P01_V41_PLAN",
+      "data": {
+        "summary": "原定任务是修改活动通知，把地点从旧活动室换成用户决定的新地点，其他信息不变且不编造关闭原因；用户明确要求修改前先询问新地点，因此需先确认新地点。",
+        "questions": [
+          {
+            "id": "new_location",
+            "question": "请提供活动的新地点（用于替换通知中的“旧活动室”）。",
+            "hint": "用户明确保留新地点的决定权并要求修改前先询问；该答案直接决定通知中地点字段的内容，未确定前无法完成修改。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4518,
+        "planId": "c1bb00bf-7566-4758-8c79-090eeb7f7c49",
+        "planningContext": {
+          "contextId": "75035421-3bba-4b9c-a9ca-2bff482c02c2",
+          "version": "sha256:6f119da3bbe996502160369ebda82a8e76363a13526f1001232cff05d3fe1dca"
+        },
+        "expiresAt": "2026-10-24T06:42:15.320997300Z"
+      }
+    }
+  },
+  {
+    "id": "P01_V41_PLAN_GEN",
+    "caseId": "P01",
+    "version": "41",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请替我修改活动通知：原定周六下午两点、地点旧活动室，现因旧活动室关闭需要换地点。新地点由我决定，修改前先问我，其他信息保持原样，不编造关闭原因。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": {
+        "planId": "c1bb00bf-7566-4758-8c79-090eeb7f7c49",
+        "planningContext": {
+          "contextId": "75035421-3bba-4b9c-a9ca-2bff482c02c2",
+          "version": "sha256:6f119da3bbe996502160369ebda82a8e76363a13526f1001232cff05d3fe1dca"
+        },
+        "answers": [
+          {
+            "questionId": "new_location",
+            "question": "请提供活动的新地点（用于替换通知中的“旧活动室”）。",
+            "answer": "新地点改为青禾中心二层会议室。"
+          }
+        ]
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "P01_V41_PLAN_GEN",
+      "data": {
+        "optimizedPrompt": "请修改下面这份活动通知：原定周六下午两点、地点旧活动室，现因旧活动室关闭需要换地点，新地点改为青禾中心二层会议室。请把通知中的“旧活动室”替换为“青禾中心二层会议室”，周六下午两点及其他信息保持原样，不要编造旧活动室关闭的原因，也不要添加原文没有的内容。直接给出修改后的完整活动通知。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4605,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "41",
+        "framework": "APE",
+        "recordId": "0e18b59d-df87-4cf7-ab10-e6cc4c03fdd8",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "Q01_V41_PLAN",
+    "caseId": "Q01",
+    "version": "41",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "7efb550b-bd51-48ea-bca7-0874c6fb5fde",
+        "version": "sha256:a3c97fc36b85645376fd5cc1953269ec63b4a888c0427805ba9f5599b1262c44"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "Q01_V41_PLAN",
+      "data": {
+        "summary": "用户要求查询全球使用AI最多的职业/行业。该任务属于公开信息检索与梳理，可由执行者完成；原文未限定统计口径、时间范围或数据来源，但这些属于执行者可在成果中说明的比较依据与资料局限，不构成必须由用户决定的前置问题。",
+        "questions": [],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3649,
+        "planId": "5ba1ab0f-ca21-4a87-8e5d-0961d6452180",
+        "planningContext": {
+          "contextId": "7efb550b-bd51-48ea-bca7-0874c6fb5fde",
+          "version": "sha256:a3c97fc36b85645376fd5cc1953269ec63b4a888c0427805ba9f5599b1262c44"
+        },
+        "expiresAt": "2026-10-24T06:42:11.439800800Z"
+      }
+    }
+  },
+  {
+    "id": "Q01_V41_PLAN_GEN",
+    "caseId": "Q01",
+    "version": "41",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": {
+        "planId": "5ba1ab0f-ca21-4a87-8e5d-0961d6452180",
+        "planningContext": {
+          "contextId": "7efb550b-bd51-48ea-bca7-0874c6fb5fde",
+          "version": "sha256:a3c97fc36b85645376fd5cc1953269ec63b4a888c0427805ba9f5599b1262c44"
+        },
+        "answers": []
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "Q01_V41_PLAN_GEN",
+      "data": {
+        "optimizedPrompt": "请帮我查询全球使用AI最多的职业和行业，并给出查询结果。请说明所依据的数据来源、统计口径和时间范围，区分“使用AI最多”是指使用人数、使用频率还是渗透率；如果不同来源的排名或结论不一致，请并列呈现并说明差异。资料不足或口径无法统一时，请说明受影响的结论，其余内容仍照常完成。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4465,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "41",
+        "framework": "APE",
+        "recordId": "17a82511-fa34-476d-9334-3f434278aa1d",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "W01_ORIGINAL_EXEC_R1",
+    "caseId": "W01",
+    "version": "ORIGINAL",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 4096,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "完成用户当前请求，遵守用户明确的输出范围、输出形式与阶段边界。仅使用本次提供的材料；无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "请先阅读我提供的项目材料，理解模块关系后等待我给具体任务；这一步不改文件，也不交付说明文档。\n\n执行本次任务时用户提供的材料（完整正文）：\n--- 合成项目材料 ---\n这是合成项目：web端负责订单录入；api校验订单后调用stock模块预留库存，库存失败时订单保持待处理状态。当前只供阅读理解，下一步任务尚未下达。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "W01_ORIGINAL_EXEC_R1",
+      "data": {
+        "usage": {
+          "prompt_tokens": 131,
+          "completion_tokens": 135,
+          "total_tokens": 266,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 131
+        },
+        "content": "已阅读材料，理解如下：\n\n- **web 端**：负责订单录入。\n- **api**：接收订单后做校验，校验通过后调用 **stock 模块**预留库存。\n- **stock 模块**：执行库存预留，可能成功或失败。\n- **失败处理**：库存预留失败时，订单保持**待处理**状态。\n\n模块关系：web → api → stock；api 是编排与校验方，stock 是库存预留的执行方，订单状态由 api 侧根据 stock 结果决定（失败则维持待处理）。\n\n本次未修改任何文件，也未生成说明文档。等待你的具体任务。",
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "W01_V40_EXEC_R1",
+    "caseId": "W01",
+    "version": "V40",
+    "phase": "EXECUTION",
+    "request": {
+      "model": "deepseek-flash",
+      "stream": false,
+      "temperature": 0.2,
+      "max_tokens": 4096,
+      "thinking": {
+        "type": "disabled"
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "完成用户当前请求，遵守用户明确的输出范围、输出形式与阶段边界。仅使用本次提供的材料；无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+        },
+        {
+          "role": "user",
+          "content": "请先阅读我提供的项目材料，理解各模块之间的关系，然后等待我给出具体任务。这一步不要修改任何文件，也不要交付说明文档。\n\n执行本次任务时用户提供的材料（完整正文）：\n--- 合成项目材料 ---\n这是合成项目：web端负责订单录入；api校验订单后调用stock模块预留库存，库存失败时订单保持待处理状态。当前只供阅读理解，下一步任务尚未下达。"
+        }
+      ]
+    },
+    "status": 200,
+    "body": {
+      "requestId": "W01_V40_EXEC_R1",
+      "data": {
+        "usage": {
+          "prompt_tokens": 136,
+          "completion_tokens": 55,
+          "total_tokens": 191,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 136
+        },
+        "content": "已阅读并理解材料，等待你的具体任务。\n\n当前理解的关系：web 端录入订单 → api 校验订单 → 调用 stock 模块预留库存；若库存预留失败，订单保持待处理状态。\n\n未修改任何文件，未生成说明文档。",
+        "finishReason": "stop"
+      }
+    }
+  },
+  {
+    "id": "W01_V40_GEN",
+    "caseId": "W01",
+    "version": "40",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请先阅读我提供的项目材料，理解模块关系后等待我给具体任务；这一步不改文件，也不交付说明文档。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "W01_V40_GEN",
+      "data": {
+        "optimizedPrompt": "请先阅读我提供的项目材料，理解各模块之间的关系，然后等待我给出具体任务。这一步不要修改任何文件，也不要交付说明文档。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3592,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "40",
+        "framework": "APE",
+        "recordId": "a17fb3fc-afd1-4f90-bd8b-508e2e3e6750",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    },
+    "reusedFrom": {
+      "path": "tmp/natural-routing-repair-2026-10-24/timing-advisory/results/W01_V40_GEN.json",
+      "sha256": "c59c0a512e50f623ed48ba28bafaff2addee096d3eacf4ab9e36f3d517ecc64b"
+    }
+  }
+]

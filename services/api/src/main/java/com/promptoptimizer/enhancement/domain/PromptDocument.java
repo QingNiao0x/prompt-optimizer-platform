@@ -42,7 +42,8 @@ public record PromptDocument(
         String framework,
         UUID recordId,
         long editRevision,
-        @com.fasterxml.jackson.annotation.JsonIgnore List<PlanAnswer> confirmedPlanAnswers
+        @com.fasterxml.jackson.annotation.JsonIgnore List<PlanAnswer> confirmedPlanAnswers,
+        @JsonInclude(JsonInclude.Include.NON_NULL) NaturalProcessing processing
 ) {
     /** 自然正文链路标识；与排版偏好独立，旧COMPACT不能据此升级链路。 */
     public static final String NATURAL_PIPELINE = "NATURAL";
@@ -64,6 +65,25 @@ public record PromptDocument(
         warnings = List.copyOf(warnings);
         evidenceCards = List.copyOf(evidenceCards);
         confirmedPlanAnswers = confirmedPlanAnswers == null ? null : List.copyOf(confirmedPlanAnswers);
+    }
+
+    /** 兼容未登记阶段的生成器与历史构造；缺少记录时不补造处理结论。 */
+    public PromptDocument(String optimizedPrompt, ResultKind resultKind, List<PromptSection> sections,
+            ContextSnapshot contextReport, List<String> ambiguities, List<String> appliedConstraints,
+            TemplateCode templateCode, ProviderMetadata provider, long latencyMs, List<String> warnings,
+            List<PlanningFactCard> evidenceCards, PromptFormat promptFormat, ConstraintBundle constraintGroups,
+            String generationPipeline, String chainVersion, String framework, UUID recordId, long editRevision,
+            List<PlanAnswer> confirmedPlanAnswers) {
+        this(optimizedPrompt, resultKind, sections, contextReport, ambiguities, appliedConstraints, templateCode,
+                provider, latencyMs, warnings, evidenceCards, promptFormat, constraintGroups, generationPipeline,
+                chainVersion, framework, recordId, editRevision, confirmedPlanAnswers, null);
+    }
+
+    /** 生成阶段由服务端登记，正文和权限组装完成后才确定文本是否保持原样。 */
+    public PromptDocument withProcessing(NaturalProcessing value) {
+        return new PromptDocument(optimizedPrompt, resultKind, sections, contextReport, ambiguities, appliedConstraints,
+                templateCode, provider, latencyMs, warnings, evidenceCards, promptFormat, constraintGroups,
+                generationPipeline, chainVersion, framework, recordId, editRevision, confirmedPlanAnswers, value);
     }
 
     /** 非Plan和旧结果无需携带内部题答；字段不进入V2响应，避免出现第二份可编辑事实来源。 */
@@ -89,7 +109,7 @@ public record PromptDocument(
     public PromptDocument withRecordId(UUID id) {
         return new PromptDocument(optimizedPrompt, resultKind, sections, contextReport, ambiguities, appliedConstraints,
                 templateCode, provider, latencyMs, warnings, evidenceCards, promptFormat, constraintGroups,
-                generationPipeline, chainVersion, framework, id, editRevision, confirmedPlanAnswers);
+                generationPipeline, chainVersion, framework, id, editRevision, confirmedPlanAnswers, processing);
     }
 
     /**

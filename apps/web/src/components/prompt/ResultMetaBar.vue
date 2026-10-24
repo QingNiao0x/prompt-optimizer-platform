@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { formatModelVersion } from '@/features/models/modelVersion';
+import { processingStatusLabel } from '@/features/optimization/processingStatus';
 
 import type { OptimizationResult } from '@/types/api';
 
@@ -30,7 +31,7 @@ const sectionCount = computed(() =>
     <div>
       <dt>Latency</dt>
       <dd>{{ result.latencyMs }} ms</dd>
-      <small>{{ result.provider.mock ? 'Mock 结果' : '模型生成' }}</small>
+      <small>{{ processingStatusLabel(result) }}</small>
     </div>
   </dl>
 </template>

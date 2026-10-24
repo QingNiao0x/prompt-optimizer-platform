@@ -123,7 +123,9 @@ public class NaturalEnhancementService {
                                 draft.provider().mock() ? "" : model.displayName()),
                         Math.max(0, clock.millis() - start), warnings.stream().distinct().toList(), List.of(),
                         PromptFormat.COMPACT, groups, PromptDocument.NATURAL_PIPELINE, strategyVersion, draft.framework().name(), null, 0,
-                        confirmed.bound() ? confirmed.answers() : null);
+                        confirmed.bound() ? confirmed.answers() : null)
+                        .withProcessing(draft.provider().mock() ? null
+                                : NaturalProcessing.completed(draft.completedStages(), request.rawPrompt(), body));
             });
         }
     }

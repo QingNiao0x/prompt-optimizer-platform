@@ -1,0 +1,89 @@
+{
+  "reviewType": "开发者内部非盲语义评估；评估者参与开发并已看增强正文，不声称独立人工/专家或匿名结论",
+  "informationConditions": "各对照臂相同执行模型、参数、系统提示词与执行资料；只替换原始/优化提示词；各一份作品，不能推断稳定胜率。",
+  "bodyComponent": "40与41正文指导及执行路径相同；作品采用真实40正文，不改记为41重新生成。",
+  "cases": [
+    {
+      "caseId": "E01",
+      "outcome": "MIXED",
+      "help": "优化作品以通俗机制解释缓存命中、过期与重新验证，较少以配置术语开篇。",
+      "edits": [
+        "ETag被表述为文件内容指纹，须改成服务器给出的验证标识，不保证总是内容哈希。",
+        "“通常缓存的不是网页正文本身”容易误导，应明确HTML也可缓存。"
+      ],
+      "source": "https://www.rfc-editor.org/rfc/rfc9110.html#section-8.8.3",
+      "scopeViolation": false,
+      "artifacts": [
+        {
+          "arm": "ORIGINAL",
+          "characters": 1616,
+          "status": 200,
+          "finishReason": "stop",
+          "sha256": "960f59480836fcf174b8af470fa246b8cbab980f64aced736ca0af41256295d7"
+        },
+        {
+          "arm": "V40",
+          "characters": 1548,
+          "status": 200,
+          "finishReason": "stop",
+          "sha256": "65c79a92b830c0401bed69f218df7a57c486ce58f6f897ee8b60ad3b048990d8"
+        }
+      ]
+    },
+    {
+      "caseId": "C01",
+      "outcome": "NO_CLEAR_WIN",
+      "help": "优化作品更详细解释频率、保留与演练安排的条件，而非假设用户环境数值。",
+      "edits": [
+        "篇幅明显增加，需要按用户实际用途压缩。",
+        "双方都有备份类型或定期全量的过度概括：原始把差异备份空间关系说反；优化将差异备份和增量链混写，并称定期全量不可避免。",
+        "需区分传统增量链与永久增量/合成全量实现，不能将一种实现当通用要求。"
+      ],
+      "sources": [
+        "https://aws.amazon.com/compare/the-difference-between-incremental-differential-and-other-backups/",
+        "https://helpcenter.veeam.com/docs/vbr/userguide/incremental_forever_backup.html"
+      ],
+      "scopeViolation": false,
+      "artifacts": [
+        {
+          "arm": "ORIGINAL",
+          "characters": 1347,
+          "status": 200,
+          "finishReason": "stop",
+          "sha256": "00ff48d45c898e8a7e85859c896ca0174a62818f68149a626b521df5458f6f04"
+        },
+        {
+          "arm": "V40",
+          "characters": 3582,
+          "status": 200,
+          "finishReason": "stop",
+          "sha256": "206e79c75fc43e204afc4fe78a28e601f0c68fdabb334d342d0a87a611adc4fe"
+        }
+      ]
+    },
+    {
+      "caseId": "W01",
+      "outcome": "SCOPE_PRESERVED_WITH_LOCAL_FIDELITY_GAIN",
+      "help": "两臂均阅读后等待，无文件修改或独立说明文档；优化作品只概述已给链路，比原始少了“订单状态由api侧决定”的无依据责任归属。",
+      "edits": [],
+      "scopeViolation": false,
+      "artifacts": [
+        {
+          "arm": "ORIGINAL",
+          "characters": 260,
+          "status": 200,
+          "finishReason": "stop",
+          "sha256": "68b8f1017d421247b11a2a2d406545f20a4b51f72569af4cd843193c71a649f0"
+        },
+        {
+          "arm": "V40",
+          "characters": 103,
+          "status": 200,
+          "finishReason": "stop",
+          "sha256": "1c423195d401e5c8ee529ae7c81ee46c7124dde3d91bfcdd05fbdbc8a9e65217"
+        }
+      ]
+    }
+  ],
+  "decision": "采用仅限门控、阶段状态和本轮所验Plan决定权修复；不宣称总体正文质量、所有场景或长期稳定收益。"
+}

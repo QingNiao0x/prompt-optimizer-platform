@@ -1,0 +1,99 @@
+{
+  "origin": "内部定向回归及正常变体，无独立留出或外部专业评审声明",
+  "cases": [
+    {
+      "id": "Q01",
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "planExpectation": "ZERO_QUESTIONS",
+      "acceptance": [
+        "保留查询职业与行业目标",
+        "内容重点与执行检索可由AI承担，不将统计口径扩成主体",
+        "无附件不是必须追问的理由"
+      ],
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": []
+    },
+    {
+      "id": "E01",
+      "rawPrompt": "请解释一下浏览器缓存，帮我弄明白它怎么影响网页更新。",
+      "acceptance": [
+        "解释缓存与更新关系",
+        "不得改成代码实现或项目报告"
+      ],
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": []
+    },
+    {
+      "id": "C01",
+      "rawPrompt": "帮我比较全量备份和增量备份，方便决定日常该怎么安排。",
+      "acceptance": [
+        "比较两者及日常安排",
+        "不假定已有系统、数据量或恢复目标"
+      ],
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": []
+    },
+    {
+      "id": "S01",
+      "rawPrompt": "只输出三行，每行一个数字，顺序为1、2、3；不要标题、解释或额外内容。",
+      "acceptance": [
+        "充分需求允许保留原文",
+        "三行数字要求不变"
+      ],
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": []
+    },
+    {
+      "id": "W01",
+      "rawPrompt": "请先阅读我提供的项目材料，理解模块关系后等待我给具体任务；这一步不改文件，也不交付说明文档。",
+      "executorMaterials": [
+        {
+          "name": "合成项目材料",
+          "content": "这是合成项目：web端负责订单录入；api校验订单后调用stock模块预留库存，库存失败时订单保持待处理状态。当前只供阅读理解，下一步任务尚未下达。"
+        }
+      ],
+      "acceptance": [
+        "只阅读理解后等待",
+        "不得增加说明文档、代码、架构报告或下一任务设计"
+      ],
+      "contextDescription": "",
+      "files": []
+    },
+    {
+      "id": "M01",
+      "rawPrompt": "我没有现成的活动资料，请帮我写一份适合社区周末开展的旧物交换活动建议。",
+      "acceptance": [
+        "保留没有现成活动资料的事实",
+        "仍指导交付活动建议，不改成资料清单或填空模板",
+        "允许设计时间流程但不冒充社区既定安排"
+      ],
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": []
+    },
+    {
+      "id": "P01",
+      "rawPrompt": "请替我修改活动通知：原定周六下午两点、地点旧活动室，现因旧活动室关闭需要换地点。新地点由我决定，修改前先问我，其他信息保持原样，不编造关闭原因。",
+      "planExpectation": "IMPORTANT_UNKNOWN",
+      "answerFacts": [
+        {
+          "id": "place",
+          "answer": "新地点改为青禾中心二层会议室。"
+        }
+      ],
+      "answerBundle": "新地点改为青禾中心二层会议室。",
+      "acceptance": [
+        "必须询问用户保留的新地点",
+        "回答后使用青禾中心二层会议室",
+        "保留周六下午两点和旧地点关闭事实，不编造原因"
+      ],
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": []
+    }
+  ]
+}

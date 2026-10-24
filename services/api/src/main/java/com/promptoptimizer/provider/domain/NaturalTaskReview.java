@@ -27,6 +27,7 @@ public record NaturalTaskReview(InputReadiness inputReadiness, List<Coverage> re
 
     /** 模型对需求充分程度的候选判断，只指导补全，不建立事实、授权或额外追问。 */
     public enum InputReadiness {
+        /** 服务端逐字保留路径未进行充分性判断，不能以未改写推断需求充分。 */ NOT_ASSESSED,
         /** 现有表达足以交付，优先保留有效原句。 */ SUFFICIENT,
         /** 需要补充适用内容或处理重要未知，不要求用户补齐所有执行细节。 */ NEEDS_COMPLETION
     }

@@ -44,9 +44,10 @@ public final class NaturalPreservedRequest {
             }
         }
         var understanding = new NaturalTaskUnderstanding(scope.goal(), "", requirements, List.of(), List.of(),
-                new NaturalTaskReview(NaturalTaskReview.InputReadiness.SUFFICIENT, coverage, List.of(), List.of())).resolve(input);
+                new NaturalTaskReview(NaturalTaskReview.InputReadiness.NOT_ASSESSED, coverage, List.of(), List.of())).resolve(input);
         understanding.review().validateEnhancement(understanding, body.toString());
-        return new NaturalPromptDraft(body.toString(), NaturalPromptDraft.Framework.APE, metadata, understanding);
+        return new NaturalPromptDraft(body.toString(), NaturalPromptDraft.Framework.APE, metadata, understanding)
+                .withStages(List.of(com.promptoptimizer.enhancement.domain.NaturalProcessing.Stage.SCOPE_ANALYSIS));
     }
 
     /**

@@ -1,0 +1,621 @@
+[
+  {
+    "id": "C01_V40_GEN",
+    "caseId": "C01",
+    "version": "40",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "帮我比较全量备份和增量备份，方便决定日常该怎么安排。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "C01_V40_GEN",
+      "data": {
+        "optimizedPrompt": "帮我比较全量备份和增量备份，方便决定日常该怎么安排。请围绕备份速度与耗时、存储空间占用、恢复速度与恢复步骤复杂度、对源系统和网络带宽的压力、数据安全性与容错能力、管理和自动化难度等方面做对比，说明两者各自适合的场景和主要取舍。最后结合日常使用给出可执行的备份安排建议，例如全量与增量如何搭配、各自频率大致怎么定、保留多少份备份、恢复演练和校验应如何安排；建议要说明理由和适用前提，若某些安排取决于数据量、变更频率、可接受恢复时间或存储预算等具体条件，请指出这些条件会如何影响选择，不要编造具体数据或假定我的环境参数。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5897,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "40",
+        "framework": "APE",
+        "recordId": "449b3573-36c7-4928-aaa0-7f0755751075",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "E01_V40_GEN",
+    "caseId": "E01",
+    "version": "40",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请解释一下浏览器缓存，帮我弄明白它怎么影响网页更新。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "E01_V40_GEN",
+      "data": {
+        "optimizedPrompt": "请解释浏览器缓存，帮我弄明白它怎么影响网页更新。说明时请讲清缓存的基本机制（浏览器把哪些资源、按什么依据存下来，再次访问时如何判断用本地副本还是重新请求），以及缓存对网页更新的实际影响：为什么改了文件用户却仍看到旧页面，缓存命中、过期与重新验证分别意味着什么。可结合常见缓存相关响应头（如 Cache-Control、ETag、Last-Modified）和强缓存、协商缓存的区别来说明，并给出让更新及时生效的常见做法（如文件名加版本号或哈希、合理设置缓存时长、必要时强制刷新）。用通俗易懂的语言面向非专业读者讲解，避免堆砌术语，篇幅适中。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 6303,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "40",
+        "framework": "APE",
+        "recordId": "f3a7cfff-3250-4fff-90cf-482e3a47a79a",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "M01_V40_GEN",
+    "caseId": "M01",
+    "version": "40",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "我没有现成的活动资料，请帮我写一份适合社区周末开展的旧物交换活动建议。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "M01_V40_GEN",
+      "data": {
+        "optimizedPrompt": "我没有现成的活动资料，请帮我写一份适合社区周末开展的旧物交换活动建议。建议要能直接用于社区落地，围绕周末这一时间条件展开，内容可包括：活动目标与适合的参与人群、旧物征集与分类规则（可交换物品范围、禁用物品、卫生与安全检查）、周末现场流程与时间安排、场地布置和分区、人员分工与志愿者安排、宣传招募方式、交换规则与秩序维护、安全与应急措施、活动后的收尾和反馈。由于没有现成资料，请按一般社区场景给出通用、可调整的方案，不要编造具体社区名称、人数、预算数字或已确认的合作方；涉及数量和费用时说明为估算或给出确定方法。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 6107,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "40",
+        "framework": "APE",
+        "recordId": "69f6acb9-8df6-4b82-b261-40df102cdbc5",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "P01_V40_PLAN",
+    "caseId": "P01",
+    "version": "40",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "请替我修改活动通知：原定周六下午两点、地点旧活动室，现因旧活动室关闭需要换地点。新地点由我决定，修改前先问我，其他信息保持原样，不编造关闭原因。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "84cf3324-92fb-4e1d-9d05-7d7eeb695040",
+        "version": "sha256:6f119da3bbe996502160369ebda82a8e76363a13526f1001232cff05d3fe1dca"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "P01_V40_PLAN",
+      "data": {
+        "summary": "原任务是在用户确定新地点后修改活动通知，仅替换地点，保留周六下午两点等其他信息，不编造关闭原因。唯一需本轮确认的是用户保留决定权的新地点。",
+        "questions": [
+          {
+            "id": "new_location",
+            "question": "请提供替换旧活动室的新地点（名称或具体位置），我将据此修改通知。",
+            "hint": "用户明确要求新地点由自己决定且修改前先询问；该答案直接决定通知中地点字段的最终内容，未确定则无法交付修改稿。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5003,
+        "planId": "19d7e086-a0d2-4082-9060-ef2ac5ddde46",
+        "planningContext": {
+          "contextId": "84cf3324-92fb-4e1d-9d05-7d7eeb695040",
+          "version": "sha256:6f119da3bbe996502160369ebda82a8e76363a13526f1001232cff05d3fe1dca"
+        },
+        "expiresAt": "2026-10-24T06:34:27.447030Z"
+      }
+    }
+  },
+  {
+    "id": "Q01_V40_GEN",
+    "caseId": "Q01",
+    "version": "40",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "Q01_V40_GEN",
+      "data": {
+        "optimizedPrompt": "请帮我查询全球使用AI最多的职业/行业，并给出查询结果。请说明所依据的数据来源、统计口径和时间范围，例如是按使用人数、使用频率还是采用率衡量；如果不同来源的排名不一致，请并列呈现并说明差异。资料不足或口径不统一时，请说明受影响的结论，其余内容仍照常完成。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4543,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "40",
+        "framework": "APE",
+        "recordId": "ecf03454-3d5c-4e7a-9f39-baf50b6fe4e0",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "Q01_V40_PLAN",
+    "caseId": "Q01",
+    "version": "40",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "35aa5d08-d39d-4219-882b-772453dfcf45",
+        "version": "sha256:a3c97fc36b85645376fd5cc1953269ec63b4a888c0427805ba9f5599b1262c44"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "Q01_V40_PLAN",
+      "data": {
+        "summary": "用户要求查询全球使用AI最多的职业/行业。需澄清“使用最多”的衡量口径与数据时间范围，以便确定排序依据和引用数据。",
+        "questions": [
+          {
+            "id": "metric",
+            "question": "“使用AI最多”希望按哪种口径衡量？",
+            "hint": "不同口径会改变排名结果与结论表述",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "adoption",
+                "label": "采用率/渗透率",
+                "description": "按职业或行业中使用者占比排序",
+                "answer": "按采用率或渗透率衡量，给出占比最高的职业/行业",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "users",
+                "label": "使用人数",
+                "description": "按绝对使用人数排序",
+                "answer": "按使用人数衡量，给出人数最多的职业/行业",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "hours",
+                "label": "使用时长/频次",
+                "description": "按使用时长或使用频次排序",
+                "answer": "按使用时长或频次衡量，给出使用最密集的职业/行业",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "any",
+                "label": "不限口径，综合说明",
+                "description": "由执行者综合多种口径给出概览",
+                "answer": "不限单一口径，综合多种指标给出概览",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          },
+          {
+            "id": "timeframe",
+            "question": "希望采用什么时间范围的数据？",
+            "hint": "不同年份会改变引用的数据与排名时效性",
+            "type": "SINGLE_CHOICE",
+            "options": [
+              {
+                "id": "latest",
+                "label": "最新可得数据",
+                "description": "采用当前可获得的最新公开数据",
+                "answer": "采用最新可得的公开数据",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "recent3",
+                "label": "近三年",
+                "description": "综合近三年数据",
+                "answer": "综合近三年数据给出结论",
+                "recommended": false,
+                "recommendationReason": ""
+              },
+              {
+                "id": "any",
+                "label": "不限，注明数据年份即可",
+                "description": "由执行者选择并标注年份",
+                "answer": "不限时间范围，但需注明所引数据的年份",
+                "recommended": false,
+                "recommendationReason": ""
+              }
+            ],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5724,
+        "planId": "3555c4e7-391d-462f-b514-2e0cb765ce3f",
+        "planningContext": {
+          "contextId": "35aa5d08-d39d-4219-882b-772453dfcf45",
+          "version": "sha256:a3c97fc36b85645376fd5cc1953269ec63b4a888c0427805ba9f5599b1262c44"
+        },
+        "expiresAt": "2026-10-24T06:34:21.651465200Z"
+      }
+    }
+  },
+  {
+    "id": "S01_V40_GEN",
+    "caseId": "S01",
+    "version": "40",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "只输出三行，每行一个数字，顺序为1、2、3；不要标题、解释或额外内容。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "S01_V40_GEN",
+      "data": {
+        "optimizedPrompt": "只输出三行，每行一个数字，顺序为1、2、3；不要标题、解释或额外内容。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3317,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "40",
+        "framework": "APE",
+        "recordId": "7da7a3ae-7161-489c-930d-46abfab3c2be",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": true
+        }
+      }
+    }
+  },
+  {
+    "id": "W01_V40_GEN",
+    "caseId": "W01",
+    "version": "40",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请先阅读我提供的项目材料，理解模块关系后等待我给具体任务；这一步不改文件，也不交付说明文档。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "W01_V40_GEN",
+      "data": {
+        "optimizedPrompt": "请先阅读我提供的项目材料，理解各模块之间的关系，然后等待我给出具体任务。这一步不要修改任何文件，也不要交付说明文档。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3592,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "40",
+        "framework": "APE",
+        "recordId": "a17fb3fc-afd1-4f90-bd8b-508e2e3e6750",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  }
+]

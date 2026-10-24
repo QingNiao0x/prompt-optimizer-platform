@@ -17,7 +17,7 @@ const fixture = (): OptimizationResult => ({
 });
 
 /** 固定响应验证浏览器闭环；路由白名单阻止测试误发真实模型请求，不创建用户账号。 */
-const setup = async (page: Page, planning: 'off' | 'zero' | 'question') => {
+const setup = async (page: Page, planning: 'off' | 'zero' | 'question', overrides: Partial<OptimizationResult> = {}) => {
   await mockAuthentication(page);
   await page.addInitScript(enabled => localStorage.setItem('prompt-optimizer.plan-mode.v1',
     JSON.stringify({ enabled, introSeen: true })), planning !== 'off');
@@ -26,7 +26,7 @@ const setup = async (page: Page, planning: 'off' | 'zero' | 'question') => {
     { id: 'mock', displayName: '受控测试模型', provider: 'mock', defaultModel: true },
   ] } }));
   await page.route('**/api/v1/optimizations/plan-events', route => route.fulfill({ status: 204 }));
-  const state = { current: fixture(), requests: [] as OptimizationRequest[], plans: 0, edits: 0, failSave: false };
+  const state = { current: { ...fixture(), ...overrides }, requests: [] as OptimizationRequest[], plans: 0, edits: 0, failSave: false };
   await page.route('**/api/v2/**', async route => {
     const path = new URL(route.request().url()).pathname;
     if (path === '/api/v2/optimizations/plan') {
@@ -41,7 +41,7 @@ const setup = async (page: Page, planning: 'off' | 'zero' | 'question') => {
     if (path === '/api/v2/optimizations') {
       const input = route.request().postDataJSON() as OptimizationRequest;
       state.requests.push(input);
-      const current = fixture();
+      const current = { ...fixture(), ...overrides };
       if (input.planConfirmation?.answers.length) current.optimizedPrompt += '\n' + input.planConfirmation.answers[0]!.answer;
       state.current = current;
       // 原生TEXT协议省略sections，验证API适配器不会要求模型制造四段。
@@ -78,6 +78,24 @@ const generate = async (page: Page, plan = false) => {
   await page.getByLabel('原始提示词', { exact: true }).fill(raw);
   await page.getByRole('button', { name: plan ? '先确认并增强' : '直接增强提示词', exact: true }).click();
 };
+
+for (const mode of ['generated', 'unchanged', 'preserved'] as const) {
+  test('自然增强处理状态：' + mode, async ({ page }) => {
+    const stages: NonNullable<OptimizationResult['processing']>['completedStages'] = mode === 'preserved'
+      ? ['SCOPE_ANALYSIS'] : ['SCOPE_ANALYSIS', 'BODY_GENERATION'];
+    const label = mode === 'preserved' ? '保留原请求，未执行正文改写'
+      : mode === 'unchanged' ? '已检查并保留原文' : '已生成优化正文';
+    await setup(page, 'off', { chainVersion: '39', provider: { provider: 'fixture', model: 'fixture', mock: false },
+      optimizedPrompt: mode === 'generated' ? fixture().optimizedPrompt : raw,
+      processing: { completedStages: stages, originalPreserved: mode !== 'generated' } });
+    await generate(page);
+    await openWorkbenchPane(page, 'result');
+    await expect(page.locator('.result-meta')).toContainText(label);
+    if (mode === 'unchanged') await expect(page.locator('.el-message')).toContainText('正文与原始提示词一致');
+    if (mode === 'preserved') await expect(page.locator('.el-message')).toContainText('本次未执行正文改写');
+    await expect(page.getByTestId('compact-prompt')).toHaveText(mode === 'generated' ? fixture().optimizedPrompt : raw);
+  });
+}
 
 test('移除示例参考开关，原文中的示例要求随直接增强请求保留', async ({ page }) => {
   const state = await setup(page, 'off');

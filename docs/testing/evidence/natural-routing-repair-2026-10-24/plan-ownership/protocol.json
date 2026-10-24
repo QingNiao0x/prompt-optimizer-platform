@@ -1,0 +1,96 @@
+{
+  "batch": "natural-routing-repair-plan-ownership-2026-10-24",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 56,
+  "maximumNewActualCalls": 19,
+  "taskPreviouslyActual": 37,
+  "previousClosedActualCalls": 1983,
+  "oldClosedBalanceTransferred": 0,
+  "versions": [
+    "31",
+    "41"
+  ],
+  "candidateVersions": [
+    "41"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 4096,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 6,
+    "PLAN": 6,
+    "EXECUTION": 6,
+    "REVIEW": 0
+  },
+  "generation": [],
+  "regressionGeneration": [],
+  "generationVersionsByCase": {},
+  "plan": [
+    "Q01",
+    "P01"
+  ],
+  "planVersions": [
+    "41"
+  ],
+  "confirmedPlanGeneration": [
+    "Q01",
+    "P01"
+  ],
+  "execution": [
+    "E01",
+    "C01",
+    "W01"
+  ],
+  "executionArms": [
+    "ORIGINAL",
+    "V40"
+  ],
+  "executionRepeats": 1,
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "41": [
+      "41"
+    ]
+  },
+  "allowedJobs": [
+    "Q01_V41_PLAN",
+    "P01_V41_PLAN",
+    "Q01_V41_PLAN_GEN",
+    "P01_V41_PLAN_GEN",
+    "E01_ORIGINAL_EXEC_R1",
+    "E01_V40_EXEC_R1",
+    "C01_ORIGINAL_EXEC_R1",
+    "C01_V40_EXEC_R1",
+    "W01_ORIGINAL_EXEC_R1",
+    "W01_V40_EXEC_R1"
+  ],
+  "prerequisiteStages": [],
+  "reviews": [],
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false,
+  "criteria": [
+    "本轮独立验收门控修复，不以全部作品胜率判定所有能力。",
+    "41在EXPLICIT/INHERENT/UNSPECIFIED均完成正文阶段，历史31保留兼容；阶段与文本比较必须真实。",
+    "查询解释比较不因未决为空跳过生成；读后等待不增加独立成果；充分需求允许持平；明确无资料及真实回答不得改变。",
+    "零题Plan继续正文，有重要用户决定时提问；全部实际题答保持来源与正文覆盖。",
+    "先回归及正常变体人工语义核对为PASS，后执行同信息实际作品。",
+    "实际作品检查范围保持、可用补充及必要编辑；不把更多文本当收益，任何明确严重越界阻断对应能力。"
+  ],
+  "limits": [
+    "正文指导、路由及协议与40一致，仅Plan增加决定权与实质影响双条件；代码测试须验证两版本正文相同。",
+    "复用40的E01/C01/W01完整增强原件，不改名为41，不计为新生成调用；作品只证明该共同正文组件。",
+    "本阶段正常14调用，总计预期51/56；不做质量重试，历史39/40 Plan失败保持失败。",
+    "Plan两条路径通过后才执行作品；无独立留出或人工用户评审。"
+  ]
+}

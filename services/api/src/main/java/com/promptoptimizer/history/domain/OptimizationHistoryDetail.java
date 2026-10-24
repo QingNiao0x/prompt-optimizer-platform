@@ -40,7 +40,8 @@ public record OptimizationHistoryDetail(
         String resultKind,
         String generationPipeline,
         String chainVersion,
-        String framework
+        String framework,
+        com.promptoptimizer.enhancement.domain.NaturalProcessing processing
 ) {
 
     /**
@@ -52,6 +53,19 @@ public record OptimizationHistoryDetail(
         appliedConstraints = List.copyOf(appliedConstraints);
         conversationHistory = List.copyOf(conversationHistory);
         promptFormat = promptFormat == null ? com.promptoptimizer.enhancement.domain.PromptFormat.STRUCTURED : promptFormat;
+    }
+
+    /** 旧历史与调用方缺少处理阶段时保持未知，不从正文相同或模型身份反推。 */
+    public OptimizationHistoryDetail(UUID id, String rawPrompt, String optimizedPrompt, List<PromptSection> sections,
+            Map<String,Object> contextSummary, List<String> ambiguities, List<String> appliedConstraints,
+            String templateCode, String providerName, String modelName, boolean mock, Integer latencyMs,
+            OffsetDateTime createdAt, boolean includePermissionBoundaries,
+            List<ConversationMessage> conversationHistory, Map<String,Object> permissionPolicy, String modelVersion,
+            com.promptoptimizer.enhancement.domain.PromptFormat promptFormat, ConstraintBundle constraintGroups,
+            String resultKind, String generationPipeline, String chainVersion, String framework) {
+        this(id, rawPrompt, optimizedPrompt, sections, contextSummary, ambiguities, appliedConstraints, templateCode,
+                providerName, modelName, mock, latencyMs, createdAt, includePermissionBoundaries, conversationHistory,
+                permissionPolicy, modelVersion, promptFormat, constraintGroups, resultKind, generationPipeline, chainVersion, framework, null);
     }
 
     /** 兼容旧构造与旧历史；缺少链路信息的COMPACT依然属于旧链。 */

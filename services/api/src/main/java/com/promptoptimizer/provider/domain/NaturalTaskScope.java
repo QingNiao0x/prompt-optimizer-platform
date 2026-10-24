@@ -37,6 +37,18 @@ public record NaturalTaskScope(List<Action> actions, Response response) {
      * 这里不根据引文存在宣称语义正确，也不以准备记录代替最终正文覆盖检查。
      */
     public NaturalTaskScope resolve(NaturalPromptInput input) {
+        return resolve(input, true);
+    }
+
+    /**
+     * 准备分类仅供参考时，不用CURRENT是否出现推断该不该继续生成或提问。
+     * 合法动作、条件及用户来源仍全部核验；最终阶段另从完整原始提示词形成目标与覆盖记录。
+     */
+    public NaturalTaskScope resolveAdvisory(NaturalPromptInput input) {
+        return resolve(input, false);
+    }
+
+    private NaturalTaskScope resolve(NaturalPromptInput input, boolean requireCurrent) {
         if (actions == null || actions.isEmpty() || actions.size() > 64 || response == null || response.basis() == null) {
             throw invalid();
         }
@@ -50,7 +62,7 @@ public record NaturalTaskScope(List<Action> actions, Response response) {
             evidence(action.evidence(), sources, action.timing() != Timing.DESCRIPTIVE);
             current |= action.timing() == Timing.CURRENT;
         }
-        if (!current) throw invalid();
+        if (requireCurrent && !current) throw invalid();
         text(response.description(), response.basis() == ResponseBasis.UNSPECIFIED);
         if (response.basis() == ResponseBasis.UNSPECIFIED) {
             if (!response.description().isEmpty() || response.evidence() == null || !response.evidence().isEmpty()) throw invalid();

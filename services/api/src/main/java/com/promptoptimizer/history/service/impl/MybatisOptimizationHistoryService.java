@@ -354,7 +354,9 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
                 metadataValue(metadata, "resultKind", PromptDocument.ResultKind.SECTIONS.name()),
                 metadataValue(metadata, "generationPipeline", PromptDocument.LEGACY_PIPELINE),
                 metadataValue(metadata, "chainVersion", PromptDocument.LEGACY_VERSION),
-                stringValue(metadata.get("framework"))
+                stringValue(metadata.get("framework")),
+                metadata.get("processing") == null ? null : objectMapper.convertValue(metadata.get("processing"),
+                        com.promptoptimizer.enhancement.domain.NaturalProcessing.class)
         );
     }
 
@@ -370,6 +372,8 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
         metadata.put("resultKind", result.resultKind().name());
         metadata.put("generationPipeline", result.generationPipeline());
         metadata.put("chainVersion", result.chainVersion());
+        // 只持久化服务端观测的阶段和生成时文本比较；旧记录不补写，编辑正文保留当次生成快照。
+        if (result.processing() != null) metadata.put("processing", toMap(result.processing()));
         metadata.put("selectedModelId", result.provider().mock() ? request.modelId() : result.provider().model());
         if (result.framework() != null) metadata.put("framework", result.framework());
         metadata.put("promptFormat", result.promptFormat().name());

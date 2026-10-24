@@ -9,12 +9,12 @@ package com.promptoptimizer.provider.domain;
 public final class NaturalPromptInstructions {
     /** 冻结第四版，供旧历史和明确成果的原始生成路径使用，不能随默认切换回改。 */
     public static final String VERSION = "4";
-    /** 新自然请求采用意图守门；明确成果仍以冻结第四版的原始请求完成生成。 */
+    /** 默认版本在独立门控验收通过后切换；旧历史始终按保存版本重放。 */
     public static final String CURRENT_VERSION = NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION;
 
     /** 已保存的自然版本继续使用各自冻结指导，不静默改换再次增强策略。 */
     public static boolean supports(String version) {
-        return VERSION.equals(version) || NaturalPromptStageInstructions.supports(version)
+        return VERSION.equals(version) || NaturalPromptRoutingRepairInstructions.supports(version) || NaturalPromptStageInstructions.supports(version)
                 || NaturalPromptSourcePreservingInstructions.VERSION.equals(version)
                 || NaturalPromptInformationStateInstructions.VERSION.equals(version)
                 || NaturalPromptSourceReviewInstructions.VERSION.equals(version)
@@ -33,7 +33,7 @@ public final class NaturalPromptInstructions {
 
     /** 第四版及补全候选共用覆盖保护；增加示范不能降低来源、题答和正文锚点校验。 */
     public static boolean requiresTaskReview(String version) {
-        return VERSION.equals(version) || NaturalPromptStageInstructions.supports(version)
+        return VERSION.equals(version) || NaturalPromptRoutingRepairInstructions.supports(version) || NaturalPromptStageInstructions.supports(version)
                 || NaturalPromptSourcePreservingInstructions.VERSION.equals(version)
                 || NaturalPromptInformationStateInstructions.VERSION.equals(version)
                 || NaturalPromptSourceReviewInstructions.VERSION.equals(version)
@@ -50,6 +50,8 @@ public final class NaturalPromptInstructions {
             case "2" -> NaturalPromptInstructionsV2.ENHANCE;
             case "3" -> NaturalPromptInstructionsV3.ENHANCE;
             case VERSION -> ENHANCE;
+            case NaturalPromptRoutingRepairInstructions.VERSION, NaturalPromptRoutingRepairInstructions.ADVISORY_TIMING_VERSION,
+                    NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION -> NaturalPromptRoutingRepairInstructions.ENHANCE;
             case NaturalPromptCompletionGuidance.GUIDANCE_VERSION -> NaturalPromptCompletionGuidance.ENHANCE;
             case NaturalPromptCompletionGuidance.EXEMPLAR_VERSION -> NaturalPromptCompletionGuidance.ENHANCE_WITH_DEMONSTRATIONS;
             case NaturalPromptActionGuidance.GUIDANCE_VERSION -> NaturalPromptActionGuidance.ENHANCE;
@@ -90,6 +92,8 @@ public final class NaturalPromptInstructions {
             case "2" -> NaturalPromptInstructionsV2.PLAN;
             case "3" -> NaturalPromptInstructionsV3.PLAN;
             case VERSION -> PLAN;
+            case NaturalPromptRoutingRepairInstructions.VERSION, NaturalPromptRoutingRepairInstructions.ADVISORY_TIMING_VERSION -> NaturalPromptRoutingRepairInstructions.PLAN;
+            case NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION -> NaturalPromptRoutingRepairInstructions.OWNED_PLAN;
             // 本轮只检验正文补全，不同时改变提问策略；已绑定题答仍进入同一生成和保护路径。
             case NaturalPromptCompletionGuidance.GUIDANCE_VERSION, NaturalPromptCompletionGuidance.EXEMPLAR_VERSION -> PLAN;
             case NaturalPromptActionGuidance.GUIDANCE_VERSION, NaturalPromptActionGuidance.EXEMPLAR_VERSION -> PLAN;
