@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Clock, DataAnalysis, HomeFilled, MagicStick, Setting, Tools } from '@element-plus/icons-vue';
+import { Clock, DataAnalysis, HomeFilled, MagicStick, Picture, Setting, Tools } from '@element-plus/icons-vue';
 import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 
 import BrandMark from '@/components/brand/BrandMark.vue';
 import AccountMenu from '@/components/layout/AccountMenu.vue';
@@ -9,6 +10,7 @@ import { useAuthStore } from '@/stores/auth';
 import { useOptimizationStore } from '@/stores/optimization';
 
 const auth = useAuthStore();
+const route = useRoute();
 const optimization = useOptimizationStore();
 // 顶栏与选择器共用展示短名；管理员名称和调用路由不变。
 const selectedModelVersion = computed(() => formatModelVersion(optimization.availableModels.find(
@@ -18,6 +20,7 @@ const selectedModelVersion = computed(() => formatModelVersion(optimization.avai
 const navigation = [
   { to: '/', label: '首页', icon: HomeFilled },
   { to: '/workbench', label: '工作台', icon: MagicStick },
+  { to: '/image-to-prompt', label: '图像转提示词', icon: Picture },
   { to: '/history', label: '历史', icon: Clock },
   { to: '/settings', label: '设置', icon: Setting },
 ] as const;
@@ -38,6 +41,7 @@ const navigation = [
         v-for="item in navigation"
         :key="item.to"
         :to="item.to"
+        :aria-label="item.label"
         class="nav-link"
       >
         <component :is="item.icon" aria-hidden="true" />
@@ -55,7 +59,8 @@ const navigation = [
 
     <div class="topbar-tools">
       <AccountMenu />
-      <div class="provider-status" :title="`模型版本：${selectedModelVersion}（由平台管理员维护）`">
+      <!-- 说明页尚未调用视觉模型，隐藏文本任务的模型状态以免误导。 -->
+      <div v-if="route.name !== 'image-to-prompt'" class="provider-status" :title="`模型版本：${selectedModelVersion}（由平台管理员维护）`">
         <span class="status-dot" aria-hidden="true"></span>
         <span>{{ selectedModelVersion }}</span>
       </div>
@@ -110,12 +115,15 @@ const navigation = [
 
 .main-nav {
   display: flex;
+  min-width: 0;
+  overflow-x: auto;
   align-items: center;
   gap: 4px;
 }
 
 .nav-link {
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 6px;
   padding: 7px 16px;
@@ -170,10 +178,29 @@ const navigation = [
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 12%, transparent);
 }
 
-@media (max-width: 900px) {
+/* 图像入口加入后，中窄屏将导航独立成行，保留品牌与账号操作的可用空间。 */
+@media (max-width: 1200px) {
   .topbar {
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    padding: 0 16px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'brand tools' 'navigation navigation';
+    height: auto;
+    gap: 8px 12px;
+    padding: calc(8px + env(safe-area-inset-top, 0px)) 16px 8px;
+  }
+
+  .brand {
+    grid-area: brand;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .main-nav {
+    grid-area: navigation;
+  }
+
+  .topbar-tools {
+    grid-area: tools;
   }
 }
 
@@ -185,9 +212,7 @@ const navigation = [
   }
 
   .topbar {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    height: calc(52px + env(safe-area-inset-top, 0px));
-    padding: env(safe-area-inset-top, 0px) 12px 0;
+    padding: calc(8px + env(safe-area-inset-top, 0px)) 12px 8px;
   }
 
   .topbar-tools {
@@ -196,7 +221,7 @@ const navigation = [
   }
 
   .main-nav {
-    justify-self: center;
+    justify-self: stretch;
     gap: 2px;
   }
 

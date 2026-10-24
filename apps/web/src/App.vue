@@ -64,7 +64,7 @@ useUiTheme();
   padding: 0;
 }
 
-/* 管理员有六个导航入口，统计页窄屏分两行，避免覆盖品牌与账号操作。 */
+/* 管理员有七个导航入口；窄屏导航独立成行，长标签折行，保留各入口的位置与可用性。 */
 @media (max-width: 1100px) {
   .topbar--analytics {
     grid-template-columns: minmax(0, 1fr) auto;
@@ -82,7 +82,7 @@ useUiTheme();
     grid-area: navigation;
     display: grid;
     width: 100%;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 0;
   }
 
@@ -91,7 +91,7 @@ useUiTheme();
 
 @media (max-width: 640px) {
   .topbar--analytics :deep(.nav-link) { min-height: 48px; flex-direction: column; gap: 4px; padding: 6px 2px; font-size: 11px; }
-  .topbar--analytics :deep(.nav-link span) { display: inline; white-space: nowrap; }
+  .topbar--analytics :deep(.nav-link span) { display: inline; white-space: normal; text-wrap: balance; text-align: center; }
 
   .app-main {
     width: min(100% - 24px, 720px);

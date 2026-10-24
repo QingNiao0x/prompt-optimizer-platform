@@ -36,6 +36,12 @@ const router = createRouter({
       meta: { title: '提示词工作台' },
     },
     {
+      path: '/image-to-prompt',
+      name: 'image-to-prompt',
+      component: () => import('@/pages/ImageToPromptPage.vue'),
+      meta: { title: '图像转提示词' },
+    },
+    {
       path: '/history',
       name: 'history',
       component: () => import('@/pages/HistoryPage.vue'),
