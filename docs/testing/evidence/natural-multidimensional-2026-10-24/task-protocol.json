@@ -1,0 +1,15 @@
+{
+  "status": "FROZEN",
+  "selectedMaximumActualCalls": 200,
+  "oldClosedBalancesTransferred": 0,
+  "authorization": "本会话用户要求执行四项自动开发，并授权本轮最多200次真实评测，开发前先提交代码。",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "data": "公开查询原题、泛化科研需求、合成项目与合成业务资料；没有真实研究数据、个人数据或账号凭据。",
+  "qualityRetriesAllowed": false,
+  "default": "31 until the frozen adoption criterion passes; no production deployment",
+  "stages": {
+    "regressionMaximum": 56,
+    "worksMaximum": 144
+  },
+  "stop": "同一假设两个候选出现相同严重失败则停止采样并复核；不以换版本或重复采样寻求通过。"
+}

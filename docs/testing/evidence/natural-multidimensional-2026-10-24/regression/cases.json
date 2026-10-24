@@ -1,0 +1,144 @@
+{
+  "origin": "已有回归题与两条来源正常变体；不用于证明未见题收益。",
+  "cases": [
+    {
+      "id": "Q01",
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "planExpectation": "ZERO_QUESTIONS",
+      "acceptance": [
+        "保留查询职业与行业目标",
+        "内容重点与执行检索可由AI承担，不将统计口径扩成主体",
+        "无附件不是必须追问的理由"
+      ],
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": [
+        {
+          "name": "公开来源摘录；仅执行阶段提供，非穷尽性资料",
+          "content": "来源A：OECD Artificial intelligence，https://www.oecd.org/en/topics/artificial-intelligence.html ，本轮2026-10-24核对的2025年数据：OECD企业采用AI比例20.2%；信息通信业57.3%，专业和科研服务36.8%。这是企业采用指标，覆盖OECD，不是全球所有从业者。\n来源B：Anthropic The Anthropic Economic Index，2025-02-10，https://www.anthropic.com/research/the-anthropic-economic-index ：分析约100万次Claude.ai免费及Pro对话，将任务映射到O*NET职业；计算机与数学类占对话37.2%，艺术与媒体10.3%，教育与图书馆9.3%，办公行政7.9%，生命科学6.4%，商业金融5.9%。这些比例是该平台对话分布，不是职业内人员渗透率。报告指出使用集中于软件开发和技术写作，使用方式约57%是辅助增强、43%是自动执行。"
+        }
+      ]
+    },
+    {
+      "id": "E01",
+      "rawPrompt": "请解释一下浏览器缓存，帮我弄明白它怎么影响网页更新。",
+      "acceptance": [
+        "解释缓存与更新关系",
+        "不得改成代码实现或项目报告"
+      ],
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": []
+    },
+    {
+      "id": "C01",
+      "rawPrompt": "帮我比较全量备份和增量备份，方便决定日常该怎么安排。",
+      "acceptance": [
+        "比较两者及日常安排",
+        "不假定已有系统、数据量或恢复目标"
+      ],
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": []
+    },
+    {
+      "id": "S01",
+      "rawPrompt": "只输出三行，每行一个数字，顺序为1、2、3；不要标题、解释或额外内容。",
+      "acceptance": [
+        "充分需求允许保留原文",
+        "三行数字要求不变"
+      ],
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": []
+    },
+    {
+      "id": "W01",
+      "rawPrompt": "请先阅读我提供的项目材料，理解模块关系后等待我给具体任务；这一步不改文件，也不交付说明文档。",
+      "executorMaterials": [
+        {
+          "name": "合成项目材料",
+          "content": "这是合成项目：web端负责订单录入；api校验订单后调用stock模块预留库存，库存失败时订单保持待处理状态。当前只供阅读理解，下一步任务尚未下达。"
+        }
+      ],
+      "acceptance": [
+        "只阅读理解后等待",
+        "不得增加说明文档、代码、架构报告或下一任务设计"
+      ],
+      "contextDescription": "",
+      "files": []
+    },
+    {
+      "id": "M01",
+      "rawPrompt": "我没有现成的活动资料，请帮我写一份适合社区周末开展的旧物交换活动建议。",
+      "acceptance": [
+        "保留没有现成活动资料的事实",
+        "仍指导交付活动建议，不改成资料清单或填空模板",
+        "允许设计时间流程但不冒充社区既定安排"
+      ],
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": []
+    },
+    {
+      "id": "P01",
+      "rawPrompt": "请替我修改活动通知：原定周六下午两点、地点旧活动室，现因旧活动室关闭需要换地点。新地点由我决定，修改前先问我，其他信息保持原样，不编造关闭原因。",
+      "planExpectation": "IMPORTANT_UNKNOWN",
+      "answerFacts": [
+        {
+          "id": "place",
+          "answer": "新地点改为青禾中心二层会议室。"
+        }
+      ],
+      "answerBundle": "新地点改为青禾中心二层会议室。",
+      "acceptance": [
+        "必须询问用户保留的新地点",
+        "回答后使用青禾中心二层会议室",
+        "保留周六下午两点和旧地点关闭事实，不编造原因"
+      ],
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": []
+    },
+    {
+      "id": "R01",
+      "rawPrompt": "我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:\n1.时间序列的长期趋势和季节性趋势\n2.分性别\\地区\\分人群\\分亚类去进行比较\n3.进行减寿分析:年度的\\性别的yll和yll率\n4.采用Arriaga分解方法去分析",
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": [],
+      "acceptance": [
+        "保留2015—2025年、四项分析及报告任务",
+        "未见数据不断言现实无资料或数据来源尚未确定",
+        "不改成只有提纲、填空、先补材料的任务",
+        "不把拟议统计方法或参数冒充用户已确认"
+      ],
+      "scope": "用户失败原件用于正文诊断；不进行无实证数据的医学结论验收"
+    },
+    {
+      "id": "U01",
+      "rawPrompt": "请根据材料整理存储要求，保留尚未决定的业务条件。",
+      "contextDescription": "合成项目：审计记录保留期限由业务负责人决定，目前未定；不得默认永久保存。",
+      "files": [],
+      "acceptance": [
+        "保留业务负责人决定及期限未知，不能擅自确定期限",
+        "其他有依据的要求继续整理"
+      ]
+    },
+    {
+      "id": "A01",
+      "rawPrompt": "请拟订社区读书活动建议，预算金额还没决定，请给可调整的做法。",
+      "contextDescription": "",
+      "files": [],
+      "conversationHistory": [
+        {
+          "role": "assistant",
+          "content": "可以考虑预算5000元，在阅览室开展。"
+        }
+      ],
+      "acceptance": [
+        "5000元只是助手建议，不得写成用户已确认金额",
+        "普通活动设计由执行者完成，不把预算未知改成停止整个任务"
+      ]
+    }
+  ]
+}

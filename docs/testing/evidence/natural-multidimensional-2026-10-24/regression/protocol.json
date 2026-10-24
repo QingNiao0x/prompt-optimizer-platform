@@ -1,0 +1,124 @@
+{
+  "batch": "natural-multidimensional44-regression-2026-10-24",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 200,
+  "maximumNewActualCalls": 56,
+  "versions": [
+    "31",
+    "44"
+  ],
+  "candidateVersions": [
+    "44"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 4096,
+    "reviewMaxTokens": 4096,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "44": [
+      "44"
+    ]
+  },
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false,
+  "oldClosedBalanceTransferred": 0,
+  "phaseLimits": {
+    "GENERATION": 48,
+    "PLAN": 8,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "generation": [
+    "Q01",
+    "E01",
+    "C01",
+    "S01",
+    "W01",
+    "M01",
+    "R01",
+    "U01",
+    "A01"
+  ],
+  "generationVersionsByCase": {
+    "Q01": [
+      "31",
+      "44"
+    ],
+    "E01": [
+      "44"
+    ],
+    "C01": [
+      "44"
+    ],
+    "S01": [
+      "44"
+    ],
+    "W01": [
+      "44"
+    ],
+    "M01": [
+      "44"
+    ],
+    "P01": [
+      "44"
+    ],
+    "R01": [
+      "31",
+      "44"
+    ],
+    "U01": [
+      "44"
+    ],
+    "A01": [
+      "44"
+    ]
+  },
+  "regressionGeneration": [],
+  "plan": [
+    "Q01",
+    "P01"
+  ],
+  "planVersions": [
+    "44"
+  ],
+  "confirmedPlanGeneration": [
+    "Q01",
+    "P01"
+  ],
+  "execution": [],
+  "executionArms": [
+    "ORIGINAL",
+    "V31",
+    "V44"
+  ],
+  "executionRepeats": 2,
+  "reviews": [],
+  "allowedJobs": [
+    "Q01_V31_GEN",
+    "Q01_V44_GEN",
+    "E01_V44_GEN",
+    "C01_V44_GEN",
+    "S01_V44_GEN",
+    "W01_V44_GEN",
+    "M01_V44_GEN",
+    "R01_V31_GEN",
+    "R01_V44_GEN",
+    "U01_V44_GEN",
+    "A01_V44_GEN",
+    "Q01_V44_PLAN",
+    "Q01_V44_PLAN_GEN",
+    "P01_V44_PLAN",
+    "P01_V44_PLAN_GEN"
+  ]
+}
