@@ -1,0 +1,76 @@
+{
+  "id": "T01_V31_GEN",
+  "caseId": "T01",
+  "version": "31",
+  "phase": "GENERATION",
+  "request": {
+    "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "status": 200,
+  "body": {
+    "requestId": "T01_V31_GEN",
+    "data": {
+      "optimizedPrompt": "请查询并整理全球范围内使用人工智能（AI）最多的职业和行业，形成一份可直接阅读的调研结果。内容应说明哪些职业、哪些行业在AI使用上处于领先，并给出支撑判断的依据，例如权威调查、行业报告或统计数据；如涉及排名或占比，请说明比较口径（如使用率、采用比例、使用频次）和数据来源、统计时间与覆盖范围。若不同来源口径不一致或数据不足，请如实说明受影响的结论，不要编造数据或来源。最终以清晰的分点或表格形式呈现职业与行业两类结果，并附简要结论。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 4970,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "31",
+      "framework": "APE",
+      "recordId": "c8fbbd5f-da18-4d79-a7b5-9ef8cbb23c41",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

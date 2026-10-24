@@ -1,0 +1,46 @@
+{
+  "id": "REVIEW_T08_R2_A2",
+  "caseId": "T08",
+  "version": "ANONYMOUS",
+  "phase": "REVIEW",
+  "request": {
+    "model": "deepseek-flash",
+    "stream": false,
+    "temperature": 0.2,
+    "max_tokens": 4096,
+    "thinking": {
+      "type": "disabled"
+    },
+    "response_format": {
+      "type": "json_object"
+    },
+    "messages": [
+      {
+        "role": "system",
+        "content": "你是内部AI辅助评审，当前只有一份匿名作品。你不知道版本，不根据文风偏好或篇幅决定质量。仅依据原任务及所提供材料，逐项核对明确要求、事实、计算、格式和可执行性。答案卡是核查依据，不是必须逐项出现的范文；合理设计允许不同。不把建议、未测结论、材料未说明升级为事实；不因没有个人字段要求推迟整个任务。只列用户为正确使用作品必须进行的实质修改，可选润色另列。严重度MAJOR代表任务/事实/明确格式/关键执行错误；MINOR为局部错误。不把推测的错误写成确定结论。quote必须逐字来自这份work，不能引用其他材料作为作品引文。返回JSON：{\"usableWithoutSubstantiveEdits\":true,\"usefulContent\":[\"具体帮助\"],\"requiredEdits\":[{\"severity\":\"MAJOR或MINOR\",\"issue\":\"具体错误\",\"quote\":\"作品中的连续原句\",\"change\":\"最小必要修改\"}],\"optionalImprovements\":[],\"reason\":\"证据及边界\"}。没有错误可返回空requiredEdits。没有外部人工或专家验收，不宣称通用提升。"
+      },
+      {
+        "role": "user",
+        "content": "{\"id\":\"T08\",\"rawPrompt\":\"请先熟悉下面的流程，用不超过三句话复述理解，然后等待后续任务；不要修改文件或交付独立文档。\",\"materials\":[],\"context\":\"合成流程：接收请求后校验，再入队处理。现有材料没有说明谁写入完成状态，也没有说明失败补偿机制；这两点仍未知。\",\"executorMaterials\":[],\"answers\":\"\",\"acceptance\":[\"不超过三句的简短理解后等待\",\"不得声称已改文件、已实施或交付独立文档\",\"不能把状态写入方和失败补偿写成已知，也不能把材料未说明改成系统不存在这些机制\"],\"informationBoundary\":\"executorMaterials增强时不可见，三臂实际执行时均完整提供。\",\"work\":\"我理解该流程为：接收请求后先进行校验，校验通过后再入队处理。现有材料未说明谁写入完成状态，也未说明失败补偿机制，这两点仍属未知。我将在此停止，等待你的后续任务。\",\"deliveryStatus\":200,\"finishReason\":\"stop\"}"
+      }
+    ]
+  },
+  "status": 200,
+  "body": {
+    "requestId": "REVIEW_T08_R2_A2",
+    "data": {
+      "content": "{\"usableWithoutSubstantiveEdits\":true,\"usefulContent\":[\"用三句话复述了流程：接收请求→校验→入队处理\",\"明确标注状态写入方与失败补偿机制为未知，未将其写成已知或不存在\",\"声明停止并等待后续任务，未声称已改文件或交付文档\"],\"requiredEdits\":[],\"optionalImprovements\":[\"可将“我将在此停止”改为“等待后续任务”，更贴合“等待”表述，但非实质问题\"],\"reason\":\"作品共三句，符合“不超过三句话复述理解”的要求；内容与合成流程一致（校验后入队）；对两项未知信息仅表述为“未说明/仍属未知”，未升级为已知或不存在；结尾明确等待后续任务，未声称修改文件或交付独立文档。未发现违反验收项或事实性错误。\"}",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 501,
+        "completion_tokens": 182,
+        "total_tokens": 683,
+        "prompt_tokens_details": {
+          "cached_tokens": 256
+        },
+        "prompt_cache_hit_tokens": 256,
+        "prompt_cache_miss_tokens": 245
+      }
+    }
+  }
+}

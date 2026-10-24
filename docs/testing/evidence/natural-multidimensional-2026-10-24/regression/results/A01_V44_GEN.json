@@ -1,0 +1,81 @@
+{
+  "id": "A01_V44_GEN",
+  "caseId": "A01",
+  "version": "44",
+  "phase": "GENERATION",
+  "request": {
+    "rawPrompt": "请拟订社区读书活动建议，预算金额还没决定，请给可调整的做法。",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": true,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [
+      {
+        "role": "assistant",
+        "content": "可以考虑预算5000元，在阅览室开展。"
+      }
+    ],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "status": 200,
+  "body": {
+    "requestId": "A01_V44_GEN",
+    "data": {
+      "optimizedPrompt": "请拟订一份社区读书活动建议，供社区活动组织者参考。预算金额尚未确定，因此建议中不要写死总预算或把某一档金额当作已定事实；请围绕活动目标、参与对象、活动形式与流程、场地与时间安排、人员分工、宣传招募、书籍与物料准备、现场组织、安全与应急、效果评估等方面提出方案。\n\n请把预算未定作为方案设计的核心条件来处理：给出可调整的做法，例如按精简、常规、加强等不同投入档位列出可增减的项目和对应做法，说明哪些环节可以低成本或零成本开展、哪些项目会随预算变化而调整、调整时优先保留什么；金额只作为示例性区间或占位说明，并注明需根据实际预算再确定。\n\n对话中曾提到可考虑5000元、在阅览室开展，这仅是此前的初步设想，不是已确认的条件；可以把它作为可选示例纳入，但不要写成既定预算或唯一场地。若涉及具体金额、场地容量、参与人数等未提供的信息，请用可替换的假设或待确认项标明，不要编造确定数据。最终以条理清晰、便于直接讨论和修改的活动建议形式呈现。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 7665,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "44",
+      "framework": "APE",
+      "recordId": "efbe0b1b-317d-4f48-8d67-e0174976e0e8",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

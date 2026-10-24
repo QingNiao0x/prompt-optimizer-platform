@@ -1,0 +1,55 @@
+{
+  "batch" : "natural-multidimensional44-works-2026-10-24",
+  "jobId" : "REVIEW_T05_R2_A2",
+  "phase" : "REVIEW",
+  "caseId" : "T05",
+  "request" : {
+    "model" : "deepseek-flash",
+    "stream" : false,
+    "temperature" : 0.2,
+    "max_tokens" : 4096,
+    "thinking" : {
+      "type" : "disabled"
+    },
+    "response_format" : {
+      "type" : "json_object"
+    },
+    "messages" : [ {
+      "role" : "system",
+      "content" : "你是内部AI辅助评审，当前只有一份匿名作品。你不知道版本，不根据文风偏好或篇幅决定质量。仅依据原任务及所提供材料，逐项核对明确要求、事实、计算、格式和可执行性。答案卡是核查依据，不是必须逐项出现的范文；合理设计允许不同。不把建议、未测结论、材料未说明升级为事实；不因没有个人字段要求推迟整个任务。只列用户为正确使用作品必须进行的实质修改，可选润色另列。严重度MAJOR代表任务/事实/明确格式/关键执行错误；MINOR为局部错误。不把推测的错误写成确定结论。quote必须逐字来自这份work，不能引用其他材料作为作品引文。返回JSON：{\"usableWithoutSubstantiveEdits\":true,\"usefulContent\":[\"具体帮助\"],\"requiredEdits\":[{\"severity\":\"MAJOR或MINOR\",\"issue\":\"具体错误\",\"quote\":\"作品中的连续原句\",\"change\":\"最小必要修改\"}],\"optionalImprovements\":[],\"reason\":\"证据及边界\"}。没有错误可返回空requiredEdits。没有外部人工或专家验收，不宣称通用提升。"
+    }, {
+      "role" : "user",
+      "content" : "{\"id\":\"T05\",\"rawPrompt\":\"帮我写一则社区读书活动通知，亲切简洁，避免夸大承诺。\",\"materials\":[],\"context\":\"以下为合成且已确认的信息：活动时间10月31日14:00—16:00；地点青禾社区阅览室；社区居民均可参加，自愿报名，不收费。联系人称呼“小青”，无需手机号。\",\"executorMaterials\":[],\"answers\":\"\",\"acceptance\":[\"保留时间、地点、自愿报名和免费信息\",\"直接交付可发送的通知\",\"不编造报名截止日、人数上限、联系电话或已确定的活动环节\",\"表达亲切简洁，不以准备清单代替通知\"],\"informationBoundary\":\"executorMaterials增强时不可见，三臂实际执行时均完整提供。\",\"work\":\"# 社区读书活动通知\\n\\n各位居民朋友：\\n\\n青禾社区将举办一场读书活动，欢迎大家一起读读书、聊聊天。\\n\\n**活动时间：** 10月31日（周五）14:00—16:00  \\n**活动地点：** 青禾社区阅览室  \\n**参加对象：** 社区居民均可参加  \\n**报名方式：** 自愿报名，不收费  \\n**联系人：** 小青\\n\\n有兴趣的居民可联系小青报名。期待和你一起度过一个安静的阅读下午。\\n\\n青禾社区  \\n（日期可自行补充）\",\"deliveryStatus\":200,\"finishReason\":\"stop\"}"
+    } ]
+  },
+  "httpStatus" : 200,
+  "responseBytes" : 2015,
+  "responseSha256" : "0024e6970bb9013db614452924a549b2e54fc26ad3eb071ff5b91398c7850970",
+  "elapsedMs" : 2747,
+  "response" : {
+    "id" : "665c2b84-02d4-451e-9abb-8042d6f9452e",
+    "object" : "chat.completion",
+    "created" : 1792845389,
+    "model" : "deepseek-flash",
+    "choices" : [ {
+      "index" : 0,
+      "message" : {
+        "role" : "assistant",
+        "content" : "{\"usableWithoutSubstantiveEdits\":false,\"usefulContent\":[\"保留了活动时间10月31日14:00—16:00、地点青禾社区阅览室、社区居民均可参加、自愿报名、不收费、联系人小青等已确认信息\",\"以通知形式直接交付，未编造报名截止日、人数上限、联系电话或具体活动环节\",\"语气亲切简洁，未作夸大承诺\"],\"requiredEdits\":[{\"severity\":\"MAJOR\",\"issue\":\"作品自行添加“（周五）”，但已确认信息未说明10月31日为星期几，属于编造事实\",\"quote\":\"**活动时间：** 10月31日（周五）14:00—16:00\",\"change\":\"删除“（周五）”，改为“10月31日14:00—16:00”\"},{\"severity\":\"MINOR\",\"issue\":\"落款处“（日期可自行补充）”是未完成的占位内容，影响通知可直接发送\",\"quote\":\"（日期可自行补充）\",\"change\":\"删除该占位说明，或替换为实际发布日期的留空格式，如“____年__月__日”\"}],\"optionalImprovements\":[\"“报名方式：自愿报名，不收费”中“不收费”不属于报名方式，可拆分为“报名方式：自愿报名”和“费用：免费”以更清晰\"],\"reason\":\"核查依据为已确认信息：时间、地点、对象、自愿报名、免费、联系人小青。作品主体符合要求且未编造报名截止、人数上限、电话或活动环节；但自行添加“周五”属于材料未说明的事实，需删除；落款占位语影响直接发送，需处理。未发现其他实质错误。\"}"
+      },
+      "logprobs" : null,
+      "finish_reason" : "stop"
+    } ],
+    "usage" : {
+      "prompt_tokens" : 592,
+      "completion_tokens" : 364,
+      "total_tokens" : 956,
+      "prompt_tokens_details" : {
+        "cached_tokens" : 256
+      },
+      "prompt_cache_hit_tokens" : 256,
+      "prompt_cache_miss_tokens" : 336
+    },
+    "system_fingerprint" : "e72d3c7f663d3e1383b00b3884cb4501"
+  }
+}

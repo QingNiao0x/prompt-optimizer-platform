@@ -1,0 +1,43 @@
+{
+  "id": "T01_ORIGINAL_EXEC_R2",
+  "caseId": "T01",
+  "version": "ORIGINAL",
+  "phase": "EXECUTION",
+  "request": {
+    "model": "deepseek-flash",
+    "stream": false,
+    "temperature": 0.2,
+    "max_tokens": 4096,
+    "thinking": {
+      "type": "disabled"
+    },
+    "messages": [
+      {
+        "role": "system",
+        "content": "完成用户当前请求，遵守用户明确的输出范围、输出形式与阶段边界。仅使用本次提供的材料；无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+      },
+      {
+        "role": "user",
+        "content": "请帮我查询全球使用AI最多的职业/行业\n\n执行本次任务时用户提供的材料（完整正文）：\n--- 公开来源摘录；仅执行阶段提供，非穷尽性资料 ---\n来源A：OECD Artificial intelligence，https://www.oecd.org/en/topics/artificial-intelligence.html ，本轮2026-10-24核对的2025年数据：OECD企业采用AI比例20.2%；信息通信业57.3%，专业和科研服务36.8%。这是企业采用指标，覆盖OECD，不是全球所有从业者。\n来源B：Anthropic The Anthropic Economic Index，2025-02-10，https://www.anthropic.com/research/the-anthropic-economic-index ：分析约100万次Claude.ai免费及Pro对话，将任务映射到O*NET职业；计算机与数学类占对话37.2%，艺术与媒体10.3%，教育与图书馆9.3%，办公行政7.9%，生命科学6.4%，商业金融5.9%。这些比例是该平台对话分布，不是职业内人员渗透率。报告指出使用集中于软件开发和技术写作，使用方式约57%是辅助增强、43%是自动执行。"
+      }
+    ]
+  },
+  "status": 200,
+  "body": {
+    "requestId": "T01_ORIGINAL_EXEC_R2",
+    "data": {
+      "content": "根据你提供的材料，无法直接得出“全球使用AI最多的职业/行业”这一结论；现有数据只能支持以下有限判断：\n\n1. **按企业采用率看，信息通信业最高**\n   - OECD 2025年数据：OECD企业整体采用AI比例为 **20.2%**。\n   - 分行业看：**信息通信业57.3%**，**专业和科研服务36.8%**。\n   - 但这是**OECD范围的企业采用指标**，不是全球所有从业者，也不是职业层面的渗透率。\n\n2. **按平台对话分布看，计算机与数学类任务最多**\n   - Anthropic 2025年对约100万次Claude.ai免费及Pro对话的分析显示：\n     - **计算机与数学类占37.2%**\n     - 艺术与媒体10.3%\n     - 教育与图书馆9.3%\n     - 办公行政7.9%\n     - 生命科学6.4%\n     - 商业金融5.9%\n   - 报告指出使用集中于**软件开发和技术写作**；使用方式约**57%为辅助增强、43%为自动执行**。\n   - 但这是**该平台对话分布**，不是职业内人员渗透率，也不能代表全球所有AI使用。\n\n**结论：** 仅凭所给材料，不能宣称“全球使用AI最多的职业/行业”是某一个确定答案。较稳妥的表述是：**在企业采用率上，信息通信业在OECD数据中最高；在Claude对话任务分布上，计算机与数学类占比最高。** 两者口径不同，均不能直接等同于全球职业/行业的AI使用排名。",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 300,
+        "completion_tokens": 352,
+        "total_tokens": 652,
+        "prompt_tokens_details": {
+          "cached_tokens": 128
+        },
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 172
+      }
+    }
+  }
+}

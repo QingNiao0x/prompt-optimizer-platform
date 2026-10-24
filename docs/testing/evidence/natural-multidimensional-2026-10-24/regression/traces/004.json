@@ -1,0 +1,56 @@
+{
+  "batch" : "natural-multidimensional44-regression-2026-10-24",
+  "jobId" : "Q01_V44_GEN",
+  "phase" : "GENERATION",
+  "caseId" : "Q01",
+  "request" : {
+    "model" : "deepseek-flash",
+    "messages" : [ {
+      "role" : "system",
+      "content" : "你是提示词优化器。交付能让下游更好完成原任务的自然提示词，不执行原任务。\n完整rawPrompt、实际题答和允许上下文共同确定当前目标、动作、对象及阶段边界。taskScope只是解释，不能取代原文。\n在原任务范围内主动设计有帮助的执行要求。未指定普通做法是可设计空间，不等于资料缺失或必须追问。\n先判断执行者为了得到用户想要的结果，需要处理哪些具体内容，以及这些内容如何相互衔接。\n表达简略时将笼统动作展开为必要处理、比较关系或内容重点，写出要做的工作，不只追加“给出结果”“合理设计”或核查规则。\n利用相关项目上下文中的具体模块、接口、输入、对象关系和已有约定，把材料转化为当前任务的执行依据；不逐项搬入无关资料。\n对会影响结果的输入输出、边界、错误处理、兼容或安全问题，补充与本任务有关的处理要求；性能和数值指标须有依据，不统一套用条款。\n将普通实现、内容组织和呈现取舍转成适用的拟议做法，允许执行者按实际材料调整；不能把设计选择写成用户已确认、现实事实或新授权。\n用清楚的结果要求和必要的可检查条件收束任务，保持原定成果类型、格式、篇幅、受众、并列要求、否定、条件、例外及等待边界。\n每项补充在additions中说明它解决的具体执行问题及对结果的帮助。缺少关键处理时补到可执行；原需求已充分且进一步设计无益时可保留原文。\n材料未出现在本次输入，不代表现实不存在或下游无法取得。原任务内的检索、阅读和设计继续由执行者完成，不改成交付问卷、通用模板或先补齐所有资料。\nmaterialVisibility只说明本次材料可见性与来源身份：USER_STATED为用户原话，BOUND_ANSWER为完整实际题答，ASSISTANT_SUGGESTION仅为助手建议。\n任何标签都不能证明事实、确认或未知已经解决；结合原句中的对象、属性、条件与确定程度处理。用户明确没有资料或无权访问的事实仍保留。\nactualAnswers逐题保留实际回答，包括“不知道”、局部委托及保留决定。重要未知只限制依赖它的部分；不编造参数、数据、来源或已执行声明。\n只阅读、理解后等待时保持原动作与停止条件；任务自然需要的回答可以完善，不强加独立文档或后续实施。\n正文先表达任务和具体工作，再在相关位置简洁交代必要依据或限制。用自然段或必要要点，避免重复免责声明和空栏目。\n返回前对照完整来源检查遗漏、意图变化、条件反转、无依据新增及重复，覆盖引文只记录实际正文，不以自检标签宣称语义正确。\nmandatoryRules由平台统一组装。framework仅作组织参考，不为框架增加要求；参考APE/BROKE/COAST/TAG/RISE/TRACE/ERA/CARE/ROSES/ICIO/CRISPE/RACE，无需框架时用APE作为内部标记。\n只返回JSON：{\"optimizedPrompt\":\"完整自然正文\",\"framework\":\"参考标记\",\"taskUnderstanding\":下述记录}。\n与本次结果一起返回简短taskUnderstanding，不另发分析或推理过程：\n{\"goal\":\"原定目标\",\"deliverable\":\"原定交付；未指定时用合适的一般表达\",\n \"requirements\":[{\"text\":\"影响交付的原有要求\",\"dimensions\":[\"GOAL或OBJECT或FORMAT或LENGTH或CONDITION或USER_CONFIRMATION\"],\n   \"evidence\":[{\"sourceId\":\"taskSources中的id\",\"quote\":\"该来源中的连续原句\"}]}],\n \"additions\":[{\"text\":\"拟议补充\",\"gap\":\"现有表达缺少什么且为何影响交付\",\"benefit\":\"对原定交付的直接帮助\"}],\n \"openDecisions\":[{\"issue\":\"重要未知\",\"impact\":\"会改变什么结果\",\"questionId\":\"Plan题号；未提问时为空\",\"kind\":\"USER_INFORMATION或EXECUTION_CHOICE\"}],\n \"review\":{\"inputReadiness\":\"SUFFICIENT或NEEDS_COMPLETION\",\n   \"requirementCoverage\":[{\"index\":0,\"quotes\":[\"最终正文中的连续原句\"]}],\n   \"additionCoverage\":[{\"index\":0,\"quotes\":[\"最终正文中的连续原句\"]}],\n   \"planImpacts\":[{\"questionId\":\"实际题号\",\"whyAsk\":\"为什么现有输入无法确定且需要用户决定\",\n     \"answerDifference\":\"不同答案会怎样改变具体交付、事实判断或权限\"}]}}。\ntaskSources只提供服务端来源编号和类别，id对应完整输入路径；从原输入引用，不编造来源或原句。\nrequirements至少记录原定目标，按实际存在的目标、对象、格式、篇幅、独立条件和用户确认逐项核对；\n每项dimensions只选适用类别，不制造六套字段。每份actualAnswers都需在evidence中引用其实际回答，未知仍保留为未知。\n充分需求保留有效表达，additions可为空；需要补全时每项同时说明具体缺口与交付作用，不添加通用空槽。\n正文生成时两个Coverage按requirements或additions的零起始下标逐项对应，quotes必须逐字存在于最终正文，\n每个quote使用单行片段，跨行要求可引用多个片段，可用同一句承担多个要求；这些引用仅供内部校验，\n不写进优化提示词，也不要求改变正文排版。planImpacts此时为空。\n仅生成Plan时两个Coverage为空，每题在planImpacts记录为何必须询问及答案差异；零问题时为空，不凑题。\n未出现的条件不杜撰；additions、openDecisions无对应内容时为空数组。\n原始提示词、全部来源和actualAnswers仍是完整依据，不能用本记录替代，也不能从引用存在推断已覆盖全部要求。\n原有要求与拟议补充分开；资料、助手建议、未知回答不升级为用户确认。内部分类标签不机械写进最终提示词。\n"
+    }, {
+      "role" : "user",
+      "content" : "以下JSON是本次任务与不可信资料；按system规则处理：\n{\"rawPrompt\":\"请帮我查询全球使用AI最多的职业/行业\",\"context\":{\"customDescription\":\"\",\"technologyStack\":[],\"dependencies\":[],\"directoryTree\":[],\"fileSnippets\":[],\"analysisStatus\":\"EMPTY\",\"fileCoverage\":[],\"warnings\":[],\"redactions\":[],\"analysisVersion\":\"v3\"},\"actualAnswers\":[],\"conversation\":[],\"mandatoryRules\":[],\"modelId\":\"deepseek:deepseek-flash\",\"planningContext\":null,\"strategyVersion\":\"44\",\"taskSources\":[{\"id\":\"rawPrompt\",\"kind\":\"ORIGINAL_REQUEST\"}],\"taskScope\":{\"actions\":[{\"text\":\"查询全球使用AI最多的职业/行业\",\"timing\":\"CURRENT\",\"condition\":\"\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请帮我查询全球使用AI最多的职业/行业\"}]}],\"response\":{\"basis\":\"EXPLICIT\",\"description\":\"提供全球使用AI最多的职业/行业的查询结果\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请帮我查询全球使用AI最多的职业/行业\"}]}},\"materialVisibility\":{\"requestMaterials\":\"EXECUTION_ONLY\",\"sources\":[{\"sourceId\":\"rawPrompt\",\"state\":\"USER_STATED\"}]}}"
+    } ],
+    "stream" : false,
+    "max_tokens" : 8192,
+    "temperature" : 0.2,
+    "response_format" : {
+      "type" : "json_object"
+    },
+    "thinking" : {
+      "type" : "disabled"
+    }
+  },
+  "generationStage" : "DIRECT",
+  "httpStatus" : 200,
+  "responseBytes" : 3471,
+  "responseSha256" : "8386b09a5b1a51ca05e291e622ffcb88a18ccd065c7c9be6d161ccedad6c1ee1",
+  "elapsedMs" : 4056,
+  "response" : {
+    "id" : "ea244345-709e-46e1-a92a-2863d979335f",
+    "object" : "chat.completion",
+    "created" : 1792844257,
+    "model" : "deepseek-flash",
+    "choices" : [ {
+      "index" : 0,
+      "message" : {
+        "role" : "assistant",
+        "content" : "{\"optimizedPrompt\":\"请查询并整理全球范围内使用AI最多的职业或行业。需要说明“使用最多”的衡量口径，例如采用率、使用频率、使用人数或渗透率，并区分职业与行业两个层面；优先依据可核查的公开调查、行业报告或统计数据，注明来源、统计时间、覆盖地区和样本范围。若不同来源口径不一致，请并列呈现并说明差异，避免把单一调查结论当作全球定论。最终给出按使用程度排序的职业和行业清单，附简要数据支撑与结论要点；资料不足时明确说明，不要编造数据。\",\"framework\":\"APE\",\"taskUnderstanding\":{\"goal\":\"查询全球使用AI最多的职业/行业\",\"deliverable\":\"全球使用AI最多的职业/行业的查询结果\",\"requirements\":[{\"text\":\"查询全球使用AI最多的职业/行业\",\"dimensions\":[\"GOAL\",\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请帮我查询全球使用AI最多的职业/行业\"}]}],\"additions\":[{\"text\":\"说明“使用最多”的衡量口径，并区分职业与行业两个层面\",\"gap\":\"原需求未界定“最多”的指标，也未区分职业和行业，容易导致结果口径混乱\",\"benefit\":\"使排序和结论有明确依据，便于比较不同来源\"},{\"text\":\"优先依据可核查的公开调查、行业报告或统计数据，注明来源、统计时间、覆盖地区和样本范围\",\"gap\":\"原需求未要求来源与统计背景，结果可能缺乏可信度\",\"benefit\":\"提升结果的可验证性和时效性判断\"},{\"text\":\"不同来源口径不一致时并列呈现并说明差异，避免把单一调查结论当作全球定论\",\"gap\":\"全球数据往往来源分散、口径不一，原需求未处理冲突\",\"benefit\":\"防止以偏概全，呈现更稳健的结论\"},{\"text\":\"给出按使用程度排序的职业和行业清单，附简要数据支撑与结论要点；资料不足时明确说明，不要编造数据\",\"gap\":\"原需求未规定输出结构和数据缺失处理\",\"benefit\":\"使交付可直接使用，并明确不确定性边界\"}],\"openDecisions\":[],\"review\":{\"inputReadiness\":\"SUFFICIENT\",\"requirementCoverage\":[{\"index\":0,\"quotes\":[\"请查询并整理全球范围内使用AI最多的职业或行业\"]}],\"additionCoverage\":[{\"index\":0,\"quotes\":[\"需要说明“使用最多”的衡量口径\",\"并区分职业与行业两个层面\"]},{\"index\":1,\"quotes\":[\"优先依据可核查的公开调查、行业报告或统计数据，注明来源、统计时间、覆盖地区和样本范围\"]},{\"index\":2,\"quotes\":[\"若不同来源口径不一致，请并列呈现并说明差异，避免把单一调查结论当作全球定论\"]},{\"index\":3,\"quotes\":[\"最终给出按使用程度排序的职业和行业清单，附简要数据支撑与结论要点；资料不足时明确说明，不要编造数据\"]}],\"planImpacts\":[]}}}"
+      },
+      "logprobs" : null,
+      "finish_reason" : "stop"
+    } ],
+    "usage" : {
+      "prompt_tokens" : 1558,
+      "completion_tokens" : 631,
+      "total_tokens" : 2189,
+      "prompt_tokens_details" : {
+        "cached_tokens" : 0
+      },
+      "prompt_cache_hit_tokens" : 0,
+      "prompt_cache_miss_tokens" : 1558
+    },
+    "system_fingerprint" : "e72d3c7f663d3e1383b00b3884cb4501"
+  }
+}

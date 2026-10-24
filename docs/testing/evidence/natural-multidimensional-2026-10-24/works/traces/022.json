@@ -1,0 +1,56 @@
+{
+  "batch" : "natural-multidimensional44-works-2026-10-24",
+  "jobId" : "T06_V44_GEN",
+  "phase" : "GENERATION",
+  "caseId" : "T06",
+  "request" : {
+    "model" : "deepseek-flash",
+    "messages" : [ {
+      "content" : "你是提示词优化器。交付能让下游更好完成原任务的自然提示词，不执行原任务。\n完整rawPrompt、实际题答和允许上下文共同确定当前目标、动作、对象及阶段边界。taskScope只是解释，不能取代原文。\n在原任务范围内主动设计有帮助的执行要求。未指定普通做法是可设计空间，不等于资料缺失或必须追问。\n先判断执行者为了得到用户想要的结果，需要处理哪些具体内容，以及这些内容如何相互衔接。\n表达简略时将笼统动作展开为必要处理、比较关系或内容重点，写出要做的工作，不只追加“给出结果”“合理设计”或核查规则。\n利用相关项目上下文中的具体模块、接口、输入、对象关系和已有约定，把材料转化为当前任务的执行依据；不逐项搬入无关资料。\n对会影响结果的输入输出、边界、错误处理、兼容或安全问题，补充与本任务有关的处理要求；性能和数值指标须有依据，不统一套用条款。\n将普通实现、内容组织和呈现取舍转成适用的拟议做法，允许执行者按实际材料调整；不能把设计选择写成用户已确认、现实事实或新授权。\n用清楚的结果要求和必要的可检查条件收束任务，保持原定成果类型、格式、篇幅、受众、并列要求、否定、条件、例外及等待边界。\n每项补充在additions中说明它解决的具体执行问题及对结果的帮助。缺少关键处理时补到可执行；原需求已充分且进一步设计无益时可保留原文。\n材料未出现在本次输入，不代表现实不存在或下游无法取得。原任务内的检索、阅读和设计继续由执行者完成，不改成交付问卷、通用模板或先补齐所有资料。\nmaterialVisibility只说明本次材料可见性与来源身份：USER_STATED为用户原话，BOUND_ANSWER为完整实际题答，ASSISTANT_SUGGESTION仅为助手建议。\n任何标签都不能证明事实、确认或未知已经解决；结合原句中的对象、属性、条件与确定程度处理。用户明确没有资料或无权访问的事实仍保留。\nactualAnswers逐题保留实际回答，包括“不知道”、局部委托及保留决定。重要未知只限制依赖它的部分；不编造参数、数据、来源或已执行声明。\n只阅读、理解后等待时保持原动作与停止条件；任务自然需要的回答可以完善，不强加独立文档或后续实施。\n正文先表达任务和具体工作，再在相关位置简洁交代必要依据或限制。用自然段或必要要点，避免重复免责声明和空栏目。\n返回前对照完整来源检查遗漏、意图变化、条件反转、无依据新增及重复，覆盖引文只记录实际正文，不以自检标签宣称语义正确。\nmandatoryRules由平台统一组装。framework仅作组织参考，不为框架增加要求；参考APE/BROKE/COAST/TAG/RISE/TRACE/ERA/CARE/ROSES/ICIO/CRISPE/RACE，无需框架时用APE作为内部标记。\n只返回JSON：{\"optimizedPrompt\":\"完整自然正文\",\"framework\":\"参考标记\",\"taskUnderstanding\":下述记录}。\n与本次结果一起返回简短taskUnderstanding，不另发分析或推理过程：\n{\"goal\":\"原定目标\",\"deliverable\":\"原定交付；未指定时用合适的一般表达\",\n \"requirements\":[{\"text\":\"影响交付的原有要求\",\"dimensions\":[\"GOAL或OBJECT或FORMAT或LENGTH或CONDITION或USER_CONFIRMATION\"],\n   \"evidence\":[{\"sourceId\":\"taskSources中的id\",\"quote\":\"该来源中的连续原句\"}]}],\n \"additions\":[{\"text\":\"拟议补充\",\"gap\":\"现有表达缺少什么且为何影响交付\",\"benefit\":\"对原定交付的直接帮助\"}],\n \"openDecisions\":[{\"issue\":\"重要未知\",\"impact\":\"会改变什么结果\",\"questionId\":\"Plan题号；未提问时为空\",\"kind\":\"USER_INFORMATION或EXECUTION_CHOICE\"}],\n \"review\":{\"inputReadiness\":\"SUFFICIENT或NEEDS_COMPLETION\",\n   \"requirementCoverage\":[{\"index\":0,\"quotes\":[\"最终正文中的连续原句\"]}],\n   \"additionCoverage\":[{\"index\":0,\"quotes\":[\"最终正文中的连续原句\"]}],\n   \"planImpacts\":[{\"questionId\":\"实际题号\",\"whyAsk\":\"为什么现有输入无法确定且需要用户决定\",\n     \"answerDifference\":\"不同答案会怎样改变具体交付、事实判断或权限\"}]}}。\ntaskSources只提供服务端来源编号和类别，id对应完整输入路径；从原输入引用，不编造来源或原句。\nrequirements至少记录原定目标，按实际存在的目标、对象、格式、篇幅、独立条件和用户确认逐项核对；\n每项dimensions只选适用类别，不制造六套字段。每份actualAnswers都需在evidence中引用其实际回答，未知仍保留为未知。\n充分需求保留有效表达，additions可为空；需要补全时每项同时说明具体缺口与交付作用，不添加通用空槽。\n正文生成时两个Coverage按requirements或additions的零起始下标逐项对应，quotes必须逐字存在于最终正文，\n每个quote使用单行片段，跨行要求可引用多个片段，可用同一句承担多个要求；这些引用仅供内部校验，\n不写进优化提示词，也不要求改变正文排版。planImpacts此时为空。\n仅生成Plan时两个Coverage为空，每题在planImpacts记录为何必须询问及答案差异；零问题时为空，不凑题。\n未出现的条件不杜撰；additions、openDecisions无对应内容时为空数组。\n原始提示词、全部来源和actualAnswers仍是完整依据，不能用本记录替代，也不能从引用存在推断已覆盖全部要求。\n原有要求与拟议补充分开；资料、助手建议、未知回答不升级为用户确认。内部分类标签不机械写进最终提示词。\n",
+      "role" : "system"
+    }, {
+      "content" : "以下JSON是本次任务与不可信资料；按system规则处理：\n{\"rawPrompt\":\"请比较两种资料备份方案，推荐一个适合3人小团队日常使用的。\",\"context\":{\"customDescription\":\"\",\"technologyStack\":[],\"dependencies\":[],\"directoryTree\":[],\"fileSnippets\":[],\"analysisStatus\":\"EMPTY\",\"fileCoverage\":[],\"warnings\":[],\"redactions\":[],\"analysisVersion\":\"v3\"},\"actualAnswers\":[],\"conversation\":[],\"mandatoryRules\":[],\"modelId\":\"deepseek:deepseek-flash\",\"planningContext\":null,\"strategyVersion\":\"44\",\"taskSources\":[{\"id\":\"rawPrompt\",\"kind\":\"ORIGINAL_REQUEST\"}],\"taskScope\":{\"actions\":[{\"text\":\"比较两种资料备份方案\",\"timing\":\"CURRENT\",\"condition\":\"\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请比较两种资料备份方案\"}]},{\"text\":\"推荐一个适合3人小团队日常使用的备份方案\",\"timing\":\"CURRENT\",\"condition\":\"\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"推荐一个适合3人小团队日常使用的\"}]}],\"response\":{\"basis\":\"EXPLICIT\",\"description\":\"对两种资料备份方案进行比较，并推荐一个适合3人小团队日常使用的方案\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请比较两种资料备份方案，推荐一个适合3人小团队日常使用的。\"}]}},\"materialVisibility\":{\"requestMaterials\":\"EXECUTION_ONLY\",\"sources\":[{\"sourceId\":\"rawPrompt\",\"state\":\"USER_STATED\"}]}}",
+      "role" : "user"
+    } ],
+    "stream" : false,
+    "max_tokens" : 8192,
+    "temperature" : 0.2,
+    "response_format" : {
+      "type" : "json_object"
+    },
+    "thinking" : {
+      "type" : "disabled"
+    }
+  },
+  "generationStage" : "DIRECT",
+  "httpStatus" : 200,
+  "responseBytes" : 4877,
+  "responseSha256" : "62ccca55e865b76097797bb4df523b6b0b8f492ab0cdeb093db1eef28634b43a",
+  "elapsedMs" : 6054,
+  "response" : {
+    "id" : "26c424d0-3251-48f6-bcf4-194193c5578e",
+    "object" : "chat.completion",
+    "created" : 1792844840,
+    "model" : "deepseek-flash",
+    "choices" : [ {
+      "index" : 0,
+      "message" : {
+        "role" : "assistant",
+        "content" : "{\"optimizedPrompt\":\"请比较两种资料备份方案，并推荐一个适合3人小团队日常使用的方案。比较时请先明确两种方案各自的具体做法和适用条件，再围绕小团队日常备份真正关心的维度展开，例如：备份哪些资料、由谁操作、操作频率与恢复流程是否简单、数据丢失或误删后的恢复能力、存储成本与扩容方式、是否需要额外硬件或维护、多人共享与权限管理、安全与隐私风险、断网或设备故障时的可用性。请说明两种方案在这些维度上的差异和各自优缺点，不要只罗列功能。最后给出明确推荐，并说明推荐理由、适用前提和不推荐另一方案的原因；如两种方案各有适用场景，请指出在什么条件下应改选另一种。若两种方案的具体内容或团队资料规模、预算、现有设备等信息未给出，请基于常见做法作出合理假设并明确标注，不要编造具体产品价格或服务条款。\",\"framework\":\"APE\",\"taskUnderstanding\":{\"goal\":\"比较两种资料备份方案，并推荐一个适合3人小团队日常使用的方案\",\"deliverable\":\"两种备份方案的比较及明确推荐\",\"requirements\":[{\"text\":\"比较两种资料备份方案\",\"dimensions\":[\"GOAL\",\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请比较两种资料备份方案\"}]},{\"text\":\"推荐一个适合3人小团队日常使用的方案\",\"dimensions\":[\"GOAL\",\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"推荐一个适合3人小团队日常使用的\"}]}],\"additions\":[{\"text\":\"明确两种方案各自的具体做法和适用条件，再围绕小团队日常备份关心的维度展开比较\",\"gap\":\"原文只说“比较”，未说明比较对象的具体内容和比较维度，容易只罗列功能而缺少可判断的差异\",\"benefit\":\"使比较有统一框架，便于3人小团队按自身情况判断\"},{\"text\":\"比较维度包括备份范围、操作人、频率与恢复流程、恢复能力、成本与扩容、额外硬件或维护、共享与权限、安全隐私、断网或设备故障可用性\",\"gap\":\"原文未给出比较维度，无法保证覆盖小团队日常使用的关键因素\",\"benefit\":\"让比较结果直接服务于日常使用和恢复场景，而非泛泛而谈\"},{\"text\":\"最后给出明确推荐，并说明推荐理由、适用前提和不推荐另一方案的原因；如各有适用场景，指出改选条件\",\"gap\":\"原文只要求推荐，未要求说明理由和边界，推荐可能缺乏可检验依据\",\"benefit\":\"使推荐可被团队理解和复核，并知道何时应调整方案\"},{\"text\":\"若方案具体内容或团队规模、预算、现有设备等信息未给出，基于常见做法作出合理假设并明确标注，不编造具体产品价格或服务条款\",\"gap\":\"原文未提供两种方案的具体内容和团队约束，执行者可能编造事实或无法推进\",\"benefit\":\"在信息有限时仍能给出可用比较，同时保持假设透明、避免虚假信息\"}],\"openDecisions\":[{\"issue\":\"两种资料备份方案的具体内容未给出\",\"impact\":\"比较对象不明确，执行者需基于常见方案类型作出假设或请用户补充\",\"questionId\":\"\",\"kind\":\"USER_INFORMATION\"},{\"issue\":\"3人小团队的资料规模、预算、现有设备和IT能力未给出\",\"impact\":\"会影响推荐偏向本地备份、云备份或混合方案\",\"questionId\":\"\",\"kind\":\"USER_INFORMATION\"}],\"review\":{\"inputReadiness\":\"SUFFICIENT\",\"requirementCoverage\":[{\"index\":0,\"quotes\":[\"请比较两种资料备份方案\"]},{\"index\":1,\"quotes\":[\"推荐一个适合3人小团队日常使用的方案\"]}],\"additionCoverage\":[{\"index\":0,\"quotes\":[\"比较时请先明确两种方案各自的具体做法和适用条件\"]},{\"index\":1,\"quotes\":[\"例如：备份哪些资料、由谁操作、操作频率与恢复流程是否简单\"]},{\"index\":2,\"quotes\":[\"最后给出明确推荐，并说明推荐理由、适用前提和不推荐另一方案的原因\"]},{\"index\":3,\"quotes\":[\"若两种方案的具体内容或团队资料规模、预算、现有设备等信息未给出，请基于常见做法作出合理假设并明确标注\"]}],\"planImpacts\":[]}}}"
+      },
+      "logprobs" : null,
+      "finish_reason" : "stop"
+    } ],
+    "usage" : {
+      "prompt_tokens" : 1618,
+      "completion_tokens" : 913,
+      "total_tokens" : 2531,
+      "prompt_tokens_details" : {
+        "cached_tokens" : 1152
+      },
+      "prompt_cache_hit_tokens" : 1152,
+      "prompt_cache_miss_tokens" : 466
+    },
+    "system_fingerprint" : "e72d3c7f663d3e1383b00b3884cb4501"
+  }
+}

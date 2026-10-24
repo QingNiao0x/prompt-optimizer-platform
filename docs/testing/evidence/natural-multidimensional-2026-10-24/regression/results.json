@@ -1,0 +1,1101 @@
+[
+  {
+    "id": "A01_V44_GEN",
+    "caseId": "A01",
+    "version": "44",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请拟订社区读书活动建议，预算金额还没决定，请给可调整的做法。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": true,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [
+        {
+          "role": "assistant",
+          "content": "可以考虑预算5000元，在阅览室开展。"
+        }
+      ],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "A01_V44_GEN",
+      "data": {
+        "optimizedPrompt": "请拟订一份社区读书活动建议，供社区活动组织者参考。预算金额尚未确定，因此建议中不要写死总预算或把某一档金额当作已定事实；请围绕活动目标、参与对象、活动形式与流程、场地与时间安排、人员分工、宣传招募、书籍与物料准备、现场组织、安全与应急、效果评估等方面提出方案。\n\n请把预算未定作为方案设计的核心条件来处理：给出可调整的做法，例如按精简、常规、加强等不同投入档位列出可增减的项目和对应做法，说明哪些环节可以低成本或零成本开展、哪些项目会随预算变化而调整、调整时优先保留什么；金额只作为示例性区间或占位说明，并注明需根据实际预算再确定。\n\n对话中曾提到可考虑5000元、在阅览室开展，这仅是此前的初步设想，不是已确认的条件；可以把它作为可选示例纳入，但不要写成既定预算或唯一场地。若涉及具体金额、场地容量、参与人数等未提供的信息，请用可替换的假设或待确认项标明，不要编造确定数据。最终以条理清晰、便于直接讨论和修改的活动建议形式呈现。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 7665,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "44",
+        "framework": "APE",
+        "recordId": "efbe0b1b-317d-4f48-8d67-e0174976e0e8",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "C01_V44_GEN",
+    "caseId": "C01",
+    "version": "44",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "帮我比较全量备份和增量备份，方便决定日常该怎么安排。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "C01_V44_GEN",
+      "data": {
+        "optimizedPrompt": "帮我比较全量备份和增量备份，方便决定日常该怎么安排。比较时请覆盖两者的工作原理、每次备份的数据量与耗时、占用的存储空间、恢复时的步骤和所需时间、对日常运行的影响，以及各自适合的场景和主要风险；不要只罗列定义，要说明这些差异在实际使用中意味着什么。在此基础上，请给出日常备份安排的建议，例如全量与增量如何搭配、各自多久做一次、保留多少份、恢复演练和校验怎么安排，并说明这些建议分别适用于什么情况、在什么条件下需要调整。如果某些安排取决于备份对象、数据量、可接受的恢复时间或存储成本等条件，请把这些条件讲清楚，并给出不同条件下的可选方案，而不是假定某一种情况。最后用便于对照的方式呈现比较结果，并让建议能直接用于决定日常怎么安排。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 6663,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "44",
+        "framework": "APE",
+        "recordId": "ff0458c7-71db-4ce6-93f1-af0c9a6c7cc6",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "E01_V44_GEN",
+    "caseId": "E01",
+    "version": "44",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请解释一下浏览器缓存，帮我弄明白它怎么影响网页更新。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "E01_V44_GEN",
+      "data": {
+        "optimizedPrompt": "请解释浏览器缓存，重点帮我弄明白它如何影响网页更新。面向不熟悉缓存机制的读者，用通俗语言讲清：浏览器缓存是什么、缓存了哪些内容；浏览器在什么情况下直接用缓存、什么情况下向服务器确认或重新获取；缓存命中、过期、重新验证等情形分别会让用户看到旧页面还是新页面。请结合常见缓存机制（如强缓存与协商缓存、Cache-Control、ETag/Last-Modified 等）说明它们对网页更新的作用，并解释开发者发布新版本后用户仍看到旧内容的原因，以及刷新、强制刷新、清除缓存等操作为什么可能改变结果。必要时用简单例子或对比帮助理解，但不要堆砌术语；内容以解释清楚为主，篇幅适中，最后给出让网页更新及时生效的常见做法要点。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 6592,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "44",
+        "framework": "APE",
+        "recordId": "bfdc79f9-7ecb-4845-95f9-0be98b97defd",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "M01_V44_GEN",
+    "caseId": "M01",
+    "version": "44",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "我没有现成的活动资料，请帮我写一份适合社区周末开展的旧物交换活动建议。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "M01_V44_GEN",
+      "data": {
+        "optimizedPrompt": "请帮我写一份适合社区周末开展的旧物交换活动建议。我没有现成的活动资料，请基于社区周末活动的常见场景自行设计，不要因缺少资料而停下来追问。\n\n建议应是一份可直接供社区组织者参考的活动方案，内容围绕旧物交换展开，至少包括：活动目标与适合的参与对象；周末开展的时间安排和场地布置思路；旧物征集范围与可交换物品的基本要求（如可正常使用、清洁完好，并说明哪些物品不宜接收）；现场交换的组织方式与流程；人员分工、宣传动员和现场秩序维护；安全、卫生与纠纷处理等注意事项；活动后的收尾与效果反馈方式。\n\n请把各环节按活动推进顺序组织清楚，让组织者能据此安排准备、执行和收尾工作；涉及数量、时长、人员配置等具体安排时，请给出适合一般社区规模的可调整参考值，并说明可按参与人数和场地条件灵活调整，不要写成固定标准。整体篇幅适中，语言务实、条理清晰，便于社区工作人员直接使用。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 7084,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "44",
+        "framework": "APE",
+        "recordId": "dbb66016-758e-4a18-9a02-042242baeacc",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "P01_V44_PLAN",
+    "caseId": "P01",
+    "version": "44",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "请替我修改活动通知：原定周六下午两点、地点旧活动室，现因旧活动室关闭需要换地点。新地点由我决定，修改前先问我，其他信息保持原样，不编造关闭原因。",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "fb1a814b-1908-4b43-a181-3957c1ccda1d",
+        "version": "sha256:6f119da3bbe996502160369ebda82a8e76363a13526f1001232cff05d3fe1dca"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "P01_V44_PLAN",
+      "data": {
+        "summary": "原定任务是修改活动通知，把地点从旧活动室换成用户指定的新地点，时间和其他信息不变，且不编造关闭原因。用户明确要求修改前先询问并由其决定新地点，因此本轮需先确认新地点这一用户独有信息。",
+        "questions": [
+          {
+            "id": "new_location",
+            "question": "请提供活动的新地点（用于替换通知中的“旧活动室”）。",
+            "hint": "新地点由您明确保留决定，执行者不能代为确定或编造；不同地点会直接改变修改后通知的地点内容。",
+            "type": "FREE_TEXT",
+            "options": [],
+            "examples": [],
+            "allowCustomAnswer": true
+          }
+        ],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5570,
+        "planId": "882e2637-10c4-4733-8366-60b5b07bb7dd",
+        "planningContext": {
+          "contextId": "fb1a814b-1908-4b43-a181-3957c1ccda1d",
+          "version": "sha256:6f119da3bbe996502160369ebda82a8e76363a13526f1001232cff05d3fe1dca"
+        },
+        "expiresAt": "2026-10-24T12:48:45.016946500Z"
+      }
+    }
+  },
+  {
+    "id": "P01_V44_PLAN_GEN",
+    "caseId": "P01",
+    "version": "44",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请替我修改活动通知：原定周六下午两点、地点旧活动室，现因旧活动室关闭需要换地点。新地点由我决定，修改前先问我，其他信息保持原样，不编造关闭原因。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": {
+        "planId": "882e2637-10c4-4733-8366-60b5b07bb7dd",
+        "planningContext": {
+          "contextId": "fb1a814b-1908-4b43-a181-3957c1ccda1d",
+          "version": "sha256:6f119da3bbe996502160369ebda82a8e76363a13526f1001232cff05d3fe1dca"
+        },
+        "answers": [
+          {
+            "questionId": "new_location",
+            "question": "请提供活动的新地点（用于替换通知中的“旧活动室”）。",
+            "answer": "新地点改为青禾中心二层会议室。"
+          }
+        ]
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "P01_V44_PLAN_GEN",
+      "data": {
+        "optimizedPrompt": "请修改下面这份活动通知：原定周六下午两点、地点旧活动室，现因旧活动室关闭需要换地点。新地点已确定为青禾中心二层会议室，请将通知中的“旧活动室”替换为该新地点，周六下午两点及其他信息保持原样。不要编造旧活动室关闭的原因，也不要添加原文没有的活动安排、联系人、报名方式等内容。请直接输出修改后的完整通知，并确保除地点外其余表述与原文一致。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5649,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "44",
+        "framework": "APE",
+        "recordId": "04a881b0-7546-4a28-be30-6d40932a1043",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "Q01_V31_GEN",
+    "caseId": "Q01",
+    "version": "31",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "Q01_V31_GEN",
+      "data": {
+        "optimizedPrompt": "请帮我查询全球使用AI最多的职业或行业，并给出查询结果。请说明所依据的数据来源、统计口径和时间范围，区分“使用AI最多”的不同衡量方式（例如采用率、使用频次、使用人数或使用深度），并注明哪些结论受数据覆盖范围限制。如果找不到可靠的全球统一排名，请如实说明，同时整理可获得的行业或职业层面证据，不要编造数据或来源。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5902,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "31",
+        "framework": "APE",
+        "recordId": "558fe2a0-41a7-42cc-8804-ba9e8d4a3142",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "Q01_V44_GEN",
+    "caseId": "Q01",
+    "version": "44",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "Q01_V44_GEN",
+      "data": {
+        "optimizedPrompt": "请查询并整理全球范围内使用AI最多的职业或行业。需要说明“使用最多”的衡量口径，例如采用率、使用频率、使用人数或渗透率，并区分职业与行业两个层面；优先依据可核查的公开调查、行业报告或统计数据，注明来源、统计时间、覆盖地区和样本范围。若不同来源口径不一致，请并列呈现并说明差异，避免把单一调查结论当作全球定论。最终给出按使用程度排序的职业和行业清单，附简要数据支撑与结论要点；资料不足时明确说明，不要编造数据。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5472,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "44",
+        "framework": "APE",
+        "recordId": "95f3c20e-318b-4699-b562-3547947cf26e",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "Q01_V44_PLAN",
+    "caseId": "Q01",
+    "version": "44",
+    "phase": "PLAN",
+    "request": {
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "contextDescription": "",
+      "conversationHistory": [],
+      "modelId": "deepseek:deepseek-flash",
+      "planningContext": {
+        "contextId": "b189774f-e13f-42f2-886a-e2a22992c236",
+        "version": "sha256:a3c97fc36b85645376fd5cc1953269ec63b4a888c0427805ba9f5599b1262c44"
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "Q01_V44_PLAN",
+      "data": {
+        "summary": "用户要求查询全球使用AI最多的职业/行业。这是公开信息检索与综合类任务，可由执行者检索并说明不同统计口径与资料局限，无需向用户前置提问。",
+        "questions": [],
+        "templateCode": "AUTO",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2639,
+        "planId": "9952a5cc-fbc4-45a0-b70c-6f1a2f720658",
+        "planningContext": {
+          "contextId": "b189774f-e13f-42f2-886a-e2a22992c236",
+          "version": "sha256:a3c97fc36b85645376fd5cc1953269ec63b4a888c0427805ba9f5599b1262c44"
+        },
+        "expiresAt": "2026-10-24T12:48:42.154732Z"
+      }
+    }
+  },
+  {
+    "id": "Q01_V44_PLAN_GEN",
+    "caseId": "Q01",
+    "version": "44",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": {
+        "planId": "9952a5cc-fbc4-45a0-b70c-6f1a2f720658",
+        "planningContext": {
+          "contextId": "b189774f-e13f-42f2-886a-e2a22992c236",
+          "version": "sha256:a3c97fc36b85645376fd5cc1953269ec63b4a888c0427805ba9f5599b1262c44"
+        },
+        "answers": []
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "Q01_V44_PLAN_GEN",
+      "data": {
+        "optimizedPrompt": "请查询并整理全球范围内使用AI最多的职业或行业。先说明“使用最多”可按哪些口径衡量（例如采用率、使用频率、使用人数或生成式AI工具渗透率），再基于可查证的公开数据或报告，给出排名靠前的职业/行业及其依据。请注明数据来源、统计时间、覆盖地区和统计口径，并区分不同口径下结论可能存在的差异；若不同来源结论不一致，请并列呈现并说明原因。最后用简洁的列表或表格汇总主要结论。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4696,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "44",
+        "framework": "APE",
+        "recordId": "909349c5-37d9-493b-85da-a4a19f624e28",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "R01_V31_GEN",
+    "caseId": "R01",
+    "version": "31",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:\n1.时间序列的长期趋势和季节性趋势\n2.分性别\\地区\\分人群\\分亚类去进行比较\n3.进行减寿分析:年度的\\性别的yll和yll率\n4.采用Arriaga分解方法去分析",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "R01_V31_GEN",
+      "data": {
+        "optimizedPrompt": "请撰写一篇2015—2025年某地区心脑血管疾病死亡率特征分析报告。研究地区、数据来源与数据口径尚未确定，请在报告中明确标注所用数据来源、统计口径与地区范围；若缺少实际数据，请以可复现的分析框架和示例性说明呈现，不得编造具体数值或结论。报告需围绕以下四个方面展开：\n\n1. 时间序列分析：描述2015—2025年心脑血管疾病死亡率的长期变化趋势，并识别季节性波动特征，说明趋势检验与季节分解所采用的方法及其适用条件。\n\n2. 分组比较：按性别、地区（如城乡或行政区划）、人群（如年龄组）及疾病亚类（如缺血性心脏病、脑卒中等）分别比较死亡率水平与变化差异，指出主要差异及其可能原因。\n\n3. 减寿分析：计算年度及分性别的潜在减寿年数（YLL）和YLL率，说明指标定义、计算口径与年龄截断值的选择依据，并对年度和性别差异进行解读。\n\n4. Arriaga分解：采用Arriaga分解方法分析死亡率变化的贡献因素，说明分解模型、年龄组划分及各项效应的计算与解释方式。\n\n报告应结构清晰、方法交代完整、结果解读与数据边界一致，适合科研论文或技术报告使用。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 8529,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "31",
+        "framework": "APE",
+        "recordId": "e2847911-1b5a-443e-97e1-abdda1dc9292",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "R01_V44_GEN",
+    "caseId": "R01",
+    "version": "44",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:\n1.时间序列的长期趋势和季节性趋势\n2.分性别\\地区\\分人群\\分亚类去进行比较\n3.进行减寿分析:年度的\\性别的yll和yll率\n4.采用Arriaga分解方法去分析",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "R01_V44_GEN",
+      "data": {
+        "optimizedPrompt": "请撰写一篇2015—2025年某地区心脑血管疾病死亡率特征分析。文章围绕该地区这一时期的心脑血管疾病死亡数据展开，目标是对死亡率的分布特征、变化趋势和健康损失进行系统分析，形成结构完整、方法交代清楚、结果解读与结论相互衔接的分析文稿。\n\n分析内容至少包括以下四部分：\n1. 时间序列分析：描述死亡率的长期变化趋势，并识别和解释季节性波动特征，说明趋势与季节性的判断依据。\n2. 分组比较：按性别、地区、人群和疾病亚类分别比较死亡率水平及其变化差异，指出主要差异所在及可能的影响因素。\n3. 减寿分析：计算并报告年度和分性别的YLL（减寿年数）及YLL率，比较不同年度和性别之间的差异，并解释其含义。\n4. Arriaga分解：采用Arriaga分解方法分析死亡率变化的贡献来源，说明分解结果中各因素的贡献方向与大小，并结合前文结果进行解释。\n\n写作时请保持四部分之间的逻辑衔接：时间趋势与分组差异为减寿分析和分解分析提供背景，减寿分析和分解结果再回到总体特征与重点人群上加以归纳。对数据来源、指标定义、计算口径和分析方法作必要说明；对结果中的主要发现、局限性和结论进行讨论。若某些地区、人群或亚类的划分口径或数据细节需要设定，请采用与研究目的相符、前后一致的处理方式，并在文中明确交代，不要虚构具体数据或来源。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 9577,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "44",
+        "framework": "APE",
+        "recordId": "236963d6-3d1d-4206-9479-78977c9b6102",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "S01_V44_GEN",
+    "caseId": "S01",
+    "version": "44",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "只输出三行，每行一个数字，顺序为1、2、3；不要标题、解释或额外内容。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "S01_V44_GEN",
+      "data": {
+        "optimizedPrompt": "只输出三行，每行一个数字，顺序为1、2、3；不要标题、解释或额外内容。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3196,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "44",
+        "framework": "APE",
+        "recordId": "a6d3adcf-6ab8-46cd-b349-9624d78635f2",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": true
+        }
+      }
+    }
+  },
+  {
+    "id": "U01_V44_GEN",
+    "caseId": "U01",
+    "version": "44",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请根据材料整理存储要求，保留尚未决定的业务条件。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "合成项目：审计记录保留期限由业务负责人决定，目前未定；不得默认永久保存。",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "U01_V44_GEN",
+      "data": {
+        "optimizedPrompt": "请根据现有材料整理存储要求，形成一份可直接使用的存储要求说明。整理时，请把已经明确的存储要求与尚未决定的业务条件分开表述：对审计记录保留期限，应明确标注为“由业务负责人决定、目前未定”，不得默认按永久保存处理，也不要把该期限写成已确认的固定值。对于材料中其他尚未确定的业务条件，同样保留其待定状态，并说明待定事项会影响哪部分存储要求；不要自行补充材料未给出的期限、参数或业务规则。输出应便于后续业务负责人确认待定条件后继续完善。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "合成项目：审计记录保留期限由业务负责人决定，目前未定；不得默认永久保存。",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5763,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "44",
+        "framework": "APE",
+        "recordId": "9b338c62-4baf-46dc-a371-1373a43d8643",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  },
+  {
+    "id": "W01_V44_GEN",
+    "caseId": "W01",
+    "version": "44",
+    "phase": "GENERATION",
+    "request": {
+      "rawPrompt": "请先阅读我提供的项目材料，理解模块关系后等待我给具体任务；这一步不改文件，也不交付说明文档。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "W01_V44_GEN",
+      "data": {
+        "optimizedPrompt": "请先阅读我提供的项目材料，梳理并理解各模块之间的关系；完成阅读和理解后，请等待我给出具体任务。这一步不要修改任何文件，也不要交付说明文档。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3947,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "44",
+        "framework": "APE",
+        "recordId": "a5f6dac3-6235-49d4-947a-0ea176a749bd",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  }
+]

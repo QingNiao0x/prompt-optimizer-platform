@@ -1,0 +1,76 @@
+{
+  "id": "T08_V31_GEN",
+  "caseId": "T08",
+  "version": "31",
+  "phase": "GENERATION",
+  "request": {
+    "rawPrompt": "请先熟悉下面的流程，用不超过三句话复述理解，然后等待后续任务；不要修改文件或交付独立文档。",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "合成流程：接收请求后校验，再入队处理。现有材料没有说明谁写入完成状态，也没有说明失败补偿机制；这两点仍未知。",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "status": 200,
+  "body": {
+    "requestId": "T08_V31_GEN",
+    "data": {
+      "optimizedPrompt": "请先熟悉以下合成流程：接收请求后先校验，再入队处理。用不超过三句话复述你对这一流程的理解，然后等待我给出后续任务。不要修改任何文件，也不要交付独立文档。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "合成流程：接收请求后校验，再入队处理。现有材料没有说明谁写入完成状态，也没有说明失败补偿机制；这两点仍未知。",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 4073,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "31",
+      "framework": "APE",
+      "recordId": "47159dcc-c995-4baa-a03f-4f0e2cea624c",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

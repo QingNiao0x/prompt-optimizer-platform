@@ -1,0 +1,76 @@
+{
+  "id": "T03_V44_GEN",
+  "caseId": "T03",
+  "version": "44",
+  "phase": "GENERATION",
+  "request": {
+    "rawPrompt": "看看这次知识分享的反馈，帮我决定下一期怎么改。",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "完全合成的知识分享反馈：48人参加，40份问卷。5分制平均评分：内容相关性4.5、动手实践安排2.6。改进项为多选，31人希望增加实践，18人希望缩短连续讲授，10人希望提供课后资料。未收集姓名、部门、年龄；未测学习成绩。",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "status": 200,
+  "body": {
+    "requestId": "T03_V44_GEN",
+    "data": {
+      "optimizedPrompt": "请根据这次知识分享的反馈，帮我决定下一期怎么改。现有反馈为：48人参加，回收40份问卷；5分制平均评分中，内容相关性4.5、动手实践安排2.6；改进项为多选，31人希望增加实践，18人希望缩短连续讲授，10人希望提供课后资料。反馈未收集姓名、部门、年龄，也未测学习成绩。请先概括这次反馈反映出的主要问题和优势，再据此给出下一期知识分享的具体改进决定，重点说明如何调整实践环节和连续讲授安排，并说明课后资料是否以及如何提供。建议要结合上述人数和评分，区分哪些是有数据支撑的判断、哪些是推断；不要编造未收集的参与者信息或学习成绩，也不要声称已实施改进。最后用便于直接执行的条目列出下一期的调整方案。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "完全合成的知识分享反馈：48人参加，40份问卷。5分制平均评分：内容相关性4.5、动手实践安排2.6。改进项为多选，31人希望增加实践，18人希望缩短连续讲授，10人希望提供课后资料。未收集姓名、部门、年龄；未测学习成绩。",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 5897,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "44",
+      "framework": "APE",
+      "recordId": "81712ae9-e1ba-48f4-a600-3fe909255ca2",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

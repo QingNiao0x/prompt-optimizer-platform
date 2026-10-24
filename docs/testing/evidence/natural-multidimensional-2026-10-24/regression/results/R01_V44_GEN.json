@@ -1,0 +1,76 @@
+{
+  "id": "R01_V44_GEN",
+  "caseId": "R01",
+  "version": "44",
+  "phase": "GENERATION",
+  "request": {
+    "rawPrompt": "我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:\n1.时间序列的长期趋势和季节性趋势\n2.分性别\\地区\\分人群\\分亚类去进行比较\n3.进行减寿分析:年度的\\性别的yll和yll率\n4.采用Arriaga分解方法去分析",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "status": 200,
+  "body": {
+    "requestId": "R01_V44_GEN",
+    "data": {
+      "optimizedPrompt": "请撰写一篇2015—2025年某地区心脑血管疾病死亡率特征分析。文章围绕该地区这一时期的心脑血管疾病死亡数据展开，目标是对死亡率的分布特征、变化趋势和健康损失进行系统分析，形成结构完整、方法交代清楚、结果解读与结论相互衔接的分析文稿。\n\n分析内容至少包括以下四部分：\n1. 时间序列分析：描述死亡率的长期变化趋势，并识别和解释季节性波动特征，说明趋势与季节性的判断依据。\n2. 分组比较：按性别、地区、人群和疾病亚类分别比较死亡率水平及其变化差异，指出主要差异所在及可能的影响因素。\n3. 减寿分析：计算并报告年度和分性别的YLL（减寿年数）及YLL率，比较不同年度和性别之间的差异，并解释其含义。\n4. Arriaga分解：采用Arriaga分解方法分析死亡率变化的贡献来源，说明分解结果中各因素的贡献方向与大小，并结合前文结果进行解释。\n\n写作时请保持四部分之间的逻辑衔接：时间趋势与分组差异为减寿分析和分解分析提供背景，减寿分析和分解结果再回到总体特征与重点人群上加以归纳。对数据来源、指标定义、计算口径和分析方法作必要说明；对结果中的主要发现、局限性和结论进行讨论。若某些地区、人群或亚类的划分口径或数据细节需要设定，请采用与研究目的相符、前后一致的处理方式，并在文中明确交代，不要虚构具体数据或来源。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 9577,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "44",
+      "framework": "APE",
+      "recordId": "236963d6-3d1d-4206-9479-78977c9b6102",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

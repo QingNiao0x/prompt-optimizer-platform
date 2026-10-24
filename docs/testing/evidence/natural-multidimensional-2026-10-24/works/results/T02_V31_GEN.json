@@ -1,0 +1,76 @@
+{
+  "id": "T02_V31_GEN",
+  "caseId": "T02",
+  "version": "31",
+  "phase": "GENERATION",
+  "request": {
+    "rawPrompt": "看看这次知识分享的反馈，帮我决定下一期怎么改。",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "status": 200,
+  "body": {
+    "requestId": "T02_V31_GEN",
+    "data": {
+      "optimizedPrompt": "请根据这次知识分享的反馈，帮我判断下一期应如何调整。先梳理反馈中反映的主要优点、问题和参与者的具体意见，再据此提出下一期的改进建议，包括内容选题、分享形式、时长节奏、互动安排和宣传通知等可调整之处，并说明每项调整针对的反馈依据和预期效果。反馈材料尚未提供，请先说明需要哪些反馈信息（如问卷结果、现场记录、评论或聊天记录）以及缺少这些信息会影响哪些结论；在材料到位前，可先给出基于常见知识分享反馈维度的分析框架和待验证的改进方向，不要编造具体数据或反馈内容。最终交付一份简洁的反馈分析与下一期改进建议，结论与建议分开呈现。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 6083,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "31",
+      "framework": "APE",
+      "recordId": "682157be-22b4-448f-b00f-5c3ac03fc440",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

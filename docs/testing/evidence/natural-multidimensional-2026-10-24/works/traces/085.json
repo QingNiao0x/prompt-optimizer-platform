@@ -1,0 +1,55 @@
+{
+  "batch" : "natural-multidimensional44-works-2026-10-24",
+  "jobId" : "REVIEW_T01_R2_A2",
+  "phase" : "REVIEW",
+  "caseId" : "T01",
+  "request" : {
+    "model" : "deepseek-flash",
+    "stream" : false,
+    "temperature" : 0.2,
+    "max_tokens" : 4096,
+    "thinking" : {
+      "type" : "disabled"
+    },
+    "response_format" : {
+      "type" : "json_object"
+    },
+    "messages" : [ {
+      "role" : "system",
+      "content" : "你是内部AI辅助评审，当前只有一份匿名作品。你不知道版本，不根据文风偏好或篇幅决定质量。仅依据原任务及所提供材料，逐项核对明确要求、事实、计算、格式和可执行性。答案卡是核查依据，不是必须逐项出现的范文；合理设计允许不同。不把建议、未测结论、材料未说明升级为事实；不因没有个人字段要求推迟整个任务。只列用户为正确使用作品必须进行的实质修改，可选润色另列。严重度MAJOR代表任务/事实/明确格式/关键执行错误；MINOR为局部错误。不把推测的错误写成确定结论。quote必须逐字来自这份work，不能引用其他材料作为作品引文。返回JSON：{\"usableWithoutSubstantiveEdits\":true,\"usefulContent\":[\"具体帮助\"],\"requiredEdits\":[{\"severity\":\"MAJOR或MINOR\",\"issue\":\"具体错误\",\"quote\":\"作品中的连续原句\",\"change\":\"最小必要修改\"}],\"optionalImprovements\":[],\"reason\":\"证据及边界\"}。没有错误可返回空requiredEdits。没有外部人工或专家验收，不宣称通用提升。"
+    }, {
+      "role" : "user",
+      "content" : "{\"id\":\"T01\",\"rawPrompt\":\"请帮我查询全球使用AI最多的职业/行业\",\"materials\":[],\"context\":\"\",\"executorMaterials\":[{\"name\":\"公开来源摘录；仅执行阶段提供，非穷尽性资料\",\"content\":\"来源A：OECD Artificial intelligence，https://www.oecd.org/en/topics/artificial-intelligence.html ，本轮2026-10-24核对的2025年数据：OECD企业采用AI比例20.2%；信息通信业57.3%，专业和科研服务36.8%。这是企业采用指标，覆盖OECD，不是全球所有从业者。\\n来源B：Anthropic The Anthropic Economic Index，2025-02-10，https://www.anthropic.com/research/the-anthropic-economic-index ：分析约100万次Claude.ai免费及Pro对话，将任务映射到O*NET职业；计算机与数学类占对话37.2%，艺术与媒体10.3%，教育与图书馆9.3%，办公行政7.9%，生命科学6.4%，商业金融5.9%。这些比例是该平台对话分布，不是职业内人员渗透率。报告指出使用集中于软件开发和技术写作，使用方式约57%是辅助增强、43%是自动执行。\"}],\"answers\":\"\",\"acceptance\":[\"保留查询职业与行业目标\",\"内容重点与执行检索可由AI承担，不将统计口径扩成主体\",\"无附件不是必须追问的理由\"],\"informationBoundary\":\"executorMaterials增强时不可见，三臂实际执行时均完整提供。\",\"work\":\"根据你提供的材料，无法直接得出“全球使用AI最多的职业/行业”这一结论；现有数据只能支持以下有限判断：\\n\\n1. **按企业采用率看，信息通信业最高**\\n   - OECD 2025年数据：OECD企业整体采用AI比例为 **20.2%**。\\n   - 分行业看：**信息通信业57.3%**，**专业和科研服务36.8%**。\\n   - 但这是**OECD范围的企业采用指标**，不是全球所有从业者，也不是职业层面的渗透率。\\n\\n2. **按平台对话分布看，计算机与数学类任务最多**\\n   - Anthropic 2025年对约100万次Claude.ai免费及Pro对话的分析显示：\\n     - **计算机与数学类占37.2%**\\n     - 艺术与媒体10.3%\\n     - 教育与图书馆9.3%\\n     - 办公行政7.9%\\n     - 生命科学6.4%\\n     - 商业金融5.9%\\n   - 报告指出使用集中于**软件开发和技术写作**；使用方式约**57%为辅助增强、43%为自动执行**。\\n   - 但这是**该平台对话分布**，不是职业内人员渗透率，也不能代表全球所有AI使用。\\n\\n**结论：** 仅凭所给材料，不能宣称“全球使用AI最多的职业/行业”是某一个确定答案。较稳妥的表述是：**在企业采用率上，信息通信业在OECD数据中最高；在Claude对话任务分布上，计算机与数学类占比最高。** 两者口径不同，均不能直接等同于全球职业/行业的AI使用排名。\",\"deliveryStatus\":200,\"finishReason\":\"stop\"}"
+    } ]
+  },
+  "httpStatus" : 200,
+  "responseBytes" : 1636,
+  "responseSha256" : "ad1e4c1e4e179e78adc67ddcfa33cb0fce07f17b1374aee6ad7fb8eba45dedb4",
+  "elapsedMs" : 2452,
+  "response" : {
+    "id" : "4bcd3ecc-8317-41f0-bc3d-e384ea3fba9b",
+    "object" : "chat.completion",
+    "created" : 1792845324,
+    "model" : "deepseek-flash",
+    "choices" : [ {
+      "index" : 0,
+      "message" : {
+        "role" : "assistant",
+        "content" : "{\"usableWithoutSubstantiveEdits\":true,\"usefulContent\":[\"明确区分企业采用率与平台对话分布两种统计口径，避免把局部数据扩成全球职业/行业排名\",\"准确复述OECD企业采用比例及信息通信业、专业和科研服务分行业数据，并标注OECD范围与企业指标边界\",\"准确复述Anthropic对话任务分布及辅助增强/自动执行比例，并说明这是平台对话分布而非职业渗透率\",\"结论给出有限、可辩护的表述，符合材料边界\"],\"requiredEdits\":[],\"optionalImprovements\":[\"可在开头补充一句“以下为基于所给材料的有限回答”，使读者更快理解回答边界\",\"可注明Anthropic数据仅来自Claude.ai免费及Pro对话，进一步限定平台范围\"],\"reason\":\"作品逐项保留了查询职业与行业目标，内容重点落在可由AI检索承担的统计口径说明上；未将OECD企业采用指标或Anthropic平台对话分布扩成全球职业/行业使用排名；未因无附件而追问。所引数据与执行材料一致，结论表述与材料边界相符，未发现任务、事实、计算或格式上的实质错误。\"}"
+      },
+      "logprobs" : null,
+      "finish_reason" : "stop"
+    } ],
+    "usage" : {
+      "prompt_tokens" : 1002,
+      "completion_tokens" : 247,
+      "total_tokens" : 1249,
+      "prompt_tokens_details" : {
+        "cached_tokens" : 384
+      },
+      "prompt_cache_hit_tokens" : 384,
+      "prompt_cache_miss_tokens" : 618
+    },
+    "system_fingerprint" : "e72d3c7f663d3e1383b00b3884cb4501"
+  }
+}

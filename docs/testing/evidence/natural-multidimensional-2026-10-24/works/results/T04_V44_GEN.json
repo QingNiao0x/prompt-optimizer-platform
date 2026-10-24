@@ -1,0 +1,76 @@
+{
+  "id": "T04_V44_GEN",
+  "caseId": "T04",
+  "version": "44",
+  "phase": "GENERATION",
+  "request": {
+    "rawPrompt": "请完善项目里的order函数，只输出完整Python函数代码。",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "合成项目使用Python标准库，不增加依赖。现有函数：\ndef order(values):\n    return values.sort()\n契约：接收整数列表；返回新的升序列表，原列表不变；空列表和重复整数正常处理；非列表或含非整数时抛出TypeError。bool不视为整数。",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "status": 200,
+  "body": {
+    "requestId": "T04_V44_GEN",
+    "data": {
+      "optimizedPrompt": "请完善项目中的 order 函数，只输出完整的 Python 函数代码，不要附加解释、示例或 Markdown 代码围栏。\n\n现有实现为：\ndef order(values):\n    return values.sort()\n\n请按以下契约实现：接收整数列表；返回新的升序列表，原列表保持不变；空列表和重复整数均正常处理；当输入不是列表，或列表中包含非整数元素时，抛出 TypeError；bool 不视为整数。实现只使用 Python 标准库，不增加依赖。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "合成项目使用Python标准库，不增加依赖。现有函数：\ndef order(values):\n    return values.sort()\n契约：接收整数列表；返回新的升序列表，原列表不变；空列表和重复整数正常处理；非列表或含非整数时抛出TypeError。bool不视为整数。",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 4690,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "44",
+      "framework": "APE",
+      "recordId": "441eac3c-39af-45a7-804a-dd5170404bf5",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

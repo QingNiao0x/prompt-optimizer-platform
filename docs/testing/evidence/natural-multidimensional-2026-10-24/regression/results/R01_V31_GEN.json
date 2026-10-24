@@ -1,0 +1,76 @@
+{
+  "id": "R01_V31_GEN",
+  "caseId": "R01",
+  "version": "31",
+  "phase": "GENERATION",
+  "request": {
+    "rawPrompt": "我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:\n1.时间序列的长期趋势和季节性趋势\n2.分性别\\地区\\分人群\\分亚类去进行比较\n3.进行减寿分析:年度的\\性别的yll和yll率\n4.采用Arriaga分解方法去分析",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "status": 200,
+  "body": {
+    "requestId": "R01_V31_GEN",
+    "data": {
+      "optimizedPrompt": "请撰写一篇2015—2025年某地区心脑血管疾病死亡率特征分析报告。研究地区、数据来源与数据口径尚未确定，请在报告中明确标注所用数据来源、统计口径与地区范围；若缺少实际数据，请以可复现的分析框架和示例性说明呈现，不得编造具体数值或结论。报告需围绕以下四个方面展开：\n\n1. 时间序列分析：描述2015—2025年心脑血管疾病死亡率的长期变化趋势，并识别季节性波动特征，说明趋势检验与季节分解所采用的方法及其适用条件。\n\n2. 分组比较：按性别、地区（如城乡或行政区划）、人群（如年龄组）及疾病亚类（如缺血性心脏病、脑卒中等）分别比较死亡率水平与变化差异，指出主要差异及其可能原因。\n\n3. 减寿分析：计算年度及分性别的潜在减寿年数（YLL）和YLL率，说明指标定义、计算口径与年龄截断值的选择依据，并对年度和性别差异进行解读。\n\n4. Arriaga分解：采用Arriaga分解方法分析死亡率变化的贡献因素，说明分解模型、年龄组划分及各项效应的计算与解释方式。\n\n报告应结构清晰、方法交代完整、结果解读与数据边界一致，适合科研论文或技术报告使用。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 8529,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "31",
+      "framework": "APE",
+      "recordId": "e2847911-1b5a-443e-97e1-abdda1dc9292",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

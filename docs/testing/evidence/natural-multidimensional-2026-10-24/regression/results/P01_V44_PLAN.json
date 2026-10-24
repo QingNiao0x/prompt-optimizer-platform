@@ -1,0 +1,48 @@
+{
+  "id": "P01_V44_PLAN",
+  "caseId": "P01",
+  "version": "44",
+  "phase": "PLAN",
+  "request": {
+    "rawPrompt": "请替我修改活动通知：原定周六下午两点、地点旧活动室，现因旧活动室关闭需要换地点。新地点由我决定，修改前先问我，其他信息保持原样，不编造关闭原因。",
+    "contextDescription": "",
+    "conversationHistory": [],
+    "modelId": "deepseek:deepseek-flash",
+    "planningContext": {
+      "contextId": "fb1a814b-1908-4b43-a181-3957c1ccda1d",
+      "version": "sha256:6f119da3bbe996502160369ebda82a8e76363a13526f1001232cff05d3fe1dca"
+    }
+  },
+  "status": 200,
+  "body": {
+    "requestId": "P01_V44_PLAN",
+    "data": {
+      "summary": "原定任务是修改活动通知，把地点从旧活动室换成用户指定的新地点，时间和其他信息不变，且不编造关闭原因。用户明确要求修改前先询问并由其决定新地点，因此本轮需先确认新地点这一用户独有信息。",
+      "questions": [
+        {
+          "id": "new_location",
+          "question": "请提供活动的新地点（用于替换通知中的“旧活动室”）。",
+          "hint": "新地点由您明确保留决定，执行者不能代为确定或编造；不同地点会直接改变修改后通知的地点内容。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "AUTO",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 5570,
+      "planId": "882e2637-10c4-4733-8366-60b5b07bb7dd",
+      "planningContext": {
+        "contextId": "fb1a814b-1908-4b43-a181-3957c1ccda1d",
+        "version": "sha256:6f119da3bbe996502160369ebda82a8e76363a13526f1001232cff05d3fe1dca"
+      },
+      "expiresAt": "2026-10-24T12:48:45.016946500Z"
+    }
+  }
+}

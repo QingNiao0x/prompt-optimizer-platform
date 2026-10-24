@@ -1,0 +1,46 @@
+{
+  "id": "REVIEW_T04_R1_A3",
+  "caseId": "T04",
+  "version": "ANONYMOUS",
+  "phase": "REVIEW",
+  "request": {
+    "model": "deepseek-flash",
+    "stream": false,
+    "temperature": 0.2,
+    "max_tokens": 4096,
+    "thinking": {
+      "type": "disabled"
+    },
+    "response_format": {
+      "type": "json_object"
+    },
+    "messages": [
+      {
+        "role": "system",
+        "content": "你是内部AI辅助评审，当前只有一份匿名作品。你不知道版本，不根据文风偏好或篇幅决定质量。仅依据原任务及所提供材料，逐项核对明确要求、事实、计算、格式和可执行性。答案卡是核查依据，不是必须逐项出现的范文；合理设计允许不同。不把建议、未测结论、材料未说明升级为事实；不因没有个人字段要求推迟整个任务。只列用户为正确使用作品必须进行的实质修改，可选润色另列。严重度MAJOR代表任务/事实/明确格式/关键执行错误；MINOR为局部错误。不把推测的错误写成确定结论。quote必须逐字来自这份work，不能引用其他材料作为作品引文。返回JSON：{\"usableWithoutSubstantiveEdits\":true,\"usefulContent\":[\"具体帮助\"],\"requiredEdits\":[{\"severity\":\"MAJOR或MINOR\",\"issue\":\"具体错误\",\"quote\":\"作品中的连续原句\",\"change\":\"最小必要修改\"}],\"optionalImprovements\":[],\"reason\":\"证据及边界\"}。没有错误可返回空requiredEdits。没有外部人工或专家验收，不宣称通用提升。"
+      },
+      {
+        "role": "user",
+        "content": "{\"id\":\"T04\",\"rawPrompt\":\"请完善项目里的order函数，只输出完整Python函数代码。\",\"materials\":[],\"context\":\"合成项目使用Python标准库，不增加依赖。现有函数：\\ndef order(values):\\n    return values.sort()\\n契约：接收整数列表；返回新的升序列表，原列表不变；空列表和重复整数正常处理；非列表或含非整数时抛出TypeError。bool不视为整数。\",\"executorMaterials\":[],\"answers\":\"\",\"acceptance\":[\"保留order接口，返回新升序整数列表，不修改输入\",\"覆盖空列表、重复整数、负数和无效输入\",\"只输出完整函数代码，不新增依赖\",\"合理实现允许不同，不强制快速排序或特定复杂度\"],\"informationBoundary\":\"executorMaterials增强时不可见，三臂实际执行时均完整提供。\",\"work\":\"def order(values):\\n    if not isinstance(values, list):\\n        raise TypeError(\\\"values must be a list\\\")\\n    for value in values:\\n        if isinstance(value, bool) or not isinstance(value, int):\\n            raise TypeError(\\\"all elements must be integers\\\")\\n    return sorted(values)\",\"deliveryStatus\":200,\"finishReason\":\"stop\"}"
+      }
+    ]
+  },
+  "status": 200,
+  "body": {
+    "requestId": "REVIEW_T04_R1_A3",
+    "data": {
+      "content": "{\"usableWithoutSubstantiveEdits\":true,\"usefulContent\":[\"实现了类型校验：非列表抛 TypeError\",\"逐元素校验，bool 被排除，非整数抛 TypeError\",\"使用 sorted(values) 返回新列表，不修改原列表\",\"空列表、重复整数、负数由 sorted 自然正确处理\",\"仅用标准库，无新增依赖\",\"只输出完整函数代码，符合输出格式要求\"],\"requiredEdits\":[],\"optionalImprovements\":[\"可在函数内添加简短注释说明契约，但非必需\",\"错误信息可更具体地指出非法元素类型，属可选优化\"],\"reason\":\"逐项核对契约：接口 order 保留；sorted 返回新升序列表且原列表不变；空列表、重复整数、负数均正常；非列表抛 TypeError；bool 通过 isinstance(value, bool) 排除；非整数抛 TypeError；无新增依赖；输出仅为完整函数代码。未发现任务、事实、计算或明确格式错误，故无需实质修改。\"}",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 549,
+        "completion_tokens": 210,
+        "total_tokens": 759,
+        "prompt_tokens_details": {
+          "cached_tokens": 384
+        },
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 165
+      }
+    }
+  }
+}

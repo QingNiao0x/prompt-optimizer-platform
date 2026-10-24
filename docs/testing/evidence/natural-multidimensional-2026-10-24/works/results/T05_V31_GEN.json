@@ -1,0 +1,76 @@
+{
+  "id": "T05_V31_GEN",
+  "caseId": "T05",
+  "version": "31",
+  "phase": "GENERATION",
+  "request": {
+    "rawPrompt": "帮我写一则社区读书活动通知，亲切简洁，避免夸大承诺。",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "以下为合成且已确认的信息：活动时间10月31日14:00—16:00；地点青禾社区阅览室；社区居民均可参加，自愿报名，不收费。联系人称呼“小青”，无需手机号。",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "status": 200,
+  "body": {
+    "requestId": "T05_V31_GEN",
+    "data": {
+      "optimizedPrompt": "帮我写一则社区读书活动通知，语气亲切、篇幅简洁，避免夸大承诺。通知中写明：活动时间为10月31日14:00—16:00，地点在青禾社区阅览室；社区居民均可参加，自愿报名，不收费；联系人为“小青”，不写手机号。请直接给出可直接发布的通知正文。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "以下为合成且已确认的信息：活动时间10月31日14:00—16:00；地点青禾社区阅览室；社区居民均可参加，自愿报名，不收费。联系人称呼“小青”，无需手机号。",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 4124,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "31",
+      "framework": "APE",
+      "recordId": "15fe64e5-5aae-45b4-a47e-bad201f1c596",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

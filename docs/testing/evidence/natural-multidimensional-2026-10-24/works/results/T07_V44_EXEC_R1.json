@@ -1,0 +1,43 @@
+{
+  "id": "T07_V44_EXEC_R1",
+  "caseId": "T07",
+  "version": "V44",
+  "phase": "EXECUTION",
+  "request": {
+    "model": "deepseek-flash",
+    "stream": false,
+    "temperature": 0.2,
+    "max_tokens": 4096,
+    "thinking": {
+      "type": "disabled"
+    },
+    "messages": [
+      {
+        "role": "system",
+        "content": "完成用户当前请求，遵守用户明确的输出范围、输出形式与阶段边界。仅使用本次提供的材料；无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+      },
+      {
+        "role": "user",
+        "content": "只输出三行：第一行是1，第二行是2，第三行是3。不要标题、代码块或解释。"
+      }
+    ]
+  },
+  "status": 200,
+  "body": {
+    "requestId": "T07_V44_EXEC_R1",
+    "data": {
+      "content": "1\n2\n3",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 75,
+        "completion_tokens": 5,
+        "total_tokens": 80,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 75
+      }
+    }
+  }
+}

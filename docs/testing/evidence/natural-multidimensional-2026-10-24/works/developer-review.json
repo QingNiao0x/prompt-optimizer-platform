@@ -1,0 +1,44 @@
+{
+  "reviewer": "实现者（AI）复核，不是外部人工或统计专家验收",
+  "independence": "辅助模型逐份匿名评审；实现者知道版本。T02/T03同属反馈任务，不计为两个任务族。",
+  "aiReview": {"usableFlagsTrue":46,"usableFlagsFalse":2,"validJson":48,"exactRequiredEditQuotes":true,"qualityPass":false},
+  "reviewCorrections": [
+    {"works":["T04_ORIGINAL_EXEC_R1","T04_ORIGINAL_EXEC_R2","T04_V31_EXEC_R2"],"issue":"辅助模型遗漏输出代码围栏；纯函数契约通过不等于只交付完整函数代码。","evidence":"```python","classification":"确定性的格式交付差异","decision":"剥除围栏才可直接按Python函数使用；不将算法正确与格式正确合并。"},
+    {"works":["T02_V31_EXEC_R1","T02_V31_EXEC_R2"],"issue":"辅助模型遗漏把希望提供资料推成当前资料不足。","evidence":"课后资料供给不足","classification":"来源未支持的现状判断","decision":"应仅陈述10人希望提供课后资料，不能确定此前是否已经提供或是否不足。"},
+    {"works":["T02_V44_EXEC_R1","T02_V44_EXEC_R2"],"issue":"辅助模型遗漏把需求写成缺失事实。","evidence":"课后资料缺失","classification":"来源未支持的现状判断","decision":"改为课后资料需求；同一错误的重复出现说明44尚未稳定修复信息状态。"},
+    {"works":["T02_V31_EXEC_R2"],"issue":"辅助模型只在另一份31作品中指出代表性推断，本份也有同类表达。","evidence":"反馈对整体参与者具有一定代表性","classification":"回收比例不单独证明代表性","decision":"保留48人和40份问卷，说明只代表填答者，不必展开新调查任务。"},
+    {"works":["T02_V44_EXEC_R1"],"issue":"辅助模型遗漏代表性判断。","evidence":"反馈代表性尚可","classification":"未有代表性检验支持","decision":"删除代表性结论或改为中性样本覆盖描述。"},
+    {"works":["T02_V44_EXEC_R2"],"issue":"辅助模型遗漏代表性判断。","evidence":"反馈有一定代表性","classification":"未有代表性检验支持","decision":"同上一项。"},
+    {"works":["T03_ORIGINAL_EXEC_R2"],"issue":"原始提示词作品也存在同类推断，不能只找候选错误。","evidence":"反馈有一定代表性","classification":"未有代表性检验支持","decision":"同上一项；不因此宣称44在整个反馈任务族胜出。"},
+    {"works":["T06_V31_EXEC_R1","T06_V31_EXEC_R2"],"issue":"将自动/手动备份分别认定为云存储/本地NAS，带入未给出的方案属性。辅助模型只在一份中判为局部问题，低估了其贯穿比较和推荐的影响。","evidence":"云存储备份","classification":"重要比较对象属性无依据新增","decision":"应只比较实际给出的自动/手动、费用、保留与恢复条件，未知实现不作为推荐依据。"},
+    {"works":["T06_V31_EXEC_R2"],"issue":"把未提供费用写成不存在。","evidence":"无一次性设备费","classification":"未提供不等于零费用","decision":"改为仅按材料列明的费用计算，不断言没有其他费用。"},
+    {"works":["T06_V44_EXEC_R1"],"issue":"假设标签未防止推测进入推荐依据；辅助模型把全部有标签假设一概当成允许的设计。","evidence":"无需自购和放置设备，减少硬件维护、供电和物理安全问题","classification":"未明确方案性质时用拟议实现支持实际选择","decision":"普通实施设计可以提出；现有方案是否托管、是否需要硬件不是平台可替用户设定的实际属性。去掉这些假设依据，基于已知自动化和成本作比较。"},
+    {"works":["T06_V44_EXEC_R2"],"issue":"同类假设进入推荐依据。","evidence":"不需要团队维护自购设备，减少硬件故障、摆放、更换等事务。","classification":"假设影响实际方案推荐","decision":"同上一项；预列九类比较维度进一步诱发无资料可答的栏目和推测。"}
+  ],
+  "normalVariants": [
+    "T03_V44两份均保留未测学习成绩，并用建议、如条件允许说明可设计安排，不能把所有建议数值判为编造事实。",
+    "T04六份函数剥除围栏后均通过12项契约检查，44没有创造新的算法正确性收益。",
+    "T05原始两份新增周五与一份待填落款，31和44均避免；44相对31持平。报名联系既有联系人属于正常通知表达。",
+    "T07三个版本提示词完全相同，六份三行数字均准确，只计持平。",
+    "T08六份均三句、保持未知并等待，没有新增独立文档义务。31和44补出的校验通过条件虽常见，材料未明确失败路径，不能据此宣称任何失败处理已确定。"
+  ],
+  "familyFindings": [
+    {"family":"query","cases":["T01"],"finding":"三臂均能根据相同摘录提供有限结论；44仍将大量篇幅用于口径和限制，未证明减少必要修改。"},
+    {"family":"feedback","cases":["T02","T03"],"finding":"44提示词修复未附材料等于无材料的表述，但执行作品仍把希望提供变成资料缺失，且预列内容/形式维度诱发空栏目和重复未知。资料可见时可保留数据与设计，但未稳定优于原始和31。"},
+    {"family":"code-control","cases":["T04"],"finding":"44两次均代码无围栏，31一次、原始两次含围栏；六份算法契约均正确。这是有限格式收益，最多算一个任务族，不能代表实质补全整体收益。"},
+    {"family":"writing","cases":["T05"],"finding":"31和44都避免原始作品新增星期/落款问题；44没有相对31的新增收益。"},
+    {"family":"comparison","cases":["T06"],"finding":"三臂费用计算均正确，原始更紧凑；31和44都加入未给出的云/本地属性，44进一步放大为九类维度和假设，未改善可用性。"},
+    {"family":"sufficient-control","cases":["T07"],"finding":"提示词及作品完全相同，持平。"},
+    {"family":"wait-control","cases":["T08"],"finding":"范围和未知状态保留，持平；不以三句复述的文风差异计收益。"}
+  ],
+  "adoption": {
+    "status":"NOT_ADOPTED",
+    "default":"31",
+    "maximumFamiliesWithLimitedBenefitOverBoth":1,
+    "minimumRequired":2,
+    "reason":"未证实至少两个不同任务族相对原始和31减少实质必要修改；事实状态与比较依据仍有错误，继续扩展采样不能替代机制修复。",
+    "qualityGoalAchieved":false,
+    "productionDeployment":false
+  },
+  "limits":"样本小、单模型、两次执行；必要修改量是实现者和AI辅助估计，未测真人编辑时长。公开查询作品使用冻结摘录，不能评价真实联网检索能力。科研题仅做提示词诊断，不评医学实证结论。"
+}

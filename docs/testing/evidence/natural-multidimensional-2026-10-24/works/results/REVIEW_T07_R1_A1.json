@@ -1,0 +1,46 @@
+{
+  "id": "REVIEW_T07_R1_A1",
+  "caseId": "T07",
+  "version": "ANONYMOUS",
+  "phase": "REVIEW",
+  "request": {
+    "model": "deepseek-flash",
+    "stream": false,
+    "temperature": 0.2,
+    "max_tokens": 4096,
+    "thinking": {
+      "type": "disabled"
+    },
+    "response_format": {
+      "type": "json_object"
+    },
+    "messages": [
+      {
+        "role": "system",
+        "content": "你是内部AI辅助评审，当前只有一份匿名作品。你不知道版本，不根据文风偏好或篇幅决定质量。仅依据原任务及所提供材料，逐项核对明确要求、事实、计算、格式和可执行性。答案卡是核查依据，不是必须逐项出现的范文；合理设计允许不同。不把建议、未测结论、材料未说明升级为事实；不因没有个人字段要求推迟整个任务。只列用户为正确使用作品必须进行的实质修改，可选润色另列。严重度MAJOR代表任务/事实/明确格式/关键执行错误；MINOR为局部错误。不把推测的错误写成确定结论。quote必须逐字来自这份work，不能引用其他材料作为作品引文。返回JSON：{\"usableWithoutSubstantiveEdits\":true,\"usefulContent\":[\"具体帮助\"],\"requiredEdits\":[{\"severity\":\"MAJOR或MINOR\",\"issue\":\"具体错误\",\"quote\":\"作品中的连续原句\",\"change\":\"最小必要修改\"}],\"optionalImprovements\":[],\"reason\":\"证据及边界\"}。没有错误可返回空requiredEdits。没有外部人工或专家验收，不宣称通用提升。"
+      },
+      {
+        "role": "user",
+        "content": "{\"id\":\"T07\",\"rawPrompt\":\"只输出三行：第一行是1，第二行是2，第三行是3。不要标题、代码块或解释。\",\"materials\":[],\"context\":\"\",\"executorMaterials\":[],\"answers\":\"\",\"acceptance\":[\"作品严格为1换行2换行3，允许末尾换行\",\"充分需求持平，不计为增强增益\"],\"informationBoundary\":\"executorMaterials增强时不可见，三臂实际执行时均完整提供。\",\"work\":\"1\\n2\\n3\",\"deliveryStatus\":200,\"finishReason\":\"stop\"}"
+      }
+    ]
+  },
+  "status": 200,
+  "body": {
+    "requestId": "REVIEW_T07_R1_A1",
+    "data": {
+      "content": "{\"usableWithoutSubstantiveEdits\":true,\"usefulContent\":[\"作品严格按要求输出三行：1、2、3，无标题、代码块或解释\",\"符合验收标准：1换行2换行3，末尾换行允许\"],\"requiredEdits\":[],\"optionalImprovements\":[],\"reason\":\"作品内容为“1\\\\n2\\\\n3”，逐字核对原任务三项要求：第一行1、第二行2、第三行3，且无标题、代码块或解释，完全满足；验收标准允许末尾换行，作品末尾换行不构成错误。未发现事实、计算、格式或可执行性方面的实质问题。\"}",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 405,
+        "completion_tokens": 144,
+        "total_tokens": 549,
+        "prompt_tokens_details": {
+          "cached_tokens": 128
+        },
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 277
+      }
+    }
+  }
+}

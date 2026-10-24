@@ -1,0 +1,76 @@
+{
+  "id": "U01_V44_GEN",
+  "caseId": "U01",
+  "version": "44",
+  "phase": "GENERATION",
+  "request": {
+    "rawPrompt": "请根据材料整理存储要求，保留尚未决定的业务条件。",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "合成项目：审计记录保留期限由业务负责人决定，目前未定；不得默认永久保存。",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "status": 200,
+  "body": {
+    "requestId": "U01_V44_GEN",
+    "data": {
+      "optimizedPrompt": "请根据现有材料整理存储要求，形成一份可直接使用的存储要求说明。整理时，请把已经明确的存储要求与尚未决定的业务条件分开表述：对审计记录保留期限，应明确标注为“由业务负责人决定、目前未定”，不得默认按永久保存处理，也不要把该期限写成已确认的固定值。对于材料中其他尚未确定的业务条件，同样保留其待定状态，并说明待定事项会影响哪部分存储要求；不要自行补充材料未给出的期限、参数或业务规则。输出应便于后续业务负责人确认待定条件后继续完善。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "合成项目：审计记录保留期限由业务负责人决定，目前未定；不得默认永久保存。",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 5763,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "44",
+      "framework": "APE",
+      "recordId": "9b338c62-4baf-46dc-a371-1373a43d8643",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

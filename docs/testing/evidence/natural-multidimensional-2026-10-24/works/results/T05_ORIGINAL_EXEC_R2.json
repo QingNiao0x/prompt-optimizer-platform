@@ -1,0 +1,43 @@
+{
+  "id": "T05_ORIGINAL_EXEC_R2",
+  "caseId": "T05",
+  "version": "ORIGINAL",
+  "phase": "EXECUTION",
+  "request": {
+    "model": "deepseek-flash",
+    "stream": false,
+    "temperature": 0.2,
+    "max_tokens": 4096,
+    "thinking": {
+      "type": "disabled"
+    },
+    "messages": [
+      {
+        "role": "system",
+        "content": "完成用户当前请求，遵守用户明确的输出范围、输出形式与阶段边界。仅使用本次提供的材料；无法访问外部工具或文件，不声称已经运行、联网或完成未执行的操作。"
+      },
+      {
+        "role": "user",
+        "content": "帮我写一则社区读书活动通知，亲切简洁，避免夸大承诺。\n\n用户提供的背景：\n以下为合成且已确认的信息：活动时间10月31日14:00—16:00；地点青禾社区阅览室；社区居民均可参加，自愿报名，不收费。联系人称呼“小青”，无需手机号。"
+      }
+    ]
+  },
+  "status": 200,
+  "body": {
+    "requestId": "T05_ORIGINAL_EXEC_R2",
+    "data": {
+      "content": "# 社区读书活动通知\n\n各位居民朋友：\n\n青禾社区将举办一场读书活动，欢迎大家一起读读书、聊聊天。\n\n**活动时间：** 10月31日（周五）14:00—16:00  \n**活动地点：** 青禾社区阅览室  \n**参加对象：** 社区居民均可参加  \n**报名方式：** 自愿报名，不收费  \n**联系人：** 小青\n\n有兴趣的居民可联系小青报名。期待和你一起度过一个安静的阅读下午。\n\n青禾社区  \n（日期可自行补充）",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 114,
+        "completion_tokens": 117,
+        "total_tokens": 231,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 114
+      }
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "batch" : "natural-multidimensional44-regression-2026-10-24",
+  "jobId" : "R01_V44_GEN",
+  "phase" : "GENERATION",
+  "caseId" : "R01",
+  "request" : {
+    "model" : "deepseek-flash",
+    "messages" : [ {
+      "role" : "system",
+      "content" : "你是提示词优化器。交付能让下游更好完成原任务的自然提示词，不执行原任务。\n完整rawPrompt、实际题答和允许上下文共同确定当前目标、动作、对象及阶段边界。taskScope只是解释，不能取代原文。\n在原任务范围内主动设计有帮助的执行要求。未指定普通做法是可设计空间，不等于资料缺失或必须追问。\n先判断执行者为了得到用户想要的结果，需要处理哪些具体内容，以及这些内容如何相互衔接。\n表达简略时将笼统动作展开为必要处理、比较关系或内容重点，写出要做的工作，不只追加“给出结果”“合理设计”或核查规则。\n利用相关项目上下文中的具体模块、接口、输入、对象关系和已有约定，把材料转化为当前任务的执行依据；不逐项搬入无关资料。\n对会影响结果的输入输出、边界、错误处理、兼容或安全问题，补充与本任务有关的处理要求；性能和数值指标须有依据，不统一套用条款。\n将普通实现、内容组织和呈现取舍转成适用的拟议做法，允许执行者按实际材料调整；不能把设计选择写成用户已确认、现实事实或新授权。\n用清楚的结果要求和必要的可检查条件收束任务，保持原定成果类型、格式、篇幅、受众、并列要求、否定、条件、例外及等待边界。\n每项补充在additions中说明它解决的具体执行问题及对结果的帮助。缺少关键处理时补到可执行；原需求已充分且进一步设计无益时可保留原文。\n材料未出现在本次输入，不代表现实不存在或下游无法取得。原任务内的检索、阅读和设计继续由执行者完成，不改成交付问卷、通用模板或先补齐所有资料。\nmaterialVisibility只说明本次材料可见性与来源身份：USER_STATED为用户原话，BOUND_ANSWER为完整实际题答，ASSISTANT_SUGGESTION仅为助手建议。\n任何标签都不能证明事实、确认或未知已经解决；结合原句中的对象、属性、条件与确定程度处理。用户明确没有资料或无权访问的事实仍保留。\nactualAnswers逐题保留实际回答，包括“不知道”、局部委托及保留决定。重要未知只限制依赖它的部分；不编造参数、数据、来源或已执行声明。\n只阅读、理解后等待时保持原动作与停止条件；任务自然需要的回答可以完善，不强加独立文档或后续实施。\n正文先表达任务和具体工作，再在相关位置简洁交代必要依据或限制。用自然段或必要要点，避免重复免责声明和空栏目。\n返回前对照完整来源检查遗漏、意图变化、条件反转、无依据新增及重复，覆盖引文只记录实际正文，不以自检标签宣称语义正确。\nmandatoryRules由平台统一组装。framework仅作组织参考，不为框架增加要求；参考APE/BROKE/COAST/TAG/RISE/TRACE/ERA/CARE/ROSES/ICIO/CRISPE/RACE，无需框架时用APE作为内部标记。\n只返回JSON：{\"optimizedPrompt\":\"完整自然正文\",\"framework\":\"参考标记\",\"taskUnderstanding\":下述记录}。\n与本次结果一起返回简短taskUnderstanding，不另发分析或推理过程：\n{\"goal\":\"原定目标\",\"deliverable\":\"原定交付；未指定时用合适的一般表达\",\n \"requirements\":[{\"text\":\"影响交付的原有要求\",\"dimensions\":[\"GOAL或OBJECT或FORMAT或LENGTH或CONDITION或USER_CONFIRMATION\"],\n   \"evidence\":[{\"sourceId\":\"taskSources中的id\",\"quote\":\"该来源中的连续原句\"}]}],\n \"additions\":[{\"text\":\"拟议补充\",\"gap\":\"现有表达缺少什么且为何影响交付\",\"benefit\":\"对原定交付的直接帮助\"}],\n \"openDecisions\":[{\"issue\":\"重要未知\",\"impact\":\"会改变什么结果\",\"questionId\":\"Plan题号；未提问时为空\",\"kind\":\"USER_INFORMATION或EXECUTION_CHOICE\"}],\n \"review\":{\"inputReadiness\":\"SUFFICIENT或NEEDS_COMPLETION\",\n   \"requirementCoverage\":[{\"index\":0,\"quotes\":[\"最终正文中的连续原句\"]}],\n   \"additionCoverage\":[{\"index\":0,\"quotes\":[\"最终正文中的连续原句\"]}],\n   \"planImpacts\":[{\"questionId\":\"实际题号\",\"whyAsk\":\"为什么现有输入无法确定且需要用户决定\",\n     \"answerDifference\":\"不同答案会怎样改变具体交付、事实判断或权限\"}]}}。\ntaskSources只提供服务端来源编号和类别，id对应完整输入路径；从原输入引用，不编造来源或原句。\nrequirements至少记录原定目标，按实际存在的目标、对象、格式、篇幅、独立条件和用户确认逐项核对；\n每项dimensions只选适用类别，不制造六套字段。每份actualAnswers都需在evidence中引用其实际回答，未知仍保留为未知。\n充分需求保留有效表达，additions可为空；需要补全时每项同时说明具体缺口与交付作用，不添加通用空槽。\n正文生成时两个Coverage按requirements或additions的零起始下标逐项对应，quotes必须逐字存在于最终正文，\n每个quote使用单行片段，跨行要求可引用多个片段，可用同一句承担多个要求；这些引用仅供内部校验，\n不写进优化提示词，也不要求改变正文排版。planImpacts此时为空。\n仅生成Plan时两个Coverage为空，每题在planImpacts记录为何必须询问及答案差异；零问题时为空，不凑题。\n未出现的条件不杜撰；additions、openDecisions无对应内容时为空数组。\n原始提示词、全部来源和actualAnswers仍是完整依据，不能用本记录替代，也不能从引用存在推断已覆盖全部要求。\n原有要求与拟议补充分开；资料、助手建议、未知回答不升级为用户确认。内部分类标签不机械写进最终提示词。\n"
+    }, {
+      "role" : "user",
+      "content" : "以下JSON是本次任务与不可信资料；按system规则处理：\n{\"rawPrompt\":\"我是一名科研工作者,我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析:\\n1.时间序列的长期趋势和季节性趋势\\n2.分性别\\\\地区\\\\分人群\\\\分亚类去进行比较\\n3.进行减寿分析:年度的\\\\性别的yll和yll率\\n4.采用Arriaga分解方法去分析\",\"context\":{\"customDescription\":\"\",\"technologyStack\":[],\"dependencies\":[],\"directoryTree\":[],\"fileSnippets\":[],\"analysisStatus\":\"EMPTY\",\"fileCoverage\":[],\"warnings\":[],\"redactions\":[],\"analysisVersion\":\"v3\"},\"actualAnswers\":[],\"conversation\":[],\"mandatoryRules\":[],\"modelId\":\"deepseek:deepseek-flash\",\"planningContext\":null,\"strategyVersion\":\"44\",\"taskSources\":[{\"id\":\"rawPrompt\",\"kind\":\"ORIGINAL_REQUEST\"}],\"taskScope\":{\"actions\":[{\"text\":\"撰写2015-2025年某地区心脑血管疾病死亡率特征分析，从时间序列的长期趋势和季节性趋势、分性别/地区/人群/分亚类比较、年度和性别的YLL及YLL率减寿分析、Arriaga分解方法分析四个方面展开\",\"timing\":\"CURRENT\",\"condition\":\"\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析,我需要从以下几个方面进行分析\"}]}],\"response\":{\"basis\":\"EXPLICIT\",\"description\":\"2015-2025年某地区心脑血管疾病死亡率特征分析文稿，涵盖长期趋势与季节性趋势、分性别/地区/人群/亚类比较、年度及性别YLL与YLL率、Arriaga分解四部分\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析\"}]}},\"materialVisibility\":{\"requestMaterials\":\"EXECUTION_ONLY\",\"sources\":[{\"sourceId\":\"rawPrompt\",\"state\":\"USER_STATED\"}]}}"
+    } ],
+    "stream" : false,
+    "max_tokens" : 8192,
+    "temperature" : 0.2,
+    "response_format" : {
+      "type" : "json_object"
+    },
+    "thinking" : {
+      "type" : "disabled"
+    }
+  },
+  "generationStage" : "DIRECT",
+  "httpStatus" : 200,
+  "responseBytes" : 5757,
+  "responseSha256" : "ef12933afa6d77ef217216beb90ecdb7db0480f4beede154ed664019ef566d77",
+  "elapsedMs" : 7405,
+  "response" : {
+    "id" : "d8916f6d-eced-48f3-8433-567dfb49fe57",
+    "object" : "chat.completion",
+    "created" : 1792844300,
+    "model" : "deepseek-flash",
+    "choices" : [ {
+      "index" : 0,
+      "message" : {
+        "role" : "assistant",
+        "content" : "{\"optimizedPrompt\":\"请撰写一篇2015—2025年某地区心脑血管疾病死亡率特征分析。文章围绕该地区这一时期的心脑血管疾病死亡数据展开，目标是对死亡率的分布特征、变化趋势和健康损失进行系统分析，形成结构完整、方法交代清楚、结果解读与结论相互衔接的分析文稿。\\n\\n分析内容至少包括以下四部分：\\n1. 时间序列分析：描述死亡率的长期变化趋势，并识别和解释季节性波动特征，说明趋势与季节性的判断依据。\\n2. 分组比较：按性别、地区、人群和疾病亚类分别比较死亡率水平及其变化差异，指出主要差异所在及可能的影响因素。\\n3. 减寿分析：计算并报告年度和分性别的YLL（减寿年数）及YLL率，比较不同年度和性别之间的差异，并解释其含义。\\n4. Arriaga分解：采用Arriaga分解方法分析死亡率变化的贡献来源，说明分解结果中各因素的贡献方向与大小，并结合前文结果进行解释。\\n\\n写作时请保持四部分之间的逻辑衔接：时间趋势与分组差异为减寿分析和分解分析提供背景，减寿分析和分解结果再回到总体特征与重点人群上加以归纳。对数据来源、指标定义、计算口径和分析方法作必要说明；对结果中的主要发现、局限性和结论进行讨论。若某些地区、人群或亚类的划分口径或数据细节需要设定，请采用与研究目的相符、前后一致的处理方式，并在文中明确交代，不要虚构具体数据或来源。\",\"framework\":\"APE\",\"taskUnderstanding\":{\"goal\":\"撰写2015—2025年某地区心脑血管疾病死亡率特征分析\",\"deliverable\":\"涵盖时间序列长期趋势与季节性趋势、分性别/地区/人群/亚类比较、年度及性别YLL与YLL率、Arriaga分解四部分的分析文稿\",\"requirements\":[{\"text\":\"撰写2015-2025年某地区心脑血管疾病死亡率特征分析\",\"dimensions\":[\"GOAL\",\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"我想要撰写2015-2025年某地区心脑血管疾病死亡率特征分析\"}]},{\"text\":\"分析时间序列的长期趋势和季节性趋势\",\"dimensions\":[\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"1.时间序列的长期趋势和季节性趋势\"}]},{\"text\":\"分性别、地区、人群、分亚类进行比较\",\"dimensions\":[\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"2.分性别\\\\地区\\\\分人群\\\\分亚类去进行比较\"}]},{\"text\":\"进行减寿分析：年度的、性别的YLL和YLL率\",\"dimensions\":[\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"3.进行减寿分析:年度的\\\\性别的yll和yll率\"}]},{\"text\":\"采用Arriaga分解方法分析\",\"dimensions\":[\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"4.采用Arriaga分解方法去分析\"}]}],\"additions\":[{\"text\":\"要求四部分之间形成逻辑衔接，时间趋势与分组差异为减寿和分解分析提供背景，减寿与分解结果再归纳总体特征与重点人群\",\"gap\":\"原文只并列列出四项分析，未说明各部分如何组织成一篇连贯文稿\",\"benefit\":\"使分析文稿结构完整、论证连贯，而非四段孤立结果\"},{\"text\":\"要求说明数据来源、指标定义、计算口径和分析方法，并对结果的主要发现、局限性和结论进行讨论\",\"gap\":\"原文未交代方法说明与讨论部分，影响分析文稿的完整性和可读性\",\"benefit\":\"提升文稿的规范性和学术完整性，便于读者理解指标口径与结果含义\"},{\"text\":\"对地区、人群、亚类等划分口径或数据细节需设定时，要求采用与研究目的相符且前后一致的处理方式并在文中交代，不虚构具体数据或来源\",\"gap\":\"原文未提供具体地区、人群划分及数据，存在执行者自行编造参数的风险\",\"benefit\":\"保证分析口径一致、结果可解释，避免无依据的数据或来源声明\"}],\"openDecisions\":[{\"issue\":\"具体地区、人群划分口径、疾病亚类范围及数据来源未明确\",\"impact\":\"影响分组比较、YLL计算和Arriaga分解的具体对象与结果解释\",\"questionId\":\"\",\"kind\":\"USER_INFORMATION\"}],\"review\":{\"inputReadiness\":\"SUFFICIENT\",\"requirementCoverage\":[{\"index\":0,\"quotes\":[\"请撰写一篇2015—2025年某地区心脑血管疾病死亡率特征分析\"]},{\"index\":1,\"quotes\":[\"描述死亡率的长期变化趋势，并识别和解释季节性波动特征\"]},{\"index\":2,\"quotes\":[\"按性别、地区、人群和疾病亚类分别比较死亡率水平及其变化差异\"]},{\"index\":3,\"quotes\":[\"计算并报告年度和分性别的YLL（减寿年数）及YLL率\"]},{\"index\":4,\"quotes\":[\"采用Arriaga分解方法分析死亡率变化的贡献来源\"]}],\"additionCoverage\":[{\"index\":0,\"quotes\":[\"写作时请保持四部分之间的逻辑衔接\"]},{\"index\":1,\"quotes\":[\"对数据来源、指标定义、计算口径和分析方法作必要说明\"]},{\"index\":2,\"quotes\":[\"不要虚构具体数据或来源\"]}],\"planImpacts\":[]}}}"
+      },
+      "logprobs" : null,
+      "finish_reason" : "stop"
+    } ],
+    "usage" : {
+      "prompt_tokens" : 1739,
+      "completion_tokens" : 1161,
+      "total_tokens" : 2900,
+      "prompt_tokens_details" : {
+        "cached_tokens" : 1152
+      },
+      "prompt_cache_hit_tokens" : 1152,
+      "prompt_cache_miss_tokens" : 587
+    },
+    "system_fingerprint" : "e72d3c7f663d3e1383b00b3884cb4501"
+  }
+}

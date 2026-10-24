@@ -1,0 +1,76 @@
+{
+  "id": "C01_V44_GEN",
+  "caseId": "C01",
+  "version": "44",
+  "phase": "GENERATION",
+  "request": {
+    "rawPrompt": "帮我比较全量备份和增量备份，方便决定日常该怎么安排。",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "status": 200,
+  "body": {
+    "requestId": "C01_V44_GEN",
+    "data": {
+      "optimizedPrompt": "帮我比较全量备份和增量备份，方便决定日常该怎么安排。比较时请覆盖两者的工作原理、每次备份的数据量与耗时、占用的存储空间、恢复时的步骤和所需时间、对日常运行的影响，以及各自适合的场景和主要风险；不要只罗列定义，要说明这些差异在实际使用中意味着什么。在此基础上，请给出日常备份安排的建议，例如全量与增量如何搭配、各自多久做一次、保留多少份、恢复演练和校验怎么安排，并说明这些建议分别适用于什么情况、在什么条件下需要调整。如果某些安排取决于备份对象、数据量、可接受的恢复时间或存储成本等条件，请把这些条件讲清楚，并给出不同条件下的可选方案，而不是假定某一种情况。最后用便于对照的方式呈现比较结果，并让建议能直接用于决定日常怎么安排。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 6663,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "44",
+      "framework": "APE",
+      "recordId": "ff0458c7-71db-4ce6-93f1-af0c9a6c7cc6",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}
