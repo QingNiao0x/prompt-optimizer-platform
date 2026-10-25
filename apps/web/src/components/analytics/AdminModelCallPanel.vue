@@ -31,7 +31,7 @@ let chart: EChartsType | undefined;
 let resize: ResizeObserver | undefined;
 let callsGeneration = 0;
 let disposed = false;
-const operationNames: Record<string, string> = { 'prompt.optimize': '提示词优化', 'plan.generate': 'Plan 问题生成', 'document.summary.map': '文档分段摘要', 'document.summary.reduce': '文档合并摘要', 'context.embedding': '上下文向量化', 'context.vision': '上下文视觉识别', 'text.polish': '文章祛AI味', unknown: '未知操作' };
+const operationNames: Record<string, string> = { 'prompt.optimize': '提示词优化', 'plan.generate': 'Plan 问题生成', 'document.summary.map': '文档分段摘要', 'document.summary.reduce': '文档合并摘要', 'context.embedding': '上下文向量化', 'context.vision': '上下文视觉识别', 'image.plan': '图像创作计划', 'image.generate': '图像提示词生成', 'text.polish': '文章祛AI味', unknown: '未知操作' };
 const sourceName = (value: string): string => ranking.value?.groupBy === 'OPERATION' ? (operationNames[value] ?? value) : value;
 const usageNames = { COMPLETE: '完整', PARTIAL: '部分', UNKNOWN: '未知', INVALID: '无效' };
 const cacheNames = { HIT: '命中', MISS: '未命中', MIXED: '部分命中', NONE: '零输入', UNKNOWN: '未知' };

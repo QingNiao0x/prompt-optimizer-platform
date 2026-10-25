@@ -16,6 +16,7 @@ const dashboard: AnalyticsDashboard = {
     fromInclusive: '2026-10-01T16:00:00Z', toExclusive: '2026-10-02T16:00:00Z', zoneId: 'Asia/Shanghai' },
   registeredAccountCount: 33, newAccountCount: 0, actualUserCount: 0,
   accessCount: 0, uniqueVisitorCount: 0, activeUserCount: 0, averageDailyActiveUsers: 0, directEnhancementCount: 0, planCompletedCount: 0,
+  toolUsage: { imagePromptSubmittedCount: 0, imagePromptGeneratedCount: 0, textPolishSubmittedCount: 0, textPolishGeneratedCount: 0 },
   dailyMetrics: [], hourlyUsage: [], monthlyUsage: [], deviceDistribution: [],
   rechargeByDay: [], rechargeStatisticsAvailable: false,
 };

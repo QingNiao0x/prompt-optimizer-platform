@@ -64,6 +64,8 @@ class AdminAnalyticsServiceTest {
                 new DailyMetric(LocalDate.parse("2026-09-03"), 3, 1, 1, 0, 1, 0, 2)
         ), List.of(new HourlyMetric(9, 3)), List.of(new DeviceMetric("MOBILE", 2, 1))));
         when(repository.monthlyUsage(any(), any(), eq(AnalyticsAccountFilter.forUser(USER_ID)))).thenReturn(List.of(new MonthlyMetric("2026-09", 4)));
+        when(repository.toolUsageCounts(period, AnalyticsAccountFilter.forUser(USER_ID)))
+                .thenReturn(new com.promptoptimizer.analytics.dto.AnalyticsViews.ToolUsage(3, 2, 5, 4));
         when(repository.usageRanking(period, AnalyticsAccountFilter.forUser(USER_ID), 10)).thenReturn(List.of(
                 new UserRank(USER_ID, "Admin", 4, 1, 2)
         ));
@@ -78,6 +80,7 @@ class AdminAnalyticsServiceTest {
         assertThat(view.averageDailyActiveUsers()).isEqualByComparingTo("1.00");
         assertThat(view.directEnhancementCount()).isEqualTo(3);
         assertThat(view.planCompletedCount()).isEqualTo(2);
+        assertThat(view.toolUsage()).isEqualTo(new com.promptoptimizer.analytics.dto.AnalyticsViews.ToolUsage(3, 2, 5, 4));
         assertThat(view.dailyMetrics()).hasSize(3);
         assertThat(view.hourlyUsage()).hasSize(24).filteredOn(metric -> metric.hour() == 9)
                 .containsExactly(new HourlyMetric(9, 3));
@@ -183,6 +186,7 @@ class AdminAnalyticsServiceTest {
         AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver(), provider(repository), provider(recharge), true);
         service.dashboard(new DashboardQuery("TODAY", null, null, USER_ID, " DEMO@EXAMPLE.TEST ", " 演示名称 "));
         verify(repository).dashboardMetrics(period, account);
+        verify(repository).toolUsageCounts(period, account);
         verify(repository).accountCounts(period, account);
         verify(repository).monthlyUsage(any(), any(), eq(account));
         verify(recharge).paidByDay(period, account);

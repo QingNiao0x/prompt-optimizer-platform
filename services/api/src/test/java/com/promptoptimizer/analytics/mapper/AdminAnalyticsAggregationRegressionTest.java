@@ -8,6 +8,7 @@ import com.promptoptimizer.analytics.dto.AnalyticsViews.DeviceMetric;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.HourlyMetric;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.MonthlyMetric;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.UserRank;
+import com.promptoptimizer.analytics.dto.AnalyticsViews.ToolUsage;
 import com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper.MetricKind;
 import com.promptoptimizer.analytics.dto.DashboardQuery;
 import com.promptoptimizer.analytics.service.AdminAnalyticsService;
@@ -161,6 +162,70 @@ class AdminAnalyticsAggregationRegressionTest {
             assertFusedMatchesIndependent(period, narrowed);
         }
         assertFusedMatchesIndependent(period, new AnalyticsAccountFilter(scenario.beta().id(), seed + "-alpha-alias", null));
+    }
+
+    @Test
+    void accountToolFactsReachDashboardRankingAndLogsWithoutDoubleCountingResults() {
+        Scenario scenario = seedScenario();
+        AnalyticsPeriod period = period(FIRST_DAY, FIRST_DAY.plusDays(4), SHANGHAI);
+        var filter = matchingAccounts();
+        UUID submitted = UUID.randomUUID();
+        assertThat(events.insert(submitted, scenario.alpha().tenantId(), scenario.alpha().id(),
+                AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, Map.of(), at(FIRST_DAY, 11))).isEqualTo(1);
+        assertThat(events.insert(submitted, scenario.alpha().tenantId(), scenario.alpha().id(),
+                AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, Map.of(), at(FIRST_DAY, 11))).isZero();
+        event(scenario.alpha(), AnalyticsEventType.IMAGE_PROMPT_PLAN_CREATED, at(FIRST_DAY, 11), Map.of());
+        event(scenario.alpha(), AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, at(FIRST_DAY.plusDays(1), 0), Map.of());
+        event(scenario.alpha(), AnalyticsEventType.IMAGE_PROMPT_GENERATED, at(FIRST_DAY.plusDays(1), 0), Map.of());
+        event(scenario.beta(), AnalyticsEventType.TEXT_POLISH_SUBMITTED, at(FIRST_DAY, 23), Map.of());
+        event(scenario.beta(), AnalyticsEventType.TEXT_POLISH_GENERATED, at(FIRST_DAY.plusDays(1), 0), Map.of());
+        event(scenario.alpha(), AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, period.toExclusive(), Map.of());
+        event(scenario.beta(), AnalyticsEventType.TEXT_POLISH_GENERATED, period.fromInclusive().minusNanos(1000), Map.of());
+        for (var type : List.of(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, AnalyticsEventType.TEXT_POLISH_GENERATED)) {
+            events.insert(UUID.randomUUID(), scenario.alpha().tenantId(), null, type, Map.of(), at(FIRST_DAY, 11));
+        }
+        assertThat(analytics.toolUsageCounts(period, filter)).isEqualTo(new ToolUsage(2, 1, 1, 1));
+        assertThat(analytics.toolUsageCounts(period(FIRST_DAY, FIRST_DAY.plusDays(1), SHANGHAI), filter))
+                .isEqualTo(new ToolUsage(1, 0, 1, 0));
+        assertThat(analytics.toolUsageCounts(period(FIRST_DAY.plusDays(1), FIRST_DAY.plusDays(2), SHANGHAI), filter))
+                .isEqualTo(new ToolUsage(1, 1, 0, 1));
+        assertThat(analytics.toolUsageCounts(period, AnalyticsAccountFilter.forUser(UUID.randomUUID())))
+                .isEqualTo(new ToolUsage(0, 0, 0, 0));
+        for (var narrowed : List.of(AnalyticsAccountFilter.forUser(scenario.alpha().id()),
+                new AnalyticsAccountFilter(null, seed + "-alpha-alias", scenario.alpha().displayName()))) {
+            assertThat(analytics.toolUsageCounts(period, narrowed)).isEqualTo(new ToolUsage(2, 1, 0, 0));
+        }
+        assertThat(analytics.toolUsageCounts(period, new AnalyticsAccountFilter(scenario.beta().id(), seed + "-alpha-alias", null)))
+                .isEqualTo(new ToolUsage(0, 0, 0, 0));
+        assertThat(analytics.usageRanking(period, filter, 20)).containsExactly(
+                new UserRank(scenario.alpha().id(), scenario.alpha().displayName(), 5, 2, 3),
+                new UserRank(scenario.beta().id(), scenario.beta().displayName(), 4, 3, 2));
+        assertHours(period, filter, Map.of(0, 1L, 11, 5L, 14, 2L, 23, 1L));
+        assertThat(analytics.monthlyUsage(period, period.toDateExclusive().minusDays(1), filter))
+                .containsExactly(new MonthlyMetric("2020-01", 8), new MonthlyMetric("2020-02", 1));
+        var dashboard = service.dashboard(new DashboardQuery("CUSTOM", FIRST_DAY.toString(), FIRST_DAY.plusDays(3).toString(), null, seed, null));
+        assertThat(dashboard.toolUsage()).isEqualTo(new ToolUsage(2, 1, 1, 1));
+        assertThat(dashboard.directEnhancementCount()).isZero(); assertThat(dashboard.planCompletedCount()).isZero();
+        assertThat(dashboard.accessCount()).isZero(); assertThat(dashboard.actualUserCount()).isEqualTo(2);
+        assertThat(analytics.countOperationLogs(period.fromInclusive(), period.toExclusive(), filter, "IMAGE_PROMPT_PLAN_CREATED")).isEqualTo(1);
+        assertThat(analytics.countOperationLogs(period.fromInclusive(), period.toExclusive(), filter, "TEXT_POLISH_GENERATED")).isEqualTo(1);
+        assertFusedMatchesIndependent(period, filter);
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"Asia/Shanghai", "America/New_York"})
+    void toolCountsUseExactLocalDayBoundariesIncludingDaylightSavingTime(String zoneText) {
+        var owner = account(tenant(), "tool-zone", FIRST_DAY, false);
+        var date = LocalDate.of(2024, 3, 10);
+        var period = period(date, date.plusDays(1), ZoneId.of(zoneText));
+        var filter = AnalyticsAccountFilter.forUser(owner.id());
+        event(owner, AnalyticsEventType.TEXT_POLISH_SUBMITTED, period.fromInclusive().minusNanos(1000), Map.of());
+        event(owner, AnalyticsEventType.TEXT_POLISH_SUBMITTED, period.fromInclusive(), Map.of());
+        event(owner, AnalyticsEventType.TEXT_POLISH_GENERATED, period.toExclusive().minusNanos(1000), Map.of());
+        event(owner, AnalyticsEventType.TEXT_POLISH_GENERATED, period.toExclusive(), Map.of());
+        assertThat(analytics.toolUsageCounts(period, filter)).isEqualTo(new ToolUsage(0, 0, 1, 1));
+        assertThat(analytics.usageCounts(period, filter).actualUsers()).isEqualTo(1);
+        assertFusedMatchesIndependent(period, filter);
     }
 
     @Test
@@ -384,6 +449,7 @@ class AdminAnalyticsAggregationRegressionTest {
 
     /** 无匹配账号时每类聚合都返回准确零值；不得让 bool_or 的 null 漏入数字响应。 */
     private void assertEmpty(AnalyticsPeriod period, AnalyticsAccountFilter filter) {
+        assertThat(analytics.toolUsageCounts(period, filter)).isEqualTo(new ToolUsage(0, 0, 0, 0));
         assertThat(analytics.accountCounts(period, filter)).isEqualTo(new AdminAnalyticsMapper.AccountCounts(0, 0));
         assertThat(analytics.usageCounts(period, filter)).isEqualTo(new AdminAnalyticsMapper.UsageCounts(0, 0, 0, 0));
         assertThat(analytics.dailyMetrics(period, filter)).containsExactlyElementsOf(

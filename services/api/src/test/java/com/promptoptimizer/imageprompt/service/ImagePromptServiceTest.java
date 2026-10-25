@@ -1,6 +1,8 @@
 package com.promptoptimizer.imageprompt.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.promptoptimizer.analytics.service.AnalyticsEventService;
+import static com.promptoptimizer.analytics.domain.AnalyticsEventType.*;
 import com.promptoptimizer.identity.service.*;
 import com.promptoptimizer.imageprompt.domain.ImagePromptModels.*;
 import com.promptoptimizer.imageprompt.dto.ImagePromptRequests.*;
@@ -20,6 +22,7 @@ class ImagePromptServiceTest {
     private final ImagePromptAssetService assets = mock(ImagePromptAssetService.class);
     private final ImagePromptModelService models = mock(ImagePromptModelService.class);
     private final ImagePromptProvider provider = mock(ImagePromptProvider.class);
+    private final AnalyticsEventService analytics = mock(AnalyticsEventService.class);
     private final ActorIdentity actor = new ActorIdentity(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), "fixture@example.test", "fixture");
     private ImagePromptHistoryService history;
     private ImagePromptService service;
@@ -29,7 +32,7 @@ class ImagePromptServiceTest {
         var beans = new StaticListableBeanFactory();
         history = new ImagePromptHistoryService(beans.getBeanProvider(com.promptoptimizer.imageprompt.mapper.ImagePromptMapper.class), json, false);
         service = new ImagePromptService(current, assets, models, provider,
-                new ImagePromptStateStore(beans.getBeanProvider(StringRedisTemplate.class), json, "MEMORY"), history, json);
+                new ImagePromptStateStore(beans.getBeanProvider(StringRedisTemplate.class), json, "MEMORY"), history, json, analytics);
         when(current.require()).thenReturn(actor);
     }
 
@@ -40,7 +43,7 @@ class ImagePromptServiceTest {
         assertThatThrownBy(() -> service.extract(new Generate(UUID.randomUUID(), task(Mode.REFERENCE_RECONSTRUCTION,
                 List.of(new Reference(UUID.randomUUID(), ImageRole.GENERAL)), "改为新的海边场景", ""))))
                 .isInstanceOf(ImagePromptException.class);
-        verifyNoInteractions(provider);
+        verifyNoInteractions(provider, analytics);
     }
 
     @Test
@@ -53,7 +56,7 @@ class ImagePromptServiceTest {
         var doc = service.extractTrial(guest, new Generate(UUID.randomUUID(), task(Mode.REFERENCE_RECONSTRUCTION,
                 List.of(new Reference(assetId, ImageRole.GENERAL)), "", "")));
         assertThat(doc.historySaved()).isFalse(); assertThat(doc.persistentHistory()).isFalse(); assertThat(doc.recordId()).isNull();
-        verifyNoInteractions(current);
+        verifyNoInteractions(current, analytics);
         verify(assets, never()).require(any(ActorIdentity.class), any());
         assertThat(history.list(actor, 1, 10, null).total()).isZero();
         assertThatThrownBy(() -> service.extractTrial(guest, new Generate(UUID.randomUUID(), task(Mode.CUSTOM_CREATION, List.of(), "新图", ""))))
@@ -129,12 +132,72 @@ class ImagePromptServiceTest {
         history = spy(history);
         var beans = new StaticListableBeanFactory();
         service = new ImagePromptService(current, assets, models, provider,
-                new ImagePromptStateStore(beans.getBeanProvider(StringRedisTemplate.class), json, "MEMORY"), history, json);
+                new ImagePromptStateStore(beans.getBeanProvider(StringRedisTemplate.class), json, "MEMORY"), history, json, analytics);
         doThrow(new DataAccessResourceFailureException("fixture offline")).doCallRealMethod().when(history).save(any(), any());
         var generated = generate();
         assertThat(generated.document().historySaved()).isFalse();
         assertThat(service.retrySave(generated.document().operationId()).historySaved()).isTrue();
         verify(provider, times(2)).invoke(any());
+        verify(analytics, times(2)).recordToolOperation(eq(IMAGE_PROMPT_SUBMITTED), any());
+        verify(analytics).recordToolOperation(IMAGE_PROMPT_GENERATED, generated.document().operationId());
+    }
+
+    @Test
+    void planQuestionsFinalResultReplayAndRewriteHaveDistinctAccountFacts() {
+        var generated = generate();
+        verify(analytics).recordToolOperation(IMAGE_PROMPT_PLAN_CREATED, generated.plan().id());
+        verify(analytics).recordToolOperation(IMAGE_PROMPT_GENERATED, generated.document().operationId());
+        service.confirm(generated.plan().id(), generated.confirm());
+        service.operation(generated.document().operationId());
+        service.retrySave(generated.document().operationId());
+        verify(analytics, times(2)).recordToolOperation(eq(IMAGE_PROMPT_SUBMITTED), any());
+        verify(analytics, times(1)).recordToolOperation(eq(IMAGE_PROMPT_GENERATED), any());
+        UUID rewrite = UUID.randomUUID();
+        service.rewrite(generated.document().recordId(), new Rewrite(rewrite, 0, "更简洁"));
+        verify(analytics).recordToolOperation(IMAGE_PROMPT_SUBMITTED, rewrite);
+        verify(analytics).recordToolOperation(IMAGE_PROMPT_GENERATED, rewrite);
+    }
+
+    @Test
+    void failedModelCallKeepsOneSubmissionWithoutGeneratedFact() {
+        UUID id = UUID.randomUUID();
+        var request = new Generate(id, task(Mode.CUSTOM_CREATION, List.of(), "植物海报", ""));
+        when(provider.invoke(any())).thenThrow(new IllegalStateException("synthetic failure"));
+        assertThatThrownBy(() -> service.plan(request)).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> service.plan(request)).isInstanceOf(ImagePromptException.class);
+        verify(analytics).recordToolOperation(IMAGE_PROMPT_SUBMITTED, id);
+        verify(analytics, never()).recordToolOperation(eq(IMAGE_PROMPT_PLAN_CREATED), any());
+        verify(analytics, never()).recordToolOperation(eq(IMAGE_PROMPT_GENERATED), any());
+        verify(provider).invoke(any());
+    }
+
+    @Test
+    void invalidFinalPromptDoesNotBecomeGeneratedFact() {
+        when(provider.invoke(any())).thenReturn(result("", List.of()));
+        var plan = service.plan(new Generate(UUID.randomUUID(), task(Mode.CUSTOM_CREATION, List.of(), "植物海报", "")));
+        UUID id = UUID.randomUUID();
+        assertThatThrownBy(() -> service.confirm(plan.id(), new Confirm(id, plan.fingerprint(), List.of())))
+                .isInstanceOf(ImagePromptException.class);
+        verify(analytics).recordToolOperation(IMAGE_PROMPT_SUBMITTED, id);
+        verify(analytics, never()).recordToolOperation(eq(IMAGE_PROMPT_GENERATED), any());
+    }
+
+    @Test
+    void referenceExtractionCountsOnceAndExpiredAssetDoesNotCountAsSubmission() {
+        UUID assetId = UUID.randomUUID();
+        var asset = new Asset(assetId, "fixture.png", "image/png", 1, 1, 1, "hash", Instant.now().plusSeconds(3600), "/fixture", List.of());
+        when(assets.require(actor, assetId)).thenReturn(asset);
+        when(assets.bytes(actor, assetId)).thenReturn(new byte[]{1});
+        when(provider.invoke(any())).thenReturn(result("测试图像提示词", List.of()));
+        UUID id = UUID.randomUUID();
+        var request = new Generate(id, task(Mode.REFERENCE_RECONSTRUCTION, List.of(new Reference(assetId, ImageRole.GENERAL)), "", ""));
+        service.extract(request); service.extract(request);
+        verify(analytics).recordToolOperation(IMAGE_PROMPT_SUBMITTED, id);
+        verify(analytics).recordToolOperation(IMAGE_PROMPT_GENERATED, id);
+        clearInvocations(analytics, provider);
+        when(assets.require(actor, assetId)).thenThrow(ImagePromptException.expired());
+        assertThatThrownBy(() -> service.extract(new Generate(UUID.randomUUID(), request.input()))).isInstanceOf(ImagePromptException.class);
+        verifyNoInteractions(analytics, provider);
     }
 
     private Generated generate() {

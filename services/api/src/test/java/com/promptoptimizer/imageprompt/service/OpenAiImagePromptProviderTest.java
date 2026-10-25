@@ -1,6 +1,8 @@
 package com.promptoptimizer.imageprompt.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.promptoptimizer.common.logging.ModelCallAuditContext;
+import com.promptoptimizer.common.logging.ModelCallObservation;
 import com.promptoptimizer.imageprompt.domain.ImagePromptModels.*;
 import com.promptoptimizer.imageprompt.service.ImagePromptProvider.*;
 import com.promptoptimizer.provider.domain.*;
@@ -25,7 +27,10 @@ class OpenAiImagePromptProviderTest {
     private MockRestServiceServer server;
     private OpenAiImagePromptProvider provider;
     private final UUID asset = UUID.randomUUID();
+    private final List<ModelCallObservation> calls = new ArrayList<>();
+    private ModelCallAuditContext.Scope auditScope;
     @BeforeEach void setup() {
+        auditScope = ModelCallAuditContext.bind(new ModelCallAuditContext.Snapshot(UUID.randomUUID(), (tenant, call) -> calls.add(call)));
         var builder = RestClient.builder(); server = MockRestServiceServer.bindTo(builder).build();
         var properties = new OpenAiCompatibleProperties();
         properties.setEndpoint(URI.create(ENDPOINT)); properties.setApiKey("fixture-api-key"); properties.setModel("fixture");
@@ -34,6 +39,7 @@ class OpenAiImagePromptProviderTest {
         when(catalog.resolve("fixture")).thenReturn(new PlatformModelCatalog.ModelEntry(UUID.randomUUID(), "fixture", route.key(), "fixture", "测试", true, true, 0));
         provider = new OpenAiImagePromptProvider(builder.build(), json, properties, catalog);
     }
+    @AfterEach void closeAuditScope() { auditScope.close(); }
     @Test void sendsPixelsAsImagePartsWithRoleAndModeInsteadOfEmbeddingBase64InText() throws Exception {
         server.expect(requestTo(ENDPOINT)).andExpect(request -> {
             var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
@@ -46,16 +52,29 @@ class OpenAiImagePromptProviderTest {
             assertThat(parts.get(0).path("text").asText()).doesNotContain("base64");
         }).andRespond(withSuccess(response("完整画面还原提示词"), MediaType.APPLICATION_JSON));
         assertThat(provider.invoke(call()).draft().optimizedPrompt()).isEqualTo("完整画面还原提示词"); server.verify();
+        assertThat(calls).singleElement().satisfies(call -> {
+            assertThat(call.operation()).isEqualTo("image.generate"); assertThat(call.successful()).isTrue();
+            assertThat(call.usage().totalTokens()).isEqualTo(15);
+            assertThat(call.toString()).doesNotContain("AQID", "完整画面还原提示词");
+        });
     }
     @Test void invalidProtocolStopsAfterOneRepair() {
         server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(envelope("{}"), MediaType.APPLICATION_JSON));
         server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(envelope("{}"), MediaType.APPLICATION_JSON));
         assertThatThrownBy(() -> provider.invoke(call())).isInstanceOf(ProviderException.class); server.verify();
+        assertThat(calls).hasSize(2).extracting(ModelCallObservation::eventId).doesNotHaveDuplicates();
+        assertThat(calls).extracting(ModelCallObservation::attempt).containsExactly(1, 2);
+        assertThat(calls).extracting(ModelCallObservation::willRetry).containsExactly(true, false);
+        assertThat(calls).allSatisfy(call -> assertThat(call.usage().totalTokens()).isEqualTo(15));
     }
     @Test void timeoutAndContentRefusalDoNotAutomaticallyRetry() {
         server.expect(requestTo(ENDPOINT)).andRespond(request -> { throw new java.net.SocketTimeoutException("fixture"); });
         assertThatThrownBy(() -> provider.invoke(call())).isInstanceOfSatisfying(ProviderException.class,
                 e -> assertThat(e.getFailureType()).isEqualTo(ProviderFailureType.TIMEOUT)); server.verify();
+        assertThat(calls).singleElement().satisfies(call -> {
+            assertThat(call.successful()).isFalse(); assertThat(call.failureType()).isEqualTo("TIMEOUT");
+            assertThat(call.willRetry()).isFalse(); assertThat(call.usage()).isNull();
+        });
     }
     @Test void sensitiveResultIsBlockedBeforeHistoryAndDisplay() throws Exception {
         server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(response("api_key=fixtureSecretCredential123"), MediaType.APPLICATION_JSON));

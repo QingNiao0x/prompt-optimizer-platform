@@ -44,6 +44,7 @@ public final class AnalyticsViews {
             BigDecimal averageDailyActiveUsers,
             long directEnhancementCount,
             long planCompletedCount,
+            ToolUsage toolUsage,
             List<DailyMetric> dailyMetrics,
             List<HourlyMetric> hourlyUsage,
             List<MonthlyMetric> monthlyUsage,
@@ -51,6 +52,21 @@ public final class AnalyticsViews {
             List<RechargeMetric> rechargeByDay,
             boolean rechargeStatisticsAvailable
     ) {
+    }
+
+    /**
+     * 登录账号的独立工具统计，沿用仪表盘时间/账号筛选；提交含失败，生成按可恢复的有效结果计。
+     * 图像提交包含计划准备、确认生成及再次优化，计划问题不算最终结果；不反推历史缺失事件。
+     */
+    public record ToolUsage(long imagePromptSubmittedCount, long imagePromptGeneratedCount,
+                            long textPolishSubmittedCount, long textPolishGeneratedCount) {
+        /** 数据库应返回非负次数，映射异常不能伪装为零。 */
+        public ToolUsage {
+            if (imagePromptSubmittedCount < 0 || imagePromptGeneratedCount < 0
+                    || textPolishSubmittedCount < 0 || textPolishGeneratedCount < 0) {
+                throw new IllegalArgumentException("工具统计次数不能为负数");
+            }
+        }
     }
 
     /**

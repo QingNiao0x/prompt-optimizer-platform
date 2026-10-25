@@ -22,6 +22,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -122,6 +124,42 @@ public class AnalyticsEventServiceImpl implements AnalyticsEventService {
         UUID eventId = UUID.nameUUIDFromBytes(scope.getBytes(StandardCharsets.UTF_8));
         // 原始 planId 和身份字符串不进入 details，更不能成为 Micrometer 标签。
         delivery.accept(requestEvent(actor, AnalyticsEventType.PLAN_COMPLETED, request, eventId), false);
+    }
+
+    /** 工具请求及结果各有稳定主键；同一工作区操作重放不重计，跨账号/租户/工作区不能碰撞。 */
+    @Override
+    public void recordToolOperation(AnalyticsEventType eventType, UUID operationId) {
+        if (operationId == null || eventType == null || !switch (eventType) {
+            case IMAGE_PROMPT_SUBMITTED, IMAGE_PROMPT_PLAN_CREATED, IMAGE_PROMPT_GENERATED,
+                    TEXT_POLISH_SUBMITTED, TEXT_POLISH_GENERATED -> true;
+            default -> false;
+        }) throw new InvalidOptimizationRequestException("工具统计事件或操作编号无效");
+        // 不接受客户端账号；先校验认证主体，不能以审计降级绕过业务身份要求。
+        ActorIdentity actor = currentActor.require();
+        String scope = "analytics:tool:v1:" + actor.tenantId() + ":" + actor.workspaceId() + ":" + actor.userId() + ":" + eventType + ":" + operationId;
+        UUID eventId = UUID.nameUUIDFromBytes(scope.getBytes(StandardCharsets.UTF_8));
+        PendingAuditEvent event = new PendingAuditEvent(eventId, actor.tenantId(), actor.userId(), eventType,
+                Map.of(), OffsetDateTime.now(ZoneOffset.UTC));
+        try {
+            var attributes = RequestContextHolder.getRequestAttributes();
+            if (attributes instanceof ServletRequestAttributes servlet) {
+                var metadata = requestEvent(actor, eventType, servlet.getRequest(), eventId);
+                event = new PendingAuditEvent(eventId, actor.tenantId(), actor.userId(), eventType,
+                        metadata.details(), event.occurredAt());
+            }
+        } catch (RuntimeException failure) {
+            // 位置/会话只是可选增强；解析故障仍投递已确认的账号操作，不能因元数据不可用而丢失计数。
+            LOGGER.warn("event=analytics.tool_metadata_unavailable eventType={} failureType={}",
+                    eventType, failure.getClass().getSimpleName());
+        }
+        try {
+            // 与其他审计共用可靠 journal 和独立入库事务；正文、图片及原始操作编号不进入 details。
+            delivery.accept(event, false);
+        } catch (RuntimeException failure) {
+            // 意外审计故障不把已生成结果伪装成业务失败；正常存储故障由投递组件负责恢复和告警。
+            LOGGER.error("event=analytics.tool_capture_failure eventType={} failureType={}",
+                    eventType, failure.getClass().getSimpleName());
+        }
     }
 
     /** 只从认证上下文与元数据白名单构造不可变事实，保留服务端采集的 UTC 时刻。 */

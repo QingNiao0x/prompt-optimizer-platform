@@ -76,6 +76,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "app.security.sms.enabled=false",
         "app.security.registration.delivery-mode=disabled",
         "app.provider.mode=mock",
+        // 本类排除了 Redis 自动配置；显式本机状态用于验证业务链路，Redis 原子性由独立测试覆盖。
+        "app.image-prompt.store-mode=MEMORY",
+        "app.text-polish.store-mode=MEMORY",
         "app.analytics.zone-id=Asia/Shanghai",
         "app.analytics.trusted-proxies=",
         "app.analytics.recharge.enabled=false",
@@ -111,6 +114,10 @@ class AnalyticsLocalDatabaseAcceptanceTest {
     private Account ordinary;
     private String password;
 
+    @Autowired private com.promptoptimizer.provider.service.PlatformModelCatalog modelCatalog;
+    @org.springframework.boot.test.mock.mockito.SpyBean
+    private com.promptoptimizer.textpolish.service.TextPolishModelService textModels;
+
     @BeforeEach
     void createTransactionalAccounts() {
         org.mockito.Mockito.doAnswer(invocation -> {
@@ -137,6 +144,67 @@ class AnalyticsLocalDatabaseAcceptanceTest {
             assertThat(inspection.remainingRows(account.userId(), account.tenantId(), account.workspaceId()))
                     .as("测试账户及其审计、历史、身份和工作区记录均必须回滚").isZero();
         }
+    }
+
+    /** 真实认证、两个工具的 Mock Provider、审计 Mapper 和管理员 API 同链路对账；夹具全部回滚。 */
+    @Test
+    void imageAndArticleAccountOperationsAreVisibleToAdminAndReplayDoesNotIncreaseCounts() throws Exception {
+        Login member = login(ordinary);
+        String model = modelCatalog.available().getFirst().publicId();
+        // Mock 目录项不持久化到 platform_model；测试只替换模块准入，避免修改开发者配置或伪造外键。
+        org.mockito.Mockito.doReturn(new com.promptoptimizer.textpolish.domain.TextPolishModels.ModelPolicy(List.of(model), model))
+                .when(textModels).policy();
+        UUID planId = UUID.randomUUID();
+        String intent = "设计一张新的植物展览插画海报，使用柔和配色、清晰主体和自然留白，细节委托设计，不需要文字。".repeat(3);
+        JsonNode plan = data(mvc.perform(write("/api/v1/image-prompts/plans", member).content(json.writeValueAsString(Map.of(
+                "requestId", planId, "input", Map.of("mode", "CUSTOM_CREATION", "modelId", model, "images", List.of(),
+                        "creationIntent", intent, "exactText", "", "context", "", "language", "ZH", "targetTool", "通用")))))
+                .andExpect(status().isOk()).andReturn());
+        assertThat(plan.path("questions").size()).isZero();
+        UUID generatedId = UUID.randomUUID();
+        String confirm = json.writeValueAsString(Map.of("requestId", generatedId, "fingerprint", plan.path("fingerprint").asText(), "answers", List.of()));
+        for (int i = 0; i < 2; i++) mvc.perform(write("/api/v1/image-prompts/plans/" + planId + "/confirm", member).content(confirm))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/v1/image-prompts/operations/" + generatedId).session(member.session())).andExpect(status().isOk());
+        mvc.perform(write("/api/v1/image-prompts/operations/" + generatedId + "/save", member)).andExpect(status().isOk());
+        UUID polishId = UUID.randomUUID();
+        String article = json.writeValueAsString(Map.of("requestId", polishId, "sourceMode", "RAW", "input", Map.of(
+                "sourceText", "这是一段用于本机审计验收的合成文章。", "style", "NATURAL", "depth", "LIGHT", "audience", "",
+                "requirements", "", "lockedTexts", List.of(), "modelId", model)));
+        for (int i = 0; i < 2; i++) mvc.perform(write("/api/v1/text-polish", member).content(article)).andExpect(status().isOk());
+        mvc.perform(get("/api/v1/text-polish/operations/" + polishId).session(member.session())).andExpect(status().isOk());
+        mvc.perform(write("/api/v1/text-polish/operations/" + polishId + "/save", member)).andExpect(status().isOk());
+        event(member, "APP_VISIT");
+
+        Login administrator = login(admin);
+        LocalDate day = LocalDate.now(ZONE);
+        JsonNode dashboard = dashboard(administrator, "TODAY", day, day, ordinary.userId());
+        assertThat(dashboard.path("toolUsage").path("imagePromptSubmittedCount").asLong()).isEqualTo(2);
+        assertThat(dashboard.path("toolUsage").path("imagePromptGeneratedCount").asLong()).isEqualTo(1);
+        assertThat(dashboard.path("toolUsage").path("textPolishSubmittedCount").asLong()).isEqualTo(1);
+        assertThat(dashboard.path("toolUsage").path("textPolishGeneratedCount").asLong()).isEqualTo(1);
+        assertThat(dashboard.path("actualUserCount").asLong()).isEqualTo(1);
+        assertThat(dashboard.path("accessCount").asLong()).isZero();
+        assertThat(dashboard.path("directEnhancementCount").asLong()).isZero();
+        assertThat(dashboard.path("planCompletedCount").asLong()).isZero();
+        assertThat(ranking(administrator, day, ordinary.userId()).path("items").get(0).path("operationCount").asLong()).isEqualTo(3);
+        for (String type : List.of("IMAGE_PROMPT_PLAN_CREATED", "IMAGE_PROMPT_GENERATED", "TEXT_POLISH_GENERATED")) {
+            var logs = operations(administrator, day, day, ordinary.userId(), 1, 10, type);
+            assertThat(logs.path("total").asLong()).isEqualTo(1);
+            assertThat(logs.path("records").get(0).path("userId").asText()).isEqualTo(ordinary.userId().toString());
+        }
+        assertThat(inspection.eventTypes(ordinary.userId())).doesNotContain("APP_VISIT");
+        var accepted = org.mockito.ArgumentCaptor.forClass(PendingAuditEvent.class);
+        org.mockito.Mockito.verify(delivery, org.mockito.Mockito.atLeastOnce()).accept(accepted.capture(), org.mockito.ArgumentMatchers.anyBoolean());
+        var modelFacts = accepted.getAllValues().stream().filter(e -> e.eventType() == AnalyticsEventType.MODEL_CALL_RECORDED).toList();
+        assertThat(modelFacts).hasSize(3).allSatisfy(e -> {
+            assertThat(e.actorUserId()).isNull(); assertThat(e.tenantId()).isEqualTo(ordinary.tenantId());
+            assertThat(e.details()).containsEntry("mock", true).doesNotContainKeys("userId", "sourceText", "optimizedPrompt");
+        });
+        assertThat(modelFacts).extracting(e -> e.details().get("operation")).containsExactlyInAnyOrder("image.plan", "image.generate", "text.polish");
+        mvc.perform(get("/api/v1/admin/analytics/dashboard").session(member.session()).param("range", "TODAY"))
+                .andExpect(status().isForbidden());
+        mvc.perform(get("/api/v1/admin/analytics/dashboard").param("range", "TODAY")).andExpect(status().isUnauthorized());
     }
 
     @Test

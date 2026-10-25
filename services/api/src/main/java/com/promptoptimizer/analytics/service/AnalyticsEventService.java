@@ -5,6 +5,7 @@ import com.promptoptimizer.analytics.domain.ClientAnalyticsEventType;
 import com.promptoptimizer.analytics.dto.ClientAnalyticsEventRequest;
 import com.promptoptimizer.analytics.dto.ClientAnalyticsContext;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.UUID;
 
 /**
  * 记录服务端确认的审计行为；优化提交统计请求尝试，其他事件按各流程完成点记录。
@@ -29,6 +30,13 @@ public interface AnalyticsEventService {
 
     /** 仅在服务端验证计划、生成结果并保存历史后调用；计划标识只用于稳定主键，不保存为明细或标签。 */
     void recordPlanCompleted(String planId, HttpServletRequest request);
+
+    /**
+     * 采集已登录账号的独立工具操作；仅允许图像/文章工具的固定事件，操作编号只用于幂等主键。
+     * 调用方在幂等预留及输入/资源校验通过后记录提交，在有效结果可恢复后记录生成；不采集页面访问。
+     * 当前 HTTP 的安全元数据由实现读取，非 HTTP 调用保留空元数据，身份始终取自服务端。
+     */
+    void recordToolOperation(AnalyticsEventType eventType, UUID operationId);
 
     /** 校验重放所属身份与原时刻后可靠接收白名单事件，未可靠接收时返回可重试错误。 */
     void recordClientEvent(ClientAnalyticsEventRequest event, HttpServletRequest request);

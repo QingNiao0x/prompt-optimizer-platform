@@ -109,6 +109,11 @@ export type AnalyticsEventType =
   | 'OPTIMIZATION_SUBMITTED'
   | 'DIRECT_OPTIMIZATION_SUBMITTED'
   | 'PLAN_COMPLETED'
+  | 'IMAGE_PROMPT_SUBMITTED'
+  | 'IMAGE_PROMPT_PLAN_CREATED'
+  | 'IMAGE_PROMPT_GENERATED'
+  | 'TEXT_POLISH_SUBMITTED'
+  | 'TEXT_POLISH_GENERATED'
   | 'PLAN_CREATED'
   | 'CONTEXT_PREPARED'
   | 'CONTEXT_ANALYZED'
@@ -208,6 +213,14 @@ export interface AnalyticsRechargeMetric {
   currency: string;
 }
 
+/** 登录账号工具操作；提交含失败，结果指有效生成，均按服务端幂等操作去重。 */
+export interface AnalyticsToolUsage {
+  imagePromptSubmittedCount: number;
+  imagePromptGeneratedCount: number;
+  textPolishSubmittedCount: number;
+  textPolishGeneratedCount: number;
+}
+
 export interface AnalyticsDashboard {
   period: AnalyticsPeriodView;
   registeredAccountCount: number;
@@ -220,6 +233,7 @@ export interface AnalyticsDashboard {
   averageDailyActiveUsers: number;
   directEnhancementCount: number;
   planCompletedCount: number;
+  toolUsage: AnalyticsToolUsage;
   dailyMetrics: AnalyticsDailyMetric[];
   hourlyUsage: AnalyticsHourlyMetric[];
   monthlyUsage: AnalyticsMonthlyMetric[];

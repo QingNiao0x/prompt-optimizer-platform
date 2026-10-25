@@ -2,6 +2,8 @@ package com.promptoptimizer.imageprompt.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.promptoptimizer.analytics.domain.AnalyticsEventType;
+import com.promptoptimizer.analytics.service.AnalyticsEventService;
 import com.promptoptimizer.common.logging.LogCorrelation;
 import com.promptoptimizer.common.security.SensitiveValueScanner;
 import com.promptoptimizer.identity.service.*;
@@ -30,12 +32,15 @@ public class ImagePromptService {
     private final ImagePromptStateStore states;
     private final ImagePromptHistoryService history;
     private final ObjectMapper json;
+    private final AnalyticsEventService analytics;
     private final SensitiveValueScanner scanner = new SensitiveValueScanner();
 
+    /** 装配独立图像流程与账号审计；试用入口不产生正式账号操作事件。 */
     public ImagePromptService(CurrentActor current, ImagePromptAssetService assets, ImagePromptModelService models,
-                              ImagePromptProvider provider, ImagePromptStateStore states, ImagePromptHistoryService history, ObjectMapper json) {
+                              ImagePromptProvider provider, ImagePromptStateStore states, ImagePromptHistoryService history,
+                              ObjectMapper json, AnalyticsEventService analytics) {
         this.current = current; this.assets = assets; this.models = models; this.provider = provider;
-        this.states = states; this.history = history; this.json = json;
+        this.states = states; this.history = history; this.json = json; this.analytics = analytics;
     }
 
     /** 返回真实服务限制与本次可用模型，未知能力不通过名称猜测。 */
@@ -76,6 +81,7 @@ public class ImagePromptService {
         if (input.mode() != Mode.REFERENCE_RECONSTRUCTION) throw ImagePromptException.invalid("新图创作请使用 Plan 入口。");
         return operate(actor, request.requestId(), fingerprint(input), () -> {
             List<ImageData> images = images(actor, input);
+            analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, request.requestId());
             var response = provider.invoke(new Call(Stage.EXTRACT, input, images, List.of(), List.of(), List.of(), "", ""));
             images.forEach(i -> assets.require(actor, i.source().id()));
             return new Operation(fingerprint(input), "COMPLETED", null, persist(actor, document(request.requestId(), input,
@@ -89,6 +95,7 @@ public class ImagePromptService {
         if (input.mode() != Mode.CUSTOM_CREATION) throw ImagePromptException.invalid("参考图还原不发起创作问答。");
         return operate(actor, request.requestId(), fingerprint(input), () -> {
             var images = images(actor, input);
+            analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, request.requestId());
             var response = provider.invoke(new Call(Stage.PLAN, input, images, List.of(), List.of(), List.of(), "", ""));
             // 识图期间撤销或过期的资产不再向页面交付分析，也不建立可确认计划。
             images.forEach(i -> assets.require(actor, i.source().id()));
@@ -113,6 +120,7 @@ public class ImagePromptService {
         return operate(actor, request.requestId(), fingerprint, () -> {
             bound.sources().forEach(s -> assets.require(actor, s.id()));
             models.require(bound.input().modelId(), 0);
+            analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, request.requestId());
             var response = provider.invoke(new Call(Stage.GENERATE, bound.input(), List.of(), bound.view().analysis(),
                     bound.view().questions(), answers, "", ""));
             bound.sources().forEach(s -> assets.require(actor, s.id()));
@@ -128,6 +136,7 @@ public class ImagePromptService {
         safeText(request.instruction());
         return operate(actor, request.requestId(), fingerprint(List.of(id, source.editRevision(), request.instruction())), () -> {
             models.require(source.modelId(), 0);
+            analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, request.requestId());
             var response = provider.invoke(new Call(Stage.REWRITE, source.input(), List.of(), source.analysis(), source.questions(), source.answers(),
                     source.optimizedPrompt(), request.instruction()));
             // 再次核对逻辑删除与修订，旧模型响应不能越过中途删除或其他标签页的编辑。
@@ -178,6 +187,9 @@ public class ImagePromptService {
         try (var correlation = LogCorrelation.bindWorkflow("image", id.toString())) {
             Operation done = action.get();
             states.put(actor, "op:" + id, done, OPERATION_TTL);
+            // 只采集第一次完成的有效结果。缓存重放、状态查询和补存均不经过该分支。
+            if (done.document() != null) analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_GENERATED, id);
+            else if (done.plan() != null) analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_PLAN_CREATED, id);
             return done;
         } catch (RuntimeException failure) {
             // 不保存异常正文，避免上游错误中夹带图片、请求或凭据。已发送请求不得因错误缓存重放。

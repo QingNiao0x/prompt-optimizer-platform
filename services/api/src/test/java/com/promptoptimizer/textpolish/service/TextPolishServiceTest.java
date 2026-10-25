@@ -1,6 +1,8 @@
 package com.promptoptimizer.textpolish.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.promptoptimizer.analytics.service.AnalyticsEventService;
+import static com.promptoptimizer.analytics.domain.AnalyticsEventType.*;
 import com.promptoptimizer.identity.service.*;
 import com.promptoptimizer.provider.service.PlatformModelCatalog.ModelEntry;
 import com.promptoptimizer.textpolish.domain.TextPolishModels.*;
@@ -17,14 +19,15 @@ class TextPolishServiceTest {
     private final ActorIdentity a = new ActorIdentity(new UUID(0,1), new UUID(0,2), new UUID(0,3), "fixture@local", "fixture");
     private final ModelEntry model = new ModelEntry(new UUID(0,4), "fixture", "mock", "fixture", "测试模型", true, true, 0);
     private final TextPolishFidelity fidelity = new TextPolishFidelity();
+    private final AnalyticsEventService analytics = mock(AnalyticsEventService.class);
     private CurrentActor current; private TextPolishProvider provider; private TextPolishHistoryService history; private TextPolishService service;
     @BeforeEach @SuppressWarnings("unchecked") void setup() {
         current = mock(CurrentActor.class); when(current.require()).thenReturn(a);
         provider = mock(TextPolishProvider.class); when(provider.polish(any(), any())).thenAnswer(i -> ((Input)i.getArgument(0)).sourceText());
         var models = mock(TextPolishModelService.class); when(models.require(any())).thenReturn(model);
-        history = new TextPolishHistoryService(mock(ObjectProvider.class), json, fidelity, false);
+        history = spy(new TextPolishHistoryService(mock(ObjectProvider.class), json, fidelity, false));
         var states = new TextPolishStateStore(mock(ObjectProvider.class), json, "MEMORY");
-        service = new TextPolishService(current, models, provider, history, states, fidelity, json);
+        service = new TextPolishService(current, models, provider, history, states, fidelity, json, analytics);
     }
     private Input input(String text) { return new Input(text, null, null, "", "", List.of(), "fixture"); }
     private Generate first(String text) { return new Generate(UUID.randomUUID(), input(text), null, null, null); }
@@ -33,7 +36,7 @@ class TextPolishServiceTest {
         assertThat(result.polishedText()).isEqualTo("访客主动输入的文章。");
         assertThat(result.historySaved()).isFalse();
         assertThat(result.persistentHistory()).isFalse();
-        verifyNoInteractions(current);
+        verifyNoInteractions(current, analytics);
         assertThat(history.list(a, 1, 10).total()).isZero();
         assertThatThrownBy(() -> service.generateTrial(new Generate(UUID.randomUUID(), input("输入"), UUID.randomUUID(), 0L, SourceMode.CURRENT)))
                 .isInstanceOf(com.promptoptimizer.trial.TrialException.class);
@@ -44,6 +47,10 @@ class TextPolishServiceTest {
         assertThat(doc.input().style()).isEqualTo(Style.NATURAL); assertThat(doc.input().depth()).isEqualTo(Depth.LIGHT);
         assertThat(service.generate(request).id()).isEqualTo(doc.id()); verify(provider, times(1)).polish(any(), any());
         assertThatThrownBy(() -> service.generate(new Generate(request.requestId(), input("不同原文"), null, null, null))).isInstanceOf(TextPolishException.class);
+        service.operation(doc.id()); service.save(doc.id());
+        verify(analytics).recordToolOperation(TEXT_POLISH_SUBMITTED, request.requestId());
+        verify(analytics).recordToolOperation(TEXT_POLISH_GENERATED, request.requestId());
+        verifyNoMoreInteractions(analytics);
     }
     @Test void originalAndCurrentUseServerSourceInsteadOfClientClaimedTextAndKeepGeneratedSnapshot() {
         var original = service.generate(first("原始文章。"));
@@ -54,6 +61,8 @@ class TextPolishServiceTest {
         assertThat(regenerated.input().sourceText()).isEqualTo("原始文章。");
         assertThat(history.find(a, original.id()).generatedText()).isEqualTo("原始文章。");
         assertThatThrownBy(() -> service.generate(new Generate(UUID.randomUUID(), input("内容"), original.id(), 0L, SourceMode.CURRENT))).isInstanceOf(TextPolishException.class);
+        verify(analytics, times(3)).recordToolOperation(eq(TEXT_POLISH_SUBMITTED), any());
+        verify(analytics, times(3)).recordToolOperation(eq(TEXT_POLISH_GENERATED), any());
     }
     @Test void editsConflictAndDeletedHistoryCannotBeRecoveredReSavedOrUsedAsSource() {
         var doc = service.generate(first("文章正文"));
@@ -91,5 +100,30 @@ class TextPolishServiceTest {
         assertThat(fidelity.check(in, "至少3次；引文：原样。")).extracting(Check::code).doesNotContain("SEMANTICS_VERIFIED");
         assertThatThrownBy(() -> fidelity.validateInput(new Input("原文", null,null,"","", List.of("不存在"),""))).isInstanceOf(TextPolishException.class);
         assertThatThrownBy(() -> fidelity.validateInput(input("api_key=fixtureSecretCredential123"))).isInstanceOf(TextPolishException.class);
+    }
+    @Test void failureAndInvalidResultKeepSubmissionButDoNotCountResultOrRetry() {
+        var failed = first("原始文章");
+        doThrow(new IllegalStateException("synthetic failure")).when(provider).polish(any(), any());
+        assertThatThrownBy(() -> service.generate(failed)).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> service.generate(failed)).isInstanceOf(TextPolishException.class);
+        verify(analytics).recordToolOperation(TEXT_POLISH_SUBMITTED, failed.requestId());
+        verify(analytics, never()).recordToolOperation(eq(TEXT_POLISH_GENERATED), any());
+        verify(provider).polish(any(), any());
+        doReturn("锁定引文已丢失").when(provider).polish(any(), any());
+        var invalid = new Generate(UUID.randomUUID(), new Input("原文保留引文。", null, null, "", "", List.of("保留引文"), "fixture"), null, null, SourceMode.RAW);
+        assertThatThrownBy(() -> service.generate(invalid)).isInstanceOf(TextPolishException.class);
+        verify(analytics).recordToolOperation(TEXT_POLISH_SUBMITTED, invalid.requestId());
+        verify(analytics, never()).recordToolOperation(eq(TEXT_POLISH_GENERATED), any());
+    }
+    @Test void historySaveFailureStillCountsRecoverableResultAndSaveRetryDoesNotRecount() {
+        doThrow(new org.springframework.dao.DataAccessResourceFailureException("fixture offline"))
+                .doCallRealMethod().when(history).save(any(), any());
+        var request = first("原始文章");
+        assertThat(service.generate(request).historySaved()).isFalse();
+        assertThat(service.save(request.requestId()).historySaved()).isTrue();
+        verify(analytics).recordToolOperation(TEXT_POLISH_SUBMITTED, request.requestId());
+        verify(analytics).recordToolOperation(TEXT_POLISH_GENERATED, request.requestId());
+        verifyNoMoreInteractions(analytics);
+        verify(provider).polish(any(), any());
     }
 }

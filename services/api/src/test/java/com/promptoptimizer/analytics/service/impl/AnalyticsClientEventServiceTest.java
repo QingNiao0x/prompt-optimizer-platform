@@ -18,6 +18,8 @@ import com.promptoptimizer.identity.service.CurrentActor;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -159,6 +161,75 @@ class AnalyticsClientEventServiceTest {
                 event(ClientAnalyticsEventType.RESULT_EXPORTED, UUID.randomUUID(), historicalTime(), actor.userId(), null), request()))
                 .isInstanceOf(AnalyticsDeliveryUnavailableException.class)
                 .hasMessage("统计事件暂未接收，请稍后重试。");
+    }
+
+    @Test
+    void toolEventsUseStableAccountScopedIdsAndOnlySafeHttpMetadata() {
+        UUID operation = UUID.randomUUID();
+        var request = request();
+        request.setAttribute(com.promptoptimizer.common.web.RequestIdFilter.REQUEST_ID_ATTRIBUTE, "fixture-request");
+        request.setContent("private article and image content".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        try {
+            service.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, operation);
+            service.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, operation);
+            service.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_GENERATED, operation);
+            service(new ActorIdentity(UUID.randomUUID(), actor.tenantId(), actor.workspaceId(), "other@local", "Other"))
+                    .recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, operation);
+            service(new ActorIdentity(actor.userId(), UUID.randomUUID(), actor.workspaceId(), "other@local", "Other"))
+                    .recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, operation);
+            service(new ActorIdentity(actor.userId(), actor.tenantId(), UUID.randomUUID(), "other@local", "Other"))
+                    .recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, operation);
+        } finally { RequestContextHolder.resetRequestAttributes(); }
+        var facts = ArgumentCaptor.forClass(PendingAuditEvent.class);
+        verify(delivery, times(6)).accept(facts.capture(), eq(false));
+        var events = facts.getAllValues();
+        assertThat(events.get(0).id()).isEqualTo(events.get(1).id()).isNotEqualTo(operation);
+        assertThat(events.subList(1, 6)).extracting(PendingAuditEvent::id).doesNotHaveDuplicates();
+        assertThat(events.get(0).actorUserId()).isEqualTo(actor.userId());
+        assertThat(events.get(0).tenantId()).isEqualTo(actor.tenantId());
+        assertThat(events.get(0).details()).containsEntry("clientIp", "198.51.100.24").containsEntry("requestId", "fixture-request")
+                .doesNotContainKeys("operationId", "userId", "prompt", "sourceText", "image", "apiKey");
+        assertThat(events.get(0).details().toString()).doesNotContain("private article", operation.toString());
+    }
+
+    @Test
+    void nonHttpToolCallsKeepIdentityButDoNotInventLocationAndCaptureFailureDoesNotFailBusiness() {
+        service.recordToolOperation(AnalyticsEventType.TEXT_POLISH_GENERATED, UUID.randomUUID());
+        var event = ArgumentCaptor.forClass(PendingAuditEvent.class);
+        verify(delivery).accept(event.capture(), eq(false));
+        assertThat(event.getValue().details()).isEmpty();
+        assertThat(event.getValue().actorUserId()).isEqualTo(actor.userId());
+        verifyNoInteractions(geo);
+        doThrow(new IllegalStateException("private underlying details")).when(delivery).accept(any(), eq(false));
+        org.assertj.core.api.Assertions.assertThatCode(() -> service.recordToolOperation(
+                AnalyticsEventType.TEXT_POLISH_SUBMITTED, UUID.randomUUID())).doesNotThrowAnyException();
+    }
+
+    @Test
+    void unavailableRequestMetadataStillDeliversTheConfirmedAccountFact() {
+        var request = request();
+        // 模拟请求组件异常，不使用私有正文制造故障；不能让元数据错误抹去实际发生的业务提交。
+        request.setAttribute(com.promptoptimizer.common.web.RequestIdFilter.REQUEST_ID_ATTRIBUTE, new Object());
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        try { service.recordToolOperation(AnalyticsEventType.TEXT_POLISH_SUBMITTED, UUID.randomUUID()); }
+        finally { RequestContextHolder.resetRequestAttributes(); }
+        var fact = ArgumentCaptor.forClass(PendingAuditEvent.class);
+        verify(delivery).accept(fact.capture(), eq(false));
+        assertThat(fact.getValue().actorUserId()).isEqualTo(actor.userId());
+        assertThat(fact.getValue().details()).isEmpty();
+    }
+
+    @Test
+    void toolBoundaryRejectsPageEventsOtherTypesAndMissingIdentifiers() {
+        for (AnalyticsEventType type : new AnalyticsEventType[]{null, AnalyticsEventType.APP_VISIT,
+                AnalyticsEventType.LOGIN, AnalyticsEventType.MODEL_CALL_RECORDED}) {
+            assertThatThrownBy(() -> service.recordToolOperation(type, UUID.randomUUID()))
+                    .isInstanceOf(InvalidOptimizationRequestException.class);
+        }
+        assertThatThrownBy(() -> service.recordToolOperation(AnalyticsEventType.TEXT_POLISH_SUBMITTED, null))
+                .isInstanceOf(InvalidOptimizationRequestException.class);
+        verifyNoInteractions(delivery, geo);
     }
 
     /** 使用固定合法历史时刻，避免永久队列测试依赖当天日期。 */

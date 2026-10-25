@@ -129,6 +129,11 @@ const eventTypes: Array<{ value: AnalyticsEventType; label: string }> = [
   { value: 'OPTIMIZATION_SUBMITTED', label: '提交优化' },
   { value: 'DIRECT_OPTIMIZATION_SUBMITTED', label: '直接增强提交' },
   { value: 'PLAN_COMPLETED', label: 'Plan 完成' },
+  { value: 'IMAGE_PROMPT_SUBMITTED', label: '图像转提示词：提交' },
+  { value: 'IMAGE_PROMPT_PLAN_CREATED', label: '图像转提示词：计划生成' },
+  { value: 'IMAGE_PROMPT_GENERATED', label: '图像转提示词：结果生成' },
+  { value: 'TEXT_POLISH_SUBMITTED', label: '文章祛 AI 味：提交' },
+  { value: 'TEXT_POLISH_GENERATED', label: '文章祛 AI 味：结果生成' },
   { value: 'PLAN_CREATED', label: '生成方案' },
   { value: 'CONTEXT_PREPARED', label: '准备上下文' },
   { value: 'CONTEXT_ANALYZED', label: '分析上下文' },
@@ -645,7 +650,7 @@ onBeforeUnmount(() => {
         <article class="metric">
           <div class="metric-label"><span>实际使用账号</span><ElIcon aria-hidden="true"><MagicStick /></ElIcon></div>
           <strong>{{ dashboard.actualUserCount.toLocaleString() }}</strong>
-          <small>优化、上下文、导出或充值关键操作</small>
+          <small>增强、图像、文章、上下文等关键操作</small>
         </article>
         <article class="metric">
           <div class="metric-label"><span>平均日活</span><ElIcon aria-hidden="true"><DataLine /></ElIcon></div>
@@ -654,7 +659,7 @@ onBeforeUnmount(() => {
         </article>
       </section>
 
-      <section class="feature-usage-strip" aria-label="增强功能使用次数">
+      <section class="feature-usage-strip" aria-label="功能使用次数">
         <article class="metric" data-testid="direct-enhancement-count">
           <div class="metric-label"><span>直接增强提交次数</span><ElIcon aria-hidden="true"><MagicStick /></ElIcon></div>
           <strong>{{ dashboard.directEnhancementCount.toLocaleString() }}</strong>
@@ -665,8 +670,29 @@ onBeforeUnmount(() => {
           <strong>{{ dashboard.planCompletedCount.toLocaleString() }}</strong>
           <small>成功生成并保存历史，每个计划计一次</small>
         </article>
+        <article class="metric" data-testid="image-prompt-submitted-count">
+          <div class="metric-label"><span>图像转提示词提交次数</span><ElIcon aria-hidden="true"><MagicStick /></ElIcon></div>
+          <strong>{{ dashboard.toolUsage.imagePromptSubmittedCount.toLocaleString() }}</strong>
+          <small>包含图像还原、计划准备、确认生成及再次优化</small>
+        </article>
+        <article class="metric" data-testid="image-prompt-generated-count">
+          <div class="metric-label"><span>图像提示词生成次数</span><ElIcon aria-hidden="true"><List /></ElIcon></div>
+          <strong>{{ dashboard.toolUsage.imagePromptGeneratedCount.toLocaleString() }}</strong>
+          <small>有效提示词生成，不含计划问题；补存历史不重计</small>
+        </article>
+        <article class="metric" data-testid="text-polish-submitted-count">
+          <div class="metric-label"><span>文章祛 AI 味提交次数</span><ElIcon aria-hidden="true"><MagicStick /></ElIcon></div>
+          <strong>{{ dashboard.toolUsage.textPolishSubmittedCount.toLocaleString() }}</strong>
+          <small>包含新原文、原文重生和当前稿继续润色的尝试</small>
+        </article>
+        <article class="metric" data-testid="text-polish-generated-count">
+          <div class="metric-label"><span>文章润色结果生成次数</span><ElIcon aria-hidden="true"><List /></ElIcon></div>
+          <strong>{{ dashboard.toolUsage.textPolishGeneratedCount.toLocaleString() }}</strong>
+          <small>通过事实保护检查且可恢复的结果，补存不重计</small>
+        </article>
       </section>
-      <p class="panel-caption feature-usage-note">细分次数自本功能启用后记录；旧通用优化记录无法区分这两种使用路径。</p>
+      <p class="panel-caption feature-usage-note">细分次数自各功能埋点启用后记录；旧通用优化记录无法区分直接增强与 Plan 路径。</p>
+      <p class="panel-caption feature-usage-note">工具次数仅统计登录账号，自本次埋点启用后采集。提交含生成失败，同一请求重放不重计；结果按生成时刻统计，可与提交跨日。</p>
 
       <div id="analytics-trends" class="section-heading"><h2>使用趋势</h2><span>活跃账号与使用习惯</span></div>
       <section class="charts-grid" aria-label="使用统计图表">

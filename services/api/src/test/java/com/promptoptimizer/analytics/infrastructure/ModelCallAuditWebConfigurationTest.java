@@ -34,7 +34,9 @@ class ModelCallAuditWebConfigurationTest {
     @MockBean private ModelCallAuditService audit;
 
     @org.junit.jupiter.params.ParameterizedTest
-    @org.junit.jupiter.params.provider.ValueSource(strings = {"/api/v1/optimizations/ledger-test", "/api/v2/optimizations/ledger-test"})
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"/api/v1/optimizations/ledger-test", "/api/v2/optimizations/ledger-test",
+            "/api/v1/image-prompts", "/api/v1/image-prompts/plans", "/api/v1/image-prompts/plans/fixture/confirm",
+            "/api/v1/image-prompts/history/fixture/re-optimize", "/api/v1/text-polish"})
     void callerCannotOverrideTenantAndRequestScopeIsRestored(String path) throws Exception {
         UUID tenant = UUID.randomUUID();
         when(actor.require()).thenReturn(new ActorIdentity(UUID.randomUUID(), tenant, UUID.randomUUID(), "fixture@example.test", "fixture"));
@@ -52,7 +54,9 @@ class ModelCallAuditWebConfigurationTest {
     /** 测试控制器仅输出固定响应，模拟 Provider 完成日志的真实采集入口。 */
     @RestController
     public static class CallController {
-        @PostMapping({"/api/v1/optimizations/ledger-test", "/api/v2/optimizations/ledger-test"})
+        @PostMapping({"/api/v1/optimizations/ledger-test", "/api/v2/optimizations/ledger-test",
+                "/api/v1/image-prompts", "/api/v1/image-prompts/plans", "/api/v1/image-prompts/plans/fixture/confirm",
+                "/api/v1/image-prompts/history/fixture/re-optimize", "/api/v1/text-polish"})
         public String call() {
             try (var attempt = ModelCallLogger.beginAttempt()) {
                 ModelCallLogger.completed("prompt.optimize", "fixture-provider", "fixture-model", "PLATFORM_DEFAULT",

@@ -7,6 +7,7 @@ import com.promptoptimizer.analytics.dto.AnalyticsViews.HourlyMetric;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.MonthlyMetric;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.OperationLog;
 import com.promptoptimizer.analytics.dto.AnalyticsViews.UserRank;
+import com.promptoptimizer.analytics.dto.AnalyticsViews.ToolUsage;
 import com.promptoptimizer.analytics.domain.AnalyticsPeriod;
 import com.promptoptimizer.analytics.domain.AnalyticsAccountFilter;
 import org.apache.ibatis.annotations.Mapper;
@@ -45,6 +46,12 @@ public interface AdminAnalyticsMapper {
      * @return 四项指标的区间总量，不是每日去重数的相加
      */
     UsageCounts usageCounts(@Param("period") AnalyticsPeriod period, @Param("account") AnalyticsAccountFilter account);
+
+    /**
+     * 按提交/生成各自发生时刻汇总登录账号的图像和文章工具事件，空区间返回四个零值。
+     * 使用同一账号组合筛选；只计固定事件，不读取任意 JSON 或将模型重试算成业务提交。
+     */
+    ToolUsage toolUsageCounts(@Param("period") AnalyticsPeriod period, @Param("account") AnalyticsAccountFilter account);
 
     /**
      * 一次读取筛选后的事件，复用账号/自然日归并结果生成仪表盘使用总量、日、小时和设备维度。

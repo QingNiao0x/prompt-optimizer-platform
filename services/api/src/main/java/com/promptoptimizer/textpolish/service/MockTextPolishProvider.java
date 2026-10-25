@@ -1,5 +1,6 @@
 package com.promptoptimizer.textpolish.service;
 
+import com.promptoptimizer.common.logging.ModelCallLogger;
 import com.promptoptimizer.textpolish.domain.TextPolishModels.Input;
 import com.promptoptimizer.provider.service.PlatformModelCatalog.ModelEntry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -14,5 +15,10 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(prefix = "app.provider", name = "mode", havingValue = "mock", matchIfMissing = true)
 public class MockTextPolishProvider implements TextPolishProvider {
     /** 不产生外部调用、事实或改写效果。 */
-    @Override public String polish(Input input, ModelEntry model) { return input.sourceText(); }
+    @Override
+    public String polish(Input input, ModelEntry model) {
+        // 演示调用同样进入匿名模型对账，mock 标志明确其不产生上游费用，Token 未知而非伪造为零。
+        ModelCallLogger.completed("text.polish", "mock", model.publicId(), "PLATFORM_CATALOG", true, 1, 0, 0, null);
+        return input.sourceText();
+    }
 }

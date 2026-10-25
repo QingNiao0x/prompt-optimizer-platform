@@ -9,6 +9,14 @@
             <arg column="new_accounts" javaType="_long"/>
         </constructor>
     </resultMap>
+    <resultMap id="toolUsage" type="com.promptoptimizer.analytics.dto.AnalyticsViews$ToolUsage">
+        <constructor>
+            <arg column="image_submitted" javaType="_long"/>
+            <arg column="image_generated" javaType="_long"/>
+            <arg column="text_submitted" javaType="_long"/>
+            <arg column="text_generated" javaType="_long"/>
+        </constructor>
+    </resultMap>
     <resultMap id="usageCounts" type="com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper$UsageCounts">
         <constructor>
             <arg column="access_count" javaType="_long"/>
@@ -93,9 +101,10 @@
     </resultMap>
 
     <sql id="usageEventPredicate">
-        <!-- 关键使用保持原六类口径：直接提交细分与 Plan 完成另行计数，不能重复放大排行和小时/月操作数。 -->
+        <!-- 独立工具只以提交计关键使用；结果/图像计划创建和旧增强细分另行展示，避免同一操作被双计。 -->
         event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED', 'CONTEXT_PREPARED',
-                       'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')
+                       'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID',
+                       'IMAGE_PROMPT_SUBMITTED', 'TEXT_POLISH_SUBMITTED')
     </sql>
 
     <!--
@@ -138,6 +147,26 @@
                    AND id IN (<include refid="matchingAccounts"/>)
                 </if>
                ) AS new_accounts
+    </select>
+
+    <select id="toolUsageCounts" resultMap="toolUsage">
+        <!-- 提交和生成按各自 UTC 时刻筛选，不强制生成数小于提交数：跨日完成可落入下一日。
+             无 GROUP BY 的 COUNT 即使没有数据也返回零；稳定主键在写入时去重，无需再关联正文/历史表。
+             账号邮箱使用 EXISTS/IN，多个身份不会重复展开事件，匿名模型对账不计入账号工具次数。 -->
+        SELECT COUNT(*) FILTER (WHERE e.event_type = 'IMAGE_PROMPT_SUBMITTED') AS image_submitted,
+               COUNT(*) FILTER (WHERE e.event_type = 'IMAGE_PROMPT_GENERATED') AS image_generated,
+               COUNT(*) FILTER (WHERE e.event_type = 'TEXT_POLISH_SUBMITTED') AS text_submitted,
+               COUNT(*) FILTER (WHERE e.event_type = 'TEXT_POLISH_GENERATED') AS text_generated
+          FROM audit_event e
+         WHERE e.actor_user_id IS NOT NULL
+           AND e.event_type IN ('IMAGE_PROMPT_SUBMITTED', 'IMAGE_PROMPT_GENERATED',
+                                'TEXT_POLISH_SUBMITTED', 'TEXT_POLISH_GENERATED')
+           AND e.occurred_at &gt;= #{period.fromInclusive}
+           AND e.occurred_at &lt; #{period.toExclusive}
+           AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})
+        <if test="account.email != null or account.displayName != null">
+           AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
+        </if>
     </select>
 
     <select id="usageCounts" resultMap="usageCounts">
@@ -339,8 +368,7 @@
          WHERE e.occurred_at &gt;= #{period.fromInclusive}
            AND e.occurred_at &lt; #{period.toExclusive}
            AND e.actor_user_id IS NOT NULL
-           AND e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED', 'CONTEXT_PREPARED',
-                                'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')
+           AND (<include refid="usageEventPredicate"/>)
            AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})
         <if test="account.email != null or account.displayName != null">
            AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
@@ -367,8 +395,7 @@
                      WHERE e.occurred_at &gt;= #{period.fromInclusive}
                        AND e.occurred_at &lt; #{period.toExclusive}
                        AND e.actor_user_id IS NOT NULL
-                       AND e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED', 'CONTEXT_PREPARED',
-                                            'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')
+                       AND (<include refid="usageEventPredicate"/>)
                        AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})
                     <if test="account.email != null or account.displayName != null">
                        AND e.actor_user_id IN (<include refid="matchingAccounts"/>)
@@ -408,8 +435,7 @@
         WITH account_days AS (
         SELECT e.actor_user_id,
                (e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text))::date AS activity_day,
-               COUNT(*) FILTER (WHERE e.event_type IN ('OPTIMIZATION_SUBMITTED', 'PLAN_CREATED',
-                     'CONTEXT_PREPARED', 'CONTEXT_ANALYZED', 'RESULT_EXPORTED', 'RECHARGE_PAID')) AS operation_count,
+               COUNT(*) FILTER (WHERE <include refid="usageEventPredicate"/>) AS operation_count,
                COUNT(*) FILTER (WHERE e.event_type = 'LOGIN') AS login_count
           FROM audit_event e
          WHERE e.actor_user_id IS NOT NULL

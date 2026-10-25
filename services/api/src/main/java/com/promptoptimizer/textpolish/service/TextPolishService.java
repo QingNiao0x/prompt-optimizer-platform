@@ -2,6 +2,8 @@ package com.promptoptimizer.textpolish.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.promptoptimizer.analytics.domain.AnalyticsEventType;
+import com.promptoptimizer.analytics.service.AnalyticsEventService;
 import com.promptoptimizer.common.logging.LogCorrelation;
 import com.promptoptimizer.identity.service.*;
 import com.promptoptimizer.textpolish.domain.TextPolishModels.*;
@@ -27,10 +29,13 @@ public class TextPolishService {
     private final TextPolishStateStore states;
     private final TextPolishFidelity fidelity;
     private final ObjectMapper json;
+    private final AnalyticsEventService analytics;
+    /** 装配文章独立生成与审计；不把模型重试、状态恢复或补存当作新提交。 */
     public TextPolishService(CurrentActor current, TextPolishModelService models, TextPolishProvider provider,
-            TextPolishHistoryService history, TextPolishStateStore states, TextPolishFidelity fidelity, ObjectMapper json) {
+            TextPolishHistoryService history, TextPolishStateStore states, TextPolishFidelity fidelity, ObjectMapper json,
+            AnalyticsEventService analytics) {
         this.current = current; this.models = models; this.provider = provider; this.history = history;
-        this.states = states; this.fidelity = fidelity; this.json = json;
+        this.states = states; this.fidelity = fidelity; this.json = json; this.analytics = analytics;
     }
     /** 页面限制和可用模型来自服务端当前策略。 */
     public Capabilities capabilities() { current.require(); return new Capabilities(models.models(), 12000, 24000, history.persistent()); }
@@ -73,6 +78,8 @@ public class TextPolishService {
             return existing.document();
         }
         try (var correlation = LogCorrelation.bindWorkflow("text-polish", request.requestId().toString())) {
+            // 幂等预留和服务端来源/模型校验通过后才计提交；模型失败保留尝试，不记成功结果。
+            analytics.recordToolOperation(AnalyticsEventType.TEXT_POLISH_SUBMITTED, request.requestId());
             String text = provider.polish(input, model);
             var checks = fidelity.check(input, text);
             if (source != null && history.find(actor, source.id()).editRevision() != source.editRevision())
@@ -83,6 +90,7 @@ public class TextPolishService {
             try { doc = history.save(actor, doc); }
             catch (DataAccessException failure) { /* 返回可恢复正文，页面明确显示历史未保存。 */ }
             states.put(actor, request.requestId().toString(), new Operation("COMPLETED", fingerprint, doc, pending.startedAt()), TTL);
+            analytics.recordToolOperation(AnalyticsEventType.TEXT_POLISH_GENERATED, request.requestId());
             return doc;
         } catch (RuntimeException failure) {
             states.put(actor, request.requestId().toString(), new Operation("FAILED", fingerprint, null, pending.startedAt()), TTL);

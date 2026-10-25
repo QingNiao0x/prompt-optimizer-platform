@@ -98,6 +98,7 @@ public class AdminAnalyticsServiceImpl implements AdminAnalyticsService {
                 averageDailyActive,
                 metrics.featureUsage().directEnhancementCount(),
                 metrics.featureUsage().planCompletedCount(),
+                mapper.toolUsageCounts(period, account),
                 dailyMetrics,
                 metrics.hourlyUsage(),
                 mapper.monthlyUsage(twelveMonthPeriod,

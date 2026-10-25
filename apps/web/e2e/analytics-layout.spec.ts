@@ -135,6 +135,8 @@ const mockAnalytics = async (page: Page, empty = false) => {
     actualUserCount: empty ? 0 : 7304, accessCount: empty ? 0 : 128540,
     uniqueVisitorCount: empty ? 0 : 8600, activeUserCount: empty ? 0 : 9172,
     averageDailyActiveUsers: empty ? 0 : 2587.33, directEnhancementCount: empty ? 0 : 54, planCompletedCount: empty ? 0 : 27,
+    toolUsage: { imagePromptSubmittedCount: empty ? 0 : 12, imagePromptGeneratedCount: empty ? 0 : 5,
+      textPolishSubmittedCount: empty ? 0 : 18, textPolishGeneratedCount: empty ? 0 : 15 },
     dailyMetrics: Array.from({ length: 27 }, (_, index) => ({
       date: `2026-09-${String(index + 1).padStart(2, '0')}`,
       accessCount: empty ? 0 : 3000 + index * 52, uniqueVisitors: empty ? 0 : 1000 + index * 24,
@@ -167,7 +169,9 @@ const mockAnalytics = async (page: Page, empty = false) => {
     eventId: `event-${index + 1}`, userId: `00000000-0000-0000-0000-${String(index + 1).padStart(12, '0')}`,
     displayName: `测试账号 ${index + 1}`,
     eventType: index === 0 ? 'DIRECT_OPTIMIZATION_SUBMITTED' : index === 1 ? 'PLAN_COMPLETED'
-      : index % 2 === 0 ? 'LOGIN' : 'OPTIMIZATION_SUBMITTED',
+      : index === 2 ? 'IMAGE_PROMPT_SUBMITTED' : index === 3 ? 'IMAGE_PROMPT_PLAN_CREATED'
+        : index === 4 ? 'IMAGE_PROMPT_GENERATED' : index === 5 ? 'TEXT_POLISH_SUBMITTED'
+          : index === 6 ? 'TEXT_POLISH_GENERATED' : index % 2 === 0 ? 'LOGIN' : 'OPTIMIZATION_SUBMITTED',
     occurredAt: '2026-09-27T09:32:10Z',
     clientIp: '2001:db8:1234:5678:abcd:ef01:2345:6789',
     country: '测试国家', province: '测试省份', city: index === 0 ? longLocation : '测试城市',
@@ -289,6 +293,32 @@ test('新增细分操作以中文显示，筛选保持后端事件代码', async
   await expect(page.locator('.operations-panel .el-table__body .el-table__row')).toContainText('Plan 完成');
 });
 
+test('图像和文章账号提交与结果分别展示，中文日志筛选沿用账号查询且不采集访问', async ({ page }) => {
+  const { requests } = await mockAnalytics(page);
+  const browserEvents: string[] = [];
+  page.on('request', request => {
+    if (new URL(request.url()).pathname === '/api/v1/analytics/events') browserEvents.push(request.postData() ?? '');
+  });
+  await page.goto('/admin/analytics');
+  for (const [name, count] of [['image-prompt-submitted-count', '12'], ['image-prompt-generated-count', '5'],
+    ['text-polish-submitted-count', '18'], ['text-polish-generated-count', '15']] as const) {
+    await expect(page.getByTestId(name).locator('strong')).toHaveText(count);
+  }
+  await page.getByRole('textbox', { name: '按登录邮箱筛选', exact: true }).fill('fixture@example.test');
+  for (const [eventType, label] of [['IMAGE_PROMPT_SUBMITTED', '图像转提示词：提交'], ['IMAGE_PROMPT_PLAN_CREATED', '图像转提示词：计划生成'],
+    ['IMAGE_PROMPT_GENERATED', '图像转提示词：结果生成'], ['TEXT_POLISH_SUBMITTED', '文章祛 AI 味：提交'],
+    ['TEXT_POLISH_GENERATED', '文章祛 AI 味：结果生成']] as const) {
+    await page.locator('.event-select .el-select__wrapper').click();
+    await page.getByRole('option', { name: label, exact: true }).click();
+    await page.getByRole('button', { name: '查询', exact: true }).click();
+    await expect.poll(() => requests.operations.at(-1)?.searchParams.get('eventType')).toBe(eventType);
+    expect(requests.operations.at(-1)?.searchParams.get('email')).toBe('fixture@example.test');
+    await expect(page.locator('.operations-panel .el-table__body .el-table__row')).toHaveCount(1);
+    await expect(page.locator('.operations-panel .el-table__body .el-table__row')).toContainText(label);
+  }
+  expect(browserEvents).toEqual([]);
+});
+
 test('宽屏充分利用宽度，平板与手机不溢出；主题切换保留图表与查询结果', async ({ page }, testInfo) => {
   const { requests } = await mockAnalytics(page);
   await page.goto('/admin/analytics');
@@ -296,7 +326,7 @@ test('宽屏充分利用宽度，平板与手机不溢出；主题切换保留�
   await expect(page.locator('.chart canvas')).toHaveCount(6);
   await expect(page.getByTestId('direct-enhancement-count').locator('strong')).toHaveText('54');
   await expect(page.getByTestId('plan-completed-count').locator('strong')).toHaveText('27');
-  await expect(page.getByText('细分次数自本功能启用后记录；旧通用优化记录无法区分这两种使用路径。')).toBeVisible();
+  await expect(page.getByText('细分次数自各功能埋点启用后记录；旧通用优化记录无法区分直接增强与 Plan 路径。')).toBeVisible();
   for (const width of [1920, 1440, 1024, 768, 390, 320]) {
     await page.setViewportSize({ width, height: 1000 });
     await expectContainedLayout(page);
@@ -380,7 +410,7 @@ test('空数据保留筛选和明确空状态，后续查询可恢复图表', as
   await expect(page.getByText('所选周期内没有关键使用操作。')).toBeVisible();
   await expect(page.getByText('所选范围内没有关键操作日志。')).toBeVisible();
   await expect(page.getByText('充值图表尚无数据源')).toBeVisible();
-  await expect(page.locator('.metric strong')).toHaveText(['0', '0', '0', '0', '0', '0', '0']);
+  await expect(page.locator('.metric strong')).toHaveText(Array.from({ length: 11 }, () => '0'));
   await expect(page.getByText('所选范围内暂无增强功能细分记录。')).toBeVisible();
   await expect(page.locator('.chart canvas')).toHaveCount(0);
   await expect(page.getByText(/^峰值 /)).toHaveCount(0);

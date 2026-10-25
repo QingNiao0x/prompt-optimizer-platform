@@ -122,7 +122,8 @@ class TrialServiceTest {
         var current = org.mockito.Mockito.mock(com.promptoptimizer.identity.service.CurrentActor.class);
         var history = org.mockito.Mockito.mock(com.promptoptimizer.textpolish.service.TextPolishHistoryService.class);
         var actual = new com.promptoptimizer.textpolish.service.TextPolishService(current, models, provider, history,
-                org.mockito.Mockito.mock(com.promptoptimizer.textpolish.service.TextPolishStateStore.class), fidelity, json);
+                org.mockito.Mockito.mock(com.promptoptimizer.textpolish.service.TextPolishStateStore.class), fidelity, json,
+                org.mockito.Mockito.mock(com.promptoptimizer.analytics.service.AnalyticsEventService.class));
         var input = new com.promptoptimizer.textpolish.domain.TextPolishModels.Generate(UUID.randomUUID(),
                 new com.promptoptimizer.textpolish.domain.TextPolishModels.Input("合成测试原文。", null, null, "", "", List.of(), "fixture"), null, null, null);
         String envelope = json.writeValueAsString(Map.of("choices", List.of(Map.of("finish_reason", "stop", "message", Map.of("content", "{\"polishedText\":\"合成测试原文。\"}")))));
