@@ -22,7 +22,7 @@ public record ModelCallObservation(
         String validationReason, String validationField
 ) {
     private static final Set<String> OPERATIONS = Set.of("prompt.optimize", "plan.generate",
-            "document.summary.map", "document.summary.reduce", "context.embedding", "image.plan", "image.generate");
+            "document.summary.map", "document.summary.reduce", "context.embedding", "image.plan", "image.generate", "text.polish");
     private static final Set<String> FAILURES = Set.of("AUTHENTICATION", "RATE_LIMIT", "TIMEOUT",
             "REQUEST_REJECTED", "UPSTREAM_UNAVAILABLE", "INVALID_RESPONSE", "CONFIGURATION",
             "INTERNAL", "RESOURCE_ACCESS", "UNEXPECTED", "MODEL_CONCURRENCY_LIMIT");

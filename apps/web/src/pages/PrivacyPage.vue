@@ -6,7 +6,7 @@ import { ICP_LICENSE_NUMBER, LEGAL_CONTACT_EMAIL } from '@/config/legal';
 <template>
   <LegalDocLayout title="隐私政策">
     <p>
-      本政策说明 Prompt Optimizer Platform（以下称“本站”）在你使用提示词优化服务时如何收集、使用、存储和保护你的信息。
+      本政策说明 Prompt Optimizer Platform（以下称“本站”）在你使用提示词优化和文章润色工具时如何收集、使用、存储和保护你的信息。
       请结合<RouterLink to="/terms">用户协议</RouterLink>一并阅读。
     </p>
 
@@ -14,7 +14,7 @@ import { ICP_LICENSE_NUMBER, LEGAL_CONTACT_EMAIL } from '@/config/legal';
     <ul>
       <li><strong>账号信息</strong>：你注册时提供的邮箱地址或中国大陆手机号（用于验证码校验），以及你设置的密码。密码以不可逆的哈希形式存储，我们不保存也无法查看明文密码。</li>
       <li><strong>会话信息</strong>：用于维持登录状态的会话 Cookie，以及登录时间、来源 IP 等安全审计所需信息。</li>
-      <li><strong>你提交的内容</strong>：你输入的原始提示词、你主动选择的文件或目录，以及生成出的优化提示词。</li>
+      <li><strong>你提交的内容</strong>：你输入的原始提示词、你主动选择的文件或目录，以及生成出的优化提示词；文章工具另处理你主动提交的原始文本、文体及润色要求、生成正文和编辑稿。</li>
       <li><strong>使用记录</strong>：你在本站的操作类型、时间、调用的模型标识、Token 用量、调用耗时和调用结果状态。</li>
     </ul>
 
@@ -34,6 +34,7 @@ import { ICP_LICENSE_NUMBER, LEGAL_CONTACT_EMAIL } from '@/config/legal';
     </p>
     <ul>
       <li>平台的模型密钥保存在服务端，不会下发到浏览器，也不会出现在你的请求或页面配置中。</li>
+      <li>使用文章工具时，只有点击润色后才将本次原文、保护内容及润色设置发送给所选模型供应商；切换文体不会发送文章。</li>
       <li>本站不会把你的内容发送给与本次生成无关的第三方，也不会将其用于广告投放或出售给他人。</li>
       <li>供应商对其自身服务范围内的数据处理适用其各自的隐私政策；如你不希望内容离开本站，请勿提交需要外部模型处理的材料。</li>
     </ul>
@@ -57,6 +58,7 @@ import { ICP_LICENSE_NUMBER, LEGAL_CONTACT_EMAIL } from '@/config/legal';
     <ul>
       <li>业务数据按租户与工作区隔离，查询会同时校验归属范围，其他用户无法读取你的记录。</li>
       <li>短时上下文（如本次分析结果、索引与 Plan 会话）在请求结束或短期缓存到期后即删除。</li>
+      <li>文章润色成功后，原文、生成原件、当前正文、设置及模型来源自动保存在仅本人可读的文章历史中；可通过文章历史逻辑删除。处理恢复状态含文章内容，在私有缓存中暂存24小时；已删除记录不能从该缓存恢复。页面草稿不写入浏览器长期存储。</li>
       <li>优化历史仅在你主动保存时留存，并可能按保留期限清理。<strong>删除采用逻辑删除</strong>，常规读取会立即排除已删除内容，物理清理由独立的保留期策略处理。</li>
       <li>你的操作记录会按最小必要原则在实现统计、排障与安全审计所需的期限内保留。</li>
     </ul>

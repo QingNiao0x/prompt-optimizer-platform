@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.textpolish.mapper.TextPolishMapper">
+    <resultMap id="record" type="com.promptoptimizer.textpolish.domain.TextPolishRecordRow">
+        <constructor>
+            <idArg column="id" javaType="java.util.UUID"/><arg column="tenant_id" javaType="java.util.UUID"/>
+            <arg column="workspace_id" javaType="java.util.UUID"/><arg column="user_id" javaType="java.util.UUID"/>
+            <arg column="source_record_id" javaType="java.util.UUID"/><arg column="payload" javaType="java.lang.String"/>
+            <arg column="polished_text" javaType="java.lang.String"/><arg column="edit_revision" javaType="_long"/>
+            <arg column="created_at" javaType="java.time.OffsetDateTime"/>
+        </constructor>
+    </resultMap>
+    <sql id="columns">id, tenant_id, workspace_id, user_id, source_record_id, payload::text AS payload, polished_text, edit_revision, created_at</sql>
+    <!-- CurrentActor提供三个归属维度；管理员角色不放宽私有文章访问。 -->
+    <sql id="scope">tenant_id = #{a.tenantId} AND workspace_id = #{a.workspaceId} AND user_id = #{a.userId} AND deleted_at IS NULL</sql>
+    <insert id="insertRecord">
+        INSERT INTO text_polish_record (id, tenant_id, workspace_id, user_id, source_record_id, payload, polished_text, created_at)
+        VALUES (#{r.id}, #{r.tenantId}, #{r.workspaceId}, #{r.userId}, #{r.sourceRecordId}, CAST(#{r.payload} AS JSONB), #{r.polishedText}, #{r.createdAt})
+        ON CONFLICT (id) DO NOTHING
+    </insert>
+    <select id="find" resultMap="record">SELECT <include refid="columns"/> FROM text_polish_record WHERE id = #{id} AND <include refid="scope"/></select>
+    <select id="list" resultMap="record">
+        SELECT <include refid="columns"/> FROM text_polish_record WHERE <include refid="scope"/> ORDER BY created_at DESC, id DESC
+    </select>
+    <update id="edit">
+        UPDATE text_polish_record SET polished_text = #{text}, edit_revision = edit_revision + 1, updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id} AND edit_revision = #{revision} AND <include refid="scope"/>
+    </update>
+    <update id="delete">UPDATE text_polish_record SET deleted_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = #{id} AND <include refid="scope"/></update>
+    <select id="policy" resultType="java.lang.String">
+        SELECT jsonb_build_object('enabledModelIds', enabled_model_ids, 'defaultModelId', default_model_id)::text FROM text_polish_model_policy WHERE id = 1
+    </select>
+    <update id="setPolicy">UPDATE text_polish_model_policy SET enabled_model_ids = CAST(#{ids} AS JSONB), default_model_id = #{defaultId}, updated_at = CURRENT_TIMESTAMP WHERE id = 1</update>
+</mapper>

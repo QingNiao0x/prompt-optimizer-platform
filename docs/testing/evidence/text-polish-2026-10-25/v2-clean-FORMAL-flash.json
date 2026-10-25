@@ -1,0 +1,83 @@
+{
+  "job": {
+    "id": "v2-clean-FORMAL-flash",
+    "sample": "clean",
+    "style": "FORMAL",
+    "modelId": "deepseek:deepseek-flash"
+  },
+  "input": {
+    "sourceText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+    "style": "FORMAL",
+    "depth": "LIGHT",
+    "audience": "",
+    "requirements": "",
+    "lockedTexts": [],
+    "modelId": "deepseek:deepseek-flash"
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "requestId": "929d1f22-d3a7-4915-9748-4e3f6f4a3f83",
+      "data": {
+        "id": "3771228a-20f7-4bc0-a034-e66334d3aba3",
+        "input": {
+          "sourceText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+          "style": "FORMAL",
+          "depth": "LIGHT",
+          "audience": "",
+          "requirements": "",
+          "lockedTexts": [],
+          "modelId": "deepseek:deepseek-flash"
+        },
+        "generatedText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+        "polishedText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+        "sourceRecordId": null,
+        "sourceMode": "RAW",
+        "modelId": "deepseek:deepseek-flash",
+        "modelName": "DeepSeek-V4.1-Flash",
+        "mock": false,
+        "editRevision": 0,
+        "checks": [
+          {
+            "code": "UNCHANGED",
+            "message": "本次保留原文，未作文字改动。",
+            "before": "",
+            "after": ""
+          }
+        ],
+        "historySaved": true,
+        "persistentHistory": true,
+        "createdAt": "2026-10-24T19:07:24.458667500Z"
+      }
+    }
+  },
+  "entry": {
+    "id": "v2-clean-FORMAL-flash",
+    "requestId": "3771228a-20f7-4bc0-a034-e66334d3aba3",
+    "reserved": 2,
+    "status": "COMPLETED",
+    "startedAt": "2026-10-24T19:07:23.574Z",
+    "httpStatus": 200,
+    "elapsedMs": 917,
+    "attempts": [
+      {
+        "event": "model.call.completed",
+        "requestId": "929d1f22-d3a7-4915-9748-4e3f6f4a3f83",
+        "workflowId": "1748b18c54401659b14f",
+        "operation": "text.polish",
+        "providerRoute": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "selectionSource": "PLATFORM_CATALOG",
+        "mock": "false",
+        "attempt": "1",
+        "inputItems": "1",
+        "inputTokens": "615",
+        "outputTokens": "39",
+        "totalTokens": "654",
+        "durationMs": "847"
+      }
+    ],
+    "actualCalls": 1,
+    "finishedAt": "2026-10-24T19:07:24.498Z"
+  }
+}

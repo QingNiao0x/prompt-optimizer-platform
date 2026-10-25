@@ -1,0 +1,87 @@
+{
+  "job": {
+    "id": "medical-FORMAL-flash",
+    "sample": "medical",
+    "style": "FORMAL",
+    "modelId": "deepseek:deepseek-flash"
+  },
+  "input": {
+    "sourceText": "这份随访摘要记录了20名成年参与者的情况，其中12人在第4周自述睡眠有所改善。由于没有设置对照组，且结果来自自述，目前只能认为这项做法可能与睡眠变化有关，不能据此认定具有治疗效果。对于未成年人、孕妇以及正在服药的人，本次资料没有提供适用性证据。总体而言，相关结果值得进一步关注和研究，以便在未来获得更加全面和深入的认识。",
+    "style": "FORMAL",
+    "depth": "LIGHT",
+    "audience": "",
+    "requirements": "",
+    "lockedTexts": [
+      "不能据此认定具有治疗效果。"
+    ],
+    "modelId": "deepseek:deepseek-flash"
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "requestId": "ae59fd11-86ec-4724-8c3c-70912a059e5c",
+      "data": {
+        "id": "dcb04dc7-a7a1-4239-8239-49f5c497ee16",
+        "input": {
+          "sourceText": "这份随访摘要记录了20名成年参与者的情况，其中12人在第4周自述睡眠有所改善。由于没有设置对照组，且结果来自自述，目前只能认为这项做法可能与睡眠变化有关，不能据此认定具有治疗效果。对于未成年人、孕妇以及正在服药的人，本次资料没有提供适用性证据。总体而言，相关结果值得进一步关注和研究，以便在未来获得更加全面和深入的认识。",
+          "style": "FORMAL",
+          "depth": "LIGHT",
+          "audience": "",
+          "requirements": "",
+          "lockedTexts": [
+            "不能据此认定具有治疗效果。"
+          ],
+          "modelId": "deepseek:deepseek-flash"
+        },
+        "generatedText": "这份随访摘要记录了20名成年参与者的情况，其中12人在第4周自述睡眠有所改善。由于未设置对照组，且结果来自自述，目前只能认为这项做法可能与睡眠变化有关，不能据此认定具有治疗效果。对于未成年人、孕妇以及正在服药的人，本次资料未提供适用性证据。总体而言，相关结果值得进一步关注和研究，以便未来获得更全面、深入的认识。",
+        "polishedText": "这份随访摘要记录了20名成年参与者的情况，其中12人在第4周自述睡眠有所改善。由于未设置对照组，且结果来自自述，目前只能认为这项做法可能与睡眠变化有关，不能据此认定具有治疗效果。对于未成年人、孕妇以及正在服药的人，本次资料未提供适用性证据。总体而言，相关结果值得进一步关注和研究，以便未来获得更全面、深入的认识。",
+        "sourceRecordId": null,
+        "sourceMode": "RAW",
+        "modelId": "deepseek:deepseek-flash",
+        "modelName": "DeepSeek-V4.1-Flash",
+        "mock": false,
+        "editRevision": 0,
+        "checks": [
+          {
+            "code": "LOCKS_PRESERVED",
+            "message": "指定保护的文字已按原样保留。",
+            "before": "",
+            "after": ""
+          }
+        ],
+        "historySaved": true,
+        "persistentHistory": true,
+        "createdAt": "2026-10-24T18:56:33.559934700Z"
+      }
+    }
+  },
+  "entry": {
+    "id": "medical-FORMAL-flash",
+    "requestId": "dcb04dc7-a7a1-4239-8239-49f5c497ee16",
+    "reserved": 2,
+    "status": "COMPLETED",
+    "startedAt": "2026-10-24T18:56:32.571Z",
+    "httpStatus": 200,
+    "elapsedMs": 1011,
+    "attempts": [
+      {
+        "event": "model.call.completed",
+        "requestId": "ae59fd11-86ec-4724-8c3c-70912a059e5c",
+        "workflowId": "b3b5ff9b35883918e141",
+        "operation": "text.polish",
+        "providerRoute": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "selectionSource": "PLATFORM_CATALOG",
+        "mock": "false",
+        "attempt": "1",
+        "inputItems": "1",
+        "inputTokens": "548",
+        "outputTokens": "91",
+        "totalTokens": "639",
+        "durationMs": "909"
+      }
+    ],
+    "actualCalls": 1,
+    "finishedAt": "2026-10-24T18:56:33.586Z"
+  }
+}

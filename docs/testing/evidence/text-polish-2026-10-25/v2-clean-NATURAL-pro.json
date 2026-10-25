@@ -1,0 +1,83 @@
+{
+  "job": {
+    "id": "v2-clean-NATURAL-pro",
+    "sample": "clean",
+    "style": "NATURAL",
+    "modelId": "deepseek:deepseek-v4-pro"
+  },
+  "input": {
+    "sourceText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+    "style": "NATURAL",
+    "depth": "LIGHT",
+    "audience": "",
+    "requirements": "",
+    "lockedTexts": [],
+    "modelId": "deepseek:deepseek-v4-pro"
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "requestId": "a79ca7e5-1874-4fc4-b1a9-449c6b21983d",
+      "data": {
+        "id": "87de8a1e-5ab8-4fc0-a0f8-0a61467dc68c",
+        "input": {
+          "sourceText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+          "style": "NATURAL",
+          "depth": "LIGHT",
+          "audience": "",
+          "requirements": "",
+          "lockedTexts": [],
+          "modelId": "deepseek:deepseek-v4-pro"
+        },
+        "generatedText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+        "polishedText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+        "sourceRecordId": null,
+        "sourceMode": "RAW",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "modelName": "DeepSeek-V4-Pro-0813",
+        "mock": false,
+        "editRevision": 0,
+        "checks": [
+          {
+            "code": "UNCHANGED",
+            "message": "本次保留原文，未作文字改动。",
+            "before": "",
+            "after": ""
+          }
+        ],
+        "historySaved": true,
+        "persistentHistory": true,
+        "createdAt": "2026-10-24T19:08:13.739862600Z"
+      }
+    }
+  },
+  "entry": {
+    "id": "v2-clean-NATURAL-pro",
+    "requestId": "87de8a1e-5ab8-4fc0-a0f8-0a61467dc68c",
+    "reserved": 2,
+    "status": "COMPLETED",
+    "startedAt": "2026-10-24T19:08:12.394Z",
+    "httpStatus": 200,
+    "elapsedMs": 1371,
+    "attempts": [
+      {
+        "event": "model.call.completed",
+        "requestId": "a79ca7e5-1874-4fc4-b1a9-449c6b21983d",
+        "workflowId": "4752c7b4507f5ac9a59f",
+        "operation": "text.polish",
+        "providerRoute": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "selectionSource": "PLATFORM_CATALOG",
+        "mock": "false",
+        "attempt": "1",
+        "inputItems": "1",
+        "inputTokens": "614",
+        "outputTokens": "43",
+        "totalTokens": "657",
+        "durationMs": "1301"
+      }
+    ],
+    "actualCalls": 1,
+    "finishedAt": "2026-10-24T19:08:13.769Z"
+  }
+}

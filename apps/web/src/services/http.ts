@@ -24,7 +24,7 @@ export const isAuthenticationRequired = (error: unknown): boolean => (
 httpClient.interceptors.response.use(undefined, (error: unknown) => {
   if (isAuthenticationRequired(error) && error instanceof AxiosError
       && !error.config?.url?.startsWith('/api/v1/auth/')
-      && (['/workbench', '/image-to-prompt', '/history', '/settings'].includes(window.location.pathname)
+      && (['/workbench', '/image-to-prompt', '/text-polish', '/history', '/settings'].includes(window.location.pathname)
         || window.location.pathname.startsWith('/admin/'))) {
     window.location.replace('/login?expired=1');
   }

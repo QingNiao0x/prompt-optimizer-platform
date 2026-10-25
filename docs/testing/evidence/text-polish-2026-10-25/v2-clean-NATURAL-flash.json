@@ -1,0 +1,76 @@
+{
+  "job": {
+    "id": "v2-clean-NATURAL-flash",
+    "sample": "clean",
+    "style": "NATURAL",
+    "modelId": "deepseek:deepseek-flash"
+  },
+  "input": {
+    "sourceText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+    "style": "NATURAL",
+    "depth": "LIGHT",
+    "audience": "",
+    "requirements": "",
+    "lockedTexts": [],
+    "modelId": "deepseek:deepseek-flash"
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "requestId": "49c2897f-cb17-4d37-a17b-a66d7808d3b1",
+      "data": {
+        "id": "f100eaf5-f629-4486-af14-a455746e3628",
+        "input": {
+          "sourceText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+          "style": "NATURAL",
+          "depth": "LIGHT",
+          "audience": "",
+          "requirements": "",
+          "lockedTexts": [],
+          "modelId": "deepseek:deepseek-flash"
+        },
+        "generatedText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了碗汤。",
+        "polishedText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了碗汤。",
+        "sourceRecordId": null,
+        "sourceMode": "RAW",
+        "modelId": "deepseek:deepseek-flash",
+        "modelName": "DeepSeek-V4.1-Flash",
+        "mock": false,
+        "editRevision": 0,
+        "checks": [],
+        "historySaved": true,
+        "persistentHistory": true,
+        "createdAt": "2026-10-24T19:07:25.265342Z"
+      }
+    }
+  },
+  "entry": {
+    "id": "v2-clean-NATURAL-flash",
+    "requestId": "f100eaf5-f629-4486-af14-a455746e3628",
+    "reserved": 2,
+    "status": "COMPLETED",
+    "startedAt": "2026-10-24T19:07:24.501Z",
+    "httpStatus": 200,
+    "elapsedMs": 806,
+    "attempts": [
+      {
+        "event": "model.call.completed",
+        "requestId": "49c2897f-cb17-4d37-a17b-a66d7808d3b1",
+        "workflowId": "d760a29d7fabfa5e32ac",
+        "operation": "text.polish",
+        "providerRoute": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "selectionSource": "PLATFORM_CATALOG",
+        "mock": "false",
+        "attempt": "1",
+        "inputItems": "1",
+        "inputTokens": "616",
+        "outputTokens": "39",
+        "totalTokens": "655",
+        "durationMs": "729"
+      }
+    ],
+    "actualCalls": 1,
+    "finishedAt": "2026-10-24T19:07:25.309Z"
+  }
+}

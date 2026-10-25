@@ -1,0 +1,77 @@
+{
+  "checks": {
+    "clipboardMatchesVisible": false,
+    "historyMatchesEdited": true,
+    "currentSourceBound": true,
+    "idempotency": true,
+    "casConflict": true,
+    "ordinaryCannotManageModels": true,
+    "mobileNoOverflow": true,
+    "deletedDetailRejected": true,
+    "deletedOperationRejected": true,
+    "deletedSaveRejected": true
+  },
+  "request": {
+    "requestId": "3066c675-d955-4971-ac4a-e163b22914db",
+    "input": {
+      "sourceText": "关于周末图书室开放安排的通知\n为了进一步提升服务水平，切实满足广大读者的阅读需求，现就本周末图书室开放的相关事项通知如下。本周六开放时间为9:00—17:00，周日因设备维护暂停开放。每人每次可借3本书，借期14天，暂不提供续借服务。希望各位读者能够合理安排自己的时间，按照上述安排前来借阅。对于给大家带来的不便，敬请理解。",
+      "style": "NATURAL",
+      "depth": "LIGHT",
+      "audience": "",
+      "requirements": "",
+      "lockedTexts": [
+        "每人每次可借3本书，借期14天，暂不提供续借服务。"
+      ],
+      "modelId": "deepseek:deepseek-flash"
+    },
+    "sourceMode": "CURRENT",
+    "sourceRecordId": "11c224b0-6e8a-48bd-8f0a-c02485b94203",
+    "expectedRevision": 3
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "requestId": "f250cc37-e858-4ed6-8f71-d6e46912da3b",
+      "data": {
+        "id": "3066c675-d955-4971-ac4a-e163b22914db",
+        "input": {
+          "sourceText": "关于周末图书室开放安排的通知\n\n为更好地服务读者、满足阅读需求，现将本周末图书室开放安排通知如下。本周六开放时间为9:00—17:00，周日因设备维护暂停开放。每人每次可借3本书，借期14天，暂不提供续借服务。请各位读者合理安排时间，按上述安排前来借阅。由此带来的不便，敬请理解。\n请按开放时间到馆。",
+          "style": "NATURAL",
+          "depth": "LIGHT",
+          "audience": "",
+          "requirements": "",
+          "lockedTexts": [
+            "每人每次可借3本书，借期14天，暂不提供续借服务。"
+          ],
+          "modelId": "deepseek:deepseek-flash"
+        },
+        "generatedText": "关于周末图书室开放安排的通知\n\n为更好地服务读者、满足阅读需求，现将本周末图书室开放安排通知如下。本周六开放时间为9:00—17:00，周日因设备维护暂停开放。每人每次可借3本书，借期14天，暂不提供续借服务。请各位读者合理安排时间，按上述安排前来借阅。由此带来的不便，敬请理解。\n请按开放时间到馆。",
+        "polishedText": "关于周末图书室开放安排的通知\n\n为更好地服务读者、满足阅读需求，现将本周末图书室开放安排通知如下。本周六开放时间为9:00—17:00，周日因设备维护暂停开放。每人每次可借3本书，借期14天，暂不提供续借服务。请各位读者合理安排时间，按上述安排前来借阅。由此带来的不便，敬请理解。\n请按开放时间到馆。",
+        "sourceRecordId": "11c224b0-6e8a-48bd-8f0a-c02485b94203",
+        "sourceMode": "CURRENT",
+        "modelId": "deepseek:deepseek-flash",
+        "modelName": "DeepSeek-V4.1-Flash",
+        "mock": false,
+        "editRevision": 0,
+        "checks": [
+          {
+            "code": "LOCKS_PRESERVED",
+            "message": "指定保护的文字已按原样保留。",
+            "before": "",
+            "after": ""
+          },
+          {
+            "code": "UNCHANGED",
+            "message": "本次保留原文，未作文字改动。",
+            "before": "",
+            "after": ""
+          }
+        ],
+        "historySaved": true,
+        "persistentHistory": true,
+        "createdAt": "2026-10-25T02:17:29.576219400Z"
+      }
+    }
+  },
+  "actualCalls": 46
+}

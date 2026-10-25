@@ -1,0 +1,76 @@
+{
+  "job": {
+    "id": "essay-CONVERSATIONAL-flash",
+    "sample": "essay",
+    "style": "CONVERSATIONAL",
+    "modelId": "deepseek:deepseek-flash"
+  },
+  "input": {
+    "sourceText": "下班回家，我又走进了楼下那家面馆。面还是那碗面，老板也没有突然说出什么人生道理。我只是饿了，想吃点热的。\n窗边有人在打电话，筷子碰到碗沿，叮的一声。那天工作没做完，消息也没回完，但我先把面吃完了。想到这里，我觉得在快节奏的现代生活中，我们需要适当地放慢自己的脚步，感受生活中的美好，这无疑是一件十分重要的事情。",
+    "style": "CONVERSATIONAL",
+    "depth": "LIGHT",
+    "audience": "",
+    "requirements": "",
+    "lockedTexts": [],
+    "modelId": "deepseek:deepseek-flash"
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "requestId": "0e9ae3ae-eaa4-4aac-a53a-0a38e5f3df32",
+      "data": {
+        "id": "ab6a22a1-2ea1-4ffb-9199-24124a5f22f1",
+        "input": {
+          "sourceText": "下班回家，我又走进了楼下那家面馆。面还是那碗面，老板也没有突然说出什么人生道理。我只是饿了，想吃点热的。\n窗边有人在打电话，筷子碰到碗沿，叮的一声。那天工作没做完，消息也没回完，但我先把面吃完了。想到这里，我觉得在快节奏的现代生活中，我们需要适当地放慢自己的脚步，感受生活中的美好，这无疑是一件十分重要的事情。",
+          "style": "CONVERSATIONAL",
+          "depth": "LIGHT",
+          "audience": "",
+          "requirements": "",
+          "lockedTexts": [],
+          "modelId": "deepseek:deepseek-flash"
+        },
+        "generatedText": "下班回家，我又走进了楼下那家面馆。面还是那碗面，老板也没突然说出什么人生道理。我就是饿了，想吃点热的。\n窗边有人在打电话，筷子碰到碗沿，叮的一声。那天工作没做完，消息也没回完，但我先把面吃完了。想到这儿，我觉得在快节奏的现代生活里，我们确实该适当放慢脚步，感受一下生活里的美好，这无疑是件挺重要的事。",
+        "polishedText": "下班回家，我又走进了楼下那家面馆。面还是那碗面，老板也没突然说出什么人生道理。我就是饿了，想吃点热的。\n窗边有人在打电话，筷子碰到碗沿，叮的一声。那天工作没做完，消息也没回完，但我先把面吃完了。想到这儿，我觉得在快节奏的现代生活里，我们确实该适当放慢脚步，感受一下生活里的美好，这无疑是件挺重要的事。",
+        "sourceRecordId": null,
+        "sourceMode": "RAW",
+        "modelId": "deepseek:deepseek-flash",
+        "modelName": "DeepSeek-V4.1-Flash",
+        "mock": false,
+        "editRevision": 0,
+        "checks": [],
+        "historySaved": true,
+        "persistentHistory": true,
+        "createdAt": "2026-10-24T18:56:32.509066200Z"
+      }
+    }
+  },
+  "entry": {
+    "id": "essay-CONVERSATIONAL-flash",
+    "requestId": "ab6a22a1-2ea1-4ffb-9199-24124a5f22f1",
+    "reserved": 2,
+    "status": "COMPLETED",
+    "startedAt": "2026-10-24T18:56:31.605Z",
+    "httpStatus": 200,
+    "elapsedMs": 954,
+    "attempts": [
+      {
+        "event": "model.call.completed",
+        "requestId": "0e9ae3ae-eaa4-4aac-a53a-0a38e5f3df32",
+        "workflowId": "9db6c0fdab97fe77c514",
+        "operation": "text.polish",
+        "providerRoute": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "selectionSource": "PLATFORM_CATALOG",
+        "mock": "false",
+        "attempt": "1",
+        "inputItems": "1",
+        "inputTokens": "550",
+        "outputTokens": "102",
+        "totalTokens": "652",
+        "durationMs": "842"
+      }
+    ],
+    "actualCalls": 1,
+    "finishedAt": "2026-10-24T18:56:32.563Z"
+  }
+}

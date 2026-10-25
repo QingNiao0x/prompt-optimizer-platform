@@ -1,0 +1,120 @@
+{
+  "verifiedAt": "2026-10-25T02:36:20.200750+00:00",
+  "javaUniqueTests": 27,
+  "javaSuites": [
+    {
+      "name": "com.promptoptimizer.textpolish.service.TextPolishServiceTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.59",
+      "testNames": [
+        "lockedTextIsExactAndNumbersOnlyProduceReviewHints",
+        "everyIdentityDimensionIsRequiredEvenWithSameUser",
+        "deletionDuringModelWorkCannotCreateContinuation",
+        "defaultsAreNaturalAndLightAndDuplicateRequestUsesOneCall",
+        "originalAndCurrentUseServerSourceInsteadOfClientClaimedTextAndKeepGeneratedSnapshot",
+        "editsConflictAndDeletedHistoryCannotBeRecoveredReSavedOrUsedAsSource"
+      ]
+    },
+    {
+      "name": "com.promptoptimizer.textpolish.service.OpenAiTextPolishProviderTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.45",
+      "testNames": [
+        "independentProtocolCarriesTextAsMaterialAndReturnsOnlyArticle",
+        "protocolErrorAllowsOnlyOneRepair",
+        "lockedViolationDoesNotTriggerUnboundedQualityRetries",
+        "truncatedOutputIsNotSavedOrAutomaticallyRetried"
+      ]
+    },
+    {
+      "name": "com.promptoptimizer.textpolish.service.TextPolishModelServiceTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.071",
+      "testNames": [
+        "moduleDefaultsAndDisabledModelsAreEnforcedWithoutChangingCatalog"
+      ]
+    },
+    {
+      "name": "com.promptoptimizer.textpolish.controller.TextPolishControllerSecurityTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.661",
+      "testNames": [
+        "privateCapabilitiesHistoryAndRecoveryRequireAuthentication",
+        "invalidCsrfAndMissingInputCannotCallModels",
+        "ordinaryAndRevokedAdminsCannotChangeModelPolicy"
+      ]
+    },
+    {
+      "name": "com.promptoptimizer.textpolish.service.TextPolishDatabaseAcceptanceTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "6.917",
+      "testNames": [
+        "jsonSnapshotCurrentDraftAndCasRemainConsistentAfterDeletion",
+        "everyScopeIsAppliedInXmlAndModulePolicyWritesAtomically",
+        "allPersistentColumnsAndTablesHaveDatabaseComments"
+      ]
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.PlatformModelCatalogServiceTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.135",
+      "testNames": [
+        "resolvesOnlyEnabledPublishedModelsAndNeverFallsBackToUnpublishedRouteModels"
+      ]
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyHttpIntegrationTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "6.601",
+      "testNames": [
+        "doesNotReplaceAuthenticationOrCsrfWithClientSuppliedIdentity",
+        "holdsOneHundredRealHttpResponsesRejectsNextAndThenRecovers",
+        "releasesBothLimitsAfterHttpErrorsInvalidResponsesAndValidationFailures",
+        "sharesThreeAcrossDifferentSessionsAndModelEndpointsIgnoringSpoofedUserHeader"
+      ]
+    },
+    {
+      "name": "com.promptoptimizer.imageprompt.controller.ImagePromptControllerSecurityTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "4.542",
+      "testNames": [
+        "staleAdminRoleStillRequiresCurrentPermissionCheck",
+        "invalidInputNeverReachesPaidOperation",
+        "ordinaryUsersCannotEnableVisionEvenWithCsrf",
+        "mutationRequiresValidCsrfBeforeModelOrStorageWork",
+        "privatePreviewsHistoryOperationsAndCapabilitiesRequireAuthentication"
+      ]
+    }
+  ],
+  "javaFinalAffectedRerun": 13,
+  "frontendUnitTests": 19,
+  "articleBrowserChecks": 8,
+  "sharedBrowserChecksEarlierInSession": 18,
+  "sharedBrowserRawLogAvailable": false,
+  "typecheckAndBuild": "passed",
+  "localMockYaml": "parsed with existing SnakeYAML; explicit MEMORY; no separate live profile run"
+}

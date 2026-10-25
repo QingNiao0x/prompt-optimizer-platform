@@ -6,6 +6,9 @@ spring:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 
 app:
+  text-polish:
+    # 无Redis的显式演示环境使用内存，普通运行仍要求私有Redis状态。
+    store-mode: MEMORY
   image-prompt:
     store-mode: MEMORY
   provider:

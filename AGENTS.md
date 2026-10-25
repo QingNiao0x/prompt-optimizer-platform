@@ -9,7 +9,7 @@
 
 ## 项目上下文
 
-本仓库是 Prompt Optimizer Platform：在保留用户意图、事实和权限边界的前提下，将需求整理为可执行的优化提示词，支持紧凑自然表达与结构化表达。技术栈为 Vue 3 + Vite + TypeScript + Element Plus，以及 Java 21 + Spring Boot 3 模块化单体；数据用 PostgreSQL 16，短时状态用 Redis 7。产品只生成提示词，不执行用户任务。
+本仓库是 Prompt Optimizer Platform：在保留用户意图、事实和权限边界的前提下，将需求整理为可执行的优化提示词，支持紧凑自然表达与结构化表达。技术栈为 Vue 3 + Vite + TypeScript + Element Plus，以及 Java 21 + Spring Boot 3 模块化单体；数据用 PostgreSQL 16，短时状态用 Redis 7。提示词增强只生成提示词，不执行用户任务；独立的“文章祛AI味”工具按用户主动提交的已有正文交付润色结果，不接入提示词增强或 Plan 链路。
 
 项目术语见 `CONTEXT.md`，模块文档按需从 `docs/README.md` 查找；已读取且未变化的内容不重复读取。文档与实现不一致时，以代码为准，并说明差异。使用 `CONTEXT.md` 中的术语：原始提示词、优化提示词、项目上下文、上下文摘要、优化会话、优化记录、模型供应商、工作区、租户、提示词增强、四要素结构、权限红线。
 

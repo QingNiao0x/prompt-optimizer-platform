@@ -1,0 +1,76 @@
+{
+  "job": {
+    "id": "v2-clean-CONVERSATIONAL-flash",
+    "sample": "clean",
+    "style": "CONVERSATIONAL",
+    "modelId": "deepseek:deepseek-flash"
+  },
+  "input": {
+    "sourceText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+    "style": "CONVERSATIONAL",
+    "depth": "LIGHT",
+    "audience": "",
+    "requirements": "",
+    "lockedTexts": [],
+    "modelId": "deepseek:deepseek-flash"
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "requestId": "b91a02a1-5af2-4b02-8dc0-8da43bc5639c",
+      "data": {
+        "id": "6b9cf4f5-6ba1-40ad-a10a-9c5261831ffb",
+        "input": {
+          "sourceText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+          "style": "CONVERSATIONAL",
+          "depth": "LIGHT",
+          "audience": "",
+          "requirements": "",
+          "lockedTexts": [],
+          "modelId": "deepseek:deepseek-flash"
+        },
+        "generatedText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了碗汤。",
+        "polishedText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了碗汤。",
+        "sourceRecordId": null,
+        "sourceMode": "RAW",
+        "modelId": "deepseek:deepseek-flash",
+        "modelName": "DeepSeek-V4.1-Flash",
+        "mock": false,
+        "editRevision": 0,
+        "checks": [],
+        "historySaved": true,
+        "persistentHistory": true,
+        "createdAt": "2026-10-24T19:07:26.139457500Z"
+      }
+    }
+  },
+  "entry": {
+    "id": "v2-clean-CONVERSATIONAL-flash",
+    "requestId": "6b9cf4f5-6ba1-40ad-a10a-9c5261831ffb",
+    "reserved": 2,
+    "status": "COMPLETED",
+    "startedAt": "2026-10-24T19:07:25.312Z",
+    "httpStatus": 200,
+    "elapsedMs": 867,
+    "attempts": [
+      {
+        "event": "model.call.completed",
+        "requestId": "b91a02a1-5af2-4b02-8dc0-8da43bc5639c",
+        "workflowId": "9fff979e4a9f4f94ddce",
+        "operation": "text.polish",
+        "providerRoute": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "selectionSource": "PLATFORM_CATALOG",
+        "mock": "false",
+        "attempt": "1",
+        "inputItems": "1",
+        "inputTokens": "617",
+        "outputTokens": "39",
+        "totalTokens": "656",
+        "durationMs": "788"
+      }
+    ],
+    "actualCalls": 1,
+    "finishedAt": "2026-10-24T19:07:26.179Z"
+  }
+}

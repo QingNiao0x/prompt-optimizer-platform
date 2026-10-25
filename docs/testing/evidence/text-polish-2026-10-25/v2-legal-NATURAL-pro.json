@@ -1,0 +1,87 @@
+{
+  "job": {
+    "id": "v2-legal-NATURAL-pro",
+    "sample": "legal",
+    "style": "NATURAL",
+    "modelId": "deepseek:deepseek-v4-pro"
+  },
+  "input": {
+    "sourceText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+    "style": "NATURAL",
+    "depth": "LIGHT",
+    "audience": "",
+    "requirements": "",
+    "lockedTexts": [
+      "已使用的数字内容不适用无理由退款。"
+    ],
+    "modelId": "deepseek:deepseek-v4-pro"
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "requestId": "79338ff7-579f-4bcb-b29b-4654640ba428",
+      "data": {
+        "id": "e443ddfc-9f41-484f-904a-d80e61489c1b",
+        "input": {
+          "sourceText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+          "style": "NATURAL",
+          "depth": "LIGHT",
+          "audience": "",
+          "requirements": "",
+          "lockedTexts": [
+            "已使用的数字内容不适用无理由退款。"
+          ],
+          "modelId": "deepseek:deepseek-v4-pro"
+        },
+        "generatedText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。",
+        "polishedText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。",
+        "sourceRecordId": null,
+        "sourceMode": "RAW",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "modelName": "DeepSeek-V4-Pro-0813",
+        "mock": false,
+        "editRevision": 0,
+        "checks": [
+          {
+            "code": "LOCKS_PRESERVED",
+            "message": "指定保护的文字已按原样保留。",
+            "before": "",
+            "after": ""
+          }
+        ],
+        "historySaved": true,
+        "persistentHistory": true,
+        "createdAt": "2026-10-24T19:08:12.342189Z"
+      }
+    }
+  },
+  "entry": {
+    "id": "v2-legal-NATURAL-pro",
+    "requestId": "e443ddfc-9f41-484f-904a-d80e61489c1b",
+    "reserved": 2,
+    "status": "COMPLETED",
+    "startedAt": "2026-10-24T19:08:10.776Z",
+    "httpStatus": 200,
+    "elapsedMs": 1594,
+    "attempts": [
+      {
+        "event": "model.call.completed",
+        "requestId": "79338ff7-579f-4bcb-b29b-4654640ba428",
+        "workflowId": "fe8a1ed833ef979c3798",
+        "operation": "text.polish",
+        "providerRoute": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "selectionSource": "PLATFORM_CATALOG",
+        "mock": "false",
+        "attempt": "1",
+        "inputItems": "1",
+        "inputTokens": "680",
+        "outputTokens": "79",
+        "totalTokens": "759",
+        "durationMs": "1521"
+      }
+    ],
+    "actualCalls": 1,
+    "finishedAt": "2026-10-24T19:08:12.382Z"
+  }
+}

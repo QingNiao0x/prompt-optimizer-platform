@@ -56,6 +56,6 @@ public class ModelCallAuditWebConfiguration implements WebMvcConfigurer {
                 "/api/v1/context/**", "/api/v1/optimization-history/*/re-optimize",
                 "/api/v2/optimizations", "/api/v2/optimizations/**",
                 "/api/v2/context/**", "/api/v2/optimization-history/*/re-optimize",
-                "/api/v1/image-prompts", "/api/v1/image-prompts/**");
+                "/api/v1/image-prompts", "/api/v1/image-prompts/**", "/api/v1/text-polish", "/api/v1/text-polish/**");
     }
 }

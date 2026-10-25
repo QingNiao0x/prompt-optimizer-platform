@@ -1,0 +1,87 @@
+{
+  "job": {
+    "id": "v2-notice-NATURAL-pro",
+    "sample": "notice",
+    "style": "NATURAL",
+    "modelId": "deepseek:deepseek-v4-pro"
+  },
+  "input": {
+    "sourceText": "关于周末图书室开放安排的通知\n为了进一步提升服务水平，切实满足广大读者的阅读需求，现就本周末图书室开放的相关事项通知如下。本周六开放时间为9:00—17:00，周日因设备维护暂停开放。每人每次可借3本书，借期14天，暂不提供续借服务。希望各位读者能够合理安排自己的时间，按照上述安排前来借阅。对于给大家带来的不便，敬请理解。",
+    "style": "NATURAL",
+    "depth": "LIGHT",
+    "audience": "",
+    "requirements": "",
+    "lockedTexts": [
+      "每人每次可借3本书，借期14天，暂不提供续借服务。"
+    ],
+    "modelId": "deepseek:deepseek-v4-pro"
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "requestId": "9615be46-6a57-419d-b729-1ecc4202136a",
+      "data": {
+        "id": "f0c49dc8-b911-440e-9ab2-cdc44251b88c",
+        "input": {
+          "sourceText": "关于周末图书室开放安排的通知\n为了进一步提升服务水平，切实满足广大读者的阅读需求，现就本周末图书室开放的相关事项通知如下。本周六开放时间为9:00—17:00，周日因设备维护暂停开放。每人每次可借3本书，借期14天，暂不提供续借服务。希望各位读者能够合理安排自己的时间，按照上述安排前来借阅。对于给大家带来的不便，敬请理解。",
+          "style": "NATURAL",
+          "depth": "LIGHT",
+          "audience": "",
+          "requirements": "",
+          "lockedTexts": [
+            "每人每次可借3本书，借期14天，暂不提供续借服务。"
+          ],
+          "modelId": "deepseek:deepseek-v4-pro"
+        },
+        "generatedText": "关于周末图书室开放安排的通知\n\n本周末图书室开放安排如下：周六开放时间为9:00—17:00，周日因设备维护暂停开放。每人每次可借3本书，借期14天，暂不提供续借服务。请各位读者合理安排时间，按上述安排前来借阅。不便之处，敬请理解。",
+        "polishedText": "关于周末图书室开放安排的通知\n\n本周末图书室开放安排如下：周六开放时间为9:00—17:00，周日因设备维护暂停开放。每人每次可借3本书，借期14天，暂不提供续借服务。请各位读者合理安排时间，按上述安排前来借阅。不便之处，敬请理解。",
+        "sourceRecordId": null,
+        "sourceMode": "RAW",
+        "modelId": "deepseek:deepseek-v4-pro",
+        "modelName": "DeepSeek-V4-Pro-0813",
+        "mock": false,
+        "editRevision": 0,
+        "checks": [
+          {
+            "code": "LOCKS_PRESERVED",
+            "message": "指定保护的文字已按原样保留。",
+            "before": "",
+            "after": ""
+          }
+        ],
+        "historySaved": true,
+        "persistentHistory": true,
+        "createdAt": "2026-10-24T19:08:07.222367900Z"
+      }
+    }
+  },
+  "entry": {
+    "id": "v2-notice-NATURAL-pro",
+    "requestId": "f0c49dc8-b911-440e-9ab2-cdc44251b88c",
+    "reserved": 2,
+    "status": "COMPLETED",
+    "startedAt": "2026-10-24T19:08:05.326Z",
+    "httpStatus": 200,
+    "elapsedMs": 1923,
+    "attempts": [
+      {
+        "event": "model.call.completed",
+        "requestId": "9615be46-6a57-419d-b729-1ecc4202136a",
+        "workflowId": "f1c06073d43ace26201e",
+        "operation": "text.polish",
+        "providerRoute": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "selectionSource": "PLATFORM_CATALOG",
+        "mock": "false",
+        "attempt": "1",
+        "inputItems": "1",
+        "inputTokens": "692",
+        "outputTokens": "83",
+        "totalTokens": "775",
+        "durationMs": "1847"
+      }
+    ],
+    "actualCalls": 1,
+    "finishedAt": "2026-10-24T19:08:07.257Z"
+  }
+}

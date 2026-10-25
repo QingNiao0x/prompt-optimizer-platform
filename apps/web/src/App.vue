@@ -7,7 +7,7 @@ import WorkbenchTopBar from '@/components/layout/WorkbenchTopBar.vue';
 import { useUiTheme } from '@/composables/useUiTheme';
 
 const route = useRoute();
-const isWorkbench = computed(() => route.name === 'workbench' || route.name === 'image-to-prompt');
+const isWorkbench = computed(() => route.name === 'workbench' || route.name === 'image-to-prompt' || route.name === 'text-polish');
 // 统计表格需要完整可用宽度，其余页面继续使用原有居中容器。
 const isAnalytics = computed(() => route.name === 'admin-analytics');
 // 独立布局页面自带顶栏与页脚，不再叠加应用内 WorkbenchTopBar。
@@ -64,7 +64,7 @@ useUiTheme();
   padding: 0;
 }
 
-/* 管理员有七个导航入口；窄屏导航独立成行，长标签折行，保留各入口的位置与可用性。 */
+/* 管理员新增工具入口后有八项；窄屏导航独立成行，长标签折行，保留各入口的位置与可用性。 */
 @media (max-width: 1100px) {
   .topbar--analytics {
     grid-template-columns: minmax(0, 1fr) auto;
@@ -82,7 +82,7 @@ useUiTheme();
     grid-area: navigation;
     display: grid;
     width: 100%;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-template-columns: repeat(8, minmax(0, 1fr));
     gap: 0;
   }
 

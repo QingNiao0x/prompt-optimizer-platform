@@ -1,0 +1,35 @@
+import { createRequire } from 'node:module';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { createInterface } from 'node:readline/promises';
+const require = createRequire(new URL('../../apps/web/package.json', import.meta.url));
+const { chromium } = require('@playwright/test');
+const { createServer } = require('vite');
+const root = resolve('tmp/text-polish-acceptance');
+const account = JSON.parse(await readFile('tmp/local-acceptance/account.json','utf8'));
+let password = process.env.POLISH_ACCEPTANCE_PASSWORD; delete process.env.POLISH_ACCEPTANCE_PASSWORD;
+if (!password || account.kind !== 'LOCAL_SYNTHETIC_FIXTURE') throw new Error('Canonical account required');
+const server = await createServer({root:resolve('apps/web'), logLevel:'warn',server:{host:'127.0.0.1',port:5185,strictPort:true,proxy:{'/api':{target:'http://127.0.0.1:9005',changeOrigin:true}}}});
+await server.listen();
+const browser = await chromium.launch({headless:true,channel:'chrome',args:['--remote-debugging-port=9355','--remote-debugging-address=127.0.0.1']});
+const context = await browser.newContext({viewport:{width:1536,height:1080}}), page = await context.newPage();
+const lines = createInterface({input:process.stdin,output:process.stdout,terminal:false});
+await page.goto('http://127.0.0.1:5185/login',{waitUntil:'domcontentloaded'});
+await page.waitForLoadState('networkidle');
+await page.evaluate(()=>fetch('/api/v1/auth/csrf'));
+const captcha = await context.request.get('http://127.0.0.1:5185/api/v1/auth/captcha');
+if (!captcha.ok() || !captcha.headers()['content-type']?.startsWith('image/')) throw new Error('Captcha service unavailable '+captcha.status());
+await writeFile(resolve(root,'captcha.png'),await captcha.body());
+console.log(JSON.stringify({event:'captcha',path:resolve(root,'captcha.png')}));
+const answer = (await lines.question('')).trim();
+const login = await page.evaluate(async body=>{
+ const csrf=document.cookie.split('; ').find(x=>x.startsWith('XSRF-TOKEN='))?.split('=').slice(1).join('=');
+ const r=await fetch('/api/v1/auth/login',{method:'POST',headers:{'Content-Type':'application/json','X-XSRF-TOKEN':decodeURIComponent(csrf??'')},body:JSON.stringify(body)});
+ const json=await r.json(); return {status:r.status,code:json.error?.code};
+},{identifier:account.identifier,password,captcha:answer}); password=undefined;
+if(login.status!==200) throw new Error('Canonical login failed '+login.code);
+await page.goto('http://127.0.0.1:5185/text-polish');
+await page.getByRole('heading',{name:'文章祛AI味',exact:true}).waitFor();
+console.log(JSON.stringify({event:'authenticated',port:9355}));
+for await (const command of lines) { if(command==='close') break; }
+await context.close();await browser.close();await server.close();

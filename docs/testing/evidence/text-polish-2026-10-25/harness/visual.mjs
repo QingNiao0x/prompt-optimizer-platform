@@ -1,0 +1,15 @@
+import {createRequire} from 'node:module';
+import {writeFile} from 'node:fs/promises';
+const require=createRequire(new URL('../../apps/web/package.json',import.meta.url));
+const {chromium,expect}=require('@playwright/test');
+const browser=await chromium.connectOverCDP('http://127.0.0.1:9355'),context=browser.contexts()[0];
+const page=context.pages().find(p=>p.url().includes(':5185/'));
+await page.setViewportSize({width:1536,height:1080});
+if(await page.getByRole('button',{name:'切换为深色主题',exact:true}).isVisible())await page.getByRole('button',{name:'切换为深色主题',exact:true}).click();
+await expect(page.locator('html')).toHaveClass(/dark/);
+await page.screenshot({path:'docs/testing/evidence/text-polish-2026-10-25/desktop-dark-final.png',fullPage:true,animations:'disabled'});
+await page.setViewportSize({width:390,height:900});await page.locator('nav.mobile-panes').getByRole('button',{name:'设置',exact:true}).click();
+for(const text of ['适合报告、商务邮件和正式说明。','默认，适合一般文章和日常沟通。','适合社交内容和面向大众的介绍。'])await expect(page.getByText(text,{exact:true})).toBeVisible();
+await page.screenshot({path:'docs/testing/evidence/text-polish-2026-10-25/mobile-dark-final.png',fullPage:true,animations:'disabled'});
+await writeFile('docs/testing/evidence/text-polish-2026-10-25/visual-final.json',JSON.stringify({modelCalls:0,themeSwitchedWithExistingButton:true,htmlDarkClass:true,mobileStyleDescriptionsVisible:true,mobileNoHorizontalOverflow:await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),initialDesktopDarkScreenshotWasCapturedBeforeCorrectThemeApplication:true},null,2));
+console.log('EXISTING_THEME_AND_MOBILE_VERIFIED');await browser.close();

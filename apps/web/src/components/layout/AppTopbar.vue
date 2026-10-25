@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Clock, DataAnalysis, HomeFilled, MagicStick, Picture, Setting, Tools } from '@element-plus/icons-vue';
+import { Clock, DataAnalysis, HomeFilled, MagicStick, Picture, EditPen, Setting, Tools } from '@element-plus/icons-vue';
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -8,14 +8,18 @@ import AccountMenu from '@/components/layout/AccountMenu.vue';
 import { formatModelVersion } from '@/features/models/modelVersion';
 import { useAuthStore } from '@/stores/auth';
 import { useOptimizationStore } from '@/stores/optimization';
+import { useTextPolishStore } from '@/stores/textPolish';
 import { useImagePromptStore } from '@/stores/imagePrompt';
 
 const auth = useAuthStore();
 const route = useRoute();
 const optimization = useOptimizationStore();
 const imagePrompt = useImagePromptStore();
+const textPolish = useTextPolishStore();
 // 顶栏与选择器共用展示短名；管理员名称和调用路由不变。
-const selectedModelVersion = computed(() => route.name === 'image-to-prompt'
+const selectedModelVersion = computed(() => route.name === 'text-polish'
+  ? formatModelVersion(textPolish.selectedModel?.displayName, '未选择模型')
+  : route.name === 'image-to-prompt'
   ? formatModelVersion(imagePrompt.selectedModel?.displayName, '未选择模型')
   : formatModelVersion(optimization.availableModels.find(
   (model) => model.id === optimization.selectedModelId,
@@ -25,6 +29,7 @@ const navigation = [
   { to: '/', label: '首页', icon: HomeFilled },
   { to: '/workbench', label: '工作台', icon: MagicStick },
   { to: '/image-to-prompt', label: '图像转提示词', icon: Picture },
+  { to: '/text-polish', label: '文章祛AI味', icon: EditPen },
   { to: '/history', label: '历史', icon: Clock },
   { to: '/settings', label: '设置', icon: Setting },
 ] as const;
@@ -63,8 +68,8 @@ const navigation = [
 
     <div class="topbar-tools">
       <AccountMenu />
-      <!-- 两个工作台分别展示本任务的模型，不把文本模型误示为视觉调用模型。 -->
-      <div v-if="route.name !== 'image-to-prompt' || imagePrompt.selectedModel" class="provider-status" :title="`模型版本：${selectedModelVersion}（由平台管理员维护）`">
+      <!-- 各工具展示本任务选择的模型，使用独立状态，避免误示其他模块的模型。 -->
+      <div v-if="(route.name !== 'image-to-prompt' || imagePrompt.selectedModel) && (route.name !== 'text-polish' || textPolish.selectedModel)" class="provider-status" :title="`模型版本：${selectedModelVersion}（由平台管理员维护）`">
         <span class="status-dot" aria-hidden="true"></span>
         <span>{{ selectedModelVersion }}</span>
       </div>

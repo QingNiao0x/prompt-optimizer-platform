@@ -27,6 +27,7 @@ import {
   listModelRoutes,
   updateAdminModel,
 } from '@/services/modelCatalogApi';
+import TextPolishModelSettings from '@/components/textpolish/TextPolishModelSettings.vue';
 import type { AdminModel, AdminModelChange, ModelRoute } from '@/types/api';
 
 const models = ref<AdminModel[]>([]);
@@ -36,6 +37,7 @@ const isSaving = ref(false);
 const errorMessage = ref('');
 const dialogVisible = ref(false);
 const editingId = ref<string>();
+const polishSettingsVisible = ref(false);
 const visionModel = ref<AdminModel>();
 const form = reactive<AdminModelChange>({
   routeKey: '', upstreamModel: '', displayName: '',
@@ -141,9 +143,9 @@ onMounted(() => { void refresh(); });
       <div>
         <p class="eyebrow">PLATFORM ADMIN</p>
         <h1>用户可选模型</h1>
-        <p>统一配置提示词增强与图像转提示词的模型目录。用户只能选择已启用项；带图调用还需在对应模型的“图像能力”中开放视觉输入。</p>
+        <p>统一配置提示词增强、图像转提示词与文章祛AI味的模型目录。用户只能选择已启用项；带图调用还需在对应模型的“图像能力”中开放视觉输入。</p>
       </div>
-      <ElButton type="primary" :disabled="routes.length === 0" @click="openCreate">添加模型</ElButton>
+      <div class="heading-actions"><ElButton @click="polishSettingsVisible = true">文章润色模型</ElButton><ElButton type="primary" :disabled="routes.length === 0" @click="openCreate">添加模型</ElButton></div>
     </div>
 
     <ElAlert v-if="errorMessage" type="error" :title="errorMessage" show-icon :closable="false" />
@@ -183,6 +185,7 @@ onMounted(() => { void refresh(); });
       <ElEmpty v-else-if="!isLoading" description="尚无模型，请添加首个可用模型。" />
     </div>
 
+    <TextPolishModelSettings :visible="polishSettingsVisible" :models="models" @close="polishSettingsVisible = false" />
     <ImagePromptModelSettings :model="visionModel" @close="visionModel = undefined" />
     <ElDialog v-model="dialogVisible" :title="editingId ? '编辑模型' : '添加模型'" width="min(520px, 94vw)">
       <div class="model-form">

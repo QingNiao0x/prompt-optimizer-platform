@@ -332,7 +332,7 @@ onMounted(loadPage);
         <h1>优化历史</h1>
         <p>查看、载入或重新优化已经生成的提示词。历史只保存脱敏摘要，不保存文件正文。</p>
       </div>
-      <ElButton @click="router.push({ path: '/image-to-prompt', query: { history: '1' } })">图像提示词历史</ElButton>
+      <div><ElButton @click="router.push({ path: '/text-polish', query: { history: '1' } })">文章润色历史</ElButton><ElButton @click="router.push({ path: '/image-to-prompt', query: { history: '1' } })">图像提示词历史</ElButton></div>
     </header>
 
     <div class="history-card">

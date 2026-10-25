@@ -18,7 +18,7 @@ public record ModelCallQuery(
         @NotBlank @Size(max = 10) String toDate,
         @Pattern(regexp = "(?i)GLOBAL|TENANT") String scope,
         UUID tenantId,
-        @Pattern(regexp = "prompt\\.optimize|plan\\.generate|document\\.summary\\.(map|reduce)|context\\.embedding|unknown") String operation,
+        @Pattern(regexp = "prompt\\.optimize|plan\\.generate|document\\.summary\\.(map|reduce)|context\\.embedding|text\\.polish|unknown") String operation,
         @Size(max = 64) @Pattern(regexp = "[A-Za-z0-9._-]+") String requestId,
         @Min(1) @Max(100000) Integer current,
         @Min(1) @Max(100) Integer size

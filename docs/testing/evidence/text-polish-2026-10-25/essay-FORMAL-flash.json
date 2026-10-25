@@ -1,0 +1,83 @@
+{
+  "job": {
+    "id": "essay-FORMAL-flash",
+    "sample": "essay",
+    "style": "FORMAL",
+    "modelId": "deepseek:deepseek-flash"
+  },
+  "input": {
+    "sourceText": "下班回家，我又走进了楼下那家面馆。面还是那碗面，老板也没有突然说出什么人生道理。我只是饿了，想吃点热的。\n窗边有人在打电话，筷子碰到碗沿，叮的一声。那天工作没做完，消息也没回完，但我先把面吃完了。想到这里，我觉得在快节奏的现代生活中，我们需要适当地放慢自己的脚步，感受生活中的美好，这无疑是一件十分重要的事情。",
+    "style": "FORMAL",
+    "depth": "LIGHT",
+    "audience": "",
+    "requirements": "",
+    "lockedTexts": [],
+    "modelId": "deepseek:deepseek-flash"
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "requestId": "356ba9eb-0748-442d-8794-5a84b502be4d",
+      "data": {
+        "id": "85eeb890-59f4-4125-935e-ecd927884232",
+        "input": {
+          "sourceText": "下班回家，我又走进了楼下那家面馆。面还是那碗面，老板也没有突然说出什么人生道理。我只是饿了，想吃点热的。\n窗边有人在打电话，筷子碰到碗沿，叮的一声。那天工作没做完，消息也没回完，但我先把面吃完了。想到这里，我觉得在快节奏的现代生活中，我们需要适当地放慢自己的脚步，感受生活中的美好，这无疑是一件十分重要的事情。",
+          "style": "FORMAL",
+          "depth": "LIGHT",
+          "audience": "",
+          "requirements": "",
+          "lockedTexts": [],
+          "modelId": "deepseek:deepseek-flash"
+        },
+        "generatedText": "下班回家，我又走进了楼下那家面馆。面还是那碗面，老板也没有突然说出什么人生道理。我只是饿了，想吃点热的。\n窗边有人在打电话，筷子碰到碗沿，叮的一声。那天工作没做完，消息也没回完，但我先把面吃完了。想到这里，我觉得在快节奏的现代生活中，我们需要适当地放慢自己的脚步，感受生活中的美好，这无疑是一件十分重要的事情。",
+        "polishedText": "下班回家，我又走进了楼下那家面馆。面还是那碗面，老板也没有突然说出什么人生道理。我只是饿了，想吃点热的。\n窗边有人在打电话，筷子碰到碗沿，叮的一声。那天工作没做完，消息也没回完，但我先把面吃完了。想到这里，我觉得在快节奏的现代生活中，我们需要适当地放慢自己的脚步，感受生活中的美好，这无疑是一件十分重要的事情。",
+        "sourceRecordId": null,
+        "sourceMode": "RAW",
+        "modelId": "deepseek:deepseek-flash",
+        "modelName": "DeepSeek-V4.1-Flash",
+        "mock": false,
+        "editRevision": 0,
+        "checks": [
+          {
+            "code": "UNCHANGED",
+            "message": "本次保留原文，未作文字改动。",
+            "before": "",
+            "after": ""
+          }
+        ],
+        "historySaved": true,
+        "persistentHistory": true,
+        "createdAt": "2026-10-24T18:56:30.461854100Z"
+      }
+    }
+  },
+  "entry": {
+    "id": "essay-FORMAL-flash",
+    "requestId": "85eeb890-59f4-4125-935e-ecd927884232",
+    "reserved": 2,
+    "status": "COMPLETED",
+    "startedAt": "2026-10-24T18:56:29.273Z",
+    "httpStatus": 200,
+    "elapsedMs": 1240,
+    "attempts": [
+      {
+        "event": "model.call.completed",
+        "requestId": "356ba9eb-0748-442d-8794-5a84b502be4d",
+        "workflowId": "6f8ba3d9bed615b84b9e",
+        "operation": "text.polish",
+        "providerRoute": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "selectionSource": "PLATFORM_CATALOG",
+        "mock": "false",
+        "attempt": "1",
+        "inputItems": "1",
+        "inputTokens": "548",
+        "outputTokens": "97",
+        "totalTokens": "645",
+        "durationMs": "968"
+      }
+    ],
+    "actualCalls": 1,
+    "finishedAt": "2026-10-24T18:56:30.515Z"
+  }
+}

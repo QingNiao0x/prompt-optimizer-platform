@@ -42,6 +42,12 @@ const router = createRouter({
       meta: { title: '图像转提示词' },
     },
     {
+      path: '/text-polish',
+      name: 'text-polish',
+      component: () => import('@/pages/TextPolishPage.vue'),
+      meta: { title: '文章祛AI味' },
+    },
+    {
       path: '/history',
       name: 'history',
       component: () => import('@/pages/HistoryPage.vue'),
