@@ -53,6 +53,8 @@ describe('P0 task lifecycle regressions', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     setActivePinia(createPinia());
+    useAuthStore().user = { userId: 'fixture-user', tenantId: 'fixture-tenant', workspaceId: 'fixture-workspace',
+      email: 'fixture@example.test', displayName: '生命周期测试用户', platformAdmin: false };
     vi.stubGlobal('window', { localStorage: { getItem: () => null, setItem: () => undefined, removeItem: () => undefined } });
     vi.mocked(deleteDocumentUpload).mockResolvedValue(undefined);
     vi.mocked(projectIndexRepository.deleteProject).mockResolvedValue(undefined);

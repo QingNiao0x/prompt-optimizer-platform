@@ -46,7 +46,9 @@ test('生成、编辑、真实剪贴板、历史恢复和再次润色来源闭�
   await page.getByRole('button',{name:'保存编辑',exact:true}).click(); await expect(page.getByLabel('润色正文',{exact:true})).toHaveText('用户手动修改的文章正文。');
   await context.grantPermissions(['clipboard-read','clipboard-write']); await page.getByRole('button',{name:'复制正文',exact:true}).click();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('用户手动修改的文章正文。');
-  await page.getByRole('button',{name:'文章历史',exact:true}).click(); await page.getByRole('button',{name:'打开文章',exact:true}).click();
+  await page.getByRole('button',{name:'文章历史',exact:true}).click();
+  await expect(page).toHaveURL(/\/history\?type=text-polish/);
+  await page.locator('.polish-history-table:visible, .polish-history-cards:visible').getByRole('button',{name:'载入',exact:true}).click();
   const request = page.waitForRequest(r => r.url().endsWith('/api/v1/text-polish') && r.method()==='POST');
   await page.getByRole('button',{name:'以当前稿继续润色',exact:true}).click(); expect((await request).postDataJSON()).toMatchObject({sourceMode:'CURRENT',sourceRecordId:'record',expectedRevision:1});
 });

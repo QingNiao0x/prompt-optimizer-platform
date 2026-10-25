@@ -19,6 +19,7 @@ import {
 import type { OptimizationResult } from '@/types/api';
 
 import { useOptimizationStore } from './optimization';
+import { useAuthStore } from './auth';
 
 const readyIndex = (): ProjectIndexSummary => ({
   id: 'same-project',
@@ -54,6 +55,9 @@ describe('optimization store project context', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setActivePinia(createPinia());
+    // 原有上下文与 Plan 场景属于正式账号，访客额度在独立用例中覆盖。
+    useAuthStore().user = { userId: 'fixture-user', tenantId: 'fixture-tenant', workspaceId: 'fixture-workspace',
+      email: 'fixture@example.test', displayName: '提示词测试用户', platformAdmin: false };
     vi.stubGlobal('window', {
       localStorage: {
         getItem: () => null,

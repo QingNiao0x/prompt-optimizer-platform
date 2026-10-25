@@ -91,6 +91,10 @@ logging:
   config: classpath:logback-spring.xml
 
 app:
+  trial:
+    # 三项一次性访客体验：图像1次、提示词增强3次、文章润色3次；真实模式Redis故障拒绝发起模型。
+    enabled: ${TRIAL_ENABLED:true}
+    store-mode: ${TRIAL_STORE_MODE:REDIS}
   planning:
     store-mode: ${PLANNING_STORE_MODE:LOCAL_FALLBACK}
   demo:

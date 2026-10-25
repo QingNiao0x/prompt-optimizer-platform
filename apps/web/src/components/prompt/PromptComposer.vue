@@ -25,6 +25,7 @@ interface Props {
   selectedModelId: string;
   isLoadingModels: boolean;
   modelLoadError: string;
+  allowPlan?: boolean;
 }
 
 interface Emits {
@@ -36,7 +37,9 @@ interface Emits {
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
-const { enabled: planModeEnabled, setEnabled: setPlanModeEnabled } = usePlanModePreference();
+const { enabled: preferredPlanMode, setEnabled: setPlanModeEnabled } = usePlanModePreference();
+// 试用不改变用户曾保存的 Plan 偏好；登录后仍使用原偏好。
+const planModeEnabled = computed(() => props.allowPlan !== false && preferredPlanMode.value);
 
 const rawPromptModel = computed({
   get: (): string => props.rawPrompt,
@@ -50,7 +53,7 @@ const structuredPromptModel = computed({
 
 const planModeModel = computed({
   get: (): boolean => planModeEnabled.value,
-  set: (value: boolean): void => setPlanModeEnabled(value),
+  set: (value: boolean): void => { if (props.allowPlan !== false) setPlanModeEnabled(value); },
 });
 const selectedModel = computed({
   get: (): string => props.selectedModelId,
@@ -124,9 +127,10 @@ const isBusy = computed(() => props.isAnalyzing || props.isPlanning || props.isO
             <label class="switch-control">
               <span>Plan 确认</span>
               <em v-if="planModeEnabled" class="plan-badge" aria-hidden="true">Plan</em>
-              <ElSwitch v-model="planModeModel" aria-label="Plan 确认" :disabled="isBusy" />
+              <ElSwitch v-model="planModeModel" aria-label="Plan 确认" :disabled="isBusy || allowPlan === false" />
             </label>
           </ElTooltip>
+          <span v-if="allowPlan === false" class="model-warning">注册登录后可使用 Plan 确认。</span>
           <!-- 纯文字帮助不接收指针；开关保持焦点时浮层也不能遮挡生成按钮。 -->
           <ElTooltip
             content="选择下一次增强方式：开启时按模块组织，关闭时自然表达。已有结果需点击重新增强后更新。"

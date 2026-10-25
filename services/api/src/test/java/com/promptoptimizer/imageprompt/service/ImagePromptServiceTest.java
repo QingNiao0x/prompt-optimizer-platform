@@ -44,6 +44,24 @@ class ImagePromptServiceTest {
     }
 
     @Test
+    void trialKeepsGuestAssetScopeAndNeverCreatesFormalHistory() {
+        String guest = "a".repeat(64); UUID assetId = UUID.randomUUID();
+        var asset = new Asset(assetId, "fixture.png", "image/png", 1, 1, 1, "hash", Instant.now().plusSeconds(3600), "/trial/asset", List.of());
+        when(assets.requireGuest(guest, assetId)).thenReturn(asset);
+        when(assets.bytesGuest(guest, assetId)).thenReturn(new byte[]{1});
+        when(provider.invoke(any())).thenReturn(result("一张测试图片的提示词。", List.of()));
+        var doc = service.extractTrial(guest, new Generate(UUID.randomUUID(), task(Mode.REFERENCE_RECONSTRUCTION,
+                List.of(new Reference(assetId, ImageRole.GENERAL)), "", "")));
+        assertThat(doc.historySaved()).isFalse(); assertThat(doc.persistentHistory()).isFalse(); assertThat(doc.recordId()).isNull();
+        verifyNoInteractions(current);
+        verify(assets, never()).require(any(ActorIdentity.class), any());
+        assertThat(history.list(actor, 1, 10, null).total()).isZero();
+        assertThatThrownBy(() -> service.extractTrial(guest, new Generate(UUID.randomUUID(), task(Mode.CUSTOM_CREATION, List.of(), "新图", ""))))
+                .isInstanceOf(ImagePromptException.class);
+        verify(provider, times(1)).invoke(any());
+    }
+
+    @Test
     void zeroQuestionPlanNeedsNoImagesAndPreservesExactTextDuringGeneration() {
         when(provider.invoke(any())).thenAnswer(inv -> {
             ImagePromptProvider.Call call = inv.getArgument(0);

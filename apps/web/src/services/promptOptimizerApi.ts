@@ -1,4 +1,5 @@
 import { httpClient } from './http';
+import { trialEndpoint } from './trialApi';
 
 import type {
   ApiResponse,
@@ -19,7 +20,7 @@ import type {
 
 /** 读取管理员发布的可选模型目录；浏览器不会收到上游端点或 API Key。 */
 export const listAvailableModels = async (): Promise<ApiResponse<AvailableModel[]>> => {
-  const response = await httpClient.get<ApiResponse<AvailableModel[]>>('/api/v1/models');
+  const response = await httpClient.get<ApiResponse<AvailableModel[]>>(trialEndpoint('/api/v1/models', '/models'));
   return response.data;
 };
 
@@ -57,8 +58,9 @@ export const optimizePrompt = async (
   request: OptimizationRequest,
 ): Promise<ApiResponse<OptimizationResult>> => {
   const response = await httpClient.post<ApiResponse<OptimizationResult>>(
-    '/api/v2/optimizations',
+    trialEndpoint('/api/v2/optimizations', '/optimizations'),
     request,
+    { headers: { 'X-Trial-Request-Id': crypto.randomUUID() } },
   );
   // TEXT协议不返回sections；空集合仅兼容集合操作，不制造四个假段落或重建正文。
   return response.data.data.resultKind === 'TEXT'

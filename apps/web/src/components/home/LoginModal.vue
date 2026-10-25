@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onScopeDispose, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { getApiErrorMessage, httpClient } from '@/services/http';
 import { requestRegistrationCode, requestSmsChallenge } from '@/services/authApi';
@@ -27,6 +28,13 @@ const emit = defineEmits<Emits>();
 
 const view = ref<AuthView>(props.mode === 'register' ? 'register' : 'password');
 const auth = useAuthStore();
+const route = useRoute();
+/** 只接受应用内明确工具/历史路由，拒绝外部重定向和旧账号的资源查询参数。 */
+const destinationAfterLogin = (): string => {
+  const destination = typeof route.query.redirect === 'string' ? route.query.redirect.split('?')[0] : '';
+  return ['/workbench', '/image-to-prompt', '/text-polish', '/history'].includes(destination)
+    ? destination : '/workbench';
+};
 const submitting = ref(false);
 const registrationSucceeded = ref(false);
 const errorMessage = ref('');
@@ -334,7 +342,7 @@ const handleSubmit = async (event: Event): Promise<void> => {
       captcha: captcha.value.trim(),
     });
     // 新身份始终从干净的应用内存开始，不复用另一账号的计划和文件。
-    window.location.replace('/workbench');
+    window.location.replace(destinationAfterLogin());
   } catch (error: unknown) {
     errorMessage.value = getApiErrorMessage(error);
     if (view.value === 'password') {
@@ -350,7 +358,7 @@ const handleSubmit = async (event: Event): Promise<void> => {
 };
 
 const enterWorkbench = (): void => {
-  window.location.replace('/workbench');
+  window.location.replace(destinationAfterLogin());
 };
 </script>
 
@@ -395,7 +403,7 @@ const enterWorkbench = (): void => {
             <PhoneBindingForm v-if="needsPhoneVerification" sequential />
           </template>
           <button class="login-modal__submit" type="button" @click="enterWorkbench">
-            {{ needsPhoneVerification ? '稍后绑定，进入工作台' : '进入工作台' }}
+            {{ needsPhoneVerification ? '稍后绑定，进入提示词优化' : '进入提示词优化' }}
           </button>
         </div>
         <div v-else-if="view === 'qr'" class="login-modal__qr">

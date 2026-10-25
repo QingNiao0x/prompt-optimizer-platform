@@ -28,6 +28,17 @@ class TextPolishServiceTest {
     }
     private Input input(String text) { return new Input(text, null, null, "", "", List.of(), "fixture"); }
     private Generate first(String text) { return new Generate(UUID.randomUUID(), input(text), null, null, null); }
+    @Test void trialUsesSameProviderWithoutFormalIdentityOrHistoryAndRejectsHistorySources() {
+        var result = service.generateTrial(first("访客主动输入的文章。"));
+        assertThat(result.polishedText()).isEqualTo("访客主动输入的文章。");
+        assertThat(result.historySaved()).isFalse();
+        assertThat(result.persistentHistory()).isFalse();
+        verifyNoInteractions(current);
+        assertThat(history.list(a, 1, 10).total()).isZero();
+        assertThatThrownBy(() -> service.generateTrial(new Generate(UUID.randomUUID(), input("输入"), UUID.randomUUID(), 0L, SourceMode.CURRENT)))
+                .isInstanceOf(com.promptoptimizer.trial.TrialException.class);
+        verify(provider, times(1)).polish(any(), any());
+    }
     @Test void defaultsAreNaturalAndLightAndDuplicateRequestUsesOneCall() {
         var request = first("原文很自然。"); var doc = service.generate(request);
         assertThat(doc.input().style()).isEqualTo(Style.NATURAL); assertThat(doc.input().depth()).isEqualTo(Depth.LIGHT);

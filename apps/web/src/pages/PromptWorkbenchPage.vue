@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { optimizationCompletionNotice } from '@/features/optimization/processingStatus';
 import { WarningFilled } from '@element-plus/icons-vue';
-import { ElAlert, ElMessage, ElMessageBox } from 'element-plus';
+import { ElAlert, ElButton, ElInput, ElMessage, ElMessageBox } from 'element-plus';
 import { storeToRefs } from 'pinia';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
@@ -13,6 +13,9 @@ import PlanQuestionDialog from '@/components/prompt/PlanQuestionDialog.vue';
 import IntentComposer from '@/components/prompt/IntentComposer.vue';
 import ResultPanel from '@/components/prompt/ResultPanel.vue';
 import WorkbenchFlowHeader from '@/components/prompt/WorkbenchFlowHeader.vue';
+import GuestTrialBanner from '@/components/auth/GuestTrialBanner.vue';
+import { useAuthStore } from '@/stores/auth';
+import { useTrialStore } from '@/stores/trial';
 import { withRelativePath, type DroppedFileCollection } from '@/composables/fileDrop';
 import { usePlanModePreference } from '@/composables/usePlanModePreference';
 import { useProjectIndex } from '@/composables/useProjectIndex';
@@ -32,6 +35,8 @@ import {
 } from '@/workers/fileReaderCore';
 
 const store = useOptimizationStore();
+const auth = useAuthStore();
+const trial = useTrialStore();
 const route = useRoute();
 const router = useRouter();
 const projectContextSettingsStore = useProjectContextSettingsStore();
@@ -103,11 +108,12 @@ const selectionWarnings = ref<string[]>([]);
 let pageLifecycleVersion = 0;
 let contextSelectionVersion = 0;
 const {
-  enabled: planModeEnabled,
+  enabled: preferredPlanMode,
   introSeen: planIntroSeen,
   acceptIntro: acceptPlanIntro,
   dismissIntro: dismissPlanIntro,
 } = usePlanModePreference();
+const planModeEnabled = computed(() => auth.isAuthenticated && preferredPlanMode.value);
 
 // 分析按钮需要抽取项目画像，而不是只围绕某个业务提示词检索。
 // 将常见分层目录放在查询前部，可以让本地索引同时召回构建清单和代表性模块源码。
@@ -420,6 +426,10 @@ const handleRegenerateWithFormat = async (): Promise<void> => {
 
 const beginEnhancement = (intent: 'optimize' | 'reenhance'): boolean => {
   if (isPreparingContext.value || isRecoveringPlan.value || planDialogVisible.value) return false;
+  if (!trial.canUse('PROMPT_ENHANCEMENT')) {
+    ElMessage.warning(trial.error || '免费体验次数不足，请注册或登录后继续使用。');
+    return false;
+  }
   if (hasUnsavedResultDraft.value) {
     ElMessage.warning('请先保存或取消结果中的修改，再进行增强。');
     return false;
@@ -691,7 +701,7 @@ watch(result, (value) => {
 onMounted(() => {
   clearPersistedProjectSelection();
   void store.refreshAvailableModels();
-  void projectContextSettingsStore.refreshStorageStatus();
+  if (auth.isAuthenticated) void projectContextSettingsStore.refreshStorageStatus();
   window.addEventListener('pagehide', handlePageHide);
   mobilePaneQuery = window.matchMedia(MOBILE_PANE_QUERY);
   syncNarrowWorkbench();
@@ -712,6 +722,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="workbench-page">
     <WorkbenchFlowHeader :stage="workbenchStage" />
+    <GuestTrialBanner feature="PROMPT_ENHANCEMENT" />
 
     <ElAlert
       v-if="errorMessage"
@@ -750,6 +761,7 @@ onBeforeUnmount(() => {
 
     <div class="workbench-grid" :data-mobile-pane="activeMobilePane">
       <ContextPanel
+        v-if="auth.isAuthenticated"
         v-show="showContextPane"
         class="glass-panel context-column"
         :custom-description="customDescription"
@@ -783,6 +795,14 @@ onBeforeUnmount(() => {
         @cancel-index="handleCancelIndex"
       />
 
+      <section v-else v-show="showContextPane" class="glass-panel context-column guest-context">
+        <h2>背景与补充说明</h2>
+        <p>访客可用文字补充背景。上传资料、项目索引与 Plan 确认需注册登录后使用。</p>
+        <ElInput v-model="customDescription" type="textarea" :rows="8" maxlength="4000" show-word-limit
+          aria-label="访客背景说明" placeholder="例如：面向谁、需要什么风格、哪些事实和限制必须保留。" />
+        <ElButton type="primary" plain @click="router.push({ path: '/login', query: { mode: 'register', redirect: '/workbench' } })">注册后使用完整上下文功能</ElButton>
+      </section>
+
       <IntentComposer
         v-show="showIntentPane"
         class="glass-panel intent-column"
@@ -795,7 +815,8 @@ onBeforeUnmount(() => {
         :is-analyzing="isAnalyzing"
         :is-planning="isPlanning"
         :is-optimizing="isOptimizing || isPreparingContext"
-        :can-optimize="canOptimize"
+        :can-optimize="canOptimize && trial.canUse('PROMPT_ENHANCEMENT')"
+        :allow-plan="auth.isAuthenticated"
         @update:raw-prompt="rawPrompt = $event"
         @update:structured-prompt="store.setPromptFormat($event ? 'STRUCTURED' : 'COMPACT')"
         @update:selected-model-id="selectedModelId = $event"
@@ -808,7 +829,7 @@ onBeforeUnmount(() => {
         :edit-draft="resultDraft"
         :can-undo="canUndoResult"
         :selected-prompt-format="promptFormat"
-        :can-regenerate-with-format="canReuseGenerationSource"
+        :can-regenerate-with-format="canReuseGenerationSource && trial.canUse('PROMPT_ENHANCEMENT')"
         :busy="isAnalyzing || isPlanning || isOptimizing || isPreparingContext"
         :plan-mode-enabled="planModeEnabled"
         @save="handleSaveResult"
@@ -843,6 +864,10 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+.guest-context { display: flex; flex-direction: column; gap: 16px; padding: 22px; overflow-y: auto; }
+.guest-context h2 { margin: 0; font-size: 16px; }
+.guest-context p { margin: 0; color: var(--text-secondary); line-height: 1.7; }
+.workbench-page > :deep(.guest-trial-banner) { margin: 8px 20px 0; flex-shrink: 0; }
 .workbench-page {
   display: flex;
   min-width: 0;

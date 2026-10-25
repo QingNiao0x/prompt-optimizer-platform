@@ -6,6 +6,7 @@ import { restoreNaturalBoundaries } from '@/features/optimization/naturalTextEdi
 import { completeContextTransmission, createContextTransmission, failContextTransmission,
   type ContextTransmissionReport, type TransmissionPhase } from '@/features/context-analysis/contextTransmission';
 import { useAuthStore } from '@/stores/auth';
+import { useTrialStore } from '@/stores/trial';
 
 import {
   buildOptimizationPlanRequest,
@@ -173,6 +174,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     cleanupReferences(discarded, files.value);
 
   const auth = useAuthStore();
+  const trial = useTrialStore();
   watch(() => [auth.user?.userId, auth.user?.tenantId, auth.user?.workspaceId].join('|'), resetTask, { flush: 'sync' });
   watch([rawPrompt, customDescription], invalidateContext, { flush: 'sync' });
 
@@ -461,8 +463,25 @@ export const useOptimizationStore = defineStore('optimization', () => {
 
   /** 保存实际发送的 JSON 快照；成功前不替换当前结果及其可撤销来源。 */
   const submitOptimization = async (request: OptimizationRequest, lease: OptimizationContextLease): Promise<boolean> => {
+    const guest = !auth.isAuthenticated;
+    if (guest) {
+      await trial.initialize();
+      if (!isCurrentContext(lease)) return false;
+      if (!trial.canUse('PROMPT_ENHANCEMENT')) {
+        errorMessage.value = trial.error || '免费体验次数已用完，请注册或登录后继续使用。';
+        return false;
+      }
+      // 访客只提交文字直接增强；不得通过旧草稿携带正式 Plan 或私有文档引用。
+      if (request.planConfirmation || request.context.files.length) {
+        errorMessage.value = 'Plan 和资料上传需要注册登录后使用。';
+        return false;
+      }
+    }
     const requestJson = JSON.stringify(request);
-    const response = await optimizePrompt(request);
+    const response = await (async () => {
+      try { return await optimizePrompt(request); }
+      finally { if (guest) await trial.refresh(); }
+    })();
     if (!isCurrentContext(lease)) return false;
     finishTransmission(response.data.contextReport, response.requestId);
     if (contextTransmission.value) contextTransmission.value = {

@@ -68,6 +68,24 @@ class NaturalEnhancementServiceTest {
     }
 
     @Test
+    void explicitTrialSharesGenerationButDoesNotRelaxFormalAuthenticationOrPlan() {
+        CurrentActor denied = () -> { throw new org.springframework.security.authentication.AuthenticationCredentialsNotFoundException("fixture"); };
+        var filter = new ProtectedContextFilterImpl();
+        var clock = Clock.fixed(Instant.parse("2026-10-19T00:00:00Z"), ZoneOffset.UTC);
+        var privateSessions = new PlanningSessionServiceImpl(new InMemoryPlanningSessionStore(clock), analyzer, filter, denied, clock);
+        var catalog = mock(PlatformModelCatalog.class);
+        when(catalog.resolve(any())).thenReturn(new PlatformModelCatalog.ModelEntry(new UUID(0, 4),
+                "fixture:model", "fixture", "model", "Fixture model", true, true, 0));
+        var explicit = new NaturalEnhancementService(analyzer, filter, privateSessions, denied, catalog, provider, clock);
+        var input = request("写一封邮件", null, List.of(), "fixture:model");
+        assertThat(explicit.optimizeTrial(input).optimizedPrompt()).isEqualTo(service.optimize(input).optimizedPrompt());
+        assertThatThrownBy(() -> explicit.optimize(input)).isInstanceOf(org.springframework.security.core.AuthenticationException.class);
+        assertThatThrownBy(() -> explicit.plan(planRequest())).isInstanceOf(org.springframework.security.core.AuthenticationException.class);
+        assertThatThrownBy(() -> privateSessions.confirm(input.rawPrompt(), "", List.of(), null))
+                .isInstanceOf(org.springframework.security.core.AuthenticationException.class);
+    }
+
+    @Test
     void currentPlanKeepsEveryQuestionWithinTheExistingProtocolCapacity() {
         provider.questions = java.util.stream.IntStream.rangeClosed(1, 8).mapToObj(i -> question("q" + i)).toList();
         assertThat(service.plan(planRequest()).questions()).hasSize(8);

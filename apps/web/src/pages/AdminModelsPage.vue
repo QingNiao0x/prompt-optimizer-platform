@@ -143,7 +143,7 @@ onMounted(() => { void refresh(); });
       <div>
         <p class="eyebrow">PLATFORM ADMIN</p>
         <h1>用户可选模型</h1>
-        <p>统一配置提示词增强、图像转提示词与文章祛AI味的模型目录。用户只能选择已启用项；带图调用还需在对应模型的“图像能力”中开放视觉输入。</p>
+        <p>统一配置提示词优化、图像转提示词与文章祛AI味的模型目录。用户只能选择已启用项；带图调用还需在对应模型的“图像能力”中开放视觉输入。</p>
       </div>
       <div class="heading-actions"><ElButton @click="polishSettingsVisible = true">文章润色模型</ElButton><ElButton type="primary" :disabled="routes.length === 0" @click="openCreate">添加模型</ElButton></div>
     </div>

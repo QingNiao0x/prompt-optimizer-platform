@@ -21,8 +21,8 @@ const activeIndex = computed(() => stages.findIndex((stage) => stage.id === prop
 <template>
   <header class="workbench-header">
     <div>
-      <p class="header-label">Context-aware prompt engineering</p>
-      <p class="header-description">让模型先理解你的工程，再理解你的要求。</p>
+      <h1 class="header-title">提示词优化工作台</h1>
+      <p class="header-description">把需求表达清楚，让 AI 更好执行。</p>
     </div>
 
     <ol class="flow-indicator" aria-label="提示词处理流程">
@@ -56,13 +56,12 @@ const activeIndex = computed(() => stages.findIndex((stage) => stage.id === prop
   margin: 0;
 }
 
-.header-label {
-  color: var(--accent);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
+.header-title {
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .header-description {
@@ -115,14 +114,16 @@ const activeIndex = computed(() => stages.findIndex((stage) => stage.id === prop
     padding: 8px 16px 0;
   }
 
-  .header-label,
   .header-description {
     display: none;
   }
 
+  .header-title {
+    font-size: 16px;
+  }
+
   .flow-indicator {
-    width: 100%;
-    justify-content: center;
+    justify-content: flex-end;
     font-size: 13px;
   }
 }

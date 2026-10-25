@@ -42,7 +42,7 @@ const openAuth = (mode: AuthModalMode): void => {
         <a href="#features">功能特性</a>
         <!-- 备案期间隐藏「定价」入口，与首页版块一起恢复 -->
         <!-- <a href="#pricing">定价</a> -->
-        <RouterLink to="/workbench">工作台</RouterLink>
+        <RouterLink to="/workbench">提示词优化</RouterLink>
         <RouterLink to="/terms">用户协议</RouterLink>
         <RouterLink to="/privacy">隐私政策</RouterLink>
       </nav>

@@ -67,16 +67,27 @@ public class NaturalEnhancementService {
 
     /** 旧历史显式选择已知版本；新请求使用当前版本，未知版本在模型调用前拒绝。 */
     public PromptDocument optimize(OptimizationRequest request, String strategyVersion) {
+        actor.require();
+        return generate(request, strategyVersion, sessions.confirm(request.rawPrompt(), request.context().customDescription(),
+                request.conversationHistory(), request.planConfirmation()));
+    }
+
+    /** 专用访客入口只复用生成算法；正式optimize和plan仍强制认证，不接受任何访客Plan确认。 */
+    public PromptDocument optimizeTrial(OptimizationRequest request) {
+        if (request.planConfirmation() != null) throw new InvalidOptimizationRequestException("请注册登录后使用Plan。");
+        return generate(request, NaturalPromptInstructions.CURRENT_VERSION,
+                new PlanningSessionService.ConfirmedPlan(List.of(), null, false));
+    }
+
+    /** 两个入口共享相同安全过滤、策略协议和正文校验；身份/Plan授权在各自入口完成。 */
+    private PromptDocument generate(OptimizationRequest request, String strategyVersion, PlanningSessionService.ConfirmedPlan confirmed) {
         if (!NaturalPromptInstructions.supports(strategyVersion)) {
             throw new com.promptoptimizer.common.exception.UnsupportedResultVersionException("自然增强版本暂不支持，请恢复原始需求重新增强。");
         }
         long start = clock.millis();
-        actor.require();
         rejectInput(request.rawPrompt());
         rejectInput(request.context().customDescription());
         request.conversationHistory().forEach(message -> rejectInput(message.content()));
-        var confirmed = sessions.confirm(request.rawPrompt(), request.context().customDescription(),
-                request.conversationHistory(), request.planConfirmation());
         confirmed.answers().forEach(answer -> rejectInput(answer.answer()));
         if (confirmed.bound() && request.modelId() != null && !request.modelId().isBlank()
                 && !Objects.equals(request.modelId().trim(), confirmed.modelId())) {

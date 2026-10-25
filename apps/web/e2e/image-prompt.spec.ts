@@ -100,6 +100,13 @@ test('直接模式：选择不上传，确认隐私后单图提取，编辑复�
   await page.getByRole('button', { name: '复制提示词', exact: true }).click();
   await expect(page.getByRole('textbox', { name: '手动复制图像提示词' })).toHaveValue(state.current.optimizedPrompt);
   await page.getByRole('dialog', { name: '手动复制提示词' }).getByRole('button', { name: 'Close this dialog' }).click();
+  // 生成及编辑后的同一记录也应直接出现在公共历史页；载入只恢复正文，不再次调用模型。
+  await page.goto('/history?type=image-prompt');
+  const historyList = page.locator('.image-history-table:visible, .image-history-cards:visible');
+  await expect(historyList).toContainText('用户核对后的参考图还原正文。');
+  await historyList.getByRole('button', { name: '载入', exact: true }).click();
+  await expect(page.locator('.prompt-text')).toHaveText('用户核对后的参考图还原正文。');
+  expect(state.extracts).toBe(1); expect(state.plans).toBe(0); expect(state.uploads).toBe(1);
   await page.getByRole('button', { name: '图像历史', exact: true }).click();
   await expect(page.getByRole('dialog', { name: '图像提示词历史' })).toContainText('用户核对后的');
   await page.getByRole('dialog', { name: '图像提示词历史' }).getByRole('button', { name: '删除', exact: true }).click();

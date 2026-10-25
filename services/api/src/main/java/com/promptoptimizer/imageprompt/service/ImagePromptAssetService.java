@@ -56,9 +56,19 @@ public class ImagePromptAssetService {
 
     /** 串行受控解码限制瞬时内存；前端声明大小、后缀和 MIME 均不作为可信格式依据。 */
     public synchronized Asset upload(ActorIdentity actor, MultipartFile file) {
+        return upload(actor, null, file);
+    }
+
+    /** 复用像素、EXIF及磁盘预算校验，访客资产与正式账号完全分区。 */
+    public synchronized Asset uploadGuest(String guest, MultipartFile file) {
+        return upload(null, guest, file);
+    }
+
+    private Asset upload(ActorIdentity actor, String guest, MultipartFile file) {
         cleanExpired();
+        String owner = actor == null ? "guest:" + guest : scope(actor);
         if (file.isEmpty() || file.getSize() > MAX_BYTES) throw ImagePromptException.invalid("请选择不超过 10 MiB 的 JPEG 或 PNG 图片。");
-        if (owned.values().stream().filter(a -> a.owner().equals(scope(actor))).count() >= 12) {
+        if (owned.values().stream().filter(a -> a.owner().equals(owner)).count() >= (actor == null ? 2 : 12)) {
             throw new ImagePromptException(429, "IMAGE_ASSET_LIMIT", "本次账号临时图片较多，请移除旧图片或等待过期。");
         }
         try (var input = file.getInputStream()) {
@@ -96,13 +106,16 @@ public class ImagePromptAssetService {
             }
             UUID id = UUID.randomUUID();
             var asset = new Asset(id, safeName(file.getOriginalFilename()), "image/" + output, normalized.getWidth(), normalized.getHeight(),
-                    bytes.length, hash(bytes), clock.instant().plus(TTL), "/api/v1/image-prompt-assets/" + id,
+                    bytes.length, hash(bytes), clock.instant().plus(TTL), (actor == null ? "/api/v1/trial/image-prompt-assets/" : "/api/v1/image-prompt-assets/") + id,
                     List.of(orientation == 1 ? "已保留画面方向" : "已校正照片方向", "已重新编码并清除图片元数据"));
             Path path = path(id);
             Files.write(path, bytes, StandardOpenOption.CREATE_NEW);
-            try { store.put(actor, "asset:" + id, new StoredAsset(asset, false), TTL); }
+            try {
+                if (actor == null) store.putGuest(guest, "asset:" + id, new StoredAsset(asset, false), TTL);
+                else store.put(actor, "asset:" + id, new StoredAsset(asset, false), TTL);
+            }
             catch (RuntimeException failure) { Files.deleteIfExists(path); throw failure; }
-            owned.put(id, new LocalAsset(scope(actor), asset.expiresAt()));
+            owned.put(id, new LocalAsset(owner, asset.expiresAt()));
             return asset;
         } catch (ImagePromptException failure) { throw failure; }
         catch (IOException failure) { throw ImagePromptException.invalid("图片处理失败，请检查文件是否损坏。"); }
@@ -128,6 +141,30 @@ public class ImagePromptAssetService {
         var stored = store.get(actor, "asset:" + id, StoredAsset.class);
         if (stored == null || stored.revoked()) return;
         store.put(actor, "asset:" + id, new StoredAsset(stored.asset(), true), TTL);
+        try { Files.deleteIfExists(path(id)); owned.remove(id); }
+        catch (IOException failure) { LoggerFactory.getLogger(getClass()).warn("event=image.asset.cleanup_failed"); }
+    }
+
+    /** 预览与识图均先检查访客所属缓存，不把随机资源编号当作授权。 */
+    public Asset requireGuest(String guest, UUID id) {
+        StoredAsset stored = store.getGuest(guest, "asset:" + id, StoredAsset.class);
+        if (stored == null || stored.revoked() || !stored.asset().expiresAt().isAfter(clock.instant())) throw ImagePromptException.expired();
+        if (!Files.isRegularFile(path(id), LinkOption.NOFOLLOW_LINKS)) throw ImagePromptException.expired();
+        return stored.asset();
+    }
+
+    /** 只读取经过访客归属校验的规范图片，不接受任意路径。 */
+    public byte[] bytesGuest(String guest, UUID id) {
+        requireGuest(guest, id);
+        try { return Files.readAllBytes(path(id)); }
+        catch (IOException failure) { throw ImagePromptException.expired(); }
+    }
+
+    /** 撤销仅影响当前访客临时资源，正式历史不参与此流程。 */
+    public void revokeGuest(String guest, UUID id) {
+        var asset = store.getGuest(guest, "asset:" + id, StoredAsset.class);
+        if (asset == null || asset.revoked()) return;
+        store.putGuest(guest, "asset:" + id, new StoredAsset(asset.asset(), true), TTL);
         try { Files.deleteIfExists(path(id)); owned.remove(id); }
         catch (IOException failure) { LoggerFactory.getLogger(getClass()).warn("event=image.asset.cleanup_failed"); }
     }

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import { useTrialStore } from '@/stores/trial';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -33,7 +34,7 @@ const router = createRouter({
       path: '/workbench',
       name: 'workbench',
       component: () => import('@/pages/PromptWorkbenchPage.vue'),
-      meta: { title: '提示词工作台' },
+      meta: { title: '提示词优化工作台' },
     },
     {
       path: '/image-to-prompt',
@@ -85,13 +86,20 @@ router.beforeEach(async (to) => {
   } catch {
     return { name: 'login', query: { unavailable: '1' } };
   }
-  if (!auth.isAuthenticated) return { name: 'login' };
+  if (!auth.isAuthenticated) {
+    // 只开放三个工具的受控试用；历史页在挂载前拦截，避免先请求私有记录再显示登录提示。
+    if (['workbench', 'image-to-prompt', 'text-polish'].includes(String(to.name))) {
+      await useTrialStore().initialize();
+      return true;
+    }
+    return { name: 'login', query: { mode: 'register', reason: to.name === 'history' ? 'history' : 'authentication', redirect: to.fullPath } };
+  }
   if (to.meta.platformAdmin && !auth.user?.platformAdmin) return { name: 'workbench' };
   return true;
 });
 
 router.afterEach((to) => {
-  const pageTitle = typeof to.meta.title === 'string' ? to.meta.title : '工作台';
+  const pageTitle = typeof to.meta.title === 'string' ? to.meta.title : '提示词优化工作台';
   document.title = `${pageTitle} · Prompt Optimizer`;
 });
 

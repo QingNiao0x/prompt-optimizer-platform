@@ -1,4 +1,6 @@
-import { describe, expect, it, vi } from 'vitest';
+import { createPinia, setActivePinia } from 'pinia';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useAuthStore } from '@/stores/auth';
 
 vi.mock('./http', () => ({
   httpClient: {
@@ -14,6 +16,13 @@ import {
   optimizePrompt,
   preparePlanningContext,
 } from './promptOptimizerApi';
+
+beforeEach(() => {
+  vi.resetAllMocks();
+  setActivePinia(createPinia());
+  useAuthStore().user = { userId: 'fixture-user', tenantId: 'fixture-tenant', workspaceId: 'fixture-workspace',
+    displayName: '接口测试用户', email: 'fixture@example.test', platformAdmin: false };
+});
 
 describe('listHistory', () => {
   it('should send keyword and date range filters with the paged request', async () => {
@@ -66,7 +75,27 @@ describe('optimizePrompt', () => {
     expect(httpClient.post).toHaveBeenCalledWith(
       '/api/v2/optimizations',
       expect.any(Object),
+      expect.objectContaining({ headers: { 'X-Trial-Request-Id': expect.any(String) } }),
     );
+  });
+
+  it('routes only guest enhancement to the trial endpoint with a unique operation id', async () => {
+    useAuthStore().user = undefined;
+    vi.mocked(httpClient.post).mockResolvedValue({ data: { requestId: 'guest', data: {} } });
+    const input = { rawPrompt: '请写一封会议通知邮件。', context: { customDescription: '', files: [] },
+      enhancement: { templateCode: 'AUTO' as const, includeConversationHistory: false, includePermissionBoundaries: true },
+      conversationHistory: [], permissionPolicy: { protectedPaths: [], requireConfirmationFor: [] } };
+    await optimizePrompt(input);
+    await optimizePrompt(input);
+    const calls = vi.mocked(httpClient.post).mock.calls;
+    expect(calls[0]?.[0]).toBe('/api/v1/trial/optimizations');
+    const first = calls[0]?.[2]?.headers?.['X-Trial-Request-Id'];
+    const second = calls[1]?.[2]?.headers?.['X-Trial-Request-Id'];
+    expect(first).toMatch(/^[0-9a-f-]{36}$/);
+    expect(first).not.toBe(second);
+    vi.mocked(httpClient.get).mockResolvedValue({ data: { data: { items: [], totalItems: 0 } } });
+    await listHistory(1, 10);
+    expect(httpClient.get).toHaveBeenCalledWith('/api/v2/optimization-history', expect.any(Object));
   });
 });
 

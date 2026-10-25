@@ -72,6 +72,16 @@ public class SecurityConfiguration {
                                 "/actuator/health",
                                 "/actuator/health/**"
                         ).permitAll()
+                        // 只放行试用白名单；正式历史、保存、Plan及管理员接口不继承访客权限。
+                        .requestMatchers(org.springframework.http.HttpMethod.GET,
+                                "/api/v1/trial/status", "/api/v1/trial/models",
+                                "/api/v1/trial/text-polish/capabilities", "/api/v1/trial/image-prompts/capabilities",
+                                "/api/v1/trial/text-polish/operations/*", "/api/v1/trial/image-prompts/operations/*",
+                                "/api/v1/trial/optimizations/operations/*", "/api/v1/trial/image-prompt-assets/*").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.POST,
+                                "/api/v1/trial/session", "/api/v1/trial/optimizations", "/api/v1/trial/text-polish",
+                                "/api/v1/trial/image-prompts", "/api/v1/trial/image-prompt-assets").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/v1/trial/image-prompt-assets/*").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("PLATFORM_ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
@@ -147,7 +157,7 @@ public class SecurityConfiguration {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(allowedOrigin.trim()));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Content-Type", "X-XSRF-TOKEN"));
+        configuration.setAllowedHeaders(List.of("Content-Type", "X-XSRF-TOKEN", "X-Trial-Request-Id"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3_600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

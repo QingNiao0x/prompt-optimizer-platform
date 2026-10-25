@@ -1,24 +1,29 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
-import { onBeforeRouteLeave, useRoute } from 'vue-router';
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import { ElAlert, ElButton, ElCollapse, ElCollapseItem, ElDialog, ElEmpty, ElInput, ElMessage,
-  ElMessageBox, ElOption, ElPagination, ElRadio, ElRadioGroup, ElSelect, ElSwitch, ElTag } from 'element-plus';
+  ElMessageBox, ElOption, ElRadio, ElRadioGroup, ElSelect, ElSwitch, ElTag } from 'element-plus';
 import { useTextPolishStore } from '@/stores/textPolish';
 import { useAuthStore } from '@/stores/auth';
+import { useTrialStore } from '@/stores/trial';
+import GuestTrialBanner from '@/components/auth/GuestTrialBanner.vue';
 import { polishStyles } from '@/types/textPolish';
 import { comparePolish } from '@/features/textpolish/diff';
 import { formatModelVersion } from '@/features/models/modelVersion';
 
-const store = useTextPolishStore(), auth = useAuthStore(), route = useRoute();
+const store = useTextPolishStore(), auth = useAuthStore(), route = useRoute(), router = useRouter();
+const trial = useTrialStore();
 const { sourceText, style, depth, audience, requirements, lockedText, modelId, capabilities, selectedModel,
   result, pendingResult, previousResult, editDraft, isEditing, busy, saving, loading, error, dirty, currentText,
-  canGenerate, recoveryPending, history, historyLoading } = storeToRefs(store);
-const pane = ref('source'), showDiff = ref(false), historyVisible = ref(false), manualCopy = ref(false);
+  canGenerate, recoveryPending } = storeToRefs(store);
+const pane = ref('source'), showDiff = ref(false), manualCopy = ref(false);
 const diff = computed(() => result.value ? comparePolish(result.value.input.sourceText, currentText.value) : []);
+// 账号历史可能保存在数据库或服务内存；是否开放历史操作由身份而非存储介质决定。
+const accountResult = computed(() => auth.isAuthenticated);
 const styleLabel = (value: string): string => polishStyles.find(s => s.value === value)?.label ?? value;
 watch(() => [auth.user?.userId, auth.user?.tenantId, auth.user?.workspaceId].join('|'), () => {
-  historyVisible.value = false; manualCopy.value = false; showDiff.value = false; pane.value = 'source';
+  manualCopy.value = false; showDiff.value = false; pane.value = 'source';
 }, { flush: 'sync' });
 const protectDraft = async (): Promise<boolean> => {
   if (!dirty.value) return true;
@@ -31,14 +36,16 @@ const newArticle = async (): Promise<void> => { if (await protectDraft()) { stor
 const acceptPending = async (): Promise<void> => {
   if (pendingResult.value && await protectDraft()) { store.install(pendingResult.value); pane.value = 'result'; }
 };
-const openHistory = (): void => { historyVisible.value = true; void store.loadHistory(); };
-const restore = async (id: string): Promise<void> => {
-  if (!busy.value && await protectDraft() && await store.restore(id)) { historyVisible.value = false; pane.value = 'result'; }
+const registerForHistory = (): void => {
+  void router.push({ path: '/login', query: { mode: 'register', reason: 'history', redirect: route.path } });
 };
-const remove = async (id: string): Promise<void> => {
-  try { await ElMessageBox.confirm('删除后将无法从历史、编辑或继续润色入口访问这条记录。', '删除文章记录',
-    { confirmButtonText: '删除记录', cancelButtonText: '取消', type: 'warning' }); } catch { return; }
-  await store.remove(id);
+const openHistory = (): void => {
+  if (!auth.isAuthenticated) { registerForHistory(); return; }
+  void router.push({ path: '/history', query: { type: 'text-polish' } });
+};
+const restore = async (id: string): Promise<void> => {
+  if (!auth.isAuthenticated) { registerForHistory(); return; }
+  if (!busy.value && await protectDraft() && await store.restore(id)) pane.value = 'result';
 };
 /** 剪贴板只取可见正文；编辑中明确提示复制的是尚未保存的稿件。 */
 const copy = async (): Promise<void> => {
@@ -46,8 +53,14 @@ const copy = async (): Promise<void> => {
   catch { manualCopy.value = true; }
 };
 onMounted(async () => {
+  // 深链接不能绕过访客历史限制；先阻止请求，再初始化本页的独立试用额度。
+  if (!auth.isAuthenticated) {
+    if (route.query.history === '1' || typeof route.query.record === 'string') { registerForHistory(); return; }
+    await trial.initialize();
+  }
   await store.load();
   if (route.query.record && typeof route.query.record === 'string') await restore(route.query.record);
+  if (route.query.pane === 'result' && result.value) pane.value = 'result';
   if (route.query.history === '1') openHistory();
 });
 </script>
@@ -58,9 +71,10 @@ onMounted(async () => {
       <div><h1>文章祛AI味</h1><p>保留原意与细节，让文章更清楚、更自然。</p></div>
       <div class="heading-actions"><ElButton @click="openHistory">文章历史</ElButton><ElButton :disabled="busy || saving" @click="newArticle">新建文章</ElButton></div>
     </header>
+    <GuestTrialBanner feature="TEXT_POLISH" />
     <ElAlert v-if="error" :title="error" type="error" :closable="false" show-icon />
     <ElAlert v-if="selectedModel?.mock" title="当前为演示模型，只回传原文，不代表真实润色效果。" type="info" :closable="false" />
-    <ElAlert v-if="capabilities && !capabilities.persistentHistory" title="演示历史保存在服务内存中，重启后不保留。" type="info" :closable="false" />
+    <ElAlert v-if="auth.isAuthenticated && capabilities && !capabilities.persistentHistory" title="演示历史保存在服务内存中，重启后不保留。" type="info" :closable="false" />
     <div v-if="recoveryPending" class="notice-row"><span>该次处理结果尚未确认，原文和上一稿已保留。</span><ElButton :loading="busy" @click="store.recover">查询处理结果</ElButton></div>
     <div v-if="pendingResult" class="notice-row"><span>新结果已生成。你在等待期间修改了内容，当前稿已保留。</span><ElButton @click="acceptPending">查看新结果</ElButton></div>
     <nav class="mobile-panes" aria-label="文章工作台分区">
@@ -105,32 +119,27 @@ onMounted(async () => {
         <ElEmpty v-if="!result" :description="busy ? '正在润色文章，原文会保持在左侧。' : '输入文章并选择文体，获取完整润色正文。'" />
         <template v-else>
           <p class="hint">{{ styleLabel(result.input.style) }} · {{ formatModelVersion(result.modelName) }} · {{ result.sourceMode === 'CURRENT' ? '基于已保存的当前稿' : '基于原文' }}</p>
-          <ElAlert v-if="!result.historySaved" title="正文已生成，历史尚未保存。请重试保存或复制正文。" type="warning" :closable="false" />
-          <ElButton v-if="!result.historySaved" :loading="saving" @click="store.save">重试保存历史</ElButton>
+          <ElAlert v-if="accountResult && !result.historySaved" title="正文已生成，历史尚未保存。请重试保存或复制正文。" type="warning" :closable="false" />
+          <ElButton v-if="accountResult && !result.historySaved" :loading="saving" @click="store.save">重试保存历史</ElButton>
+          <p v-if="!accountResult" class="hint">本次结果不保存到账号历史。可在当前页面编辑和复制，请及时保留正文。</p>
           <div class="compare-toggle"><span>与本次原文对照</span><ElSwitch v-model="showDiff" aria-label="显示文章差异" /></div>
           <ElInput v-if="isEditing" v-model="editDraft" type="textarea" :rows="20" :maxlength="capabilities?.maxOutputCharacters ?? 24000" show-word-limit aria-label="润色编辑稿" />
           <div v-else-if="showDiff" class="diff-view" aria-label="文章差异"><div v-for="(line, index) in diff" :key="index" :class="['diff-line', line.kind]"><span class="diff-label">{{ line.kind === 'removed' ? '原文' : line.kind === 'added' ? '改为' : '' }}</span><span>{{ line.text || '\u00a0' }}</span></div></div>
           <pre v-else class="article-text" aria-label="润色正文">{{ result.polishedText }}</pre>
           <div class="result-actions">
-            <ElButton v-if="!isEditing" :disabled="!result.historySaved" @click="isEditing = true; editDraft = result.polishedText">编辑正文</ElButton>
-            <template v-else><ElButton type="primary" :loading="saving" :disabled="busy || !editDraft.trim()" @click="store.save">保存编辑</ElButton><ElButton :disabled="saving" @click="isEditing = false; editDraft = result.polishedText">取消编辑</ElButton></template>
+            <ElButton v-if="!isEditing" :disabled="accountResult && !result.historySaved" @click="isEditing = true; editDraft = result.polishedText">编辑正文</ElButton>
+            <template v-else><ElButton type="primary" :loading="saving" :disabled="busy || !editDraft.trim()" @click="store.save">{{ accountResult ? '保存编辑' : '保留本页修改' }}</ElButton><ElButton :disabled="saving" @click="isEditing = false; editDraft = result.polishedText">取消编辑</ElButton></template>
             <ElButton type="primary" plain :disabled="!currentText.trim()" @click="copy">{{ isEditing ? '复制当前稿' : '复制正文' }}</ElButton>
-            <ElButton :disabled="!canGenerate || isEditing || !result.historySaved || !!pendingResult" @click="generate(true)">以当前稿继续润色</ElButton>
+            <ElButton :disabled="!canGenerate || isEditing || accountResult && !result.historySaved || !!pendingResult" @click="generate(true)">以当前稿继续润色</ElButton>
             <ElButton v-if="previousResult" :disabled="dirty || busy || saving" @click="store.undo">返回上一稿</ElButton>
           </div>
-          <p v-if="isEditing" class="hint">差异和检查提示以已保存正文为准，保存后更新。复制当前稿不会自动保存。</p>
+          <p v-if="isEditing" class="hint">{{ accountResult ? '差异和检查提示以已保存正文为准，保存后更新。复制当前稿不会自动保存。' : '修改只保留在本页，不写入账号历史；本地修改后请自行核对原文和当前稿。' }}</p>
           <div v-if="result.checks.length" class="check-list"><p v-for="check in result.checks" :key="check.code"><strong>{{ check.message }}</strong><span v-if="check.before">原文：{{ check.before }}<br />当前：{{ check.after }}</span></p></div>
           <p class="hint">请结合原文核对对象、数值、条件和引用。差异提示不代表完整语义检查。</p>
         </template>
       </section>
     </div>
     <ElDialog v-model="manualCopy" title="手动复制文章" width="min(760px, calc(100vw - 24px))"><p>浏览器未允许写入剪贴板，请选中下方正文手动复制。</p><ElInput :model-value="currentText" type="textarea" :rows="16" readonly aria-label="手动复制文章" /></ElDialog>
-    <ElDialog v-model="historyVisible" title="文章润色历史" width="min(900px, calc(100vw - 24px))">
-      <ElButton :loading="historyLoading" @click="store.loadHistory(history.current)">刷新记录</ElButton>
-      <ElEmpty v-if="!historyLoading && !history.records.length" description="还没有文章润色记录。" />
-      <article v-for="document in history.records" :key="document.id" class="history-row"><div><strong>{{ document.input.sourceText.slice(0, 70) }}</strong><p>{{ styleLabel(document.input.style) }} · {{ formatModelVersion(document.modelName) }} · {{ new Date(document.createdAt).toLocaleString('zh-CN') }}</p><p>{{ document.polishedText.slice(0, 100) }}</p></div><div class="heading-actions"><ElButton :disabled="busy || saving" @click="restore(document.id)">打开文章</ElButton><ElButton type="danger" text :disabled="busy || saving" @click="remove(document.id)">删除</ElButton></div></article>
-      <ElPagination v-if="history.total" layout="prev, pager, next, total" :current-page="history.current" :page-size="10" :total="history.total" @current-change="store.loadHistory" />
-    </ElDialog>
   </section>
 </template>
 

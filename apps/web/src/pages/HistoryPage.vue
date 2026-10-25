@@ -12,11 +12,15 @@ import {
   ElPagination,
   ElTable,
   ElTableColumn,
+  ElTabPane,
+  ElTabs,
   ElTag,
 } from 'element-plus';
 import zhCn from 'element-plus/es/locale/lang/zh-cn';
-import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import ImagePromptHistoryPanel from '@/components/imageprompt/ImagePromptHistoryPanel.vue';
+import TextPolishHistoryPanel from '@/components/textpolish/TextPolishHistoryPanel.vue';
 import { formatModelVersion } from '@/features/models/modelVersion';
 
 import { getApiErrorMessage } from '@/services/http';
@@ -34,7 +38,13 @@ import type {
 } from '@/types/api';
 
 const router = useRouter();
+const route = useRoute();
 const store = useOptimizationStore();
+// 分类写入地址，刷新或从各工作台进入时仍定位到对应记录；各类记录沿用各自的接口和恢复目标。
+const historyType = computed({
+  get: () => route.query.type === 'image-prompt' || route.query.type === 'text-polish' ? route.query.type : 'enhancement',
+  set: (value: string) => { void router.replace({ query: { ...route.query, type: value === 'image-prompt' || value === 'text-polish' ? value : undefined } }); },
+});
 
 const HISTORY_PAGE_SIZES = [10, 20, 50] as const;
 
@@ -268,7 +278,7 @@ const loadToWorkbench = async (id: string): Promise<void> => {
   try {
     const response = await getHistory(id);
     store.loadFromHistory(response.data);
-    ElMessage.success('已载入工作台，可以继续修改后重新增强。');
+    ElMessage.success('已载入提示词优化工作台，可以继续修改后重新增强。');
     await router.push('/workbench');
   } catch (error: unknown) {
     ElMessage.error(getApiErrorMessage(error));
@@ -321,7 +331,13 @@ const formatDate = (value: string): string => {
 
 const templateLabel = (code: TemplateCode): string => TEMPLATE_LABELS[code] ?? code;
 
-onMounted(loadPage);
+watch(historyType, value => {
+  loadSequence += 1;
+  loading.value = false;
+  detailVisible.value = false;
+  if (value === 'enhancement') void loadPage();
+});
+onMounted(() => { if (historyType.value === 'enhancement') void loadPage(); });
 </script>
 
 <template>
@@ -330,11 +346,12 @@ onMounted(loadPage);
       <div>
         <span class="eyebrow">History</span>
         <h1>优化历史</h1>
-        <p>查看、载入或重新优化已经生成的提示词。历史只保存脱敏摘要，不保存文件正文。</p>
+        <p>查看提示词优化、图像转提示词与文章祛AI味的使用记录，载入后继续处理。图像历史不长期保存原图。</p>
       </div>
-      <div><ElButton @click="router.push({ path: '/text-polish', query: { history: '1' } })">文章润色历史</ElButton><ElButton @click="router.push({ path: '/image-to-prompt', query: { history: '1' } })">图像提示词历史</ElButton></div>
     </header>
 
+    <ElTabs v-model="historyType" aria-label="历史记录类型">
+    <ElTabPane label="提示词优化" name="enhancement">
     <div class="history-card">
       <div class="history-filter-bar" aria-label="历史记录筛选">
         <ElInput
@@ -466,6 +483,15 @@ onMounted(loadPage);
         />
       </div>
     </div>
+
+    </ElTabPane>
+    <ElTabPane label="图像转提示词" name="image-prompt" lazy>
+      <ImagePromptHistoryPanel v-if="historyType === 'image-prompt'" />
+    </ElTabPane>
+    <ElTabPane label="文章祛AI味" name="text-polish" lazy>
+      <TextPolishHistoryPanel v-if="historyType === 'text-polish'" />
+    </ElTabPane>
+    </ElTabs>
 
     <ElDialog v-model="detailVisible" title="历史记录详情" width="min(760px, 92vw)">
       <div v-loading="detailLoading" class="detail-body">

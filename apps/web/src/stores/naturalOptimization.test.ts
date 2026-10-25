@@ -6,6 +6,7 @@ vi.mock('@/services/promptOptimizerApi', () => ({
 }));
 import { saveNaturalPrompt } from '@/services/promptOptimizerApi';
 import { useOptimizationStore } from './optimization';
+import { useAuthStore } from './auth';
 import type { OptimizationResult } from '@/types/api';
 
 const document = (): OptimizationResult => ({
@@ -21,6 +22,8 @@ describe('native natural result lifecycle', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     setActivePinia(createPinia());
+    useAuthStore().user = { userId: 'fixture-user', tenantId: 'fixture-tenant', workspaceId: 'fixture-workspace',
+      email: 'fixture@example.test', displayName: '自然正文测试用户', platformAdmin: false };
     vi.stubGlobal('window', { localStorage: { getItem: () => null, setItem: () => undefined, removeItem: () => undefined } });
   });
   it('saves the same full text to the server and current result without synthesizing sections', async () => {

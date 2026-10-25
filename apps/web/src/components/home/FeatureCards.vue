@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Clock, Document, EditPen } from '@element-plus/icons-vue';
+import { Document, EditPen, Picture } from '@element-plus/icons-vue';
 import type { Component } from 'vue';
 
 interface FeatureDefinition {
@@ -11,21 +11,21 @@ interface FeatureDefinition {
 
 const features: readonly FeatureDefinition[] = [
   {
-    title: '项目上下文感知',
-    description: '上传代码/文档/项目描述，AI 自动理解技术栈、架构与业务逻辑',
+    title: '提示词优化',
+    description: '结合你主动提供的代码、文档与背景整理需求，支持自然正文、结构化输出和可选 Plan 确认。',
     icon: Document,
     tone: 'accent',
   },
   {
-    title: '一键结构化增强',
-    description: '意图自动拆解为背景/任务/约束/格式/验收标准五段结构化提示词',
-    icon: EditPen,
+    title: '图像转提示词',
+    description: '从参考图提取主体、构图与风格；也可从文字构想开启 Plan，结合可选参考图生成新图提示词。',
+    icon: Picture,
     tone: 'success',
   },
   {
-    title: '多模型适配',
-    description: '内置 DeepSeek、GPT、Claude 等主流模型的优化模板',
-    icon: Clock,
+    title: '文章祛AI味',
+    description: '独立润色已有文章，提供三档文体、正文差异对比与私有历史，不进入提示词优化的 Plan 流程。',
+    icon: EditPen,
     tone: 'warning',
   },
 ];
@@ -34,8 +34,8 @@ const features: readonly FeatureDefinition[] = [
 <template>
   <section id="features" class="feature-cards" aria-labelledby="features-title">
     <header class="feature-cards__header">
-      <h2 id="features-title">为什么选择 PromptOptimizer</h2>
-      <p>从项目上下文到结构化提示词，一站式优化你的 AI 工作流</p>
+      <h2 id="features-title">三项工具，按任务选择</h2>
+      <p>从文本与图片整理提示词，也为已有文章提供独立润色工作台。</p>
     </header>
 
     <div class="feature-cards__grid">

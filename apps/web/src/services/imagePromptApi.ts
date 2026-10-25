@@ -1,4 +1,5 @@
 import { httpClient } from './http';
+import { trialEndpoint } from './trialApi';
 import type { ApiResponse } from '@/types/api';
 import type {
   ImagePromptAnswer, ImagePromptAsset, ImagePromptCapabilities, ImagePromptDocument, ImagePromptHistoryPage,
@@ -8,16 +9,16 @@ import type {
 /** 专用图像接口；浏览器只提交用户主动选择的图片，不接收供应商密钥或上游地址。 */
 export const imagePromptApi = {
   async capabilities(): Promise<ImagePromptCapabilities> {
-    return (await httpClient.get<ApiResponse<ImagePromptCapabilities>>('/api/v1/image-prompts/capabilities')).data.data;
+    return (await httpClient.get<ApiResponse<ImagePromptCapabilities>>(trialEndpoint('/api/v1/image-prompts/capabilities', '/image-prompts/capabilities'))).data.data;
   },
   async upload(file: File, signal: AbortSignal): Promise<ImagePromptAsset> {
     const form = new FormData(); form.append('file', file);
-    return (await httpClient.post<ApiResponse<ImagePromptAsset>>('/api/v1/image-prompt-assets', form,
+    return (await httpClient.post<ApiResponse<ImagePromptAsset>>(trialEndpoint('/api/v1/image-prompt-assets', '/image-prompt-assets'), form,
       { headers: { 'Content-Type': undefined }, signal })).data.data;
   },
-  async removeAsset(id: string): Promise<void> { await httpClient.delete(`/api/v1/image-prompt-assets/${encodeURIComponent(id)}`); },
+  async removeAsset(id: string): Promise<void> { await httpClient.delete(trialEndpoint(`/api/v1/image-prompt-assets/${encodeURIComponent(id)}`, `/image-prompt-assets/${encodeURIComponent(id)}`)); },
   async extract(requestId: string, input: ImagePromptInput, signal: AbortSignal): Promise<ImagePromptDocument> {
-    return (await httpClient.post<ApiResponse<ImagePromptDocument>>('/api/v1/image-prompts', { requestId, input }, { signal })).data.data;
+    return (await httpClient.post<ApiResponse<ImagePromptDocument>>(trialEndpoint('/api/v1/image-prompts', '/image-prompts'), { requestId, input }, { signal })).data.data;
   },
   async plan(requestId: string, input: ImagePromptInput, signal: AbortSignal): Promise<ImagePromptPlan> {
     return (await httpClient.post<ApiResponse<ImagePromptPlan>>('/api/v1/image-prompts/plans', { requestId, input }, { signal })).data.data;
@@ -27,7 +28,7 @@ export const imagePromptApi = {
       { requestId, fingerprint: plan.fingerprint, answers }, { signal })).data.data;
   },
   async operation(id: string): Promise<ImagePromptOperation> {
-    return (await httpClient.get<ApiResponse<ImagePromptOperation>>(`/api/v1/image-prompts/operations/${id}`)).data.data;
+    return (await httpClient.get<ApiResponse<ImagePromptOperation>>(trialEndpoint(`/api/v1/image-prompts/operations/${id}`, `/image-prompts/operations/${id}`))).data.data;
   },
   async retrySave(id: string): Promise<ImagePromptDocument> {
     return (await httpClient.post<ApiResponse<ImagePromptDocument>>(`/api/v1/image-prompts/operations/${id}/save`)).data.data;

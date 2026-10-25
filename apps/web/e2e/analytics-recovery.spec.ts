@@ -16,7 +16,7 @@ test('已有登录会话直接首页和刷新各采集一次，重复导航不�
     await route.fulfill({ status: 200, json: { data: null } });
   });
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: /让模型先理解你的工程/ })).toBeVisible();
+  await expect(page.locator('#home-hero-title')).toBeVisible();
   await expect.poll(() => events.length).toBe(1);
   expect(events[0]!.eventType).toBe('APP_VISIT');
   expect(events[0]!.expectedUserId).toBe(testUser.userId);
@@ -45,7 +45,7 @@ test('上报503不阻断首页，重载恢复相同事件而不改变发生时�
       : { status: 503, json: { error: { code: 'ANALYTICS_DELIVERY_UNAVAILABLE' } } });
   });
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: /让模型先理解你的工程/ })).toBeVisible();
+  await expect(page.locator('#home-hero-title')).toBeVisible();
   await expect.poll(() => attempts.length).toBeGreaterThan(0);
   const firstEvent = attempts[0]!;
   await expect.poll(() => page.evaluate((keyPrefix) => (
@@ -59,7 +59,7 @@ test('上报503不阻断首页，重载恢复相同事件而不改变发生时�
   await expect.poll(() => page.evaluate((keyPrefix) => (
     Object.keys(localStorage).filter((key) => key.startsWith(keyPrefix)).length
   ), prefix)).toBe(0);
-  await expect(page.getByRole('heading', { name: /让模型先理解你的工程/ })).toBeVisible();
+  await expect(page.locator('#home-hero-title')).toBeVisible();
 });
 
 test('匿名首页不采集，其他账号旧队列不会在当前登录身份下发送', async ({ page }) => {

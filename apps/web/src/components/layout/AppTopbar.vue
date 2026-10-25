@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Clock, DataAnalysis, HomeFilled, MagicStick, Picture, EditPen, Setting, Tools } from '@element-plus/icons-vue';
 import { computed } from 'vue';
+import { ElButton } from 'element-plus';
 import { useRoute } from 'vue-router';
 
 import BrandMark from '@/components/brand/BrandMark.vue';
@@ -27,7 +28,7 @@ const selectedModelVersion = computed(() => route.name === 'text-polish'
 
 const navigation = [
   { to: '/', label: '首页', icon: HomeFilled },
-  { to: '/workbench', label: '工作台', icon: MagicStick },
+  { to: '/workbench', label: '提示词优化', icon: MagicStick },
   { to: '/image-to-prompt', label: '图像转提示词', icon: Picture },
   { to: '/text-polish', label: '文章祛AI味', icon: EditPen },
   { to: '/history', label: '历史', icon: Clock },
@@ -68,6 +69,7 @@ const navigation = [
 
     <div class="topbar-tools">
       <AccountMenu />
+      <ElButton v-if="!auth.isAuthenticated" type="primary" size="small" @click="$router.push({ path: '/login', query: { mode: 'register', redirect: route.path } })">注册 / 登录</ElButton>
       <!-- 各工具展示本任务选择的模型，使用独立状态，避免误示其他模块的模型。 -->
       <div v-if="(route.name !== 'image-to-prompt' || imagePrompt.selectedModel) && (route.name !== 'text-polish' || textPolish.selectedModel)" class="provider-status" :title="`模型版本：${selectedModelVersion}（由平台管理员维护）`">
         <span class="status-dot" aria-hidden="true"></span>

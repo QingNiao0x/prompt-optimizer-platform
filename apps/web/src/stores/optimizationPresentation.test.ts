@@ -11,6 +11,7 @@ import { renderPromptSections } from '@/features/optimization/promptPresentation
 import { optimizePrompt } from '@/services/promptOptimizerApi';
 import type { OptimizationHistoryDetail, OptimizationResult, PromptFormat } from '@/types/api';
 import { useOptimizationStore } from './optimization';
+import { useAuthStore } from './auth';
 
 const fixture = (format: PromptFormat = 'COMPACT'): OptimizationResult => {
   const sections: OptimizationResult['sections'] = [
@@ -38,6 +39,8 @@ describe('explicit prompt presentation', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     setActivePinia(createPinia());
+    useAuthStore().user = { userId: 'fixture-user', tenantId: 'fixture-tenant', workspaceId: 'fixture-workspace',
+      email: 'fixture@example.test', displayName: '展示测试用户', platformAdmin: false };
     vi.stubGlobal('window', { localStorage: { getItem: () => null, setItem: () => undefined, removeItem: () => undefined } });
   });
 

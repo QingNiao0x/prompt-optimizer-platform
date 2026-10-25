@@ -29,6 +29,21 @@ class ImagePromptAssetServiceTest {
                 new ObjectMapper().findAndRegisterModules(), "MEMORY"), directory, Clock.systemUTC());
     }
     @AfterEach void close() { assets.close(); }
+    @Test void guestAssetsNeverCrossVisitorOrAccountNamespacesAndRemainBounded() throws Exception {
+        String guest = "a".repeat(64), other = "b".repeat(64);
+        var file = new MockMultipartFile("file", "fixture.png", "image/png", png(2, 2));
+        var asset = assets.uploadGuest(guest, file);
+        assertThat(asset.previewUrl()).startsWith("/api/v1/trial/image-prompt-assets/");
+        assertThat(assets.bytesGuest(guest, asset.id())).isNotEmpty();
+        assertThatThrownBy(() -> assets.bytesGuest(other, asset.id())).isInstanceOf(ImagePromptException.class);
+        assertThatThrownBy(() -> assets.bytes(owner, asset.id())).isInstanceOf(ImagePromptException.class);
+        assets.revokeGuest(other, asset.id());
+        assertThat(assets.bytesGuest(guest, asset.id())).isNotEmpty();
+        assets.uploadGuest(guest, file);
+        assertThatThrownBy(() -> assets.uploadGuest(guest, file)).isInstanceOf(ImagePromptException.class);
+        assets.revokeGuest(guest, asset.id());
+        assertThatThrownBy(() -> assets.bytesGuest(guest, asset.id())).isInstanceOf(ImagePromptException.class);
+    }
     @Test void acceptsRealPixelsEvenWithMisleadingNameAndRejectsFakeImages() throws Exception {
         var asset = assets.upload(owner, new MockMultipartFile("file", "/", "text/plain", png(4, 3)));
         assertThat(asset.name()).isEqualTo("参考图片");

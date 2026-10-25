@@ -43,6 +43,13 @@ import java.util.regex.Pattern;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /** 额度用尽返回429引导注册；会话缺失与存储故障分别为401和503，不泄露访客凭证。 */
+    @ExceptionHandler(com.promptoptimizer.trial.TrialException.class)
+    public ResponseEntity<ApiErrorResponse> handleTrial(com.promptoptimizer.trial.TrialException exception, HttpServletRequest request) {
+        return buildResponse(request, HttpStatus.valueOf(exception.status()), exception.code(), exception.getMessage(),
+                exception.status() >= 500, Map.of());
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     private static final Pattern JVM_HELPFUL_NULL_POINTER_MESSAGE = Pattern.compile(
             "^Cannot invoke \"[^\"\\r\\n]{1,256}\" because \"[^\"\\r\\n]{1,96}\" is null$"

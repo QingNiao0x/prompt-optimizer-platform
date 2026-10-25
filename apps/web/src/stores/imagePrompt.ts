@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 import { imagePromptApi } from '@/services/imagePromptApi';
 import { getApiErrorMessage } from '@/services/http';
 import { useAuthStore } from './auth';
+import { useTrialStore } from './trial';
 import type {
   ImagePromptAnswer, ImagePromptAsset, ImagePromptCapabilities, ImagePromptDocument,
   ImagePromptInput, ImagePromptMode, ImagePromptPlan, ImageReferenceRole,
@@ -37,6 +38,7 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
   const consent = ref(false);
   const isLoadingModels = ref(false);
   const auth = useAuthStore();
+  const trial = useTrialStore();
   let revision = 0;
   let modelLoad = 0;
   let controller: AbortController | undefined;
@@ -55,6 +57,11 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
   /** 按处理/草稿保护、模型、输入、图片授权的顺序说明阻塞原因，与按钮可用条件保持同一来源。 */
   const startDisabledReason = computed(() => {
     if (busy.value) return '当前操作正在处理中，请稍候。';
+    if (!auth.isAuthenticated) {
+      if (mode.value === 'CUSTOM_CREATION') return '注册登录后可开启 Plan 创作模式。';
+      if (!trial.initialized) return trial.error || '正在确认免费体验额度，请稍候。';
+      if (!trial.canUse('IMAGE_TO_PROMPT')) return trial.error || '图像转提示词的免费体验已用完，请注册登录后继续。';
+    }
     if (hasDraftChanges.value) return '请先保存或取消当前结果的编辑，再生成新版本。';
     if (recoveryPending.value) return '上次请求的结果尚未确认，请先查询处理结果。';
     if (!selectedModel.value) return isLoadingModels.value ? '正在加载可用模型，请稍候。' : '请先选择一个可用模型。';
@@ -154,7 +161,17 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
     recoveryId.value = ''; recoveryPending.value = false;
   };
   const start = async (): Promise<void> => {
+    const identityRevision = revision;
+    // 额度检查必须先于图片上传；页面重建和“新建任务”不会重置服务端额度。
+    if (!auth.isAuthenticated) {
+      await trial.initialize();
+      if (identityRevision !== revision) return;
+      if (!trial.canUse('IMAGE_TO_PROMPT')) {
+        error.value = trial.error || '图像转提示词的免费体验已用完，请注册登录后继续。'; return;
+      }
+    }
     if (!canStart.value) return;
+    const guestRequest = !auth.isAuthenticated;
     const current = revision, id = crypto.randomUUID();
     controller = new AbortController(); phase.value = 'UPLOADING'; error.value = '';
     try {
@@ -169,9 +186,14 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
         if (current === revision) accept(value);
       }
     } catch (failure: unknown) { failed(failure, current, id); }
-    finally { if (current === revision) phase.value = 'IDLE'; }
+    finally {
+      // 成功、失败和网络结果不确定都重新读取后端计数，不在浏览器猜测扣额或退款。
+      if (guestRequest) await trial.refresh();
+      if (current === revision) phase.value = 'IDLE';
+    }
   };
   const confirm = async (): Promise<void> => {
+    if (!auth.isAuthenticated) { error.value = '注册登录后可开启 Plan 创作模式。'; return; }
     if (!plan.value || busy.value || hasDraftChanges.value || recoveryPending.value) return;
     if (new Date(plan.value.expiresAt).getTime() <= Date.now()) { error.value = '计划已过期，请重新梳理创作意图；当前回答可以先复制保留。'; return; }
     for (const q of plan.value.questions) {
@@ -197,11 +219,21 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
       else if (value.status !== 'RUNNING') { recoveryPending.value = false; error.value = value.message || '请求未完成，请核对历史后再明确发起新的生成。'; }
       else error.value = '请求仍在处理，请稍后再次查询；不会自动重复调用模型。';
     } catch (failure: unknown) { if (current === revision) error.value = getApiErrorMessage(failure); }
-    finally { if (current === revision) phase.value = 'IDLE'; }
+    finally {
+      if (!auth.isAuthenticated) await trial.refresh();
+      if (current === revision) phase.value = 'IDLE';
+    }
   };
 
   const saveEdit = async (text = editDraft.value): Promise<void> => {
-    if (!result.value?.recordId || busy.value || !text.trim()) return;
+    if (!result.value || busy.value || !text.trim()) return;
+    // 只有访客正文留在本页；正式账号的内存历史仍须写回服务端并维护修订号。
+    if (!auth.isAuthenticated) {
+      undoDocument.value = result.value;
+      result.value = { ...result.value, optimizedPrompt: text };
+      editDraft.value = text; isEditing.value = false; return;
+    }
+    if (!result.value.recordId) return;
     const current = revision; phase.value = 'SAVING'; error.value = '';
     try {
       const value = await imagePromptApi.edit(result.value, text);
@@ -215,13 +247,14 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
     await saveEdit(editDraft.value);
   };
   const retrySave = async (): Promise<void> => {
-    if (!result.value || busy.value) return;
+    if (!result.value || busy.value || !auth.isAuthenticated) return;
     const current = revision; phase.value = 'SAVING';
     try { const value = await imagePromptApi.retrySave(result.value.operationId); if (current === revision) { result.value = value; error.value = ''; } }
     catch (failure: unknown) { if (current === revision) error.value = getApiErrorMessage(failure); }
     finally { if (current === revision) phase.value = 'IDLE'; }
   };
   const rewrite = async (instruction: string): Promise<void> => {
+    if (!auth.isAuthenticated) { error.value = '注册登录后可使用历史正文再次优化。'; return; }
     if (!result.value?.recordId || busy.value || hasDraftChanges.value || !instruction.trim() || recoveryPending.value) return;
     const current = revision, id = crypto.randomUUID(); controller = new AbortController(); phase.value = 'GENERATING'; error.value = '';
     dispatched(id);
@@ -230,6 +263,7 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
     finally { if (current === revision) phase.value = 'IDLE'; }
   };
   const restore = (document: ImagePromptDocument): void => {
+    if (!auth.isAuthenticated) { error.value = '历史记录仅限注册登录后查看。'; return; }
     invalidate(); files.value.forEach(release); files.value = [];
     mode.value = document.mode; modelId.value = document.modelId;
     creationIntent.value = document.input.creationIntent; exactText.value = document.input.exactText;
@@ -246,6 +280,7 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
   watch(identityKey, () => {
     modelLoad += 1; isLoadingModels.value = false;
     reset(); capabilities.value = undefined; modelId.value = ''; cleanupWarning.value = '';
+    if (!auth.isAuthenticated) mode.value = 'REFERENCE_RECONSTRUCTION';
   }, { flush: 'sync' });
   /** 离开页面仅停止旧请求写回，保留当前构想、实际回答和编辑稿供返回时继续。 */
   const cancelPending = (): void => { revision += 1; controller?.abort(); controller = undefined; phase.value = 'IDLE'; };

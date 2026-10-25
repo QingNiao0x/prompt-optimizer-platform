@@ -2,13 +2,21 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useImagePromptStore } from './imagePrompt';
 import { useAuthStore } from './auth';
+import { useTrialStore } from './trial';
 import { imagePromptApi } from '@/services/imagePromptApi';
+import { getTrialStatus, initializeTrialSession } from '@/services/trialApi';
 import type { ImagePromptDocument, ImagePromptPlan } from '@/types/imagePrompt';
+import type { TrialStatus } from '@/types/trial';
 
 vi.mock('@/services/imagePromptApi', () => ({ imagePromptApi: {
   capabilities: vi.fn(), upload: vi.fn(), removeAsset: vi.fn(), extract: vi.fn(), plan: vi.fn(), confirm: vi.fn(),
   operation: vi.fn(), edit: vi.fn(), retrySave: vi.fn(), rewrite: vi.fn(),
 } }));
+vi.mock('@/services/trialApi', () => ({ getTrialStatus: vi.fn(), initializeTrialSession: vi.fn() }));
+const guestQuota = (remaining: number): TrialStatus => ({ authenticated: false, available: true, quotas: {
+  imagePrompt: { limit: 1, used: 1 - remaining, remaining },
+  enhancement: { limit: 3, used: 0, remaining: 3 }, textPolish: { limit: 3, used: 0, remaining: 3 },
+} });
 const expiresAt = '2099-01-01T00:00:00Z';
 const plan: ImagePromptPlan = { id: 'plan', fingerprint: 'binding', summary: '新图创作', questions: [], analysis: [], warnings: [], expiresAt, mock: false };
 const document = (id = 'record'): ImagePromptDocument => ({
@@ -31,6 +39,10 @@ const ready = async () => {
 describe('image prompt task state', () => {
   beforeEach(() => {
     vi.resetAllMocks(); setActivePinia(createPinia());
+    // 既有 Plan 和历史用例显式使用正式身份；访客用例单独移除身份并模拟服务端额度。
+    useAuthStore().user = { userId: 'fixture-user', tenantId: 'fixture-tenant', workspaceId: 'fixture-workspace',
+      displayName: '图像测试用户', email: 'fixture@example.test', platformAdmin: false };
+    vi.mocked(initializeTrialSession).mockResolvedValue();
     vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:fixture');
     vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
     vi.mocked(imagePromptApi.removeAsset).mockResolvedValue();
@@ -138,5 +150,77 @@ describe('image prompt task state', () => {
     store.isEditing = true; store.editDraft = '未保存的修改'; vi.mocked(imagePromptApi.edit).mockRejectedValue(new Error('版本冲突'));
     await store.saveEdit(); expect(store.editDraft).toBe('未保存的修改'); expect(store.isEditing).toBe(true);
     expect(store.result?.optimizedPrompt).toBe(document().optimizedPrompt);
+  });
+
+  it('keeps signed-in in-memory history edits and save retries on the account API', async () => {
+    const store = await ready();
+    const original = { ...document(), persistentHistory: false };
+    store.restore(original); store.isEditing = true; store.editDraft = '账号内存历史的修改正文';
+    const edited = { ...original, optimizedPrompt: store.editDraft, editRevision: 1 };
+    vi.mocked(imagePromptApi.edit).mockResolvedValue(edited);
+    await store.saveEdit();
+    expect(imagePromptApi.edit).toHaveBeenCalledWith(original, edited.optimizedPrompt);
+    expect(store.result?.editRevision).toBe(1);
+    store.restore(edited);
+    expect(store.result?.optimizedPrompt).toBe(edited.optimizedPrompt);
+    store.restore({ ...original, recordId: null, historySaved: false });
+    vi.mocked(imagePromptApi.retrySave).mockResolvedValue(original);
+    await store.retrySave();
+    expect(imagePromptApi.retrySave).toHaveBeenCalledWith(original.operationId);
+    expect(store.result?.historySaved).toBe(true);
+    expect(store.result?.persistentHistory).toBe(false);
+    expect(imagePromptApi.extract).not.toHaveBeenCalled();
+    expect(getTrialStatus).not.toHaveBeenCalled();
+  });
+
+  it('checks unknown or exhausted visitor quota before uploading an image', async () => {
+    useAuthStore().user = undefined;
+    const store = await ready(); store.addFiles([new File(['pixels'], 'fixture.png', { type: 'image/png' })]); store.consent = true;
+    const pending = deferred<TrialStatus>(); vi.mocked(getTrialStatus).mockReturnValue(pending.promise);
+    expect(store.canStart).toBe(false);
+    const work = store.start();
+    await vi.waitFor(() => expect(getTrialStatus).toHaveBeenCalledOnce());
+    expect(imagePromptApi.upload).not.toHaveBeenCalled();
+    pending.resolve(guestQuota(0)); await work;
+    expect(store.canStart).toBe(false); expect(store.error).toContain('免费体验已用完');
+    expect(imagePromptApi.upload).not.toHaveBeenCalled(); expect(imagePromptApi.extract).not.toHaveBeenCalled();
+  });
+
+  it('refreshes server quota after a failed accepted attempt and never restores it by starting a new task', async () => {
+    useAuthStore().user = undefined;
+    const store = await ready();
+    vi.mocked(getTrialStatus).mockResolvedValueOnce(guestQuota(1)).mockResolvedValue(guestQuota(0));
+    vi.mocked(imagePromptApi.extract).mockRejectedValue(new Error('模型暂时不可用'));
+    store.addFiles([new File(['pixels'], 'fixture.png', { type: 'image/png' })]); store.consent = true;
+    await store.start();
+    expect(getTrialStatus).toHaveBeenCalledTimes(2); expect(useTrialStore().remaining('IMAGE_TO_PROMPT')).toBe(0);
+    store.reset(); store.addFiles([new File(['pixels'], 'another.png', { type: 'image/png' })]); store.consent = true;
+    await store.start();
+    expect(imagePromptApi.upload).toHaveBeenCalledOnce(); expect(imagePromptApi.extract).toHaveBeenCalledOnce();
+  });
+
+  it('keeps visitor edits local and blocks Plan, history restore, save and historical rewrites', async () => {
+    useAuthStore().user = undefined;
+    const store = await ready(); vi.mocked(getTrialStatus).mockResolvedValue(guestQuota(1));
+    await useTrialStore().initialize();
+    store.mode = 'CUSTOM_CREATION'; store.creationIntent = '测试海报';
+    await store.start(); store.plan = plan; await store.confirm();
+    expect(imagePromptApi.plan).not.toHaveBeenCalled(); expect(imagePromptApi.confirm).not.toHaveBeenCalled();
+    store.restore(document()); expect(store.result).toBeUndefined();
+    store.result = { ...document(), recordId: null, historySaved: false, persistentHistory: false };
+    store.isEditing = true; store.editDraft = '本页修改'; await store.saveEdit();
+    expect(store.result.optimizedPrompt).toBe('本页修改'); await store.undo();
+    expect(store.result.optimizedPrompt).toBe(document().optimizedPrompt);
+    await store.retrySave(); await store.rewrite('整理表达');
+    expect(imagePromptApi.edit).not.toHaveBeenCalled(); expect(imagePromptApi.retrySave).not.toHaveBeenCalled();
+    expect(imagePromptApi.rewrite).not.toHaveBeenCalled();
+  });
+
+  it('clears the old Plan mode and private result when the user signs out', async () => {
+    const store = await ready(); store.mode = 'CUSTOM_CREATION'; store.creationIntent = '已登录的构想';
+    store.plan = plan; store.result = document();
+    useAuthStore().user = undefined;
+    expect(store.mode).toBe('REFERENCE_RECONSTRUCTION'); expect(store.plan).toBeUndefined();
+    expect(store.result).toBeUndefined(); expect(store.creationIntent).toBe('');
   });
 });

@@ -48,7 +48,7 @@ const save = async (): Promise<void> => {
   <ElDialog :model-value="Boolean(model)" :title="`图像输入能力：${model?.displayName ?? ''}`" width="min(560px, 94vw)"
     :close-on-click-modal="!saving" :close-on-press-escape="!saving" :show-close="!saving" @update:model-value="!$event && !saving && emit('close')">
     <div v-loading="loading" class="vision-form">
-      <p>提示词增强与图像转提示词共用此模型。请依据官方文档或受控验证登记图片能力。</p>
+      <p>提示词优化与图像转提示词共用此模型。请依据官方文档或受控验证登记图片能力。</p>
       <ElAlert v-if="!model?.enabled" title="该模型当前已停用。可先配置图像能力，启用后再供两个工作台选择。" type="info" :closable="false" />
       <ElAlert v-if="error" :title="error" type="error" :closable="false" />
       <template v-if="draft && !draft.mock">

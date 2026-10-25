@@ -106,7 +106,7 @@ for (const smsEnabled of [true, false]) {
       await expect(page.locator('.binding-form')).toHaveCount(0);
       await expect(page.getByText('当前手机号短信验证和绑定入口尚未开放，暂时无法完成绑定。')).toBeVisible();
     }
-    await page.getByRole('button', { name: smsEnabled ? '稍后绑定，进入工作台' : '进入工作台', exact: true }).click();
+    await page.getByRole('button', { name: smsEnabled ? '稍后绑定，进入提示词优化' : '进入提示词优化', exact: true }).click();
     await expect(page).toHaveURL(/\/workbench$/);
     expect(issued).toBe(0);
   });
@@ -177,7 +177,7 @@ test('手机号注册保持密码规则，隐藏密码可查看，发码后进�
   });
   await panel.getByRole('button', { name: '创建账号', exact: true }).click();
   await expect(page.getByRole('heading', { name: '账号创建成功，已自动登录' })).toBeVisible();
-  await page.getByRole('button', { name: '进入工作台', exact: true }).click();
+  await page.getByRole('button', { name: '进入提示词优化', exact: true }).click();
   await expect(page).toHaveURL(/\/workbench$/);
 });
 

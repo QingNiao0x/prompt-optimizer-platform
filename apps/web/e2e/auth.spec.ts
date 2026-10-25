@@ -2,6 +2,12 @@ import { expect, test } from '@playwright/test';
 import { mockAuthentication } from './authFixture';
 import { openWorkbenchPane } from './workbenchPanes';
 
+test.beforeEach(async ({ page }) => {
+  // 身份交互回归不访问本机真实账号、模型或邮件服务；各场景在此兜底之上安装必要夹具。
+  await page.route('**/api/**', route => route.fulfill({ status: 503,
+    json: { error: { code: 'TEST_UNMOCKED_REQUEST', message: '本场景未模拟该接口。' } } }));
+});
+
 test('邮箱验证码注册成功后自动登录并进入工作台', async ({ page }) => {
   await mockAuthentication(page, false);
   await page.goto('/');
@@ -15,16 +21,19 @@ test('邮箱验证码注册成功后自动登录并进入工作台', async ({ pa
   await page.getByRole('button', { name: '创建账号' }).click();
   // 当前注册流程保留完成提示，由用户确认进入工作台。
   await expect(page.getByRole('heading', { name: '账号创建成功，已自动登录' })).toBeVisible();
-  await page.getByRole('button', { name: '进入工作台', exact: true }).click();
+  await page.getByRole('button', { name: '进入提示词优化', exact: true }).click();
   await expect(page).toHaveURL(/\/workbench$/);
   await expect(page.getByRole('button', { name: '退出登录' })).toBeVisible();
 });
 
-test('未登录不能挂载工作台，错误密码可重试，登录后可刷新和退出', async ({ page }) => {
+test('未登录不能挂载历史，错误密码可重试，登录后可刷新和退出', async ({ page }) => {
   await mockAuthentication(page, false);
-  await page.goto('/workbench');
-  await expect(page).toHaveURL(/\/login$/);
+  await page.goto('/history');
+  await expect(page).toHaveURL(/\/login\?.*reason=history/);
+  await expect(page.getByRole('heading', { name: '创建账号' })).toBeVisible();
   await expect(page.getByLabel('原始提示词')).toHaveCount(0);
+  // 历史默认引导注册；已有账号可明确打开登录并返回工具，访客工具入口另由 guest-trial 验证。
+  await page.goto('/login?redirect=%2Fworkbench');
   await page.getByPlaceholder('请输入手机号或邮箱').fill('test@example.com');
   await page.getByPlaceholder('请输入密码').fill('wrong-password');
   await page.getByPlaceholder('请输入图中字符').fill('ABCD');
@@ -38,8 +47,8 @@ test('未登录不能挂载工作台，错误密码可重试，登录后可刷�
   await expect(page.getByRole('button', { name: '退出登录' })).toBeVisible();
   await page.getByRole('button', { name: '退出登录' }).click();
   await expect(page).toHaveURL(/\/$/);
-  await page.goto('/workbench');
-  await expect(page).toHaveURL(/\/login$/);
+  await page.goto('/history');
+  await expect(page).toHaveURL(/\/login\?.*reason=history/);
 });
 
 test('身份服务不可用时不进入受保护页面', async ({ page }) => {

@@ -66,6 +66,32 @@ public class ImagePromptStateStore {
         } catch (RuntimeException | JsonProcessingException failure) { throw unavailable(); }
     }
 
+    /** 访客资产独立命名空间，禁止构造正式ActorIdentity或访问账号缓存。 */
+    public void putGuest(String guest, String name, Object value, Duration ttl) {
+        String key = guestKey(guest, name);
+        try {
+            if (!memory) requiredRedis().opsForValue().set(key, encode(value), ttl);
+            else { prune(); if (!local.containsKey(key) && local.size() >= 1000) throw unavailable();
+                local.put(key, new Entry(encode(value), Instant.now().plus(ttl))); }
+        } catch (RuntimeException failure) { throw unavailable(); }
+    }
+
+    /** 所有者只由服务端试用会话提供；访客编号不能命中正式租户命名空间。 */
+    public <T> T getGuest(String guest, String name, Class<T> type) {
+        try {
+            String key = guestKey(guest, name);
+            Entry entry = memory ? local.get(key) : null;
+            String value = memory ? entry != null && entry.expiresAt().isAfter(Instant.now()) ? entry.value() : null
+                    : requiredRedis().opsForValue().get(key);
+            return value == null ? null : json.readValue(value, type);
+        } catch (RuntimeException | JsonProcessingException failure) { throw unavailable(); }
+    }
+
+    private String guestKey(String guest, String name) {
+        if (guest == null || !guest.matches("[a-f0-9]{64}")) throw new IllegalArgumentException("访客资产作用域无效");
+        return "prompt-optimizer:image:guest:" + guest + ":" + name;
+    }
+
     /** 当前身份构成存储前缀，缓存编号不能跨租户、工作区或用户访问。 */
     private String key(ActorIdentity actor, String name) {
         return "prompt-optimizer:image:" + actor.tenantId() + ":" + actor.workspaceId() + ":" + actor.userId() + ":" + name;

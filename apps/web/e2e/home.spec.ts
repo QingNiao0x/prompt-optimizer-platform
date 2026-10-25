@@ -5,7 +5,7 @@ test('首页提供与工作台一致的玻璃主题入口', async ({ page }) => 
   await mockAuthentication(page, false);
   await page.goto('/');
 
-  await expect(page.getByRole('heading', { name: /让模型先理解你的工程/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /让思路更清晰/ })).toBeVisible();
   await expect(
     page.getByText(
       'AI 时代真正拉开差距的，不是谁用了更贵的模型，是谁更清楚自己要啥、更会把这份清楚说出来。',
@@ -16,9 +16,14 @@ test('首页提供与工作台一致的玻璃主题入口', async ({ page }) => 
     page.getByText('提问这件事，正在变成和写作、沟通一样重要的基本功。', { exact: true }),
   ).toBeVisible();
   await expect(page.getByRole('link', { name: 'PromptOptimizer 首页' }).locator('svg')).toBeVisible();
-  await expect(page.getByText('项目上下文感知', { exact: true })).toBeVisible();
-  await expect(page.getByText('多模型适配', { exact: true })).toBeVisible();
-  await expect(page.getByRole('link', { name: '开始增强提示词' })).toHaveAttribute('href', '/workbench');
+  await expect(page.getByRole('heading', { name: '提示词优化', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '图像转提示词', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '文章祛AI味', exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: '开始优化提示词' })).toHaveAttribute('href', '/workbench');
+  await expect(page.locator('.hero-section').getByRole('link', { name: '图像转提示词', exact: true }))
+    .toHaveAttribute('href', '/image-to-prompt');
+  await expect(page.locator('.hero-section').getByRole('link', { name: '文章祛AI味', exact: true }))
+    .toHaveAttribute('href', '/text-polish');
   await expect(page.getByText('免费开始', { exact: true })).toHaveCount(0);
   await expect(page.locator('.topbar')).toHaveCount(0);
   await expect(page.getByRole('button', { name: '登录' }).first()).toBeVisible();
@@ -73,9 +78,12 @@ test('首页提供与工作台一致的玻璃主题入口', async ({ page }) => 
   await expect(page.locator('html')).toHaveClass(/dark/);
   await expect(page.locator('body')).toHaveClass(/dark/);
 
-  await page.getByRole('link', { name: '开始增强提示词' }).click();
-  await expect(page).toHaveURL(/\/login$/);
-  await expect(page.getByRole('heading', { name: '手机号或邮箱登录' })).toBeVisible();
+  for (const entry of ['开始优化提示词', '图像转提示词', '文章祛AI味']) {
+    await page.locator('.hero-section').getByRole('link', { name: entry, exact: true }).click();
+    await expect(page).toHaveURL(/\/login$/);
+    await expect(page.getByRole('heading', { name: '手机号或邮箱登录' })).toBeVisible();
+    await page.goto('/');
+  }
 });
 
 test('同一注册表单自动切换邮箱和短信流程，账号改变后废弃旧验证码', async ({ page }) => {

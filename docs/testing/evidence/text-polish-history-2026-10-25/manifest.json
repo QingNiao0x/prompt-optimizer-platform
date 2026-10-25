@@ -1,0 +1,125 @@
+{
+  "archivedAt": "2026-10-25T04:12:54.525516+00:00",
+  "gitHead": "09a8c102231a6794784b372f7608285939d7e02c",
+  "scope": "authenticated text-polish history page; shared files contain preserved concurrent changes",
+  "unitTests": 8,
+  "uniqueBrowserChecks": 36,
+  "articleHistoryChecks": 12,
+  "browserFullRunPassed": 33,
+  "browserFullRunFailed": 3,
+  "targetedRecheckPassed": 3,
+  "detailScreenshotRecheckPassed": 2,
+  "realModelCalls": 0,
+  "databaseMigrationsAdded": 0,
+  "deployed": false,
+  "screenshots": {
+    "desktop-list.png": "tmp/text-polish-history-acceptance/browser-results-final/text-polish-history-文章润色成功后进入总历史页，直接展示使用记录且刷新保留分类-desktop-chrome/text-polish-history-list.png",
+    "mobile-list.png": "tmp/text-polish-history-acceptance/browser-results-final/text-polish-history-文章润色成功后进入总历史页，直接展示使用记录且刷新保留分类-mobile-chrome/text-polish-history-list.png",
+    "desktop-detail.png": "tmp/text-polish-history-acceptance/browser-results-detail-proof/text-polish-history-详情对照原文与当前正文，保留生成快照，复制降级和载入不调用模型-desktop-chrome/text-polish-history-detail.png",
+    "mobile-detail.png": "tmp/text-polish-history-acceptance/browser-results-detail-proof/text-polish-history-详情对照原文与当前正文，保留生成快照，复制降级和载入不调用模型-mobile-chrome/text-polish-history-detail.png"
+  },
+  "sources": [
+    {
+      "path": "apps/web/src/pages/HistoryPage.vue",
+      "sha256": "2806c9ef4782820d52d358ff949a40c133e7061910d8e0081b6b17b5fff80b21"
+    },
+    {
+      "path": "apps/web/src/pages/TextPolishPage.vue",
+      "sha256": "f97935c9e13ce820726199413d57d8e35605df619267a4a33f54ef29153e7329"
+    },
+    {
+      "path": "apps/web/src/components/textpolish/TextPolishHistoryPanel.vue",
+      "sha256": "70c7329b3bb9428c5bc3449eda5915b88ce0502fc29ca9d38c535ca6cca4fab0"
+    },
+    {
+      "path": "apps/web/src/services/textPolishApi.ts",
+      "sha256": "632992e2a758da85e2ac4c92f41c173e54458aa087181a92c03d4aa0a89ba422"
+    },
+    {
+      "path": "apps/web/src/stores/textPolish.ts",
+      "sha256": "976c33ebda7a2760d0ca5efd1c8c077234090ceee4a7c3c3e06b95d2ccee8676"
+    },
+    {
+      "path": "apps/web/src/stores/textPolish.test.ts",
+      "sha256": "d594a59e02fde760ab4fe32107c21dca6e89a77c715762b95b658bb1f9163d32"
+    },
+    {
+      "path": "apps/web/e2e/text-polish-history.spec.ts",
+      "sha256": "64902948eacd5131df84422d7b2c826593293e9e075371afd52f277c1eaee088"
+    },
+    {
+      "path": "apps/web/e2e/text-polish.spec.ts",
+      "sha256": "3cda723edaeacad5fa9bf1bb330c3b0398eea8b3c6c8b6482a819e1b4ed022a6"
+    },
+    {
+      "path": "docs/development/文章祛AI味实现与使用说明.md",
+      "sha256": "3f72450cfc68fc0b19fb7c449238f0b63bbcb6dcd6ababb012b44028ff37c88b"
+    },
+    {
+      "path": "docs/testing/文章祛AI味历史页接入与验证-2026-10-25.md",
+      "sha256": "027bb8faafd4b46590cdbd4a761e3b269fef8d484ef352e257042595d44c5273"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "archive.py",
+      "sha256": "3dd161763650def62279949a574602f9022b1abc405fa0390a930078af200711"
+    },
+    {
+      "path": "browser-detail-proof.log",
+      "sha256": "64cf54510434c6f6c64de5610aa5bfa839f0b22722a9a6a82615b8b7180717e8"
+    },
+    {
+      "path": "browser-final.log",
+      "sha256": "5bd059303736aa82291cbd48d76cb0a3f9071b73a7de87be70003f51a18c4ea2"
+    },
+    {
+      "path": "browser-history-recheck.log",
+      "sha256": "b34b458fd42d5367928907e9e4f5846a5f5240f9a36c58b67ec0767058b1a436"
+    },
+    {
+      "path": "browser-initial.log",
+      "sha256": "e9897a52ef42adf9384b3fb7af384f7cee3691bb16bf86817f6a36a6bcc2973c"
+    },
+    {
+      "path": "build-final.log",
+      "sha256": "6d5ad7ba2962e239d36bcdfb05bceb9e3d4209a52500a061bcc5e1942ee7944b"
+    },
+    {
+      "path": "desktop-detail.png",
+      "sha256": "25eeaf93170cdb2fa2c200e04c59c3b1e29bce152badcf280293943f024171aa"
+    },
+    {
+      "path": "desktop-list.png",
+      "sha256": "55c246a1e8b12dc9a3a08036d5b39aa5e2689057b9f3d3b76ceed174cb710a43"
+    },
+    {
+      "path": "desktop-manual-copy.png",
+      "sha256": "82c8272875b655af712281add4f5f6fd9157d083147bf0227b79fa224f141037"
+    },
+    {
+      "path": "initial-image-label-context.md",
+      "sha256": "fecbbf0fc0c70ffddced3339f5e765c3dd3602659eb396db4daa2d81b243229a"
+    },
+    {
+      "path": "initial-shared-history-context.md",
+      "sha256": "b3003f5d151d0adef6c7ff8e29e3a70f805f788b8ac821976ae04fbf202d38f2"
+    },
+    {
+      "path": "mobile-detail.png",
+      "sha256": "c22edde9b91545be462525bfd8dfab3ff7171d1fe7f75a51d86dd4c71d48af60"
+    },
+    {
+      "path": "mobile-list.png",
+      "sha256": "c16efdcd889f4d00891b85198ea574034f4024c79a65097dd92f9cdd667fbe48"
+    },
+    {
+      "path": "mobile-manual-copy.png",
+      "sha256": "3f50deb90598936a6c68f12e0358e2743752559b9bfce5202e3fe9d52d76b88d"
+    },
+    {
+      "path": "unit-final.log",
+      "sha256": "cb7c41efc844574dae0eaadc6b9709d0bb600a817b7dfb32012b602ba7a5c54c"
+    }
+  ]
+}

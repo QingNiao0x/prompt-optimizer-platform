@@ -34,6 +34,25 @@ public class TextPolishService {
     }
     /** 页面限制和可用模型来自服务端当前策略。 */
     public Capabilities capabilities() { current.require(); return new Capabilities(models.models(), 12000, 24000, history.persistent()); }
+    /** 访客只能提交主动输入的原文，禁止借来源编号读取或继续正式历史。 */
+    public void validateTrial(Generate request) {
+        if (request.sourceMode() != SourceMode.RAW || request.sourceRecordId() != null || request.expectedRevision() != null)
+            throw new com.promptoptimizer.trial.TrialException(401, "AUTHENTICATION_REQUIRED", "请注册登录后使用历史稿件。");
+        fidelity.validateInput(request.input());
+        models.require(request.input().modelId());
+    }
+
+    /** 复用同一模型、输入与事实保护，访客结果不落入正式账号历史。 */
+    public Document generateTrial(Generate request) {
+        validateTrial(request);
+        var model = models.require(request.input().modelId());
+        Input in = request.input();
+        Input input = new Input(in.sourceText(), in.style(), in.depth(), in.audience(), in.requirements(), in.lockedTexts(), model.publicId());
+        String text = provider.polish(input, model);
+        return new Document(request.requestId(), input, text, text, null, SourceMode.RAW, model.publicId(), model.displayName(),
+                model.routeKey().equals("mock"), 0, fidelity.check(input, text), false, false, Instant.now());
+    }
+
     /** 提交前冻结来源；并发编辑或删除发生在模型期间时拒绝把迟到响应关联到旧版本。 */
     public Document generate(Generate request) {
         var actor = current.require();

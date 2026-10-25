@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Collection } from '@element-plus/icons-vue';
+import { EditPen, Picture } from '@element-plus/icons-vue';
 
 import WandSparklesIcon from '@/components/brand/WandSparklesIcon.vue';
 </script>
@@ -8,29 +8,34 @@ import WandSparklesIcon from '@/components/brand/WandSparklesIcon.vue';
   <section class="hero-section" aria-labelledby="home-hero-title">
     <div class="hero-section__badge">
       <span class="hero-section__badge-dot" aria-hidden="true"></span>
-      CONTEXT-AWARE PROMPT ENGINEERING
+      上下文感知 · 多模态输入
     </div>
 
     <h1 id="home-hero-title">
-      让模型先理解你的工程，<br>
-      <span>再理解你的要求。</span>
+      让思路更清晰，<br>
+      <span>让表达更清楚。</span>
     </h1>
 
     <p class="hero-section__description">
-      上传项目上下文，输入你的想法，一键生成结构化、高质量的 AI 提示词。
-      告别反复调试，让每一次对话都精准高效。
+      结合项目上下文增强提示词，从参考图片还原画面描述，或用 Plan 辅助新图创作。
+      已有文章也能在独立工作台中切换文体、对比差异，润色表达。
     </p>
 
     <div class="hero-section__actions">
       <RouterLink class="hero-button hero-button--primary" to="/workbench">
         <WandSparklesIcon />
-        开始增强提示词
+        开始优化提示词
       </RouterLink>
-      <a class="hero-button hero-button--glass" href="#features">
-        功能特性
-        <Collection aria-hidden="true" />
-      </a>
+      <RouterLink class="hero-button hero-button--glass" to="/image-to-prompt">
+        <Picture aria-hidden="true" />
+        图像转提示词
+      </RouterLink>
+      <RouterLink class="hero-button hero-button--glass" to="/text-polish">
+        <EditPen aria-hidden="true" />
+        文章祛AI味
+      </RouterLink>
     </div>
+    <a class="hero-section__more" href="#features">了解三项功能</a>
   </section>
 </template>
 
@@ -91,7 +96,7 @@ h1 span {
 }
 
 .hero-section__description {
-  max-width: 520px;
+  max-width: 640px;
   margin: 0 0 48px;
   color: var(--text-secondary);
   font-size: 18px;
@@ -106,6 +111,17 @@ h1 span {
   gap: 16px;
   flex-wrap: wrap;
   animation: fade-in-up 0.6s ease-out 0.3s both;
+}
+
+.hero-section__more {
+  margin-top: 24px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  text-underline-offset: 4px;
+}
+
+.hero-section__more:hover {
+  color: var(--accent);
 }
 
 .hero-button {

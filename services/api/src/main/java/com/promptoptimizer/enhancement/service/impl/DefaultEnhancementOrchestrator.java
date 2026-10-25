@@ -181,7 +181,6 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
      */
     @Override
     public OptimizationResult optimize(OptimizationRequest request) {
-        long startedAt = clock.millis();
         validateTextInputs(request);
         PlanningSessionService.ConfirmedPlan confirmedPlan = planningSessionService.confirm(
                 request.rawPrompt(),
@@ -189,6 +188,19 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
                 request.conversationHistory(),
                 request.planConfirmation()
         );
+        return generate(request, confirmedPlan);
+    }
+
+    /** 专用试用入口只允许直接增强；正式optimize的计划所有权校验保持不变。 */
+    public OptimizationResult optimizeTrial(OptimizationRequest request) {
+        validateTextInputs(request);
+        if (request.planConfirmation() != null) throw new InvalidOptimizationRequestException("请注册登录后使用Plan。");
+        return generate(request, new PlanningSessionService.ConfirmedPlan(List.of(), null, false));
+    }
+
+    /** 共用增强策略和结果组装，不另造访客专用的低质量模板或假确认。 */
+    private OptimizationResult generate(OptimizationRequest request, PlanningSessionService.ConfirmedPlan confirmedPlan) {
+        long startedAt = clock.millis();
         boolean planConfirmed = confirmedPlan.bound();
         String requestedModelId = request.modelId() == null ? "" : request.modelId().trim();
         if (planConfirmed && !requestedModelId.isBlank()

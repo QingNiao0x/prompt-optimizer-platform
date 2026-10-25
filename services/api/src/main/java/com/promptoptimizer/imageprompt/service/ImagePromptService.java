@@ -45,6 +45,31 @@ public class ImagePromptService {
                 ImagePromptAssetService.MAX_EDGE, 3, ImagePromptAssetService.TTL.toSeconds(), history.persistent());
     }
 
+    /** 访客只开放单图还原；额度与幂等由trial模块预占，不建立Plan或正式历史。 */
+    public Document extractTrial(String guest, Generate request) {
+        Input input = normalized(request.input().input());
+        if (input.mode() != Mode.REFERENCE_RECONSTRUCTION) throw ImagePromptException.invalid("请注册登录后使用图像Plan。");
+        var images = input.images().stream().map(reference -> {
+            Asset asset = assets.requireGuest(guest, reference.assetId());
+            return new ImageData(new ImageSource(asset.id(), asset.name(), asset.hash(), reference.role(), asset.width(), asset.height(), asset.expiresAt()),
+                    asset.mimeType(), assets.bytesGuest(guest, asset.id()));
+        }).toList();
+        var result = provider.invoke(new Call(Stage.EXTRACT, input, images, List.of(), List.of(), List.of(), "", ""));
+        images.forEach(image -> assets.requireGuest(guest, image.source().id()));
+        var generated = document(request.requestId(), input, images.stream().map(ImageData::source).toList(),
+                List.of(), List.of(), result, result.draft().analysis());
+        return new Document(generated.operationId(), null, generated.mode(), generated.optimizedPrompt(), generated.analysis(),
+                generated.warnings(), generated.input(), generated.sources(), List.of(), List.of(), generated.modelId(), generated.modelName(),
+                generated.mock(), 0, false, false, generated.createdAt());
+    }
+
+    /** 在扣除试用次数前确认输入及私有图片，客户端模式不能绕过Plan登录要求。 */
+    public void validateTrial(String guest, Generate request) {
+        Input input = normalized(request.input().input());
+        if (input.mode() != Mode.REFERENCE_RECONSTRUCTION) throw ImagePromptException.invalid("请注册登录后使用图像Plan。");
+        input.images().forEach(reference -> assets.requireGuest(guest, reference.assetId()));
+    }
+
     /** 关闭 Plan：一张必填图片，从图到文，不接收新图创作要求。 */
     public Document extract(Generate request) {
         var actor = current.require(); Input input = normalized(request.input().input());
