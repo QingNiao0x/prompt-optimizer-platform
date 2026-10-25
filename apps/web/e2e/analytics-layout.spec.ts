@@ -329,6 +329,8 @@ test('宽屏充分利用宽度，平板与手机不溢出；主题切换保留�
   await expect(page.getByText('细分次数自各功能埋点启用后记录；旧通用优化记录无法区分直接增强与 Plan 路径。')).toBeVisible();
   for (const width of [1920, 1440, 1024, 768, 390, 320]) {
     await page.setViewportSize({ width, height: 1000 });
+    const menu = page.getByRole('button', { name: '功能菜单', exact: true });
+    if (await menu.isVisible() && await menu.getAttribute('aria-expanded') === 'false') await menu.click();
     await expectContainedLayout(page);
     const ranking = await page.locator('.ranking-panel').boundingBox();
     const operations = await page.locator('.operations-panel').boundingBox();
@@ -345,7 +347,9 @@ test('宽屏充分利用宽度，平板与手机不溢出；主题切换保留�
     for (let index = 1; index < links.length; index += 1) {
       const previous = await links[index - 1]!.boundingBox();
       const current = await links[index]!.boundingBox();
-      expect(current!.x).toBeGreaterThanOrEqual(previous!.x + previous!.width - 1);
+      // 窄屏展开为多行网格；同一行左右互不重叠，换行后上下互不遮挡。
+      expect(current!.x >= previous!.x + previous!.width - 1
+        || current!.y >= previous!.y + previous!.height - 1).toBe(true);
     }
     // 验证 ECharts 已随容器缩放，而不是保留上一个屏宽的画布。
     await expect.poll(() => page.locator('.chart').first().evaluate((element) => {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Clock, DataAnalysis, HomeFilled, MagicStick, Picture, EditPen, Setting, Tools } from '@element-plus/icons-vue';
-import { computed } from 'vue';
-import { ElButton } from 'element-plus';
+import { Clock, Close, DataAnalysis, HomeFilled, MagicStick, Menu, Picture, EditPen, Setting, Tools } from '@element-plus/icons-vue';
+import { computed, ref, watch } from 'vue';
+import { ElButton, type ButtonInstance } from 'element-plus';
 import { useRoute } from 'vue-router';
 
 import BrandMark from '@/components/brand/BrandMark.vue';
@@ -17,6 +17,17 @@ const route = useRoute();
 const optimization = useOptimizationStore();
 const imagePrompt = useImagePromptStore();
 const textPolish = useTextPolishStore();
+const menuOpen = ref(false);
+const menuButton = ref<ButtonInstance>();
+
+const closeNavigation = (): void => {
+  menuOpen.value = false;
+  const button = menuButton.value?.$el;
+  if (button instanceof HTMLElement) button.focus();
+};
+
+// 共用顶栏也服务统计与独立工具；路由变化后收起菜单，避免遮住目标页面。
+watch(() => route.fullPath, () => { menuOpen.value = false; });
 // 顶栏与选择器共用展示短名；管理员名称和调用路由不变。
 const selectedModelVersion = computed(() => route.name === 'text-polish'
   ? formatModelVersion(textPolish.selectedModel?.displayName, '未选择模型')
@@ -37,7 +48,7 @@ const navigation = [
 </script>
 
 <template>
-  <header class="topbar">
+  <header class="topbar" @keydown.esc="closeNavigation">
     <RouterLink class="brand" to="/" aria-label="返回 PromptOptimizer 首页">
       <BrandMark compact />
       <span class="brand-copy">
@@ -46,7 +57,7 @@ const navigation = [
       </span>
     </RouterLink>
 
-    <nav class="main-nav" aria-label="主导航">
+    <nav id="app-main-navigation" class="main-nav" :class="{ 'main-nav--open': menuOpen }" aria-label="主导航" @click="menuOpen = false">
       <RouterLink
         v-for="item in navigation"
         :key="item.to"
@@ -68,6 +79,17 @@ const navigation = [
     </nav>
 
     <div class="topbar-tools">
+      <ElButton
+        ref="menuButton"
+        class="navigation-toggle"
+        :icon="menuOpen ? Close : Menu"
+        aria-label="功能菜单"
+        aria-controls="app-main-navigation"
+        :aria-expanded="menuOpen"
+        @click="menuOpen = !menuOpen"
+      >
+        {{ menuOpen ? '收起' : '菜单' }}
+      </ElButton>
       <AccountMenu />
       <ElButton v-if="!auth.isAuthenticated" type="primary" size="small" @click="$router.push({ path: '/login', query: { mode: 'register', redirect: route.path } })">注册 / 登录</ElButton>
       <!-- 各工具展示本任务选择的模型，使用独立状态，避免误示其他模块的模型。 -->
@@ -85,9 +107,10 @@ const navigation = [
   top: 0;
   z-index: 60;
   display: grid;
-  grid-template-columns: minmax(230px, 1fr) auto minmax(180px, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  column-gap: 16px;
   align-items: center;
-  height: 56px;
+  min-height: 64px;
   padding: 0 24px;
   border-bottom: 1px solid var(--glass-border-subtle);
   background: var(--glass-bg);
@@ -100,16 +123,26 @@ const navigation = [
   align-items: center;
   gap: 10px;
   width: fit-content;
+  min-width: 0;
+  max-width: 100%;
   color: var(--text-primary);
   text-decoration: none;
 }
 
+.brand > :first-child {
+  flex-shrink: 0;
+}
+
 .brand-copy {
   display: grid;
+  min-width: 0;
   gap: 1px;
 }
 
 .brand-copy strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--text-primary);
   font-size: 14px;
   font-weight: 600;
@@ -136,6 +169,7 @@ const navigation = [
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
+  min-height: 44px;
   gap: 6px;
   padding: 7px 16px;
   border-radius: var(--radius-pill);
@@ -148,6 +182,7 @@ const navigation = [
 }
 
 .nav-link svg {
+  flex-shrink: 0;
   width: 14px;
   height: 14px;
 }
@@ -163,15 +198,28 @@ const navigation = [
   align-items: center;
   justify-self: end;
   gap: 12px;
+  min-width: 0;
+}
+
+.navigation-toggle {
+  display: none;
 }
 
 .provider-status {
   display: inline-flex;
   align-items: center;
   gap: 7px;
+  min-width: 0;
+  max-width: 140px;
   color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 12px;
+}
+
+.provider-status > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .provider-status b {
@@ -189,8 +237,8 @@ const navigation = [
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 12%, transparent);
 }
 
-/* 图像入口加入后，中窄屏将导航独立成行，保留品牌与账号操作的可用空间。 */
-@media (max-width: 1200px) {
+/* 八个管理员入口在中屏独立成行；此处统一处理所有页面，不再由统计页覆盖导航布局。 */
+@media (max-width: 1440px) {
   .topbar {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas: 'brand tools' 'navigation navigation';
@@ -208,6 +256,7 @@ const navigation = [
 
   .main-nav {
     grid-area: navigation;
+    width: 100%;
   }
 
   .topbar-tools {
@@ -215,10 +264,9 @@ const navigation = [
   }
 }
 
-@media (max-width: 640px) {
-  .brand-copy small,
-  .provider-status,
-  .nav-link span {
+/* 手机和平板使用可展开的完整文字菜单，避免把八个入口挤成难以辨认的图标。 */
+@media (max-width: 1024px) {
+  .provider-status {
     display: none;
   }
 
@@ -227,20 +275,38 @@ const navigation = [
   }
 
   .topbar-tools {
-    display: flex;
-    gap: 0;
+    gap: 8px;
+  }
+
+  .navigation-toggle {
+    display: inline-flex;
+    min-height: 44px;
+    margin-left: 0;
   }
 
   .main-nav {
-    justify-self: stretch;
-    gap: 2px;
+    display: none;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    overflow: visible;
+    padding-block: 4px;
+  }
+
+  .main-nav--open {
+    display: grid;
   }
 
   .nav-link {
-    min-width: 44px;
+    min-width: 0;
     min-height: 44px;
-    justify-content: center;
-    padding: 8px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    line-height: 1.5;
+  }
+
+  .nav-link span {
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 
   .nav-link svg {
@@ -249,9 +315,17 @@ const navigation = [
   }
 }
 
-@media (max-width: 380px) {
-  .brand-copy {
+@media (max-width: 640px) {
+  .brand-copy small {
     display: none;
+  }
+
+  .main-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .topbar-tools :deep(.account-menu button) {
+    min-height: 44px;
   }
 }
 </style>

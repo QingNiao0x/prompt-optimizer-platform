@@ -33,9 +33,15 @@
 - `JdbcAccountRegistrationGateway`：在同一事务中创建个人租户、账户、默认工作区、OWNER 成员关系和已验证邮箱身份。
 - `SecurityConfiguration`：除登录、CSRF 初始化和健康检查外，API 必须登录；写请求还必须通过 CSRF 校验。
 
-使用 HttpOnly 的 `JSESSIONID` 保存浏览器会话标识，不把登录凭据或认证 Token 存入 localStorage。注册、登录和启动配置密码均至少 8 个字符，且 UTF-8 编码不超过 BCrypt 的 72 字节上限。登录输入超过该字节上限会被拒绝，避免截断导致不同密码被视为相同。
+使用 HttpOnly Cookie 保存服务端会话标识：普通模式由 Spring Session 使用 `SESSION` Cookie 和 Redis 保存认证上下文；无 Redis 的 `local-mock` 使用 Servlet 会话，默认 Cookie 名为 `JSESSIONID`。当前认证链路不使用 JWT，也不把登录凭据或认证 Token 存入 localStorage。注册、登录和启动配置密码均至少 8 个字符，且 UTF-8 编码不超过 BCrypt 的 72 字节上限。登录输入超过该字节上限会被拒绝，避免截断导致不同密码被视为相同。
 
-默认 Session 空闲超时 8 小时，可通过 `AUTH_SESSION_TIMEOUT` 调整；这不是固定的绝对有效期。当前为单实例 Servlet Session，重启后需要重新登录。
+默认 Session 空闲超时为 **7 天**，通过 `AUTH_SESSION_TIMEOUT` 调整；浏览器 Cookie 默认也保留 7 天，可通过 `AUTH_SESSION_COOKIE_MAX_AGE` 单独设置，未设置时跟随前者。配置使用 Spring Boot 时长格式，如 `7d`、`12h`。这是持久会话方案，覆盖密码、短信登录及注册后的自动登录，不额外签发长期 JWT 或 Remember Me Token。
+
+关闭标签页、退出浏览器或系统回收浏览器进程后，浏览器保留的持久 Cookie 可以恢复仍有效的服务端 Session。前端 `auth.ts` 在新页面通过 `/auth/me` 和 CSRF 初始化恢复身份，不依赖之前的 Pinia 内存。空闲超时与浏览器 Cookie 到期分别生效，任一失效都需重新登录；成功重新认证也会把旧 Session 的空闲时限更新为当前配置。
+
+Redis 中的会话可跨 API 进程重启恢复，前提是仍使用相同 Redis、命名空间和兼容的会话对象，且 Redis 数据未丢失；`local-mock` 的进程内会话重启后仍会丢失。清除站点数据／Cookie、隐私浏览或浏览器主动清理存储后无法保留身份，需要重新登录。仅清除页面缓存与清除 Cookie 是两件事。
+
+部署时如已显式配置 `AUTH_SESSION_TIMEOUT=8h`，需同步更新该环境变量，不能只依赖源码默认值。修改后重启 API 并重新登录一次以获得新 Cookie。可配置 `AUTH_SESSION_COOKIE_MAX_AGE=-1` 恢复浏览器会话 Cookie；公共设备使用后应主动退出登录。退出使服务端 Session 失效，Spring Session 同时清除持久 Cookie，恢复旧 Cookie 也不能重新认证。
 
 如果前端和 API 部署在不同域名，必须将 `AUTH_CORS_ALLOWED_ORIGIN` 设置为完整的前端 Origin，并在 HTTPS 环境设置 `AUTH_COOKIE_SECURE=true`、`AUTH_COOKIE_SAME_SITE=None`，否则浏览器不会携带登录 Session 和 CSRF Cookie。不要使用 `*` 作为允许来源。
 
@@ -133,7 +139,7 @@ mvn.cmd spring-boot:run '-Dspring-boot.run.profiles=local-mock'
 
 前端在 `apps/web` 目录执行 `npm.cmd run dev`。开发服务器把 `/api` 代理到后端；生产也建议使用同源反向代理。当前没有开放跨域认证，直接把 API base URL 改为另一个站点并不足以完成跨域部署。
 
-HTTPS 部署必须设置 `AUTH_COOKIE_SECURE=true`，同时保证代理配置正确。`JSESSIONID` 和 `XSRF-TOKEN` 都使用 SameSite=Lax；本机 HTTP 联调保持 Secure=false。Session 只通过 Cookie 传输，不接受 URL 中的 Session ID。
+HTTPS 部署必须设置 `AUTH_COOKIE_SECURE=true`，同时保证代理配置正确。认证 Cookie 保持 HttpOnly、默认 SameSite=Lax；可由前端读取的 `XSRF-TOKEN` 用于 Cookie/Header 双提交，页面重新打开后可重新获取，不承担持久登录身份。两者在本机 HTTP 联调保持 Secure=false。Session 只通过 Cookie 传输，不接受 URL 中的 Session ID。延长有效期不会关闭 CSRF、会话 ID 轮换、管理员权限校验或退出失效。
 
 ## 4. API 契约
 
@@ -220,7 +226,7 @@ npm.cmd run test:e2e -- auth-real.spec.ts
 本轮完成的是可信身份入口和 Plan 资源隔离。公网或多实例上线前仍应处理：
 
 - 登录限流、防暴力破解、审计与监控。
-- 分布式登录 Session、会话撤销和账户禁用后的即时失效。目前已有 Session 不会逐请求重查账户状态，紧急禁用需同时撤销会话。
+- 细粒度会话管理和账户禁用后的即时失效。目前普通模式已有 Redis 共享 Session，但尚无面向管理员的完整设备会话列表／批量撤销界面；已有 Session 不会逐请求重查账户状态，紧急禁用仍需同时撤销服务端会话。
 - 上传文档 `documentId` 等其他临时资源的完整所有权审计；不能从 Plan ID 已隔离推导全部资源均已隔离。
 - 团队角色、邀请、工作区切换和跨成员资源共享策略。
 - 改密、找回密码、邮箱换绑与登录防暴力破解；注册验证码限流不能替代登录接口限流。

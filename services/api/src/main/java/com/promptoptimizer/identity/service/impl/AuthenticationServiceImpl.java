@@ -21,6 +21,7 @@ import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 
 /**
  * 登录、当前用户读取和退出的应用模块。
@@ -40,6 +41,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final LoginCaptchaService loginCaptchaService;
     private final LoginFailureGuard loginFailureGuard;
     private com.promptoptimizer.identity.mapper.SmsAccountMapper smsAccounts;
+    private int sessionTimeoutSeconds = Math.toIntExact(Duration.ofDays(7).toSeconds());
+
+    /**
+     * 与 Spring Session 保持相同超时口径；成功重新认证时也更新部署前已存在的短会话。
+     * Spring Session 配置优先于 Servlet 回退，拒绝无限或超出 Servlet 秒数范围的配置。
+     */
+    @org.springframework.beans.factory.annotation.Autowired
+    public void configureSessionLifetime(org.springframework.core.env.Environment environment) {
+        String configured = environment.getProperty("spring.session.timeout",
+                environment.getProperty("server.servlet.session.timeout", "7d"));
+        long seconds = org.springframework.boot.convert.DurationStyle.detectAndParse(configured).toSeconds();
+        if (seconds < 1 || seconds > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("登录会话有效期必须是有限的正数秒。");
+        }
+        sessionTimeoutSeconds = Math.toIntExact(seconds);
+    }
 
     /** 本地模拟模式没有持久化 Mapper；真实账户资料只暴露脱敏号码。 */
     @org.springframework.beans.factory.annotation.Autowired
@@ -141,7 +158,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return establishSession(authentication, request, response);
     }
 
-    /** 两条认证链路共享 Session ID 轮换、CSRF 更新及上下文保存。 */
+    /** 密码、注册及短信认证共享 Session ID 轮换、有效期、CSRF 更新及上下文保存。 */
     private AuthenticatedUserView establishSession(Authentication authentication, HttpServletRequest request,
             HttpServletResponse response) {
         sessionAuthenticationStrategy.onAuthentication(authentication, request, response);
@@ -149,6 +166,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
         securityContextRepository.saveContext(context, request, response);
+        // 旧 Redis 会话轮换 ID 不会自动采用新默认 TTL，显式更新，避免重新登录后仍按旧时限掉线。
+        request.getSession().setMaxInactiveInterval(sessionTimeoutSeconds);
         // 登录时旧 Token 已被旋转策略清除；立即下发新 Token，保证下一次写请求可用。
         csrfTokenRepository.saveToken(csrfTokenRepository.generateToken(request), request, response);
         analyticsEventService.recordLogin(request);

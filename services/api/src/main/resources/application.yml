@@ -24,7 +24,8 @@ spring:
       url: ${REDIS_URL:redis://localhost:6379}
   session:
     store-type: redis
-    timeout: ${AUTH_SESSION_TIMEOUT:8h}
+    # 与浏览器持久 Cookie 配合；空闲超过此时长后，Redis 中的登录身份仍会失效。
+    timeout: ${AUTH_SESSION_TIMEOUT:7d}
     redis:
       namespace: prompt-optimizer:session
   mail:
@@ -68,11 +69,13 @@ server:
   servlet:
     session:
       tracking-modes: cookie
-      timeout: ${AUTH_SESSION_TIMEOUT:8h}
+      timeout: ${AUTH_SESSION_TIMEOUT:7d}
       cookie:
         http-only: true
         secure: ${AUTH_COOKIE_SECURE:false}
         same-site: ${AUTH_COOKIE_SAME_SITE:Lax}
+        # 关闭标签页或回收浏览器进程后仍可恢复；设为 -1 可退回仅浏览器会话 Cookie。
+        max-age: ${AUTH_SESSION_COOKIE_MAX_AGE:${AUTH_SESSION_TIMEOUT:7d}}
   tomcat:
     # 大项目上下文可能一次性提交数百个文件，放宽默认 2MB 请求体限制。
     max-swallow-size: 8MB
