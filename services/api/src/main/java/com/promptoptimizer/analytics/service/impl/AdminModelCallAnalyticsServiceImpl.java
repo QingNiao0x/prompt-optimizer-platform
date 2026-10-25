@@ -59,7 +59,7 @@ public class AdminModelCallAnalyticsServiceImpl implements AdminModelCallAnalyti
         int size = bounded(query.size(), 20, 100, "size");
         String operation = query.operation();
         if (operation != null && !Set.of("prompt.optimize", "plan.generate", "document.summary.map",
-                "document.summary.reduce", "context.embedding", "text.polish", "unknown").contains(operation)) {
+                "document.summary.reduce", "context.embedding", "context.vision", "text.polish", "unknown").contains(operation)) {
             throw new InvalidOptimizationRequestException("operation 不是可查询的模型操作代码");
         }
         String requestId = query.requestId();

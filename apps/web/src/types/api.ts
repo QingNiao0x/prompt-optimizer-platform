@@ -280,7 +280,7 @@ export interface AnalyticsOperationQuery extends AnalyticsAccountFilters {
 
 /** 模型对账只按租户归属；不得加入账号、邮箱或名称过滤条件。 */
 export type ModelCallScope = 'GLOBAL' | 'TENANT';
-export type ModelCallOperation = 'prompt.optimize' | 'plan.generate' | 'document.summary.map' | 'document.summary.reduce' | 'context.embedding' | 'unknown';
+export type ModelCallOperation = 'prompt.optimize' | 'plan.generate' | 'document.summary.map' | 'document.summary.reduce' | 'context.embedding' | 'context.vision' | 'unknown';
 export type ModelCallUsageState = 'COMPLETE' | 'PARTIAL' | 'UNKNOWN' | 'INVALID';
 export interface TokenRankingQuery {
   period: AnalyticsRankingPeriod;
@@ -472,6 +472,7 @@ export type DocumentProcessingPhase =
   | 'UPLOADING'
   | 'QUEUED'
   | 'EXTRACTING'
+  | 'AWAITING_CONFIRMATION'
   | 'INDEXING'
   | 'SUMMARIZING'
   | 'READY'
@@ -494,7 +495,19 @@ export interface DocumentUploadStatus {
   errorMessage: string;
   expiresAt: string;
   chunkSizeBytes: number;
+  visionReview?: ContextVisionReview | null;
+  pageCoverage?: { page: number; method: string; status: string; message: string }[];
 }
+
+export interface ContextVisionReview {
+  pages: { page: number; readableText: boolean; hasImages: boolean; suggested: boolean; blocked: boolean; reason: string }[];
+  maxPages: number; maxCalls: number; maxOutputTokens: number; deadlineSeconds: number;
+}
+export interface ContextVisionMask { x: number; y: number; width: number; height: number }
+export interface ContextVisionConfirmation {
+  modelId: string; consent: boolean; pages: { page: number; masks: ContextVisionMask[] }[];
+}
+export interface ContextVisionModel { id: string; displayName: string; vision: boolean; maxImages: number; evidence: string; mock: boolean }
 
 export type TemplateCode =
   | 'AUTO'

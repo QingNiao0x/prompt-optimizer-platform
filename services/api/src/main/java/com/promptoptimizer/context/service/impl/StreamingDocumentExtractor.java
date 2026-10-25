@@ -72,6 +72,7 @@ public class StreamingDocumentExtractor {
     ) {
         String normalizedLanguage = language == null ? "text" : language.toLowerCase(Locale.ROOT);
         BoundedSectionSink sink = new BoundedSectionSink(consumer);
+        List<String> warnings = new ArrayList<>();
         try {
             switch (normalizedLanguage) {
                 case "docx" -> extractZipXml(
@@ -101,12 +102,14 @@ public class StreamingDocumentExtractor {
                 case "doc" -> extractLegacyWord(source, sink, progressListener);
                 case "ppt" -> extractLegacyPresentation(source, sink, progressListener);
                 case "xls", "xlsx" -> extractSpreadsheet(source, sink, progressListener);
-                case "pdf" -> extractPdf(source, sink, progressListener);
+                case "pdf" -> extractPdf(source, sink, progressListener, warnings);
                 case "wps" -> extractWpsDocument(source, sink, progressListener);
                 case "dps" -> extractWpsPresentation(source, sink, progressListener);
                 case "et" -> extractWpsSpreadsheet(source, sink, progressListener);
-                case "jpeg", "jpg", "png", "gif", "webp", "bmp" ->
-                        extractImage(source, logicalPath, normalizedLanguage, sink, progressListener);
+                case "jpeg", "jpg", "png", "gif", "webp", "bmp" -> {
+                    extractImage(source, logicalPath, normalizedLanguage, sink, progressListener);
+                    warnings.add("仅提取图片元数据，画面内容未识别；可从工作台选择视觉识别。");
+                }
                 default -> extractText(source, sink, progressListener);
             }
         } catch (IOException | XMLStreamException | RuntimeException exception) {
@@ -121,13 +124,11 @@ public class StreamingDocumentExtractor {
                     : "文件中没有可提取的文本内容";
             throw new IllegalArgumentException(message);
         }
-        List<String> warnings = sink.limitReached()
-                ? List.of("提取内容超过 100,000,000 字符，已按安全上限停止；当前结果为部分解析。")
-                : List.of();
+        if (sink.limitReached()) warnings.add("提取内容超过 100,000,000 字符，已按安全上限停止；当前结果为部分解析。");
         return new ExtractionReport(
                 sink.sections(),
                 sink.characters(),
-                !sink.limitReached(),
+                !sink.limitReached() && warnings.isEmpty(),
                 warnings
         );
     }
@@ -154,11 +155,12 @@ public class StreamingDocumentExtractor {
         progressListener.onProgress(fileSize, Math.max(fileSize, 1));
     }
 
-    /** 按页提取 PDF 文本层；扫描版 PDF 不在这里执行 OCR。 */
+    /** 纯本地兼容链按页提取文字层；混合 PDF 中缺少文字的非空页必须明确标为未识别。 */
     private void extractPdf(
             Path source,
             BoundedSectionSink sink,
-            ProgressListener progressListener
+            ProgressListener progressListener,
+            List<String> warnings
     ) throws IOException {
         try (PDDocument document = Loader.loadPDF(source.toFile())) {
             int pageCount = document.getNumberOfPages();
@@ -167,7 +169,10 @@ public class StreamingDocumentExtractor {
             for (int page = 1; page <= pageCount && !sink.limitReached(); page++) {
                 stripper.setStartPage(page);
                 stripper.setEndPage(page);
-                sink.accept("PDF 第 " + page + " 页", stripper.getText(document));
+                String text = stripper.getText(document);
+                sink.accept("PDF 第 " + page + " 页", text);
+                if (text.isBlank() && document.getPage(page - 1).hasContents())
+                    warnings.add("PDF 第 " + page + " 页没有可提取文字，画面尚未识别。");
                 progressListener.onProgress(page, Math.max(pageCount, 1));
             }
         }

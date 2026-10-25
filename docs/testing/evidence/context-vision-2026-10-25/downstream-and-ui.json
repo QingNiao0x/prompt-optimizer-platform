@@ -1,0 +1,142 @@
+{
+  "rawPrompt": "根据上传的采购资料撰写一份面向项目负责人的中文采购报告，约800字；引用样本数、报警阈值和原始单价，保留人工复核和不得删除历史数据的要求。包含资料摘要、采购明细、风险和建议。材料未给的金额不计算、不编造；其他结构与措辞由你合理设计。",
+  "plan": {
+    "questions": [],
+    "summary": "原定任务是根据上传的采购资料撰写一份面向项目负责人的约800字中文采购报告，包含资料摘要、采购明细、风险和建议，引用样本数、报警阈值和原始单价，保留人工复核与不得删除历史数据的要求，且不计算或编造材料未给的金额。现有资料已覆盖报告所需的事实要素，结构与措辞已由用户委托执行者设计，无需就交付内容向用户追问。",
+    "contextDigest": {
+      "description": "合成采购资料，仅以已识别原文为事实依据",
+      "technologies": [],
+      "dependencies": [],
+      "directoryOverview": [
+        "scanned.pdf"
+      ],
+      "fileSummaries": [
+        "[USER_MATERIAL] scanned.pdf：PDF 文档摘要：第 2 页 · 视觉描述（模型解释，需核对）；报警阈值：27件；项目 数量 单价（元）；| 项目 | 数量 | 单价（元） |；白底页面，顶部为标题，其下为三列表格（项目、数量、单价（元））共三行数据，表格下方有一行说明文字。；业务摘录：[片段 1/1] [文档片段 1/1 · 第 2 页 · 视觉描述（模型解释，需核对）] ## 第 1 页 · 视觉原文转录 青叶项目资料 任务交付：撰写一份采购报告。 数据日期：2026-10-25 样本数：128 报警阈值：27件 规则：超过27件必须人工复核。 不得删除历史数据。 ## 第 1 页 · 视觉描述（模型解释，需核对） 白底黑字的纯文本页面，内容按行纵向排列，无图表、表格或遮挡区域。 ## 第 2 页 · 视觉原文转录 采购明细（原始记录） 项目 数量 单价（元） 纸张 12 6.50 墨盒 3 99.00 文件夹 8 4.20 仅引用原始金额，不补造总价。 ## 第 2 页 · 视觉表格转录 | 项目 | 数量 | 单价（元） | | --- | --- | --- | | 纸张 | 12 | 6.50 | | 墨盒 | 3 | 99.00 | | 文件夹 | 8 | 4.20 | ## 第 2 页 · 视觉描述（模型解释，需核对） 白底页面，顶部为标题，其下为三列表格（项目、数量、单价（元））共三行数据，表格下方有一行说明文字。"
+      ],
+      "analysisStatus": "COMPLETE",
+      "analyzedFileCount": 1,
+      "warnings": [],
+      "factCards": [
+        {
+          "id": "F01",
+          "category": "BUSINESS_RULE",
+          "origin": "USER_MATERIAL",
+          "sourcePath": "scanned.pdf",
+          "evidence": "报警阈值：27件"
+        },
+        {
+          "id": "F02",
+          "category": "BUSINESS_RULE",
+          "origin": "USER_MATERIAL",
+          "sourcePath": "scanned.pdf",
+          "evidence": "规则：超过27件必须人工复核"
+        }
+      ]
+    }
+  },
+  "final": {
+    "optimizedPrompt": "请根据上传的采购资料（scanned.pdf）撰写一份面向项目负责人的中文采购报告，约800字，包含资料摘要、采购明细、风险和建议四个部分。报告须引用样本数128、报警阈值27件以及原始单价（纸张6.50元、墨盒99.00元、文件夹4.20元），并保留“超过27件必须人工复核”和“不得删除历史数据”两项要求。采购明细按原始记录列出纸张12、墨盒3、文件夹8及其单价，只引用原始金额，不计算、不补造任何总价或资料未给出的金额。资料摘要说明数据日期为2026-10-25及样本数与报警阈值的含义；风险部分围绕报警阈值与人工复核规则展开；建议部分结合人工复核与历史数据留存提出可执行建议。其他结构与措辞由你合理设计，语言简洁、面向项目负责人。",
+    "contextReport": {
+      "customDescription": "合成采购资料，仅以已识别原文为事实依据",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "scanned.pdf"
+      ],
+      "fileSnippets": [
+        {
+          "path": "scanned.pdf",
+          "language": "pdf",
+          "content": "[片段 1/1]\n[文档片段 1/1 · 第 2 页 · 视觉描述（模型解释，需核对）]\n\n## 第 1 页 · 视觉原文转录\n青叶项目资料\n\n任务交付：撰写一份采购报告。\n\n数据日期：2026-10-25\n\n样本数：128\n\n报警阈值：27件\n\n规则：超过27件必须人工复核。\n\n不得删除历史数据。\n## 第 1 页 · 视觉描述（模型解释，需核对）\n白底黑字的纯文本页面，内容按行纵向排列，无图表、表格或遮挡区域。\n## 第 2 页 · 视觉原文转录\n采购明细（原始记录）\n项目 数量 单价（元）\n纸张 12 6.50\n墨盒 3 99.00\n文件夹 8 4.20\n仅引用原始金额，不补造总价。\n## 第 2 页 · 视觉表格转录\n| 项目 | 数量 | 单价（元） |\n| --- | --- | --- |\n| 纸张 | 12 | 6.50 |\n| 墨盒 | 3 | 99.00 |\n| 文件夹 | 8 | 4.20 |\n## 第 2 页 · 视觉描述（模型解释，需核对）\n白底页面，顶部为标题，其下为三列表格（项目、数量、单价（元））共三行数据，表格下方有一行说明文字。",
+          "summary": "PDF 文档摘要：第 2 页 · 视觉描述（模型解释，需核对）；报警阈值：27件；项目 数量 单价（元）；| 项目 | 数量 | 单价（元） |；白底页面，顶部为标题，其下为三列表格（项目、数量、单价（元））共三行数据，表格下方有一行说明文字。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [
+        {
+          "path": "scanned.pdf",
+          "extractionStatus": "COMPLETE",
+          "sourceBytes": 82373,
+          "extractedCharacters": 333,
+          "indexedChunks": 1,
+          "selectedChunks": 1,
+          "selectedCharacters": 444,
+          "contextLimited": false,
+          "message": "本次已使用全部提取内容"
+        }
+      ],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "pipeline": "NATURAL",
+    "chainVersion": "31"
+  },
+  "uiBeforeFix": {
+    "analysisStatus": "EMPTY",
+    "thresholdPresent": false,
+    "secretAbsent": true,
+    "qualifiesAsRecognitionPass": false
+  },
+  "uiAfterFix": {
+    "initiallyDisabled": true,
+    "confirmationCount": 1,
+    "confirmation": [
+      {
+        "modelId": "deepseek:deepseek-flash",
+        "consent": true,
+        "pages": [
+          {
+            "page": 1,
+            "masks": [
+              {
+                "x": 0,
+                "y": 0,
+                "width": 1,
+                "height": 0.25
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "analysisStatus": "COMPLETE",
+    "thresholdPresent": true,
+    "secretAbsent": true,
+    "contextReport": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "mask.png"
+      ],
+      "fileSnippets": [
+        {
+          "path": "mask.png",
+          "language": "png",
+          "content": "[片段 1/1]\n[文档片段 1/1 · 第 1 页 · 视觉描述（模型解释，需核对）]\n\n## 第 1 页 · 视觉原文转录\n可公开资料：青叶采购项目\n\n报警阈值：27件\n\n超过27件必须人工复核。\n\n不得删除历史数据。\n## 第 1 页 · 视觉描述（模型解释，需核对）\n白底页面，顶部有一条横贯页面的不透明黑色遮挡区域，下方为四行左对齐的黑色文字，行间留有空行。",
+          "summary": "图片元数据：第 1 页 · 视觉描述（模型解释，需核对）；第 1 页 · 视觉原文转录；可公开资料：青叶采购项目；报警阈值：27件；超过27件必须人工复核。",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [
+        {
+          "path": "mask.png",
+          "extractionStatus": "COMPLETE",
+          "sourceBytes": 38628,
+          "extractedCharacters": 93,
+          "indexedChunks": 1,
+          "selectedChunks": 1,
+          "selectedCharacters": 139,
+          "contextLimited": false,
+          "message": "本次已使用全部提取内容"
+        }
+      ],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    }
+  }
+}

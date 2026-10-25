@@ -2,12 +2,13 @@ import type { AxiosProgressEvent } from 'axios';
 
 import { httpClient } from './http';
 
-import type { ApiResponse, DocumentUploadStatus } from '@/types/api';
+import type { ApiResponse, DocumentUploadStatus, ContextVisionConfirmation, ContextVisionModel } from '@/types/api';
 
 export interface DocumentUploadCreatePayload {
   path: string;
   language: string;
   sizeBytes: number;
+  visionRequested?: boolean;
 }
 
 /** 创建大型文档临时索引任务，响应会告知服务端采用的分片大小。 */
@@ -71,3 +72,15 @@ export const getDocumentUploadStatus = async (
 export const deleteDocumentUpload = async (documentId: string): Promise<void> => {
   await httpClient.delete(`/api/v1/context/documents/${documentId}`);
 };
+
+/** 共用管理员维护的模型目录及视觉准入，密钥仍只在服务端。 */
+export const listContextVisionModels = async (signal?: AbortSignal): Promise<ContextVisionModel[]> =>
+  (await httpClient.get<ApiResponse<ContextVisionModel[]>>('/api/v1/context/documents/vision-models', { signal })).data.data;
+
+/** 私有预览通过 Cookie 验证；URL 仅由服务端文档标识和页码构造，不接受外部图片链接。 */
+export const getContextPagePreview = async (documentId: string, page: number, signal?: AbortSignal): Promise<Blob> =>
+  (await httpClient.get<Blob>(`/api/v1/context/documents/${encodeURIComponent(documentId)}/pages/${page}`, { responseType: 'blob', signal })).data;
+
+/** 不自动重试确认；网络结果未知时继续查同一会话状态，不能重放识别调用。 */
+export const confirmContextVision = async (documentId: string, input: ContextVisionConfirmation, signal?: AbortSignal): Promise<ApiResponse<DocumentUploadStatus>> =>
+  (await httpClient.post<ApiResponse<DocumentUploadStatus>>(`/api/v1/context/documents/${encodeURIComponent(documentId)}/vision`, input, { signal })).data;

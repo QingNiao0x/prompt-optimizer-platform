@@ -584,6 +584,7 @@ const addManualFile = (): void => {
       class="analyze-button"
       :icon="Search"
       :loading="isAnalyzing"
+      :disabled="isReading"
       plain
       @click="emit('analyze')"
     >

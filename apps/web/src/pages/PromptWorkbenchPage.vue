@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { optimizationCompletionNotice } from '@/features/optimization/processingStatus';
+import ContextVisionReviewDialog from '@/components/context/ContextVisionReviewDialog.vue';
+import { useContextVisionStore } from '@/stores/contextVision';
 import { WarningFilled } from '@element-plus/icons-vue';
 import { ElAlert, ElButton, ElInput, ElMessage, ElMessageBox } from 'element-plus';
 import { storeToRefs } from 'pinia';
@@ -72,13 +74,14 @@ const {
   canReuseGenerationSource,
 } = storeToRefs(store);
 
+const contextVision = useContextVisionStore();
 const {
   isReading,
   warnings,
   progress,
   selectFileArray,
   reset: resetProjectFiles,
-} = useProjectFiles();
+} = useProjectFiles({ reviewVision: (status, signal) => contextVision.review(status, signal, store.selectedModelId) });
 const {
   isSupported: supportsDirectoryPicker,
   isSelecting: isSelectingDirectory,
@@ -410,7 +413,7 @@ const handleReEnhance = async (): Promise<void> => {
 
 /** 模式变更须显式重新生成；保留原请求绑定，不能把已优化正文当作新 raw 复用旧 Plan。 */
 const handleRegenerateWithFormat = async (): Promise<void> => {
-  if (isPreparingContext.value || isRecoveringPlan.value || planDialogVisible.value) return;
+  if (isReading.value || isPreparingContext.value || isRecoveringPlan.value || planDialogVisible.value) return;
   if (hasUnsavedResultDraft.value) {
     ElMessage.warning('请先保存或取消结果中的修改，再按所选模式重新增强。');
     return;
@@ -596,6 +599,11 @@ const prepareContextTransmission = async (
   willCallModel: boolean,
   planningDigestOnly = false,
 ): Promise<ContextFileInput[] | undefined> => {
+  // 临时索引只有处理完成才加入文件集合，提前提交会静默遗漏正在识别的材料。
+  if (isReading.value) {
+    ElMessage.info('上下文文件仍在上传、审阅或识别，请完成后再继续。');
+    return undefined;
+  }
   if (isPreparingContext.value) return undefined;
   const lease = store.captureContext();
   store.isPreparingContext = true;
@@ -815,7 +823,7 @@ onBeforeUnmount(() => {
         :is-analyzing="isAnalyzing"
         :is-planning="isPlanning"
         :is-optimizing="isOptimizing || isPreparingContext"
-        :can-optimize="canOptimize && trial.canUse('PROMPT_ENHANCEMENT')"
+        :can-optimize="canOptimize && !isReading && trial.canUse('PROMPT_ENHANCEMENT')"
         :allow-plan="auth.isAuthenticated"
         @update:raw-prompt="rawPrompt = $event"
         @update:structured-prompt="store.setPromptFormat($event ? 'STRUCTURED' : 'COMPACT')"
@@ -847,6 +855,7 @@ onBeforeUnmount(() => {
       @confirm="handleUploadConfirmed"
       @update:model-value="handleUploadDialogVisibility"
     />
+    <ContextVisionReviewDialog />
     <PlanQuestionDialog
       v-model="planDialogVisible"
       :plan="plan"

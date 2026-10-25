@@ -6,6 +6,7 @@ vi.mock('@/services/documentUploadApi', () => ({
   completeDocumentUpload: vi.fn(),
   getDocumentUploadStatus: vi.fn(),
   deleteDocumentUpload: vi.fn(),
+  confirmContextVision: vi.fn(),
 }));
 
 import { uploadAndIndexDocument } from './documentUploader';
@@ -13,6 +14,8 @@ import {
   completeDocumentUpload,
   createDocumentUpload,
   uploadDocumentChunk,
+  confirmContextVision,
+  getDocumentUploadStatus,
 } from '@/services/documentUploadApi';
 import type { DocumentUploadStatus } from '@/types/api';
 
@@ -35,6 +38,30 @@ const status = (overrides: Partial<DocumentUploadStatus> = {}): DocumentUploadSt
 });
 
 describe('uploadAndIndexDocument', () => {
+  it('waits for explicit vision confirmation and queries an uncertain confirmation without replaying it', async () => {
+    vi.clearAllMocks();
+    const ready = status({ phase: 'PARTIAL', warnings: ['第 2 页未识别'], chunkCount: 1 });
+    const waiting = status({ phase: 'AWAITING_CONFIRMATION', visionReview: { pages: [{ page: 1, readableText: false,
+      hasImages: true, suggested: true, blocked: false, reason: '扫描页' }], maxPages: 10, maxCalls: 10, maxOutputTokens: 8000, deadlineSeconds: 180 } });
+    vi.mocked(createDocumentUpload).mockResolvedValue({ requestId: 'create', data: status() });
+    vi.mocked(uploadDocumentChunk).mockResolvedValue({ requestId: 'chunk', data: status() });
+    vi.mocked(completeDocumentUpload).mockResolvedValue({ requestId: 'complete', data: waiting });
+    vi.mocked(confirmContextVision).mockRejectedValue(new Error('uncertain transport'));
+    vi.mocked(getDocumentUploadStatus).mockResolvedValue({ requestId: 'status', data: ready });
+    let resolve!: (value: { modelId: string; consent: boolean; pages: { page: number; masks: [] }[] }) => void;
+    const confirmation = new Promise<{ modelId: string; consent: boolean; pages: { page: number; masks: [] }[] }>(settle => { resolve = settle; });
+    const review = vi.fn(() => confirmation);
+    const operation = uploadAndIndexDocument(new File(['synthetic'], 'scan.png'), 'scan.png', 'png', undefined, undefined, review);
+    await vi.waitFor(() => expect(review).toHaveBeenCalledOnce());
+    expect(confirmContextVision).not.toHaveBeenCalled();
+    resolve({ modelId: 'fixture', consent: true, pages: [{ page: 1, masks: [] }] });
+    const result = await operation;
+    expect(confirmContextVision).toHaveBeenCalledOnce();
+    expect(getDocumentUploadStatus).toHaveBeenCalledOnce();
+    expect(result.status.phase).toBe('PARTIAL');
+    expect(createDocumentUpload).toHaveBeenCalledWith(expect.objectContaining({ visionRequested: true }), undefined);
+    vi.clearAllMocks();
+  });
   it('should upload fixed chunks and return only a lightweight document reference', async () => {
     vi.mocked(createDocumentUpload).mockResolvedValue({
       requestId: 'create',

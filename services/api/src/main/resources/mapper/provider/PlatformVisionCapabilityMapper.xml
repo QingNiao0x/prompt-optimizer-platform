@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.provider.mapper.PlatformVisionCapabilityMapper">
+    <resultMap id="capability" type="com.promptoptimizer.provider.mapper.PlatformVisionCapabilityMapper$Capability">
+        <constructor>
+            <idArg column="model_id" javaType="java.lang.String"/>
+            <arg column="enabled" javaType="_boolean"/>
+            <arg column="max_images" javaType="_int"/>
+            <arg column="evidence" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+    <select id="capabilities" resultMap="capability">
+        SELECT c.model_id, c.enabled, c.max_images, c.evidence FROM image_prompt_model_capability c
+        JOIN platform_model m ON m.public_id = c.model_id WHERE m.deleted_at IS NULL
+    </select>
+</mapper>

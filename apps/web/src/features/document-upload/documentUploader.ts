@@ -4,11 +4,13 @@ import {
   deleteDocumentUpload,
   getDocumentUploadStatus,
   uploadDocumentChunk,
+  confirmContextVision,
 } from '@/services/documentUploadApi';
 import type {
   ContextFileInput,
   DocumentProcessingPhase,
   DocumentUploadStatus,
+  ContextVisionConfirmation,
 } from '@/types/api';
 
 const STATUS_POLL_INTERVAL_MS = 400;
@@ -39,10 +41,13 @@ export const uploadAndIndexDocument = async (
   language: string,
   onProgress?: (progress: DocumentUploadProgress) => void,
   signal?: AbortSignal,
+  reviewVision?: (status: DocumentUploadStatus, signal?: AbortSignal) => Promise<ContextVisionConfirmation>,
 ): Promise<UploadedDocument> => {
   let documentId = '';
   try {
-    const created = await createDocumentUpload({ path, language, sizeBytes: source.size }, signal);
+    const visionRequested = Boolean(reviewVision) && ['jpeg', 'jpg', 'png', 'pdf'].includes(language);
+    const created = await createDocumentUpload({ path, language, sizeBytes: source.size,
+      ...(visionRequested ? { visionRequested: true } : {}) }, signal);
     documentId = created.data.documentId;
     const chunkSize = created.data.chunkSizeBytes;
     const chunkCount = Math.ceil(source.size / chunkSize);
@@ -68,8 +73,25 @@ export const uploadAndIndexDocument = async (
 
     let status = (await completeDocumentUpload(documentId, signal)).data;
     onProgress?.(toProgress(status));
-    const deadline = Date.now() + PROCESSING_TIMEOUT_MS;
+    let deadline = Date.now() + PROCESSING_TIMEOUT_MS;
     while (!isTerminal(status.phase)) {
+      if (status.phase === 'AWAITING_CONFIRMATION') {
+        if (!reviewVision || !status.visionReview) throw new Error('本次识别需要明确确认，请重新从工作台添加文件。');
+        const reviewStarted = Date.now();
+        const confirmation = await reviewVision(status, signal);
+        throwIfAborted(signal);
+        deadline += Date.now() - reviewStarted;
+        // 同一会话只确认一次；确认响应丢失时先查询，不重复发送模型任务。
+        try { status = (await confirmContextVision(documentId, confirmation, signal)).data; }
+        catch (failure: unknown) {
+          throwIfAborted(signal);
+          const observed = (await getDocumentUploadStatus(documentId, signal)).data;
+          if (observed.phase === 'AWAITING_CONFIRMATION') throw failure;
+          status = observed;
+        }
+        onProgress?.(toProgress(status));
+        continue;
+      }
       if (Date.now() >= deadline) {
         throw new Error('文档解析超过 10 分钟，请稍后重试或拆分文档。');
       }

@@ -35,6 +35,26 @@ public class DocumentUploadController {
         this.documentIndexService = documentIndexService;
     }
 
+    /** 读取平台统一目录与视觉准入，不向浏览器提供端点或密钥。 */
+    @GetMapping("/vision-models")
+    public ApiResponse<java.util.List<com.promptoptimizer.context.domain.ContextVisionModels.Model>> visionModels(HttpServletRequest request) {
+        return ApiResponse.success(requestId(request), documentIndexService.visionModels());
+    }
+
+    /** 会话归属、阶段与页码在服务端校验；浏览器和代理不得缓存原图衍生预览。 */
+    @GetMapping(value = "/{documentId}/pages/{page}", produces = MediaType.IMAGE_PNG_VALUE)
+    public org.springframework.http.ResponseEntity<byte[]> preview(@PathVariable String documentId, @PathVariable int page) {
+        return org.springframework.http.ResponseEntity.ok().cacheControl(org.springframework.http.CacheControl.noStore())
+                .body(documentIndexService.previewPage(documentId, page));
+    }
+
+    /** 只接收模型、页码与归一化遮挡区域；用户身份与作用域始终来自 CurrentActor。 */
+    @PostMapping("/{documentId}/vision")
+    public ApiResponse<DocumentUploadStatus> confirmVision(@PathVariable String documentId,
+            @RequestBody com.promptoptimizer.context.domain.ContextVisionModels.Confirmation confirmation, HttpServletRequest request) {
+        return ApiResponse.success(requestId(request), documentIndexService.confirmVision(documentId, confirmation));
+    }
+
     /** 创建一次临时文档上传会话，并返回分片上传所需的标识。 */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

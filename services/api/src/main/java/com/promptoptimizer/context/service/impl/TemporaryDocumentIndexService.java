@@ -11,6 +11,11 @@ import com.promptoptimizer.context.domain.DocumentProcessingPhase;
 import com.promptoptimizer.context.domain.DocumentSelection;
 import com.promptoptimizer.context.domain.DocumentUploadStatus;
 import com.promptoptimizer.identity.service.CurrentActor;
+import com.promptoptimizer.identity.service.ActorIdentity;
+import com.promptoptimizer.context.domain.ContextVisionModels;
+import com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyLimiter;
+import com.promptoptimizer.common.security.SensitiveValueScanner;
+import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +88,9 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
     private final SemanticVectorIndex semanticVectorIndex;
     private final MapReduceDocumentSummarizer documentSummarizer;
     private final CurrentActor currentActor;
+    private final ContextVisualDocumentExtractor visualExtractor;
+    private final ModelConcurrencyLimiter concurrency;
+    private final SensitiveValueScanner sensitiveValues = new SensitiveValueScanner();
     private final ContentChunkSelector contentChunkSelector = new ContentChunkSelector();
     private final Map<String, UploadSession> sessions = new ConcurrentHashMap<>();
     private final ExecutorService executor;
@@ -94,10 +102,20 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
             MapReduceDocumentSummarizer documentSummarizer,
             CurrentActor currentActor
     ) {
+        this(documentExtractor, semanticVectorIndex, documentSummarizer, currentActor, null, null);
+    }
+
+    /** 视觉链使用同一上传会话；旧构造器保留给纯本地解析夹具，不隐式启用视觉调用。 */
+    @Autowired
+    public TemporaryDocumentIndexService(StreamingDocumentExtractor documentExtractor, SemanticVectorIndex semanticVectorIndex,
+                                         MapReduceDocumentSummarizer documentSummarizer, CurrentActor currentActor,
+                                         ContextVisualDocumentExtractor visualExtractor, ModelConcurrencyLimiter concurrency) {
         this.documentExtractor = documentExtractor;
         this.semanticVectorIndex = semanticVectorIndex;
         this.documentSummarizer = documentSummarizer;
         this.currentActor = currentActor;
+        this.visualExtractor = visualExtractor;
+        this.concurrency = concurrency;
         this.executor = Executors.newFixedThreadPool(
                 Math.max(2, Math.min(4, Runtime.getRuntime().availableProcessors() / 2)),
                 Thread.ofPlatform().name("document-index-", 0).factory()
@@ -115,10 +133,12 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
      * 创建上传会话。这里只保存文件元数据，不接收浏览器真实绝对路径。
      */
     public DocumentUploadStatus create(DocumentUploadCreateRequest request) {
-        UUID ownerUserId = currentActor.require().userId();
+        ActorIdentity owner = currentActor.require();
         cleanupExpired();
         String path = normalizeAndValidatePath(request.path());
         String language = normalizeLanguage(request.language());
+        if (request.visionRequested() && (visualExtractor == null || !visualExtractor.supports(language)))
+            throw invalid("该类型尚未开放视觉识别，请使用 JPEG、PNG 或 PDF。");
         if (request.sizeBytes() > MAX_DOCUMENT_BYTES) {
             throw new DocumentUploadException(
                     DocumentUploadException.Reason.PAYLOAD_TOO_LARGE,
@@ -141,7 +161,7 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
             Files.createFile(sourceFile);
             UploadSession session = new UploadSession(
                     documentId,
-                    ownerUserId,
+                    owner,
                     path,
                     language,
                     request.sizeBytes(),
@@ -151,6 +171,7 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
                     directory.resolve("vectors.data"),
                     Instant.now().plus(DOCUMENT_TTL)
             );
+            session.visionRequested = request.visionRequested();
             sessions.put(documentId, session);
             return statusOf(session);
         } catch (IOException exception) {
@@ -235,6 +256,43 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
         return statusOf(session);
     }
 
+    @Override
+    public List<ContextVisionModels.Model> visionModels() {
+        currentActor.require();
+        return visualExtractor == null ? List.of() : visualExtractor.models();
+    }
+
+    @Override
+    public byte[] previewPage(String documentId, int page) {
+        UploadSession session = requireSession(documentId);
+        synchronized (session.monitor) { assertPhase(session, DocumentProcessingPhase.AWAITING_CONFIRMATION); }
+        try {
+            byte[] png = visualExtractor.preview(session.sourceFile, session.language, page);
+            // 确认、撤销或过期后不再返回迟到的预览。
+            if (requireSession(documentId) != session || session.phase != DocumentProcessingPhase.AWAITING_CONFIRMATION)
+                throw invalid("本次页面预览已失效。");
+            return png;
+        } catch (IOException exception) {
+            throw new DocumentUploadException(DocumentUploadException.Reason.INVALID_ARGUMENT, "页面预览失败，请检查文件。", exception);
+        }
+    }
+
+    @Override
+    public DocumentUploadStatus confirmVision(String documentId, ContextVisionModels.Confirmation confirmation) {
+        UploadSession session = requireSession(documentId);
+        synchronized (session.monitor) {
+            assertPhase(session, DocumentProcessingPhase.AWAITING_CONFIRMATION);
+            session.confirmation = visualExtractor.validate(session.review, confirmation);
+            session.visionConfirmed = true;
+            session.phase = DocumentProcessingPhase.QUEUED;
+            session.requestId = MDC.get("requestId");
+            session.modelAuditContext = ModelCallAuditContext.capture();
+            session.expiresAt = Instant.now().plus(DOCUMENT_TTL);
+            session.task = executor.submit(() -> process(session));
+            return statusOf(session);
+        }
+    }
+
     /**
      * 删除用户不再使用的临时文档。处理中任务先取消，再清理临时文件。
      */
@@ -269,12 +327,12 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
             int maxCharacters,
             int maxChunks
     ) {
-        UUID ownerUserId = currentActor.require().userId();
+        ActorIdentity owner = currentActor.require();
         if (documentId == null || documentId.isBlank()) {
             return Optional.empty();
         }
         UploadSession session = sessions.get(documentId);
-        if (session == null || !session.ownerUserId.equals(ownerUserId)) {
+        if (session == null || !sameScope(session.owner, owner)) {
             return Optional.empty();
         }
 
@@ -370,7 +428,10 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
 
     /** 在异步工作线程执行解析、向量化和摘要，并仅输出聚合统计，不记录文件路径或正文。 */
     private void processDocument(UploadSession session, long startedAt) {
-        try {
+        boolean awaitingReview = false;
+        // 后台实际视觉任务按服务端账号占用一个名额，等待用户审阅不占用；内部页面不会另开账号名额。
+        try (var permit = session.visionConfirmed && !session.confirmation.pages().isEmpty() && concurrency != null
+                ? concurrency.acquireUser(session.owner.userId()) : null) {
             synchronized (session.monitor) {
                 if (session.cancelled) {
                     logCancelled(session, startedAt);
@@ -379,10 +440,27 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
                 session.phase = DocumentProcessingPhase.EXTRACTING;
                 session.progressPercent = 45;
             }
+            if (session.visionRequested && !session.visionConfirmed) {
+                var review = visualExtractor.inspect(session.sourceFile, session.language);
+                synchronized (session.monitor) {
+                    if (session.cancelled || Thread.currentThread().isInterrupted()) return;
+                    session.review = review;
+                    session.phase = DocumentProcessingPhase.AWAITING_CONFIRMATION;
+                    session.progressPercent = 45;
+                    // 以本次运行的局部状态决定保留原件，避免确认请求把阶段改为 QUEUED 后被旧 finally 删除。
+                    awaitingReview = true;
+                }
+                return;
+            }
             long extractionStartedAt = System.nanoTime();
             StreamingDocumentExtractor.ExtractionReport report;
             try (DocumentChunkWriter writer = new DocumentChunkWriter(session)) {
-                report = documentExtractor.extract(
+                if (session.visionRequested) {
+                    var result = visualExtractor.extract(session.sourceFile, session.language, session.review, session.confirmation,
+                            writer::append, (processed, total) -> updateExtractionProgress(session, processed, total), () -> session.cancelled);
+                    report = result.extraction();
+                    session.pageCoverage = result.pages();
+                } else report = documentExtractor.extract(
                         session.sourceFile,
                         session.path,
                         session.language,
@@ -398,6 +476,8 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
                 session.extractedCharacters = report.extractedCharacters();
                 session.extractionComplete = report.complete();
                 session.warnings = new ArrayList<>(report.warnings());
+                if (session.sensitiveRedacted) addWarning(session.warnings, "临时索引写入前已过滤疑似凭据；摘要与向量仅使用处理后的文本。");
+                if (session.chunks.isEmpty()) throw invalid(session.warnings.isEmpty() ? "文件没有可用文字，请选择需要识别的页面。" : session.warnings.getLast());
             }
 
             long indexingStartedAt = System.nanoTime();
@@ -478,7 +558,8 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
             deleteFileQuietly(session.chunkFile);
             deleteFileQuietly(session.vectorFile);
         } finally {
-            deleteFileQuietly(session.sourceFile);
+            // 等待明确外发确认期间保留私有原件；取消、失败、完成和 TTL 到期仍清理。
+            if (!awaitingReview) deleteFileQuietly(session.sourceFile);
         }
     }
 
@@ -757,23 +838,30 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
                     session.warnings,
                     session.errorMessage,
                     session.expiresAt,
-                    UPLOAD_CHUNK_BYTES
+                    UPLOAD_CHUNK_BYTES,
+                    session.phase == DocumentProcessingPhase.AWAITING_CONFIRMATION ? session.review : null,
+                    session.pageCoverage
             );
         }
     }
 
     /** 查找上传会话前先清理过期任务，避免继续操作已失效的临时数据。 */
     private UploadSession requireSession(String documentId) {
-        UUID ownerUserId = currentActor.require().userId();
+        ActorIdentity owner = currentActor.require();
         cleanupExpired();
         UploadSession session = sessions.get(documentId);
-        if (session == null || !session.ownerUserId.equals(ownerUserId)) {
+        if (session == null || !sameScope(session.owner, owner)) {
             throw new DocumentUploadException(
                     DocumentUploadException.Reason.NOT_FOUND,
                     "文档上传任务不存在或已过期"
             );
         }
         return session;
+    }
+
+    /** 用户、租户和工作区必须同时匹配，切换工作区不会继续拥有旧文档。 */
+    private boolean sameScope(ActorIdentity left, ActorIdentity right) {
+        return left.userId().equals(right.userId()) && left.tenantId().equals(right.tenantId()) && left.workspaceId().equals(right.workspaceId());
     }
 
     private void assertPhase(UploadSession session, DocumentProcessingPhase expected) {
@@ -798,6 +886,7 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
         return sessions.values().stream()
                 .filter(session -> session.phase == DocumentProcessingPhase.UPLOADING
                         || session.phase == DocumentProcessingPhase.QUEUED
+                        || session.phase == DocumentProcessingPhase.AWAITING_CONFIRMATION
                         || session.phase == DocumentProcessingPhase.EXTRACTING)
                 .mapToLong(session -> session.fileSizeBytes)
                 .sum();
@@ -910,6 +999,9 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
                         "文档处理已取消"
                 );
             }
+            String safe = sensitiveValues.redact(content);
+            if (!java.util.Objects.equals(content, safe)) session.sensitiveRedacted = true;
+            content = safe;
             // 同一段落可由多个有界读取块组成；只在真正换段时插入标签，保持跨块词组连续。
             if (!label.equals(currentLabel)) {
                 appendBounded("\n## " + label + '\n', label);
@@ -977,7 +1069,7 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
 
         private final Object monitor = new Object();
         private final String documentId;
-        private final UUID ownerUserId;
+        private final ActorIdentity owner;
         private final String path;
         private final String language;
         private final long fileSizeBytes;
@@ -1002,10 +1094,16 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
         private volatile Instant expiresAt;
         private volatile boolean cancelled;
         private volatile Future<?> task;
+        private volatile boolean visionRequested;
+        private volatile boolean visionConfirmed;
+        private volatile boolean sensitiveRedacted;
+        private volatile ContextVisionModels.Review review;
+        private volatile ContextVisionModels.Confirmation confirmation;
+        private volatile List<ContextVisionModels.PageCoverage> pageCoverage = List.of();
 
         private UploadSession(
                 String documentId,
-                UUID ownerUserId,
+                ActorIdentity owner,
                 String path,
                 String language,
                 long fileSizeBytes,
@@ -1016,7 +1114,7 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
                 Instant expiresAt
         ) {
             this.documentId = documentId;
-            this.ownerUserId = ownerUserId;
+            this.owner = owner;
             this.path = path;
             this.language = language;
             this.fileSizeBytes = fileSizeBytes;

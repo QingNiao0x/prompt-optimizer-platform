@@ -81,6 +81,7 @@ const mapDocumentPhase = (
   switch (phase) {
     case 'UPLOADING': return 'upload';
     case 'QUEUED': return 'queue';
+    case 'AWAITING_CONFIRMATION': return 'queue';
     case 'EXTRACTING': return 'extract';
     case 'INDEXING': return 'index';
     case 'SUMMARIZING': return 'summarize';
@@ -95,7 +96,9 @@ const deleteDocumentReferences = async (files: readonly ContextFileInput[]): Pro
   await Promise.all(documentIds.map((id) => deleteDocumentUpload(id).catch(() => undefined)));
 };
 
-export const useProjectFiles = () => {
+export const useProjectFiles = (options?: {
+  reviewVision?: (status: import('@/types/api').DocumentUploadStatus, signal?: AbortSignal) => Promise<import('@/types/api').ContextVisionConfirmation>;
+}) => {
   const isReading = ref(false);
   const warnings = ref<string[]>([]);
   const progress = ref<FileProcessingProgress | null>(null);
@@ -311,6 +314,7 @@ export const useProjectFiles = () => {
               };
             },
             abortController.signal,
+            options?.reviewVision,
           );
           uploadedDocuments.push(uploaded.file);
           documentWarnings.push(...uploaded.status.warnings.map(

@@ -45,6 +45,7 @@ const confirm = (): void => {
     @update:model-value="emit('update:modelValue', $event)"
   >
     <p>项目代码已在浏览器中处理。以下文档只有勾选并确认后才会发送到本项目后端解析，供 Plan Mode 和最终提示词检索使用。</p>
+    <p>JPEG、PNG 和 PDF 上传后会先提供私有页面预览。需要视觉识别时，再选择模型、页码并确认外发；也可仅在本地提取 PDF 文字层。</p>
     <p v-if="omittedCount > 0" role="status">另有 {{ omittedCount }} 个文档因大小、安全规则或数量限制未加入清单。</p>
     <ElCheckboxGroup v-model="selected" class="candidate-list" aria-label="待上传文档">
       <ElCheckbox

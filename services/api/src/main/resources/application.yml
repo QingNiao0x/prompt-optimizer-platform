@@ -91,6 +91,15 @@ logging:
   config: classpath:logback-spring.xml
 
 app:
+  context:
+    vision:
+      # 资料先在本机解析；只有用户确认模型、页码与隐私后才外发，每页一次尝试，不自动重试。
+      max-pages: ${CONTEXT_VISION_MAX_PAGES:10}
+      max-document-pages: ${CONTEXT_VISION_MAX_DOCUMENT_PAGES:500}
+      max-calls: ${CONTEXT_VISION_MAX_CALLS:10}
+      max-output-tokens: ${CONTEXT_VISION_MAX_OUTPUT_TOKENS:8000}
+      # 总时间预算只阻止发起新页面；在途调用仍遵守公共 HTTP 客户端的读取超时。
+      deadline-seconds: ${CONTEXT_VISION_DEADLINE_SECONDS:180}
   trial:
     # 三项一次性访客体验：图像1次、提示词增强3次、文章润色3次；真实模式Redis故障拒绝发起模型。
     enabled: ${TRIAL_ENABLED:true}
