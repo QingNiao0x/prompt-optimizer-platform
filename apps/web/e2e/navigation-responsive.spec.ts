@@ -12,10 +12,24 @@ test.beforeEach(async ({ page }) => {
   } }));
 });
 
-test('管理员导航在手机、平板和桌面完整显示文字且互不遮挡', async ({ page }, testInfo) => {
+for (const theme of ['glass-light', 'glass-dark']) test(`管理员导航在手机、平板和桌面完整居中且互不遮挡（${theme}）`, async ({ page }, testInfo) => {
+  await page.addInitScript(themeId => localStorage.setItem('po-theme', themeId), theme);
   await page.goto('/history');
   await expect(page.getByRole('heading', { name: '优化历史', exact: true })).toBeVisible();
-  for (const width of [320, 375, 430, 768, 1024, 1280, 1441, 1536, 1920]) {
+  // 历史页不会加载模型目录；显式设置受控状态，实际覆盖两侧最长文本而非“平台模型”回退短名。
+  await page.evaluate(() => {
+    type Host = HTMLElement & { __vue_app__?: { config: { globalProperties: { $pinia: { _s: Map<string, unknown> } } } } };
+    const stores = document.querySelector<Host>('#app')?.__vue_app__?.config.globalProperties.$pinia._s;
+    const optimization = stores?.get('optimization') as { availableModels: { id: string; displayName: string; defaultModel: boolean }[]; selectedModelId: string } | undefined;
+    const auth = stores?.get('auth') as { user: { displayName: string } } | undefined;
+    if (!optimization || !auth?.user) throw new Error('Missing controlled navigation state');
+    optimization.availableModels = [{ id: 'navigation-model', displayName: '用于验证模型名称不会撑开导航的合成模型', defaultModel: true }];
+    optimization.selectedModelId = 'navigation-model';
+    auth.user.displayName = '用于验证账号区不会挤压导航的合成用户';
+  });
+  await expect(page.locator('.provider-status')).toContainText('合成模型');
+  await expect(page.locator('.el-message')).toHaveCount(0);
+  for (const width of [320, 375, 430, 768, 1024, 1280, 1366, 1440, 1536, 1599, 1600, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     const toggle = page.getByRole('button', { name: '功能菜单', exact: true });
     if (await toggle.isVisible() && await toggle.getAttribute('aria-expanded') === 'false') await toggle.click();
@@ -31,6 +45,10 @@ test('管理员导航在手机、平板和桌面完整显示文字且互不遮�
       expect(box!.height).toBeGreaterThanOrEqual(44);
       boxes.push(box!);
     }
+    // 测量实际入口整体，而非铺满一行的nav容器，避免容器居中而链接仍偏向一侧。
+    const start = Math.min(...boxes.map(box => box.x));
+    const end = Math.max(...boxes.map(box => box.x + box.width));
+    expect(Math.abs((start + end) / 2 - width / 2), `${width}px 入口整体应居中`).toBeLessThanOrEqual(1);
     for (let index = 0; index < boxes.length; index += 1) {
       for (const next of boxes.slice(index + 1)) {
         const current = boxes[index]!;
@@ -51,8 +69,8 @@ test('管理员导航在手机、平板和桌面完整显示文字且互不遮�
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth))
       .toBeLessThanOrEqual(1);
-    if (width === 375 || width === 768) {
-      await page.screenshot({ path: testInfo.outputPath(`admin-navigation-${width}.png`) });
+    if ([375, 768, 1280, 1920].includes(width)) {
+      await page.screenshot({ path: testInfo.outputPath(`admin-navigation-${width}-${theme}.png`) });
     }
   }
 });
@@ -82,4 +100,27 @@ test('普通用户菜单不暴露管理员入口', async ({ page }) => {
   await expect(page.locator('.main-nav .nav-link')).toHaveCount(6);
   await expect(page.getByRole('link', { name: '模型管理', exact: true })).toHaveCount(0);
   await expect(page.getByRole('link', { name: '统计日志', exact: true })).toHaveCount(0);
+});
+
+test('访客窄屏品牌、菜单与登录入口可见且互不遮挡', async ({ page }) => {
+  await mockAuthentication(page, false, false);
+  await page.goto('/image-to-prompt');
+  for (const width of [320, 375, 768, 1024]) {
+    await page.setViewportSize({ width, height: 900 });
+    const toggle = page.getByRole('button', { name: '功能菜单', exact: true });
+    await expect(toggle).toBeVisible();
+    const login = page.locator('.topbar-tools').getByRole('button', { name: '注册 / 登录', exact: true });
+    await expect(login).toBeVisible();
+    const brand = (await page.locator('.topbar .brand').boundingBox())!;
+    const tools = (await page.locator('.topbar-tools').boundingBox())!;
+    expect(brand.x + brand.width).toBeLessThanOrEqual(tools.x + 1);
+    expect(tools.x + tools.width).toBeLessThanOrEqual(width);
+    if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click();
+    await expect(page.locator('.main-nav .nav-link')).toHaveCount(6);
+    for (const label of await page.locator('.main-nav .nav-link span').all()) {
+      await expect(label).toBeVisible();
+      expect(await label.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+  }
 });

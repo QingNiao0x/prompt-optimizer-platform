@@ -329,12 +329,14 @@ p { margin: 8px 0; line-height: 1.8; overflow-wrap: anywhere; }
 .consent-heading .el-tag { flex-shrink: 0; }
 .consent-heading h3 { margin: 0; color: var(--ink-strong); font-size: 15px; font-weight: 700; line-height: 1.5; }
 .consent-guidance { margin: 10px 0 0; color: var(--ink-strong); font-size: 13px; line-height: 1.65; font-weight: 600; overflow-wrap: anywhere; }
-.upload-consent { box-sizing: border-box; width: 100%; min-height: 44px; height: auto; align-items: flex-start; white-space: normal; margin: 12px 0 0; padding: 12px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface-panel); }
-.upload-consent:focus-within { outline: 2px solid var(--accent); outline-offset: 3px; }
+.upload-consent { --el-checkbox-input-width: 20px; --el-checkbox-input-height: 20px; --el-checkbox-border-radius: calc(var(--radius-sm) * .6); box-sizing: border-box; width: 100%; min-height: 44px; height: auto; align-items: flex-start; white-space: normal; margin: 12px 0 0; padding: 12px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface-panel); }
+.upload-consent.is-checked { background: var(--glass-bg-strong); }
 .upload-consent :deep(.el-checkbox__label) { min-width: 0; white-space: normal; overflow-wrap: anywhere; line-height: 1.65; font-size: 14px; color: var(--ink-strong); padding-left: 10px; }
 .upload-consent :deep(.el-checkbox__input) { flex-shrink: 0; margin-top: 2px; }
-.upload-consent :deep(.el-checkbox__inner) { width: 20px; height: 20px; border-width: 2px; }
-.upload-consent :deep(.el-checkbox__inner::after) { left: 6px; top: 2px; }
+.upload-consent :deep(.el-checkbox__inner) { border-width: 1.5px; }
+/* 与素材范围勾选保持相同尺寸和原生居中规则，长文案仍按首行对齐。 */
+.upload-consent :deep(.el-checkbox__inner::after) { width: 5px; height: 9px; border-width: 2px; border-top: 0; border-left: 0; }
+.upload-consent :deep(.el-checkbox__original:focus-visible + .el-checkbox__inner) { outline-offset: 3px; }
 .upload-consent :deep(.el-checkbox__input:not(.is-checked):not(.is-disabled) .el-checkbox__inner) { border-color: var(--warning); background: var(--surface-elevated); }
 .analysis-section { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line-subtle); } .observation { margin-top: 12px; }
 .observation > div { display: flex; gap: 8px; align-items: center; } .observation small { color: var(--ink-muted); }

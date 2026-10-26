@@ -394,6 +394,18 @@ test('预览409显示中文业务原因，同一页再次点击预览可恢复�
   expect(state.plans).toBe(0); expect(state.confirmations).toBe(0);
 });
 
+/** 检查浏览器实际绘制的勾号，防止固定坐标与组件库的百分比平移叠加后偏到左上角。 */
+async function expectCenteredCheck(checkbox: Locator): Promise<void> {
+  const mark = await checkbox.locator('.el-checkbox__inner').evaluate(element => {
+    const box = element as HTMLElement, tick = getComputedStyle(element, '::after');
+    return { x: parseFloat(tick.left), y: parseFloat(tick.top), centerX: box.clientWidth / 2, centerY: box.clientHeight / 2,
+      width: parseFloat(tick.width), height: parseFloat(tick.height) };
+  });
+  expect(Math.abs(mark.x - mark.centerX)).toBeLessThanOrEqual(.5);
+  expect(Math.abs(mark.y - mark.centerY)).toBeLessThanOrEqual(.5);
+  expect(mark.width).toBeGreaterThanOrEqual(5); expect(mark.height).toBeGreaterThanOrEqual(9);
+}
+
 for (const theme of ['glass-light', 'glass-dark'] as const) {
   test(`${theme}首次审阅明确引导勾选、定位与键盘选择，保存后仍需隐私确认`, async ({ page }, testInfo) => {
     if (testInfo.project.name.startsWith('mobile')) await page.setViewportSize({ width: 375, height: 667 });
@@ -443,6 +455,13 @@ for (const theme of ['glass-light', 'glass-dark'] as const) {
     await choice.getByRole('checkbox').focus();
     await page.keyboard.press('Space');
     await expect(choice.getByRole('checkbox')).toBeChecked();
+    await expectCenteredCheck(choice);
+    await expect(choice.locator('.el-checkbox__inner')).toHaveCSS('outline-style', 'solid');
+    // 鼠标选中保留单层行边框；键盘焦点只强调控件，不把整行叠成双框。
+    await choice.click(); await choice.click();
+    await expect(choice.getByRole('checkbox')).toBeChecked();
+    await expect(choice.locator('..')).toHaveCSS('outline-style', 'none');
+    await page.screenshot({ path: testInfo.outputPath(`selection-${theme}-selected.png`), animations: 'disabled' });
     await expect(selection.locator('.selection-progress')).toContainText('已选 1 项');
     await expect(dialog.locator('.save-feedback')).toHaveText('已选 1 项，可以保存。');
     await expect(save).toBeEnabled();
@@ -461,6 +480,9 @@ for (const theme of ['glass-light', 'glass-dark'] as const) {
     await page.screenshot({ path: testInfo.outputPath(`consent-${theme}-pending.png`), animations: 'disabled' });
     await consent.getByRole('checkbox').focus(); await page.keyboard.press('Space');
     await expect(consent.getByRole('checkbox')).toBeChecked();
+    await expectCenteredCheck(consent.locator('.upload-consent'));
+    await consent.locator('.upload-consent').click(); await consent.locator('.upload-consent').click();
+    await page.screenshot({ path: testInfo.outputPath(`consent-${theme}-confirmed.png`), animations: 'disabled' });
     await expect(consent).toContainText('隐私确认已完成');
     await expect(start).toBeEnabled();
     expect(state.plans).toBe(0); expect(state.confirmations).toBe(0);

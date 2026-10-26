@@ -114,7 +114,10 @@ onBeforeUnmount(() => { sequence++; controller?.abort(); clear(); cancelDownload
         <p :id="selectionHintId" class="selection-guidance">请先勾选要识别的内容。预览不会自动勾选。</p>
         <p class="selection-progress" role="status" aria-live="polite">已选 <strong>{{ selected.length }}</strong> 项，当前最多可选 {{ maxUnits }} 项。</p>
         <ElCheckboxGroup v-model="selected" :max="maxUnits" class="unit-list" aria-label="素材识别页帧" :aria-describedby="selectionHintId">
-          <div v-for="item in asset.units" :key="item.id" class="unit-row" :class="{ 'is-selected': selected.includes(item.id) }"><ElCheckbox :value="item.id">{{ label(item) }}</ElCheckbox><span v-if="selected.includes(item.id)" class="unit-selected" aria-hidden="true">已选</span><ElButton link type="primary" @click="previewUnit(item.id)">预览{{ label(item) }}</ElButton></div>
+          <div v-for="item in asset.units" :key="item.id" class="unit-row" :class="{ 'is-selected': selected.includes(item.id) }">
+            <ElCheckbox :value="item.id">{{ label(item) }}</ElCheckbox>
+            <div class="unit-actions"><span v-if="selected.includes(item.id)" class="unit-selected" aria-hidden="true">已选</span><ElButton link type="primary" @click="previewUnit(item.id)">预览{{ label(item) }}</ElButton></div>
+          </div>
         </ElCheckboxGroup>
         <p class="hint">可选范围 {{ asset.units.length }} / {{ asset.totalUnits }}。未选择或未覆盖的部分不视为已识别。</p>
         <p v-for="warning in asset.warnings" :key="warning" class="warning">{{ warning }}</p>
@@ -167,16 +170,17 @@ p { line-height: 1.75; overflow-wrap: anywhere; } h3 { color: var(--ink-strong);
 .selection-progress { margin: 8px 0; color: var(--ink-normal); font-size: 13px; }
 .selection-progress strong { color: var(--accent); font-size: 17px; }
 .unit-list { display: grid; gap: 8px; max-height: 360px; overflow: auto; padding: 2px; }
-.unit-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 4px 10px; gap: 8px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--glass-fallback); }
-.unit-row.is-selected { border-color: var(--accent); background: var(--accent-soft); }
-.unit-row:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; }
-.unit-row :deep(.el-checkbox) { flex: 1; min-width: 64px; height: auto; min-height: 44px; margin: 0; white-space: normal; }
-.unit-row :deep(.el-checkbox__label) { white-space: normal; color: var(--ink-strong); font-size: 14px; font-weight: 600; line-height: 1.6; padding-left: 10px; }
-.unit-row :deep(.el-checkbox__inner) { width: 20px; height: 20px; border-width: 2px; border-color: var(--accent); }
-.unit-row :deep(.el-checkbox__inner::after) { left: 6px; top: 2px; }
-.unit-row :deep(.el-checkbox__input.is-disabled .el-checkbox__inner) { border-color: var(--el-border-color); }
-.unit-row .el-button { min-height: 40px; }
-.unit-selected { color: var(--accent); font-size: 12px; font-weight: 600; }
+.unit-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; padding: 6px 12px; gap: 12px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--glass-fallback); }
+.unit-row.is-selected { border-color: var(--accent); background: var(--glass-bg-strong); }
+.unit-row :deep(.el-checkbox) { --el-checkbox-input-width: 20px; --el-checkbox-input-height: 20px; --el-checkbox-border-radius: calc(var(--radius-sm) * .6); --el-checkbox-input-border: 1.5px solid var(--ink-soft); min-width: 0; height: auto; min-height: 44px; margin: 0; white-space: normal; }
+.unit-row :deep(.el-checkbox__input) { flex-shrink: 0; }
+.unit-row :deep(.el-checkbox__label) { min-width: 0; white-space: normal; color: var(--ink-strong); font-size: 14px; font-weight: 600; line-height: 1.6; padding-left: 10px; }
+/* 勾号沿用Element Plus的50%居中与平移，仅增大笔画；固定left/top会与其平移叠加导致偏移。 */
+.unit-row :deep(.el-checkbox__inner::after) { width: 5px; height: 9px; border-width: 2px; border-top: 0; border-left: 0; }
+.unit-row :deep(.el-checkbox__original:focus-visible + .el-checkbox__inner) { outline-offset: 3px; }
+.unit-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; column-gap: 8px; }
+.unit-actions .el-button { min-height: 44px; }
+.unit-selected { color: var(--ink-muted); font-size: 12px; }
 .preview-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; justify-content: space-between; } .preview-heading .el-select { width: 130px; }
 .preview-stage { display: flex; justify-content: center; border: 1px solid var(--line-subtle); border-radius: var(--radius-sm); background: var(--el-fill-color-light); }
 .mask-surface { position: relative; line-height: 0; width: min(100%, calc(min(52dvh, 560px) * var(--media-preview-ratio))); flex-shrink: 0; } .mask-surface img { display: block; width: 100%; height: auto; }

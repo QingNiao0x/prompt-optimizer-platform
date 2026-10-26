@@ -107,7 +107,8 @@ const navigation = [
   top: 0;
   z-index: 60;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  /* 等宽两侧保留品牌与账号区，导航始终以整个视口为中心。 */
+  grid-template-columns: minmax(0, 1fr) max-content minmax(0, 1fr);
   column-gap: 16px;
   align-items: center;
   min-height: 64px;
@@ -160,8 +161,9 @@ const navigation = [
 .main-nav {
   display: flex;
   min-width: 0;
-  overflow-x: auto;
   align-items: center;
+  justify-content: center;
+  justify-self: center;
   gap: 4px;
 }
 
@@ -237,8 +239,8 @@ const navigation = [
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 12%, transparent);
 }
 
-/* 八个管理员入口在中屏独立成行；此处统一处理所有页面，不再由统计页覆盖导航布局。 */
-@media (max-width: 1440px) {
+/* 八个管理员入口与两侧最长账号/模型区不足以并排时，导航独占居中一行，避免挤压或覆盖。 */
+@media (max-width: 1599px) {
   .topbar {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas: 'brand tools' 'navigation navigation';
@@ -257,6 +259,7 @@ const navigation = [
   .main-nav {
     grid-area: navigation;
     width: 100%;
+    flex-wrap: wrap;
   }
 
   .topbar-tools {
