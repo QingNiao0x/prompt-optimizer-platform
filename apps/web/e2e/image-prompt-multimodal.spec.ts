@@ -387,3 +387,76 @@ test('预览409显示中文业务原因，同一页再次点击预览可恢复�
   await dialog.getByRole('button', { name: '保存选择与遮挡' }).click();
   expect(state.plans).toBe(0); expect(state.confirmations).toBe(0);
 });
+
+for (const theme of ['glass-light', 'glass-dark'] as const) {
+  test(`${theme}首次审阅明确引导勾选、定位与键盘选择，保存后仍需隐私确认`, async ({ page }, testInfo) => {
+    if (testInfo.project.name.startsWith('mobile')) await page.setViewportSize({ width: 375, height: 667 });
+    const state = await setup(page, []);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.evaluate(theme => document.documentElement.setAttribute('data-ui-theme', theme), theme);
+    const preview = await page.evaluate(() => {
+      const canvas = document.createElement('canvas'); canvas.width = 720; canvas.height = 1080;
+      const drawing = canvas.getContext('2d')!;
+      drawing.fillStyle = '#213d64'; drawing.fillRect(0, 0, 720, 1080);
+      drawing.fillStyle = '#bdd8f0'; drawing.beginPath(); drawing.arc(360, 350, 210, 0, Math.PI * 2); drawing.fill();
+      drawing.fillStyle = '#f4f7fb'; drawing.fillRect(100, 670, 520, 260);
+      drawing.fillStyle = '#213d64'; drawing.font = '40px sans-serif'; drawing.fillText('REFERENCE', 224, 820);
+      return canvas.toDataURL('image/png').split(',')[1]!;
+    });
+    await page.route('**/api/v1/image-prompt-media/*/units/*', route => route.fulfill({ contentType: 'image/png', body: Buffer.from(preview, 'base64') }));
+    await page.getByRole('textbox', { name: '新图创作构想' }).fill('参考选定页面的构图，创作新内容。');
+    await pane(page, '图片');
+    const reference = page.getByTestId('reference-media');
+    await reference.locator('input[type=file]').setInputFiles({ name: 'brand.pptx', mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', buffer: Buffer.from('controlled upload') });
+    await reference.getByRole('button', { name: '上传到平台解析预览' }).click();
+    await reference.getByRole('button', { name: '选择页／帧与遮挡' }).click();
+    const dialog = page.getByRole('dialog', { name: '审阅素材与选择识别范围' });
+    const selection = dialog.getByTestId('media-range-selection');
+    const save = dialog.getByRole('button', { name: '保存选择与遮挡' });
+    await expect(selection.getByText('待勾选', { exact: true })).toBeVisible();
+    await expect(selection).toContainText('预览不会自动勾选');
+    await expect(dialog.locator('.save-feedback')).toHaveText('请先勾选至少一项识别范围。');
+    await expect(dialog.locator('input:checked')).toHaveCount(0);
+    await expect(save).toBeDisabled();
+    await expect(dialog.locator('.mask-surface img')).toBeVisible();
+    await page.screenshot({ path: testInfo.outputPath(`selection-${theme}-pending.png`), animations: 'disabled' });
+    const choice = selection.locator('.el-checkbox').filter({ hasText: '第 1 页' });
+    // 首次打开就能直接勾选，不能让页脚或长说明把核心控件挤出可视正文。
+    await expect.poll(() => choice.evaluate(element => {
+      const box = element.getBoundingClientRect();
+      return [[.05, .05], [.95, .95]].every(([x, y]) => {
+        const target = document.elementFromPoint(box.left + box.width * x!, box.top + box.height * y!);
+        return target !== null && element.contains(target);
+      });
+    })).toBe(true);
+    // 从预览位置主动返回勾选区；焦点到标题，不替用户勾选，也不唤起手机键盘。
+    await dialog.locator('.mask-surface img').scrollIntoViewIfNeeded();
+    await dialog.getByRole('button', { name: '前往勾选识别范围' }).click();
+    await expect(selection.getByRole('heading', { name: '选择识别范围', exact: true })).toBeFocused();
+    const target = await choice.boundingBox(); expect(target!.height).toBeGreaterThanOrEqual(44);
+    await choice.getByRole('checkbox').focus();
+    await page.keyboard.press('Space');
+    await expect(choice.getByRole('checkbox')).toBeChecked();
+    await expect(selection.locator('.selection-progress')).toContainText('已选 1 项');
+    await expect(dialog.locator('.save-feedback')).toHaveText('已选 1 项，可以保存。');
+    await expect(save).toBeEnabled();
+    await save.click();
+    await pane(page, '设置');
+    const consent = page.getByRole('region', { name: '生成前请确认图片隐私' });
+    await consent.scrollIntoViewIfNeeded();
+    await expect(consent.getByRole('checkbox')).not.toBeChecked();
+    await expect(consent).toContainText('请在下方勾选同意');
+    const start = page.getByRole('button', { name: '梳理创作意图', exact: true });
+    await expect(start).toBeDisabled();
+    const consentTarget = await consent.locator('.upload-consent').boundingBox();
+    expect(consentTarget!.height).toBeGreaterThanOrEqual(44);
+    expect((await start.boundingBox())!.y).toBeGreaterThan((await consent.boundingBox())!.y + (await consent.boundingBox())!.height);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+    await page.screenshot({ path: testInfo.outputPath(`consent-${theme}-pending.png`), animations: 'disabled' });
+    await consent.getByRole('checkbox').focus(); await page.keyboard.press('Space');
+    await expect(consent.getByRole('checkbox')).toBeChecked();
+    await expect(consent).toContainText('隐私确认已完成');
+    await expect(start).toBeEnabled();
+    expect(state.plans).toBe(0); expect(state.confirmations).toBe(0);
+  });
+}

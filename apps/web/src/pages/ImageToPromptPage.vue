@@ -2,8 +2,9 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
+import { CircleCheckFilled, WarningFilled } from '@element-plus/icons-vue';
 import {
-  ElAlert, ElButton, ElCheckbox, ElDialog, ElEmpty, ElInput, ElMessage,
+  ElAlert, ElButton, ElCheckbox, ElDialog, ElEmpty, ElIcon, ElInput, ElMessage,
   ElMessageBox, ElOption, ElPagination, ElSelect, ElSwitch, ElTag, ElUpload,
   type UploadFile,
 } from 'element-plus';
@@ -257,8 +258,9 @@ onBeforeUnmount(() => { active = false; clearTimeout(highlightTimer); store.canc
         <div class="output-fields"><label class="field"><span>提示词语言</span><ElSelect v-model="language" :disabled="busy" aria-label="提示词语言"><ElOption label="中文" value="ZH" /><ElOption label="英文" value="EN" /></ElSelect></label><label class="field"><span>{{ creation ? '下游创作工具' : '下游绘图工具' }}</span><ElInput v-model="targetTool" maxlength="100" :disabled="busy" :aria-label="creation ? '下游创作工具' : '下游绘图工具'" placeholder="填写下游使用的工具" /></label></div>
         <!-- 确认与生成操作放在同一区域，桌面和窄屏都不必回到图片预览下寻找勾选项。 -->
         <section v-if="files.length || creation && mediaFiles.length" class="consent-panel" :class="{ 'is-confirmed': consent }" aria-labelledby="image-consent-title">
-          <div class="consent-heading"><h3 id="image-consent-title">生成前请确认图片隐私</h3><ElTag size="small" :type="consent ? 'success' : 'warning'" effect="plain">{{ consent ? '已确认' : '待确认' }}</ElTag></div>
-          <ElCheckbox v-model="consent" :disabled="busy" class="upload-consent"><strong>我已检查图片隐私{{ mediaFiles.length && creation ? '与素材内容' : '' }}</strong>，同意点击操作后将{{ creation && mediaFiles.length ? '所选页／帧的遮挡后图片与允许的结构文字' : '所选图片' }}发送至平台后端与所选模型服务。</ElCheckbox>
+          <div class="consent-heading"><div class="consent-heading-title"><ElIcon aria-hidden="true"><CircleCheckFilled v-if="consent" /><WarningFilled v-else /></ElIcon><h3 id="image-consent-title">生成前请确认图片隐私</h3></div><ElTag size="small" :type="consent ? 'success' : 'warning'" effect="plain">{{ consent ? '已确认' : '待确认' }}</ElTag></div>
+          <p id="image-consent-guidance" class="consent-guidance" role="status">{{ consent ? '隐私确认已完成；请核对本次接收模型与所选范围。' : '请在下方勾选同意，完成本次模型外发确认。' }}</p>
+          <ElCheckbox v-model="consent" :disabled="busy" class="upload-consent" aria-describedby="image-consent-guidance"><strong>我已检查图片隐私{{ mediaFiles.length && creation ? '与素材内容' : '' }}</strong>，同意点击操作后将{{ creation && mediaFiles.length ? '所选页／帧的遮挡后图片与允许的结构文字' : '所选图片' }}发送至平台后端与所选模型服务。</ElCheckbox>
           <p v-if="creation && mediaFiles.length" class="hint">接收模型：{{ selectedModel?.displayName ?? '尚未选择' }}；所选范围 {{ selectedUnitCount }} 个页／帧。按模型图片上限分批识别，Plan 与最终生成也可能产生调用费用；未选范围不外发。音轨不发送。</p>
         </section>
         <ElButton :type="plan ? 'default' : 'primary'" class="primary-action" :loading="busy && phase !== 'SAVING'" :disabled="!canStart" @click="start">{{ creation ? plan ? '重新梳理创作意图' : '梳理创作意图' : '提取参考图提示词' }}</ElButton>
@@ -306,13 +308,19 @@ p { margin: 8px 0; line-height: 1.8; overflow-wrap: anywhere; }
 .reference-card { margin: 16px 0; padding: 10px; border: 1px solid var(--line-subtle); border-radius: var(--radius-sm); }
 .reference-card img { display: block; max-width: 100%; max-height: 260px; margin: auto; object-fit: contain; border-radius: var(--radius-sm); }
 .reference-meta span { overflow-wrap: anywhere; min-width: 0; }
-.consent-panel { margin-top: 18px; padding: 14px; border: 1px solid var(--warning); border-radius: var(--radius-sm); background: var(--orange-soft); }
+.consent-panel { margin-top: 18px; padding: 16px; min-width: 0; border: 2px solid var(--warning); border-radius: var(--radius-md); background: var(--orange-soft); }
 .consent-panel.is-confirmed { border-color: var(--success); background: var(--green-soft); }
-.consent-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.consent-heading h3 { margin: 0; color: var(--ink-strong); font-size: 14px; }
-.upload-consent { width: 100%; height: auto; align-items: flex-start; white-space: normal; margin: 12px 0 0; }
-.upload-consent :deep(.el-checkbox__label) { white-space: normal; line-height: 1.65; font-size: 14px; color: var(--ink-strong); padding-left: 10px; }
-.upload-consent :deep(.el-checkbox__input) { margin-top: 2px; }
+.consent-heading { display: flex; align-items: flex-start; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+.consent-heading-title { display: flex; align-items: flex-start; min-width: 0; gap: 8px; }
+.consent-heading-title .el-icon { flex-shrink: 0; margin-top: 1px; font-size: 20px; color: var(--warning); }
+.consent-panel.is-confirmed .consent-heading-title .el-icon { color: var(--success); }
+.consent-heading .el-tag { flex-shrink: 0; }
+.consent-heading h3 { margin: 0; color: var(--ink-strong); font-size: 15px; font-weight: 700; line-height: 1.5; }
+.consent-guidance { margin: 10px 0 0; color: var(--ink-strong); font-size: 13px; line-height: 1.65; font-weight: 600; overflow-wrap: anywhere; }
+.upload-consent { box-sizing: border-box; width: 100%; min-height: 44px; height: auto; align-items: flex-start; white-space: normal; margin: 12px 0 0; padding: 12px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface-panel); }
+.upload-consent:focus-within { outline: 2px solid var(--accent); outline-offset: 3px; }
+.upload-consent :deep(.el-checkbox__label) { min-width: 0; white-space: normal; overflow-wrap: anywhere; line-height: 1.65; font-size: 14px; color: var(--ink-strong); padding-left: 10px; }
+.upload-consent :deep(.el-checkbox__input) { flex-shrink: 0; margin-top: 2px; }
 .upload-consent :deep(.el-checkbox__inner) { width: 20px; height: 20px; border-width: 2px; }
 .upload-consent :deep(.el-checkbox__inner::after) { left: 6px; top: 2px; }
 .upload-consent :deep(.el-checkbox__input:not(.is-checked):not(.is-disabled) .el-checkbox__inner) { border-color: var(--warning); background: var(--surface-elevated); }
