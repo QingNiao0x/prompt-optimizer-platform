@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { Delete, Refresh, UploadFilled, View } from '@element-plus/icons-vue';
 import { ElButton, ElInputNumber, ElOption, ElSelect, ElTag } from 'element-plus';
 import type { SelectedMedia } from '@/stores/imagePrompt';
 import type { ImagePromptMaterialRef, ImageReferenceRole } from '@/types/imagePrompt';
@@ -26,23 +27,40 @@ const save = (units: ImagePromptMaterialRef['units']): void => { emit('update', 
 
 <template>
   <article class="media-card"><div class="media-heading"><strong>{{ label }} · {{ file.name }}</strong><ElTag size="small" effect="plain">{{ file.asset?.kind ?? '待解析' }}</ElTag></div>
-    <p class="hint">{{ statusHint }}</p>
-    <p v-if="ready && !file.units.length" class="hint selection-hint">下一步：选择并保存识别范围，才会发送给所选模型。</p>
-    <ElSelect :model-value="file.role" :aria-label="`${file.name}的素材用途`" :disabled="busy" @update:model-value="emit('update', { role: $event as ImageReferenceRole })"><ElOption label="整体灵感" value="GENERAL" /><ElOption label="主体／内容" value="SUBJECT" /><ElOption label="风格与配色" value="STYLE" /><ElOption label="布局与结构" value="LAYOUT" /></ElSelect>
+    <p class="media-status">{{ statusHint }}</p>
+    <p v-if="ready && !file.units.length" class="hint selection-hint">下一步：选择并保存识别范围；生成前仍需单独确认隐私。</p>
     <div v-if="video && !file.asset" class="video-range"><label>片段开始（秒）<ElInputNumber v-model="startSeconds" :min="0" :max="86400" :disabled="busy" :aria-label="`${file.name}片段开始秒数`" /></label><label>片段结束（秒）<ElInputNumber v-model="endSeconds" :min="0" :max="86430" :disabled="busy" :aria-label="`${file.name}片段结束秒数`" /></label><p class="hint">每段最多 30 秒。首版理解可见画面与镜头变化，不分析音轨。</p></div>
+    <div class="media-actions">
+      <ElButton v-if="!ready" type="primary" class="media-primary-action" :icon="file.asset ? Refresh : UploadFilled" :loading="file.parsing" :disabled="busy && !file.parsing" @click="emit('parse')">{{ file.asset ? '刷新解析状态' : '上传到平台解析预览' }}</ElButton>
+      <ElButton v-else type="primary" class="media-primary-action" :plain="!!file.units.length" :icon="View" :disabled="busy" @click="reviewVisible = true">选择页／帧与遮挡</ElButton>
+      <ElButton type="danger" plain class="media-remove-action" :icon="Delete" :disabled="busy && !file.parsing" @click="emit('remove')">{{ file.parsing ? '取消并移除' : '移除素材' }}</ElButton>
+    </div>
+    <p class="hint privacy-hint">解析与审阅均不会发送给模型；生成前仍需单独确认外发范围与隐私。</p>
+    <label class="media-role"><span>素材用途</span><ElSelect :model-value="file.role" :aria-label="`${file.name}的素材用途`" :disabled="busy" @update:model-value="emit('update', { role: $event as ImageReferenceRole })"><ElOption label="整体灵感" value="GENERAL" /><ElOption label="主体／内容" value="SUBJECT" /><ElOption label="风格与配色" value="STYLE" /><ElOption label="布局与结构" value="LAYOUT" /></ElSelect></label>
     <p v-if="file.error" class="warning" role="alert">{{ file.error }}</p>
     <ul v-if="file.asset?.warnings.length" class="warning"><li v-for="warning in file.asset.warnings" :key="warning">{{ warning }}</li></ul>
-    <div class="media-actions"><ElButton v-if="!ready" size="small" :loading="file.parsing" :disabled="busy && !file.parsing" @click="emit('parse')">{{ file.asset ? '刷新解析状态' : '上传到平台解析预览' }}</ElButton><ElButton v-if="ready" size="small" type="primary" plain :disabled="busy" @click="reviewVisible = true">选择页／帧与遮挡</ElButton><ElButton size="small" text type="danger" :disabled="busy && !file.parsing" @click="emit('remove')">{{ file.parsing ? '取消并移除' : '移除素材' }}</ElButton></div>
-    <p v-if="!file.asset" class="hint">点击解析仅上传至本平台；审阅后，还需单独同意发送给所选模型。</p>
     <ImagePromptMediaReviewDialog v-if="file.asset && ready" :visible="reviewVisible" :asset="file.asset" :units="file.units" :max-units="maxUnits" @close="reviewVisible = false" @save="save" />
   </article>
 </template>
 
 <style scoped>
 .media-card { padding: 12px; margin: 12px 0; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface-panel); min-width: 0; }
-.media-heading { display: flex; gap: 8px; align-items: flex-start; justify-content: space-between; } strong { color: var(--ink-strong); font-size: 14px; overflow-wrap: anywhere; min-width: 0; }
+.media-heading { display: flex; gap: 8px; align-items: flex-start; justify-content: space-between; } strong { color: var(--ink-strong); font-size: 15px; overflow-wrap: anywhere; min-width: 0; }
+.media-heading .el-tag { flex-shrink: 0; }
+.media-status { margin: 10px 0 0; color: var(--ink-normal); font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
 .hint, .warning { font-size: 12px; line-height: 1.75; color: var(--ink-muted); overflow-wrap: anywhere; } .warning { color: var(--warning); padding-left: 0; } ul.warning { padding-left: 18px; }
-.selection-hint { color: var(--accent); font-weight: 600; }
-.media-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; } .media-actions .el-button + .el-button { margin-left: 0; }
+.selection-hint { margin: 8px 0 0; color: var(--accent); font-size: 13px; font-weight: 600; }
+.media-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.media-actions .el-button { min-width: 0; min-height: 44px; height: auto; margin: 0; padding: 10px 12px; border-radius: var(--radius-sm); font-size: 14px; line-height: 1.5; white-space: normal; }
+.media-actions :deep(.el-button > span) { min-width: 0; overflow-wrap: anywhere; }
+.media-actions :deep(.el-icon) { flex-shrink: 0; font-size: 16px; }
+.media-actions .media-primary-action { flex: 1 1 200px; font-weight: 600; }
+/* 仅在本卡片恢复玻璃按钮的主次和危险色语义，保留组件库的loading及disabled处理。 */
+.media-primary-action.is-plain { --el-button-text-color: var(--accent); --el-button-bg-color: var(--accent-soft); --el-button-border-color: var(--accent-border); }
+.media-actions .media-remove-action { flex: 0 1 auto; margin-left: auto; --el-button-text-color: var(--danger); --el-button-bg-color: color-mix(in srgb, var(--danger) 6%, var(--surface-panel)); --el-button-border-color: color-mix(in srgb, var(--danger) 45%, transparent); --el-button-hover-text-color: var(--danger); --el-button-hover-bg-color: color-mix(in srgb, var(--danger) 12%, var(--glass-fallback)); --el-button-hover-border-color: var(--danger); }
+.privacy-hint { margin: 10px 0 0; }
+.media-role { display: grid; gap: 6px; margin-top: 14px; min-width: 0; }
+.media-role > span { color: var(--ink-muted); font-size: 12px; }
 .video-range { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 12px; } .video-range label { display: grid; gap: 6px; font-size: 12px; color: var(--ink-muted); } .video-range .el-input-number { width: 100%; } .video-range p { grid-column: 1 / -1; margin: 0; }
+@media (max-width: 640px) { .media-actions .media-primary-action { flex-basis: 100%; } }
 </style>

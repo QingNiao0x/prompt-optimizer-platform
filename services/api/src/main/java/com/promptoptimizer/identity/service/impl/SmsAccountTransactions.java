@@ -41,7 +41,7 @@ public class SmsAccountTransactions {
     /** 返回安全结果而非在事务内抛出预期冲突，确保冲突也消费一次性授权。 */
     @Transactional
     public Outcome complete(UUID id, SmsPurpose purpose, String phone, String fingerprint, String browser,
-            AuthenticatedUser actor, String passwordHash, String currentPassword) {
+            AuthenticatedUser actor, String passwordHash, String currentPassword, String displayName) {
         challenges.lockSubject(SmsChallengeTransactions.subject(fingerprint, purpose));
         UUID actorId = actor == null ? null : actor.actorIdentity().userId();
         var challenge = SmsChallengeTransactions.checked(challenges.find(id), purpose, fingerprint, browser, actorId);
@@ -56,7 +56,7 @@ public class SmsAccountTransactions {
         // 跨用途仍共享身份锁；注册与绑定竞争同号码时，不创建孤立租户或接管原所有者。
         UserIdentityEntity identity = identities.selectByLoginKey(UserIdentityType.PHONE, "local", phone);
         Outcome result = switch (purpose) {
-            case REGISTER -> register(phone, passwordHash, identity);
+            case REGISTER -> register(phone, passwordHash, identity, displayName);
             case BIND -> bind(actorId, phone, identity);
             case LOGIN -> login(identity);
         };
@@ -65,11 +65,11 @@ public class SmsAccountTransactions {
     }
 
     /** 号码已占用时无账户写入；角色固定USER，联系邮箱为空而非伪造邮箱。 */
-    private Outcome register(String phone, String passwordHash, UserIdentityEntity identity) {
+    private Outcome register(String phone, String passwordHash, UserIdentityEntity identity, String displayName) {
         if (identity != null) return new Outcome(null, "PHONE_ALREADY_REGISTERED");
         UUID tenant = UUID.randomUUID(), user = UUID.randomUUID(), workspace = UUID.randomUUID();
         provisioning.insertTenant(tenant, "个人账户");
-        provisioning.insertUserAccount(user, tenant, null, "新用户", passwordHash, "USER");
+        provisioning.insertUserAccount(user, tenant, null, UserDisplayNames.resolve(displayName, "新用户"), passwordHash, "USER");
         provisioning.insertWorkspace(workspace, tenant, "个人工作区", "注册时自动创建的个人工作区", user);
         provisioning.insertWorkspaceMember(workspace, user, "OWNER");
         if (accounts.insertPhone(UUID.randomUUID(), user, phone) != 1) {

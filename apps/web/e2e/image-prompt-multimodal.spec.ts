@@ -406,6 +406,26 @@ async function expectCenteredCheck(checkbox: Locator): Promise<void> {
   expect(mark.width).toBeGreaterThanOrEqual(5); expect(mark.height).toBeGreaterThanOrEqual(9);
 }
 
+/** 实际可点击区应留在卡片内；窄屏换行不能让主操作与移除互相覆盖。 */
+async function expectMediaActions(card: Locator): Promise<void> {
+  const bounds = (await card.boundingBox())!;
+  const buttons = await card.locator('.media-actions .el-button').all();
+  const boxes = [];
+  for (const button of buttons) {
+    await expect(button).toBeVisible();
+    const box = (await button.boundingBox())!; boxes.push(box);
+    expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(box.x).toBeGreaterThanOrEqual(bounds.x);
+    expect(box.x + box.width).toBeLessThanOrEqual(bounds.x + bounds.width + 1);
+    expect(await button.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+  }
+  for (let index = 0; index < boxes.length; index++) for (const next of boxes.slice(index + 1)) {
+    const box = boxes[index]!;
+    expect(Math.min(box.x + box.width, next.x + next.width) <= Math.max(box.x, next.x) + 1
+      || Math.min(box.y + box.height, next.y + next.height) <= Math.max(box.y, next.y) + 1).toBe(true);
+  }
+}
+
 for (const theme of ['glass-light', 'glass-dark'] as const) {
   test(`${theme}首次审阅明确引导勾选、定位与键盘选择，保存后仍需隐私确认`, async ({ page }, testInfo) => {
     if (testInfo.project.name.startsWith('mobile')) await page.setViewportSize({ width: 375, height: 667 });
@@ -425,9 +445,34 @@ for (const theme of ['glass-light', 'glass-dark'] as const) {
     await page.getByRole('textbox', { name: '新图创作构想' }).fill('参考选定页面的构图，创作新内容。');
     await pane(page, '图片');
     const reference = page.getByTestId('reference-media');
-    await reference.locator('input[type=file]').setInputFiles({ name: 'brand.pptx', mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', buffer: Buffer.from('controlled upload') });
-    await reference.getByRole('button', { name: '上传到平台解析预览' }).click();
-    await reference.getByRole('button', { name: '选择页／帧与遮挡' }).click();
+    await reference.locator('input[type=file]').setInputFiles({ name: 'brand-guidelines-reference-spring-campaign-v2-presentation.pptx', mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', buffer: Buffer.from('controlled upload') });
+    const card = reference.locator('.media-card');
+    await card.scrollIntoViewIfNeeded();
+    const upload = card.getByRole('button', { name: '上传到平台解析预览' });
+    const remove = card.getByRole('button', { name: '移除素材', exact: true });
+    await expect(upload).toHaveClass(/el-button--primary/);
+    await expect(remove).toHaveClass(/el-button--danger/);
+    await expect(remove).toHaveClass(/is-plain/);
+    await expect(remove.locator('svg')).toHaveCount(1);
+    const colors = await card.evaluate(element => ({
+      remove: getComputedStyle(element.querySelector('.media-remove-action')!).color,
+      hint: getComputedStyle(element.querySelector('.privacy-hint')!).color,
+      status: getComputedStyle(element.querySelector('.media-status')!).color,
+      primaryBackground: getComputedStyle(element.querySelector('.media-primary-action')!).backgroundColor,
+      cardBackground: getComputedStyle(element).backgroundColor,
+    }));
+    // 共享玻璃按钮样式可能覆盖type色值，必须验证实际渲染而非仅检查danger/primary类名。
+    expect(colors.remove).not.toBe(colors.hint); expect(colors.remove).not.toBe(colors.status);
+    expect(colors.primaryBackground).not.toBe(colors.cardBackground);
+    await expectMediaActions(card);
+    await expect(card).toContainText('尚未上传');
+    await page.screenshot({ path: testInfo.outputPath(`media-card-${theme}-pending.png`), animations: 'disabled' });
+    await upload.click();
+    const review = card.getByRole('button', { name: '选择页／帧与遮挡' });
+    await expect(review).toHaveClass(/el-button--primary/);
+    await expect(review).not.toHaveClass(/is-plain/);
+    await expectMediaActions(card);
+    await review.click();
     const dialog = page.getByRole('dialog', { name: '审阅素材与选择识别范围' });
     const selection = dialog.getByTestId('media-range-selection');
     const save = dialog.getByRole('button', { name: '保存选择与遮挡' });
@@ -466,6 +511,11 @@ for (const theme of ['glass-light', 'glass-dark'] as const) {
     await expect(dialog.locator('.save-feedback')).toHaveText('已选 1 项，可以保存。');
     await expect(save).toBeEnabled();
     await save.click();
+    await expect(review).toHaveClass(/is-plain/);
+    if (theme === 'glass-light') {
+      await card.scrollIntoViewIfNeeded();
+      await page.screenshot({ path: testInfo.outputPath('media-card-selected.png'), animations: 'disabled' });
+    }
     await pane(page, '设置');
     const consent = page.getByRole('region', { name: '生成前请确认图片隐私' });
     await consent.scrollIntoViewIfNeeded();
@@ -488,6 +538,59 @@ for (const theme of ['glass-light', 'glass-dark'] as const) {
     expect(state.plans).toBe(0); expect(state.confirmations).toBe(0);
   });
 }
+
+test('素材卡解析加载可取消，网络中断后保留刷新入口且审阅不代替隐私授权', async ({ page }, testInfo) => {
+  if (testInfo.project.name.startsWith('mobile')) await page.setViewportSize({ width: 375, height: 667 });
+  const state = await setup(page, []);
+  await pane(page, '图片');
+  const reference = page.getByTestId('reference-media');
+  const card = reference.locator('.media-card');
+  const asset: ImagePromptMediaAsset = { id: 'loading-card', name: 'loading-reference.pptx', kind: 'PPTX', status: 'PROCESSING',
+    units: [], warnings: [], expiresAt: expiry, totalUnits: 1, durationMs: null };
+  let releaseFailure: () => void = () => undefined;
+  const pendingFailure = new Promise<void>(resolve => { releaseFailure = resolve; });
+  let reads = 0;
+  await page.route('**/api/v1/image-prompt-media', route => route.fulfill({ json: { data: asset } }));
+  await page.route('**/api/v1/image-prompt-media/loading-card', async route => {
+    if (route.request().method() === 'DELETE') { state.removes++; return route.fulfill({ json: { data: null } }); }
+    reads++;
+    if (reads === 1) {
+      await pendingFailure;
+      return route.fulfill({ status: 503, json: { error: { message: '合成网络中断，请刷新解析状态。' } } });
+    }
+    return route.fulfill({ json: { data: { ...asset, status: 'READY', units: [{ id: 'loading-page', page: 1, timestampMs: null,
+      width: 900, height: 600, text: '', previewUrl: '/api/v1/image-prompt-media/loading-card/units/loading-page' }] } } });
+  });
+  await reference.locator('input[type=file]').setInputFiles({ name: asset.name, mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', buffer: Buffer.from('controlled media') });
+  await card.getByRole('button', { name: '上传到平台解析预览' }).click();
+  await expect.poll(() => reads).toBe(1);
+  const refresh = card.getByRole('button', { name: '刷新解析状态' });
+  await expect(refresh).toHaveClass(/is-loading/);
+  await expect(card.getByRole('button', { name: '取消并移除' })).toBeEnabled();
+  await expectMediaActions(card);
+  releaseFailure();
+  await expect(refresh).not.toHaveClass(/is-loading/);
+  await expect(refresh).toBeEnabled();
+  await refresh.click();
+  await expect(card.getByRole('button', { name: '选择页／帧与遮挡' })).toBeEnabled();
+  await card.getByRole('button', { name: '移除素材', exact: true }).click();
+  await expect(card).toHaveCount(0); expect(state.removes).toBe(1);
+
+  // 第二次持有查询，验证加载中的危险操作实际能取消；不等待真实解析或创建服务端素材。
+  let releaseCancel: () => void = () => undefined;
+  const pendingCancel = new Promise<void>(resolve => { releaseCancel = resolve; });
+  await page.route('**/api/v1/image-prompt-media/loading-card', async route => {
+    if (route.request().method() === 'DELETE') { state.removes++; return route.fulfill({ json: { data: null } }); }
+    await pendingCancel; return route.fulfill({ json: { data: asset } });
+  });
+  await reference.locator('input[type=file]').setInputFiles({ name: asset.name, mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', buffer: Buffer.from('controlled media') });
+  await card.getByRole('button', { name: '上传到平台解析预览' }).click();
+  await expect(card.getByRole('button', { name: '刷新解析状态' })).toHaveClass(/is-loading/);
+  await card.getByRole('button', { name: '取消并移除' }).click();
+  await expect(card).toHaveCount(0); releaseCancel();
+  await expect.poll(() => state.removes).toBe(2);
+  expect(state.plans).toBe(0); expect(state.confirmations).toBe(0); expect(state.extracts).toBe(0);
+});
 
 test('关闭Plan可上传PPTX与MP4/MOV并选择范围直接提取，无创作问答', async ({ page }, testInfo) => {
   const state = await setup(page, [], false);

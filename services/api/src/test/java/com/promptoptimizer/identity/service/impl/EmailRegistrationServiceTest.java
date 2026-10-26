@@ -76,6 +76,28 @@ class EmailRegistrationServiceTest {
     }
 
     @Test
+    void storesOptionalNicknameWithoutChangingTheEmailIdentity() {
+        EmailRegistrationService service = service((recipient, code, validFor) -> deliveredCode.set(code));
+        service.requestCode(new EmailRegistrationCodeRequest("new@example.com"), "127.0.0.1");
+        service.register(new EmailRegistrationRequest("new@example.com", deliveredCode.get(),
+                "secure-password-123", "  星河🌟  "));
+        verify(registrationGateway).createPersonalAccount(
+                org.mockito.ArgumentMatchers.eq("new@example.com"), org.mockito.ArgumentMatchers.eq("星河🌟"),
+                org.mockito.ArgumentMatchers.eq("bcrypt-hash"), any());
+    }
+
+    @Test
+    void blankNicknameKeepsTheExistingEmailDefault() {
+        EmailRegistrationService service = service((recipient, code, validFor) -> deliveredCode.set(code));
+        service.requestCode(new EmailRegistrationCodeRequest("new@example.com"), "127.0.0.1");
+        service.register(new EmailRegistrationRequest("new@example.com", deliveredCode.get(),
+                "secure-password-123", "   "));
+        verify(registrationGateway).createPersonalAccount(
+                org.mockito.ArgumentMatchers.eq("new@example.com"), org.mockito.ArgumentMatchers.eq("new"),
+                org.mockito.ArgumentMatchers.eq("bcrypt-hash"), any());
+    }
+
+    @Test
     void rejectsPasswordsShorterThanEightCharactersBeforeCreatingAccount() {
         EmailRegistrationService service = service((recipient, code, validFor) -> deliveredCode.set(code));
         service.requestCode(new EmailRegistrationCodeRequest("new@example.com"), "127.0.0.1");

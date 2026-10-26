@@ -6,7 +6,7 @@ import { getApiErrorMessage, httpClient } from '@/services/http';
 import { requestRegistrationCode, requestSmsChallenge } from '@/services/authApi';
 import { normalizeMainlandPhone, validateRegistrationAccount } from '@/features/auth/registrationAccount';
 import { useSmsChallenge } from '@/features/auth/useSmsChallenge';
-import { ElButton } from 'element-plus';
+import { ElButton, ElInput } from 'element-plus';
 import PhoneAuthPanel from '@/components/auth/PhoneAuthPanel.vue';
 import PhoneBindingForm from '@/components/auth/PhoneBindingForm.vue';
 import ImageCaptcha from '@/components/auth/ImageCaptcha.vue';
@@ -40,6 +40,7 @@ const registrationSucceeded = ref(false);
 const errorMessage = ref('');
 const statusMessage = ref('');
 const account = ref('');
+const displayName = ref('');
 const loginAsUsername = ref(false);
 const password = ref('');
 const confirmPassword = ref('');
@@ -114,6 +115,8 @@ const registrationBlockReason = computed((): string => {
   if (!/^\d{6}$/.test(verificationCode.value)) {
     return isSmsRegistration.value ? '请输入短信中的 6 位验证码。' : '请输入邮件中的 6 位验证码。';
   }
+  if (displayName.value.trim().length > 80) return '昵称不能超过80个字符。';
+  if (/[\u0000-\u001f\u007f-\u009f]/u.test(displayName.value.trim())) return '昵称不能包含换行或控制字符。';
   if (password.value.length < 8) {
     return '密码至少需要 8 个字符。';
   }
@@ -160,6 +163,7 @@ const close = (): void => {
   resetRegistrationVerification();
   password.value = '';
   confirmPassword.value = '';
+  displayName.value = '';
   showPassword.value = false;
   showConfirmPassword.value = false;
   emit('update:modelValue', false);
@@ -168,6 +172,7 @@ const close = (): void => {
 const resetFields = (): void => {
   resetRegistrationVerification();
   account.value = '';
+  displayName.value = '';
   loginAsUsername.value = false;
   password.value = '';
   confirmPassword.value = '';
@@ -317,17 +322,20 @@ const handleSubmit = async (event: Event): Promise<void> => {
           challengeId: smsChallengeId.value,
           verificationCode: verificationCode.value,
           password: password.value,
+          displayName: displayName.value.trim() || undefined,
         });
       } else {
         await auth.register({
           email: registrationAccount.value.normalized,
           verificationCode: verificationCode.value,
           password: password.value,
+          displayName: displayName.value.trim() || undefined,
         });
       }
       // 注册凭据到此即清除；后续绑定通过独立挑战及当前密码复核，不能重用注册验证码。
       password.value = '';
       confirmPassword.value = '';
+      displayName.value = '';
       resetRegistrationVerification();
       registrationSucceeded.value = true;
       return;
@@ -463,6 +471,12 @@ const enterWorkbench = (): void => {
               >
                 {{ registrationHint }}
               </small>
+            </label>
+            <label v-if="view === 'register'" class="login-modal__nickname">
+              昵称（选填）
+              <ElInput v-model="displayName" name="displayName" autocomplete="nickname" :maxlength="80"
+                :disabled="submitting" aria-label="昵称" placeholder="请输入昵称（选填）" />
+              <small>用于账户展示，最多80个字符；不填写将自动生成。</small>
             </label>
             <div v-if="view === 'password' && loginPhone" class="login-modal__field-hint" aria-live="polite">
               {{ loginAsUsername ? '当前按用户名登录。' : '已识别为手机号。' }}
@@ -878,6 +892,11 @@ h2 {
 
 .login-modal__captcha-field :deep(.el-input) {
   min-width: 0;
+}
+
+.login-modal__nickname :deep(.el-input__wrapper) {
+  min-height: 44px;
+  padding: 0 12px;
 }
 
 .login-modal__form input {

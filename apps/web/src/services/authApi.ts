@@ -11,6 +11,7 @@ import type {
   AuthCapabilities,
   SmsChallengeStatus,
   PhoneCredentials,
+  PhoneRegistrationPayload,
 } from '@/types/api';
 
 /** 只读取公开能力开关；失败由界面隐藏新入口，不影响旧邮箱流程。 */
@@ -29,7 +30,7 @@ export const requestSmsChallenge = (payload: { phone: string; purpose: 'REGISTER
   phonePost('/api/v1/auth/sms/challenges', payload)
 );
 /** 手机注册提交号码及对应挑战，复用邮箱注册后的当前用户投影和会话处理。 */
-export const registerPhone = (payload: PhoneCredentials & { password: string }): Promise<ApiResponse<AuthenticatedUser>> => (
+export const registerPhone = (payload: PhoneRegistrationPayload): Promise<ApiResponse<AuthenticatedUser>> => (
   phonePost('/api/v1/auth/phone/register', payload)
 );
 export const loginWithSms = (payload: PhoneCredentials): Promise<ApiResponse<AuthenticatedUser>> => (

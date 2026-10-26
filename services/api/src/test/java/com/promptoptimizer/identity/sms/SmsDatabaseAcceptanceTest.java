@@ -442,7 +442,7 @@ class SmsDatabaseAcceptanceTest {
         challengeMapper.verified(row.id(),token,true); return challengeMapper.find(row.id());
     }
     private SmsAccountTransactions.Outcome complete(SmsChallenge row,String phone,AuthenticatedUser actor) {
-        return accounts.complete(row.id(),row.purpose(),phone,row.phoneFingerprint(),row.browserFingerprint(),actor,encoder.encode(PASSWORD),PASSWORD);
+        return accounts.complete(row.id(),row.purpose(),phone,row.phoneFingerprint(),row.browserFingerprint(),actor,encoder.encode(PASSWORD),PASSWORD,null);
     }
     private AuthenticatedUser createUser(String name,String role) {
         UUID user=UUID.randomUUID(),tenant=UUID.randomUUID(),workspace=UUID.randomUUID(),identity=UUID.randomUUID();

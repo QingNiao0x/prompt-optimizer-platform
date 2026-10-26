@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 /**
- * 登录身份的窄接口。只按类型、签发方和规范化标识查找。
+ * 登录身份的窄接口。按登录键查找，并为已验证微信回调提供限定的展示资料同步。
  * 不继承 {@code BaseMapper}，因此没有按主键物理删除或整行覆盖的入口。
  *
  * @author QingNiao
@@ -28,4 +28,8 @@ public interface UserIdentityMapper {
             @Param("issuer") String issuer,
             @Param("normalizedIdentifier") String normalizedIdentifier
     );
+
+    /** 按已验证的微信应用和主体同步昵称；仅活动身份及活动所属账户可更新，不转移归属或改变显示名/角色。 */
+    int syncWechatNickname(@Param("issuer") String issuer, @Param("subject") String subject,
+                           @Param("nickname") String nickname, @Param("syncedAt") String syncedAt);
 }

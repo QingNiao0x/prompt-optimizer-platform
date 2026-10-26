@@ -5,7 +5,7 @@
 
     <sql id="identityColumns">
         id, user_id, identity_type, issuer, identifier, normalized_identifier,
-        status, verified_at, last_used_at, created_at, updated_at
+        status, verified_at, last_used_at, created_at, updated_at, provider_profile AS provider_profile_json
     </sql>
 
     <select id="selectByLoginKey" resultType="com.promptoptimizer.identity.entity.UserIdentityEntity">
@@ -26,4 +26,18 @@
                AND normalized_identifier = #{normalizedIdentifier}
         )
     </select>
+
+    <!-- 归属来自已绑定身份；展示资料合并保留未来扩展键，条件更新拒绝撤销身份及受限账户。 -->
+    <update id="syncWechatNickname">
+        UPDATE user_identity AS identity
+           SET provider_profile = identity.provider_profile || jsonb_build_object(
+                   'nickname', CAST(#{nickname} AS TEXT), 'nicknameSyncedAt', CAST(#{syncedAt} AS TEXT)),
+               updated_at = CURRENT_TIMESTAMP
+         WHERE identity.identity_type = 'WECHAT'
+           AND identity.issuer = #{issuer}
+           AND identity.normalized_identifier = #{subject}
+           AND identity.status = 'ACTIVE'
+           AND EXISTS (SELECT 1 FROM user_account AS account
+                        WHERE account.id = identity.user_id AND account.status = 'ACTIVE')
+    </update>
 </mapper>

@@ -1,5 +1,6 @@
 package com.promptoptimizer.identity.dto;
 
+import com.promptoptimizer.identity.domain.UserDisplayNames;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -23,6 +24,22 @@ public record EmailRegistrationRequest(
 
         @NotBlank(message = "密码不能为空")
         @Size(min = 8, max = 200, message = "密码长度必须在 8 到 200 个字符之间")
-        String password
+        String password,
+
+        @Size(max = UserDisplayNames.MAX_LENGTH, message = "昵称不能超过80个字符")
+        @Pattern(regexp = UserDisplayNames.SINGLE_LINE_PATTERN, message = "昵称不能包含换行或控制字符")
+        String displayName
 ) {
+    /** 昵称为可选资料；空白和旧客户端未传字段保持原有默认命名行为。 */
+    public EmailRegistrationRequest {
+        displayName = UserDisplayNames.optional(displayName);
+    }
+
+    /** 保留已有服务调用和测试夹具的无昵称构造方式。 */
+    public EmailRegistrationRequest(String email, String verificationCode, String password) {
+        this(email, verificationCode, password, null);
+    }
+
+    @Override
+    public String toString() { return "EmailRegistrationRequest[redacted]"; }
 }

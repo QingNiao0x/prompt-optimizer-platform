@@ -417,6 +417,12 @@ export interface PhoneCredentials {
   verificationCode: string;
 }
 
+/** 注册昵称仅用于账户展示，留空继续采用后端默认名，不参与手机号身份查找。 */
+export interface PhoneRegistrationPayload extends PhoneCredentials {
+  password: string;
+  displayName?: string;
+}
+
 export interface EmailRegistrationCodePayload {
   email: string;
 }
@@ -430,6 +436,7 @@ export interface EmailRegistrationPayload {
   email: string;
   verificationCode: string;
   password: string;
+  displayName?: string;
 }
 
 export interface CsrfTokenMetadata {

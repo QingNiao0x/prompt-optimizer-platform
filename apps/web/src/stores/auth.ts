@@ -13,7 +13,7 @@ import {
   bindPhone as bindPhoneRequest,
 } from '@/services/authApi';
 import { isAuthenticationRequired } from '@/services/http';
-import type { AuthenticatedUser, AuthCapabilities, EmailRegistrationPayload, LoginPayload, PhoneCredentials } from '@/types/api';
+import type { AuthenticatedUser, AuthCapabilities, EmailRegistrationPayload, LoginPayload, PhoneCredentials, PhoneRegistrationPayload } from '@/types/api';
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<AuthenticatedUser>();
@@ -85,7 +85,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   };
 
-  const registerPhone = async (payload: PhoneCredentials & { password: string }): Promise<void> => {
+  const registerPhone = async (payload: PhoneRegistrationPayload): Promise<void> => {
     const response = await registerPhoneRequest(payload);
     identityRevision += 1;
     user.value = response.data;

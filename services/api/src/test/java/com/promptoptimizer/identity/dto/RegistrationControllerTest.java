@@ -20,6 +20,8 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -79,6 +81,28 @@ class RegistrationControllerTest {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.email").value("new@example.com"));
+    }
+
+    @Test
+    void registerBindsOptionalNicknameWithoutChangingTheAuthenticationPayload() throws Exception {
+        when(registrationService.register(any())).thenReturn(new EmailRegistrationService.RegisteredEmail("new@example.com"));
+        when(authenticationService.loginAfterRegistration(anyString(), anyString(), any(), any())).thenReturn(user());
+        mvc.perform(post("/api/v1/auth/register").with(csrf()).contentType(APPLICATION_JSON).content("""
+                {"email":"new@example.com","verificationCode":"123456","password":"secure-password-123","displayName":"  星河🌟  "}
+                """))
+                .andExpect(status().isOk());
+        verify(registrationService).register(argThat(request -> "星河🌟".equals(request.displayName())));
+        verify(authenticationService).loginAfterRegistration(org.mockito.ArgumentMatchers.eq("new@example.com"),
+                org.mockito.ArgumentMatchers.eq("secure-password-123"), any(), any());
+    }
+
+    @Test
+    void registerRejectsOversizedNicknameBeforeCallingTheRegistrationService() throws Exception {
+        String body = new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(java.util.Map.of(
+                "email", "new@example.com", "verificationCode", "123456", "password", "secure-password-123", "displayName", "名".repeat(81)));
+        mvc.perform(post("/api/v1/auth/register").with(csrf()).contentType(APPLICATION_JSON).content(body))
+                .andExpect(status().isBadRequest());
+        org.mockito.Mockito.verifyNoInteractions(registrationService, authenticationService);
     }
 
     @Test

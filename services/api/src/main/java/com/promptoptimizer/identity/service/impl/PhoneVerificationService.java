@@ -67,8 +67,9 @@ public class PhoneVerificationService {
     /** 注册成功结果允许原浏览器恢复，但自动登录仍必须校验实际注册密码。 */
     public void register(SmsRequests.Registration request, HttpServletRequest http) {
         if (!PasswordPolicy.meets(request.password())) throw new SmsException(400, "PASSWORD_INVALID", PasswordPolicy.rejectionMessage());
+        String displayName = UserDisplayNames.resolve(request.displayName(), "新用户");
         complete(request.phone(), request.challengeId(), request.verificationCode(), SmsPurpose.REGISTER,
-                null, request.password(), null, http);
+                null, request.password(), null, http, displayName);
     }
 
     /** 普通用户短信认证入口；已消费的登录挑战不能再次签发会话。 */
@@ -76,7 +77,7 @@ public class PhoneVerificationService {
         String key = "PHONE:" + MainlandPhone.normalize(request.phone());
         guard.checkAllowed(key, http.getRemoteAddr());
         try {
-            complete(request.phone(), request.challengeId(), request.verificationCode(), SmsPurpose.LOGIN, null, null, null, http);
+            complete(request.phone(), request.challengeId(), request.verificationCode(), SmsPurpose.LOGIN, null, null, null, http, null);
         } catch (SmsException exception) {
             if (exception.getStatus() == 400) guard.recordFailure(key, http.getRemoteAddr());
             throw exception;
@@ -88,12 +89,12 @@ public class PhoneVerificationService {
     public void bind(SmsRequests.Binding request, AuthenticatedUser actor, HttpServletRequest http) {
         checkActor(actor, request.currentPassword(), http);
         complete(request.phone(), request.challengeId(), request.verificationCode(), SmsPurpose.BIND,
-                actor, null, request.currentPassword(), http);
+                actor, null, request.currentPassword(), http, null);
     }
 
     /** 分离云校验和业务事务；VERIFIED作为短时授权持久化，数据库提交失败时无需重放云核验。 */
     private void complete(String input, UUID id, String code, SmsPurpose purpose, AuthenticatedUser actor,
-            String registrationPassword, String currentPassword, HttpServletRequest request) {
+            String registrationPassword, String currentPassword, HttpServletRequest request, String displayName) {
         available();
         String phone = MainlandPhone.normalize(input), phoneHash = fingerprint.of("phone", phone), browser = browser(request, false);
         UUID actorId = actor == null ? null : actor.actorIdentity().userId(), token = UUID.randomUUID();
@@ -108,7 +109,7 @@ public class PhoneVerificationService {
         // 高成本 BCrypt 放在有效挑战和云端核验之后，避免匿名随机挑战请求消耗哈希CPU。
         String passwordHash = purpose == SmsPurpose.REGISTER && challenge.state() != SmsChallengeState.CONSUMED
                 ? passwords.encode(registrationPassword) : null;
-        accounts.complete(id, purpose, phone, phoneHash, browser, actor, passwordHash, currentPassword).requireSuccess();
+        accounts.complete(id, purpose, phone, phoneHash, browser, actor, passwordHash, currentPassword, displayName).requireSuccess();
     }
 
     /** 敏感操作密码失败继续累计现有登录失败限制，不用发码成功来清零。 */

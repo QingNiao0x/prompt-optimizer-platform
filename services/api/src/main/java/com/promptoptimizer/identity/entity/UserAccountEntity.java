@@ -27,7 +27,7 @@ public class UserAccountEntity {
     /** 可空联系邮箱；登录身份及其唯一性由 user_identity 管理。 */
     private String email;
 
-    /** 账户展示名称，不参与认证查找。 */
+    /** 账户显示昵称，最长80字符；注册可选填写并由服务端补默认名，不参与认证查找或唯一性判断。 */
     private String displayName;
 
     /** BCrypt 密码哈希；不得保存或返回明文密码。 */

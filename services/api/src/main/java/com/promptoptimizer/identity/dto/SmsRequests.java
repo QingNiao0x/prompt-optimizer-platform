@@ -1,6 +1,7 @@
 package com.promptoptimizer.identity.dto;
 
 import com.promptoptimizer.identity.domain.SmsPurpose;
+import com.promptoptimizer.identity.domain.UserDisplayNames;
 import jakarta.validation.constraints.*;
 import java.util.UUID;
 
@@ -17,9 +18,16 @@ public final class SmsRequests {
             @NotBlank @Size(max=8) String captcha) {
         @Override public String toString() { return "SmsChallengeRequest[redacted]"; }
     }
-    /** 手机注册沿用已有密码规则；是否符合复杂度由统一PasswordPolicy判断。 */
+    /** 手机注册沿用已有密码规则；昵称可选，只作显示资料，未填写时使用原默认名。 */
     public record Registration(@NotBlank @Size(max=32) String phone, @NotNull UUID challengeId,
-            @NotBlank @Pattern(regexp="[0-9]{6}") String verificationCode, @NotBlank @Size(min=8,max=200) String password) {
+            @NotBlank @Pattern(regexp="[0-9]{6}") String verificationCode, @NotBlank @Size(min=8,max=200) String password,
+            @Size(max=UserDisplayNames.MAX_LENGTH, message="昵称不能超过80个字符")
+            @Pattern(regexp=UserDisplayNames.SINGLE_LINE_PATTERN, message="昵称不能包含换行或控制字符") String displayName) {
+        public Registration { displayName = UserDisplayNames.optional(displayName); }
+        /** 兼容既有未填写昵称的注册调用。 */
+        public Registration(String phone, UUID challengeId, String verificationCode, String password) {
+            this(phone, challengeId, verificationCode, password, null);
+        }
         @Override public String toString() { return "PhoneRegistrationRequest[redacted]"; }
     }
     /** 短信登录不允许提交目标用户ID、角色或工作区。 */

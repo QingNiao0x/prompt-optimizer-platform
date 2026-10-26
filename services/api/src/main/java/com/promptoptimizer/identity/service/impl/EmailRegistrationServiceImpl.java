@@ -12,6 +12,7 @@ import com.promptoptimizer.identity.dto.EmailRegistrationCodeRequest;
 import com.promptoptimizer.identity.dto.EmailRegistrationCodeView;
 import com.promptoptimizer.identity.dto.EmailRegistrationRequest;
 import com.promptoptimizer.identity.domain.UserIdentityKey;
+import com.promptoptimizer.identity.domain.UserDisplayNames;
 import com.promptoptimizer.identity.mapper.UserIdentityMapper;
 import com.promptoptimizer.identity.infrastructure.registration.RegistrationProperties;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -123,6 +124,7 @@ public class EmailRegistrationServiceImpl implements EmailRegistrationService {
         ensureAvailable();
         UserIdentityKey emailKey = UserIdentityKey.email(request.email());
         validatePassword(request.password());
+        String displayName = UserDisplayNames.resolve(request.displayName(), deriveDisplayName(emailKey.normalizedIdentifier()));
 
         String emailFingerprint = fingerprint(emailKey.normalizedIdentifier());
         String codeDigest = codeDigest(emailKey.normalizedIdentifier(), request.verificationCode());
@@ -134,7 +136,7 @@ public class EmailRegistrationServiceImpl implements EmailRegistrationService {
         try {
             registrationGateway.createPersonalAccount(
                     emailKey.normalizedIdentifier(),
-                    deriveDisplayName(emailKey.normalizedIdentifier()),
+                    displayName,
                     passwordHash,
                     OffsetDateTime.now(ZoneOffset.UTC)
             );

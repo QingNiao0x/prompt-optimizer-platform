@@ -3,6 +3,7 @@ package com.promptoptimizer.identity.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.promptoptimizer.identity.domain.UserIdentityStatus;
 import com.promptoptimizer.identity.domain.UserIdentityType;
 
@@ -37,6 +38,13 @@ public class UserIdentityEntity {
 
     /** 全局唯一键的规范化标识，包括已撤销身份；邮箱/用户名小写，PHONE 为 E.164，国内入口限定 +86。 */
     private String normalizedIdentifier;
+
+    /**
+     * 第三方展示资料JSON对象，默认{}；当前nickname和nicknameSyncedAt为字符串，允许扩展其他展示键。
+     * 数据库只校验顶层对象。绑定账户由userId决定，此资料不能提供认证或角色依据，也不进入公开身份响应。
+     */
+    @TableField("provider_profile")
+    private String providerProfileJson = "{}";
 
     /** 身份生命周期状态；合法值及含义见 {@link UserIdentityStatus}，与数据库 CHECK 一致。 */
     private UserIdentityStatus status;
@@ -100,6 +108,10 @@ public class UserIdentityEntity {
     public void setNormalizedIdentifier(String normalizedIdentifier) {
         this.normalizedIdentifier = normalizedIdentifier;
     }
+
+    public String getProviderProfileJson() { return providerProfileJson; }
+
+    public void setProviderProfileJson(String providerProfileJson) { this.providerProfileJson = providerProfileJson; }
 
     public UserIdentityStatus getStatus() {
         return status;

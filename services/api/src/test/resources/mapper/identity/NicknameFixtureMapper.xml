@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.identity.mapper.NicknameFixtureMapper">
+    <update id="putAvatar">
+        UPDATE user_identity SET provider_profile = jsonb_set(provider_profile, '{avatarUrl}', to_jsonb(CAST(#{url} AS TEXT))) WHERE id = #{id}
+    </update>
+    <update id="accountStatus">UPDATE user_account SET status = #{status} WHERE id = #{id}</update>
+    <update id="identityStatus">UPDATE user_identity SET status = #{status} WHERE id = #{id}</update>
+    <update id="replaceProfile">UPDATE user_identity SET provider_profile = CAST(#{json} AS JSONB) WHERE id = #{id}</update>
+</mapper>
