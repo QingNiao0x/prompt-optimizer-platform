@@ -294,7 +294,7 @@ export interface AnalyticsOperationQuery extends AnalyticsAccountFilters {
 
 /** 模型对账只按租户归属；不得加入账号、邮箱或名称过滤条件。 */
 export type ModelCallScope = 'GLOBAL' | 'TENANT';
-export type ModelCallOperation = 'prompt.optimize' | 'plan.generate' | 'document.summary.map' | 'document.summary.reduce' | 'context.embedding' | 'context.vision' | 'unknown';
+export type ModelCallOperation = 'prompt.optimize' | 'plan.generate' | 'document.summary.map' | 'document.summary.reduce' | 'context.embedding' | 'context.vision' | 'image.analyze' | 'image.plan' | 'image.generate' | 'text.polish' | 'unknown';
 export type ModelCallUsageState = 'COMPLETE' | 'PARTIAL' | 'UNKNOWN' | 'INVALID';
 export interface TokenRankingQuery {
   period: AnalyticsRankingPeriod;

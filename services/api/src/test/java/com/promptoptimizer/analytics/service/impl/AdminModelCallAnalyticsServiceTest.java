@@ -43,6 +43,15 @@ class AdminModelCallAnalyticsServiceTest {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"image.analyze", "image.plan", "image.generate"})
+    void multimodalOperationsRemainQueryableWithTheSameScopedFilters(String operation) {
+        var page = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<com.promptoptimizer.analytics.dto.AnalyticsViews.ModelCallView>(1, 10);
+        when(mapper.selectModelCalls(any(), any(), isNull(), eq(operation), isNull())).thenReturn(page);
+        service(periods).modelCalls(new ModelCallQuery("2026-10-10", "2026-10-10", "GLOBAL", null, operation, null, 1, 10));
+        verify(mapper).requestOutcomes(any(), isNull(), eq(operation), isNull());
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {"DAY", "WEEK", "MONTH"})
     void wholeCalendarPeriodAndEmptyDataAreReturned(String period) {
         when(mapper.tokenRanking(any(), isNull(), eq("OPERATION"), eq(20))).thenReturn(List.of());

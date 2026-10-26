@@ -23,16 +23,16 @@ const modes = [
     id: 'creation',
     title: 'Plan 创作',
     state: 'Plan 开启',
-    direction: '从无到有 · 构思全新图片',
-    description: '从你的创作构想出发，通过必要的确认问题厘清画面内容、风格偏好和细节，形成指导 AI 创作新图的提示词。',
-    suitable: '希望创作新的海报、插画、卡片或流程图，需要一起明确主题、氛围、文案和布局。',
-    input: '先写创作构想；参考图可选，仅作为你指定的灵感或局部参考。',
+    direction: '从构想到创作 · 图片、视频或 PPT',
+    description: '从你的构想出发，结合参考素材、新主体或新内容和明确的替换关系，形成供下游图片、视频或 PPT 工具执行的提示词。',
+    suitable: '希望借鉴配色、构图、版式或镜头安排，同时替换主体、文字或内容；也可以只写构想，不上传素材。',
+    input: '先写创作构想并选择成品类型。参考素材与替换素材均可选，支持图片、PPTX 和受支持的短视频。',
     boundary: '以你的创作意图和实际回答为依据，不以复刻素材为目标；已有明确要求不重复问，信息充分时可以零问题继续。',
     example: '例如：从“给读书会设计一张温暖的招募海报”开始，确认插画风格、标题和画面布局。',
     steps: [
-      { title: '开启 Plan，描述创作构想', description: '说明想创作什么、用于哪里；有灵感图片时可附上，并写清借鉴风格、配色还是布局。' },
-      { title: '回答影响画面的关键问题', description: '确认主题、风格、氛围和必要细节。需要出现的文案单独填写；也可以明确委托 AI 提出设计。' },
-      { title: '确认创作方向并使用', description: '核对确认摘要，生成新图提示词。检查后编辑、复制，交给下游绘图工具创作。' },
+      { title: '描述构想并补充创作要求', description: '选择目标成品，在自主补充卡中填写构想、确切文案和必要项目背景；没有明确偏好时可以委托 AI 设计。' },
+      { title: '选择素材并明确替换关系', description: '参考素材提供灵感，替换素材提供新主体或新内容。上传到平台解析后，审阅选中页面或视频帧并遮挡隐私，再同意发送给模型；明确保留什么、替换什么和作用范围。' },
+      { title: '回答必要问题，确认后使用', description: '顶部 Plan 卡片会提示尚未完成的必答项，选答可以跳过，零问题可直接确认。核对生成提示词和素材对照表，再到下游上传对应文件并执行。' },
     ],
   },
 ] as const;
@@ -43,7 +43,7 @@ const modes = [
     <section aria-labelledby="image-modes-title">
       <div class="section-heading">
         <h2 id="image-modes-title">选择适合你的模式</h2>
-        <p>Plan 开关决定创作目标：关闭时还原参考图，开启时辅助自定义新图创作。</p>
+        <p>Plan 开关决定创作目标：关闭时还原单张参考图，开启时辅助自定义内容创作。</p>
       </div>
       <div class="mode-grid">
         <article
@@ -74,7 +74,7 @@ const modes = [
     <section aria-labelledby="image-how-to-title">
       <div class="section-heading">
         <h2 id="image-how-to-title">如何使用图像转提示词</h2>
-        <p>按创作目标选择模式，核对文字与画面要求后，将提示词交给下游绘图工具。</p>
+        <p>按创作目标选择模式，核对内容要求与素材关系后，将提示词交给对应的下游工具。</p>
       </div>
       <div class="mode-grid">
         <article v-for="mode in modes" :key="mode.id" class="glass-panel guide-card">
@@ -92,10 +92,12 @@ const modes = [
     <aside class="glass-panel usage-notes" aria-labelledby="image-notes-title">
       <h2 id="image-notes-title">使用前了解</h2>
       <ul>
-        <li>两种模式都输出提示词，由你复制到下游绘图工具使用，本页面不直接生成图片。</li>
+        <li>两种模式都输出提示词；图片、视频或 PPT 由下游工具制作。需要参考文件时，请按素材对照表在下游重新上传。</li>
         <li>“复刻”指描述性还原可见特征，不保证像素级一致；细小文字和复杂关系需要核对。</li>
         <li>想更换主体、增加文案或重新设计场景，请使用 Plan 创作；直接增强专注描述参考图。</li>
         <li>Plan 有参考图时，仅采用你明确指定的参考内容；创作要求不会改写原图观察事实。</li>
+        <li>视频分析仅覆盖选中片段的抽样画面，音轨不发送、不识别音乐节拍；PPTX 仅分析选中的静态页面，未选页面、备注与动画不作为已识别内容。</li>
+        <li>修改构想、素材、页码、帧或替换关系后，需要重新梳理 Plan。已有结果仍可核对和使用。</li>
       </ul>
     </aside>
   </section>

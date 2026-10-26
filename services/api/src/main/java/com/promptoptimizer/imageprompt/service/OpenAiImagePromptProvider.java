@@ -38,8 +38,9 @@ public class OpenAiImagePromptProvider implements ImagePromptProvider {
                 .enable(com.fasterxml.jackson.core.JsonParser.Feature.STRICT_DUPLICATE_DETECTION)
                 .disable(MapperFeature.ALLOW_COERCION_OF_SCALARS); this.properties = properties; this.catalog = catalog;
         // 启动时仅记录公开协议版本与指导哈希，便于区分源码已编译和运行进程实际加载，不打印指导正文。
-        org.slf4j.LoggerFactory.getLogger(getClass()).info("event=image.provider.ready protocolVersion={} instructionsSha256={}",
-                ImagePromptInstructions.VERSION, ImagePromptAssetService.hash(ImagePromptInstructions.SYSTEM.getBytes(StandardCharsets.UTF_8)));
+        org.slf4j.LoggerFactory.getLogger(getClass()).info("event=image.provider.ready protocolVersion={} instructionsSha256={} analyzeInstructionsSha256={}",
+                ImagePromptInstructions.VERSION, ImagePromptAssetService.hash(ImagePromptInstructions.SYSTEM.getBytes(StandardCharsets.UTF_8)),
+                ImagePromptAssetService.hash(ImagePromptInstructions.ANALYZE_SYSTEM.getBytes(StandardCharsets.UTF_8)));
     }
 
     /** 按平台目录选择路由并逐次审计；只为协议不合法的响应提供一次有界修复。 */
@@ -48,8 +49,8 @@ public class OpenAiImagePromptProvider implements ImagePromptProvider {
         var model = catalog.resolve(call.input().modelId());
         var route = properties.getConfiguredRoutes().stream().filter(r -> r.key().equals(model.routeKey())).findFirst()
                 .orElseThrow(() -> new ProviderException(ProviderFailureType.CONFIGURATION, "图像模型路由不可用", false));
-        String operation = call.stage() == Stage.PLAN ? "image.plan" : "image.generate";
-        for (int attempt = 1; attempt <= 2; attempt++) {
+        String operation = call.stage() == Stage.PLAN ? "image.plan" : call.stage() == Stage.ANALYZE ? "image.analyze" : "image.generate";
+        for (int attempt = 1; attempt <= call.maxAttempts(); attempt++) {
             long started = System.nanoTime();
             boolean retry = false;
             Integer status = null;
@@ -86,9 +87,9 @@ public class OpenAiImagePromptProvider implements ImagePromptProvider {
                     validate(draft, call);
                     ModelCallLogger.completed(operation, route.key(), model.publicId(), "PLATFORM_CATALOG", false,
                             attempt, call.images().size(), elapsed(started), usage(envelope));
-                    return new ProviderResult(draft, model.publicId(), model.displayName(), false);
+                    return new ProviderResult(draft, model.publicId(), model.displayName(), false, attempt);
                 } catch (ProviderException failure) {
-                    retry = attempt == 1 && failure.getFailureType() == ProviderFailureType.INVALID_RESPONSE;
+                    retry = attempt < call.maxAttempts() && failure.getFailureType() == ProviderFailureType.INVALID_RESPONSE;
                     ModelCallLogger.failed(operation, route.key(), model.publicId(), "PLATFORM_CATALOG", failure.getFailureType().name(),
                             failure.isRetryable(), status, retry, attempt, call.images().size(), elapsed(started));
                     if (!retry) throw failure;
@@ -110,11 +111,18 @@ public class OpenAiImagePromptProvider implements ImagePromptProvider {
     /** 图片使用 data URL 放入多模态内容，不把 Base64 塞进原始提示词或普通日志。 */
     private Map<String, Object> request(Call call, String routeKey, String upstream, boolean repair) {
         var payload = new LinkedHashMap<String, Object>();
-        payload.put("stage", call.stage()); payload.put("input", call.input());
+        payload.put("stage", call.stage());
         payload.put("imageSources", call.images().stream().map(ImageData::source).toList());
-        // 最终生成不重看图片时，来源仍由已有分析引用；此处不重新制造视觉观察。
-        payload.put("analysis", call.analysis()); payload.put("questions", call.questions()); payload.put("answers", call.answers());
-        payload.put("previousPrompt", call.previousPrompt()); payload.put("revisionInstruction", call.revisionInstruction());
+        payload.put("materialSources", call.materialSources());
+        payload.put("analysisBudget", call.stage() == Stage.ANALYZE ? Math.min(40, call.images().size() * 8) : 40);
+        if (call.stage() == Stage.ANALYZE) payload.put("batchCoverage", batchCoverage(call));
+        if (call.stage() != Stage.ANALYZE) {
+            // 创作目标、指定文案、上下文、关系和题答只进入创作阶段，源识别不能看到这些新内容。
+            payload.put("input", call.input());
+            payload.put("evidenceWarnings", call.evidenceWarnings());
+            payload.put("analysis", call.analysis()); payload.put("questions", call.questions()); payload.put("answers", call.answers());
+            payload.put("previousPrompt", call.previousPrompt()); payload.put("revisionInstruction", call.revisionInstruction());
+        }
         String text;
         try { text = json.writeValueAsString(payload); }
         catch (JsonProcessingException failure) { throw invalid("图像请求无法编码。"); }
@@ -125,7 +133,8 @@ public class OpenAiImagePromptProvider implements ImagePromptProvider {
         }
         var body = new LinkedHashMap<String, Object>();
         body.put("model", upstream); body.put("stream", false);
-        body.put("messages", List.of(Map.of("role", "system", "content", ImagePromptInstructions.SYSTEM
+        String instructions = call.stage() == Stage.ANALYZE ? ImagePromptInstructions.ANALYZE_SYSTEM : ImagePromptInstructions.SYSTEM;
+        body.put("messages", List.of(Map.of("role", "system", "content", instructions
                 + (repair ? "\n上次响应协议无效。请仅修复JSON结构并完整遵守阶段协议，不改变用户任务，不输出额外说明。" : "")),
                 Map.of("role", "user", "content", parts)));
         // 沿用平台已验证的路由兼容项，不从名字推断视觉能力；Kimi K3 的 TokenHub 参数与普通兼容模型不同。
@@ -141,19 +150,47 @@ public class OpenAiImagePromptProvider implements ImagePromptProvider {
         return body;
     }
 
+    /** 任务选择与本次传输分开计数；只携带来源单位标识，不让模型把有界分批误判为任务漏页或漏帧。 */
+    private Map<String, Object> batchCoverage(Call call) {
+        var current = call.images().stream().map(image -> image.source().id()).toList();
+        var selected = new LinkedHashSet<UUID>();
+        var scopes = new ArrayList<Map<String, Object>>();
+        for (var image : call.input().images()) {
+            selected.add(image.assetId());
+            if (current.contains(image.assetId())) scopes.add(Map.of("assetId", image.assetId(), "taskSelectedUnitCount", 1,
+                    "currentBatchUnitCount", 1, "taskSelectedUnitIds", List.of(image.assetId()), "currentBatchUnitIds", List.of(image.assetId())));
+        }
+        for (var material : call.input().materials()) {
+            var units = material.units().stream().map(unit -> unit.unitId()).toList();
+            selected.addAll(units);
+            var batch = units.stream().filter(current::contains).toList();
+            if (!batch.isEmpty()) scopes.add(Map.of("assetId", material.assetId(), "taskSelectedUnitCount", units.size(),
+                    "currentBatchUnitCount", batch.size(), "taskSelectedUnitIds", units, "currentBatchUnitIds", batch));
+        }
+        return Map.of("scope", "CURRENT_BATCH", "taskSelectedUnitCount", selected.size(), "currentBatchUnitCount", current.size(),
+                "currentBatchUnitIds", current, "sources", scopes);
+    }
+
     /** 校验来源、题目和输出边界；结构合法不等于视觉语义正确，实际图片质量需独立验收。 */
     void validate(ProviderDraft draft, Call call) {
         if (draft == null || draft.summary() == null || draft.summary().length() > 600 || draft.analysis() == null
                 || draft.questions() == null || draft.warnings() == null || draft.analysis().size() > 40
                 || draft.questions().size() > 8 || draft.warnings().size() > 12 || draft.optimizedPrompt() == null
                 || draft.optimizedPrompt().length() > 24000) throw invalid("图像结果字段或数量不符合协议。");
-        if (call.stage() != Stage.PLAN && (draft.optimizedPrompt().isBlank() || !draft.questions().isEmpty())) throw invalid("生成阶段缺少正文或返回了额外问题。");
+        if (call.stage() != Stage.PLAN && call.stage() != Stage.ANALYZE && (draft.optimizedPrompt().isBlank() || !draft.questions().isEmpty())) throw invalid("生成阶段缺少正文或返回了额外问题。");
         if (call.stage() == Stage.PLAN && !draft.optimizedPrompt().isEmpty()) throw invalid("Plan 阶段不能用未确认结果替代问答。");
+        if (call.stage() == Stage.ANALYZE && (!draft.optimizedPrompt().isEmpty() || !draft.questions().isEmpty())) throw invalid("素材识别阶段不能生成提示词或创作问题。");
         Set<UUID> sources = new HashSet<>();
         call.images().forEach(i -> sources.add(i.source().id())); call.analysis().forEach(i -> sources.add(i.imageId()));
+        if (call.stage() != Stage.ANALYZE) call.materialSources().forEach(source -> source.units().forEach(unit -> sources.add(unit.id())));
         for (Observation observation : draft.analysis()) {
             if (observation == null || !sources.contains(observation.imageId()) || observation.status() == null
                     || !bounded(observation.category(), 40) || !bounded(observation.description(), 1200)) throw invalid("图像观察缺少有效来源或内容。");
+        }
+        if (call.stage() == Stage.ANALYZE && (draft.analysis().size() > Math.min(40, call.images().size() * 8)
+                || draft.analysis().stream().collect(java.util.stream.Collectors.groupingBy(Observation::imageId,
+                java.util.stream.Collectors.counting())).values().stream().anyMatch(count -> count > 8))) {
+            throw invalid("单个素材单位最多8项观察，请合并相关维度并保留来源事实。");
         }
         var questionIds = new HashSet<String>();
         for (Question question : draft.questions()) {

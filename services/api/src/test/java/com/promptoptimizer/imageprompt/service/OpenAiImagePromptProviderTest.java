@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.common.logging.ModelCallAuditContext;
 import com.promptoptimizer.common.logging.ModelCallObservation;
 import com.promptoptimizer.imageprompt.domain.ImagePromptModels.*;
+import com.promptoptimizer.imageprompt.domain.ImagePromptMediaModels.*;
 import com.promptoptimizer.imageprompt.service.ImagePromptProvider.*;
 import com.promptoptimizer.provider.domain.*;
 import com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleProperties;
@@ -83,6 +84,105 @@ class OpenAiImagePromptProviderTest {
     @Test void inventedObservationSourceIsRejected() {
         var draft = new ProviderDraft("图像", "提示词", List.of(new Observation(UUID.randomUUID(), "主体", "一只鸟", Visibility.OBSERVED)), List.of(), List.of());
         assertThatThrownBy(() -> provider.validate(draft, call())).isInstanceOf(ProviderException.class);
+    }
+    @Test void analyzeAcceptsOnlyEvidenceAndRecordsItsOwnOperation() throws Exception {
+        Call original = call();
+        Call analyze = new Call(Stage.ANALYZE, original.input(), original.images(), List.of(), List.of(), List.of(), "", "", List.of(), 1);
+        var draft = new ProviderDraft("素材观察", "", List.of(new Observation(asset, "主体", "合成鸟", Visibility.OBSERVED)), List.of(), List.of());
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(envelope(json.writeValueAsString(draft)), MediaType.APPLICATION_JSON));
+        var result = provider.invoke(analyze);
+        assertThat(result.attempts()).isEqualTo(1); assertThat(result.draft().optimizedPrompt()).isEmpty();
+        assertThat(calls).singleElement().satisfies(call -> assertThat(call.operation()).isEqualTo("image.analyze")); server.verify();
+        assertThatThrownBy(() -> provider.validate(new ProviderDraft("素材", "提前生成提示词", List.of(), List.of(), List.of()), analyze))
+                .isInstanceOf(ProviderException.class);
+    }
+    @Test void sharedBudgetCanDisableEvenProtocolRepair() {
+        Call original = call();
+        Call bounded = new Call(original.stage(), original.input(), original.images(), List.of(), List.of(), List.of(), "", "", List.of(), 1);
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(envelope("{}"), MediaType.APPLICATION_JSON));
+        assertThatThrownBy(() -> provider.invoke(bounded)).isInstanceOf(ProviderException.class); server.verify();
+        assertThat(calls).singleElement().satisfies(call -> assertThat(call.willRetry()).isFalse());
+    }
+    @Test void sourceAnalysisCannotReceiveCreativeInputWhileGenerationKeepsIt() throws Exception {
+        Call original = call(); UUID material = UUID.randomUUID();
+        var relation = new ReplacementRelation("title", RelationOperation.REPLACE, material, asset, "源标题", null, null,
+                "季度指标·2046", "RELATION_SENTINEL_3059", List.of("文字"), "成品标题");
+        var input = new Input(Mode.CUSTOM_CREATION, "fixture", List.of(), "CREATION_SENTINEL_7103", "季度指标·2046",
+                "CONTEXT_SENTINEL_6284", Language.ZH, "TOOL_SENTINEL_6927", OutputType.PPT,
+                List.of(new MaterialRef(material, Track.REFERENCE, ImageRole.LAYOUT, List.of(new UnitSelection(asset, List.of())))), List.of(relation));
+        var source = new MaterialSource(material, "source.pptx", Kind.PPTX, Track.REFERENCE, ImageRole.LAYOUT,
+                List.of(new SourceUnit(asset, 2, null, "Q4 DEMO METRICS\nItem Units Score\nALPHA 24 8.5", List.of())), List.of());
+        var question = new Question("q1", QuestionType.TEXT, "QUESTION_SENTINEL_2735", List.of(), true);
+        var answer = new Answer("q1", List.of(), "ANSWER_SENTINEL_1837");
+        var analyzed = new ProviderDraft("源页", "", List.of(new Observation(asset, "文字", "Q4 DEMO METRICS", Visibility.OBSERVED)), List.of(), List.of());
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            assertThat(body.path("messages").get(0).path("content").asText()).isEqualTo(ImagePromptInstructions.ANALYZE_SYSTEM);
+            String text = body.path("messages").get(1).path("content").get(0).path("text").asText();
+            var payload = json.readTree(text);
+            var fields = new ArrayList<String>(); payload.fieldNames().forEachRemaining(fields::add);
+            assertThat(fields).containsExactlyInAnyOrder("stage", "imageSources", "materialSources", "analysisBudget", "batchCoverage");
+            assertThat(payload.path("batchCoverage").path("taskSelectedUnitCount").asInt()).isEqualTo(1);
+            assertThat(payload.path("batchCoverage").path("currentBatchUnitCount").asInt()).isEqualTo(1);
+            assertThat(text).contains("Q4 DEMO METRICS", "ALPHA 24 8.5").doesNotContain("CREATION_SENTINEL_7103", "季度指标·2046", "CONTEXT_SENTINEL_6284",
+                    "TOOL_SENTINEL_6927", "RELATION_SENTINEL_3059", "QUESTION_SENTINEL_2735", "ANSWER_SENTINEL_1837", "PREVIOUS_SENTINEL_7483", "REVISION_SENTINEL_3817");
+        }).andRespond(withSuccess(envelope(json.writeValueAsString(analyzed)), MediaType.APPLICATION_JSON));
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            var payload = json.readTree(body.path("messages").get(1).path("content").get(0).path("text").asText());
+            assertThat(payload.path("input").path("relations").get(0).path("instruction").asText()).isEqualTo("RELATION_SENTINEL_3059");
+            assertThat(payload.path("input").path("exactText").asText()).isEqualTo("季度指标·2046");
+            assertThat(payload.path("input").path("context").asText()).isEqualTo("CONTEXT_SENTINEL_6284");
+            assertThat(payload.path("answers").get(0).path("customText").asText()).isEqualTo("ANSWER_SENTINEL_1837");
+        }).andRespond(withSuccess(response("为指定标题制作PPT。"), MediaType.APPLICATION_JSON));
+        provider.invoke(new Call(Stage.ANALYZE, input, original.images(), List.of(), List.of(question), List.of(answer),
+                "PREVIOUS_SENTINEL_7483", "REVISION_SENTINEL_3817", List.of(source), 1));
+        provider.invoke(new Call(Stage.GENERATE, input, List.of(), analyzed.analysis(), List.of(question), List.of(answer), "", "", List.of(source), 1));
+        server.verify();
+    }
+
+    @Test void taskSelectionAndEachBoundedBatchHaveIndependentCoverageMetadata() throws Exception {
+        UUID material = UUID.randomUUID();
+        var units = java.util.stream.IntStream.range(0, 4).mapToObj(index -> new SourceUnit(UUID.randomUUID(), null, index * 1000L, "", List.of())).toList();
+        var input = new Input(Mode.CUSTOM_CREATION, "fixture", List.of(), "创作视频", "", "", Language.ZH, "通用", OutputType.VIDEO,
+                List.of(new MaterialRef(material, Track.REFERENCE, ImageRole.GENERAL, units.stream().map(unit -> new UnitSelection(unit.id(), List.of())).toList())), List.of());
+        var images = units.stream().map(unit -> new ImageData(new ImageSource(unit.id(), "frame.png", "hash", ImageRole.GENERAL, 1, 1,
+                Instant.now().plusSeconds(3600)), "image/png", new byte[]{1})).toList();
+        for (int expected : List.of(3, 1)) {
+            server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+                var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+                var payload = json.readTree(body.path("messages").get(1).path("content").get(0).path("text").asText());
+                var coverage = payload.path("batchCoverage");
+                assertThat(coverage.path("scope").asText()).isEqualTo("CURRENT_BATCH");
+                assertThat(coverage.path("taskSelectedUnitCount").asInt()).isEqualTo(4);
+                assertThat(coverage.path("currentBatchUnitCount").asInt()).isEqualTo(expected);
+                assertThat(coverage.path("sources").get(0).path("taskSelectedUnitCount").asInt()).isEqualTo(4);
+                assertThat(coverage.path("sources").get(0).path("currentBatchUnitIds")).hasSize(expected);
+                assertThat(ImagePromptInstructions.ANALYZE_SYSTEM).contains("本批数量少于任务选择不代表任务漏页或漏帧", "不能宣称其他批次已经识别");
+            }).andRespond(withSuccess(envelope(json.writeValueAsString(new ProviderDraft("本批来源", "", List.of(), List.of(), List.of()))), MediaType.APPLICATION_JSON));
+        }
+        provider.invoke(new Call(Stage.ANALYZE, input, images.subList(0, 3), List.of(), List.of(), List.of(), "", "",
+                List.of(new MaterialSource(material, "clip.mp4", Kind.VIDEO, Track.REFERENCE, ImageRole.GENERAL, units.subList(0, 3), List.of("任务选择4帧"))), 1));
+        provider.invoke(new Call(Stage.ANALYZE, input, images.subList(3, 4), List.of(), List.of(), List.of(), "", "",
+                List.of(new MaterialSource(material, "clip.mp4", Kind.VIDEO, Track.REFERENCE, ImageRole.GENERAL, units.subList(3, 4), List.of("任务选择4帧"))), 1));
+        server.verify();
+    }
+
+    @Test void typedPrivacyMasksReachSourceAnalysisWithoutBanningRealDarkElements() throws Exception {
+        Call original = call();
+        var source = new MaterialSource(UUID.randomUUID(), "masked.png", Kind.IMAGE, Track.REFERENCE, ImageRole.LAYOUT,
+                List.of(new SourceUnit(asset, null, null, "", List.of(new Mask(0.1, 0.1, 0.2, 0.2)))), List.of());
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            var payload = json.readTree(body.path("messages").get(1).path("content").get(0).path("text").asText());
+            assertThat(payload.path("materialSources").get(0).path("units").get(0).path("masks").get(0).path("width").asDouble()).isEqualTo(0.2);
+            assertThat(ImagePromptInstructions.ANALYZE_SYSTEM).contains("平台隐私遮挡区域", "不把遮挡痕迹当作成品元素", "未遮挡区域中真实存在的深色或黑色元素仍可正常记录");
+            assertThat(ImagePromptInstructions.SYSTEM).contains("不把遮挡矩形或痕迹迁移为成品对象");
+        }).andRespond(withSuccess(envelope(json.writeValueAsString(new ProviderDraft("合成源图", "",
+                List.of(new Observation(asset, "构图", "未遮挡的下方原有黑色横线", Visibility.OBSERVED)), List.of(), List.of()))), MediaType.APPLICATION_JSON));
+        var result = provider.invoke(new Call(Stage.ANALYZE, original.input(), original.images(), List.of(), List.of(), List.of(), "", "", List.of(source), 1));
+        assertThat(result.draft().analysis()).singleElement().satisfies(observation -> assertThat(observation.description()).contains("原有黑色横线"));
+        server.verify();
     }
     private Call call() {
         var input = new Input(Mode.REFERENCE_RECONSTRUCTION, "fixture", List.of(new ImageRef(asset, ImageRole.STYLE)), "", "", "", Language.ZH, "通用");

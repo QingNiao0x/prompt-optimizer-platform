@@ -1,20 +1,24 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import {
-  ElAlert, ElButton, ElCheckbox, ElCheckboxGroup, ElDialog, ElEmpty, ElInput, ElMessage,
-  ElMessageBox, ElOption, ElPagination, ElRadio, ElRadioGroup, ElSelect, ElSwitch, ElTag, ElUpload,
+  ElAlert, ElButton, ElCheckbox, ElDialog, ElEmpty, ElInput, ElMessage,
+  ElMessageBox, ElOption, ElPagination, ElSelect, ElSwitch, ElTag, ElUpload,
   type UploadFile,
 } from 'element-plus';
 import ImagePromptHelp from '@/components/imageprompt/ImagePromptHelp.vue';
+import ImagePromptPlanPanel from '@/components/imageprompt/ImagePromptPlanPanel.vue';
+import ImagePromptMediaCard from '@/components/imageprompt/ImagePromptMediaCard.vue';
+import ImagePromptRelations from '@/components/imageprompt/ImagePromptRelations.vue';
 import GuestTrialBanner from '@/components/auth/GuestTrialBanner.vue';
 import { useImagePromptStore } from '@/stores/imagePrompt';
 import { useAuthStore } from '@/stores/auth';
 import { useTrialStore } from '@/stores/trial';
 import { imagePromptApi } from '@/services/imagePromptApi';
 import { getApiErrorMessage } from '@/services/http';
-import type { ImagePromptDocument, ImagePromptHistoryPage, ImageReferenceRole } from '@/types/imagePrompt';
+import type { ImagePromptDocument, ImagePromptHistoryPage, ImageReferenceRole, ImagePromptAnswer, ImagePromptMaterialTrack, ImagePromptMaterialSource } from '@/types/imagePrompt';
+import { imagePromptPlanProgress } from '@/features/imageprompt/planPresentation';
 import { formatModelVersion } from '@/features/models/modelVersion';
 
 const store = useImagePromptStore();
@@ -23,8 +27,15 @@ const router = useRouter();
 const trial = useTrialStore();
 const { mode, modelId, creationIntent, exactText, context, language, targetTool, files, capabilities, availableModels,
   selectedModel, modelInputError, plan, answers, result, editDraft, isEditing, phase, error, cleanupWarning, recoveryId,
-  recoveryPending, consent, busy, hasDraftChanges, canStart, startDisabledReason, undoDocument } = storeToRefs(store);
+  recoveryPending, consent, busy, hasDraftChanges, canStart, startDisabledReason, undoDocument,
+  outputType, mediaFiles, mediaCapabilities, relations, selectedUnitCount } = storeToRefs(store);
 const creation = computed(() => mode.value === 'CUSTOM_CREATION');
+const outputLabel = computed(() => ({ IMAGE: '新图', VIDEO: '视频', PPT: 'PPT' }[outputType.value]));
+const planProgress = computed(() => imagePromptPlanProgress(plan.value, answers.value));
+const planPanel = ref<InstanceType<typeof ImagePromptPlanPanel>>();
+const requirementsHeading = ref<HTMLElement>();
+const planReadyNotice = ref(false), highlightPlan = ref(false);
+let highlightTimer: ReturnType<typeof setTimeout> | undefined;
 const rewriteInstruction = ref('');
 const historyVisible = ref(false);
 const historyPage = ref<ImagePromptHistoryPage>({ records: [], total: 0, size: 10, current: 1, pages: 0 });
@@ -35,6 +46,16 @@ const pane = ref(route.query.pane === 'result' && store.result ? 'result' : 'ima
 const phaseLabel = computed(() => ({ IDLE: '', UPLOADING: '上传并校验图片中', PLANNING: '梳理创作意图中',
   GENERATING: '生成提示词中', SAVING: '保存正文中', RECOVERING: '查询处理结果中' }[phase.value]));
 const analysis = computed(() => plan.value?.analysis ?? result.value?.analysis ?? []);
+const materialSources = computed(() => plan.value?.materialSources ?? result.value?.materialSources ?? []);
+const observationSource = (id: string): string => result.value?.sources.find(source => source.id === id)?.name
+  ?? files.value.find(file => file.asset?.id === id)?.name
+  ?? materialSources.value.find(source => source.units.some(unit => unit.id === id))?.name ?? '参考图片';
+const sourceLabel = (source: ImagePromptMaterialSource, sources: ImagePromptMaterialSource[]): string => `${source.track === 'REFERENCE' ? 'R' : 'T'}${sources.filter(item => item.track === source.track).indexOf(source) + 1}`;
+const trackFiles = (track: ImagePromptMaterialTrack) => mediaFiles.value.filter(file => file.track === track);
+const tracks: { id: ImagePromptMaterialTrack; title: string; description: string; testId: string }[] = [
+  { id: 'REFERENCE', title: '参考素材——借鉴什么', description: '提供风格、配色、构图、版式或镜头安排的来源。', testId: 'reference-media' },
+  { id: 'REPLACEMENT', title: '替换素材——新主体／新内容', description: '提供最终希望出现的新产品、人物或内容；也可在替换关系中直接填写文字。', testId: 'replacement-media' },
+];
 let active = true;
 let historyEpoch = 0;
 let historyLoad = 0;
@@ -60,7 +81,43 @@ const selectFile = (file: UploadFile): void => {
   if (!file.raw) return;
   try { store.addFiles([file.raw]); } catch (failure: unknown) { ElMessage.warning(getApiErrorMessage(failure)); }
 };
-const start = async (): Promise<void> => { await store.start(); if (active) pane.value = plan.value ? 'settings' : result.value ? 'result' : pane.value; };
+const selectMedia = (file: UploadFile, track: ImagePromptMaterialTrack): void => {
+  if (!file.raw) return;
+  try { store.addMediaFiles([file.raw], track); } catch (failure: unknown) { ElMessage.warning(getApiErrorMessage(failure)); }
+};
+/** 顶栏在窄桌面会换成双行；本页所有问答定位使用实际高度，避免固定90px遮住标题或未答题。 */
+const positionElement = (element: HTMLElement): void => {
+  const topbar = document.querySelector<HTMLElement>('header.topbar');
+  // 使用顶栏实际可见边界，兼容双行桌面导航与手机布局。
+  const navigationBottom = Math.max(0, topbar?.getBoundingClientRect().bottom ?? 0);
+  const anchor = element.closest<HTMLElement>('[data-position-anchor]') ?? element;
+  window.scrollTo({ top: Math.max(0, window.scrollY + anchor.getBoundingClientRect().top - navigationBottom - 16),
+    behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  element.focus({ preventScroll: true });
+};
+const positionPlan = async (): Promise<void> => {
+  // 先撤下就绪提示再测量；滚动后才撤提示会令卡片上移并重新被顶栏遮挡。
+  pane.value = 'settings'; planReadyNotice.value = false; await nextTick(); planPanel.value?.focus();
+};
+const editRequirements = async (): Promise<void> => {
+  pane.value = 'settings'; await nextTick(); if (requirementsHeading.value) positionElement(requirementsHeading.value);
+};
+const updateAnswer = (id: string, answer: ImagePromptAnswer): void => { answers.value[id] = answer; };
+watch(() => plan.value?.id, id => { planReadyNotice.value = Boolean(id); }, { flush: 'sync' });
+/** 仅主动取得新Plan后定位一次；用户转而编辑或打开弹窗时保留当前焦点。 */
+const start = async (): Promise<void> => {
+  const previous = plan.value?.id;
+  let editing = false;
+  const preserveEditing = (event: FocusEvent): void => { if (event.target instanceof HTMLElement && event.target.matches('input, textarea, [contenteditable="true"]')) editing = true; };
+  document.addEventListener('focusin', preserveEditing);
+  try { await store.start(); }
+  finally { document.removeEventListener('focusin', preserveEditing); }
+  if (!active) return;
+  if (plan.value && plan.value.id !== previous && !historyVisible.value && !manualCopyVisible.value && !editing) {
+    highlightPlan.value = true; clearTimeout(highlightTimer); highlightTimer = setTimeout(() => { highlightPlan.value = false; }, 800);
+    await positionPlan();
+  } else if (!plan.value && result.value) pane.value = 'result';
+};
 const confirm = async (): Promise<void> => { await store.confirm(); if (active && result.value && !plan.value) pane.value = 'result'; };
 const loadHistory = async (current = 1): Promise<void> => {
   if (!auth.isAuthenticated) { register(); return; }
@@ -125,15 +182,16 @@ onMounted(() => {
     if (route.query.history === '1' || typeof route.query.record === 'string') { register(); return; }
   }
   void store.refreshModels();
+  void store.refreshMediaCapabilities();
   if (route.query.history === '1') openHistory();
 });
-onBeforeUnmount(() => { active = false; store.cancelPending(); });
+onBeforeUnmount(() => { active = false; clearTimeout(highlightTimer); store.cancelPending(); });
 </script>
 
 <template>
   <section class="image-workbench">
     <header class="image-heading">
-      <div><h1>图像转提示词</h1><p>关闭 Plan，从图到文还原参考图；开启 Plan，从构想出发创作新图。</p></div>
+      <div><h1>图像转提示词</h1><p>关闭 Plan，从图到文还原参考图；开启 Plan，从构想与素材出发定制图片、视频或 PPT 提示词。</p></div>
       <div class="heading-actions"><ElButton @click="openHistory">图像历史</ElButton><ElButton :disabled="busy" @click="clearTask">新建任务</ElButton></div>
     </header>
     <GuestTrialBanner feature="IMAGE_TO_PROMPT" />
@@ -142,17 +200,25 @@ onBeforeUnmount(() => { active = false; store.cancelPending(); });
     <ElAlert v-if="selectedModel?.mock" type="warning" title="当前使用演示模型，不具备真实视觉识别能力。选择已登记视觉能力的真实模型后可进行识图。" :closable="false" show-icon />
     <ElAlert v-if="auth.isAuthenticated && capabilities && !capabilities.persistentHistory" type="info" title="本机演示历史保存在服务内存中，服务重启后不会保留。" :closable="false" />
     <div v-if="recoveryId && recoveryPending" class="recovery-actions"><span>该次请求的结果尚未确认。</span><ElButton :loading="busy" @click="store.recover">查询处理结果</ElButton></div>
+    <div v-if="plan && planReadyNotice" class="plan-ready-notice" role="status"><span>{{ planProgress.missing.length ? `创作问题已就绪，还有 ${planProgress.missing.length} 项必答。` : '创作方向已就绪，等待你确认生成。' }}</span><ElButton type="primary" plain @click="positionPlan">{{ planProgress.missing.length ? '前往回答' : '前往确认' }}</ElButton></div>
     <nav class="mobile-panes" aria-label="图像工作台分区">
       <ElButton v-for="item in [{ id: 'images', label: '图片' }, { id: 'settings', label: '设置' }, { id: 'result', label: '结果' }]"
-        :key="item.id" :type="pane === item.id ? 'primary' : 'default'" :aria-pressed="pane === item.id" @click="pane = item.id">{{ item.label }}</ElButton>
+        :key="item.id" :type="pane === item.id ? 'primary' : 'default'" :aria-pressed="pane === item.id" @click="pane = item.id">{{ item.label }}<small v-if="item.id === 'settings' && plan" class="pane-plan-status">{{ planProgress.missing.length ? `待回答 ${planProgress.missing.length}` : '待确认' }}</small></ElButton>
     </nav>
     <div class="workbench-grid image-grid" :data-pane="pane">
       <section class="glass-panel image-column" data-column="images" aria-labelledby="reference-images-title">
-        <div class="column-heading"><h2 id="reference-images-title">{{ creation ? '灵感参考（选填）' : '参考图片' }}</h2><ElTag effect="plain">{{ files.length }} / {{ creation ? 3 : 1 }}</ElTag></div>
+        <div class="column-heading"><h2 id="reference-images-title">{{ creation ? '创作素材（选填）' : '参考图片' }}</h2><ElTag effect="plain">{{ files.length + (creation ? mediaFiles.length : 0) }} / {{ creation ? mediaCapabilities?.maxAssets ?? 6 : 1 }}</ElTag></div>
         <p class="hint">{{ creation ? '也可以只写构想。附图时，请指定借鉴对象、风格还是布局。' : '选择一张参考图，提取实际可见的画面内容，不发起创作问答。' }}</p>
-        <ElUpload drag accept="image/jpeg,image/png" :auto-upload="false" :show-file-list="false" :disabled="busy" :on-change="selectFile" aria-label="选择参考图片">
+        <ElUpload v-if="!creation" drag accept="image/jpeg,image/png" :auto-upload="false" :show-file-list="false" :disabled="busy" :on-change="selectFile" aria-label="选择参考图片">
           <div class="upload-copy"><strong>拖入图片，或点击选择</strong><span>JPEG / PNG · 单张不超过 10 MiB</span><small>最多 1500 万像素，单边 8192 像素</small></div>
         </ElUpload>
+        <template v-if="creation"><section v-for="track in tracks" :key="track.id" :data-testid="track.testId" class="media-track" :aria-label="track.title"><h3>{{ track.title }}</h3><p class="hint">{{ track.description }}</p>
+          <ElUpload drag accept="image/jpeg,image/png,video/mp4,video/quicktime,video/webm,.pptx" :auto-upload="false" :show-file-list="false" :disabled="busy" :on-change="file => selectMedia(file, track.id)" :aria-label="track.id === 'REFERENCE' ? '选择参考素材' : '选择替换素材'">
+            <div class="upload-copy"><strong>{{ track.id === 'REFERENCE' ? '添加参考素材' : '添加新主体／新内容' }}</strong><span>JPEG / PNG · 视频片段 · PPTX</span><small>单文件最多 50 MiB，图片最多 10 MiB</small></div>
+          </ElUpload>
+          <ImagePromptMediaCard v-for="(file, index) in trackFiles(track.id)" :key="file.key" :file="file" :label="`${track.id === 'REFERENCE' ? 'R' : 'T'}${index + 1}`" :busy="busy" :max-units="Math.max(0, (mediaCapabilities?.maxSelectedUnits ?? 12) - selectedUnitCount + file.units.length)" @parse="store.parseMedia(file.key)" @remove="store.removeMediaFile(file.key)" @update="store.updateMedia(file.key, $event)" />
+        </section><p class="hint">图片、视频、PPTX 都可作为参考或新内容。每任务最多 {{ mediaCapabilities?.maxAssets ?? 6 }} 份素材、选中 {{ mediaCapabilities?.maxSelectedUnits ?? 12 }} 个页／帧。视频每段最多 30 秒。</p><p v-if="mediaCapabilities && !mediaCapabilities.videoAvailable" class="hint start-disabled-reason">当前部署尚未配置视频解码工具；图片和 PPTX 可正常解析。</p></template>
+        <p v-if="creation && files.length" class="hint">以下图片保留自参考图还原模式。需要按页／帧关联替换关系时，可移除后添加到上方素材区。</p>
         <article v-for="file in files" :key="file.key" class="reference-card">
           <img :src="file.previewUrl" :alt="file.name" />
           <div class="reference-meta"><span>{{ file.name }}</span><ElButton text type="danger" :disabled="busy" @click="store.removeFile(file.key)">移除</ElButton></div>
@@ -167,51 +233,51 @@ onBeforeUnmount(() => { active = false; store.cancelPending(); });
           <p v-if="!analysis.length" class="hint">{{ creation && !files.length ? '纯文字创作不进行图片分析。' : '实际分析结果返回后显示，文件预览不代表已识图。' }}</p>
           <article v-for="(item, index) in analysis" :key="`${item.imageId}-${index}`" class="observation">
             <div><ElTag size="small" :type="item.status === 'UNCERTAIN' ? 'warning' : 'info'">{{ item.category }}</ElTag><small>{{ item.status === 'UNCERTAIN' ? '待核对' : item.status === 'INTERPRETATION' ? '风格判断' : '可见观察' }}</small></div>
-            <p>{{ item.description }}</p><small>来源：{{ result?.sources.find(s => s.id === item.imageId)?.name ?? files.find(f => f.asset?.id === item.imageId)?.name ?? '参考图片' }}</small>
+            <p>{{ item.description }}</p><small>来源：{{ observationSource(item.imageId) }}</small>
           </article>
         </div>
       </section>
       <section class="glass-panel image-column" data-column="settings" aria-labelledby="image-creation-title">
         <div class="column-heading"><h2 id="image-creation-title">模式与要求</h2><ElSwitch :model-value="creation" active-text="Plan 开启" inactive-text="关闭" aria-label="Plan 创作模式" :disabled="busy || !auth.isAuthenticated" @change="togglePlan" /></div>
+        <ImagePromptPlanPanel v-if="plan && auth.isAuthenticated" ref="planPanel" :plan="plan" :answers="answers" :busy="busy" :recovery-pending="recoveryPending" :has-draft-changes="hasDraftChanges" :output-label="outputLabel" :highlight="highlightPlan" @answer="updateAnswer" @confirm="confirm" @edit-requirements="editRequirements" @position="positionElement" />
         <p v-if="!auth.isAuthenticated" class="hint">免费体验支持参考图还原；Plan 创作模式需注册登录。<ElButton link type="primary" @click="register('plan')">注册使用 Plan</ElButton></p>
-        <div class="mode-descriptions"><p><strong>关闭：从图到文。</strong>还原参考图的可见内容，不引导创作。</p><p><strong>开启：从无到有。</strong>确认你的构想、风格和细节，辅助创作全新图片。参考图可选。</p></div>
+        <div class="mode-descriptions"><p><strong>关闭：从图到文。</strong>还原参考图的可见内容，不引导创作。</p><p><strong>开启：从无到有。</strong>确认构想与替换关系，生成供下游创作图片、视频或 PPT 的提示词。参考素材可选。</p></div>
+        <label v-if="creation" class="field"><span>希望下游制作什么？</span><ElSelect v-model="outputType" :disabled="busy" aria-label="目标成品类型"><ElOption label="图片" value="IMAGE" /><ElOption label="视频" value="VIDEO" /><ElOption label="PPT 演示文稿" value="PPT" /></ElSelect></label>
         <label class="field"><span>本次模型</span><ElSelect v-model="modelId" :disabled="busy" placeholder="选择本次可用模型" aria-label="图像任务模型"><ElOption v-for="model in availableModels" :key="model.id" :label="`${formatModelVersion(model.displayName)}${model.mock ? '（演示）' : model.vision ? '（视觉）' : '（纯文字）'}`" :value="model.id" /></ElSelect></label>
         <p class="hint">与提示词优化共用模型目录，由模型管理统一配置。带图需开放视觉能力；无图 Plan 可使用文字模型。<ElButton link type="primary" :disabled="busy" :loading="store.isLoadingModels" @click="store.refreshModels">刷新模型</ElButton></p>
         <ElAlert v-if="modelInputError" :title="modelInputError" type="info" :closable="false" />
         <p v-if="!availableModels.length && !store.isLoadingModels" class="hint">当前没有可用模型，请刷新或联系管理员。</p>
-        <label v-if="creation" class="field"><span>想创作什么图片？</span><ElInput v-model="creationIntent" type="textarea" :rows="4" maxlength="6000" show-word-limit :disabled="busy" placeholder="例如：为读书会创作一张温暖的招募海报，用柔和插画表现窗边阅读。" aria-label="新图创作构想" /></label>
-        <label v-if="creation" class="field"><span>画面必须出现的文字（选填，逐字保留）</span><ElInput v-model="exactText" type="textarea" :rows="2" maxlength="2000" :disabled="busy" placeholder="单独填写标题、卡片文字等，不与风格选择混在一起。" aria-label="画面指定文案" /></label>
-        <label v-if="creation" class="field"><span>主动补充项目上下文（选填）</span><ElInput v-model="context" type="textarea" :rows="2" maxlength="6000" :disabled="busy" placeholder="只填写本次需要的品牌规范、产品事实或设计约束；不会自动读取源码。" aria-label="图像项目上下文" /></label>
-        <div class="output-fields"><label class="field"><span>提示词语言</span><ElSelect v-model="language" :disabled="busy" aria-label="提示词语言"><ElOption label="中文" value="ZH" /><ElOption label="英文" value="EN" /></ElSelect></label><label class="field"><span>下游绘图工具</span><ElInput v-model="targetTool" maxlength="100" :disabled="busy" aria-label="下游绘图工具" placeholder="通用文生图" /></label></div>
-        <!-- 确认与生成操作放在同一区域，桌面和窄屏都不必回到图片预览下寻找勾选项。 -->
-        <section v-if="files.length" class="consent-panel" :class="{ 'is-confirmed': consent }" aria-labelledby="image-consent-title">
-          <div class="consent-heading"><h3 id="image-consent-title">生成前请确认图片隐私</h3><ElTag size="small" :type="consent ? 'success' : 'warning'" effect="plain">{{ consent ? '已确认' : '待确认' }}</ElTag></div>
-          <ElCheckbox v-model="consent" :disabled="busy" class="upload-consent"><strong>我已检查图片隐私</strong>，同意点击操作后将所选图片发送至平台后端与所选模型服务。</ElCheckbox>
+        <section v-if="creation" data-testid="creative-supplement-card" data-position-anchor class="creative-supplement" aria-labelledby="creative-supplement-title"><h3 id="creative-supplement-title" ref="requirementsHeading" tabindex="-1">自主补充创作要求</h3><p class="hint">先描述创作构想。你还可以补充风格、构图、要保留或替换的内容；其余字段选填，没有明确偏好也可继续。</p>
+          <label class="field"><span>想创作什么？（必填）</span><ElInput v-model="creationIntent" type="textarea" :rows="4" maxlength="6000" show-word-limit :disabled="busy" placeholder="例如：参考R1的暖色和构图，将中央主体替换为T1的新产品；其他细节委托 AI 设计。" aria-label="新图创作构想" /></label>
+          <label class="field"><span>画面必须出现的文字（选填，逐字保留）</span><ElInput v-model="exactText" type="textarea" :rows="2" maxlength="2000" :disabled="busy" placeholder="单独填写标题、卡片文字等，不与风格选择混在一起。" aria-label="画面指定文案" /></label>
+          <label class="field"><span>项目或品牌背景（选填）</span><ElInput v-model="context" type="textarea" :rows="2" maxlength="6000" :disabled="busy" placeholder="只填写本次需要的品牌规范、产品事实或设计约束；不会自动读取源码。" aria-label="图像项目上下文" /></label>
+          <p v-if="plan" class="hint">修改这些要求会使当前 Plan 失效，需要重新梳理创作意图。</p>
         </section>
-        <ElButton type="primary" class="primary-action" :loading="busy && phase !== 'SAVING'" :disabled="!canStart" @click="start">{{ creation ? '梳理创作意图' : '提取参考图提示词' }}</ElButton>
+        <ImagePromptRelations v-if="creation" v-model="relations" :files="mediaFiles" :disabled="busy" />
+        <div class="output-fields"><label class="field"><span>提示词语言</span><ElSelect v-model="language" :disabled="busy" aria-label="提示词语言"><ElOption label="中文" value="ZH" /><ElOption label="英文" value="EN" /></ElSelect></label><label class="field"><span>{{ creation ? '下游创作工具' : '下游绘图工具' }}</span><ElInput v-model="targetTool" maxlength="100" :disabled="busy" :aria-label="creation ? '下游创作工具' : '下游绘图工具'" placeholder="填写下游使用的工具" /></label></div>
+        <!-- 确认与生成操作放在同一区域，桌面和窄屏都不必回到图片预览下寻找勾选项。 -->
+        <section v-if="files.length || creation && mediaFiles.length" class="consent-panel" :class="{ 'is-confirmed': consent }" aria-labelledby="image-consent-title">
+          <div class="consent-heading"><h3 id="image-consent-title">生成前请确认图片隐私</h3><ElTag size="small" :type="consent ? 'success' : 'warning'" effect="plain">{{ consent ? '已确认' : '待确认' }}</ElTag></div>
+          <ElCheckbox v-model="consent" :disabled="busy" class="upload-consent"><strong>我已检查图片隐私{{ mediaFiles.length && creation ? '与素材内容' : '' }}</strong>，同意点击操作后将{{ creation && mediaFiles.length ? '所选页／帧的遮挡后图片与允许的结构文字' : '所选图片' }}发送至平台后端与所选模型服务。</ElCheckbox>
+          <p v-if="creation && mediaFiles.length" class="hint">接收模型：{{ selectedModel?.displayName ?? '尚未选择' }}；所选范围 {{ selectedUnitCount }} 个页／帧。按模型图片上限分批识别，Plan 与最终生成也可能产生调用费用；未选范围不外发。音轨不发送。</p>
+        </section>
+        <ElButton :type="plan ? 'default' : 'primary'" class="primary-action" :loading="busy && phase !== 'SAVING'" :disabled="!canStart" @click="start">{{ creation ? plan ? '重新梳理创作意图' : '梳理创作意图' : '提取参考图提示词' }}</ElButton>
         <p v-if="phaseLabel" role="status" class="hint">{{ phaseLabel }}</p>
         <p v-if="!busy && startDisabledReason && startDisabledReason !== modelInputError" role="status" class="hint start-disabled-reason">{{ startDisabledReason }}</p>
-        <section v-if="plan && auth.isAuthenticated" class="plan-section" aria-labelledby="image-plan-title"><h3 id="image-plan-title">确认新图创作方向</h3><p>{{ plan.summary }}</p>
-          <p v-if="!plan.questions.length" class="hint">创作要求已充分，无需补充问题；确认后即可生成新图提示词。</p>
-          <fieldset v-for="q in plan.questions" :key="q.id" :disabled="busy" class="plan-question"><legend>{{ q.question }}{{ q.required ? '（必答）' : '（选答）' }}</legend>
-            <ElRadioGroup v-if="q.type === 'SINGLE_CHOICE'" :model-value="answers[q.id]?.optionIds[0] ?? ''" :aria-label="q.question" @update:model-value="answers[q.id].optionIds = [$event as string]"><ElRadio v-for="option in q.options" :key="option.id" :value="option.id">{{ option.label }}</ElRadio></ElRadioGroup>
-            <ElCheckboxGroup v-else-if="q.type === 'MULTIPLE_CHOICE'" v-model="answers[q.id].optionIds" :aria-label="q.question"><ElCheckbox v-for="option in q.options" :key="option.id" :value="option.id">{{ option.label }}</ElCheckbox></ElCheckboxGroup>
-            <ElInput v-model="answers[q.id].customText" type="textarea" :rows="2" maxlength="2000" :aria-label="`${q.question}的补充回答`" :placeholder="q.type === 'TEXT' ? '填写你的要求，也可以明确委托 AI 设计。' : '可补充说明，与已选选项一起保留。'" />
-          </fieldset><ElButton type="primary" :disabled="busy || recoveryPending || hasDraftChanges" @click="confirm">确认并生成新图提示词</ElButton>
-        </section>
       </section>
       <section class="glass-panel image-column result-column" data-column="result" aria-labelledby="image-result-title">
         <div class="column-heading"><h2 id="image-result-title">提示词结果</h2><ElTag v-if="result" effect="plain">{{ result.mode === 'CUSTOM_CREATION' ? '新图创作' : '参考图还原' }}</ElTag></div>
         <ElEmpty v-if="!result" description="生成后在这里核对、编辑和复制提示词。" />
         <template v-else>
-          <p class="hint">{{ result.modelName }}{{ result.mock ? ' · 演示结果' : '' }} · {{ result.sources.length ? `${result.sources.length} 张图片来源` : '纯文字创作' }}</p>
+          <p class="hint">{{ result.modelName }}{{ result.mock ? ' · 演示结果' : '' }} · {{ result.sources.length || result.materialSources?.length ? `${result.sources.length + (result.materialSources?.length ?? 0)} 份素材来源` : '纯文字创作' }}</p>
           <ElAlert v-if="accountResult && !result.historySaved" title="提示词已生成，历史尚未保存。可以复制当前正文或重试保存，不会重复调用模型。" type="warning" :closable="false" /><ElButton v-if="accountResult && !result.historySaved" :loading="phase === 'SAVING'" @click="store.retrySave">重试保存历史</ElButton>
           <p v-if="!accountResult" class="hint">本次结果不保存到账号历史。可在当前页面编辑和复制，请及时保留正文。</p>
           <ElInput v-if="isEditing" v-model="editDraft" type="textarea" :rows="18" maxlength="30000" show-word-limit aria-label="编辑图像提示词" /><pre v-else class="prompt-text">{{ result.optimizedPrompt }}</pre>
           <div class="result-actions"><template v-if="isEditing"><ElButton type="primary" :loading="phase === 'SAVING'" :disabled="busy || !editDraft.trim()" @click="store.saveEdit()">{{ accountResult ? '保存正文' : '保留本页修改' }}</ElButton><ElButton :disabled="busy" @click="cancelEdit">取消编辑</ElButton></template><template v-else><ElButton type="primary" @click="copy">复制提示词</ElButton><ElButton :disabled="busy || accountResult && !result.recordId" @click="isEditing = true; editDraft = result.optimizedPrompt">编辑</ElButton><ElButton :disabled="busy || !undoDocument || accountResult && !result.recordId" @click="store.undo">撤销上次修改</ElButton></template></div>
           <ul v-if="result.warnings.length" class="result-warnings"><li v-for="warning in result.warnings" :key="warning">{{ warning }}</li></ul>
-          <p v-if="result.sources.length" class="hint">历史不保存原图。已有正文可以继续使用；需要重新识图时，请重新选择参考图。</p>
-          <template v-if="accountResult"><label class="field"><span>基于当前正文再次优化</span><ElInput v-model="rewriteInstruction" type="textarea" :rows="2" maxlength="3000" :disabled="busy" :placeholder="result.mode === 'REFERENCE_RECONSTRUCTION' ? '仅整理表达。需要新增内容或改变场景，请开启 Plan。' : '描述希望如何调整当前新图提示词。'" aria-label="图像提示词再次优化要求" /></label>
+          <section v-if="result.materialSources?.length" class="material-manifest" aria-label="素材对应表"><h3>素材对应表</h3><p class="hint">请在下游工具重新上传对应素材，并按提示词说明其用途。内部素材编号不能让下游直接读取文件。</p><article v-for="source in result.materialSources" :key="source.assetId"><strong>{{ sourceLabel(source, result.materialSources) }} · {{ source.name }}</strong><p class="hint">{{ source.track === 'REFERENCE' ? '参考来源' : '新主体／新内容' }} · {{ source.kind }} · 已选 {{ source.units.length }} 个页／帧</p><p v-for="warning in source.warnings" :key="warning" class="hint">{{ warning }}</p></article></section>
+          <p v-if="result.sources.length || result.materialSources?.length" class="hint">历史不保存原始素材。已有正文可以继续使用；需要重新识别时，请重新选择参考素材。</p>
+          <template v-if="accountResult"><label class="field"><span>基于当前正文再次优化</span><ElInput v-model="rewriteInstruction" type="textarea" :rows="2" maxlength="3000" :disabled="busy" :placeholder="result.mode === 'REFERENCE_RECONSTRUCTION' ? '仅整理表达。需要新增内容或改变场景，请开启 Plan。' : '描述希望如何调整当前创作提示词。'" aria-label="图像提示词再次优化要求" /></label>
             <ElButton :disabled="busy || hasDraftChanges || !result.recordId || !rewriteInstruction.trim() || recoveryPending" @click="store.rewrite(rewriteInstruction)">基于已有文字优化</ElButton><p class="hint">此操作使用已保存正文和分析摘要，不会重新读取图片。</p>
           </template>
           <p v-else-if="!auth.isAuthenticated" class="hint">注册登录后可使用历史及历史正文再次优化。<ElButton link type="primary" @click="register()">注册账号</ElButton></p>
@@ -255,16 +321,16 @@ p { margin: 8px 0; line-height: 1.8; overflow-wrap: anywhere; }
 .mode-descriptions { padding: 10px 12px; background: var(--accent-soft); border-radius: var(--radius-sm); font-size: 13px; }
 .field { display: grid; gap: 7px; margin-top: 16px; } .field > span { color: var(--ink-strong); font-size: 13px; }
 .output-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; min-width: 0; } .primary-action { width: 100%; margin-top: 18px; }
-.plan-section { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line-subtle); }
-.plan-question { margin: 16px 0; padding: 12px; min-width: 0; border: 1px solid var(--line-subtle); border-radius: var(--radius-sm); } .plan-question legend { font-size: 13px; color: var(--ink-strong); }
-.plan-question :deep(.el-radio-group), .plan-question :deep(.el-checkbox-group) { display: grid; gap: 6px; margin-bottom: 10px; }
-.plan-question :deep(.el-radio), .plan-question :deep(.el-checkbox) { margin-right: 0; height: auto; white-space: normal; }
-.plan-question :deep(.el-radio__label), .plan-question :deep(.el-checkbox__label) { white-space: normal; line-height: 1.6; }
+.creative-supplement, .media-track, .material-manifest { margin-top: 18px; padding: 14px; min-width: 0; border: 1px solid var(--line-strong); border-radius: var(--radius-md); background: var(--surface-panel); }
+.creative-supplement h3:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.media-track h3 { font-size: 15px; } .material-manifest article { margin: 12px 0; padding-top: 10px; border-top: 1px solid var(--line-subtle); overflow-wrap: anywhere; }
+.plan-ready-notice { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; justify-content: space-between; padding: 12px 16px; color: var(--ink-strong); border: 1px solid var(--accent); border-radius: var(--radius-sm); background: var(--accent-soft); }
+.pane-plan-status { display: block; margin-top: 4px; font-size: 11px; } .mobile-panes :deep(.el-button > span) { display: flex; flex-direction: column; }
 .prompt-text { min-height: 220px; max-height: 660px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; line-height: 1.9; color: var(--ink-strong); }
 .result-actions { justify-content: flex-start; flex-wrap: wrap; margin-top: 14px; } .result-actions :deep(.el-button + .el-button) { margin-left: 0; }
 .result-warnings { padding-left: 18px; color: var(--ink-muted); font-size: 12px; } .history-row { display: flex; justify-content: space-between; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line-subtle); }
 .history-row > div { min-width: 0; } .history-row span { margin-left: 8px; font-size: 12px; } .history-row p { white-space: pre-wrap; overflow-wrap: anywhere; } .mobile-panes { display: none; }
 @media (max-width: 1100px) and (min-width: 901px) { .image-workbench { padding: 16px; } .image-grid { grid-template-columns: minmax(210px, 0.8fr) minmax(250px, 1fr) minmax(250px, 1fr); gap: 10px; } .image-column { padding: 12px; } }
-@media (max-width: 900px) { .image-grid { grid-template-columns: minmax(0, 1fr); } .mobile-panes { display: flex; gap: 8px; } .mobile-panes .el-button { flex: 1; margin-left: 0; } .image-grid[data-pane='images'] [data-column]:not([data-column='images']), .image-grid[data-pane='settings'] [data-column]:not([data-column='settings']), .image-grid[data-pane='result'] [data-column]:not([data-column='result']) { display: none; } }
+@media (max-width: 900px) { .image-grid { grid-template-columns: minmax(0, 1fr); } .mobile-panes { display: flex; gap: 8px; } .mobile-panes .el-button { flex: 1; margin-left: 0; min-height: 42px; height: auto; padding: 8px; } .image-grid[data-pane='images'] [data-column]:not([data-column='images']), .image-grid[data-pane='settings'] [data-column]:not([data-column='settings']), .image-grid[data-pane='result'] [data-column]:not([data-column='result']) { display: none; } }
 @media (max-width: 640px) { .image-workbench { padding: 12px; } .image-heading { align-items: flex-start; flex-direction: column; } .image-column { padding: 14px; } .history-row { flex-direction: column; } }
 </style>

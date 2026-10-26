@@ -1,0 +1,131 @@
+{
+  "caseId": "M02-ppt-page-data",
+  "originalPlanSha256": "a574bd549a2264a02a526cf9a2f5f8b9ddf8d9721f63e83d1897fa6b324f8ec1",
+  "input": {
+    "mode": "CUSTOM_CREATION",
+    "modelId": "fixture",
+    "images": [],
+    "creationIntent": "编写制作一页可编辑PPT的提示词。只采用R1选中的原第2页，保留表格数据、表头和这一页版式，将标题替换为指定文案。Item/Units/Score三列，ALPHA为24和8.5，BETA为48和9.2，全部为原始合成数据，不解释业务原因，不使用其他页面。字体细节委托下游设计。",
+    "exactText": "季度指标·2046",
+    "context": "这是一页合成验收资料；8.5和9.2为分数，没有百分号，不代表真实业务。",
+    "language": "ZH",
+    "targetTool": "通用PPT工具",
+    "outputType": "PPT",
+    "materials": [
+      {
+        "assetId": "00000000-0000-0000-0000-000000000001",
+        "track": "REFERENCE",
+        "role": "LAYOUT",
+        "units": [
+          {
+            "unitId": "00000000-0000-0000-0000-000000000002",
+            "masks": []
+          }
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "id": "m02-title",
+        "operation": "REPLACE",
+        "referenceObject": "原第2页标题",
+        "replacementObject": "季度指标·2046",
+        "attributes": [
+          "文字"
+        ],
+        "scope": "成品唯一一页的标题",
+        "instruction": "只替换标题，逐字使用新标题。",
+        "referenceAssetId": "00000000-0000-0000-0000-000000000001",
+        "referenceUnitId": "00000000-0000-0000-0000-000000000002"
+      },
+      {
+        "id": "m02-data",
+        "operation": "PRESERVE",
+        "referenceObject": "Item/Units/Score表格",
+        "replacementObject": "",
+        "attributes": [
+          "数据",
+          "单位"
+        ],
+        "scope": "成品表格",
+        "instruction": "保留ALPHA/24/8.5及BETA/48/9.2的对应关系，不添加百分号或新数值。",
+        "referenceAssetId": "00000000-0000-0000-0000-000000000001",
+        "referenceUnitId": "00000000-0000-0000-0000-000000000002"
+      }
+    ]
+  },
+  "originalAnalysis": [
+    {
+      "imageId": "00000000-0000-0000-0000-000000000002",
+      "category": "文字",
+      "description": "左上标题为“Q4 DEMO METRICS”，深蓝色粗体无衬线字，位于画布上部。",
+      "status": "OBSERVED"
+    },
+    {
+      "imageId": "00000000-0000-0000-0000-000000000002",
+      "category": "文字",
+      "description": "左下页脚为“SYNTHETIC / PAGE 2”，小号深色无衬线字。",
+      "status": "OBSERVED"
+    },
+    {
+      "imageId": "00000000-0000-0000-0000-000000000002",
+      "category": "主体",
+      "description": "页面主体为三列表格，表头依次为Item、Units、Score，数据行为ALPHA/24/8.5与BETA/48/9.2。",
+      "status": "OBSERVED"
+    },
+    {
+      "imageId": "00000000-0000-0000-0000-000000000002",
+      "category": "构图",
+      "description": "标题居左上，表格居中偏上，页脚居左下；整体留白较多，信息层级清晰。",
+      "status": "OBSERVED"
+    },
+    {
+      "imageId": "00000000-0000-0000-0000-000000000002",
+      "category": "配色",
+      "description": "表头为深藏蓝色底配白色文字，数据行为浅米色底配深色文字，页面背景为白色。",
+      "status": "OBSERVED"
+    },
+    {
+      "imageId": "00000000-0000-0000-0000-000000000002",
+      "category": "风格",
+      "description": "简洁扁平的企业汇报风格，无装饰图形、阴影或渐变。",
+      "status": "INTERPRETATION"
+    },
+    {
+      "imageId": "00000000-0000-0000-0000-000000000002",
+      "category": "光线",
+      "description": "静态页面无摄影光线信息，仅呈现纯色块与文字。",
+      "status": "OBSERVED"
+    },
+    {
+      "imageId": "00000000-0000-0000-0000-000000000002",
+      "category": "关系中",
+      "description": "标题需逐字替换为“季度指标·2046”；表格三列及两行数值对应关系保持不变，不加百分号。",
+      "status": "OBSERVED"
+    }
+  ],
+  "materialSources": [
+    {
+      "assetId": "00000000-0000-0000-0000-000000000001",
+      "name": "P1-demo-slides.pptx",
+      "kind": "PPTX",
+      "track": "REFERENCE",
+      "role": "LAYOUT",
+      "units": [
+        {
+          "id": "00000000-0000-0000-0000-000000000002",
+          "page": 2,
+          "timestampMs": null,
+          "text": "第 2 页；画布 960×540 pt。\n元素 TextBox 2 位置/尺寸(pt): 55,55,850,80 Q4 DEMO METRICS\n元素 Table 3 Item | Units | Score | \nALPHA | 24 | 8.5 | \nBETA | 48 | 9.2 | \n\n元素 TextBox 4 位置/尺寸(pt): 55,488,800,30 SYNTHETIC / PAGE 2\n",
+          "masks": []
+        }
+      ],
+      "warnings": [
+        "只解析可见静态页面，不读取备注；动画、切换效果和内嵌媒体未被理解。",
+        "页面结构文字是每页最多4000字符的有界摘录，不代表全文转录。",
+        "图表按源文件缓存值解析，可能不是工作簿最新值；预览不保证绘制全部图表、字体和复杂图形，请对照原件核对。",
+        "仅分析选中的 1 / 3 个可见页面；未选择页面不参与模型分析。"
+      ]
+    }
+  ]
+}

@@ -173,3 +173,25 @@ test('历史分类切换身份后拒绝旧列表的迟到响应', async ({ page 
   release(); await oldResponse;
   await expect(page.getByText('旧身份私有图像记录')).toHaveCount(0);
 });
+
+test('多模态历史保留成品类型、选页遮挡和替换关系，查看不请求原件', async ({ page }) => {
+  const state = await setup(page);
+  const record = state.records[1]!;
+  record.input.outputType = 'VIDEO';
+  record.materialSources = [{ assetId: 'brand', name: '品牌参考.pptx', kind: 'PPTX', track: 'REFERENCE', role: 'LAYOUT',
+    units: [{ id: 'page-two', page: 2, timestampMs: null, text: '', masks: [{ x: 0, y: 0, width: .2, height: .1 }] }], warnings: ['仅分析选中的1/8个可见页面'] }];
+  record.input.relations = [{ id: 'swap', operation: 'REPLACE', referenceAssetId: 'brand', referenceUnitId: 'page-two',
+    referenceObject: '中央旧产品', replacementObject: '白色耳机', instruction: '保留配色与留白', attributes: ['配色', '构图'], scope: '第一个镜头' }];
+  await page.goto('/history?type=image-prompt');
+  await visibleRows(page).nth(1).getByRole('button', { name: '查看', exact: true }).click();
+  const detail = page.getByRole('dialog', { name: '图像提示词记录详情' });
+  await expect(detail.getByRole('heading', { name: '视频创作构想' })).toBeVisible();
+  await expect(detail.getByRole('region', { name: '历史素材对照表' })).toContainText('第 2 页');
+  await expect(detail.getByRole('region', { name: '历史素材对照表' })).toContainText('已遮挡 1 处区域');
+  await expect(detail.getByRole('region', { name: '历史替换关系' })).toContainText('白色耳机');
+  await expect(detail.getByRole('region', { name: '历史替换关系' })).toContainText('第一个镜头');
+  await expect(detail.getByRole('region', { name: '历史替换关系' }).getByRole('heading', { name: '初始保留与替换关系', exact: true })).toBeVisible();
+  await expect(detail.getByRole('region', { name: '历史替换关系' })).toContainText('当前要求以 Plan 确认题答和当前正文为准');
+  await expect(detail.locator('img')).toHaveCount(0);
+  expect(state.paidCalls).toBe(0);
+});

@@ -1,0 +1,3700 @@
+{
+  "scope": "Synthetic-only multimodal prompt generation; no downstream image/video/PPT execution",
+  "actualCalls": 42,
+  "maximumAuthorizedCalls": 100,
+  "noCredentialsOrAccountIds": true,
+  "idsReplacedWithSourceLabels": true,
+  "phases": [
+    {
+      "phase": "phase1",
+      "instructionVersion": "image-prompt-v4-material-relations",
+      "model": "deepseek:deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "maxTokens": 6000,
+        "readTimeoutSeconds": 60,
+        "jsonResponseFormat": true,
+        "protocolRepairMax": 1
+      },
+      "actualCalls": 18,
+      "failedVendorCalls": 0,
+      "inputTokens": 51742,
+      "outputTokens": 14457,
+      "verdict": {
+        "F01": "PASS_PROMPT_AND_REAL_UI",
+        "M01": "PASS_PROMPT",
+        "M02": "PROMPT_PASS_SOURCE_PROVENANCE_FAIL",
+        "C01": "FAIL_PLATFORM_REACTIVATED_CANCELLED_RELATION",
+        "M03": "PROMPT_PASS_REDUNDANT_QUESTIONS",
+        "M04": "PRIVACY_PASS_MASK_ARTIFACT_TRANSFER_FAIL"
+      },
+      "cases": [
+        {
+          "id": "M01-image-swap",
+          "input": {
+            "mode": "CUSTOM_CREATION",
+            "modelId": "deepseek:deepseek-flash",
+            "images": [],
+            "creationIntent": "创作一张3:2横向产品海报。借鉴R1的奶油色背景、藏蓝标题和蓝色椭圆构图，将中央橙色杯子替换为T1的青绿色头戴耳机，保留新耳机的形状与藏蓝耳垫。橙色只作少量点缀，不把耳机染橙。标题只使用指定文案，不沿用参考文字。字体与装饰细节全部委托下游设计，不增加品牌、价格或其他文字。",
+            "exactText": "SUMMER SOUND",
+            "context": "所有素材均为本地生成的合成示意，不代表真实品牌、型号或实际产品参数。",
+            "language": "ZH",
+            "targetTool": "通用文生图",
+            "outputType": "IMAGE",
+            "materials": [
+              {
+                "assetId": "ASSET_R1",
+                "track": "REFERENCE",
+                "role": "LAYOUT",
+                "units": [
+                  {
+                    "unitId": "R1:image",
+                    "masks": []
+                  }
+                ]
+              },
+              {
+                "assetId": "ASSET_T1",
+                "track": "REPLACEMENT",
+                "role": "SUBJECT",
+                "units": [
+                  {
+                    "unitId": "T1:image",
+                    "masks": []
+                  }
+                ]
+              }
+            ],
+            "relations": [
+              {
+                "id": "m01-swap",
+                "operation": "REPLACE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:image",
+                "referenceObject": "画面中央的橙色杯子",
+                "replacementAssetId": "ASSET_T1",
+                "replacementUnitId": "T1:image",
+                "replacementObject": "青绿色头戴式耳机，藏蓝耳垫",
+                "instruction": "仅替换主体，保留参考中的中央位置和近似视觉大小；新主体保持T1外形、青绿色及藏蓝耳垫。",
+                "attributes": [
+                  "主体",
+                  "形状",
+                  "颜色"
+                ],
+                "scope": "海报中央主体"
+              }
+            ]
+          },
+          "analysis": [
+            {
+              "imageId": "R1:image",
+              "category": "构图",
+              "description": "横向3:2画面，中央偏上放置蓝色椭圆，椭圆内为橙色杯子，椭圆下方有一条深色水平细线。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "配色",
+              "description": "奶油色背景，藏蓝色标题与文字，蓝色椭圆，橙色杯子形成暖色焦点。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "文字",
+              "description": "左上角有大号藏蓝标题“SUMMER IDEA”，其下有小号副标题“SYNTHETIC POSTER / 2046”，左下角有“SAMPLE CODE 4816”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "风格",
+              "description": "扁平矢量插画风格，无渐变、无阴影，几何化图形与简洁排版。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "主体",
+              "description": "青绿色头戴式耳机，弧形头梁连接两侧耳罩，耳罩内侧为藏蓝色矩形垫。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "风格",
+              "description": "扁平矢量图标风格，纯色填充，无高光与阴影。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "文字",
+              "description": "耳机下方有藏蓝色文字“NEW AUDIO”。",
+              "status": "OBSERVED"
+            }
+          ],
+          "materialSources": [
+            {
+              "assetId": "ASSET_R1",
+              "name": "R1-reference-poster.png",
+              "kind": "IMAGE",
+              "track": "REFERENCE",
+              "role": "LAYOUT",
+              "units": [
+                {
+                  "id": "R1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            },
+            {
+              "assetId": "ASSET_T1",
+              "name": "T1-headphones.png",
+              "kind": "IMAGE",
+              "track": "REPLACEMENT",
+              "role": "SUBJECT",
+              "units": [
+                {
+                  "id": "T1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            }
+          ],
+          "questions": [],
+          "answers": [],
+          "optimizedPrompt": "创作一张3:2横向产品海报，扁平矢量插画风格，纯色填充、无渐变、无阴影，整体简洁现代。\n\n背景为奶油色，画面中央偏上放置一个蓝色椭圆作为主体承载区，椭圆下方保留一条深色水平细线作为版式分隔。椭圆中央放置一只青绿色头戴式耳机，保持耳机原有外形：弧形头梁连接两侧耳罩，耳罩内侧为藏蓝色矩形耳垫；耳机保持青绿色与藏蓝色，不染成橙色。耳机在画面中的位置与视觉大小与参考中的中央主体近似，作为唯一视觉焦点。\n\n橙色仅作少量点缀，可用于椭圆边缘的小色块、细线端点或标题旁的小圆点等微小装饰，面积克制，不形成第二焦点，也不改变耳机颜色。\n\n标题文字仅使用“SUMMER SOUND”，逐字保留英文大写与空格，置于左上角，使用藏蓝色，字号醒目；不添加副标题、编号、品牌名、价格、参数或其他任何文字。字体选择、字距、装饰图形与排版细节全部交由下游设计自由处理，保持与扁平几何风格协调。\n\n整体配色以奶油色、藏蓝、蓝色为主，青绿色耳机为视觉中心，橙色为少量暖色点缀；画面干净、留白充足，无写实光影与材质纹理。\n\n素材上传说明与已明确的关系：\n请在下游工具配套上传以下素材；编号仅用于对应，不能凭编号读取平台临时文件。\n仅使用所选页面／视频帧，并保留本次遮挡；请勿用未经审阅的完整原件代替。\nR1 · R1-reference-poster.png · IMAGE · 参考素材 [图片]\nT1 · T1-headphones.png · IMAGE · 新主体／新内容 [图片]\n- 替换：R1 画面中央的橙色杯子 → T1 青绿色头戴式耳机，藏蓝耳垫；属性：主体、形状、颜色；范围：海报中央主体；仅替换主体，保留参考中的中央位置和近似视觉大小；新主体保持T1外形、青绿色及藏蓝耳垫。\n",
+          "warnings": [
+            "图片已校正方向、缩放并清除元数据。",
+            "参考图中的副标题与左下角文字为示例文案，新海报仅使用指定文案“SUMMER SOUND”，不沿用参考文字。",
+            "耳机素材为扁平图标，替换到海报中央时需保持其青绿色与藏蓝耳垫，不染成橙色。",
+            "参考图与替换素材均为合成示意，不代表真实品牌、型号或产品参数。",
+            "参考图中的副标题、编号及T1素材中的“NEW AUDIO”均不沿用，画面只出现指定文案SUMMER SOUND。",
+            "橙色仅作少量点缀，耳机主体保持青绿色与藏蓝耳垫，不得染橙。",
+            "参考图中的副标题、编号及耳机素材中的“NEW AUDIO”均不沿用，画面只出现“SUMMER SOUND”。",
+            "耳机具体结构细节以T1素材可见部分为准，未覆盖角度不推断。",
+            "字体与装饰细节由下游设计决定，生成结果可能与预期排版存在差异。"
+          ],
+          "historySaved": true,
+          "mock": false,
+          "stageDurationsMs": {
+            "plan": 6021,
+            "generateOrRewrite": 5087
+          },
+          "actualCalls": 3,
+          "tokenUsage": [
+            {
+              "operation": "image.plan",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2619,
+              "outputTokens": 609,
+              "totalTokens": 3228,
+              "durationMs": 2668
+            },
+            {
+              "operation": "image.analyze",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2913,
+              "outputTokens": 559,
+              "totalTokens": 3472,
+              "durationMs": 3179
+            },
+            {
+              "operation": "image.generate",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2620,
+              "outputTokens": 889,
+              "totalTokens": 3509,
+              "durationMs": 4989
+            }
+          ],
+          "traceSha256": "fe0fc8d2f579beca0575915bf9e91efa60069e7c39332219ea472b76ca3019a0"
+        },
+        {
+          "id": "M02-ppt-page-data",
+          "input": {
+            "mode": "CUSTOM_CREATION",
+            "modelId": "deepseek:deepseek-flash",
+            "images": [],
+            "creationIntent": "编写制作一页可编辑PPT的提示词。只采用R1选中的原第2页，保留表格数据、表头和这一页版式，将标题替换为指定文案。Item/Units/Score三列，ALPHA为24和8.5，BETA为48和9.2，全部为原始合成数据，不解释业务原因，不使用其他页面。字体细节委托下游设计。",
+            "exactText": "季度指标·2046",
+            "context": "这是一页合成验收资料；8.5和9.2为分数，没有百分号，不代表真实业务。",
+            "language": "ZH",
+            "targetTool": "通用PPT工具",
+            "outputType": "PPT",
+            "materials": [
+              {
+                "assetId": "ASSET_R1",
+                "track": "REFERENCE",
+                "role": "LAYOUT",
+                "units": [
+                  {
+                    "unitId": "R1:page2",
+                    "masks": []
+                  }
+                ]
+              }
+            ],
+            "relations": [
+              {
+                "id": "m02-title",
+                "operation": "REPLACE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:page2",
+                "referenceObject": "原第2页标题",
+                "replacementAssetId": null,
+                "replacementUnitId": null,
+                "replacementObject": "季度指标·2046",
+                "instruction": "只替换标题，逐字使用新标题。",
+                "attributes": [
+                  "文字"
+                ],
+                "scope": "成品唯一一页的标题"
+              },
+              {
+                "id": "m02-data",
+                "operation": "PRESERVE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:page2",
+                "referenceObject": "Item/Units/Score表格",
+                "replacementAssetId": null,
+                "replacementUnitId": null,
+                "replacementObject": "",
+                "instruction": "保留ALPHA/24/8.5及BETA/48/9.2的对应关系，不添加百分号或新数值。",
+                "attributes": [
+                  "数据",
+                  "单位"
+                ],
+                "scope": "成品表格"
+              }
+            ]
+          },
+          "analysis": [
+            {
+              "imageId": "R1:page2",
+              "category": "文字",
+              "description": "左上标题为“Q4 DEMO METRICS”，深蓝色粗体无衬线字，位于画布上部。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:page2",
+              "category": "文字",
+              "description": "左下页脚为“SYNTHETIC / PAGE 2”，小号深色无衬线字。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:page2",
+              "category": "主体",
+              "description": "页面主体为三列表格，表头依次为Item、Units、Score，数据行为ALPHA/24/8.5与BETA/48/9.2。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:page2",
+              "category": "构图",
+              "description": "标题居左上，表格居中偏上，页脚居左下；整体留白较多，信息层级清晰。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:page2",
+              "category": "配色",
+              "description": "表头为深藏蓝色底配白色文字，数据行为浅米色底配深色文字，页面背景为白色。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:page2",
+              "category": "风格",
+              "description": "简洁扁平的企业汇报风格，无装饰图形、阴影或渐变。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "R1:page2",
+              "category": "光线",
+              "description": "静态页面无摄影光线信息，仅呈现纯色块与文字。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:page2",
+              "category": "关系中",
+              "description": "标题需逐字替换为“季度指标·2046”；表格三列及两行数值对应关系保持不变，不加百分号。",
+              "status": "OBSERVED"
+            }
+          ],
+          "materialSources": [
+            {
+              "assetId": "ASSET_R1",
+              "name": "P1-demo-slides.pptx",
+              "kind": "PPTX",
+              "track": "REFERENCE",
+              "role": "LAYOUT",
+              "units": [
+                {
+                  "id": "R1:page2",
+                  "page": 2,
+                  "timestampMs": null,
+                  "text": "第 2 页；画布 960×540 pt。\n元素 TextBox 2 位置/尺寸(pt): 55,55,850,80 Q4 DEMO METRICS\n元素 Table 3 Item | Units | Score | \nALPHA | 24 | 8.5 | \nBETA | 48 | 9.2 | \n\n元素 TextBox 4 位置/尺寸(pt): 55,488,800,30 SYNTHETIC / PAGE 2\n",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "只解析可见静态页面，不读取备注；动画、切换效果和内嵌媒体未被理解。",
+                "页面结构文字是每页最多4000字符的有界摘录，不代表全文转录。",
+                "图表按源文件缓存值解析，可能不是工作簿最新值；预览不保证绘制全部图表、字体和复杂图形，请对照原件核对。",
+                "仅分析选中的 1 / 3 个可见页面；未选择页面不参与模型分析。"
+              ]
+            }
+          ],
+          "questions": [],
+          "answers": [],
+          "optimizedPrompt": "制作一页可编辑的16:9演示文稿页面，画布比例与参考页一致（960×540 pt），仅此一页。\n\n版式沿用参考第2页的空间关系与信息层级：标题位于页面左上区域，横向占位较宽；三列表格居中偏上，宽度接近页面主体宽度；页脚位于左下角，字号明显小于正文。整体留白充足，信息层级清晰，不添加装饰图形、阴影或渐变。\n\n标题：将原页标题位置的内容逐字替换为“季度指标·2046”，保持左上位置与粗体无衬线风格，颜色沿用参考页标题的深蓝色调。\n\n表格：保留三列表格结构，表头依次为 Item、Units、Score，表头使用深藏蓝色底配白色文字；数据行两行，第一行为 ALPHA、24、8.5，第二行为 BETA、48、9.2，数据行使用浅米色底配深色文字。三列数值与项目的对应关系必须严格保持，8.5和9.2为分数，不加百分号，不新增、删减或改写任何数值与项目名称。\n\n页脚：保留左下角小号页脚文字“SYNTHETIC / PAGE 2”，位置与字号层级同参考页。\n\n字体细节（字族、字号、字重、行距、单元格内边距）由下游设计统一处理，需保证表格文字清晰可读、列宽均衡。所有文字与表格均为可编辑对象，不使用图片化文字。不解释业务原因，不添加图表、图标、图片或其他页面。\n\n素材上传说明与已明确的关系：\n请在下游工具配套上传以下素材；编号仅用于对应，不能凭编号读取平台临时文件。\n仅使用所选页面／视频帧，并保留本次遮挡；请勿用未经审阅的完整原件代替。\nR1 · P1-demo-slides.pptx · PPTX · 参考素材 [第2页]\n- 替换：R1 [slide 2] 原第2页标题 → 季度指标·2046；属性：文字；范围：成品唯一一页的标题；只替换标题，逐字使用新标题。\n- 保留：R1 [slide 2] Item/Units/Score表格；属性：数据、单位；范围：成品表格；保留ALPHA/24/8.5及BETA/48/9.2的对应关系，不添加百分号或新数值。\n",
+          "warnings": [
+            "只解析可见静态页面，不读取备注；动画、切换效果和内嵌媒体未被理解。",
+            "页面结构文字是每页最多4000字符的有界摘录，不代表全文转录。",
+            "图表按源文件缓存值解析，可能不是工作簿最新值；预览不保证绘制全部图表、字体和复杂图形，请对照原件核对。",
+            "仅分析选中的 1 / 3 个可见页面；未选择页面不参与模型分析。",
+            "仅分析选中的第2页静态版式，未读取备注、动画、切换效果或内嵌媒体。",
+            "字体名称、字号与精确间距未从源文件确认，字体细节按用户委托交由下游设计。",
+            "页脚“SYNTHETIC / PAGE 2”是否保留未在指令中明确，需按原版式保留处理。",
+            "仅解析了参考文件第2页的静态结构，未读取备注、动画、切换效果和内嵌媒体。",
+            "页面文字为有界摘录，非全文转录；字体、字号等细节未完全解析，交由下游设计。",
+            "表格数值为合成验收数据，8.5与9.2为分数，不得添加百分号或解释业务原因。",
+            "仅解析了参考文件的第2页，其他页面不参与本页制作。",
+            "参考页的动画、切换效果与备注未被读取，本提示词不涉及这些内容。",
+            "字体细节由下游设计决定，最终字族与字号可能与参考页存在差异。",
+            "表格数据为合成验收数据，8.5与9.2为分数，不得添加百分号或作业务解释。"
+          ],
+          "historySaved": true,
+          "mock": false,
+          "stageDurationsMs": {
+            "plan": 6931,
+            "generateOrRewrite": 5346
+          },
+          "actualCalls": 3,
+          "tokenUsage": [
+            {
+              "operation": "image.analyze",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2683,
+              "outputTokens": 680,
+              "totalTokens": 3363,
+              "durationMs": 3401
+            },
+            {
+              "operation": "image.plan",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2779,
+              "outputTokens": 686,
+              "totalTokens": 3465,
+              "durationMs": 2989
+            },
+            {
+              "operation": "image.generate",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2780,
+              "outputTokens": 1050,
+              "totalTokens": 3830,
+              "durationMs": 5257
+            }
+          ],
+          "traceSha256": "ecf4c796a59af770334dec2f4acee30424047955197d66d090ab9e2b5324471d"
+        },
+        {
+          "id": "M03-video-timing",
+          "input": {
+            "mode": "CUSTOM_CREATION",
+            "modelId": "deepseek:deepseek-flash",
+            "images": [],
+            "creationIntent": "编写6秒无声产品短片的创作提示词。R1是4秒原始合成片段，所选帧前段是红方块横移、后段是青圆竖移；借鉴先横后竖的画面安排，所有主体替换为T1青绿色头戴耳机。新片明确分为0至2秒耳机向右移动、2至6秒耳机向下移动两个镜头，这个2秒加4秒是我指定的新节奏，不是对原片切点的测量。其余运镜和转场委托下游设计，不使用原画面字幕，不添加音轨、音乐或对白。",
+            "exactText": "",
+            "context": "合成无声素材。只对所选时间戳作观察，稀疏帧不等于已识别整段精细运动；新片动作与时长是明确创作要求。",
+            "language": "ZH",
+            "targetTool": "通用视频创作工具",
+            "outputType": "VIDEO",
+            "materials": [
+              {
+                "assetId": "ASSET_R1",
+                "track": "REFERENCE",
+                "role": "LAYOUT",
+                "units": [
+                  {
+                    "unitId": "R1:0ms",
+                    "masks": []
+                  },
+                  {
+                    "unitId": "R1:1500ms",
+                    "masks": []
+                  },
+                  {
+                    "unitId": "R1:2000ms",
+                    "masks": []
+                  },
+                  {
+                    "unitId": "R1:3500ms",
+                    "masks": []
+                  }
+                ]
+              },
+              {
+                "assetId": "ASSET_T1",
+                "track": "REPLACEMENT",
+                "role": "SUBJECT",
+                "units": [
+                  {
+                    "unitId": "T1:image",
+                    "masks": []
+                  }
+                ]
+              }
+            ],
+            "relations": [
+              {
+                "id": "m03-video-swap",
+                "operation": "REPLACE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:0ms",
+                "referenceObject": "前段红方块与后段青圆两个主体",
+                "replacementAssetId": "ASSET_T1",
+                "replacementUnitId": "T1:image",
+                "replacementObject": "同一青绿耳机及藏蓝耳垫",
+                "instruction": "新片0至2秒向右、2至6秒向下，总长6秒；不将新节奏说成原片测量事实，不生成音轨。",
+                "attributes": [
+                  "主体",
+                  "动作",
+                  "镜头节奏"
+                ],
+                "scope": "两个目标镜头"
+              }
+            ]
+          },
+          "analysis": [
+            {
+              "imageId": "R1:0ms",
+              "category": "构图",
+              "description": "0 ms 帧：浅米色背景，红色方块位于画面左侧偏中，左上角有深色标题文字，左下角有时间码文字。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:0ms",
+              "category": "文字",
+              "description": "左上角可见“SHOT A - RED SQUARE”，左下角可见“0.00 s”；均为原片字幕，新片不使用。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:1500ms",
+              "category": "构图",
+              "description": "1500 ms 帧：同一浅米色背景，红色方块移至画面中部偏右，较 0 ms 帧明显右移。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:1500ms",
+              "category": "文字",
+              "description": "左上角仍为“SHOT A - RED SQUARE”，左下角时间码为“1.50 s”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:2000ms",
+              "category": "构图",
+              "description": "2000 ms 帧：背景变为浅青灰色，青绿色圆形位于画面右上方，左上角标题与左下角时间码仍在。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:2000ms",
+              "category": "文字",
+              "description": "左上角可见“SHOT B - TEAL CIRCLE”，左下角可见“2.00 s”；为原片字幕，新片不使用。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:2000ms",
+              "category": "配色",
+              "description": "前段浅米色背景配红色方块，后段浅青灰背景配青绿色圆形，两段背景色不同。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:2000ms",
+              "category": "关系中",
+              "description": "所选帧显示前段为方块横向移动、后段切换为圆形；仅凭稀疏帧不能确认完整运动轨迹或精确切点。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "文字",
+              "description": "左上角有深蓝色无衬线标题“SHOT B - TEAL CIRCLE”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "文字",
+              "description": "左下角有深蓝色时间标记“3.50 s”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "主体",
+              "description": "画面右侧偏中位置有一个青绿色实心圆。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "构图",
+              "description": "浅灰蓝纯色背景，主体偏右，左上与左下分置文字，留白较大。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "配色",
+              "description": "背景为浅灰蓝，主体为青绿，文字为深蓝，整体低饱和、简洁。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "光线",
+              "description": "无可见光影或立体明暗，呈平面纯色表现。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "主体",
+              "description": "青绿色头戴式耳机正面图标，弧形头梁连接左右两个耳罩。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "主体",
+              "description": "左右耳罩内侧为藏蓝色圆角矩形耳垫。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "文字",
+              "description": "耳机下方居中有一行深蓝色无衬线文字“NEW AUDIO”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "构图",
+              "description": "耳机居中偏上，文字位于下方，浅灰白背景，主体与文字垂直对齐。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "风格",
+              "description": "扁平化矢量图标风格，无渐变、无阴影，边缘干净。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "配色",
+              "description": "青绿主体、藏蓝耳垫与文字、浅灰白背景，与参考帧色系相近。",
+              "status": "OBSERVED"
+            }
+          ],
+          "materialSources": [
+            {
+              "assetId": "ASSET_R1",
+              "name": "V1-two-shots.mp4",
+              "kind": "VIDEO",
+              "track": "REFERENCE",
+              "role": "LAYOUT",
+              "units": [
+                {
+                  "id": "R1:0ms",
+                  "page": null,
+                  "timestampMs": 0,
+                  "text": "",
+                  "masks": []
+                },
+                {
+                  "id": "R1:1500ms",
+                  "page": null,
+                  "timestampMs": 1500,
+                  "text": "",
+                  "masks": []
+                },
+                {
+                  "id": "R1:2000ms",
+                  "page": null,
+                  "timestampMs": 2000,
+                  "text": "",
+                  "masks": []
+                },
+                {
+                  "id": "R1:3500ms",
+                  "page": null,
+                  "timestampMs": 3500,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "仅采样源视频 0–4000 ms 片段，共 8 帧；音频未发送或识别。",
+                "静态采样不等于完整运动理解，镜头节奏仅限有时间戳的采样证据。",
+                "仅分析所选时间戳的采样帧，不能据此声称完整运动、音轨或音乐节拍已识别。"
+              ]
+            },
+            {
+              "assetId": "ASSET_T1",
+              "name": "T1-headphones.png",
+              "kind": "IMAGE",
+              "track": "REPLACEMENT",
+              "role": "SUBJECT",
+              "units": [
+                {
+                  "id": "T1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            }
+          ],
+          "questions": [
+            {
+              "id": "q1",
+              "type": "SINGLE_CHOICE",
+              "question": "新片两个镜头中，耳机下方的“NEW AUDIO”文字是否需要随耳机一起出现？",
+              "options": [
+                {
+                  "id": "o1",
+                  "label": "保留，随耳机一同移动"
+                },
+                {
+                  "id": "o2",
+                  "label": "不保留，画面只出现耳机"
+                },
+                {
+                  "id": "o3",
+                  "label": "保留但固定在画面中，不随耳机移动"
+                }
+              ],
+              "required": true
+            },
+            {
+              "id": "q2",
+              "type": "SINGLE_CHOICE",
+              "question": "两个镜头的背景色如何处理？",
+              "options": [
+                {
+                  "id": "o1",
+                  "label": "沿用参考片两段不同背景色（前段浅米色、后段浅青灰）"
+                },
+                {
+                  "id": "o2",
+                  "label": "两个镜头统一使用浅灰白背景"
+                },
+                {
+                  "id": "o3",
+                  "label": "由下游设计决定"
+                }
+              ],
+              "required": true
+            },
+            {
+              "id": "q3",
+              "type": "SINGLE_CHOICE",
+              "question": "两个镜头之间的衔接方式希望是哪种？",
+              "options": [
+                {
+                  "id": "o1",
+                  "label": "硬切"
+                },
+                {
+                  "id": "o2",
+                  "label": "快速淡入淡出"
+                },
+                {
+                  "id": "o3",
+                  "label": "由下游设计决定"
+                }
+              ],
+              "required": true
+            },
+            {
+              "id": "q4",
+              "type": "SINGLE_CHOICE",
+              "question": "耳机在画面中的大小与留白倾向？",
+              "options": [
+                {
+                  "id": "o1",
+                  "label": "主体较大、留白较少"
+                },
+                {
+                  "id": "o2",
+                  "label": "主体适中、保留较多留白"
+                },
+                {
+                  "id": "o3",
+                  "label": "由下游设计决定"
+                }
+              ],
+              "required": true
+            }
+          ],
+          "answers": [
+            {
+              "questionId": "q1",
+              "optionIds": [
+                "o2"
+              ],
+              "customText": "仅使用T1耳机主体，不带图片下方文字。"
+            },
+            {
+              "questionId": "q2",
+              "optionIds": [
+                "o3"
+              ],
+              "customText": "背景由下游合理设计。"
+            },
+            {
+              "questionId": "q3",
+              "optionIds": [
+                "o3"
+              ],
+              "customText": "衔接方式已明确委托下游设计。"
+            },
+            {
+              "questionId": "q4",
+              "optionIds": [
+                "o3"
+              ],
+              "customText": "主体大小与留白由下游合理设计，保留两个镜头的新时长要求。"
+            }
+          ],
+          "optimizedPrompt": "制作一支总长6秒的无声产品短片，画面只呈现同一副青绿色头戴式耳机（青绿头梁与耳罩外壳、藏蓝色圆角矩形耳垫），采用扁平化矢量图标风格，无渐变、无阴影、边缘干净。全片不出现任何字幕、标题、时间码或图片原有文字，不添加音轨、音乐、对白或音效，成片为纯静音。\n\n镜头一（0–2秒）：耳机在画面中向右移动，从偏左位置平滑横移至偏右位置，运动连贯匀速，起止清晰。\n\n镜头二（2–6秒）：耳机在画面中向下移动，从偏上位置平滑竖移至偏下位置，运动连贯匀速，节奏与镜头一协调。\n\n两个镜头的主体均为同一副耳机，不新增其他物体、图标或装饰元素。背景色、镜头间衔接方式（硬切或淡入淡出等）、主体在画面中的大小与留白比例均由下游设计合理决定，保持简洁、低饱和、与青绿和藏蓝配色协调。整体为干净的产品展示短片，画面稳定，无抖动，无原片字幕残留。\n\n素材上传说明与已明确的关系：\n请在下游工具配套上传以下素材；编号仅用于对应，不能凭编号读取平台临时文件。\n仅使用所选页面／视频帧，并保留本次遮挡；请勿用未经审阅的完整原件代替。\nR1 · V1-two-shots.mp4 · VIDEO · 参考素材 [0.000s] [1.500s] [2.000s] [3.500s]\nT1 · T1-headphones.png · IMAGE · 新主体／新内容 [图片]\n- 替换：R1 [0.000s] 前段红方块与后段青圆两个主体 → T1 同一青绿耳机及藏蓝耳垫；属性：主体、动作、镜头节奏；范围：两个目标镜头；新片0至2秒向右、2至6秒向下，总长6秒；不将新节奏说成原片测量事实，不生成音轨。\n",
+          "warnings": [
+            "仅采样源视频 0–4000 ms 片段，共 8 帧；音频未发送或识别。",
+            "静态采样不等于完整运动理解，镜头节奏仅限有时间戳的采样证据。",
+            "仅分析所选时间戳的采样帧，不能据此声称完整运动、音轨或音乐节拍已识别。",
+            "图片已校正方向、缩放并清除元数据。",
+            "仅采样源视频 0–4000 ms 的 3 帧，未覆盖完整运动，不能据此确认精确切点或连续轨迹。",
+            "未提供音轨，不能推断音乐、对白或声音。",
+            "原片字幕与时间码仅作观察记录，新片明确不使用。",
+            "新片0–2秒向右、2–6秒向下的节奏为用户指定，不是对原片切点的测量。",
+            "参考视频仅采样0–4000ms共8帧，未提供完整运动轨迹与切点，不能据此推断原片精确节奏。",
+            "参考帧中的“SHOT B - TEAL CIRCLE”“3.50 s”为原片字幕，新片明确不使用。",
+            "替换主体图含“NEW AUDIO”文字，是否进入新片需由用户或下游决定，本分析不视为已确认。",
+            "未提供音轨，不能推断音乐、对白或节拍。",
+            "仅采样源视频0–4000 ms共8帧，未识别完整运动轨迹、精确切点或音轨；新片2秒+4秒节奏为用户指定，非原片测量结果。",
+            "参考片左上角标题与左下角时间码为原片字幕，新片明确不使用。",
+            "T1素材含“NEW AUDIO”文字，是否随主体出现待用户确认。",
+            "新片要求无声，不添加音轨、音乐或对白。",
+            "参考片仅采样0–4000毫秒共8帧，未识别完整运动与音轨；新片2秒加4秒节奏为用户指定，非原片切点测量。",
+            "原片字幕与时间码明确不使用，下游不得保留或复刻。",
+            "背景色、转场方式、主体大小与留白已委托下游设计，成片需保持6秒总长与两段动作方向。",
+            "成片须完全无声，不得生成音轨或音乐。"
+          ],
+          "historySaved": true,
+          "mock": false,
+          "stageDurationsMs": {
+            "plan": 15977,
+            "generateOrRewrite": 3816
+          },
+          "actualCalls": 4,
+          "tokenUsage": [
+            {
+              "operation": "image.analyze",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 3287,
+              "outputTokens": 720,
+              "totalTokens": 4007,
+              "durationMs": 4511
+            },
+            {
+              "operation": "image.analyze",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 3061,
+              "outputTokens": 849,
+              "totalTokens": 3910,
+              "durationMs": 4512
+            },
+            {
+              "operation": "image.plan",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 3792,
+              "outputTokens": 1791,
+              "totalTokens": 5583,
+              "durationMs": 6766
+            },
+            {
+              "operation": "image.generate",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 4242,
+              "outputTokens": 455,
+              "totalTokens": 4697,
+              "durationMs": 3729
+            }
+          ],
+          "traceSha256": "9326c8f632b03563f7cd91bb40c40ca9c19354c4f7acec9fd6536ab0af9b693f"
+        },
+        {
+          "id": "F01-freeform-ui",
+          "input": {
+            "mode": "CUSTOM_CREATION",
+            "modelId": "deepseek:deepseek-flash",
+            "images": [],
+            "creationIntent": "为合成读书活动设计一张4:5竖版招募海报提示词。采用温暖扁平插画，奶油白、深绿与琥珀色；上方四分之一为标题，下方为原创人物窗边阅读。人物动作、装饰和字体细节全部委托下游设计。只出现指定标题，不增加日期、地点、价格、二维码或其他文案；无需进一步确认已委托细节。",
+            "exactText": "周末读书会",
+            "context": "这是合成设计任务，不提供真实活动日期、地点或品牌事实。",
+            "language": "ZH",
+            "targetTool": "通用文生图",
+            "outputType": "IMAGE",
+            "materials": [],
+            "relations": []
+          },
+          "analysis": [],
+          "materialSources": [],
+          "questions": [],
+          "answers": [],
+          "optimizedPrompt": "设计一张4:5竖版招募海报，用于合成读书活动。整体采用温暖扁平插画风格，配色以奶油白、深绿与琥珀色为主，画面干净、柔和、有亲和力。\n\n版式：画面上方约四分之一为标题区域，居中或按视觉平衡排布标题“周末读书会”，字体风格、字号与装饰细节由你设计，确保清晰醒目、与整体插画风格统一。标题区域可保留适量留白，不添加其他文字。\n\n画面下方为主体插画：一位原创人物坐在窗边阅读，人物动作、姿态、服饰、窗边陈设与装饰元素全部由你设计，保持温暖、安静、专注的阅读氛围。窗外光线柔和，可用扁平色块表现光影层次，深绿与琥珀色用于人物、窗框、植物或室内细节，奶油白作为背景与留白主色。\n\n画面中只出现“周末读书会”这一处文字，不添加日期、地点、价格、二维码、品牌标识或其他任何文案。整体构图简洁，视觉重心明确，适合作为读书活动招募海报。",
+          "warnings": [
+            "无参考图，画面细节由下游按提示词自行设计。",
+            "仅允许出现“周末读书会”这一处文字，需避免模型自动生成其他文案或伪文字。",
+            "画面仅允许出现“周末读书会”这一处文字，下游生成时需避免模型自动添加其他文案。",
+            "人物动作、装饰与字体细节已委托下游设计，生成结果可能与预期存在差异。"
+          ],
+          "historySaved": true,
+          "mock": false,
+          "stageDurationsMs": {
+            "plan": 5079,
+            "generateOrRewrite": 3689
+          },
+          "actualCalls": 2,
+          "tokenUsage": [
+            {
+              "operation": "image.plan",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 1580,
+              "outputTokens": 115,
+              "totalTokens": 1695,
+              "durationMs": 1904
+            },
+            {
+              "operation": "image.generate",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 1581,
+              "outputTokens": 358,
+              "totalTokens": 1939,
+              "durationMs": 3187
+            }
+          ],
+          "traceSha256": "741922f6b24523bc4acfb60958b8ff16649e5d453096172771d743cf1d402e5a"
+        },
+        {
+          "id": "C01-relation-conflict",
+          "input": {
+            "mode": "CUSTOM_CREATION",
+            "modelId": "deepseek:deepseek-flash",
+            "images": [],
+            "creationIntent": "创作3:2横向产品海报，奶油底、标题居上、主体居中。我在两张关系卡里一方面要求橙色杯子保留原形原色，另一方面又要求同一主体换成T1青绿耳机。两项不能同时满足，请先确认取舍。标题使用指定文案，其他字体、装饰和间距委托下游设计。",
+            "exactText": "SUMMER SOUND",
+            "context": "合成素材。原杯子保留与替换为耳机是同一个主体的互斥要求，不能擅自决定。",
+            "language": "ZH",
+            "targetTool": "通用文生图",
+            "outputType": "IMAGE",
+            "materials": [
+              {
+                "assetId": "ASSET_R1",
+                "track": "REFERENCE",
+                "role": "LAYOUT",
+                "units": [
+                  {
+                    "unitId": "R1:image",
+                    "masks": []
+                  }
+                ]
+              },
+              {
+                "assetId": "ASSET_T1",
+                "track": "REPLACEMENT",
+                "role": "SUBJECT",
+                "units": [
+                  {
+                    "unitId": "T1:image",
+                    "masks": []
+                  }
+                ]
+              }
+            ],
+            "relations": [
+              {
+                "id": "c01-preserve",
+                "operation": "PRESERVE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:image",
+                "referenceObject": "画面中央的橙色杯子",
+                "replacementAssetId": null,
+                "replacementUnitId": null,
+                "replacementObject": "",
+                "instruction": "杯子的形状和橙色均保持原样，原杯子作为唯一主体。",
+                "attributes": [
+                  "主体",
+                  "形状",
+                  "颜色"
+                ],
+                "scope": "海报中央主体"
+              },
+              {
+                "id": "c01-swap",
+                "operation": "REPLACE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:image",
+                "referenceObject": "画面中央的橙色杯子",
+                "replacementAssetId": "ASSET_T1",
+                "replacementUnitId": "T1:image",
+                "replacementObject": "青绿色头戴式耳机，藏蓝耳垫",
+                "instruction": "仅替换主体，保留参考中的中央位置和近似视觉大小；新主体保持T1外形、青绿色及藏蓝耳垫。",
+                "attributes": [
+                  "主体",
+                  "形状",
+                  "颜色"
+                ],
+                "scope": "海报中央主体"
+              }
+            ]
+          },
+          "analysis": [
+            {
+              "imageId": "R1:image",
+              "category": "文字",
+              "description": "顶部大标题为深藏蓝色无衬线大写“SUMMER IDEA”，下方一行较小副标题“SYNTHETIC POSTER / 2046”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "文字",
+              "description": "左下角有深藏蓝色小字“SAMPLE CODE 4816”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "主体",
+              "description": "画面中央为扁平化橙色带柄杯子，杯口呈浅奶油色椭圆，置于蓝色椭圆色块上。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "构图",
+              "description": "3:2横向版式，标题居上、主体居中，主体下方有一条深藏蓝色水平细线，底部左侧放小字。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "配色",
+              "description": "奶油色背景，主体橙、蓝色椭圆、深藏蓝文字与线条，整体为少量高对比扁平色块。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "风格",
+              "description": "扁平矢量插画风格，无渐变、无写实质感，几何化造型与简洁排版。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "主体",
+              "description": "青绿色头戴式耳机，头梁与耳罩外壳为青绿色，两侧耳垫为深藏蓝色圆角矩形。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "构图",
+              "description": "耳机居中、正面平视，下方有深藏蓝色文字“NEW AUDIO”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "风格",
+              "description": "扁平矢量图标风格，纯白背景，无阴影与材质细节。",
+              "status": "INTERPRETATION"
+            }
+          ],
+          "materialSources": [
+            {
+              "assetId": "ASSET_R1",
+              "name": "R1-reference-poster.png",
+              "kind": "IMAGE",
+              "track": "REFERENCE",
+              "role": "LAYOUT",
+              "units": [
+                {
+                  "id": "R1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            },
+            {
+              "assetId": "ASSET_T1",
+              "name": "T1-headphones.png",
+              "kind": "IMAGE",
+              "track": "REPLACEMENT",
+              "role": "SUBJECT",
+              "units": [
+                {
+                  "id": "T1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            }
+          ],
+          "questions": [
+            {
+              "id": "q1",
+              "type": "SINGLE_CHOICE",
+              "question": "海报中央主体采用哪一项？两项关系卡互斥，只能选其一。",
+              "options": [
+                {
+                  "id": "o1",
+                  "label": "保留橙色杯子原形原色作为唯一主体"
+                },
+                {
+                  "id": "o2",
+                  "label": "替换为T1青绿耳机（青绿外壳、藏蓝耳垫），保留中央位置与近似大小"
+                }
+              ],
+              "required": true
+            }
+          ],
+          "answers": [
+            {
+              "questionId": "q1",
+              "optionIds": [
+                "o2"
+              ],
+              "customText": "采用替换方案：只保留R1中央位置和近似视觉大小，主体形状和颜色改用T1青绿耳机与藏蓝耳垫；取消保留杯形和橙色的要求，原杯子不再出现。其他设计细节按原委托执行。"
+            }
+          ],
+          "optimizedPrompt": "创作一张3:2横向产品海报，扁平矢量插画风格，无渐变、无写实质感，几何化造型与简洁排版。\n\n画面结构：奶油色纯色背景；顶部居中放置大标题，逐字使用“SUMMER SOUND”，深藏蓝色无衬线大写，字形干净利落；标题下方可留出适度呼吸空间，不添加副标题或其他说明文字。画面中央为唯一主体：一只青绿色头戴式耳机，正面平视，头梁与耳罩外壳为青绿色，两侧耳垫为深藏蓝色圆角矩形，造型简洁、轮廓清晰，保持T1耳机的外形与配色。耳机置于画面中央，视觉大小与参考版式中中央主体的占比相近，下方可保留一条深藏蓝色水平细线作为版面分隔，整体信息层级为标题在上、主体居中。\n\n配色限定为奶油色背景、青绿色主体、深藏蓝色文字与线条，少量高对比扁平色块，画面干净克制。字体、装饰元素与间距由下游设计自由处理，但不得新增品牌标识、价格、促销语或其他文案，不得出现橙色杯子或任何杯形物体。\n\n素材上传说明与已明确的关系：\n请在下游工具配套上传以下素材；编号仅用于对应，不能凭编号读取平台临时文件。\n仅使用所选页面／视频帧，并保留本次遮挡；请勿用未经审阅的完整原件代替。\nR1 · R1-reference-poster.png · IMAGE · 参考素材 [图片]\nT1 · T1-headphones.png · IMAGE · 新主体／新内容 [图片]\n- 保留：R1 画面中央的橙色杯子；属性：主体、形状、颜色；范围：海报中央主体；杯子的形状和橙色均保持原样，原杯子作为唯一主体。\n- 替换：R1 画面中央的橙色杯子 → T1 青绿色头戴式耳机，藏蓝耳垫；属性：主体、形状、颜色；范围：海报中央主体；仅替换主体，保留参考中的中央位置和近似视觉大小；新主体保持T1外形、青绿色及藏蓝耳垫。\n",
+          "warnings": [
+            "图片已校正方向、缩放并清除元数据。",
+            "用户关系卡中“保留橙色杯子原形原色”与“同一主体替换为T1青绿耳机”互斥，无法同时满足，需在PLAN阶段确认取舍。",
+            "参考海报中的“SUMMER IDEA”“SYNTHETIC POSTER / 2046”“SAMPLE CODE 4816”与指定文案“SUMMER SOUND”不同，不能自动沿用。",
+            "T1耳机素材中的“NEW AUDIO”文字是否进入成品未明确。",
+            "两张关系卡对同一中央主体分别要求保留橙色杯子和替换为青绿耳机，二者互斥，未确认前无法生成。",
+            "参考图标题文案为“SUMMER IDEA”，本次指定文案为“SUMMER SOUND”，生成时以指定文案为准。",
+            "参考图与替换素材中的副标题、小字及“NEW AUDIO”等文字不自动带入新海报。",
+            "已按用户确认采用替换方案：橙色杯子不再出现，仅保留参考版式的中央位置与近似视觉大小。",
+            "参考图中的副标题、左下角小字及耳机素材中的“NEW AUDIO”均不进入成品，画面仅保留逐字文案“SUMMER SOUND”。",
+            "字体、装饰与间距由下游设计决定，成品中不得新增品牌、价格或促销信息。"
+          ],
+          "historySaved": true,
+          "mock": false,
+          "stageDurationsMs": {
+            "plan": 7878,
+            "generateOrRewrite": 5038
+          },
+          "actualCalls": 3,
+          "tokenUsage": [
+            {
+              "operation": "image.plan",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2878,
+              "outputTokens": 863,
+              "totalTokens": 3741,
+              "durationMs": 3766
+            },
+            {
+              "operation": "image.analyze",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 3032,
+              "outputTokens": 766,
+              "totalTokens": 3798,
+              "durationMs": 3972
+            },
+            {
+              "operation": "image.generate",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 3042,
+              "outputTokens": 1009,
+              "totalTokens": 4051,
+              "durationMs": 4943
+            }
+          ],
+          "traceSha256": "47133786f387bbcbc2b763d67fc5d25e47daf22b6b26c63ba76347e573332f16"
+        },
+        {
+          "id": "M04-masked-reference",
+          "input": {
+            "mode": "CUSTOM_CREATION",
+            "modelId": "deepseek:deepseek-flash",
+            "images": [],
+            "creationIntent": "创作3:2新产品海报，借鉴R1未遮挡部分的奶油底、藏蓝标题和中央布局，将杯子替换为T1青绿耳机，保留新耳机外形与藏蓝耳垫。只使用指定标题，不沿用其他参考文案。遮挡内容不可用，不猜测、不要求解除遮挡；字体与装饰细节委托下游设计。",
+            "exactText": "OPEN SOUND",
+            "context": "只使用用户选择且遮挡后的素材；未知区域保持未知。",
+            "language": "ZH",
+            "targetTool": "通用文生图",
+            "outputType": "IMAGE",
+            "materials": [
+              {
+                "assetId": "ASSET_R1",
+                "track": "REFERENCE",
+                "role": "LAYOUT",
+                "units": [
+                  {
+                    "unitId": "R1:image",
+                    "masks": [
+                      {
+                        "x": 0.08,
+                        "y": 0.84,
+                        "width": 0.42,
+                        "height": 0.1
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "assetId": "ASSET_T1",
+                "track": "REPLACEMENT",
+                "role": "SUBJECT",
+                "units": [
+                  {
+                    "unitId": "T1:image",
+                    "masks": []
+                  }
+                ]
+              }
+            ],
+            "relations": [
+              {
+                "id": "m04-swap",
+                "operation": "REPLACE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:image",
+                "referenceObject": "画面中央的橙色杯子",
+                "replacementAssetId": "ASSET_T1",
+                "replacementUnitId": "T1:image",
+                "replacementObject": "青绿色头戴式耳机，藏蓝耳垫",
+                "instruction": "仅替换主体，保留参考中的中央位置和近似视觉大小；新主体保持T1外形、青绿色及藏蓝耳垫。",
+                "attributes": [
+                  "主体",
+                  "形状",
+                  "颜色"
+                ],
+                "scope": "海报中央主体"
+              }
+            ]
+          },
+          "analysis": [
+            {
+              "imageId": "R1:image",
+              "category": "构图",
+              "description": "3:2横版海报，奶油色/浅米色背景，标题位于左上，中央偏下放置主体图形，底部有横线与色块。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "文字",
+              "description": "左上大标题为深藏蓝色无衬线大写“SUMMER IDEA”，下方一行较小副标题“SYNTHETIC POSTER / 2046”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "主体",
+              "description": "画面中央为橙色杯子图形，置于浅蓝色椭圆内，杯口为白色椭圆，杯把在右侧。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "构图",
+              "description": "浅蓝椭圆下方有一条深藏蓝细横线，横线下方左侧有黑色矩形色块。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "文字",
+              "description": "左下角黑色矩形区域被遮挡，内部文字不可辨认，不猜测内容。",
+              "status": "UNCERTAIN"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "风格",
+              "description": "扁平矢量插画风格，纯色块、无渐变、无纹理，整体简洁。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "配色",
+              "description": "主色为奶油底、深藏蓝文字与线条、浅蓝椭圆、橙色主体，形成暖冷对比。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "主体",
+              "description": "青绿色头戴式耳机正面图形，头梁为弧形，左右各有一个耳罩。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "主体",
+              "description": "耳罩外侧为青绿色，内侧耳垫为深藏蓝色圆角矩形。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "风格",
+              "description": "扁平矢量图标风格，纯色填充，无阴影、无渐变、无纹理。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "文字",
+              "description": "耳机下方有深藏蓝色文字“NEW AUDIO”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "配色",
+              "description": "主体为青绿色与深藏蓝双色，背景为浅灰白色。",
+              "status": "OBSERVED"
+            }
+          ],
+          "materialSources": [
+            {
+              "assetId": "ASSET_R1",
+              "name": "R1-reference-poster.png",
+              "kind": "IMAGE",
+              "track": "REFERENCE",
+              "role": "LAYOUT",
+              "units": [
+                {
+                  "id": "R1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": [
+                    {
+                      "x": 0.08,
+                      "y": 0.84,
+                      "width": 0.42,
+                      "height": 0.1
+                    }
+                  ]
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            },
+            {
+              "assetId": "ASSET_T1",
+              "name": "T1-headphones.png",
+              "kind": "IMAGE",
+              "track": "REPLACEMENT",
+              "role": "SUBJECT",
+              "units": [
+                {
+                  "id": "T1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            }
+          ],
+          "questions": [],
+          "answers": [],
+          "optimizedPrompt": "创作一张3:2横版新产品海报，扁平矢量插画风格，纯色块填充，无渐变、无纹理、无写实阴影，整体简洁克制。\n\n背景为奶油色/浅米色，画面中央偏下放置主体：一副青绿色头戴式耳机正面图形，头梁为弧形，左右各一个耳罩，耳罩外侧为青绿色，内侧耳垫为深藏蓝色圆角矩形；保持耳机原有外形比例与双色关系，视觉大小与参考中中央主体相近。耳机可置于浅蓝色椭圆底形之上，形成中央聚焦。\n\n版式借鉴参考的空间关系与信息层级：标题位于左上，使用深藏蓝色无衬线大写字体，画面中只出现逐字文案“OPEN SOUND”，不添加副标题、品牌名、价格或其他参考文案。中央主体下方保留一条深藏蓝细横线，横线下方左侧保留一个深色矩形色块作为版式元素，色块内不放置任何文字。\n\n配色以奶油底、深藏蓝文字与线条、浅蓝椭圆、青绿主体为主，形成暖冷对比。字体具体字形与装饰细节由下游设计决定。左下角被遮挡区域的内容不可见，不猜测、不补写、不要求解除遮挡，保持该区域为空白或仅保留版式色块。\n\n素材上传说明与已明确的关系：\n请在下游工具配套上传以下素材；编号仅用于对应，不能凭编号读取平台临时文件。\n仅使用所选页面／视频帧，并保留本次遮挡；请勿用未经审阅的完整原件代替。\nR1 · R1-reference-poster.png · IMAGE · 参考素材 [图片，已遮挡]\nT1 · T1-headphones.png · IMAGE · 新主体／新内容 [图片]\n- 替换：R1 画面中央的橙色杯子 → T1 青绿色头戴式耳机，藏蓝耳垫；属性：主体、形状、颜色；范围：海报中央主体；仅替换主体，保留参考中的中央位置和近似视觉大小；新主体保持T1外形、青绿色及藏蓝耳垫。\n",
+          "warnings": [
+            "图片已校正方向、缩放并清除元数据。",
+            "R1左下角黑色矩形区域被遮挡，内部文字不可辨认，不猜测、不要求解除遮挡。",
+            "R1中的“SUMMER IDEA”“SYNTHETIC POSTER / 2046”及T1中的“NEW AUDIO”均不沿用，成品仅使用指定标题“OPEN SOUND”。",
+            "T1为正面扁平耳机图形，替换后需保持其外形与青绿/藏蓝配色，不自动迁移T1背景与文字。",
+            "字体与装饰细节由下游设计，不指定具体字体名称。",
+            "R1左下角黑色矩形区域被遮挡，内容不可辨认，成品不猜测、不补写该区域文字。",
+            "R1原副标题“SYNTHETIC POSTER / 2046”及T1下方“NEW AUDIO”均不沿用，画面仅出现逐字标题OPEN SOUND。",
+            "字体与装饰细节由下游设计决定，不视为已确认。",
+            "参考图左下角遮挡区域内容不可辨认，成品中不猜测、不补写。",
+            "参考图原有标题与副标题文案不沿用，画面仅出现“OPEN SOUND”。",
+            "耳机素材下方“NEW AUDIO”文字不迁移到新海报。",
+            "字体字形与装饰细节交由下游设计，生成结果不保证文字完全准确。"
+          ],
+          "historySaved": true,
+          "mock": false,
+          "stageDurationsMs": {
+            "plan": 8400,
+            "generateOrRewrite": 5396
+          },
+          "actualCalls": 3,
+          "tokenUsage": [
+            {
+              "operation": "image.analyze",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2948,
+              "outputTokens": 948,
+              "totalTokens": 3896,
+              "durationMs": 4803
+            },
+            {
+              "operation": "image.plan",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2952,
+              "outputTokens": 918,
+              "totalTokens": 3870,
+              "durationMs": 3448
+            },
+            {
+              "operation": "image.generate",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2953,
+              "outputTokens": 1192,
+              "totalTokens": 4145,
+              "durationMs": 5299
+            }
+          ],
+          "traceSha256": "e3c0408e566a7eb47932528f45ad09d3768a6aff94e39bea1af4bca38971203b"
+        }
+      ]
+    },
+    {
+      "phase": "phase2",
+      "instructionVersion": "image-prompt-v5-source-boundaries",
+      "model": "deepseek:deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "maxTokens": 6000,
+        "readTimeoutSeconds": 60,
+        "jsonResponseFormat": true,
+        "protocolRepairMax": 1
+      },
+      "actualCalls": 19,
+      "failedVendorCalls": 0,
+      "inputTokens": 47776,
+      "outputTokens": 17546,
+      "verdict": {
+        "F01": "PROMPT_AND_HISTORY_PASS_CLIPBOARD_PENDING_NONPAID_DIAGNOSIS",
+        "M01": "PASS_PROMPT",
+        "M02": "PROMPT_PASS_TARGET_PROVENANCE_FIXED_SOURCE_COORDINATE_INACCURACY",
+        "C01": "CONFLICT_ASSEMBLY_FIXED_REDUNDANT_QUESTION_AND_SOURCE_ASPECT_ERROR",
+        "M03": "PROMPT_PASS_ZERO_QUESTIONS_BATCH_COVERAGE_WARNING_INACCURACY",
+        "M04": "PRIVACY_AND_MASK_ARTIFACT_FIX_PASS",
+        "R01": "LEGACY_REWRITE_PASS"
+      },
+      "cases": [
+        {
+          "id": "M01-image-swap",
+          "input": {
+            "mode": "CUSTOM_CREATION",
+            "modelId": "deepseek:deepseek-flash",
+            "images": [],
+            "creationIntent": "创作一张3:2横向产品海报。借鉴R1的奶油色背景、藏蓝标题和蓝色椭圆构图，将中央橙色杯子替换为T1的青绿色头戴耳机，保留新耳机的形状与藏蓝耳垫。橙色只作少量点缀，不把耳机染橙。标题只使用指定文案，不沿用参考文字。字体与装饰细节全部委托下游设计，不增加品牌、价格或其他文字。",
+            "exactText": "SUMMER SOUND",
+            "context": "所有素材均为本地生成的合成示意，不代表真实品牌、型号或实际产品参数。",
+            "language": "ZH",
+            "targetTool": "通用文生图",
+            "outputType": "IMAGE",
+            "materials": [
+              {
+                "assetId": "ASSET_R1",
+                "track": "REFERENCE",
+                "role": "LAYOUT",
+                "units": [
+                  {
+                    "unitId": "R1:image",
+                    "masks": []
+                  }
+                ]
+              },
+              {
+                "assetId": "ASSET_T1",
+                "track": "REPLACEMENT",
+                "role": "SUBJECT",
+                "units": [
+                  {
+                    "unitId": "T1:image",
+                    "masks": []
+                  }
+                ]
+              }
+            ],
+            "relations": [
+              {
+                "id": "m01-swap",
+                "operation": "REPLACE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:image",
+                "referenceObject": "画面中央的橙色杯子",
+                "replacementAssetId": "ASSET_T1",
+                "replacementUnitId": "T1:image",
+                "replacementObject": "青绿色头戴式耳机，藏蓝耳垫",
+                "instruction": "仅替换主体，保留参考中的中央位置和近似视觉大小；新主体保持T1外形、青绿色及藏蓝耳垫。",
+                "attributes": [
+                  "主体",
+                  "形状",
+                  "颜色"
+                ],
+                "scope": "海报中央主体"
+              }
+            ]
+          },
+          "analysis": [
+            {
+              "imageId": "R1:image",
+              "category": "版式与文字",
+              "description": "浅米色背景；左上角大号深蓝粗体标题“SUMMER IDEA”，其下小号深蓝文字“SYNTHETIC POSTER / 2046”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "版式与文字",
+              "description": "左下角深蓝文字“SAMPLE CODE 4816”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "主体图形",
+              "description": "画面中部偏右为蓝色横向椭圆，其上叠加橙色马克杯图形，杯口为浅色椭圆，杯身右侧有环形把手。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "主体图形",
+              "description": "蓝色椭圆下方有一条深蓝水平细线，横跨椭圆底部并向右延伸。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "版式与文字",
+              "description": "文字与图形整体呈左对齐标题、居中图形、左下编号的分布；标题区与图形区之间留有较大空白。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "主体图形",
+              "description": "浅灰背景中央为青绿色耳机图标：上方为粗弧形头带，左右各一个圆角矩形耳罩，耳罩内嵌深蓝色竖向圆角矩形。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "版式与文字",
+              "description": "耳机图标下方居中为深蓝文字“NEW AUDIO”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "主体图形",
+              "description": "耳机图标左右耳罩与头带连接处留有缺口，头带与耳罩为同一青绿色，耳罩内块为深蓝色。",
+              "status": "OBSERVED"
+            }
+          ],
+          "materialSources": [
+            {
+              "assetId": "ASSET_R1",
+              "name": "R1-reference-poster.png",
+              "kind": "IMAGE",
+              "track": "REFERENCE",
+              "role": "LAYOUT",
+              "units": [
+                {
+                  "id": "R1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            },
+            {
+              "assetId": "ASSET_T1",
+              "name": "T1-headphones.png",
+              "kind": "IMAGE",
+              "track": "REPLACEMENT",
+              "role": "SUBJECT",
+              "units": [
+                {
+                  "id": "T1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            }
+          ],
+          "questions": [],
+          "answers": [],
+          "optimizedPrompt": "创作一张 3:2 横向产品海报，用于通用文生图。\n\n【整体构图】采用参考海报的版式结构：浅奶油色/米色纯色背景；左上角放置大号深藏蓝粗体标题，标题下方可留一行小号深藏蓝辅助文字区（但除指定文案外不添加任何其他文字）；画面中部偏右放置一个横向蓝色椭圆作为主体承托图形，椭圆下方有一条深藏蓝水平细线横跨椭圆底部并向右延伸；左下角保留编号/小字位置但留空或仅作装饰，不写任何文字。标题区与图形区之间保留较大留白，整体左对齐标题、居中图形、左下留白的分布关系。\n\n【主体替换】将参考图中位于蓝色椭圆上的橙色马克杯整体替换为一只青绿色头戴式耳机：上方为粗弧形头带，左右各一个圆角矩形耳罩，耳罩内嵌深藏蓝色竖向圆角矩形作为耳垫；头带与耳罩为同一青绿色，耳罩内块为藏蓝色。耳机保持原有外形轮廓与配色，不染成橙色，不改变形状。耳机置于蓝色椭圆中央位置，视觉大小与参考中杯子所占比例近似，可略微悬浮于椭圆之上。\n\n【色彩与点缀】主色为奶油色背景、藏蓝文字与线条、蓝色椭圆、青绿色耳机；橙色仅作少量点缀（如椭圆边缘的小色块、细线端点或极小装饰点），不得大面积使用，不得让耳机出现橙色。\n\n【文字】画面仅出现逐字文案：SUMMER SOUND。使用深藏蓝色粗体，置于左上角标题位置，语言、大小写、空格与拼写严格保持。不添加品牌名、价格、型号、副标题、编号或其他任何文字。\n\n【风格与细节】扁平化矢量海报风格，简洁几何图形，无渐变噪点或写实光影；字体选择、字距、装饰细节、椭圆比例与细线粗细全部交由下游设计自由发挥。\n\n【禁止】不出现杯子、不出现参考图中的 SUMMER IDEA、SYNTHETIC POSTER / 2046、SAMPLE CODE 4816 等原文字；不出现真实品牌标识、价格或产品参数；不把耳机画成橙色；不添加额外文案。\n\n素材对照：\n仅按正文实际采用的来源配套上传；列出条目不表示需要全部用于成品。编号仅用于对应，不是公开链接。\n仅使用所选页面／视频帧，并保留本次遮挡；请勿用未经审阅的完整原件代替。\nR1 · R1-reference-poster.png · IMAGE · 原参考来源 [图片]\nT1 · T1-headphones.png · IMAGE · 原新内容来源 [图片]\n",
+          "warnings": [
+            "图片已校正方向、缩放并清除元数据。",
+            "两张图均无遮挡区域，未提供视频帧、幻灯片或音轨，无法判断运动、声音或跨页关系。",
+            "R1-reference-poster.png 与 T1-headphones.png 的尺寸均为768×512，但未提供二者在成品中的组合关系。",
+            "参考图与替换图均为合成示意，不代表真实品牌、型号或产品参数。",
+            "耳机图标在替换素材中为扁平图标，成品中需保持其青绿+藏蓝配色与轮廓，不添加写实材质或品牌标识。",
+            "除 SUMMER SOUND 外不得出现任何文字，左下角编号位置需留空。"
+          ],
+          "historySaved": true,
+          "mock": false,
+          "stageDurationsMs": {
+            "plan": 7533,
+            "generateOrRewrite": 5200
+          },
+          "actualCalls": 3,
+          "tokenUsage": [
+            {
+              "operation": "image.plan",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2814,
+              "outputTokens": 727,
+              "totalTokens": 3541,
+              "durationMs": 3394
+            },
+            {
+              "operation": "image.analyze",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 1476,
+              "outputTokens": 710,
+              "totalTokens": 2186,
+              "durationMs": 3987
+            },
+            {
+              "operation": "image.generate",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2815,
+              "outputTokens": 662,
+              "totalTokens": 3477,
+              "durationMs": 5129
+            }
+          ],
+          "traceSha256": "171c41d655ce8ece7b05b45377319179d63a3ddb7b9c5dcfa0c6c97f58e5746c"
+        },
+        {
+          "id": "M02-ppt-page-data",
+          "input": {
+            "mode": "CUSTOM_CREATION",
+            "modelId": "deepseek:deepseek-flash",
+            "images": [],
+            "creationIntent": "编写制作一页可编辑PPT的提示词。只采用R1选中的原第2页，保留表格数据、表头和这一页版式，将标题替换为指定文案。Item/Units/Score三列，ALPHA为24和8.5，BETA为48和9.2，全部为原始合成数据，不解释业务原因，不使用其他页面。字体细节委托下游设计。",
+            "exactText": "季度指标·2046",
+            "context": "这是一页合成验收资料；8.5和9.2为分数，没有百分号，不代表真实业务。",
+            "language": "ZH",
+            "targetTool": "通用PPT工具",
+            "outputType": "PPT",
+            "materials": [
+              {
+                "assetId": "ASSET_R1",
+                "track": "REFERENCE",
+                "role": "LAYOUT",
+                "units": [
+                  {
+                    "unitId": "R1:page2",
+                    "masks": []
+                  }
+                ]
+              }
+            ],
+            "relations": [
+              {
+                "id": "m02-title",
+                "operation": "REPLACE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:page2",
+                "referenceObject": "原第2页标题",
+                "replacementAssetId": null,
+                "replacementUnitId": null,
+                "replacementObject": "季度指标·2046",
+                "instruction": "只替换标题，逐字使用新标题。",
+                "attributes": [
+                  "文字"
+                ],
+                "scope": "成品唯一一页的标题"
+              },
+              {
+                "id": "m02-data",
+                "operation": "PRESERVE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:page2",
+                "referenceObject": "Item/Units/Score表格",
+                "replacementAssetId": null,
+                "replacementUnitId": null,
+                "replacementObject": "",
+                "instruction": "保留ALPHA/24/8.5及BETA/48/9.2的对应关系，不添加百分号或新数值。",
+                "attributes": [
+                  "数据",
+                  "单位"
+                ],
+                "scope": "成品表格"
+              }
+            ]
+          },
+          "analysis": [
+            {
+              "imageId": "R1:page2",
+              "category": "页面整体布局",
+              "description": "960×540 横向画布，白色背景；标题位于左上，表格居中偏上，页脚位于左下，整体留白较多。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:page2",
+              "category": "标题文字",
+              "description": "左上角深蓝色粗体无衬线标题为“Q4 DEMO METRICS”，单行排列。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:page2",
+              "category": "表格结构",
+              "description": "表格为 3 列、3 行（含表头）；列标题依次为 Item、Units、Score，表头深蓝底白字，列间有白色细分隔线。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:page2",
+              "category": "表格数据",
+              "description": "第一数据行：ALPHA | 24 | 8.5；第二数据行：BETA | 48 | 9.2。数据行浅米色底、深色文字，行间有白色细分隔线。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:page2",
+              "category": "页脚文字",
+              "description": "左下角小号深色文字为“SYNTHETIC / PAGE 2”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:page2",
+              "category": "配色与字体",
+              "description": "主色为深蓝（标题与表头）与浅米色（数据行），辅以白色背景和分隔线；标题为粗体，表格与页脚为常规字重。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "R1:page2",
+              "category": "源结构文字",
+              "description": "源结构记录 TextBox 2 位于 55,55、尺寸 850×80，Table 3 与 TextBox 4 位于 55,488、尺寸 800×30；与可见版面位置一致。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:page2",
+              "category": "覆盖限制",
+              "description": "仅提供第 2 页静态画面，未提供动画、切换、备注或内嵌媒体信息；表格数值按源缓存值呈现。",
+              "status": "UNCERTAIN"
+            }
+          ],
+          "materialSources": [
+            {
+              "assetId": "ASSET_R1",
+              "name": "P1-demo-slides.pptx",
+              "kind": "PPTX",
+              "track": "REFERENCE",
+              "role": "LAYOUT",
+              "units": [
+                {
+                  "id": "R1:page2",
+                  "page": 2,
+                  "timestampMs": null,
+                  "text": "第 2 页；画布 960×540 pt。\n元素 TextBox 2 位置/尺寸(pt): 55,55,850,80 Q4 DEMO METRICS\n元素 Table 3 Item | Units | Score | \nALPHA | 24 | 8.5 | \nBETA | 48 | 9.2 | \n\n元素 TextBox 4 位置/尺寸(pt): 55,488,800,30 SYNTHETIC / PAGE 2\n",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "只解析可见静态页面，不读取备注；动画、切换效果和内嵌媒体未被理解。",
+                "页面结构文字是每页最多4000字符的有界摘录，不代表全文转录。",
+                "图表按源文件缓存值解析，可能不是工作簿最新值；预览不保证绘制全部图表、字体和复杂图形，请对照原件核对。",
+                "仅分析选中的 1 / 3 个可见页面；未选择页面不参与模型分析。"
+              ]
+            }
+          ],
+          "questions": [],
+          "answers": [],
+          "optimizedPrompt": "制作一页可编辑的横向PPT，画布比例16:9（约960×540 pt），白色背景，整体留白充足。\n\n版式沿用参考页的空间关系：标题位于左上角，表格居中偏上，页脚位于左下角。\n\n标题：左上角单行标题，逐字使用“季度指标·2046”，不得改动文字、数字与间隔号；采用深蓝色粗体无衬线字体，字号与位置参照原页标题区域（约55,55起、宽850、高80 pt）。\n\n表格：位于标题下方居中偏上区域，3列3行（含表头）。表头依次为 Item、Units、Score，深蓝底白字；数据行浅米色底、深色文字；列间与行间使用白色细分隔线。数据严格为：\nALPHA | 24 | 8.5\nBETA | 48 | 9.2\n保持列与数值的对应关系，8.5和9.2为分数，不加百分号，不新增、修改或推算任何数值，不添加业务解释、注释或结论。\n\n页脚：左下角小号深色文字“SYNTHETIC / PAGE 2”，位置约55,488、宽800、高30 pt。\n\n配色：深蓝用于标题与表头，浅米色用于数据行，白色用于背景与分隔线。字体族、字号层级与行距等细节由下游设计确定，但须保持标题粗体、表格与页脚常规字重的层级关系。\n\n仅制作这一页，不使用其他页面内容；所有元素保持可编辑（标题为文本框、数据为表格）。\n\n素材对照：\n仅按正文实际采用的来源配套上传；列出条目不表示需要全部用于成品。编号仅用于对应，不是公开链接。\n仅使用所选页面／视频帧，并保留本次遮挡；请勿用未经审阅的完整原件代替。\nR1 · P1-demo-slides.pptx · PPTX · 原参考来源 [第2页]\n",
+          "warnings": [
+            "只解析可见静态页面，不读取备注；动画、切换效果和内嵌媒体未被理解。",
+            "页面结构文字是每页最多4000字符的有界摘录，不代表全文转录。",
+            "图表按源文件缓存值解析，可能不是工作簿最新值；预览不保证绘制全部图表、字体和复杂图形，请对照原件核对。",
+            "仅分析选中的 1 / 3 个可见页面；未选择页面不参与模型分析。",
+            "仅分析选中的 1 个可见页面（第 2 页），其余页面未参与分析。",
+            "页面结构文字为有界摘录，不代表全文转录；动画、切换效果和内嵌媒体未被理解。",
+            "表格数值按源文件缓存值解析，可能不是工作簿最新值，需对照原件核对。",
+            "仅提供第 2 页静态画面，未提供动画、切换、备注或内嵌媒体信息；表格数值按源缓存值呈现。",
+            "仅解析参考第2页静态版面，动画、切换、备注与内嵌媒体未纳入，成品不要求复现这些效果。",
+            "表格数值为源文件缓存值，成品按给定数值逐字写入，不另行核对工作簿。",
+            "字体族与具体字号未在源中明确，交由下游设计，但需保持标题粗体、表格与页脚常规字重的层级。",
+            "8.5与9.2为分数，不得添加百分号或换算。"
+          ],
+          "historySaved": true,
+          "mock": false,
+          "stageDurationsMs": {
+            "plan": 8080,
+            "generateOrRewrite": 5649
+          },
+          "actualCalls": 3,
+          "tokenUsage": [
+            {
+              "operation": "image.plan",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2972,
+              "outputTokens": 828,
+              "totalTokens": 3800,
+              "durationMs": 3376
+            },
+            {
+              "operation": "image.analyze",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 1253,
+              "outputTokens": 825,
+              "totalTokens": 2078,
+              "durationMs": 4069
+            },
+            {
+              "operation": "image.generate",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2973,
+              "outputTokens": 1189,
+              "totalTokens": 4162,
+              "durationMs": 5563
+            }
+          ],
+          "traceSha256": "07a480560a14f5e21a5be1454a5b5f6b892b2ce18206179ecff35f3d75ed2076"
+        },
+        {
+          "id": "M03-video-timing",
+          "input": {
+            "mode": "CUSTOM_CREATION",
+            "modelId": "deepseek:deepseek-flash",
+            "images": [],
+            "creationIntent": "编写6秒无声产品短片的创作提示词。R1是4秒原始合成片段，所选帧前段是红方块横移、后段是青圆竖移；借鉴先横后竖的画面安排，所有主体替换为T1青绿色头戴耳机。新片明确分为0至2秒耳机向右移动、2至6秒耳机向下移动两个镜头，这个2秒加4秒是我指定的新节奏，不是对原片切点的测量。其余运镜和转场委托下游设计，不使用原画面字幕，不添加音轨、音乐或对白。",
+            "exactText": "",
+            "context": "合成无声素材。只对所选时间戳作观察，稀疏帧不等于已识别整段精细运动；新片动作与时长是明确创作要求。",
+            "language": "ZH",
+            "targetTool": "通用视频创作工具",
+            "outputType": "VIDEO",
+            "materials": [
+              {
+                "assetId": "ASSET_R1",
+                "track": "REFERENCE",
+                "role": "LAYOUT",
+                "units": [
+                  {
+                    "unitId": "R1:0ms",
+                    "masks": []
+                  },
+                  {
+                    "unitId": "R1:1500ms",
+                    "masks": []
+                  },
+                  {
+                    "unitId": "R1:2000ms",
+                    "masks": []
+                  },
+                  {
+                    "unitId": "R1:3500ms",
+                    "masks": []
+                  }
+                ]
+              },
+              {
+                "assetId": "ASSET_T1",
+                "track": "REPLACEMENT",
+                "role": "SUBJECT",
+                "units": [
+                  {
+                    "unitId": "T1:image",
+                    "masks": []
+                  }
+                ]
+              }
+            ],
+            "relations": [
+              {
+                "id": "m03-video-swap",
+                "operation": "REPLACE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:0ms",
+                "referenceObject": "前段红方块与后段青圆两个主体",
+                "replacementAssetId": "ASSET_T1",
+                "replacementUnitId": "T1:image",
+                "replacementObject": "同一青绿耳机及藏蓝耳垫",
+                "instruction": "新片0至2秒向右、2至6秒向下，总长6秒；不将新节奏说成原片测量事实，不生成音轨。",
+                "attributes": [
+                  "主体",
+                  "动作",
+                  "镜头节奏"
+                ],
+                "scope": "两个目标镜头"
+              }
+            ]
+          },
+          "analysis": [
+            {
+              "imageId": "R1:0ms",
+              "category": "画面文字与布局",
+              "description": "左上角深蓝色粗体文字“SHOT A - RED SQUARE”；左下角深蓝色粗体时间码“0.00 s”；背景为浅米黄色纯色。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:0ms",
+              "category": "主体图形",
+              "description": "画面左侧偏中位置有一个红色实心正方形，无描边、无阴影，边缘平直。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:0ms",
+              "category": "构图关系",
+              "description": "红色方块位于画面左半部，与顶部标题、左下时间码形成大面积留白的极简构图。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "R1:1500ms",
+              "category": "画面文字与布局",
+              "description": "左上角仍为“SHOT A - RED SQUARE”；左下角时间码为“1.50 s”；背景仍为浅米黄色。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:1500ms",
+              "category": "主体图形",
+              "description": "红色实心正方形出现在画面中部偏右位置，尺寸与 0 ms 帧所见相近。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:1500ms",
+              "category": "帧间变化",
+              "description": "与 0 ms 帧相比，红色方块由左侧移至中右，标题与背景未变；仅凭两帧不能确定移动路径或缓动方式。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "R1:2000ms",
+              "category": "画面文字与布局",
+              "description": "左上角深蓝色粗体文字变为“SHOT B - TEAL CIRCLE”；左下角时间码为“2.00 s”；背景变为浅青灰色。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:2000ms",
+              "category": "主体图形",
+              "description": "画面右上区域有一个青绿色实心圆形，无描边、无阴影。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:2000ms",
+              "category": "帧间变化",
+              "description": "2000 ms 帧与前一帧相比，标题文字、背景色、主体形状与颜色均改变，红色方块不再出现；采样点之间是否另有过渡无法从三帧判断。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "R1:2000ms",
+              "category": "构图关系",
+              "description": "圆形位于右上，标题在左上，时间码在左下，整体保持大面积留白的极简版式。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "画面布局与文字",
+              "description": "画面为浅灰蓝纯色背景；左上角有深蓝色无衬线大写文字“SHOT B - TEAL CIRCLE”；左下角有深蓝色文字“3.50 s”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "图形元素",
+              "description": "画面右侧偏中位置有一个青绿色实心圆形，边缘平滑，无描边或阴影。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "构图关系",
+              "description": "圆形位于画面右侧，与左上角标题和左下角时间文字形成分散布局；画面留白较多。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "色彩",
+              "description": "背景为低饱和浅灰蓝，圆形为中等饱和青绿色，文字为深蓝色。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "时间信息",
+              "description": "左下角文字“3.50 s”与来源标注的 3500 ms 采样时点对应。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "主体图形",
+              "description": "白底中央为青绿色头戴式耳机图形，由上方弧形头带和左右两个耳罩组成。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "图形细节",
+              "description": "左右耳罩为青绿色圆角矩形外框，内部各有一个深蓝色竖向圆角矩形。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "文字",
+              "description": "耳机图形下方居中位置有深蓝色无衬线大写文字“NEW AUDIO”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "构图与色彩",
+              "description": "图形居中，白底留白均匀；青绿色与深蓝色构成主要配色，文字与耳罩内矩形颜色一致。",
+              "status": "OBSERVED"
+            }
+          ],
+          "materialSources": [
+            {
+              "assetId": "ASSET_R1",
+              "name": "V1-two-shots.mp4",
+              "kind": "VIDEO",
+              "track": "REFERENCE",
+              "role": "LAYOUT",
+              "units": [
+                {
+                  "id": "R1:0ms",
+                  "page": null,
+                  "timestampMs": 0,
+                  "text": "",
+                  "masks": []
+                },
+                {
+                  "id": "R1:1500ms",
+                  "page": null,
+                  "timestampMs": 1500,
+                  "text": "",
+                  "masks": []
+                },
+                {
+                  "id": "R1:2000ms",
+                  "page": null,
+                  "timestampMs": 2000,
+                  "text": "",
+                  "masks": []
+                },
+                {
+                  "id": "R1:3500ms",
+                  "page": null,
+                  "timestampMs": 3500,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "仅采样源视频 0–4000 ms 片段，共 8 帧；音频未发送或识别。",
+                "静态采样不等于完整运动理解，镜头节奏仅限有时间戳的采样证据。",
+                "解析共生成 8 个预览帧；本任务选择 4 个采样帧（具体时间戳见 units）。",
+                "仅分析所选时间戳的采样帧，不能据此声称完整运动、音轨或音乐节拍已识别。"
+              ]
+            },
+            {
+              "assetId": "ASSET_T1",
+              "name": "T1-headphones.png",
+              "kind": "IMAGE",
+              "track": "REPLACEMENT",
+              "role": "SUBJECT",
+              "units": [
+                {
+                  "id": "T1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            }
+          ],
+          "questions": [],
+          "answers": [],
+          "optimizedPrompt": "制作一支6秒无声产品短片，画面中只出现同一副青绿色头戴式耳机（上方弧形头带、左右两个青绿色圆角矩形耳罩，耳罩内部各有一个深蓝色竖向圆角矩形），整体为简洁扁平图形风格，白底或极浅纯色背景，青绿色与深蓝色为主配色，构图留白充足。\n\n镜头一（0–2秒）：耳机从画面左侧偏中位置水平向右移动，到2秒时停在画面中部偏右；运动平稳，起止可带轻微缓入缓出。\n\n镜头二（2–6秒）：画面切换到耳机位于画面上方偏右的位置，随后在4秒内垂直向下移动，到6秒时停在画面右侧偏中或偏下位置；运动平稳，起止可带轻微缓入缓出。\n\n两个镜头之间采用简洁的硬切或极短淡入淡出转场，具体运镜细节与转场方式由执行者设计；整体保持极简、干净的产品展示节奏。\n\n画面不出现任何标题、时间码、字幕或其他文字；不添加音轨、音乐、对白或音效，成片完全无声。\n\n素材对照：\n仅按正文实际采用的来源配套上传；列出条目不表示需要全部用于成品。编号仅用于对应，不是公开链接。\n仅使用所选页面／视频帧，并保留本次遮挡；请勿用未经审阅的完整原件代替。\nR1 · V1-two-shots.mp4 · VIDEO · 原参考来源 [0.000s] [1.500s] [2.000s] [3.500s]\nT1 · T1-headphones.png · IMAGE · 原新内容来源 [图片]\n",
+          "warnings": [
+            "仅采样源视频 0–4000 ms 片段，共 8 帧；音频未发送或识别。",
+            "静态采样不等于完整运动理解，镜头节奏仅限有时间戳的采样证据。",
+            "解析共生成 8 个预览帧；本任务选择 4 个采样帧（具体时间戳见 units）。",
+            "仅分析所选时间戳的采样帧，不能据此声称完整运动、音轨或音乐节拍已识别。",
+            "图片已校正方向、缩放并清除元数据。",
+            "仅提供 0 ms、1500 ms、2000 ms 三个采样帧，不能据此确认完整运动路径、转场方式或镜头节奏。",
+            "源视频音频未发送或识别，无法推断音乐节拍、对白或声音。",
+            "源说明称共采样 8 帧、本任务选择 4 个采样帧，但本批仅提供 3 个图像来源，存在覆盖缺口。",
+            "文字内容按画面可见转录，未验证其与实际镜头编号或制作意图的对应关系。",
+            "视频仅采样 0–4000 ms 片段共 8 帧，本任务仅分析 3500 ms 单帧；不能据此推断完整运动、镜头节奏或音频内容。",
+            "视频音频未发送或识别，无法判断声音、对白或音乐节拍。",
+            "图片已校正方向、缩放并清除元数据，原始尺寸与方向信息不可见。",
+            "参考视频仅采样0–4000 ms的4帧，未覆盖完整运动，也未识别音轨；新片2秒+4秒节奏为用户指定，不是对原片切点的测量。",
+            "替换素材中的“NEW AUDIO”文字不进入新片，成片不出现任何文字。",
+            "成片要求完全无声，下游不得自动添加音乐、音效或对白。",
+            "运镜细节与转场方式由执行者设计，需保持极简产品展示风格。"
+          ],
+          "historySaved": true,
+          "mock": false,
+          "stageDurationsMs": {
+            "plan": 14628,
+            "generateOrRewrite": 7237
+          },
+          "actualCalls": 4,
+          "tokenUsage": [
+            {
+              "operation": "image.plan",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 3921,
+              "outputTokens": 1395,
+              "totalTokens": 5316,
+              "durationMs": 5416
+            },
+            {
+              "operation": "image.analyze",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 1500,
+              "outputTokens": 789,
+              "totalTokens": 2289,
+              "durationMs": 4161
+            },
+            {
+              "operation": "image.analyze",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 1708,
+              "outputTokens": 942,
+              "totalTokens": 2650,
+              "durationMs": 4820
+            },
+            {
+              "operation": "image.generate",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 3922,
+              "outputTokens": 1716,
+              "totalTokens": 5638,
+              "durationMs": 7162
+            }
+          ],
+          "traceSha256": "3b4fcbec9bef926321c94d30192d19ecaaeaa911f734afceb9ac4ffa7b6cd6f4"
+        },
+        {
+          "id": "F01-freeform-ui",
+          "input": {
+            "mode": "CUSTOM_CREATION",
+            "modelId": "deepseek:deepseek-flash",
+            "images": [],
+            "creationIntent": "为合成读书活动设计一张4:5竖版招募海报提示词。采用温暖扁平插画，奶油白、深绿与琥珀色；上方四分之一为标题，下方为原创人物窗边阅读。人物动作、装饰和字体细节全部委托下游设计。只出现指定标题，不增加日期、地点、价格、二维码或其他文案；无需进一步确认已委托细节。",
+            "exactText": "周末读书会",
+            "context": "这是合成设计任务，不提供真实活动日期、地点或品牌事实。",
+            "language": "ZH",
+            "targetTool": "通用文生图",
+            "outputType": "IMAGE",
+            "materials": [],
+            "relations": []
+          },
+          "analysis": [],
+          "materialSources": [],
+          "questions": [],
+          "answers": [],
+          "optimizedPrompt": "设计一张4:5竖版招募海报，用于合成读书活动。整体采用温暖扁平插画风格，配色以奶油白、深绿与琥珀色为主，画面干净、柔和、有亲和力。\n\n版式：画面上方约四分之一为标题区域，居中或按视觉平衡排布标题文字“周末读书会”，字体风格、字号与装饰细节由你设计，确保清晰易读、与整体插画风格统一。画面下方为主体插画区域，绘制一位原创人物在窗边阅读的场景；人物动作、姿态、服饰、窗边陈设与装饰元素均由你设计，保持温暖、安静、专注的阅读氛围。\n\n构图与光色：竖版构图，上下分区明确，标题区与插画区自然衔接；光线柔和，可用窗光营造温暖感，色彩以奶油白为底、深绿作稳定色块、琥珀色作点缀与暖光强调。\n\n文字限制：画面中只出现“周末读书会”这一行标题文字，不添加日期、地点、价格、二维码、品牌标识、副标题、英文或其他任何文案。\n\n输出要求：单张完整海报，无多余文字与装饰性乱码，适合直接用于招募宣传。",
+          "warnings": [
+            "画面仅允许出现“周末读书会”标题文字，下游生成时需避免模型自动添加日期、地点、价格、二维码等额外文案。",
+            "人物动作、装饰与字体细节已委托下游设计，生成结果可能与预期存在差异。"
+          ],
+          "historySaved": true,
+          "mock": false,
+          "stageDurationsMs": {
+            "plan": 4627,
+            "generateOrRewrite": 3909
+          },
+          "actualCalls": 2,
+          "tokenUsage": [
+            {
+              "operation": "image.plan",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 1681,
+              "outputTokens": 136,
+              "totalTokens": 1817,
+              "durationMs": 1668
+            },
+            {
+              "operation": "image.generate",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 1682,
+              "outputTokens": 395,
+              "totalTokens": 2077,
+              "durationMs": 3464
+            }
+          ],
+          "traceSha256": "9677aa8897b056477797963138e83813b7a20a4e5f6243a97bd7ff2b4b61fa20"
+        },
+        {
+          "id": "C01-relation-conflict",
+          "input": {
+            "mode": "CUSTOM_CREATION",
+            "modelId": "deepseek:deepseek-flash",
+            "images": [],
+            "creationIntent": "创作3:2横向产品海报，奶油底、标题居上、主体居中。我在两张关系卡里一方面要求橙色杯子保留原形原色，另一方面又要求同一主体换成T1青绿耳机。两项不能同时满足，请先确认取舍。标题使用指定文案，其他字体、装饰和间距委托下游设计。",
+            "exactText": "SUMMER SOUND",
+            "context": "合成素材。原杯子保留与替换为耳机是同一个主体的互斥要求，不能擅自决定。",
+            "language": "ZH",
+            "targetTool": "通用文生图",
+            "outputType": "IMAGE",
+            "materials": [
+              {
+                "assetId": "ASSET_R1",
+                "track": "REFERENCE",
+                "role": "LAYOUT",
+                "units": [
+                  {
+                    "unitId": "R1:image",
+                    "masks": []
+                  }
+                ]
+              },
+              {
+                "assetId": "ASSET_T1",
+                "track": "REPLACEMENT",
+                "role": "SUBJECT",
+                "units": [
+                  {
+                    "unitId": "T1:image",
+                    "masks": []
+                  }
+                ]
+              }
+            ],
+            "relations": [
+              {
+                "id": "c01-preserve",
+                "operation": "PRESERVE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:image",
+                "referenceObject": "画面中央的橙色杯子",
+                "replacementAssetId": null,
+                "replacementUnitId": null,
+                "replacementObject": "",
+                "instruction": "杯子的形状和橙色均保持原样，原杯子作为唯一主体。",
+                "attributes": [
+                  "主体",
+                  "形状",
+                  "颜色"
+                ],
+                "scope": "海报中央主体"
+              },
+              {
+                "id": "c01-swap",
+                "operation": "REPLACE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:image",
+                "referenceObject": "画面中央的橙色杯子",
+                "replacementAssetId": "ASSET_T1",
+                "replacementUnitId": "T1:image",
+                "replacementObject": "青绿色头戴式耳机，藏蓝耳垫",
+                "instruction": "仅替换主体，保留参考中的中央位置和近似视觉大小；新主体保持T1外形、青绿色及藏蓝耳垫。",
+                "attributes": [
+                  "主体",
+                  "形状",
+                  "颜色"
+                ],
+                "scope": "海报中央主体"
+              }
+            ]
+          },
+          "analysis": [
+            {
+              "imageId": "R1:image",
+              "category": "版式与构图",
+              "description": "竖版海报式布局：顶部左对齐两行文字，中部居中图形，底部左对齐一行文字；整体留白较多，元素沿左边缘与水平中线分布。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "源文字",
+              "description": "顶部主标题为“SUMMER IDEA”，深蓝色、粗体、大字号，左对齐。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "源文字",
+              "description": "主标题下方副标题为“SYNTHETIC POSTER / 2046”，深蓝色、较小字号、粗体，左对齐。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "源文字",
+              "description": "底部文字为“SAMPLE CODE 4816”，深蓝色、中等字号、粗体，左对齐。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "图形与配色",
+              "description": "中部为蓝色横向椭圆，椭圆内是橙色马克杯扁平图形，杯口为浅米色椭圆，杯身右侧有环形把手；一条深蓝细横线横穿椭圆下部并延伸至椭圆左右外侧。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "配色",
+              "description": "背景为浅米色；文字与横线为深蓝；椭圆为中等蓝色；杯身为橙色；杯口为浅米色。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "审美解释",
+              "description": "扁平化、几何化插画风格，高对比暖橙与冷蓝搭配，整体简洁、现代、偏海报视觉。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "主体与构图",
+              "description": "浅灰白背景上居中放置一个头戴式耳机扁平图标，上方为半圆形头梁，左右各一个竖向耳罩，下方居中一行文字。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "图形细节",
+              "description": "耳机头梁与耳罩外框为青绿色，左右耳罩内部各有一个深蓝色竖向圆角矩形。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "源文字",
+              "description": "图标下方文字为“NEW AUDIO”，深蓝色、粗体、居中。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "审美解释",
+              "description": "极简扁平图标风格，青绿与深蓝形成冷色系对比，图形对称、轮廓圆润。",
+              "status": "INTERPRETATION"
+            }
+          ],
+          "materialSources": [
+            {
+              "assetId": "ASSET_R1",
+              "name": "R1-reference-poster.png",
+              "kind": "IMAGE",
+              "track": "REFERENCE",
+              "role": "LAYOUT",
+              "units": [
+                {
+                  "id": "R1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            },
+            {
+              "assetId": "ASSET_T1",
+              "name": "T1-headphones.png",
+              "kind": "IMAGE",
+              "track": "REPLACEMENT",
+              "role": "SUBJECT",
+              "units": [
+                {
+                  "id": "T1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            }
+          ],
+          "questions": [
+            {
+              "id": "q1",
+              "type": "SINGLE_CHOICE",
+              "question": "海报中央主体采用哪一项？（原“保留橙色杯子”与“替换为T1青绿耳机”互斥，只能选一）",
+              "options": [
+                {
+                  "id": "o1",
+                  "label": "保留参考中的橙色杯子原形原色，作为唯一中央主体"
+                },
+                {
+                  "id": "o2",
+                  "label": "替换为T1青绿头戴式耳机（藏蓝耳垫），沿用参考的中央位置与近似视觉大小"
+                }
+              ],
+              "required": true
+            },
+            {
+              "id": "q2",
+              "type": "SINGLE_CHOICE",
+              "question": "参考海报的蓝色横向椭圆与深蓝细横线是否保留？",
+              "options": [
+                {
+                  "id": "o1",
+                  "label": "保留椭圆与横线，作为主体背后的版式元素"
+                },
+                {
+                  "id": "o2",
+                  "label": "只保留横线，去掉椭圆"
+                },
+                {
+                  "id": "o3",
+                  "label": "两者都去掉，主体直接置于奶油底上"
+                }
+              ],
+              "required": true
+            },
+            {
+              "id": "q3",
+              "type": "SINGLE_CHOICE",
+              "question": "参考海报中的副标题与底部文字（“SYNTHETIC POSTER / 2046”“SAMPLE CODE 4816”）如何处理？",
+              "options": [
+                {
+                  "id": "o1",
+                  "label": "全部去掉，画面只保留“SUMMER SOUND”"
+                },
+                {
+                  "id": "o2",
+                  "label": "保留位置层级，但换成委托设计的占位文字"
+                },
+                {
+                  "id": "o3",
+                  "label": "保留原文字内容"
+                }
+              ],
+              "required": true
+            }
+          ],
+          "answers": [
+            {
+              "questionId": "q1",
+              "optionIds": [
+                "o2"
+              ],
+              "customText": "采用替换方案：只保留R1中央位置和近似视觉大小，主体形状和颜色改用T1青绿耳机与藏蓝耳垫；取消保留杯形和橙色的要求，原杯子不再出现。其他设计细节按原委托执行。"
+            },
+            {
+              "questionId": "q2",
+              "optionIds": [],
+              "customText": "装饰细节已委托下游设计，保留既定主体位置与标题层级即可。"
+            },
+            {
+              "questionId": "q3",
+              "optionIds": [
+                "o1"
+              ],
+              "customText": "仅保留指定标题 SUMMER SOUND。"
+            }
+          ],
+          "optimizedPrompt": "创作一张3:2横向产品海报，用于通用文生图。\n\n画面构成：奶油色（浅米色）纯色背景，整体简洁、现代、留白充足。标题“SUMMER SOUND”置于画面上方，作为唯一文字，逐字保留英文大写与空格，不翻译、不增删标点。画面中央放置唯一主体：一只青绿色头戴式耳机，扁平化图标风格，上方为半圆形头梁，左右各一个竖向耳罩，耳罩外框为青绿色，左右耳罩内部各有一个深蓝色竖向圆角矩形作为耳垫；图形对称、轮廓圆润。主体沿用参考海报的中央位置与近似视觉大小，居中呈现。\n\n风格与配色：扁平化、几何化插画风格，青绿与深蓝冷色系对比，配奶油底，高对比、干净利落的海报视觉。字体、字号、装饰元素与间距由下游设计自由处理，保持标题居上、主体居中的信息层级。\n\n明确排除：不出现橙色杯子或任何杯形元素；不出现参考海报中的副标题“SYNTHETIC POSTER / 2046”与底部文字“SAMPLE CODE 4816”；不出现“NEW AUDIO”等额外文字；除“SUMMER SOUND”外不添加任何文案、品牌、价格或声明。\n\n素材对照：\n仅按正文实际采用的来源配套上传；列出条目不表示需要全部用于成品。编号仅用于对应，不是公开链接。\n仅使用所选页面／视频帧，并保留本次遮挡；请勿用未经审阅的完整原件代替。\nR1 · R1-reference-poster.png · IMAGE · 原参考来源 [图片]\nT1 · T1-headphones.png · IMAGE · 原新内容来源 [图片]\n\n\n已确认补充要求：\n以下为本次实际回答；同一事项按本次确认执行，未被修改的独立要求继续有效。\n- 海报中央主体采用哪一项？（原“保留橙色杯子”与“替换为T1青绿耳机”互斥，只能选一）\n  替换为T1青绿头戴式耳机（藏蓝耳垫），沿用参考的中央位置与近似视觉大小\n  采用替换方案：只保留R1中央位置和近似视觉大小，主体形状和颜色改用T1青绿耳机与藏蓝耳垫；取消保留杯形和橙色的要求，原杯子不再出现。其他设计细节按原委托执行。\n- 参考海报的蓝色横向椭圆与深蓝细横线是否保留？\n  装饰细节已委托下游设计，保留既定主体位置与标题层级即可。\n- 参考海报中的副标题与底部文字（“SYNTHETIC POSTER / 2046”“SAMPLE CODE 4816”）如何处理？\n  全部去掉，画面只保留“SUMMER SOUND”\n  仅保留指定标题 SUMMER SOUND。\n",
+          "warnings": [
+            "图片已校正方向、缩放并清除元数据。",
+            "两张图均为静态位图，未提供视频帧或时间序列，无法判断动态或交互。",
+            "未提供音轨，无法推断声音相关信息。",
+            "R1与T1的尺寸相同，但未提供两者之间的合成或替换关系说明，仅按各自可见内容记录。",
+            "原“保留橙色杯子”与“替换为T1耳机”互斥，已按用户确认采用替换方案，杯子不再出现。",
+            "参考海报的蓝色椭圆与深蓝横线是否保留未明确选择，已交由下游设计处理，不作为硬性要求。",
+            "参考海报为竖版，成品为3:2横向，版式需按横向重新组织，仅沿用标题居上、主体居中的层级。",
+            "T1素材中的“NEW AUDIO”文字不迁移到成品。"
+          ],
+          "historySaved": true,
+          "mock": false,
+          "stageDurationsMs": {
+            "plan": 11864,
+            "generateOrRewrite": 6580
+          },
+          "actualCalls": 3,
+          "tokenUsage": [
+            {
+              "operation": "image.analyze",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 1476,
+              "outputTokens": 971,
+              "totalTokens": 2447,
+              "durationMs": 6190
+            },
+            {
+              "operation": "image.plan",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 3161,
+              "outputTokens": 1249,
+              "totalTokens": 4410,
+              "durationMs": 5312
+            },
+            {
+              "operation": "image.generate",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 3608,
+              "outputTokens": 1280,
+              "totalTokens": 4888,
+              "durationMs": 6438
+            }
+          ],
+          "traceSha256": "63cbeb681dd5f54de9383d78a7e96c6af809babf820f507836e052427fb7a899"
+        },
+        {
+          "id": "M04-masked-reference",
+          "input": {
+            "mode": "CUSTOM_CREATION",
+            "modelId": "deepseek:deepseek-flash",
+            "images": [],
+            "creationIntent": "创作3:2新产品海报，借鉴R1未遮挡部分的奶油底、藏蓝标题和中央布局，将杯子替换为T1青绿耳机，保留新耳机外形与藏蓝耳垫。只使用指定标题，不沿用其他参考文案。遮挡内容不可用，不猜测、不要求解除遮挡；字体与装饰细节委托下游设计。",
+            "exactText": "OPEN SOUND",
+            "context": "只使用用户选择且遮挡后的素材；未知区域保持未知。",
+            "language": "ZH",
+            "targetTool": "通用文生图",
+            "outputType": "IMAGE",
+            "materials": [
+              {
+                "assetId": "ASSET_R1",
+                "track": "REFERENCE",
+                "role": "LAYOUT",
+                "units": [
+                  {
+                    "unitId": "R1:image",
+                    "masks": [
+                      {
+                        "x": 0.08,
+                        "y": 0.84,
+                        "width": 0.42,
+                        "height": 0.1
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "assetId": "ASSET_T1",
+                "track": "REPLACEMENT",
+                "role": "SUBJECT",
+                "units": [
+                  {
+                    "unitId": "T1:image",
+                    "masks": []
+                  }
+                ]
+              }
+            ],
+            "relations": [
+              {
+                "id": "m04-swap",
+                "operation": "REPLACE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:image",
+                "referenceObject": "画面中央的橙色杯子",
+                "replacementAssetId": "ASSET_T1",
+                "replacementUnitId": "T1:image",
+                "replacementObject": "青绿色头戴式耳机，藏蓝耳垫",
+                "instruction": "仅替换主体，保留参考中的中央位置和近似视觉大小；新主体保持T1外形、青绿色及藏蓝耳垫。",
+                "attributes": [
+                  "主体",
+                  "形状",
+                  "颜色"
+                ],
+                "scope": "海报中央主体"
+              }
+            ]
+          },
+          "analysis": [
+            {
+              "imageId": "R1:image",
+              "category": "版式与文字",
+              "description": "浅米色背景；左上角深蓝色大号无衬线标题“SUMMER IDEA”，其下较小字号副标题“SYNTHETIC POSTER / 2046”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "主体图形",
+              "description": "画面中部偏右为蓝色横向椭圆，椭圆内为橙色马克杯扁平图形，杯口为浅色椭圆，右侧有环形把手。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "线条与构图",
+              "description": "蓝色椭圆下方有一条深蓝色水平细线，横贯椭圆下部宽度。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "遮挡区域",
+              "description": "左下角存在平台隐私遮挡矩形，仅记录为遮挡区域，不推断其原始内容。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "配色",
+              "description": "可见主色为浅米色底、深蓝色文字与线条、蓝色椭圆、橙色杯体。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "风格判断",
+              "description": "整体呈扁平化、几何化的合成海报风格，元素简洁、色块分明。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "主体图形",
+              "description": "浅灰白背景中央为青绿色头戴耳机扁平图标，弧形头梁连接左右两个耳罩，耳罩内为深蓝色圆角矩形。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "文字",
+              "description": "耳机图标下方居中为深蓝色无衬线文字“NEW AUDIO”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "配色",
+              "description": "可见主色为浅灰白底、青绿色耳机主体、深蓝色耳罩内块与文字。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "风格判断",
+              "description": "图标为对称、圆角、扁平化风格，无渐变或阴影细节。",
+              "status": "INTERPRETATION"
+            }
+          ],
+          "materialSources": [
+            {
+              "assetId": "ASSET_R1",
+              "name": "R1-reference-poster.png",
+              "kind": "IMAGE",
+              "track": "REFERENCE",
+              "role": "LAYOUT",
+              "units": [
+                {
+                  "id": "R1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": [
+                    {
+                      "x": 0.08,
+                      "y": 0.84,
+                      "width": 0.42,
+                      "height": 0.1
+                    }
+                  ]
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            },
+            {
+              "assetId": "ASSET_T1",
+              "name": "T1-headphones.png",
+              "kind": "IMAGE",
+              "track": "REPLACEMENT",
+              "role": "SUBJECT",
+              "units": [
+                {
+                  "id": "T1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            }
+          ],
+          "questions": [],
+          "answers": [],
+          "optimizedPrompt": "创作一张3:2比例的新产品海报，扁平化、几何化的合成海报风格，色块分明、元素简洁。\n\n背景使用浅奶油米色，整体干净留白。画面左上角放置深藏蓝色大号无衬线标题，标题文字严格为“OPEN SOUND”，逐字保留，不翻译、不增删、不改标点；标题下方可留出少量呼吸空间，不添加副标题或其他文案。\n\n画面中央偏右安排主体：一只青绿色头戴式耳机，保持其对称、圆角、扁平化的外形，弧形头梁连接左右两个耳罩，耳罩内侧为藏蓝色圆角块，无渐变、无写实阴影。耳机置于一个蓝色横向椭圆之上，椭圆作为承托底形，耳机在椭圆内居中，视觉大小与参考海报中央主体相近。椭圆下方保留一条深藏蓝色水平细线，横贯椭圆下部宽度。\n\n配色限定为浅奶油米色底、深藏蓝色文字与线条、蓝色椭圆、青绿色耳机主体与藏蓝色耳垫。字体选择与装饰细节由下游设计自行处理，保持简洁现代。\n\n画面中只出现“OPEN SOUND”这一处文字，不沿用任何其他参考文案；不出现杯子、马克杯或把手图形；不添加人物、品牌标识、价格、参数或额外声明。左下角区域保持空白，不复制任何遮挡痕迹或推测内容。\n\n素材对照：\n仅按正文实际采用的来源配套上传；列出条目不表示需要全部用于成品。编号仅用于对应，不是公开链接。\n仅使用所选页面／视频帧，并保留本次遮挡；请勿用未经审阅的完整原件代替。\nR1 · R1-reference-poster.png · IMAGE · 原参考来源 [图片，已遮挡]\nT1 · T1-headphones.png · IMAGE · 原新内容来源 [图片]\n",
+          "warnings": [
+            "图片已校正方向、缩放并清除元数据。",
+            "R1-reference-poster.png左下角存在平台隐私遮挡区域，其原始内容不可辨认。",
+            "两张图片均已校正方向、缩放并清除元数据，无法据此判断原始拍摄或导出参数。",
+            "参考海报左下角为平台遮挡区域，其原始内容未知，成品中该区域保持空白，不推测、不还原。",
+            "耳机素材自带的“NEW AUDIO”文字不迁移到新海报，画面仅保留“OPEN SOUND”。",
+            "字体与装饰细节由下游设计决定，不保证与参考海报完全一致。"
+          ],
+          "historySaved": true,
+          "mock": false,
+          "stageDurationsMs": {
+            "plan": 8483,
+            "generateOrRewrite": 5453
+          },
+          "actualCalls": 3,
+          "tokenUsage": [
+            {
+              "operation": "image.plan",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2944,
+              "outputTokens": 841,
+              "totalTokens": 3785,
+              "durationMs": 3818
+            },
+            {
+              "operation": "image.analyze",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 1508,
+              "outputTokens": 794,
+              "totalTokens": 2302,
+              "durationMs": 4506
+            },
+            {
+              "operation": "image.generate",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2945,
+              "outputTokens": 1110,
+              "totalTokens": 4055,
+              "durationMs": 5376
+            }
+          ],
+          "traceSha256": "63ed356c840de1a7277d50757c3f41aba05ff8e169a0a32b8719ba62b35427c8"
+        },
+        {
+          "id": "R01-legacy-rewrite",
+          "input": {
+            "mode": "CUSTOM_CREATION",
+            "modelId": "deepseek:deepseek-flash",
+            "images": [],
+            "creationIntent": "创作3:2横向产品海报，奶油底、标题居上、主体居中。我在两张关系卡里一方面要求橙色杯子保留原形原色，另一方面又要求同一主体换成T1青绿耳机。两项不能同时满足，请先确认取舍。标题使用指定文案，其他字体、装饰和间距委托下游设计。",
+            "exactText": "SUMMER SOUND",
+            "context": "合成素材。原杯子保留与替换为耳机是同一个主体的互斥要求，不能擅自决定。",
+            "language": "ZH",
+            "targetTool": "通用文生图",
+            "outputType": "IMAGE",
+            "materials": [
+              {
+                "assetId": "ASSET_R1",
+                "track": "REFERENCE",
+                "role": "LAYOUT",
+                "units": [
+                  {
+                    "unitId": "R1:image",
+                    "masks": []
+                  }
+                ]
+              },
+              {
+                "assetId": "ASSET_T1",
+                "track": "REPLACEMENT",
+                "role": "SUBJECT",
+                "units": [
+                  {
+                    "unitId": "T1:image",
+                    "masks": []
+                  }
+                ]
+              }
+            ],
+            "relations": [
+              {
+                "id": "c01-preserve",
+                "operation": "PRESERVE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:image",
+                "referenceObject": "画面中央的橙色杯子",
+                "replacementAssetId": null,
+                "replacementUnitId": null,
+                "replacementObject": "",
+                "instruction": "杯子的形状和橙色均保持原样，原杯子作为唯一主体。",
+                "attributes": [
+                  "主体",
+                  "形状",
+                  "颜色"
+                ],
+                "scope": "海报中央主体"
+              },
+              {
+                "id": "c01-swap",
+                "operation": "REPLACE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:image",
+                "referenceObject": "画面中央的橙色杯子",
+                "replacementAssetId": "ASSET_T1",
+                "replacementUnitId": "T1:image",
+                "replacementObject": "青绿色头戴式耳机，藏蓝耳垫",
+                "instruction": "仅替换主体，保留参考中的中央位置和近似视觉大小；新主体保持T1外形、青绿色及藏蓝耳垫。",
+                "attributes": [
+                  "主体",
+                  "形状",
+                  "颜色"
+                ],
+                "scope": "海报中央主体"
+              }
+            ]
+          },
+          "analysis": [
+            {
+              "imageId": "R1:image",
+              "category": "文字",
+              "description": "顶部大标题为深藏蓝色无衬线大写“SUMMER IDEA”，下方一行较小副标题“SYNTHETIC POSTER / 2046”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "文字",
+              "description": "左下角有深藏蓝色小字“SAMPLE CODE 4816”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "主体",
+              "description": "画面中央为扁平化橙色带柄杯子，杯口呈浅奶油色椭圆，置于蓝色椭圆色块上。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "构图",
+              "description": "3:2横向版式，标题居上、主体居中，主体下方有一条深藏蓝色水平细线，底部左侧放小字。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "配色",
+              "description": "奶油色背景，主体橙、蓝色椭圆、深藏蓝文字与线条，整体为少量高对比扁平色块。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:image",
+              "category": "风格",
+              "description": "扁平矢量插画风格，无渐变、无写实质感，几何化造型与简洁排版。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "主体",
+              "description": "青绿色头戴式耳机，头梁与耳罩外壳为青绿色，两侧耳垫为深藏蓝色圆角矩形。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "构图",
+              "description": "耳机居中、正面平视，下方有深藏蓝色文字“NEW AUDIO”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "风格",
+              "description": "扁平矢量图标风格，纯白背景，无阴影与材质细节。",
+              "status": "INTERPRETATION"
+            }
+          ],
+          "materialSources": [
+            {
+              "assetId": "ASSET_R1",
+              "name": "R1-reference-poster.png",
+              "kind": "IMAGE",
+              "track": "REFERENCE",
+              "role": "LAYOUT",
+              "units": [
+                {
+                  "id": "R1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            },
+            {
+              "assetId": "ASSET_T1",
+              "name": "T1-headphones.png",
+              "kind": "IMAGE",
+              "track": "REPLACEMENT",
+              "role": "SUBJECT",
+              "units": [
+                {
+                  "id": "T1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            }
+          ],
+          "questions": [
+            {
+              "id": "q1",
+              "type": "SINGLE_CHOICE",
+              "question": "海报中央主体采用哪一项？两项关系卡互斥，只能选其一。",
+              "options": [
+                {
+                  "id": "o1",
+                  "label": "保留橙色杯子原形原色作为唯一主体"
+                },
+                {
+                  "id": "o2",
+                  "label": "替换为T1青绿耳机（青绿外壳、藏蓝耳垫），保留中央位置与近似大小"
+                }
+              ],
+              "required": true
+            }
+          ],
+          "answers": [
+            {
+              "questionId": "q1",
+              "optionIds": [
+                "o2"
+              ],
+              "customText": "采用替换方案：只保留R1中央位置和近似视觉大小，主体形状和颜色改用T1青绿耳机与藏蓝耳垫；取消保留杯形和橙色的要求，原杯子不再出现。其他设计细节按原委托执行。"
+            }
+          ],
+          "optimizedPrompt": "创作一张3:2横向产品海报，采用扁平矢量插画风格，无渐变、无写实质感，以几何化造型和简洁排版呈现。\n\n画面结构：奶油色纯色背景。顶部居中放置大标题，逐字使用“SUMMER SOUND”，深藏蓝色无衬线大写，字形干净利落；标题下方留出适度呼吸空间，不添加副标题或其他说明文字。画面中央为唯一主体：一只青绿色头戴式耳机，正面平视，头梁与耳罩外壳为青绿色，两侧耳垫为深藏蓝色圆角矩形，造型简洁、轮廓清晰，保持T1耳机的外形与配色。耳机置于画面中央，视觉大小与参考版式中中央主体的占比相近；下方可保留一条深藏蓝色水平细线作为版面分隔。整体信息层级为标题在上、主体居中。\n\n配色限定为奶油色背景、青绿色主体、深藏蓝色文字与线条，以少量高对比扁平色块构成，画面干净克制。字体、装饰元素与间距由下游设计自由处理，但不得新增品牌标识、价格、促销语或其他文案，不得出现橙色杯子或任何杯形物体。\n\n素材对照：\n仅按正文实际采用的来源配套上传；列出条目不表示需要全部用于成品。编号仅用于对应，不是公开链接。\n仅使用所选页面／视频帧，并保留本次遮挡；请勿用未经审阅的完整原件代替。\nR1 · R1-reference-poster.png · IMAGE · 原参考来源 [图片]\nT1 · T1-headphones.png · IMAGE · 原新内容来源 [图片]\n\n\n已确认补充要求：\n以下为本次实际回答；同一事项按本次确认执行，未被修改的独立要求继续有效。\n- 海报中央主体采用哪一项？两项关系卡互斥，只能选其一。\n  替换为T1青绿耳机（青绿外壳、藏蓝耳垫），保留中央位置与近似大小\n  采用替换方案：只保留R1中央位置和近似视觉大小，主体形状和颜色改用T1青绿耳机与藏蓝耳垫；取消保留杯形和橙色的要求，原杯子不再出现。其他设计细节按原委托执行。\n",
+          "warnings": [
+            "图片已校正方向、缩放并清除元数据。",
+            "已按用户确认取消保留橙色杯子的要求，原杯子不再出现。",
+            "T1素材中的“NEW AUDIO”文字不迁移到新海报，仅借鉴耳机主体外形与配色。",
+            "R1中的副标题、左下角小字及蓝色椭圆色块不沿用，仅借鉴标题居上、主体居中、下方细线的版式层级。",
+            "本次基于已保存正文和分析摘要优化，未重新分析图片。"
+          ],
+          "historySaved": true,
+          "mock": false,
+          "stageDurationsMs": {
+            "generateOrRewrite": 4844
+          },
+          "actualCalls": 1,
+          "tokenUsage": [
+            {
+              "operation": "image.generate",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 3417,
+              "outputTokens": 987,
+              "totalTokens": 4404,
+              "durationMs": 4745
+            }
+          ],
+          "traceSha256": "04d65e849ac351eda50e249cedf3f4d046cd86d9f76e16f5b720c33379193663"
+        }
+      ]
+    },
+    {
+      "phase": "phase3",
+      "instructionVersion": "image-prompt-v6-evidence-persistence",
+      "model": "deepseek:deepseek-flash",
+      "parameters": {
+        "temperature": 0.2,
+        "maxTokens": 6000,
+        "readTimeoutSeconds": 60,
+        "jsonResponseFormat": true,
+        "protocolRepairMax": 1
+      },
+      "actualCalls": 5,
+      "failedVendorCalls": 0,
+      "inputTokens": 17373,
+      "outputTokens": 4924,
+      "verdict": {
+        "M03": "CORE_PROMPT_PASS_BATCH_SCOPE_IMPROVED_VERBOSE_WARNINGS_REMAIN",
+        "R02": "HISTORY_EVIDENCE_PRESERVATION_PASS",
+        "F01": "COPY_ARGUMENT_EXACT_NATIVE_SUCCESS_WINDOWS_CRLF_ONLY_DIFFERENCE",
+        "executor": "LOCAL_PRECALL_GUARD_FAILURE_PRESERVED_RELOADED_NO_PAID_REPLAY"
+      },
+      "cases": [
+        {
+          "id": "M03-video-timing",
+          "input": {
+            "mode": "CUSTOM_CREATION",
+            "modelId": "deepseek:deepseek-flash",
+            "images": [],
+            "creationIntent": "编写6秒无声产品短片的创作提示词。R1是4秒原始合成片段，所选帧前段是红方块横移、后段是青圆竖移；借鉴先横后竖的画面安排，所有主体替换为T1青绿色头戴耳机。新片明确分为0至2秒耳机向右移动、2至6秒耳机向下移动两个镜头，这个2秒加4秒是我指定的新节奏，不是对原片切点的测量。其余运镜和转场委托下游设计，不使用原画面字幕，不添加音轨、音乐或对白。",
+            "exactText": "",
+            "context": "合成无声素材。只对所选时间戳作观察，稀疏帧不等于已识别整段精细运动；新片动作与时长是明确创作要求。",
+            "language": "ZH",
+            "targetTool": "通用视频创作工具",
+            "outputType": "VIDEO",
+            "materials": [
+              {
+                "assetId": "ASSET_R1",
+                "track": "REFERENCE",
+                "role": "LAYOUT",
+                "units": [
+                  {
+                    "unitId": "R1:0ms",
+                    "masks": []
+                  },
+                  {
+                    "unitId": "R1:1500ms",
+                    "masks": []
+                  },
+                  {
+                    "unitId": "R1:2000ms",
+                    "masks": []
+                  },
+                  {
+                    "unitId": "R1:3500ms",
+                    "masks": []
+                  }
+                ]
+              },
+              {
+                "assetId": "ASSET_T1",
+                "track": "REPLACEMENT",
+                "role": "SUBJECT",
+                "units": [
+                  {
+                    "unitId": "T1:image",
+                    "masks": []
+                  }
+                ]
+              }
+            ],
+            "relations": [
+              {
+                "id": "m03-video-swap",
+                "operation": "REPLACE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:0ms",
+                "referenceObject": "前段红方块与后段青圆两个主体",
+                "replacementAssetId": "ASSET_T1",
+                "replacementUnitId": "T1:image",
+                "replacementObject": "同一青绿耳机及藏蓝耳垫",
+                "instruction": "新片0至2秒向右、2至6秒向下，总长6秒；不将新节奏说成原片测量事实，不生成音轨。",
+                "attributes": [
+                  "主体",
+                  "动作",
+                  "镜头节奏"
+                ],
+                "scope": "两个目标镜头"
+              }
+            ]
+          },
+          "analysis": [
+            {
+              "imageId": "R1:0ms",
+              "category": "画面布局与文字",
+              "description": "0 ms 帧：浅米色背景；左上角深蓝色无衬线标题“SHOT A - RED SQUARE”；画面左侧中部有一个红色正方形；左下角深蓝色时间码“0.00 s”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:0ms",
+              "category": "构图关系",
+              "description": "红色方块位于画面左侧偏中，标题与时间码分别占据左上和左下，整体留白较多。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:1500ms",
+              "category": "画面布局与文字",
+              "description": "1500 ms 帧：背景、标题“SHOT A - RED SQUARE”与时间码样式同前；红色正方形移至画面中部偏右；左下角时间码为“1.50 s”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:1500ms",
+              "category": "帧间变化",
+              "description": "与 0 ms 帧相比，红色方块由左侧移至中部偏右，标题文字未变，时间码由 0.00 s 变为 1.50 s。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:2000ms",
+              "category": "画面布局与文字",
+              "description": "2000 ms 帧：背景变为浅青灰色；左上角标题为“SHOT B - TEAL CIRCLE”；画面右上区域有一个青绿色圆形；左下角时间码为“2.00 s”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:2000ms",
+              "category": "镜头切换",
+              "description": "与 1500 ms 帧相比，背景色、标题、图形形状与颜色、图形位置均发生变化，时间码由 1.50 s 变为 2.00 s，呈现为一次镜头切换。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:2000ms",
+              "category": "审美解释",
+              "description": "两镜头均采用大留白、单一几何主体与高对比标题的极简示意风格；红与青绿形成明显色相区分，用于区分两个镜头。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "画面文字",
+              "description": "左上角可见深色无衬线大写文字“SHOT B - TEAL CIRCLE”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "画面文字",
+              "description": "左下角可见深色文字“3.50 s”，与来源时间戳 3500 ms 对应。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "主体与布局",
+              "description": "画面右侧偏下位置有一个青绿色实心圆形，背景为浅灰蓝色。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "构图",
+              "description": "画面大面积留白，文字位于左上与左下，圆形单独位于右侧，形成左右不对称的极简布局。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "色彩",
+              "description": "背景为低饱和浅灰蓝，圆形为中等明度的青绿色，文字为深蓝黑色。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "运动与时间",
+              "description": "仅提供 3500 ms 单帧，无法判断圆形或文字是否移动、缩放或变化。",
+              "status": "UNCERTAIN"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "主体",
+              "description": "画面中央为青绿色头戴式耳机图形，包含弧形头带与左右两个耳罩。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "主体细节",
+              "description": "左右耳罩内部各有一个深蓝黑色圆角矩形区域，与青绿色外壳形成对比。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "画面文字",
+              "description": "耳机图形下方居中可见深色无衬线大写文字“NEW AUDIO”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "构图与色彩",
+              "description": "浅色近白背景上居中放置青绿色耳机图形，下方文字居中，整体为扁平化图标式构图。",
+              "status": "INTERPRETATION"
+            }
+          ],
+          "materialSources": [
+            {
+              "assetId": "ASSET_R1",
+              "name": "V1-two-shots.mp4",
+              "kind": "VIDEO",
+              "track": "REFERENCE",
+              "role": "LAYOUT",
+              "units": [
+                {
+                  "id": "R1:0ms",
+                  "page": null,
+                  "timestampMs": 0,
+                  "text": "",
+                  "masks": []
+                },
+                {
+                  "id": "R1:1500ms",
+                  "page": null,
+                  "timestampMs": 1500,
+                  "text": "",
+                  "masks": []
+                },
+                {
+                  "id": "R1:2000ms",
+                  "page": null,
+                  "timestampMs": 2000,
+                  "text": "",
+                  "masks": []
+                },
+                {
+                  "id": "R1:3500ms",
+                  "page": null,
+                  "timestampMs": 3500,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "仅采样源视频 0–4000 ms 片段，共 8 帧；音频未发送或识别。",
+                "静态采样不等于完整运动理解，镜头节奏仅限有时间戳的采样证据。",
+                "解析共生成 8 个预览帧；本任务选择 4 个采样帧（具体时间戳见 units）。",
+                "仅分析所选时间戳的采样帧，不能据此声称完整运动、音轨或音乐节拍已识别。"
+              ]
+            },
+            {
+              "assetId": "ASSET_T1",
+              "name": "T1-headphones.png",
+              "kind": "IMAGE",
+              "track": "REPLACEMENT",
+              "role": "SUBJECT",
+              "units": [
+                {
+                  "id": "T1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            }
+          ],
+          "questions": [],
+          "answers": [],
+          "optimizedPrompt": "生成一支6秒无声产品短片，画面中只出现同一副青绿色头戴式耳机（含弧形头带与左右两个耳罩，耳罩内侧为深蓝黑色圆角矩形耳垫），不出现其他主体。\n\n整体结构借鉴参考片的两段式画面安排：先一段横向移动，再一段纵向移动，两段之间形成明确的镜头切换；参考片中的红方块、青圆、背景标题文字与时间码均不沿用，新片不出现任何字幕、标题、时间码或水印。\n\n镜头一（0–2秒）：耳机在画面中向右移动，从偏左位置移向偏右位置，保持耳机完整可见、比例稳定，背景简洁留白，突出耳机本身。\n\n镜头二（2–6秒）：切换后耳机在画面中向下移动，从偏上位置移向偏下位置，同样保持完整可见与比例稳定，背景简洁留白。\n\n两段的具体运镜方式（推拉、平移幅度、景别变化）与转场方式（硬切或简短过渡）由执行方自行设计，但必须保证0–2秒为向右移动、2–6秒为向下移动，总时长严格6秒。\n\n画面风格：干净极简的产品展示感，浅色低饱和背景，青绿色耳机为唯一视觉焦点，光线均匀柔和，无强烈阴影与复杂装饰。\n\n输出要求：纯画面，无音轨、无音乐、无对白、无音效；不添加任何文字。\n\n素材对照：\n仅按正文实际采用的来源配套上传；列出条目不表示需要全部用于成品。编号仅用于对应，不是公开链接。\n仅使用所选页面／视频帧，并保留本次遮挡；请勿用未经审阅的完整原件代替。\nR1 · V1-two-shots.mp4 · VIDEO · 原参考来源 [0.000s] [1.500s] [2.000s] [3.500s]\nT1 · T1-headphones.png · IMAGE · 原新内容来源 [图片]\n",
+          "warnings": [
+            "仅采样源视频 0–4000 ms 片段，共 8 帧；音频未发送或识别。",
+            "静态采样不等于完整运动理解，镜头节奏仅限有时间戳的采样证据。",
+            "解析共生成 8 个预览帧；本任务选择 4 个采样帧（具体时间戳见 units）。",
+            "仅分析所选时间戳的采样帧，不能据此声称完整运动、音轨或音乐节拍已识别。",
+            "图片已校正方向、缩放并清除元数据。",
+            "仅识别本批 3 个采样帧（0 ms、1500 ms、2000 ms）；任务另选的第 4 个采样帧 R1:3500ms 不在本批，未作识别。",
+            "源视频仅采样 0–4000 ms 片段，共 8 帧；本批 3 帧不能证明完整运动、镜头节奏或转场方式。",
+            "音频未发送或识别，无法推断音乐节拍、对白或声音。",
+            "帧间图形位置变化仅基于离散采样点，不能确定连续运动轨迹或缓动方式。",
+            "本批仅覆盖任务所选 5 个单位中的 2 个；其余 3 个视频采样帧未在本批提供，不能据此判断完整运动或镜头节奏。",
+            "V1-two-shots.mp4 仅采样 0–4000 ms 片段共 8 帧，本批只提供 3500 ms 单帧；音频未发送或识别，无法推断音乐节拍、对白或声音。",
+            "T1-headphones.png 已校正方向、缩放并清除元数据，无法从当前文件确认原始拍摄或制作参数。",
+            "静态单帧不能证明圆形或文字在时间上的变化，相关运动状态保持未知。",
+            "仅提供 3500 ms 单帧，无法判断圆形或文字是否移动、缩放或变化。",
+            "参考视频仅采样0–4000 ms片段，未提供音轨，无法推断原片音乐节拍、对白或声音；新片按要求不生成音轨。",
+            "参考片帧间位置变化仅基于离散采样点，不能确定连续运动轨迹或缓动方式；新片动作与2秒+4秒节奏为用户指定，非原片测量结果。",
+            "参考片中的标题文字与时间码不迁移到新片，新片不出现任何字幕。",
+            "T1-headphones.png 已校正方向、缩放并清除元数据，无法确认原始制作参数；其下方“NEW AUDIO”文字不纳入新片。",
+            "两段之间的转场方式与具体运镜幅度由下游设计，需保证0–2秒向右、2–6秒向下且总长6秒。"
+          ],
+          "evidenceWarnings": [
+            "仅采样源视频 0–4000 ms 片段，共 8 帧；音频未发送或识别。",
+            "静态采样不等于完整运动理解，镜头节奏仅限有时间戳的采样证据。",
+            "解析共生成 8 个预览帧；本任务选择 4 个采样帧（具体时间戳见 units）。",
+            "仅分析所选时间戳的采样帧，不能据此声称完整运动、音轨或音乐节拍已识别。",
+            "图片已校正方向、缩放并清除元数据。",
+            "仅识别本批 3 个采样帧（0 ms、1500 ms、2000 ms）；任务另选的第 4 个采样帧 R1:3500ms 不在本批，未作识别。",
+            "源视频仅采样 0–4000 ms 片段，共 8 帧；本批 3 帧不能证明完整运动、镜头节奏或转场方式。",
+            "音频未发送或识别，无法推断音乐节拍、对白或声音。",
+            "帧间图形位置变化仅基于离散采样点，不能确定连续运动轨迹或缓动方式。",
+            "本批仅覆盖任务所选 5 个单位中的 2 个；其余 3 个视频采样帧未在本批提供，不能据此判断完整运动或镜头节奏。",
+            "V1-two-shots.mp4 仅采样 0–4000 ms 片段共 8 帧，本批只提供 3500 ms 单帧；音频未发送或识别，无法推断音乐节拍、对白或声音。",
+            "T1-headphones.png 已校正方向、缩放并清除元数据，无法从当前文件确认原始拍摄或制作参数。",
+            "静态单帧不能证明圆形或文字在时间上的变化，相关运动状态保持未知。",
+            "仅提供 3500 ms 单帧，无法判断圆形或文字是否移动、缩放或变化。"
+          ],
+          "historySaved": true,
+          "mock": false,
+          "stageDurationsMs": {
+            "plan": 17202,
+            "generateOrRewrite": 6246
+          },
+          "actualCalls": 4,
+          "tokenUsage": [
+            {
+              "operation": "image.plan",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 4312,
+              "outputTokens": 1479,
+              "totalTokens": 5791,
+              "durationMs": 5614
+            },
+            {
+              "operation": "image.analyze",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 2094,
+              "outputTokens": 858,
+              "totalTokens": 2952,
+              "durationMs": 4967
+            },
+            {
+              "operation": "image.analyze",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 1934,
+              "outputTokens": 924,
+              "totalTokens": 2858,
+              "durationMs": 6340
+            },
+            {
+              "operation": "image.generate",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 4336,
+              "outputTokens": 1129,
+              "totalTokens": 5465,
+              "durationMs": 6125
+            }
+          ],
+          "traceSha256": "a438843348117d3c1475df6852e6864f6e37632f639c435e89b1d04b89e9715c"
+        },
+        {
+          "id": "R02-evidence-rewrite",
+          "input": {
+            "mode": "CUSTOM_CREATION",
+            "modelId": "deepseek:deepseek-flash",
+            "images": [],
+            "creationIntent": "编写6秒无声产品短片的创作提示词。R1是4秒原始合成片段，所选帧前段是红方块横移、后段是青圆竖移；借鉴先横后竖的画面安排，所有主体替换为T1青绿色头戴耳机。新片明确分为0至2秒耳机向右移动、2至6秒耳机向下移动两个镜头，这个2秒加4秒是我指定的新节奏，不是对原片切点的测量。其余运镜和转场委托下游设计，不使用原画面字幕，不添加音轨、音乐或对白。",
+            "exactText": "",
+            "context": "合成无声素材。只对所选时间戳作观察，稀疏帧不等于已识别整段精细运动；新片动作与时长是明确创作要求。",
+            "language": "ZH",
+            "targetTool": "通用视频创作工具",
+            "outputType": "VIDEO",
+            "materials": [
+              {
+                "assetId": "ASSET_R1",
+                "track": "REFERENCE",
+                "role": "LAYOUT",
+                "units": [
+                  {
+                    "unitId": "R1:0ms",
+                    "masks": []
+                  },
+                  {
+                    "unitId": "R1:1500ms",
+                    "masks": []
+                  },
+                  {
+                    "unitId": "R1:2000ms",
+                    "masks": []
+                  },
+                  {
+                    "unitId": "R1:3500ms",
+                    "masks": []
+                  }
+                ]
+              },
+              {
+                "assetId": "ASSET_T1",
+                "track": "REPLACEMENT",
+                "role": "SUBJECT",
+                "units": [
+                  {
+                    "unitId": "T1:image",
+                    "masks": []
+                  }
+                ]
+              }
+            ],
+            "relations": [
+              {
+                "id": "m03-video-swap",
+                "operation": "REPLACE",
+                "referenceAssetId": "ASSET_R1",
+                "referenceUnitId": "R1:0ms",
+                "referenceObject": "前段红方块与后段青圆两个主体",
+                "replacementAssetId": "ASSET_T1",
+                "replacementUnitId": "T1:image",
+                "replacementObject": "同一青绿耳机及藏蓝耳垫",
+                "instruction": "新片0至2秒向右、2至6秒向下，总长6秒；不将新节奏说成原片测量事实，不生成音轨。",
+                "attributes": [
+                  "主体",
+                  "动作",
+                  "镜头节奏"
+                ],
+                "scope": "两个目标镜头"
+              }
+            ]
+          },
+          "analysis": [
+            {
+              "imageId": "R1:0ms",
+              "category": "画面布局与文字",
+              "description": "0 ms 帧：浅米色背景；左上角深蓝色无衬线标题“SHOT A - RED SQUARE”；画面左侧中部有一个红色正方形；左下角深蓝色时间码“0.00 s”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:0ms",
+              "category": "构图关系",
+              "description": "红色方块位于画面左侧偏中，标题与时间码分别占据左上和左下，整体留白较多。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:1500ms",
+              "category": "画面布局与文字",
+              "description": "1500 ms 帧：背景、标题“SHOT A - RED SQUARE”与时间码样式同前；红色正方形移至画面中部偏右；左下角时间码为“1.50 s”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:1500ms",
+              "category": "帧间变化",
+              "description": "与 0 ms 帧相比，红色方块由左侧移至中部偏右，标题文字未变，时间码由 0.00 s 变为 1.50 s。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:2000ms",
+              "category": "画面布局与文字",
+              "description": "2000 ms 帧：背景变为浅青灰色；左上角标题为“SHOT B - TEAL CIRCLE”；画面右上区域有一个青绿色圆形；左下角时间码为“2.00 s”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:2000ms",
+              "category": "镜头切换",
+              "description": "与 1500 ms 帧相比，背景色、标题、图形形状与颜色、图形位置均发生变化，时间码由 1.50 s 变为 2.00 s，呈现为一次镜头切换。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:2000ms",
+              "category": "审美解释",
+              "description": "两镜头均采用大留白、单一几何主体与高对比标题的极简示意风格；红与青绿形成明显色相区分，用于区分两个镜头。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "画面文字",
+              "description": "左上角可见深色无衬线大写文字“SHOT B - TEAL CIRCLE”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "画面文字",
+              "description": "左下角可见深色文字“3.50 s”，与来源时间戳 3500 ms 对应。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "主体与布局",
+              "description": "画面右侧偏下位置有一个青绿色实心圆形，背景为浅灰蓝色。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "构图",
+              "description": "画面大面积留白，文字位于左上与左下，圆形单独位于右侧，形成左右不对称的极简布局。",
+              "status": "INTERPRETATION"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "色彩",
+              "description": "背景为低饱和浅灰蓝，圆形为中等明度的青绿色，文字为深蓝黑色。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "R1:3500ms",
+              "category": "运动与时间",
+              "description": "仅提供 3500 ms 单帧，无法判断圆形或文字是否移动、缩放或变化。",
+              "status": "UNCERTAIN"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "主体",
+              "description": "画面中央为青绿色头戴式耳机图形，包含弧形头带与左右两个耳罩。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "主体细节",
+              "description": "左右耳罩内部各有一个深蓝黑色圆角矩形区域，与青绿色外壳形成对比。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "画面文字",
+              "description": "耳机图形下方居中可见深色无衬线大写文字“NEW AUDIO”。",
+              "status": "OBSERVED"
+            },
+            {
+              "imageId": "T1:image",
+              "category": "构图与色彩",
+              "description": "浅色近白背景上居中放置青绿色耳机图形，下方文字居中，整体为扁平化图标式构图。",
+              "status": "INTERPRETATION"
+            }
+          ],
+          "materialSources": [
+            {
+              "assetId": "ASSET_R1",
+              "name": "V1-two-shots.mp4",
+              "kind": "VIDEO",
+              "track": "REFERENCE",
+              "role": "LAYOUT",
+              "units": [
+                {
+                  "id": "R1:0ms",
+                  "page": null,
+                  "timestampMs": 0,
+                  "text": "",
+                  "masks": []
+                },
+                {
+                  "id": "R1:1500ms",
+                  "page": null,
+                  "timestampMs": 1500,
+                  "text": "",
+                  "masks": []
+                },
+                {
+                  "id": "R1:2000ms",
+                  "page": null,
+                  "timestampMs": 2000,
+                  "text": "",
+                  "masks": []
+                },
+                {
+                  "id": "R1:3500ms",
+                  "page": null,
+                  "timestampMs": 3500,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "仅采样源视频 0–4000 ms 片段，共 8 帧；音频未发送或识别。",
+                "静态采样不等于完整运动理解，镜头节奏仅限有时间戳的采样证据。",
+                "解析共生成 8 个预览帧；本任务选择 4 个采样帧（具体时间戳见 units）。",
+                "仅分析所选时间戳的采样帧，不能据此声称完整运动、音轨或音乐节拍已识别。"
+              ]
+            },
+            {
+              "assetId": "ASSET_T1",
+              "name": "T1-headphones.png",
+              "kind": "IMAGE",
+              "track": "REPLACEMENT",
+              "role": "SUBJECT",
+              "units": [
+                {
+                  "id": "T1:image",
+                  "page": null,
+                  "timestampMs": null,
+                  "text": "",
+                  "masks": []
+                }
+              ],
+              "warnings": [
+                "图片已校正方向、缩放并清除元数据。"
+              ]
+            }
+          ],
+          "questions": [],
+          "answers": [],
+          "optimizedPrompt": "生成一支总长严格为6秒的无声产品短片，画面中只出现同一副青绿色头戴式耳机：弧形头带、左右两个耳罩，耳罩内侧为深蓝黑色圆角矩形耳垫；不出现其他主体。\n\n整体结构借鉴参考片的两段式画面安排——先横向移动、再纵向移动，两段之间形成明确的镜头切换。参考片中的红方块、青圆、背景标题文字与时间码一律不沿用；新片不出现任何字幕、标题、时间码或水印。\n\n镜头一（0–2秒）：耳机在画面中向右移动，从偏左位置移向偏右位置，全程保持耳机完整可见、比例稳定，背景简洁留白，突出耳机本身。\n\n镜头二（2–6秒）：切换后，耳机在画面中向下移动，从偏上位置移向偏下位置，同样保持完整可见与比例稳定，背景简洁留白。\n\n两段的具体运镜方式（推拉、平移幅度、景别变化）与转场方式（硬切或简短过渡）由执行方自行设计，但必须保证0–2秒为向右移动、2–6秒为向下移动，总时长严格6秒。\n\n画面风格：干净极简的产品展示感，浅色低饱和背景，青绿色耳机为唯一视觉焦点，光线均匀柔和，无强烈阴影与复杂装饰。\n\n输出要求：纯画面，无音轨、无音乐、无对白、无音效；不添加任何文字。\n\n素材对照：\n仅按正文实际采用的来源配套上传；列出条目不表示需要全部用于成品。编号仅用于对应，不是公开链接。\n仅使用所选页面／视频帧，并保留本次遮挡；请勿用未经审阅的完整原件代替。\nR1 · V1-two-shots.mp4 · VIDEO · 原参考来源 [0.000s] [1.500s] [2.000s] [3.500s]\nT1 · T1-headphones.png · IMAGE · 原新内容来源 [图片]\n",
+          "warnings": [
+            "仅采样源视频 0–4000 ms 片段，共 8 帧；音频未发送或识别。",
+            "静态采样不等于完整运动理解，镜头节奏仅限有时间戳的采样证据。",
+            "解析共生成 8 个预览帧；本任务选择 4 个采样帧（具体时间戳见 units）。",
+            "仅分析所选时间戳的采样帧，不能据此声称完整运动、音轨或音乐节拍已识别。",
+            "图片已校正方向、缩放并清除元数据。",
+            "仅识别本批 3 个采样帧（0 ms、1500 ms、2000 ms）；任务另选的第 4 个采样帧 R1:3500ms 不在本批，未作识别。",
+            "源视频仅采样 0–4000 ms 片段，共 8 帧；本批 3 帧不能证明完整运动、镜头节奏或转场方式。",
+            "音频未发送或识别，无法推断音乐节拍、对白或声音。",
+            "帧间图形位置变化仅基于离散采样点，不能确定连续运动轨迹或缓动方式。",
+            "本批仅覆盖任务所选 5 个单位中的 2 个；其余 3 个视频采样帧未在本批提供，不能据此判断完整运动或镜头节奏。",
+            "V1-two-shots.mp4 仅采样 0–4000 ms 片段共 8 帧，本批只提供 3500 ms 单帧；音频未发送或识别，无法推断音乐节拍、对白或声音。",
+            "T1-headphones.png 已校正方向、缩放并清除元数据，无法从当前文件确认原始拍摄或制作参数。",
+            "静态单帧不能证明圆形或文字在时间上的变化，相关运动状态保持未知。",
+            "仅提供 3500 ms 单帧，无法判断圆形或文字是否移动、缩放或变化。",
+            "源视频仅采样0–4000 ms片段共8帧，且部分采样帧未在本批识别，不能据此推断完整运动、镜头节奏或转场方式；新片2秒+4秒节奏为用户指定，非原片测量结果。",
+            "音频未发送或识别，无法推断音乐节拍、对白或声音；成片按要求不含任何音轨。",
+            "T1-headphones.png已校正方向、缩放并清除元数据，无法确认原始拍摄或制作参数。",
+            "参考片中的标题文字与时间码不迁移到新片，新片不出现任何文字。",
+            "本次基于已保存正文和分析摘要优化，未重新分析图片。"
+          ],
+          "evidenceWarnings": [
+            "仅采样源视频 0–4000 ms 片段，共 8 帧；音频未发送或识别。",
+            "静态采样不等于完整运动理解，镜头节奏仅限有时间戳的采样证据。",
+            "解析共生成 8 个预览帧；本任务选择 4 个采样帧（具体时间戳见 units）。",
+            "仅分析所选时间戳的采样帧，不能据此声称完整运动、音轨或音乐节拍已识别。",
+            "图片已校正方向、缩放并清除元数据。",
+            "仅识别本批 3 个采样帧（0 ms、1500 ms、2000 ms）；任务另选的第 4 个采样帧 R1:3500ms 不在本批，未作识别。",
+            "源视频仅采样 0–4000 ms 片段，共 8 帧；本批 3 帧不能证明完整运动、镜头节奏或转场方式。",
+            "音频未发送或识别，无法推断音乐节拍、对白或声音。",
+            "帧间图形位置变化仅基于离散采样点，不能确定连续运动轨迹或缓动方式。",
+            "本批仅覆盖任务所选 5 个单位中的 2 个；其余 3 个视频采样帧未在本批提供，不能据此判断完整运动或镜头节奏。",
+            "V1-two-shots.mp4 仅采样 0–4000 ms 片段共 8 帧，本批只提供 3500 ms 单帧；音频未发送或识别，无法推断音乐节拍、对白或声音。",
+            "T1-headphones.png 已校正方向、缩放并清除元数据，无法从当前文件确认原始拍摄或制作参数。",
+            "静态单帧不能证明圆形或文字在时间上的变化，相关运动状态保持未知。",
+            "仅提供 3500 ms 单帧，无法判断圆形或文字是否移动、缩放或变化。"
+          ],
+          "historySaved": true,
+          "mock": false,
+          "stageDurationsMs": {
+            "generateOrRewrite": 3360
+          },
+          "actualCalls": 1,
+          "tokenUsage": [
+            {
+              "operation": "image.generate",
+              "model": "deepseek:deepseek-flash",
+              "successful": true,
+              "failureType": null,
+              "attempt": 1,
+              "inputTokens": 4697,
+              "outputTokens": 534,
+              "totalTokens": 5231,
+              "durationMs": 3279
+            }
+          ],
+          "traceSha256": "cc76069edebe3a6ad3717f7db8ff14d6e55e2a8ac75cdc996e7c6c8e71b1ba56"
+        }
+      ]
+    }
+  ],
+  "maskExport": {
+    "caseId": "M04-masked-reference",
+    "exportedBytes": 19344,
+    "sha256": "6ad421b2437a3dec6729c52efae10eb46346b65b39f6d5d4b2e69964c7c8ee6b",
+    "matchesModelSource": true,
+    "masks": [
+      {
+        "x": 0.08,
+        "y": 0.84,
+        "width": 0.42,
+        "height": 0.1
+      }
+    ]
+  },
+  "copyDiagnostic": {
+    "caseId": "F01-freeform-ui",
+    "zeroPaidCalls": true,
+    "historyMatches": true,
+    "domMatches": true,
+    "called": true,
+    "resolved": true,
+    "errorName": null,
+    "argumentMatches": true,
+    "copiedExactly": false,
+    "newlineNormalizedMatches": true,
+    "expectedLength": 388,
+    "readLength": 396,
+    "manualMatches": false,
+    "readError": null
+  },
+  "riskPreservation": {
+    "before": 14,
+    "after": 14,
+    "allPreserved": true,
+    "sameArray": true,
+    "sourceWarningsAbsentFromUncertain": 8,
+    "sourcePromptUnchanged": true
+  },
+  "executorPreflight": {
+    "time": "2026-10-25T21:11:30.512Z",
+    "cause": "Node会话在freeze之前启动，freeze更新了尚未执行的R02前置来源守卫；已加载进程未重读该函数。",
+    "actualCallsBeforeRestart": 4,
+    "sourceVersion": "image-prompt-v6-evidence-persistence",
+    "loadedScriptSha256": "f67bd0faa3f7da3c126a1dc0d893edd866f1cabc1f0dbeaee02db8266cb3e2c9",
+    "sealedScriptSha256": "b58e67b6e747bd0e6291ee3048e5d750f94c3f66e7b9e1d1b8ac9b99adc4524f",
+    "difference": "仅R02在reserve之前的本地前置来源哈希守卫；M03的请求/参数/预算执行路径完全相同。",
+    "localFailure": "R02在reserve之前失败，未发出请求、未记新reservation、未付费。",
+    "correction": "保留原件与4次实际计数；关闭会话后以原已封存脚本重启，不重跑M03，只执行原R02。"
+  }
+}

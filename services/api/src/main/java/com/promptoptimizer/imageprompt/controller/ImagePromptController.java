@@ -51,7 +51,7 @@ public class ImagePromptController {
     /** 关闭 Plan 的单图还原入口，不接受新图创作要求。 */
     @PostMapping("/image-prompts")
     public ApiResponse<Document> extract(@Valid @RequestBody Generate input, HttpServletRequest request) { return ok(request, service.extract(input)); }
-    /** 为自定义新图建立服务端绑定计划，参考图片可为空。 */
+    /** 为图片、视频或PPT内容创作建立服务端绑定计划，参考与替换素材可为空。 */
     @PostMapping("/image-prompts/plans")
     public ApiResponse<Plan> plan(@Valid @RequestBody Generate input, HttpServletRequest request) { return ok(request, service.plan(input)); }
     /** 只接收服务端原题的实际答案，不能由客户端覆盖计划输入或来源。 */

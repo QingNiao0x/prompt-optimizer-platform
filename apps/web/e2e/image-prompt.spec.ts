@@ -70,7 +70,7 @@ test('图像模型列表与文本目录一致，文字模型只能用于无图 P
   await page.locator('.column-heading .el-switch').click();
   await page.getByRole('textbox', { name: '新图创作构想' }).fill('文字构想：社区植物展海报。');
   await page.getByRole('button', { name: '梳理创作意图' }).click();
-  await expect(page.getByRole('heading', { name: '确认新图创作方向' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '请确认创作细节' })).toBeVisible();
   expect(state.task.modelId).toBe(textModel.id); expect(state.uploads).toBe(0); expect(state.plans).toBe(1);
 });
 

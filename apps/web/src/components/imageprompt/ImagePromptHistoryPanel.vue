@@ -36,6 +36,21 @@ let listSequence = 0;
 let detailSequence = 0;
 const valid = (expectedEpoch: number): boolean => active && expectedEpoch === epoch;
 const modeLabel = (value: ImagePromptMode): string => value === 'CUSTOM_CREATION' ? 'Plan 新图创作' : '参考图还原';
+const outputLabel = (document: ImagePromptDocument): string => ({ IMAGE: '图片', VIDEO: '视频', PPT: 'PPT' }[document.input.outputType ?? 'IMAGE']);
+const materialCount = (document: ImagePromptDocument): number => document.materialSources?.length || document.sources.length;
+const unitLabel = (unit: { page?: number | null; timestampMs?: number | null }): string => unit.page != null
+  ? `第 ${unit.page} 页` : unit.timestampMs != null ? `${(unit.timestampMs / 1000).toFixed(2)} 秒画面` : '图片';
+/** 历史引用转换为可读素材名，不把平台内部 ID 当成下游能够访问的附件。 */
+const relationSource = (assetId?: string, unitId?: string): string => {
+  if (!assetId) return '文字说明';
+  const source = detail.value?.materialSources?.find(item => item.assetId === assetId);
+  const unit = source?.units.find(item => item.id === unitId);
+  return source ? `${source.name}${unit ? ` · ${unitLabel(unit)}` : ''}`
+    : detail.value?.sources.find(item => item.id === assetId)?.name ?? '已过期素材';
+};
+const operationLabel = { PRESERVE: '保留', REPLACE: '替换', REMOVE: '移除', FUSE: '融合' } as const;
+// 原始关系完整保留用于追溯；存在实际回答后，不把这些初始卡片冒充确认后的最新约束。
+const hasActualPlanAnswers = computed(() => detail.value?.answers.some(answer => answer.optionIds.length > 0 || Boolean(answer.customText.trim())) ?? false);
 const formatDate = (value: string): string => {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? value : date.toLocaleString('zh-CN', { hour12: false });
@@ -201,7 +216,7 @@ onBeforeUnmount(() => { active = false; epoch += 1; listSequence += 1; detailSeq
       <ElButton :icon="RefreshRight" :loading="loading" @click="loadPage">刷新记录</ElButton>
       <ElButton type="primary" @click="router.push('/image-to-prompt')">前往图像转提示词</ElButton>
     </div>
-    <p class="image-history-note">生成成功后自动记录提示词、模式、模型与必要分析。原图不长期保存，载入历史不会重新识图或调用模型。</p>
+    <p class="image-history-note">生成成功后记录提示词、模式、素材说明、替换关系与必要分析。原件不长期保存，载入历史不会重新识别素材或调用模型。</p>
     <ElAlert v-if="error" :title="error" type="error" :closable="false" />
     <ElAlert v-if="records.some(record => !record.persistentHistory)" title="本机演示记录保存在服务内存中，服务重启后不会保留。" type="info" :closable="false" />
     <div v-loading="loading" class="image-history-results">
@@ -211,7 +226,7 @@ onBeforeUnmount(() => { active = false; epoch += 1; listSequence += 1; detailSeq
           <li v-for="record in records" :key="record.recordId!" class="image-history-card">
             <div class="record-meta"><ElTag size="small" effect="plain">{{ modeLabel(record.mode) }}</ElTag><time>{{ formatDate(record.createdAt) }}</time></div>
             <p class="record-preview">{{ record.optimizedPrompt.slice(0, 160) }}</p>
-            <span class="record-model">{{ formatModelVersion(record.modelName) }} · {{ record.sources.length }} 张参考图</span>
+            <span class="record-model">{{ formatModelVersion(record.modelName) }} · {{ outputLabel(record) }} · {{ materialCount(record) }} 份素材</span>
             <div class="record-actions">
               <ElButton text size="small" :icon="View" @click="openDetail(record.recordId)">查看</ElButton>
               <ElButton text size="small" :icon="Upload" :disabled="store.busy || !!actionId" @click="restore(record.recordId)">载入</ElButton>
@@ -224,7 +239,7 @@ onBeforeUnmount(() => { active = false; epoch += 1; listSequence += 1; detailSeq
           <ElTableColumn label="模式" width="140"><template #default="{ row }"><ElTag size="small" effect="plain">{{ modeLabel(row.mode) }}</ElTag></template></ElTableColumn>
           <ElTableColumn label="模型" min-width="160"><template #default="{ row }"><span class="record-model">{{ formatModelVersion(row.modelName) }}</span></template></ElTableColumn>
           <ElTableColumn label="生成的提示词" min-width="220"><template #default="{ row }"><span class="table-preview">{{ row.optimizedPrompt.slice(0, 160) }}</span></template></ElTableColumn>
-          <ElTableColumn label="参考图" width="80"><template #default="{ row }">{{ row.sources.length }} 张</template></ElTableColumn>
+          <ElTableColumn label="成品／素材" width="110"><template #default="{ row }">{{ outputLabel(row as ImagePromptDocument) }}／{{ materialCount(row as ImagePromptDocument) }} 份</template></ElTableColumn>
           <ElTableColumn label="操作" width="260" align="right"><template #default="{ row }">
             <ElButton text size="small" :icon="View" @click="openDetail(row.recordId)">查看</ElButton>
             <ElButton text size="small" :icon="Upload" :disabled="store.busy || !!actionId" @click="restore(row.recordId)">载入</ElButton>
@@ -243,11 +258,29 @@ onBeforeUnmount(() => { active = false; epoch += 1; listSequence += 1; detailSeq
         <template v-if="detail">
           <div class="record-meta"><ElTag effect="plain">{{ modeLabel(detail.mode) }}</ElTag><span>{{ formatModelVersion(detail.modelName) }}</span><time>{{ formatDate(detail.createdAt) }}</time></div>
           <ElAlert v-if="detail.mock" title="本机演示结果，不代表真实视觉识别。" type="info" :closable="false" />
-          <section v-if="detail.input.creationIntent" class="detail-block"><h3>新图创作构想</h3><pre>{{ detail.input.creationIntent }}</pre></section>
+          <section v-if="detail.input.creationIntent" class="detail-block"><h3>{{ outputLabel(detail) }}创作构想</h3><pre>{{ detail.input.creationIntent }}</pre></section>
           <section v-if="detail.input.exactText" class="detail-block"><h3>画面指定文案</h3><pre>{{ detail.input.exactText }}</pre></section>
           <section v-if="detail.input.context" class="detail-block"><h3>项目上下文</h3><pre>{{ detail.input.context }}</pre></section>
           <section class="detail-block"><h3>生成的提示词</h3><pre>{{ detail.optimizedPrompt }}</pre><ElButton type="primary" @click="copyPrompt">复制提示词</ElButton></section>
           <section v-if="detail.sources.length" class="detail-block"><h3>参考图片来源</h3><p v-for="source in detail.sources" :key="source.id">{{ source.name }} · {{ source.width }} × {{ source.height }}</p><p>仅保留来源说明；历史不恢复原图。</p></section>
+          <section v-if="detail.materialSources?.length" class="detail-block" aria-label="历史素材对照表"><h3>素材对照表与识别范围</h3>
+            <article v-for="source in detail.materialSources" :key="source.assetId" class="material-history-source">
+              <h4>{{ source.track === 'REFERENCE' ? '参考素材' : '替换素材（新主体／新内容）' }}：{{ source.name }}</h4>
+              <p>{{ source.kind === 'PPTX' ? 'PPTX 幻灯片' : source.kind === 'VIDEO' ? '视频片段' : '图片' }} · 仅使用以下 {{ source.units.length }} 个选中画面</p>
+              <p v-for="unit in source.units" :key="unit.id">{{ unitLabel(unit) }}<template v-if="unit.masks.length"> · 已遮挡 {{ unit.masks.length }} 处区域</template></p>
+              <p v-for="warning in source.warnings" :key="warning">{{ warning }}</p>
+            </article>
+            <p>需要在下游使用参考素材时，请按对照关系重新上传文件。历史只保留文字与来源范围，不恢复原件、页面或视频帧。</p>
+          </section>
+          <section v-if="detail.input.relations?.length" class="detail-block" aria-label="历史替换关系"><h3>{{ hasActualPlanAnswers ? '初始保留与替换关系' : '用户指定的保留与替换关系' }}</h3>
+            <p v-if="hasActualPlanAnswers">以下卡片记录初始要求，用于追溯；当前要求以 Plan 确认题答和当前正文为准。</p>
+            <article v-for="relation in detail.input.relations" :key="relation.id" class="material-history-source">
+              <h4>{{ operationLabel[relation.operation] }} · {{ relation.referenceObject }}</h4>
+              <p>参考来源：{{ relationSource(relation.referenceAssetId, relation.referenceUnitId) }}</p>
+              <p v-if="relation.replacementAssetId || relation.replacementObject">新内容来源：{{ relationSource(relation.replacementAssetId, relation.replacementUnitId) }} · {{ relation.replacementObject }}</p>
+              <p v-if="relation.attributes.length">作用属性：{{ relation.attributes.join('、') }}</p><p v-if="relation.scope">作用范围：{{ relation.scope }}</p><p v-if="relation.instruction">{{ relation.instruction }}</p>
+            </article>
+          </section>
           <section v-if="detail.questions.length" class="detail-block"><h3>Plan 确认记录</h3><div v-for="question in detail.questions" :key="question.id"><h4>{{ question.question }}</h4><pre>{{ answerText(question) }}</pre></div></section>
           <section v-if="detail.analysis.length" class="detail-block"><h3>视觉分析</h3><p v-for="(observation, index) in detail.analysis" :key="index">{{ observation.status === 'OBSERVED' ? '观察' : observation.status === 'UNCERTAIN' ? '不确定' : '推断' }}：{{ observation.description }}</p></section>
           <section v-if="detail.warnings.length" class="detail-block"><h3>注意事项</h3><p v-for="warning in detail.warnings" :key="warning">{{ warning }}</p></section>
@@ -282,6 +315,7 @@ onBeforeUnmount(() => { active = false; epoch += 1; listSequence += 1; detailSeq
 .detail-block h3, .detail-block h4 { margin: 0 0 8px; color: var(--ink-strong); font-size: 14px; }
 .detail-block p { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.7; }
 .detail-block pre { margin: 0 0 12px; padding: 14px; max-height: 320px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid var(--line-subtle); border-radius: var(--radius-sm); background: var(--surface-code); color: var(--ink-muted); font-family: var(--font-mono); line-height: 1.7; }
+.material-history-source { padding: 12px; margin: 10px 0; border: 1px solid var(--line-subtle); border-radius: var(--radius-sm); }
 @media (max-width: 720px) {
   .image-history-cards { display: grid; }
   .image-history-table { display: none; }

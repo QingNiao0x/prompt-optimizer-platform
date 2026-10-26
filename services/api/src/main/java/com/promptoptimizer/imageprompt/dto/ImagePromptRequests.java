@@ -1,6 +1,7 @@
 package com.promptoptimizer.imageprompt.dto;
 
 import com.promptoptimizer.imageprompt.domain.ImagePromptModels.*;
+import com.promptoptimizer.imageprompt.domain.ImagePromptMediaModels.MaterialRef;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.util.List;
@@ -19,11 +20,18 @@ public final class ImagePromptRequests {
                        @NotNull @Size(max = 6000) String creationIntent,
                        @NotNull @Size(max = 2000) String exactText,
                        @NotNull @Size(max = 6000) String context,
-                       @NotNull Language language, @NotNull @Size(max = 100) String targetTool) {
+                       @NotNull Language language, @NotNull @Size(max = 100) String targetTool,
+                       OutputType outputType, @Size(max = 6) List<@NotNull @Valid MaterialRef> materials,
+                       @Size(max = 12) List<@NotNull ReplacementRelation> relations) {
+        /** 保留原有单图调用与测试夹具；新增字段由Input统一提供历史兼容默认值。 */
+        public Task(Mode mode, String modelId, List<Reference> images, String creationIntent,
+                    String exactText, String context, Language language, String targetTool) {
+            this(mode, modelId, images, creationIntent, exactText, context, language, targetTool, null, null, null);
+        }
         /** 普通描述只去除外围空白，确切画面文案保留原字符；事实与权限仍由应用服务核对。 */
         public Input input() {
             return new Input(mode, modelId.trim(), images.stream().map(i -> new ImageRef(i.assetId(), i.role())).toList(),
-                    creationIntent.strip(), exactText, context.strip(), language, targetTool.strip());
+                    creationIntent.strip(), exactText, context.strip(), language, targetTool.strip(), outputType, materials, relations);
         }
     }
     public record Generate(@NotNull UUID requestId, @NotNull @Valid Task input) { }

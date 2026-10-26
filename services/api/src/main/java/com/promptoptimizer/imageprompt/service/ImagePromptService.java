@@ -8,16 +8,22 @@ import com.promptoptimizer.common.logging.LogCorrelation;
 import com.promptoptimizer.common.security.SensitiveValueScanner;
 import com.promptoptimizer.identity.service.*;
 import com.promptoptimizer.imageprompt.domain.ImagePromptModels.*;
+import com.promptoptimizer.imageprompt.domain.ImagePromptMediaModels.MaterialRef;
+import com.promptoptimizer.imageprompt.domain.ImagePromptMediaModels.MaterialSource;
+import com.promptoptimizer.imageprompt.domain.ImagePromptMediaModels.Resolved;
+import com.promptoptimizer.imageprompt.domain.ImagePromptMediaModels.Track;
 import com.promptoptimizer.imageprompt.dto.ImagePromptRequests.*;
 import com.promptoptimizer.imageprompt.service.ImagePromptProvider.*;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.nio.charset.StandardCharsets;
 import java.time.*;
 import java.util.*;
 import java.util.function.Supplier;
+import static com.promptoptimizer.imageprompt.domain.ImagePromptModels.knownEvidenceWarnings;
 
 /**
- * 编排图像还原和自定义新图创作。服务端绑定全部输入、来源和实际题答，幂等缓存只保存最终阶段结果。
+ * 编排图像还原和图片、视频、PPT内容创作。服务端绑定全部输入、来源和实际题答，幂等缓存只保存最终阶段结果。
  * 生成与保存职责分开：存储失败重试保存，不重复模型调用；历史删除后缓存同样不再公开正文。
  * @author QingNiao
  * @since 0.1.0
@@ -33,14 +39,28 @@ public class ImagePromptService {
     private final ImagePromptHistoryService history;
     private final ObjectMapper json;
     private final AnalyticsEventService analytics;
+    private final ImagePromptMediaService media;
+    /** 最多12个受控单位，最差单图模型也能留出Plan、生成与协议修复空间；所有阶段按实际尝试累计。 */
+    private static final int MAX_WORKFLOW_ATTEMPTS = 28;
+    private static final int MAX_SELECTED_UNITS = 12;
+    private static final int MAX_SOURCE_OBSERVATIONS = MAX_SELECTED_UNITS * 8;
     private final SensitiveValueScanner scanner = new SensitiveValueScanner();
 
     /** 装配独立图像流程与账号审计；试用入口不产生正式账号操作事件。 */
     public ImagePromptService(CurrentActor current, ImagePromptAssetService assets, ImagePromptModelService models,
                               ImagePromptProvider provider, ImagePromptStateStore states, ImagePromptHistoryService history,
                               ObjectMapper json, AnalyticsEventService analytics) {
+        this(current, assets, models, provider, states, history, json, analytics, null);
+    }
+
+    /** 多模态解析只提供已授权单位与来源，不能把客户端分析替代服务端证据。 */
+    @Autowired
+    public ImagePromptService(CurrentActor current, ImagePromptAssetService assets, ImagePromptModelService models,
+                              ImagePromptProvider provider, ImagePromptStateStore states, ImagePromptHistoryService history,
+                              ObjectMapper json, AnalyticsEventService analytics, ImagePromptMediaService media) {
         this.current = current; this.assets = assets; this.models = models; this.provider = provider;
         this.states = states; this.history = history; this.json = json; this.analytics = analytics;
+        this.media = media;
     }
 
     /** 返回真实服务限制与本次可用模型，未知能力不通过名称猜测。 */
@@ -65,7 +85,7 @@ public class ImagePromptService {
                 List.of(), List.of(), result, result.draft().analysis());
         return new Document(generated.operationId(), null, generated.mode(), generated.optimizedPrompt(), generated.analysis(),
                 generated.warnings(), generated.input(), generated.sources(), List.of(), List.of(), generated.modelId(), generated.modelName(),
-                generated.mock(), 0, false, false, generated.createdAt());
+                generated.mock(), 0, false, false, generated.createdAt(), generated.materialSources(), generated.evidenceWarnings());
     }
 
     /** 在扣除试用次数前确认输入及私有图片，客户端模式不能绕过Plan登录要求。 */
@@ -78,7 +98,7 @@ public class ImagePromptService {
     /** 关闭 Plan：一张必填图片，从图到文，不接收新图创作要求。 */
     public Document extract(Generate request) {
         var actor = current.require(); Input input = normalized(request.input().input());
-        if (input.mode() != Mode.REFERENCE_RECONSTRUCTION) throw ImagePromptException.invalid("新图创作请使用 Plan 入口。");
+        if (input.mode() != Mode.REFERENCE_RECONSTRUCTION) throw ImagePromptException.invalid("内容创作请使用 Plan 入口。");
         return operate(actor, request.requestId(), fingerprint(input), () -> {
             List<ImageData> images = images(actor, input);
             analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, request.requestId());
@@ -89,22 +109,50 @@ public class ImagePromptService {
         }).document();
     }
 
-    /** 开启 Plan：文字构想起步，图片可选；图像观察不会被升级为用户确认。 */
+    /** 开启 Plan：文字构想起步，参考与替换素材可选；素材观察不会被升级为用户确认。 */
     public Plan plan(Generate request) {
         var actor = current.require(); Input input = normalized(request.input().input());
         if (input.mode() != Mode.CUSTOM_CREATION) throw ImagePromptException.invalid("参考图还原不发起创作问答。");
         return operate(actor, request.requestId(), fingerprint(input), () -> {
-            var images = images(actor, input);
+            var prepared = prepared(actor, input);
+            var images = prepared.images();
             analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, request.requestId());
-            var response = provider.invoke(new Call(Stage.PLAN, input, images, List.of(), List.of(), List.of(), "", ""));
+            var prior = new ArrayList<Observation>();
+            var evidenceWarnings = new ArrayList<>(prepared.warnings());
+            int attempts = 0;
+            Instant deadline = Instant.now().plusSeconds(180);
+            // 旧单次图片请求沿用原流程；多媒体先按登记的maxImages识别，再以来源证据组织Plan，不抬高供应商能力上限。
+            if (!input.materials().isEmpty()) {
+                int batchSize = models.require(input.modelId(), 1).maxImages();
+                for (int offset = 0; offset < images.size(); offset += batchSize) {
+                    requireInputs(actor, input);
+                    if (Instant.now().isAfter(deadline)) throw ImagePromptException.invalid("素材分析已达到时间上限，请减少选取范围后重试；已开始的模型请求不会自动重放。");
+                    var batch = images.subList(offset, Math.min(images.size(), offset + batchSize));
+                    models.require(input.modelId(), batch.size());
+                    var observed = provider.invoke(new Call(Stage.ANALYZE, input, batch, List.of(), List.of(), List.of(), "", "",
+                            batchSources(prepared.sources(), batch), Math.min(2, MAX_WORKFLOW_ATTEMPTS - attempts - 4)));
+                    attempts += attempts(observed); prior.addAll(observed.draft().analysis()); evidenceWarnings.addAll(observed.draft().warnings());
+                    if (prior.size() > MAX_SOURCE_OBSERVATIONS) throw ImagePromptException.invalid("素材观察超过每单位8项的分析预算，请缩小选择范围。");
+                }
+            }
+            requireInputs(actor, input);
+            if (Instant.now().isAfter(deadline)) throw ImagePromptException.invalid("素材分析已达到时间上限，请减少页面或视频帧后重新梳理。");
+            var response = provider.invoke(new Call(Stage.PLAN, input, input.materials().isEmpty() ? images : List.of(), prior,
+                    List.of(), List.of(), "", "", prepared.sources(), Math.min(2, MAX_WORKFLOW_ATTEMPTS - attempts - 2), distinctWarnings(evidenceWarnings)));
+            attempts += attempts(response);
             // 识图期间撤销或过期的资产不再向页面交付分析，也不建立可确认计划。
-            images.forEach(i -> assets.require(actor, i.source().id()));
+            requireInputs(actor, input);
             Instant expiry = images.stream().map(i -> i.source().expiresAt()).min(Comparator.naturalOrder()).orElse(Instant.now().plus(PLAN_TTL));
             var sources = images.stream().map(ImageData::source).toList();
-            String binding = fingerprint(List.of(input, sources));
+            String binding = fingerprint(List.of(input, sources, prepared.sources()));
+            // 已独立识别的媒体只保留ANALYZE证据；Plan中的创作要求和新文案不能被追加为源素材观察。
+            var sourceAnalysis = mergedAnalysis(prior, input.materials().isEmpty() ? response.draft().analysis() : List.of());
+            evidenceWarnings.addAll(sourceAnalysis.stream().filter(observation -> observation.status() == Visibility.UNCERTAIN)
+                    .map(Observation::description).toList());
+            var warnings = new ArrayList<>(evidenceWarnings); warnings.addAll(response.draft().warnings());
             var view = new Plan(request.requestId(), binding, response.draft().summary(), response.draft().questions(),
-                    response.draft().analysis(), response.draft().warnings(), expiry, response.mock());
-            states.put(actor, "plan:" + view.id(), new BoundPlan(input, sources, view), Duration.between(Instant.now(), expiry));
+                    sourceAnalysis, distinctWarnings(warnings), expiry, response.mock(), prepared.sources());
+            states.put(actor, "plan:" + view.id(), new BoundPlan(input, sources, view, attempts, distinctWarnings(evidenceWarnings)), Duration.between(Instant.now(), expiry));
             return new Operation(fingerprint(input), "COMPLETED", view, null, "", Instant.now());
         }).plan();
     }
@@ -118,14 +166,20 @@ public class ImagePromptService {
         List<Answer> answers = validateAnswers(bound.view().questions(), request.answers().stream().map(Reply::answer).toList());
         String fingerprint = fingerprint(List.of(id, request.fingerprint(), answers));
         return operate(actor, request.requestId(), fingerprint, () -> {
-            bound.sources().forEach(s -> assets.require(actor, s.id()));
+            requireInputs(actor, bound.input());
             models.require(bound.input().modelId(), 0);
             analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, request.requestId());
             var response = provider.invoke(new Call(Stage.GENERATE, bound.input(), List.of(), bound.view().analysis(),
-                    bound.view().questions(), answers, "", ""));
-            bound.sources().forEach(s -> assets.require(actor, s.id()));
+                    bound.view().questions(), answers, "", "", bound.view().materialSources(), Math.min(2, MAX_WORKFLOW_ATTEMPTS - bound.attemptsUsed()), bound.evidenceWarnings()));
+            requireInputs(actor, bound.input());
+            if (bound.input().materials().isEmpty() && !bound.input().images().isEmpty()) {
+                // legacy一次Plan同时识别/提问：继续展示完整旧警告，但不把无法归因的混合提示持久化为独立来源风险。
+                var legacyWarnings = new ArrayList<>(bound.view().warnings()); legacyWarnings.addAll(response.draft().warnings());
+                response = new ProviderResult(new ProviderDraft(response.draft().summary(), response.draft().optimizedPrompt(), response.draft().analysis(),
+                        response.draft().questions(), distinctWarnings(legacyWarnings)), response.modelId(), response.modelName(), response.mock(), response.attempts());
+            }
             return new Operation(fingerprint, "COMPLETED", null, persist(actor, document(request.requestId(), bound.input(), bound.sources(),
-                    bound.view().questions(), answers, response, bound.view().analysis())), "", Instant.now());
+                    bound.view().questions(), answers, response, bound.view().analysis(), bound.view().materialSources(), bound.evidenceWarnings())), "", Instant.now());
         }).document();
     }
 
@@ -138,14 +192,15 @@ public class ImagePromptService {
             models.require(source.modelId(), 0);
             analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, request.requestId());
             var response = provider.invoke(new Call(Stage.REWRITE, source.input(), List.of(), source.analysis(), source.questions(), source.answers(),
-                    source.optimizedPrompt(), request.instruction()));
+                    creationBody(source), request.instruction(), source.materialSources(), 2, source.evidenceWarnings()));
             // 再次核对逻辑删除与修订，旧模型响应不能越过中途删除或其他标签页的编辑。
             if (history.find(actor, id).editRevision() != source.editRevision()) throw ImagePromptException.conflict("原记录在生成期间已修改，请核对后重新操作。");
             var warnings = new ArrayList<>(response.draft().warnings()); warnings.add("本次基于已保存正文和分析摘要优化，未重新分析图片。");
             var adjusted = new ProviderResult(new ProviderDraft(response.draft().summary(), response.draft().optimizedPrompt(), response.draft().analysis(),
                     List.of(), List.copyOf(warnings)), response.modelId(), response.modelName(), response.mock());
             return new Operation(fingerprint(List.of(id, source.editRevision(), request.instruction())), "COMPLETED", null,
-                    persist(actor, document(request.requestId(), source.input(), source.sources(), source.questions(), source.answers(), adjusted, source.analysis())), "", Instant.now());
+                    persist(actor, document(request.requestId(), source.input(), source.sources(), source.questions(), source.answers(), adjusted, source.analysis(), source.materialSources(),
+                            source.evidenceWarnings())), "", Instant.now());
         }).document();
     }
 
@@ -204,15 +259,113 @@ public class ImagePromptService {
     private Input normalized(Input input) {
         if (input.mode() == null || input.language() == null || input.images() == null || input.images().size() > 3) throw ImagePromptException.invalid("图像请求模式或图片数量无效。");
         if (input.images().stream().map(ImageRef::assetId).distinct().count() != input.images().size()) throw ImagePromptException.invalid("同一图片不能重复加入本次任务。");
+        // 旧图片与多模态素材共享任务名额，不能通过混用两种协议绕过前端的合计六份限制。
+        if (input.images().size() + input.materials().size() > 6 || input.materials().stream().map(MaterialRef::assetId).distinct().count() != input.materials().size()
+                || input.relations().size() > 12) throw ImagePromptException.invalid("最多使用6份不同素材和12条替换关系。");
         if (input.mode() == Mode.REFERENCE_RECONSTRUCTION) {
             if (input.images().size() != 1) throw ImagePromptException.invalid("直接增强需要一张参考图。");
+            if (input.outputType() != OutputType.IMAGE || !input.materials().isEmpty() || !input.relations().isEmpty()) {
+                throw ImagePromptException.invalid("多模态素材与结构化替换请开启 Plan；直接增强只还原单张参考图。");
+            }
             if (!input.creationIntent().isBlank() || !input.exactText().isBlank() || !input.context().isBlank()) {
                 throw ImagePromptException.invalid("更换场景、添加文案或自定义画面请开启 Plan；直接增强只还原参考图。");
             }
-        } else if (input.creationIntent().isBlank()) throw ImagePromptException.invalid("请先描述想创作的新图片。");
+        } else if (input.creationIntent().isBlank()) throw ImagePromptException.invalid("请先描述想创作的内容。");
         safeText(input.creationIntent()); safeText(input.exactText()); safeText(input.context()); safeText(input.targetTool());
+        validateRelations(input);
         models.require(input.modelId(), input.images().size());
         return input;
+    }
+
+    /** 关系引用只能指向当前主动选择的素材与单位；角色选择不构成读取其他私有素材的授权。 */
+    private void validateRelations(Input input) {
+        var ids = new HashSet<String>();
+        for (ReplacementRelation relation : input.relations()) {
+            if (relation == null || relation.id() == null || !relation.id().matches("[A-Za-z0-9_-]{1,60}") || !ids.add(relation.id())
+                    || relation.operation() == null) throw ImagePromptException.invalid("替换关系编号或操作无效。");
+            relationSource(input, relation.referenceAssetId(), relation.referenceUnitId(), false);
+            relationSource(input, relation.replacementAssetId(), relation.replacementUnitId(), true);
+            boundedText(relation.referenceObject(), 500); boundedText(relation.replacementObject(), 500);
+            boundedText(relation.instruction(), 1500); boundedText(relation.scope(), 500);
+            if (relation.attributes() == null || relation.attributes().size() > 8) throw ImagePromptException.invalid("每条关系最多选择8项属性。");
+            relation.attributes().forEach(value -> {
+                if (blank(value)) throw ImagePromptException.invalid("替换关系属性不能为空。");
+                boundedText(value, 100);
+            });
+            if (relation.operation() == RelationOperation.REPLACE && relation.replacementAssetId() == null
+                    && blank(relation.replacementObject()) && blank(relation.instruction())) throw ImagePromptException.invalid("替换关系需要新素材或明确的新内容说明。");
+            if (relation.referenceAssetId() == null && relation.replacementAssetId() == null && blank(relation.referenceObject())
+                    && blank(relation.replacementObject()) && blank(relation.instruction())) throw ImagePromptException.invalid("请说明这条关系要保留、替换、移除或融合的内容。");
+        }
+    }
+
+    /** 非空单位必须在同一素材的已选范围内，不能用独立UUID绕过页面/帧选择。 */
+    private void relationSource(Input input, UUID assetId, UUID unitId, boolean replacement) {
+        if (assetId == null) { if (unitId != null) throw ImagePromptException.invalid("关系单位缺少所属素材。"); return; }
+        MaterialRef source = input.materials().stream().filter(m -> assetId.equals(m.assetId())).findFirst()
+                .orElseThrow(() -> ImagePromptException.invalid("替换关系引用了未加入本次任务的素材。"));
+        if (replacement && source.track() != Track.REPLACEMENT) throw ImagePromptException.invalid("新内容来源请选择替换素材轨道中的素材。");
+        if (unitId != null && (source.units() == null || source.units().stream().noneMatch(u -> unitId.equals(u.unitId())))) {
+            throw ImagePromptException.invalid("替换关系引用了未选择的页面或视频帧。");
+        }
+    }
+
+    /** 关系文本是用户指令，限定长度并按既有凭据扫描，不让敏感值进入模型、指纹或历史。 */
+    private void boundedText(String value, int maximum) {
+        if (value != null && value.length() > maximum) throw ImagePromptException.invalid("替换关系文字超过长度限制。");
+        safeText(value == null ? "" : value);
+    }
+    private boolean blank(String value) { return value == null || value.isBlank(); }
+
+    /** 在模型调用前一次性解析受控来源；遮挡后的字节与文本必须由同一次resolve产生。 */
+    private Resolved prepared(ActorIdentity actor, Input input) {
+        var result = new ArrayList<>(images(actor, input));
+        var resolved = input.materials().isEmpty() ? new Resolved(List.of(), List.of(), List.of()) : requiredMedia().resolve(actor, input.materials());
+        result.addAll(resolved.images());
+        if (result.size() > MAX_SELECTED_UNITS || result.stream().mapToLong(i -> i.bytes().length).sum() > 30L * 1024 * 1024) {
+            throw ImagePromptException.invalid("本次最多选择12个图片、页面或视频帧，规范化图像总量不能超过30 MiB。");
+        }
+        resolved.sources().forEach(source -> { safeText(source.name()); source.units().forEach(unit -> safeText(unit.text())); });
+        var warnings = new ArrayList<>(resolved.warnings());
+        input.images().forEach(reference -> warnings.addAll(assets.require(actor, reference.assetId()).processing()));
+        return new Resolved(List.copyOf(result), resolved.sources(), distinctWarnings(warnings));
+    }
+
+    /** 只检查当前归属、撤销与有效期；确认及生成结束时不得重新调用视觉模型。 */
+    private void requireInputs(ActorIdentity actor, Input input) {
+        input.images().forEach(reference -> assets.require(actor, reference.assetId()));
+        input.materials().forEach(reference -> requiredMedia().require(actor, reference.assetId()));
+    }
+    /** 兼容旧装配入口，但多模态请求缺少解析端口时明确失败，不能退化成已识别或空资料。 */
+    private ImagePromptMediaService requiredMedia() {
+        if (media == null) throw ImagePromptException.invalid("多模态素材服务尚未配置。");
+        return media;
+    }
+
+    /** 应用服务按适配器实际尝试数结算，缺失计数不能伪装为未调用。 */
+    private int attempts(ProviderResult response) {
+        if (response.attempts() < 1 || response.attempts() > 2) throw ImagePromptException.invalid("模型调用预算状态无效。");
+        return response.attempts();
+    }
+
+    /** 来源证据去除完全重复项；新媒体调用方只传ANALYZE证据，旧带图Plan保留原识图结果。 */
+    private List<Observation> mergedAnalysis(List<Observation> prior, List<Observation> planned) {
+        var result = new LinkedHashSet<>(prior); result.addAll(planned);
+        if (result.size() > MAX_SOURCE_OBSERVATIONS + 40) throw ImagePromptException.invalid("素材观察超过有界分析预算，请缩小选择范围后重新梳理。");
+        return List.copyOf(result);
+    }
+
+    /** 保留各识别批次和最终阶段的独立风险，完全相同的提示只展示一次。 */
+    private List<String> distinctWarnings(List<String> warnings) {
+        return warnings.stream().filter(Objects::nonNull).filter(w -> !w.isBlank()).distinct().toList();
+    }
+
+    /** 每批只附本批页/帧的结构文本，避免重复外发其他已选页面的全文及重复计费。 */
+    private List<MaterialSource> batchSources(List<MaterialSource> sources, List<ImageData> batch) {
+        var ids = batch.stream().map(image -> image.source().id()).collect(java.util.stream.Collectors.toSet());
+        return sources.stream().map(source -> new MaterialSource(source.assetId(), source.name(), source.kind(), source.track(), source.role(),
+                        source.units().stream().filter(unit -> ids.contains(unit.id())).toList(), source.warnings()))
+                .filter(source -> !source.units().isEmpty()).toList();
     }
 
     /** 单次调用总预算与逐张预算独立校验，角色随图片作为明确来源传入模型。 */
@@ -249,15 +402,146 @@ public class ImagePromptService {
     /** 确切画面文案为用户硬约束，缺失时按原文补入，不润色、不翻译、不采用模型评分决定保留。 */
     private Document document(UUID id, Input input, List<ImageSource> sources, List<Question> questions, List<Answer> answers,
                               ProviderResult result, List<Observation> analysis) {
+        // 本重载只服务EXTRACT；此阶段没有创作问答，其模型风险提示全部属于来源识别，不能在后续文字修订中丢失。
+        var evidenceWarnings = new ArrayList<>(result.draft().warnings());
+        evidenceWarnings.addAll(knownEvidenceWarnings(List.of(), analysis));
+        return document(id, input, sources, questions, answers, result, analysis, List.of(), distinctWarnings(evidenceWarnings));
+    }
+
+    /** 来源清单随正文复制；编号只用于用户在下游配套上传，不把平台私有ID伪装成可访问资源。 */
+    private Document document(UUID id, Input input, List<ImageSource> sources, List<Question> questions, List<Answer> answers,
+                              ProviderResult result, List<Observation> analysis, List<MaterialSource> materialSources, List<String> priorWarnings) {
         String prompt = result.draft().optimizedPrompt();
         if (prompt == null || prompt.isBlank() || prompt.length() > 24000) throw ImagePromptException.invalid("模型未返回有效提示词。");
         if (!input.exactText().isBlank() && !prompt.contains(input.exactText())) {
             prompt += input.language() == Language.EN ? "\nRequired on-image text (verbatim):\n" : "\n画面文字（逐字保留）：\n";
             prompt += input.exactText();
         }
+        if (!materialSources.isEmpty()) prompt += materialManifest(input, materialSources);
+        prompt += confirmedSupplement(input, questions, answers);
+        if (prompt.length() > 30000) throw ImagePromptException.invalid("提示词与素材说明合计超过30000字符，请缩小创作要求或替换关系范围。");
         safeText(prompt);
-        return new Document(id, null, input.mode(), prompt, List.copyOf(analysis), result.draft().warnings(), input, sources, questions, answers,
-                result.modelId(), result.modelName(), result.mock(), 0, false, history.persistent(), Instant.now());
+        var warnings = new ArrayList<>(priorWarnings); warnings.addAll(result.draft().warnings());
+        return new Document(id, null, input.mode(), prompt, List.copyOf(analysis), distinctWarnings(warnings), input, sources, questions, answers,
+                result.modelId(), result.modelName(), result.mock(), 0, false, history.persistent(), Instant.now(), materialSources, distinctWarnings(priorWarnings));
+    }
+
+    /** 只移除与服务端完整生成说明完全一致的尾部；人工修改过的文字保持原样，不用正则猜删用户内容。 */
+    private String creationBody(Document source) {
+        if (source.materialSources().isEmpty() && source.input().relations().isEmpty()) return source.optimizedPrompt();
+        String suffix = (source.materialSources().isEmpty() ? "" : materialManifest(source.input(), source.materialSources()))
+                + confirmedSupplement(source.input(), source.questions(), source.answers());
+        if (!suffix.isEmpty() && source.optimizedPrompt().endsWith(suffix)) {
+            return source.optimizedPrompt().substring(0, source.optimizedPrompt().length() - suffix.length());
+        }
+        // v4历史可能包含已被回答撤销的原关系尾部；只去掉能完整重建的旧服务端说明，原历史本身不被改写。
+        String legacy = legacyMaterialManifest(source.input(), source.materialSources());
+        return source.optimizedPrompt().endsWith(legacy)
+                ? source.optimizedPrompt().substring(0, source.optimizedPrompt().length() - legacy.length()) : source.optimizedPrompt();
+    }
+
+    /** 清单只编译可确定的来源与范围；原关系可能被Plan回答更改，不能在这里重新作为当前要求执行。 */
+    private String materialManifest(Input input, List<MaterialSource> sources) {
+        boolean english = input.language() == Language.EN;
+        var text = new StringBuilder(english ? "\n\nMaterial reference:\n" : "\n\n素材对照：\n");
+        text.append(english ? "Upload only sources actually used by the prompt; listed entries need not all appear in the result. Labels identify sources and are not public URLs.\n"
+                : "仅按正文实际采用的来源配套上传；列出条目不表示需要全部用于成品。编号仅用于对应，不是公开链接。\n");
+        text.append(english ? "Use only the selected slides/frames and preserve all applied masks; do not replace them with unreviewed full originals.\n"
+                : "仅使用所选页面／视频帧，并保留本次遮挡；请勿用未经审阅的完整原件代替。\n");
+        text.append(materialRows(input, sources, false));
+        return text.toString();
+    }
+
+    /** 轨道是原输入的来源属性，不代表确认后必须使用；legacy仅用于精确重建旧版尾部。 */
+    private String materialRows(Input input, List<MaterialSource> sources, boolean legacy) {
+        boolean english = input.language() == Language.EN;
+        var text = new StringBuilder();
+        int reference = 0, replacement = 0;
+        for (MaterialSource source : sources) {
+            String label = source.track() == Track.REFERENCE ? "R" + ++reference : "T" + ++replacement;
+            String track = source.track() == Track.REFERENCE
+                    ? legacy ? (english ? "reference" : "参考素材") : (english ? "original reference source" : "原参考来源")
+                    : legacy ? (english ? "new subject/content" : "新主体／新内容") : (english ? "original replacement source" : "原新内容来源");
+            text.append(label).append(" · ").append(source.name()).append(" · ").append(source.kind()).append(" · ")
+                    .append(track);
+            for (var unit : source.units()) {
+                text.append(" [");
+                if (unit.page() != null) text.append(english ? "slide " : "第").append(unit.page()).append(english ? "" : "页");
+                else if (unit.timestampMs() != null) text.append(String.format(Locale.ROOT, "%.3fs", unit.timestampMs() / 1000.0));
+                else text.append(english ? "image" : "图片");
+                if (unit.masks() != null && !unit.masks().isEmpty()) text.append(english ? ", masked" : "，已遮挡");
+                text.append(']');
+            }
+            text.append('\n');
+        }
+        return text.toString();
+    }
+
+    /** 实际选项标签和自填文字共同保留；只强化已回答的确认，不推断哪些原卡被取消或改写。 */
+    private String confirmedSupplement(Input input, List<Question> questions, List<Answer> answers) {
+        if (input.relations().isEmpty()) return "";
+        var confirmed = answers.stream().filter(answer -> !answer.optionIds().isEmpty() || !answer.customText().isBlank()).toList();
+        if (confirmed.isEmpty()) return "";
+        boolean english = input.language() == Language.EN;
+        var text = new StringBuilder(english ? "\n\nConfirmed additional requirements:\n" : "\n\n已确认补充要求：\n");
+        text.append(english ? "Apply these actual answers to the same matters; keep independent requirements that they do not change.\n"
+                : "以下为本次实际回答；同一事项按本次确认执行，未被修改的独立要求继续有效。\n");
+        for (Answer answer : confirmed) {
+            Question question = questions.stream().filter(value -> value.id().equals(answer.questionId())).findFirst()
+                    .orElseThrow(() -> ImagePromptException.invalid("确认答案缺少服务端原题。"));
+            text.append("- ").append(question.question()).append('\n');
+            for (String optionId : answer.optionIds()) {
+                String label = question.options().stream().filter(option -> option.id().equals(optionId)).findFirst()
+                        .orElseThrow(() -> ImagePromptException.invalid("确认答案缺少服务端原选项。")).label();
+                text.append("  ").append(label).append('\n');
+            }
+            if (!answer.customText().isBlank()) text.append("  ").append(answer.customText()).append('\n');
+        }
+        return text.toString();
+    }
+
+    /** 仅为精确移除v4历史的完整服务端尾部重建旧格式；新结果绝不调用它来追加关系。 */
+    private String legacyMaterialManifest(Input input, List<MaterialSource> sources) {
+        boolean english = input.language() == Language.EN;
+        String legacyHeading = english ? "\n\nMaterial upload guide and confirmed relationships:\n" : "\n\n素材上传说明与已明确的关系：\n";
+        var text = new StringBuilder(legacyHeading)
+                .append(english ? "Upload the corresponding files to the downstream tool; these labels are not public URLs.\n"
+                        : "请在下游工具配套上传以下素材；编号仅用于对应，不能凭编号读取平台临时文件。\n")
+                .append(english ? "Use only the selected slides/frames and preserve all applied masks; do not replace them with unreviewed full originals.\n"
+                        : "仅使用所选页面／视频帧，并保留本次遮挡；请勿用未经审阅的完整原件代替。\n")
+                .append(materialRows(input, sources, true));
+        var labels = new LinkedHashMap<UUID, String>(); int reference = 0, replacement = 0;
+        for (MaterialSource source : sources) labels.put(source.assetId(), source.track() == Track.REFERENCE ? "R" + ++reference : "T" + ++replacement);
+        for (ReplacementRelation relation : input.relations()) {
+            String operation = english ? relation.operation().name() : switch (relation.operation()) {
+                case PRESERVE -> "保留"; case REPLACE -> "替换"; case REMOVE -> "移除"; case FUSE -> "融合";
+            };
+            text.append("- ").append(operation).append("：");
+            appendRelationSource(text, labels, sources, relation.referenceAssetId(), relation.referenceUnitId(), relation.referenceObject());
+            if (relation.replacementAssetId() != null || !blank(relation.replacementObject())) {
+                text.append(" → "); appendRelationSource(text, labels, sources, relation.replacementAssetId(), relation.replacementUnitId(), relation.replacementObject());
+            }
+            if (!relation.attributes().isEmpty()) text.append(english ? "; attributes: " : "；属性：").append(String.join("、", relation.attributes()));
+            if (!blank(relation.scope())) text.append(english ? "; scope: " : "；范围：").append(relation.scope());
+            if (!blank(relation.instruction())) text.append("；").append(relation.instruction());
+            text.append('\n');
+        }
+        return text.toString();
+    }
+
+    /** 单位定位使用可读页码/时间戳，UUID只留在平台协议中。 */
+    private void appendRelationSource(StringBuilder text, Map<UUID, String> labels, List<MaterialSource> sources,
+                                      UUID assetId, UUID unitId, String object) {
+        if (assetId != null) {
+            text.append(labels.getOrDefault(assetId, "素材"));
+            if (unitId != null) sources.stream().filter(s -> assetId.equals(s.assetId())).flatMap(s -> s.units().stream())
+                    .filter(u -> unitId.equals(u.id())).findFirst().ifPresent(unit -> {
+                        if (unit.page() != null) text.append(" [slide ").append(unit.page()).append(']');
+                        else if (unit.timestampMs() != null) text.append(String.format(Locale.ROOT, " [%.3fs]", unit.timestampMs() / 1000.0));
+                    });
+            text.append(' ');
+        }
+        if (!blank(object)) text.append(object);
     }
 
     /** 生成结果先返回；预期数据库故障保留可重试保存状态，删除等归属拒绝不能伪装成功。 */
@@ -275,8 +559,17 @@ public class ImagePromptService {
         try { return ImagePromptAssetService.hash(json.writeValueAsString(value).getBytes(StandardCharsets.UTF_8)); }
         catch (JsonProcessingException failure) { throw new IllegalStateException("图像输入无法编码", failure); }
     }
-    /** 服务端原输入及完整来源绑定；客户端只能提交 view 的指纹和实际答案。 */
-    public record BoundPlan(Input input, List<ImageSource> sources, Plan view) { }
+    /** 来源证据与Plan警告分别绑定；旧带图Plan的混合警告只留在view中兼容展示，不提升为独立来源风险。 */
+    public record BoundPlan(Input input, List<ImageSource> sources, Plan view, int attemptsUsed, List<String> evidenceWarnings) {
+        /** 旧缓存无法可靠区分警告种类，保留可确定的来源风险，不猜测哪些旧提示已被回答解决。 */
+        public BoundPlan {
+            if (evidenceWarnings == null) {
+                evidenceWarnings = knownEvidenceWarnings(view.materialSources(), view.analysis());
+            } else evidenceWarnings = List.copyOf(evidenceWarnings);
+        }
+        /** 兼容不带阶段风险字段的历史调用方，按可确定来源重建而不猜测旧提示的当前状态。 */
+        public BoundPlan(Input input, List<ImageSource> sources, Plan view, int attemptsUsed) { this(input, sources, view, attemptsUsed, null); }
+    }
     /** 短期私有操作快照；状态为 RUNNING/COMPLETED/FAILED，超过等待期的查询返回 UNKNOWN。 */
     public record Operation(String fingerprint, String status, Plan plan, Document document, String message, Instant startedAt) { }
 }
