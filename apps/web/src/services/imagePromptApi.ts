@@ -68,7 +68,9 @@ export const imagePromptApi = {
   },
   async removeMedia(id: string): Promise<void> { await httpClient.delete(`/api/v1/image-prompt-media/${encodeURIComponent(id)}`); },
   async extract(requestId: string, input: ImagePromptInput, signal: AbortSignal): Promise<ImagePromptDocument> {
-    return (await httpClient.post<ApiResponse<ImagePromptDocument>>(trialEndpoint('/api/v1/image-prompts', '/image-prompts'), { requestId, input }, { signal })).data.data;
+    // 参考素材还原与Plan均可先分批识别；普通单图及访客仍沿用共享等待时长。
+    return (await httpClient.post<ApiResponse<ImagePromptDocument>>(trialEndpoint('/api/v1/image-prompts', '/image-prompts'), { requestId, input },
+      { signal, ...(input.materials?.length ? { timeout: 270_000 } : {}) })).data.data;
   },
   async plan(requestId: string, input: ImagePromptInput, signal: AbortSignal): Promise<ImagePromptPlan> {
     // 多批素材分析在180秒后停止开启新阶段，还需等待最后一次有界模型请求返回；其余请求沿用全局超时。

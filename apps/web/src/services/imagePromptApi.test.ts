@@ -33,6 +33,16 @@ describe('image prompt request boundaries', () => {
     expect(httpClient.post).toHaveBeenCalledWith('/api/v1/image-prompts/plans', { requestId: 'operation', input: payload }, { signal });
   });
 
+  it.each([false, true])('sets the extended wait only for direct extraction with media=%s', async media => {
+    const payload: ImagePromptInput = { ...input(), mode: 'REFERENCE_RECONSTRUCTION', creationIntent: '',
+      ...(media ? { materials: [{ assetId: 'reference', track: 'REFERENCE', role: 'GENERAL', units: [{ unitId: 'frame', masks: [] }] }] } : {}) };
+    const signal = new AbortController().signal;
+    vi.mocked(httpClient.post).mockResolvedValue({ data: { data: { id: 'document' } } });
+    await imagePromptApi.extract('operation', payload, signal);
+    expect(httpClient.post).toHaveBeenCalledWith('/api/v1/image-prompts', { requestId: 'operation', input: payload },
+      media ? { signal, timeout: 270_000 } : { signal });
+  });
+
   it('exports only the requested private unit and exact mask payload as a blob without a model endpoint', async () => {
     const masks = [{ x: .1, y: .2, width: .3, height: .4 }], signal = new AbortController().signal;
     const blob = new Blob(['synthetic-png'], { type: 'image/png' });

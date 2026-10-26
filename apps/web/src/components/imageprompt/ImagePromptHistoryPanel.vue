@@ -36,7 +36,9 @@ let listSequence = 0;
 let detailSequence = 0;
 const valid = (expectedEpoch: number): boolean => active && expectedEpoch === epoch;
 const modeLabel = (value: ImagePromptMode): string => value === 'CUSTOM_CREATION' ? 'Plan 新图创作' : '参考图还原';
-const outputLabel = (document: ImagePromptDocument): string => ({ IMAGE: '图片', VIDEO: '视频', PPT: 'PPT' }[document.input.outputType ?? 'IMAGE']);
+// 直接素材还原沿用IMAGE协议值；历史显示其描述用途，避免误写成已经生成图片成品。
+const outputLabel = (document: ImagePromptDocument): string => document.mode === 'REFERENCE_RECONSTRUCTION' && document.materialSources?.length
+  ? '素材描述' : ({ IMAGE: '图片', VIDEO: '视频', PPT: 'PPT' }[document.input.outputType ?? 'IMAGE']);
 const materialCount = (document: ImagePromptDocument): number => document.materialSources?.length || document.sources.length;
 const unitLabel = (unit: { page?: number | null; timestampMs?: number | null }): string => unit.page != null
   ? `第 ${unit.page} 页` : unit.timestampMs != null ? `${(unit.timestampMs / 1000).toFixed(2)} 秒画面` : '图片';

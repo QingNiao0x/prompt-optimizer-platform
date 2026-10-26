@@ -223,15 +223,89 @@ describe('image prompt task state', () => {
     expect(store.consent).toBe(false);
   });
 
-  it('keeps new media out of reconstruction requests and requires reattachment of historical relationships', async () => {
-    const store = await ready(); store.mode = 'CUSTOM_CREATION'; store.creationIntent = '海报';
-    store.addMediaFiles([new File(['slides'], 'reference.pptx')], 'REFERENCE');
-    store.mode = 'REFERENCE_RECONSTRUCTION'; store.addFiles([new File(['pixels'], 'reference.png', { type: 'image/png' })]); store.consent = true;
-    vi.mocked(imagePromptApi.extract).mockResolvedValue(document()); await store.start();
-    expect(vi.mocked(imagePromptApi.extract).mock.calls[0]![1]).not.toHaveProperty('materials');
-    expect(imagePromptApi.uploadMedia).not.toHaveBeenCalled();
+  it('requires reattachment of historical relationships without pretending history restores files', async () => {
+    const store = await ready();
     store.restore({ ...document(), input: { ...document().input, outputType: 'PPT', relations: [{ id: 'old', operation: 'PRESERVE', referenceAssetId: 'expired', referenceObject: '版式', replacementObject: '', attributes: [], instruction: '保持', scope: '全部' }] } });
     expect(store.outputType).toBe('PPT'); expect(store.startDisabledReason).toContain('素材已失效');
+  });
+
+  it.each(['png', 'pptx', 'mp4', 'mov'])('adds and extracts reference %s without Plan after explicit parsing, selection and consent', async extension => {
+    const store = await ready();
+    store.addMediaFiles([new File(['synthetic'], `reference.${extension}`)], 'REFERENCE');
+    expect(imagePromptApi.uploadMedia).not.toHaveBeenCalled();
+    expect(store.startDisabledReason).toContain('上传到平台解析预览');
+    const key = store.mediaFiles[0]!.key; await store.parseMedia(key);
+    expect(store.startDisabledReason).toContain('选择页／帧与遮挡');
+    const units = [{ unitId: 'media-page-2', masks: [{ x: .1, y: .2, width: .3, height: .4 }] }];
+    store.updateMedia(key, { units });
+    expect(store.startDisabledReason).toContain('请先勾选');
+    store.consent = true;
+    vi.mocked(imagePromptApi.extract).mockImplementation(async (_id, input) => ({ ...document(), mode: input.mode, input }));
+    await store.start();
+    expect(imagePromptApi.extract).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
+      mode: 'REFERENCE_RECONSTRUCTION', images: [], creationIntent: '', exactText: '', context: '', outputType: 'IMAGE',
+      materials: [{ assetId: 'media', track: 'REFERENCE', role: 'GENERAL', units }],
+    }), expect.any(AbortSignal));
+    expect(imagePromptApi.plan).not.toHaveBeenCalled(); expect(imagePromptApi.confirm).not.toHaveBeenCalled();
+    expect(imagePromptApi.upload).not.toHaveBeenCalled(); expect(store.result?.mode).toBe('REFERENCE_RECONSTRUCTION');
+  });
+
+  it('retains parsed ids, selection and masks across Plan toggles while only sending active reference materials directly', async () => {
+    const store = await ready();
+    store.addMediaFiles([new File(['slides'], 'reference.pptx')], 'REFERENCE');
+    const key = store.mediaFiles[0]!.key; await store.parseMedia(key);
+    const units = [{ unitId: 'media-page-2', masks: [{ x: .1, y: .2, width: .3, height: .4 }] }];
+    store.updateMedia(key, { units });
+    store.addMediaFiles([new File(['movie'], 'replacement.mp4')], 'REPLACEMENT');
+    store.consent = true;
+    expect(store.activeMediaFiles.map(file => file.name)).toEqual(['reference.pptx']);
+    expect(store.canStart).toBe(true);
+    store.mode = 'CUSTOM_CREATION'; store.creationIntent = '保留参考布局，替换主体'; store.outputType = 'VIDEO';
+    expect(store.consent).toBe(false);
+    expect(store.activeMediaFiles).toHaveLength(2);
+    expect(store.startDisabledReason).toContain('replacement.mp4');
+    const target = { ...mediaAsset(), id: 'target', units: mediaAsset().units.map(unit => ({ ...unit, id: `target-${unit.id}` })) };
+    vi.mocked(imagePromptApi.uploadMedia).mockResolvedValueOnce(target);
+    await store.parseMedia(store.mediaFiles[1]!.key);
+    store.updateMedia(store.mediaFiles[1]!.key, { units: [{ unitId: 'target-media-page-2', masks: [] }] });
+    store.relations = [{ id: 'swap', operation: 'REPLACE', referenceAssetId: 'media', referenceObject: '原主体',
+      replacementAssetId: 'target', replacementObject: '新主体', instruction: '替换主体', attributes: ['主体'], scope: '中央' }];
+    store.consent = true; vi.mocked(imagePromptApi.plan).mockResolvedValue(plan); await store.start();
+    expect(vi.mocked(imagePromptApi.plan).mock.calls[0]![1].materials?.map(item => item.track)).toEqual(['REFERENCE', 'REPLACEMENT']);
+    store.mode = 'REFERENCE_RECONSTRUCTION';
+    expect(store.plan).toBeUndefined(); expect(store.consent).toBe(false);
+    expect(store.mediaFiles[0]!.asset?.id).toBe('media'); expect(store.mediaFiles[0]!.units).toEqual(units);
+    expect(store.mediaFiles[1]!.asset?.id).toBe('target'); expect(store.mediaFiles[1]!.units).toHaveLength(1);
+    expect(store.selectedUnitCount).toBe(1); expect(store.relations).toHaveLength(1);
+    store.consent = true; vi.mocked(imagePromptApi.extract).mockResolvedValue(document()); await store.start();
+    const input = vi.mocked(imagePromptApi.extract).mock.calls[0]![1];
+    expect(input.materials?.map(item => item.assetId)).toEqual(['media']);
+    expect(input.outputType).toBe('IMAGE'); expect(input.creationIntent).toBe(''); expect(input.relations ?? []).toEqual([]);
+    expect(imagePromptApi.uploadMedia).toHaveBeenCalledTimes(2);
+  });
+
+  it('counts legacy images against the direct media unit budget and does not let hidden replacement media bypass legacy model limits', async () => {
+    const store = await ready();
+    store.mode = 'CUSTOM_CREATION';
+    store.addMediaFiles([new File(['movie'], 'replacement.mp4')], 'REPLACEMENT');
+    store.addFiles(Array.from({ length: 2 }, (_, index) => new File(['pixels'], `${index}.png`, { type: 'image/png' })));
+    store.mode = 'REFERENCE_RECONSTRUCTION';
+    store.capabilities!.models[0]!.maxImages = 1;
+    expect(store.modelInputError).toContain('最多支持 1 张');
+    store.removeFile(store.files[1]!.key);
+    store.addMediaFiles([new File(['slides'], 'reference.pptx')], 'REFERENCE');
+    const file = store.mediaFiles[1]!; await store.parseMedia(file.key);
+    const asset = file.asset!;
+    asset.units = Array.from({ length: 12 }, (_, index) => ({ ...asset.units[0]!, id: `page-${index}` }));
+    store.updateMedia(file.key, { units: asset.units.map(unit => ({ unitId: unit.id, masks: [] })) }); store.consent = true;
+    expect(store.startDisabledReason).toContain('超过本次上限');
+    expect(imagePromptApi.extract).not.toHaveBeenCalled();
+  });
+
+  it('requires login for media parsing in either mode without changing the single-image guest trial', async () => {
+    const store = await ready(); useAuthStore().user = undefined;
+    expect(() => store.addMediaFiles([new File(['slides'], 'reference.pptx')], 'REFERENCE')).toThrow(/登录/);
+    expect(imagePromptApi.uploadMedia).not.toHaveBeenCalled(); expect(store.mediaFiles).toEqual([]);
   });
 
   it('shows required progress without treating optional questions or custom-only answers as missing', () => {

@@ -17,13 +17,13 @@ import com.promptoptimizer.imageprompt.domain.ImagePromptMediaModels.MaterialSou
 public final class ImagePromptModels {
     private ImagePromptModels() { }
 
-    /** 还原模式只描述参考图；内容创作模式以用户构想和实际题答为依据，参考与替换素材可为空。 */
+    /** 还原模式只描述主动选中的参考图片、页面或视频帧，不发起问答；创作模式以用户构想和实际题答为依据，参考与替换素材可为空。 */
     public enum Mode { REFERENCE_RECONSTRUCTION, CUSTOM_CREATION }
     /** 参考角色限制单张图的用途，不代表用户授权复制该图所有内容。 */
     public enum ImageRole { GENERAL, SUBJECT, STYLE, LAYOUT }
     /** 提取/素材识别/提问/最终生成/文字修订为不同阶段，修订不冒充再次识图。 */
     public enum Stage { EXTRACT, ANALYZE, PLAN, GENERATE, REWRITE }
-    /** 成品类型与上传格式独立；这里只编写供下游执行的提示词。 */
+    /** 成品类型与上传格式独立；还原模式沿用IMAGE兼容值且不创作新成品，创作模式按所选类型编写提示词。 */
     public enum OutputType { IMAGE, VIDEO, PPT }
     /** 属性级操作允许保留位置同时替换外观，不把素材用途误作整图复制授权。 */
     public enum RelationOperation { PRESERVE, REPLACE, REMOVE, FUSE }

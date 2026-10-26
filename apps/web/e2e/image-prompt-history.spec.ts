@@ -195,3 +195,28 @@ test('多模态历史保留成品类型、选页遮挡和替换关系，查看�
   await expect(detail.locator('img')).toHaveCount(0);
   expect(state.paidCalls).toBe(0);
 });
+
+test('非Plan多媒体历史显示素材描述并保留选页时间戳，不出现创作题答或替换要求', async ({ page }) => {
+  const state = await setup(page), record = state.records[0]!;
+  record.input.outputType = 'IMAGE'; record.input.exactText = ''; record.input.context = '';
+  record.sources = []; record.analysis = [];
+  record.optimizedPrompt = '描述所选第2页与1秒视频采样帧中的实际内容。';
+  record.materialSources = [
+    { assetId: 'slides', name: '参考页面.pptx', kind: 'PPTX', track: 'REFERENCE', role: 'GENERAL',
+      units: [{ id: 'page-two', page: 2, timestampMs: null, text: '', masks: [{ x: 0, y: 0, width: .2, height: .1 }] }], warnings: ['仅分析选中的第2页'] },
+    { assetId: 'clip', name: '参考视频.mp4', kind: 'VIDEO', track: 'REFERENCE', role: 'GENERAL',
+      units: [{ id: 'frame-one', page: null, timestampMs: 1000, text: '', masks: [] }], warnings: ['仅采样帧，未分析音轨'] },
+  ];
+  record.input.materials = record.materialSources.map(source => ({ assetId: source.assetId, track: source.track, role: source.role,
+    units: source.units.map(unit => ({ unitId: unit.id, masks: unit.masks })) }));
+  await page.goto('/history?type=image-prompt');
+  await expect(visibleRows(page).first()).toContainText('素材描述');
+  await visibleRows(page).first().getByRole('button', { name: '查看', exact: true }).click();
+  const detail = page.getByRole('dialog', { name: '图像提示词记录详情' });
+  const sources = detail.getByRole('region', { name: '历史素材对照表' });
+  await expect(sources).toContainText('第 2 页'); await expect(sources).toContainText('1.00 秒画面');
+  await expect(sources).toContainText('已遮挡 1 处区域');
+  await expect(detail.getByRole('region', { name: '历史替换关系' })).toHaveCount(0);
+  await expect(detail.getByRole('heading', { name: /创作构想/ })).toHaveCount(0);
+  await expect(detail.locator('img')).toHaveCount(0); expect(state.paidCalls).toBe(0);
+});

@@ -9,12 +9,12 @@ const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR
 const model = { id: 'multimodal-fixture', displayName: '受控多模态模型', vision: true, maxImages: 1, evidence: '受控测试', mock: false };
 const initial = (): ImagePromptInput => ({ mode: 'CUSTOM_CREATION', modelId: model.id, images: [], creationIntent: '', exactText: '', context: '', language: 'ZH', targetTool: '通用文生图', outputType: 'IMAGE', materials: [], relations: [] });
 const makeDocument = (input: ImagePromptInput): ImagePromptDocument => ({ operationId: 'op', recordId: 'record', mode: input.mode,
-  input, optimizedPrompt: '按用户确认关系创作全新内容，保留参考配色，使用新主体。', analysis: [], sources: [], questions: [], answers: [], warnings: [],
+  input, optimizedPrompt: input.mode === 'REFERENCE_RECONSTRUCTION' ? '描述所选参考素材的可见内容，按页码与时间戳保留来源，不新增主体或场景。' : '按用户确认关系创作全新内容，保留参考配色，使用新主体。', analysis: [], sources: [], questions: [], answers: [], warnings: [],
   modelId: model.id, modelName: model.displayName, mock: false, editRevision: 0, historySaved: true, persistentHistory: true, createdAt: '2026-10-26T00:00:00Z' });
 
 /** 所有请求在浏览器边界拦截，既不创建账号，也不外发真实图片或付费调用。 */
-async function setup(page: Page, questions: ImagePromptQuestion[]) {
-  const state = { plans: 0, confirmations: 0, uploads: 0, metadata: 0, input: initial(), answers: [] as ImagePromptAnswer[], assetNames: new Map<string, string>(), exportedMasks: [] as ImagePromptMask[] };
+async function setup(page: Page, questions: ImagePromptQuestion[], planEnabled = true) {
+  const state = { plans: 0, confirmations: 0, extracts: 0, uploads: 0, removes: 0, metadata: 0, input: initial(), answers: [] as ImagePromptAnswer[], assetNames: new Map<string, string>(), exportedMasks: [] as ImagePromptMask[] };
   await page.route('**/api/**', route => route.fulfill({ status: 501, json: { error: { message: '未登记的多模态测试请求' } } }));
   await mockAuthentication(page);
   await page.route('**/api/v1/models', route => route.fulfill({ json: { data: [{ ...model, provider: 'fixture', defaultModel: true }] } }));
@@ -25,7 +25,8 @@ async function setup(page: Page, questions: ImagePromptQuestion[]) {
     if (path === '/api/v1/image-prompt-media' && method === 'POST') {
       state.uploads++;
       const id = `media-${state.uploads}`;
-      state.assetNames.set(id, state.uploads === 1 ? 'brand.pptx' : 'subject.png');
+      const filename = /filename="([^"]+)"/.exec(route.request().postDataBuffer()?.toString('latin1') ?? '')?.[1];
+      state.assetNames.set(id, filename ?? (state.uploads === 1 ? 'brand.pptx' : 'subject.png'));
       return route.fulfill({ json: { data: media(id, 'PROCESSING') } });
     }
     if (/^\/api\/v1\/image-prompt-media\/[^/]+\/units\/[^/]+\/export$/.test(path)) {
@@ -36,9 +37,13 @@ async function setup(page: Page, questions: ImagePromptQuestion[]) {
     if (unitPath) return route.fulfill({ contentType: 'image/png', body: png });
     const assetPath = path.match(/^\/api\/v1\/image-prompt-media\/([^/]+)$/);
     if (assetPath) {
-      if (method === 'DELETE') return route.fulfill({ json: { data: null } });
+      if (method === 'DELETE') { state.removes++; return route.fulfill({ json: { data: null } }); }
       state.metadata++;
       return route.fulfill({ json: { data: media(assetPath[1]!, 'READY') } });
+    }
+    if (path === '/api/v1/image-prompts' && method === 'POST') {
+      state.extracts++; state.input = route.request().postDataJSON().input;
+      return route.fulfill({ json: { data: makeDocument(state.input) } });
     }
     if (path.endsWith('/plans')) {
       state.plans++; state.input = route.request().postDataJSON().input;
@@ -54,17 +59,18 @@ async function setup(page: Page, questions: ImagePromptQuestion[]) {
     return route.fulfill({ status: 501, json: { error: { message: '未登记的图像请求' } } });
   });
   function media(id: string, status: ImagePromptMediaAsset['status']): ImagePromptMediaAsset {
-    const presentation = id === 'media-1';
-    return { id, name: state.assetNames.get(id) ?? 'fixture', kind: presentation ? 'PPTX' : 'IMAGE', status, warnings: [], expiresAt: expiry,
-      totalUnits: presentation ? 2 : 1, durationMs: null, units: status === 'PROCESSING' ? [] : (presentation ? [1, 2] : [1]).map(index => ({
-        id: `${id}-unit-${index}`, page: presentation ? index : null, timestampMs: null, width: 900, height: 600,
+    const name = state.assetNames.get(id) ?? 'fixture';
+    const presentation = name.endsWith('.pptx'), video = /\.(mp4|mov|webm)$/.test(name);
+    return { id, name, kind: presentation ? 'PPTX' : video ? 'VIDEO' : 'IMAGE', status, warnings: [], expiresAt: expiry,
+      totalUnits: presentation || video ? 2 : 1, durationMs: video ? 3000 : null, units: status === 'PROCESSING' ? [] : (presentation || video ? [1, 2] : [1]).map(index => ({
+        id: `${id}-unit-${index}`, page: presentation ? index : null, timestampMs: video ? index * 1000 : null, width: 900, height: 600,
         text: presentation ? `第${index}页品牌文案` : '', previewUrl: `/api/v1/image-prompt-media/${id}/units/${id}-unit-${index}`,
       })) };
   }
   await page.goto('/image-to-prompt');
   await expect(page.getByRole('heading', { name: '图像转提示词', exact: true })).toBeVisible();
   await pane(page, '设置');
-  await page.locator('.column-heading .el-switch').click();
+  if (planEnabled) await page.locator('.column-heading .el-switch').click();
   return state;
 }
 
@@ -460,3 +466,85 @@ for (const theme of ['glass-light', 'glass-dark'] as const) {
     expect(state.plans).toBe(0); expect(state.confirmations).toBe(0);
   });
 }
+
+test('关闭Plan可上传PPTX与MP4/MOV并选择范围直接提取，无创作问答', async ({ page }, testInfo) => {
+  const state = await setup(page, [], false);
+  await pane(page, '图片');
+  const reference = page.getByTestId('reference-media');
+  await expect(reference.locator('input[type=file]')).toHaveAttribute('accept', /\.pptx/);
+  for (const [name, mime, label] of [
+    ['brand.pptx', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', '第 2 页'],
+    ['clip.mp4', 'video/mp4', '2.00 秒'], ['clip.mov', 'video/quicktime', '2.00 秒'],
+  ] as const) {
+    await reference.locator('input[type=file]').setInputFiles({ name, mimeType: mime, buffer: Buffer.from('controlled reference') });
+    const card = reference.locator('.media-card').filter({ hasText: name });
+    await expect(card).toContainText('尚未上传');
+    await card.getByRole('button', { name: '上传到平台解析预览' }).click();
+    await card.getByRole('button', { name: '选择页／帧与遮挡' }).click();
+    const dialog = page.getByRole('dialog', { name: '审阅素材与选择识别范围' });
+    await dialog.locator('.el-checkbox').filter({ hasText: label }).click();
+    await dialog.getByRole('button', { name: '保存选择与遮挡' }).click();
+    await expect(card).toContainText('已选 1 个');
+  }
+  expect(state.uploads).toBe(3); expect(state.plans).toBe(0); expect(state.extracts).toBe(0);
+  await pane(page, '设置');
+  const start = page.getByRole('button', { name: '提取参考素材提示词', exact: true });
+  await expect(start).toBeDisabled();
+  await page.locator('.upload-consent').click();
+  await start.click();
+  await expect(page.locator('.prompt-text')).toContainText('描述所选参考素材');
+  await expect(page.getByTestId('image-plan-panel')).toHaveCount(0);
+  expect(state.extracts).toBe(1); expect(state.plans).toBe(0); expect(state.confirmations).toBe(0);
+  expect(state.input.mode).toBe('REFERENCE_RECONSTRUCTION'); expect(state.input.creationIntent).toBe('');
+  expect(state.input.materials?.map(item => item.units.map(unit => unit.unitId))).toEqual([
+    ['media-1-unit-2'], ['media-2-unit-2'], ['media-3-unit-2'],
+  ]);
+  expect(state.input.materials?.every(item => item.track === 'REFERENCE')).toBe(true);
+  expect(state.input.relations ?? []).toEqual([]);
+  await page.screenshot({ path: testInfo.outputPath('direct-media-result.png'), fullPage: true, animations: 'disabled' });
+});
+
+test('切换Plan保留资产与遮挡，关闭时只还原参考素材且重新开启可复用替换素材', async ({ page }) => {
+  const state = await setup(page, [], false);
+  await pane(page, '图片');
+  const reference = page.getByTestId('reference-media');
+  await reference.locator('input[type=file]').setInputFiles({ name: 'brand.pptx', mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', buffer: Buffer.from('controlled reference') });
+  await reference.getByRole('button', { name: '上传到平台解析预览' }).click();
+  await reference.getByRole('button', { name: '选择页／帧与遮挡' }).click();
+  const dialog = page.getByRole('dialog', { name: '审阅素材与选择识别范围' });
+  await dialog.locator('.el-checkbox').filter({ hasText: '第 2 页' }).click();
+  await select(page, '预览素材单位', '第 2 页');
+  await expect(dialog.locator('.mask-surface img')).toBeVisible();
+  await dialog.getByRole('button', { name: '遮挡整页／帧' }).click();
+  await dialog.getByRole('button', { name: '保存选择与遮挡' }).click();
+  await pane(page, '设置'); await page.locator('.column-heading .el-switch').click();
+  await page.getByRole('textbox', { name: '新图创作构想' }).fill('借鉴参考布局，换用新主体。');
+  await pane(page, '图片');
+  await expect(reference).toContainText('已选 1 个');
+  const replacement = page.getByTestId('replacement-media');
+  await replacement.locator('input[type=file]').setInputFiles({ name: 'subject.png', mimeType: 'image/png', buffer: png });
+  await replacement.getByRole('button', { name: '上传到平台解析预览' }).click();
+  await replacement.getByRole('button', { name: '选择页／帧与遮挡' }).click();
+  await dialog.locator('.el-checkbox').filter({ hasText: /^图片$/ }).click();
+  await dialog.getByRole('button', { name: '保存选择与遮挡' }).click();
+  await pane(page, '设置'); await page.locator('.upload-consent').click();
+  await page.getByRole('button', { name: '梳理创作意图', exact: true }).click();
+  await expect(page.getByTestId('image-plan-panel')).toBeVisible();
+  expect(state.input.materials?.map(item => item.assetId)).toEqual(['media-1', 'media-2']);
+  expect(state.input.materials?.[0]?.units[0]?.masks).toEqual([{ x: 0, y: 0, width: 1, height: 1 }]);
+  await page.locator('.column-heading .el-switch').click();
+  await expect(page.getByTestId('image-plan-panel')).toHaveCount(0);
+  await expect(page.locator('.upload-consent').getByRole('checkbox')).not.toBeChecked();
+  await pane(page, '图片');
+  await expect(reference).toContainText('已选 1 个'); await expect(replacement).toHaveCount(0);
+  await expect(page.getByText(/已保留 1 份替换素材/)).toBeVisible();
+  await pane(page, '设置'); await page.locator('.upload-consent').click();
+  await page.getByRole('button', { name: '提取参考素材提示词', exact: true }).click();
+  await expect(page.locator('.prompt-text')).toContainText('描述所选参考素材');
+  expect(state.input.materials?.map(item => item.assetId)).toEqual(['media-1']);
+  expect(state.input.materials?.[0]?.units[0]?.masks).toEqual([{ x: 0, y: 0, width: 1, height: 1 }]);
+  expect(state.input.creationIntent).toBe(''); expect(state.input.relations ?? []).toEqual([]);
+  await pane(page, '设置'); await page.locator('.column-heading .el-switch').click(); await pane(page, '图片');
+  await expect(replacement).toContainText('已选 1 个');
+  expect(state.uploads).toBe(2); expect(state.removes).toBe(0); expect(state.plans).toBe(1); expect(state.extracts).toBe(1);
+});

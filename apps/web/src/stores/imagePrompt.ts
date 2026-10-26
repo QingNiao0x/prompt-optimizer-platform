@@ -56,26 +56,30 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
   const mediaControllers = new Map<string, AbortController>();
   const mediaReading = computed(() => mediaFiles.value.some(file => file.parsing));
   const busy = computed(() => phase.value !== 'IDLE' || mediaReading.value);
+  // 模式只改变本次使用范围，不清空临时素材；关闭Plan时保留替换素材草稿但不把它作为还原来源。
+  const activeMediaFiles = computed(() => mode.value === 'CUSTOM_CREATION' ? mediaFiles.value : mediaFiles.value.filter(file => file.track === 'REFERENCE'));
+  const selectedUnitCount = computed(() => activeMediaFiles.value.reduce((count, file) => count + file.units.length, 0));
   const hasDraftChanges = computed(() => isEditing.value && editDraft.value !== result.value?.optimizedPrompt);
   const selectedModel = computed(() => capabilities.value?.models.find(m => m.id === modelId.value));
   // 两个工作台展示同一发布目录；能否处理当前图片单独校验，避免将文字模型藏成另一套模型列表。
   const availableModels = computed(() => capabilities.value?.models ?? []);
   const modelInputError = computed(() => {
     if (!selectedModel.value) return '';
-    const images = mode.value === 'REFERENCE_RECONSTRUCTION' ? Math.max(1, files.value.length) : files.value.length + mediaFiles.value.reduce((count, file) => count + file.units.length, 0);
+    const selectedImages = files.value.length + selectedUnitCount.value;
+    const images = mode.value === 'REFERENCE_RECONSTRUCTION' ? Math.max(1, selectedImages) : selectedImages;
     if (images && !selectedModel.value.vision) return '当前模型未开放图片输入，请选择视觉模型；无图创作可开启 Plan 并移除参考图。';
     // 多媒体按能力上限分批识别；旧图片接口仍保持单次模型图片数限制。
-    if (!mediaFiles.value.length && images > selectedModel.value.maxImages) return `当前模型最多支持 ${selectedModel.value.maxImages} 张图片，请减少参考图或更换模型。`;
+    if (!activeMediaFiles.value.length && images > selectedModel.value.maxImages) return `当前模型最多支持 ${selectedModel.value.maxImages} 张图片，请减少参考图或更换模型。`;
     return '';
   });
   /** 解析状态说明可用画面，units只代表用户已审阅并保存的外发范围；两者不能互相代替。 */
   const mediaInputError = computed(() => {
-    for (const file of mediaFiles.value) {
+    for (const file of activeMediaFiles.value) {
       if (!file.asset) return `素材“${file.name}”尚未上传，请先点击“上传到平台解析预览”。`;
       if (file.asset.status === 'PROCESSING') return `素材“${file.name}”仍在解析，请点击“刷新解析状态”继续等待。`;
       if (!['READY', 'PARTIAL'].includes(file.asset.status)) return `素材“${file.name}”解析未完成或已取消，请刷新状态，或移除后重新选择。`;
     }
-    for (const file of mediaFiles.value) {
+    for (const file of activeMediaFiles.value) {
       if (!file.asset!.units.length) return `素材“${file.name}”未解析出可选图片、页码或视频帧，请刷新解析状态，或移除后重新选择。`;
       if (!file.units.length) return `素材“${file.name}”已解析出 ${file.asset!.units.length} 个可选图片／页／帧；请点击“选择页／帧与遮挡”，选择要发送给模型的范围并保存。`;
       // 刷新可能改变可用范围；保留原选择供核对，但不把隐藏的失效单位发给模型。
@@ -95,13 +99,13 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
     if (recoveryPending.value) return '上次请求的结果尚未确认，请先查询处理结果。';
     if (!selectedModel.value) return isLoadingModels.value ? '正在加载可用模型，请稍候。' : '请先选择一个可用模型。';
     if (modelInputError.value) return modelInputError.value;
-    if (mode.value === 'REFERENCE_RECONSTRUCTION' && files.value.length !== 1) return '请先选择一张参考图片。';
+    if (mode.value === 'REFERENCE_RECONSTRUCTION' && !activeMediaFiles.value.length && files.value.length !== 1) return '请先选择一张参考图片，或添加并审阅参考素材。';
     if (mode.value === 'CUSTOM_CREATION' && !creationIntent.value.trim()) return '请先填写新图创作构想。';
-    if (mode.value === 'CUSTOM_CREATION' && mediaInputError.value) return mediaInputError.value;
-    if (mode.value === 'CUSTOM_CREATION' && selectedUnitCount.value > (mediaCapabilities.value?.maxSelectedUnits ?? 12)) return '所选素材页/帧超过本次上限，请减少识别范围。';
+    if (mediaInputError.value) return mediaInputError.value;
+    if (activeMediaFiles.value.length && files.value.length + selectedUnitCount.value > (mediaCapabilities.value?.maxSelectedUnits ?? 12)) return '所选素材页/帧超过本次上限，请减少识别范围。';
     if (mode.value === 'CUSTOM_CREATION' && relations.value.some(relation => [relation.referenceAssetId, relation.replacementAssetId].some(id => id && !mediaFiles.value.some(file => file.asset?.id === id)))) return '替换关系中的素材已失效，请重新选择来源或删除对应关系；历史正文仍可使用。';
     if (mode.value === 'CUSTOM_CREATION' && relations.value.some(relation => [[relation.referenceAssetId, relation.referenceUnitId], [relation.replacementAssetId, relation.replacementUnitId]].some(([assetId, unitId]) => unitId && !mediaFiles.value.find(file => file.asset?.id === assetId)?.units.some(unit => unit.unitId === unitId)))) return '替换关系指向未选择的页／帧，请重新选择识别范围或调整关系。';
-    if ((files.value.length || mode.value === 'CUSTOM_CREATION' && mediaFiles.value.length) && !consent.value) return '请先勾选“我已检查图片隐私”确认框，再生成提示词。';
+    if ((files.value.length || activeMediaFiles.value.length) && !consent.value) return '请先勾选“我已检查图片隐私”确认框，再生成提示词。';
     return '';
   });
   const canStart = computed(() => !startDisabledReason.value);
@@ -119,9 +123,9 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
     const genericTools = [...Object.values(defaults), '通用视频生成工具', '通用 PPT 工具'];
     if (genericTools.includes(targetTool.value)) targetTool.value = defaults[mode.value === 'CUSTOM_CREATION' ? outputType.value : 'IMAGE'];
   }, { flush: 'sync' });
-  watch(modelId, () => { if (mediaFiles.value.length) consent.value = false; }, { flush: 'sync' });
+  // 模式或模型改变会改变外发范围/用途；保留素材与遮挡，授权须由用户重新核对。
+  watch([mode, modelId], () => { if (mediaFiles.value.length) consent.value = false; }, { flush: 'sync' });
   watch(relations, invalidate, { deep: true, flush: 'sync' });
-  const selectedUnitCount = computed(() => mediaFiles.value.reduce((count, file) => count + file.units.length, 0));
 
   const releaseMedia = (file: SelectedMedia): void => {
     const current = revision, owner = identityKey();
@@ -129,7 +133,7 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
     if (file.asset) void imagePromptApi.removeMedia(file.asset.id).catch(() => { if (current === revision && owner === identityKey()) cleanupWarning.value = '临时素材撤销未确认，将按服务端期限清理。'; });
   };
   const addMediaFiles = (selected: File[], track: ImagePromptMaterialTrack): void => {
-    if (mode.value !== 'CUSTOM_CREATION' || !auth.isAuthenticated) throw new Error('请先开启 Plan 创作模式。');
+    if (!auth.isAuthenticated) throw new Error('请先登录后上传和解析多媒体素材。');
     if (files.value.length + mediaFiles.value.length + selected.length > (mediaCapabilities.value?.maxAssets ?? 6)) throw new Error('每次最多选择六份参考与替换素材。');
     for (const file of selected) {
       if (!/\.(png|jpe?g|mp4|mov|webm|pptx)$/i.test(file.name) || !file.size || file.size > (mediaCapabilities.value?.maxFileBytes ?? 50 * 1024 * 1024)) throw new Error('请选择不超过 50 MiB 的 JPEG、PNG、视频或 PPTX。');
@@ -240,16 +244,17 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
       if (current !== revision) { void imagePromptApi.removeAsset(asset.id).catch(() => undefined); throw new Error('本次输入已改变。'); }
       file.asset = asset;
     }
+    const materials = activeMediaFiles.value.map(file => ({ assetId: file.asset!.id, track: file.track, role: file.role,
+      units: file.units.map(unit => ({ unitId: unit.unitId, masks: unit.masks.map(mask => ({ ...mask })) })) }));
     return {
       mode: mode.value, modelId: modelId.value,
       images: files.value.map(f => ({ assetId: f.asset!.id, role: f.role })),
       creationIntent: mode.value === 'CUSTOM_CREATION' ? creationIntent.value : '',
       exactText: mode.value === 'CUSTOM_CREATION' ? exactText.value : '',
       context: mode.value === 'CUSTOM_CREATION' ? context.value : '', language: language.value, targetTool: targetTool.value,
-      ...(mode.value === 'CUSTOM_CREATION' ? { outputType: outputType.value,
-        materials: mediaFiles.value.map(file => ({ assetId: file.asset!.id, track: file.track, role: file.role,
-          units: file.units.map(unit => ({ unitId: unit.unitId, masks: unit.masks.map(mask => ({ ...mask })) })) })),
-        relations: relations.value.map(relation => ({ ...relation, attributes: [...relation.attributes] })) } : {}),
+      ...(mode.value === 'CUSTOM_CREATION' ? { outputType: outputType.value, materials,
+        relations: relations.value.map(relation => ({ ...relation, attributes: [...relation.attributes] })) }
+        : materials.length ? { outputType: 'IMAGE' as const, materials } : {}),
     };
   };
 
@@ -407,5 +412,5 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
     plan, answers, result, undoDocument, editDraft, isEditing, phase, error, cleanupWarning, recoveryId, recoveryPending, consent,
     isLoadingModels, busy, hasDraftChanges, canStart, startDisabledReason, addFiles, removeFile, changeRole, refreshModels, start, confirm,
     recover, saveEdit, retrySave, rewrite, undo, restore, reset, invalidate, cancelPending,
-    outputType, mediaFiles, mediaCapabilities, relations, selectedUnitCount, mediaReading, addMediaFiles, removeMediaFile, updateMedia, parseMedia, refreshMediaCapabilities };
+    outputType, mediaFiles, activeMediaFiles, mediaCapabilities, relations, selectedUnitCount, mediaReading, addMediaFiles, removeMediaFile, updateMedia, parseMedia, refreshMediaCapabilities };
 });

@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 import static com.promptoptimizer.imageprompt.domain.ImagePromptModels.knownEvidenceWarnings;
 
 /**
- * 编排图像还原和图片、视频、PPT内容创作。服务端绑定全部输入、来源和实际题答，幂等缓存只保存最终阶段结果。
+ * 编排图片、视频帧和PPT页面的描述性还原与内容创作。服务端绑定全部输入、来源和实际题答，幂等缓存只保存最终阶段结果。
  * 生成与保存职责分开：存储失败重试保存，不重复模型调用；历史删除后缓存同样不再公开正文。
  * @author QingNiao
  * @since 0.1.0
@@ -73,7 +73,7 @@ public class ImagePromptService {
     /** 访客只开放单图还原；额度与幂等由trial模块预占，不建立Plan或正式历史。 */
     public Document extractTrial(String guest, Generate request) {
         Input input = normalized(request.input().input());
-        if (input.mode() != Mode.REFERENCE_RECONSTRUCTION) throw ImagePromptException.invalid("请注册登录后使用图像Plan。");
+        requireTrialScope(input);
         var images = input.images().stream().map(reference -> {
             Asset asset = assets.requireGuest(guest, reference.assetId());
             return new ImageData(new ImageSource(asset.id(), asset.name(), asset.hash(), reference.role(), asset.width(), asset.height(), asset.expiresAt()),
@@ -91,15 +91,16 @@ public class ImagePromptService {
     /** 在扣除试用次数前确认输入及私有图片，客户端模式不能绕过Plan登录要求。 */
     public void validateTrial(String guest, Generate request) {
         Input input = normalized(request.input().input());
-        if (input.mode() != Mode.REFERENCE_RECONSTRUCTION) throw ImagePromptException.invalid("请注册登录后使用图像Plan。");
+        requireTrialScope(input);
         input.images().forEach(reference -> assets.requireGuest(guest, reference.assetId()));
     }
 
-    /** 关闭 Plan：一张必填图片，从图到文，不接收新图创作要求。 */
+    /** 关闭 Plan：还原已选图片、页面或视频帧，不接收创作要求，也不建立问答计划。 */
     public Document extract(Generate request) {
         var actor = current.require(); Input input = normalized(request.input().input());
         if (input.mode() != Mode.REFERENCE_RECONSTRUCTION) throw ImagePromptException.invalid("内容创作请使用 Plan 入口。");
         return operate(actor, request.requestId(), fingerprint(input), () -> {
+            if (!input.materials().isEmpty()) return extractMaterials(actor, request.requestId(), input);
             List<ImageData> images = images(actor, input);
             analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, request.requestId());
             var response = provider.invoke(new Call(Stage.EXTRACT, input, images, List.of(), List.of(), List.of(), "", ""));
@@ -109,34 +110,40 @@ public class ImagePromptService {
         }).document();
     }
 
+    /** 多媒体直接还原复用来源识别，不经过PLAN；最终只消费已识别证据，不再次外发像素。 */
+    private Operation extractMaterials(ActorIdentity actor, UUID requestId, Input input) {
+        var prepared = prepared(actor, input);
+        analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, requestId);
+        Instant deadline = Instant.now().plusSeconds(180);
+        var recognized = analyzeMaterials(actor, input, prepared, deadline, 2);
+        requireInputs(actor, input);
+        requireWithinDeadline(deadline);
+        models.require(input.modelId(), 0);
+        var evidenceWarnings = new ArrayList<>(recognized.warnings());
+        evidenceWarnings.addAll(knownEvidenceWarnings(prepared.sources(), recognized.analysis()));
+        var response = provider.invoke(new Call(Stage.GENERATE, input, List.of(), recognized.analysis(), List.of(), List.of(), "", "",
+                prepared.sources(), Math.min(2, MAX_WORKFLOW_ATTEMPTS - recognized.attempts()), distinctWarnings(evidenceWarnings)));
+        requireInputs(actor, input);
+        return new Operation(fingerprint(input), "COMPLETED", null, persist(actor, document(requestId, input,
+                prepared.images().stream().map(ImageData::source).toList(), List.of(), List.of(), response, recognized.analysis(),
+                prepared.sources(), distinctWarnings(evidenceWarnings))), "", Instant.now());
+    }
+
     /** 开启 Plan：文字构想起步，参考与替换素材可选；素材观察不会被升级为用户确认。 */
     public Plan plan(Generate request) {
         var actor = current.require(); Input input = normalized(request.input().input());
-        if (input.mode() != Mode.CUSTOM_CREATION) throw ImagePromptException.invalid("参考图还原不发起创作问答。");
+        if (input.mode() != Mode.CUSTOM_CREATION) throw ImagePromptException.invalid("参考素材还原不发起创作问答。");
         return operate(actor, request.requestId(), fingerprint(input), () -> {
             var prepared = prepared(actor, input);
             var images = prepared.images();
             analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, request.requestId());
-            var prior = new ArrayList<Observation>();
-            var evidenceWarnings = new ArrayList<>(prepared.warnings());
-            int attempts = 0;
             Instant deadline = Instant.now().plusSeconds(180);
-            // 旧单次图片请求沿用原流程；多媒体先按登记的maxImages识别，再以来源证据组织Plan，不抬高供应商能力上限。
-            if (!input.materials().isEmpty()) {
-                int batchSize = models.require(input.modelId(), 1).maxImages();
-                for (int offset = 0; offset < images.size(); offset += batchSize) {
-                    requireInputs(actor, input);
-                    if (Instant.now().isAfter(deadline)) throw ImagePromptException.invalid("素材分析已达到时间上限，请减少选取范围后重试；已开始的模型请求不会自动重放。");
-                    var batch = images.subList(offset, Math.min(images.size(), offset + batchSize));
-                    models.require(input.modelId(), batch.size());
-                    var observed = provider.invoke(new Call(Stage.ANALYZE, input, batch, List.of(), List.of(), List.of(), "", "",
-                            batchSources(prepared.sources(), batch), Math.min(2, MAX_WORKFLOW_ATTEMPTS - attempts - 4)));
-                    attempts += attempts(observed); prior.addAll(observed.draft().analysis()); evidenceWarnings.addAll(observed.draft().warnings());
-                    if (prior.size() > MAX_SOURCE_OBSERVATIONS) throw ImagePromptException.invalid("素材观察超过每单位8项的分析预算，请缩小选择范围。");
-                }
-            }
+            var recognized = analyzeMaterials(actor, input, prepared, deadline, 4);
+            var prior = recognized.analysis();
+            var evidenceWarnings = new ArrayList<>(recognized.warnings());
+            int attempts = recognized.attempts();
             requireInputs(actor, input);
-            if (Instant.now().isAfter(deadline)) throw ImagePromptException.invalid("素材分析已达到时间上限，请减少页面或视频帧后重新梳理。");
+            requireWithinDeadline(deadline);
             var response = provider.invoke(new Call(Stage.PLAN, input, input.materials().isEmpty() ? images : List.of(), prior,
                     List.of(), List.of(), "", "", prepared.sources(), Math.min(2, MAX_WORKFLOW_ATTEMPTS - attempts - 2), distinctWarnings(evidenceWarnings)));
             attempts += attempts(response);
@@ -263,18 +270,28 @@ public class ImagePromptService {
         if (input.images().size() + input.materials().size() > 6 || input.materials().stream().map(MaterialRef::assetId).distinct().count() != input.materials().size()
                 || input.relations().size() > 12) throw ImagePromptException.invalid("最多使用6份不同素材和12条替换关系。");
         if (input.mode() == Mode.REFERENCE_RECONSTRUCTION) {
-            if (input.images().size() != 1) throw ImagePromptException.invalid("直接增强需要一张参考图。");
-            if (input.outputType() != OutputType.IMAGE || !input.materials().isEmpty() || !input.relations().isEmpty()) {
-                throw ImagePromptException.invalid("多模态素材与结构化替换请开启 Plan；直接增强只还原单张参考图。");
+            if (input.images().isEmpty() && input.materials().isEmpty()
+                    || input.materials().isEmpty() && input.images().size() != 1) throw ImagePromptException.invalid("直接增强需要参考图片或已选择范围的参考素材。");
+            if (input.outputType() != OutputType.IMAGE || !input.relations().isEmpty()
+                    || input.materials().stream().anyMatch(material -> material.track() != Track.REFERENCE)) {
+                throw ImagePromptException.invalid("直接增强仅还原参考素材；替换素材、结构化替换或自定义成品请开启 Plan。");
             }
             if (!input.creationIntent().isBlank() || !input.exactText().isBlank() || !input.context().isBlank()) {
-                throw ImagePromptException.invalid("更换场景、添加文案或自定义画面请开启 Plan；直接增强只还原参考图。");
+                throw ImagePromptException.invalid("更换场景、添加文案或自定义画面请开启 Plan；直接增强只还原参考素材。");
             }
         } else if (input.creationIntent().isBlank()) throw ImagePromptException.invalid("请先描述想创作的内容。");
         safeText(input.creationIntent()); safeText(input.exactText()); safeText(input.context()); safeText(input.targetTool());
         validateRelations(input);
-        models.require(input.modelId(), input.images().size());
+        // 媒体请求会连同旧图片逐批识别；先校验至少单图视觉准入，不用未分批的总数误拒合法请求。
+        models.require(input.modelId(), input.materials().isEmpty() ? input.images().size() : 1);
         return input;
+    }
+
+    /** 正式媒体引用不属于访客命名空间；在扣额度及读资产之前维持既有单图试用范围。 */
+    private void requireTrialScope(Input input) {
+        if (input.mode() != Mode.REFERENCE_RECONSTRUCTION || !input.materials().isEmpty() || input.images().size() != 1) {
+            throw ImagePromptException.invalid("请注册登录后使用多媒体素材或图像Plan；访客仅可试用单张图片还原。");
+        }
     }
 
     /** 关系引用只能指向当前主动选择的素材与单位；角色选择不构成读取其他私有素材的授权。 */
@@ -330,6 +347,37 @@ public class ImagePromptService {
         input.images().forEach(reference -> warnings.addAll(assets.require(actor, reference.assetId()).processing()));
         return new Resolved(List.copyOf(result), resolved.sources(), distinctWarnings(warnings));
     }
+
+    /**
+     * 两种模式共用同一来源识别：只给模型本批遮挡后像素及结构文本，按真实maxImages分批。
+     * reservedAttempts为后续阶段保留预算（直接还原2次、Plan及确认生成4次）；旧单次图片不额外识别。
+     */
+    private SourceAnalysis analyzeMaterials(ActorIdentity actor, Input input, Resolved prepared, Instant deadline, int reservedAttempts) {
+        var analysis = new ArrayList<Observation>();
+        var warnings = new ArrayList<>(prepared.warnings());
+        int used = 0;
+        if (!input.materials().isEmpty()) {
+            int batchSize = models.require(input.modelId(), 1).maxImages();
+            for (int offset = 0; offset < prepared.images().size(); offset += batchSize) {
+                requireInputs(actor, input); requireWithinDeadline(deadline);
+                var batch = prepared.images().subList(offset, Math.min(prepared.images().size(), offset + batchSize));
+                models.require(input.modelId(), batch.size());
+                var observed = provider.invoke(new Call(Stage.ANALYZE, input, batch, List.of(), List.of(), List.of(), "", "",
+                        batchSources(prepared.sources(), batch), Math.min(2, MAX_WORKFLOW_ATTEMPTS - used - reservedAttempts)));
+                used += attempts(observed); analysis.addAll(observed.draft().analysis()); warnings.addAll(observed.draft().warnings());
+                if (analysis.size() > MAX_SOURCE_OBSERVATIONS) throw ImagePromptException.invalid("素材观察超过每单位8项的分析预算，请缩小选择范围。");
+            }
+        }
+        return new SourceAnalysis(List.copyOf(analysis), distinctWarnings(warnings), used);
+    }
+
+    /** 截止时间后不再开启新模型阶段，不重放可能已计费的请求。 */
+    private void requireWithinDeadline(Instant deadline) {
+        if (Instant.now().isAfter(deadline)) throw ImagePromptException.invalid("素材分析已达到时间上限，请减少选取范围后重试；已开始的模型请求不会自动重放。");
+    }
+
+    /** 素材识别产物只含来源观察、独立风险及实际尝试数，不持久化图像字节。 */
+    private record SourceAnalysis(List<Observation> analysis, List<String> warnings, int attempts) { }
 
     /** 只检查当前归属、撤销与有效期；确认及生成结束时不得重新调用视觉模型。 */
     private void requireInputs(ActorIdentity actor, Input input) {
@@ -444,8 +492,14 @@ public class ImagePromptService {
     private String materialManifest(Input input, List<MaterialSource> sources) {
         boolean english = input.language() == Language.EN;
         var text = new StringBuilder(english ? "\n\nMaterial reference:\n" : "\n\n素材对照：\n");
-        text.append(english ? "Upload only sources actually used by the prompt; listed entries need not all appear in the result. Labels identify sources and are not public URLs.\n"
-                : "仅按正文实际采用的来源配套上传；列出条目不表示需要全部用于成品。编号仅用于对应，不是公开链接。\n");
+        // 还原范围是用户本次已选单位；Plan素材则可按实际确认取舍，不能用同一句尾注混淆两者。
+        if (input.mode() == Mode.REFERENCE_RECONSTRUCTION) {
+            text.append(english ? "These entries define the selected reconstruction scope. Check each selected unit against its source; unselected content is outside this scope. Labels identify sources and are not public URLs.\n"
+                    : "以下是本次还原范围，请逐项核对所选单位及来源；未选内容不属于本次还原范围。编号仅用于对应，不是公开链接。\n");
+        } else {
+            text.append(english ? "Upload only sources actually used by the prompt; listed entries need not all appear in the result. Labels identify sources and are not public URLs.\n"
+                    : "仅按正文实际采用的来源配套上传；列出条目不表示需要全部用于成品。编号仅用于对应，不是公开链接。\n");
+        }
         text.append(english ? "Use only the selected slides/frames and preserve all applied masks; do not replace them with unreviewed full originals.\n"
                 : "仅使用所选页面／视频帧，并保留本次遮挡；请勿用未经审阅的完整原件代替。\n");
         text.append(materialRows(input, sources, false));

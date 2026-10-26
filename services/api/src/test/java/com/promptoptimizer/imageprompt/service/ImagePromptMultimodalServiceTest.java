@@ -10,6 +10,7 @@ import com.promptoptimizer.imageprompt.dto.ImagePromptRequests.*;
 import com.promptoptimizer.imageprompt.service.ImagePromptProvider.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -107,7 +108,7 @@ class ImagePromptMultimodalServiceTest {
         verifyNoInteractions(assets, media, provider, analytics, models);
     }
 
-    @Test void reconstructionRejectsMultimediaAndKnownSensitiveMaterialNeverReachesModel() {
+    @Test void reconstructionRejectsReplacementAndKnownSensitiveMaterialNeverReachesModel() {
         var referenceTask = new Task(Mode.REFERENCE_RECONSTRUCTION, "fixture", List.of(new Reference(UUID.randomUUID(), ImageRole.GENERAL)),
                 "", "", "", Language.ZH, "通用", OutputType.IMAGE, materials(), List.of());
         assertThatThrownBy(() -> service.extract(new Generate(UUID.randomUUID(), referenceTask))).isInstanceOf(ImagePromptException.class);
@@ -117,6 +118,114 @@ class ImagePromptMultimodalServiceTest {
         assertThatThrownBy(() -> service.plan(new Generate(UUID.randomUUID(), task(materials(), List.of()))))
                 .isInstanceOf(ImagePromptException.class).hasMessageContaining("敏感");
         verifyNoInteractions(provider);
+    }
+
+    @ParameterizedTest
+    @EnumSource(Language.class)
+    void reconstructionBatchesSelectedPptAndVideoThenProducesDescriptiveHistoryWithoutPlan(Language language) {
+        var selected = materials().subList(0, 2);
+        var sourceMetadata = sources().subList(0, 2);
+        when(media.resolve(actor, selected)).thenReturn(new Resolved(List.of(image(slide), image(frame)), sourceMetadata,
+                List.of("视频仅覆盖选定帧，音轨未分析。")));
+        var calls = new ArrayList<Call>();
+        var observed = new ArrayList<Observation>();
+        when(provider.invoke(any())).thenAnswer(invocation -> {
+            Call call = invocation.getArgument(0); calls.add(call);
+            if (call.stage() == Stage.ANALYZE) {
+                var fact = new Observation(call.images().getFirst().source().id(), "来源", "选定来源实际画面", Visibility.OBSERVED);
+                observed.add(fact);
+                return new ProviderResult(new ProviderDraft("来源描述", "", List.of(fact), List.of(), List.of("选定帧外的运动保持未知。")),
+                        "fixture", "fixture", false, 2);
+            }
+            return new ProviderResult(new ProviderDraft("选定素材还原", "分别描述所选幻灯片与1.500秒帧的可见内容，不新增场景。",
+                    List.of(new Observation(slide, "拟议设计", "不应变为源观察", Visibility.INTERPRETATION)), List.of(), List.of()),
+                    "fixture", "fixture", false);
+        });
+        var input = new Task(Mode.REFERENCE_RECONSTRUCTION, "fixture", List.of(), "", "", "", language,
+                "通用文生图", OutputType.IMAGE, selected, List.of());
+        var request = new Generate(UUID.randomUUID(), input);
+        Document document = service.extract(request);
+        assertThat(calls).extracting(Call::stage).containsExactly(Stage.ANALYZE, Stage.ANALYZE, Stage.GENERATE);
+        assertThat(calls.subList(0, 2)).allSatisfy(call -> assertThat(call.images()).hasSize(1));
+        assertThat(calls.getLast().images()).isEmpty();
+        assertThat(calls.getLast().analysis()).containsExactlyElementsOf(observed);
+        assertThat(calls.getLast().questions()).isEmpty(); assertThat(calls.getLast().answers()).isEmpty();
+        assertThat(document.mode()).isEqualTo(Mode.REFERENCE_RECONSTRUCTION);
+        assertThat(document.questions()).isEmpty(); assertThat(document.answers()).isEmpty();
+        assertThat(document.analysis()).containsExactlyElementsOf(observed);
+        assertThat(document.evidenceWarnings()).contains("视频仅覆盖选定帧，音轨未分析。", "选定帧外的运动保持未知。");
+        assertThat(document.materialSources()).isEqualTo(sourceMetadata);
+        assertThat(document.optimizedPrompt()).contains("参考.pptx", "1.500s").doesNotContain("不应变为源观察");
+        if (language == Language.ZH) {
+            assertThat(document.optimizedPrompt()).contains("素材对照：", "第2页", "本次还原范围，请逐项核对所选单位及来源", "未选内容不属于本次还原范围", "保留本次遮挡")
+                    .doesNotContain("列出条目不表示需要全部用于成品");
+        } else {
+            assertThat(document.optimizedPrompt()).contains("Material reference:", "slide 2", "Check each selected unit against its source", "unselected content is outside this scope", "preserve all applied masks")
+                    .doesNotContain("listed entries need not all appear in the result");
+        }
+        assertThat(history.find(actor, document.recordId()).input().materials()).isEqualTo(selected);
+        assertThat(service.extract(request).recordId()).isEqualTo(document.recordId());
+        assertThat(calls).hasSize(3);
+        verify(media, times(1)).resolve(actor, selected); verifyNoInteractions(assets);
+    }
+
+    @Test void reconstructionRejectsCreativeFieldsAndSensitiveSourceBeforeAnyModelCall() {
+        var selected = materials().subList(0, 1);
+        var creative = new Task(Mode.REFERENCE_RECONSTRUCTION, "fixture", List.of(), "新增海边场景", "", "", Language.ZH,
+                "通用", OutputType.IMAGE, selected, List.of());
+        assertThatThrownBy(() -> service.extract(new Generate(UUID.randomUUID(), creative))).isInstanceOf(ImagePromptException.class);
+        var input = new Task(Mode.REFERENCE_RECONSTRUCTION, "fixture", List.of(), "", "", "", Language.ZH,
+                "通用", OutputType.IMAGE, selected, List.of());
+        var source = new MaterialSource(reference, "参考.pptx", Kind.PPTX, Track.REFERENCE, ImageRole.LAYOUT,
+                List.of(new SourceUnit(slide, 2, null, "api_key=fixtureSecretCredential123", List.of())), List.of());
+        when(media.resolve(actor, selected)).thenReturn(new Resolved(List.of(image(slide)), List.of(source), List.of()));
+        assertThatThrownBy(() -> service.extract(new Generate(UUID.randomUUID(), input)))
+                .isInstanceOf(ImagePromptException.class).hasMessageContaining("敏感");
+        verifyNoInteractions(provider);
+    }
+
+    @Test void revokedReconstructionMaterialStopsBeforeTheNextBatchWithoutSavingHistory() {
+        var selected = materials().subList(0, 2);
+        when(media.resolve(actor, selected)).thenReturn(new Resolved(List.of(image(slide), image(frame)), sources().subList(0, 2), List.of()));
+        var analyses = new java.util.concurrent.atomic.AtomicInteger();
+        when(media.require(actor, reference)).thenAnswer(invocation -> {
+            if (analyses.get() > 0) throw ImagePromptException.expired();
+            return null;
+        });
+        when(provider.invoke(any())).thenAnswer(invocation -> {
+            analyses.incrementAndGet();
+            return new ProviderResult(new ProviderDraft("观察", "", List.of(), List.of(), List.of()), "fixture", "fixture", false);
+        });
+        var input = new Task(Mode.REFERENCE_RECONSTRUCTION, "fixture", List.of(), "", "", "", Language.ZH,
+                "通用", OutputType.IMAGE, selected, List.of());
+        assertThatThrownBy(() -> service.extract(new Generate(UUID.randomUUID(), input))).isInstanceOf(ImagePromptException.class);
+        verify(provider, times(1)).invoke(any());
+        assertThat(history.list(actor, 1, 10, null).total()).isZero();
+    }
+
+    @Test void reconstructionTwelveSelectedPagesShareRepairBudgetAndKeepEverySourceObservation() {
+        var units = java.util.stream.IntStream.rangeClosed(1, 12).mapToObj(page -> new SourceUnit(UUID.randomUUID(), page, null, "合成原文", List.of())).toList();
+        var refs = List.of(new MaterialRef(reference, Track.REFERENCE, ImageRole.LAYOUT,
+                units.stream().map(unit -> new UnitSelection(unit.id(), List.of())).toList()));
+        var source = new MaterialSource(reference, "参考.pptx", Kind.PPTX, Track.REFERENCE, ImageRole.LAYOUT, units, List.of("仅选择这些页面。"));
+        when(media.resolve(actor, refs)).thenReturn(new Resolved(units.stream().map(unit -> image(unit.id())).toList(), List.of(source), source.warnings()));
+        var calls = new ArrayList<Call>();
+        when(provider.invoke(any())).thenAnswer(invocation -> {
+            Call call = invocation.getArgument(0); calls.add(call);
+            return new ProviderResult(new ProviderDraft("所选页面还原", call.stage() == Stage.ANALYZE ? "" : "按页码分别描述全部所选页面。",
+                    call.stage() == Stage.ANALYZE ? List.of(new Observation(call.images().getFirst().source().id(), "页面", "此页实际可见内容", Visibility.OBSERVED)) : List.of(),
+                    List.of(), List.of()), "fixture", "fixture", false, 2);
+        });
+        var input = new Task(Mode.REFERENCE_RECONSTRUCTION, "fixture", List.of(), "", "", "", Language.ZH,
+                "通用", OutputType.IMAGE, refs, List.of());
+        var document = service.extract(new Generate(UUID.randomUUID(), input));
+        assertThat(calls).hasSize(13);
+        assertThat(calls).noneMatch(call -> call.stage() == Stage.PLAN);
+        assertThat(calls.stream().mapToInt(Call::maxAttempts).sum()).isEqualTo(26).isLessThanOrEqualTo(28);
+        assertThat(calls.getLast().images()).isEmpty();
+        assertThat(document.analysis()).hasSize(12);
+        assertThat(document.materialSources().getFirst().units()).containsExactlyElementsOf(units);
+        assertThat(document.evidenceWarnings()).contains("仅选择这些页面。");
     }
 
     @Test void oldInputAndHistoryPayloadsDefaultToImageAndEmptyMaterials() throws Exception {

@@ -65,6 +65,19 @@ class ImagePromptServiceTest {
     }
 
     @Test
+    void trialCannotUseFormalMediaReferencesOrBypassItsSingleImageScope() {
+        var material = new com.promptoptimizer.imageprompt.domain.ImagePromptMediaModels.MaterialRef(UUID.randomUUID(),
+                com.promptoptimizer.imageprompt.domain.ImagePromptMediaModels.Track.REFERENCE, ImageRole.GENERAL,
+                List.of(new com.promptoptimizer.imageprompt.domain.ImagePromptMediaModels.UnitSelection(UUID.randomUUID(), List.of())));
+        var input = new Task(Mode.REFERENCE_RECONSTRUCTION, "fixture", List.of(), "", "", "", Language.ZH,
+                "通用", OutputType.IMAGE, List.of(material), List.of());
+        var request = new Generate(UUID.randomUUID(), input);
+        assertThatThrownBy(() -> service.validateTrial("a".repeat(64), request)).isInstanceOf(ImagePromptException.class);
+        assertThatThrownBy(() -> service.extractTrial("a".repeat(64), request)).isInstanceOf(ImagePromptException.class);
+        verifyNoInteractions(current, assets, provider, analytics);
+    }
+
+    @Test
     void zeroQuestionPlanNeedsNoImagesAndPreservesExactTextDuringGeneration() {
         when(provider.invoke(any())).thenAnswer(inv -> {
             ImagePromptProvider.Call call = inv.getArgument(0);

@@ -184,6 +184,30 @@ class OpenAiImagePromptProviderTest {
         assertThat(result.draft().analysis()).singleElement().satisfies(observation -> assertThat(observation.description()).contains("原有黑色横线"));
         server.verify();
     }
+    @Test void directMediaGenerationKeepsReferenceModeAndSourceAnchorsWithoutResendingPixelsOrQuestions() throws Exception {
+        var unit = new SourceUnit(asset, null, 1500L, "来源可见文字", List.of(new Mask(0.1, 0.2, 0.2, 0.2)));
+        UUID media = UUID.randomUUID();
+        var source = new MaterialSource(media, "clip.mp4", Kind.VIDEO, Track.REFERENCE, ImageRole.GENERAL, List.of(unit), List.of("音轨未分析。"));
+        var input = new Input(Mode.REFERENCE_RECONSTRUCTION, "fixture", List.of(), "", "", "", Language.ZH, "通用文生图", OutputType.IMAGE,
+                List.of(new MaterialRef(media, Track.REFERENCE, ImageRole.GENERAL, List.of(new UnitSelection(asset, unit.masks())))), List.of());
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            assertThat(body.path("messages").get(0).path("content").asText()).contains("创作模式下，role=LAYOUT", "还原模式的REFERENCE是本次选中的还原范围");
+            var parts = body.path("messages").get(1).path("content");
+            assertThat(parts).hasSize(1);
+            var payload = json.readTree(parts.get(0).path("text").asText());
+            assertThat(payload.path("stage").asText()).isEqualTo("GENERATE");
+            assertThat(payload.path("input").path("mode").asText()).isEqualTo("REFERENCE_RECONSTRUCTION");
+            assertThat(payload.path("materialSources").get(0).path("kind").asText()).isEqualTo("VIDEO");
+            assertThat(payload.path("materialSources").get(0).path("units").get(0).path("timestampMs").asLong()).isEqualTo(1500L);
+            assertThat(payload.path("questions")).isEmpty(); assertThat(payload.path("answers")).isEmpty();
+            assertThat(payload.path("evidenceWarnings").get(0).asText()).isEqualTo("音轨未分析。");
+        }).andRespond(withSuccess(response("描述所选视频1.500秒帧的可见画面，不推断音轨。"), MediaType.APPLICATION_JSON));
+        var result = provider.invoke(new Call(Stage.GENERATE, input, List.of(),
+                List.of(new Observation(asset, "主体", "可见合成物体", Visibility.OBSERVED)), List.of(), List.of(), "", "", List.of(source), 2, source.warnings()));
+        assertThat(result.draft().questions()).isEmpty(); server.verify();
+    }
+
     private Call call() {
         var input = new Input(Mode.REFERENCE_RECONSTRUCTION, "fixture", List.of(new ImageRef(asset, ImageRole.STYLE)), "", "", "", Language.ZH, "通用");
         return new Call(Stage.EXTRACT, input, List.of(new ImageData(new ImageSource(asset, "fixture.png", "hash", ImageRole.STYLE, 2, 2,

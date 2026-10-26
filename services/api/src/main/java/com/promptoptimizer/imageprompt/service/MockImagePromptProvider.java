@@ -23,7 +23,7 @@ public class MockImagePromptProvider implements ImagePromptProvider {
                 ? List.of(new Question("style", QuestionType.SINGLE_CHOICE, "新" + output + "希望采用哪种视觉风格？",
                 List.of(new Option("illustration", "柔和插画"), new Option("photo", "自然摄影")), true)) : List.of();
         String prompt = call.stage() == Stage.PLAN || call.stage() == Stage.ANALYZE ? "" : call.input().mode() == Mode.REFERENCE_RECONSTRUCTION
-                ? "演示提示词：依据参考图中实际可见的主体、关系、构图和配色整理画面描述；此演示未进行真实识图。"
+                ? "演示提示词：依据所选参考图片、页面或视频帧中实际可见的主体、关系、构图和配色整理描述；此演示未进行真实识图。"
                 : "创作全新的" + output + "：" + call.input().creationIntent() + "。根据用户实际确认安排主体、风格与画面细节。";
         if (call.stage() == Stage.REWRITE) prompt = call.previousPrompt() + "\n表达调整要求：" + call.revisionInstruction();
         var result = new ProviderResult(new ProviderDraft("演示模式的图像提示词任务", prompt, List.of(), questions, warnings),
