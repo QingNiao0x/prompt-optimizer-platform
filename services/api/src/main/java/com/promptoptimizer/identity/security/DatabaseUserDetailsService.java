@@ -97,7 +97,7 @@ public class DatabaseUserDetailsService implements UserDetailsService {
                 account.getPasswordHash(),
                 account.getStatus(),
                 authorities,
-                identity.getId()
+                identity.getId(), account.getSecurityVersion()
         );
     }
 

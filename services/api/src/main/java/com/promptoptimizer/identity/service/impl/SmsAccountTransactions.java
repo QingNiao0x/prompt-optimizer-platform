@@ -105,12 +105,13 @@ public class SmsAccountTransactions {
         return new Outcome(account.getId(), "OK");
     }
 
-    /** 固定账户再身份的锁顺序；旧会话没有身份ID时要求重新登录。 */
+    /** 固定账户再身份的锁顺序；云核验返回后仍须重新检查登录版本，防止在途请求越过全设备撤销。 */
     private void checkedActor(AuthenticatedUser actor, String password) {
         if (actor == null || actor.getIdentityId() == null) throw new BadCredentialsException("请重新登录后绑定手机号。");
         var account = accounts.lockAccount(actor.actorIdentity().userId());
         var identity = accounts.lockIdentity(actor.getIdentityId());
         if (account == null || !"ACTIVE".equals(account.getStatus()) || identity == null
+                || account.getSecurityVersion() != actor.getSecurityVersion()
                 || identity.getStatus() != UserIdentityStatus.ACTIVE || !identity.getUserId().equals(account.getId())
                 || !account.getTenantId().equals(actor.actorIdentity().tenantId())
                 || users.selectDefaultWorkspaceId(account.getId(), account.getTenantId()) == null

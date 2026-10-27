@@ -11,8 +11,10 @@ import { useAuthStore } from '@/stores/auth';
 import { useOptimizationStore } from '@/stores/optimization';
 import { useTextPolishStore } from '@/stores/textPolish';
 import { useImagePromptStore } from '@/stores/imagePrompt';
+import { useLocaleStore } from '@/stores/locale';
 
 const auth = useAuthStore();
+const language = useLocaleStore();
 const route = useRoute();
 const optimization = useOptimizationStore();
 const imagePrompt = useImagePromptStore();
@@ -30,26 +32,26 @@ const closeNavigation = (): void => {
 watch(() => route.fullPath, () => { menuOpen.value = false; });
 // 顶栏与选择器共用展示短名；管理员名称和调用路由不变。
 const selectedModelVersion = computed(() => route.name === 'text-polish'
-  ? formatModelVersion(textPolish.selectedModel?.displayName, '未选择模型')
+  ? formatModelVersion(textPolish.selectedModel?.displayName, language.t('noModel'))
   : route.name === 'image-to-prompt'
-  ? formatModelVersion(imagePrompt.selectedModel?.displayName, '未选择模型')
+  ? formatModelVersion(imagePrompt.selectedModel?.displayName, language.t('noModel'))
   : formatModelVersion(optimization.availableModels.find(
   (model) => model.id === optimization.selectedModelId,
-)?.displayName, '平台模型'));
+)?.displayName, language.t('platformModel')));
 
-const navigation = [
-  { to: '/', label: '首页', icon: HomeFilled },
-  { to: '/workbench', label: '提示词优化', icon: MagicStick },
-  { to: '/image-to-prompt', label: '图像转提示词', icon: Picture },
-  { to: '/text-polish', label: '文章祛AI味', icon: EditPen },
-  { to: '/history', label: '历史', icon: Clock },
-  { to: '/settings', label: '设置', icon: Setting },
-] as const;
+const navigation = computed(() => [
+  { to: '/', label: language.t('home'), icon: HomeFilled },
+  { to: '/workbench', label: language.t('enhancement'), icon: MagicStick },
+  { to: '/image-to-prompt', label: language.t('imagePrompt'), icon: Picture },
+  { to: '/text-polish', label: language.t('textPolish'), icon: EditPen },
+  { to: '/history', label: language.t('history'), icon: Clock },
+  { to: '/settings', label: language.t('settings'), icon: Setting },
+]);
 </script>
 
 <template>
   <header class="topbar" @keydown.esc="closeNavigation">
-    <RouterLink class="brand" to="/" aria-label="返回 PromptOptimizer 首页">
+    <RouterLink class="brand" to="/" :aria-label="language.t('brandHome')">
       <BrandMark compact />
       <span class="brand-copy">
         <strong>PromptOptimizer</strong>
@@ -57,7 +59,7 @@ const navigation = [
       </span>
     </RouterLink>
 
-    <nav id="app-main-navigation" class="main-nav" :class="{ 'main-nav--open': menuOpen }" aria-label="主导航" @click="menuOpen = false">
+    <nav id="app-main-navigation" class="main-nav" :class="{ 'main-nav--open': menuOpen }" :aria-label="language.t('mainNavigation')" @click="menuOpen = false">
       <RouterLink
         v-for="item in navigation"
         :key="item.to"
@@ -70,11 +72,11 @@ const navigation = [
       </RouterLink>
       <RouterLink v-if="auth.user?.platformAdmin" class="nav-link" to="/admin/models">
         <Tools aria-hidden="true" />
-        <span>模型管理</span>
+        <span>{{ language.t('models') }}</span>
       </RouterLink>
       <RouterLink v-if="auth.user?.platformAdmin" class="nav-link" to="/admin/analytics">
         <DataAnalysis aria-hidden="true" />
-        <span>统计日志</span>
+        <span>{{ language.t('analytics') }}</span>
       </RouterLink>
     </nav>
 
@@ -83,17 +85,17 @@ const navigation = [
         ref="menuButton"
         class="navigation-toggle"
         :icon="menuOpen ? Close : Menu"
-        aria-label="功能菜单"
+        :aria-label="language.t('featureMenu')"
         aria-controls="app-main-navigation"
         :aria-expanded="menuOpen"
         @click="menuOpen = !menuOpen"
       >
-        {{ menuOpen ? '收起' : '菜单' }}
+        {{ language.t(menuOpen ? 'collapse' : 'menu') }}
       </ElButton>
       <AccountMenu />
-      <ElButton v-if="!auth.isAuthenticated" type="primary" size="small" @click="$router.push({ path: '/login', query: { mode: 'register', redirect: route.path } })">注册 / 登录</ElButton>
+      <ElButton v-if="!auth.isAuthenticated" type="primary" size="small" @click="$router.push({ path: '/login', query: { mode: 'register', redirect: route.path } })">{{ language.t('registerLogin') }}</ElButton>
       <!-- 各工具展示本任务选择的模型，使用独立状态，避免误示其他模块的模型。 -->
-      <div v-if="(route.name !== 'image-to-prompt' || imagePrompt.selectedModel) && (route.name !== 'text-polish' || textPolish.selectedModel)" class="provider-status" :title="`模型版本：${selectedModelVersion}（由平台管理员维护）`">
+      <div v-if="(route.name !== 'image-to-prompt' || imagePrompt.selectedModel) && (route.name !== 'text-polish' || textPolish.selectedModel)" class="provider-status" :title="language.locale === 'en' ? `Model: ${selectedModelVersion} (maintained by the platform administrator)` : `模型版本：${selectedModelVersion}（由平台管理员维护）`">
         <span class="status-dot" aria-hidden="true"></span>
         <span>{{ selectedModelVersion }}</span>
       </div>

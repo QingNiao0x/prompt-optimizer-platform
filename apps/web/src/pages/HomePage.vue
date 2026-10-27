@@ -6,6 +6,7 @@ import HeroSection from '@/components/home/HeroSection.vue';
 import LandingNav from '@/components/home/LandingNav.vue';
 import LoginModal from '@/components/home/LoginModal.vue';
 import HomeValueProposition from '@/components/home/HomeValueProposition.vue';
+import { ICP_LICENSE_NUMBER, MIIT_BEIAN_URL } from '@/config/legal';
 import type { AuthModalMode } from '@/components/home/LoginModal.vue';
 
 const authOpen = ref(false);
@@ -46,6 +47,10 @@ const openAuth = (mode: AuthModalMode): void => {
         <RouterLink to="/terms">用户协议</RouterLink>
         <RouterLink to="/privacy">隐私政策</RouterLink>
       </nav>
+      <!-- 编号本身链到工信部备案管理系统，放在页脚底部中央，供公众核对。 -->
+      <p v-if="ICP_LICENSE_NUMBER">
+        <a :href="MIIT_BEIAN_URL" target="_blank" rel="noopener noreferrer">{{ ICP_LICENSE_NUMBER }}</a>
+      </p>
     </footer>
 
     <LoginModal v-model="authOpen" :mode="authMode" />

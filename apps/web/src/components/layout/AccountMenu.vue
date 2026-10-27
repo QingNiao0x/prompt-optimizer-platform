@@ -2,8 +2,10 @@
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { getApiErrorMessage } from '@/services/http';
+import { useLocaleStore } from '@/stores/locale';
 
 const auth = useAuthStore();
+const language = useLocaleStore();
 const busy = ref(false);
 const errorMessage = ref('');
 const logout = async (): Promise<void> => {
@@ -23,7 +25,7 @@ const logout = async (): Promise<void> => {
 <template>
   <div v-if="auth.isAuthenticated" class="account-menu">
     <span :title="auth.user?.email">{{ auth.user?.displayName }}</span>
-    <button type="button" :disabled="busy" @click="logout">{{ busy ? '退出中…' : '退出登录' }}</button>
+    <button type="button" :disabled="busy" @click="logout">{{ language.t(busy ? 'signingOut' : 'logout') }}</button>
     <span v-if="errorMessage" role="alert">{{ errorMessage }}</span>
   </div>
 </template>

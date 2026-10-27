@@ -2,7 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.promptoptimizer.identity.mapper.SmsAccountMapper">
     <select id="lockAccount" resultType="com.promptoptimizer.identity.entity.UserAccountEntity">
-        SELECT id, tenant_id, email, display_name, password_hash, status, platform_role, last_login_at, updated_at
+        <!-- 账户锁后读取最新认证版本；云核验等待期间发生的全设备撤销也必须拒绝提交。 -->
+        SELECT id, tenant_id, email, display_name, password_hash, status, platform_role, last_login_at, updated_at,
+               security_version
           FROM user_account WHERE id = #{id} FOR UPDATE
     </select>
     <select id="lockIdentity" resultType="com.promptoptimizer.identity.entity.UserIdentityEntity">

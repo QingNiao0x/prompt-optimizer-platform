@@ -33,6 +33,7 @@ public final class AuthenticatedUser implements UserDetails, CredentialsContaine
     private final List<GrantedAuthority> authorities;
     private transient String passwordHash;
     private final UUID identityId;
+    private final long securityVersion;
 
     public AuthenticatedUser(
             UUID userId,
@@ -66,6 +67,14 @@ public final class AuthenticatedUser implements UserDetails, CredentialsContaine
     public AuthenticatedUser(UUID userId, UUID tenantId, UUID workspaceId, String email, String loginIdentifier,
             String displayName, String passwordHash, String status, Collection<? extends GrantedAuthority> authorities,
             UUID identityId) {
+        this(userId, tenantId, workspaceId, email, loginIdentifier, displayName, passwordHash, status,
+                authorities, identityId, 0L);
+    }
+
+    /** 保存登录时的数据库安全版本；每请求复核用于撤销所有设备上的旧会话。 */
+    public AuthenticatedUser(UUID userId, UUID tenantId, UUID workspaceId, String email, String loginIdentifier,
+            String displayName, String passwordHash, String status, Collection<? extends GrantedAuthority> authorities,
+            UUID identityId, long securityVersion) {
         this.userId = Objects.requireNonNull(userId, "userId must not be null");
         this.tenantId = Objects.requireNonNull(tenantId, "tenantId must not be null");
         this.workspaceId = Objects.requireNonNull(workspaceId, "workspaceId must not be null");
@@ -80,10 +89,14 @@ public final class AuthenticatedUser implements UserDetails, CredentialsContaine
         this.status = Objects.requireNonNull(status, "status must not be null");
         this.authorities = List.copyOf(authorities);
         this.identityId = identityId;
+        this.securityVersion = securityVersion;
     }
 
     /** 仅供服务端重新认证使用，不投影到公开账户资料。 */
     public UUID getIdentityId() { return identityId; }
+
+    /** 登录快照版本，仅供服务端与数据库比较，不作为客户端可写资料。 */
+    public long getSecurityVersion() { return securityVersion; }
 
     /** 向业务层提供不含密码哈希和授权实现细节的认证主体。 */
     public ActorIdentity actorIdentity() {

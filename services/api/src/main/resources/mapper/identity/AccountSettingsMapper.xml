@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.identity.settings.AccountSettingsMapper">
+    <select id="account" resultType="com.promptoptimizer.identity.entity.UserAccountEntity">
+        SELECT id, tenant_id, email, display_name, password_hash, status, platform_role,
+               last_login_at, updated_at, locale, security_version, deleted_at
+          FROM user_account WHERE id = #{id}
+        <if test="lock">FOR UPDATE</if>
+    </select>
+    <select id="identity" resultType="com.promptoptimizer.identity.entity.UserIdentityEntity">
+        SELECT id, user_id, identity_type, issuer, identifier, normalized_identifier, status,
+               verified_at, last_used_at, created_at, updated_at
+          FROM user_identity WHERE id = #{id}
+    </select>
+    <select id="activeIdentity" resultType="com.promptoptimizer.identity.entity.UserIdentityEntity">
+        SELECT id, user_id, identity_type, issuer, identifier, normalized_identifier, status,
+               verified_at, last_used_at, created_at, updated_at
+          FROM user_identity WHERE user_id = #{userId} AND identity_type = #{type}
+           AND issuer = 'local' AND status = 'ACTIVE' ORDER BY created_at, id LIMIT 1
+    </select>
+    <select id="identityKey" resultType="com.promptoptimizer.identity.entity.UserIdentityEntity">
+        SELECT id, user_id, identity_type, issuer, identifier, normalized_identifier, status,
+               verified_at, last_used_at, created_at, updated_at
+          FROM user_identity WHERE identity_type = #{type} AND issuer = 'local'
+           AND normalized_identifier = #{identifier}
+    </select>
+    <update id="profile">UPDATE user_account SET display_name = #{name}, updated_at = CURRENT_TIMESTAMP WHERE id = #{id} AND deleted_at IS NULL</update>
+    <update id="locale">UPDATE user_account SET locale = #{locale}, updated_at = CURRENT_TIMESTAMP WHERE id = #{id} AND deleted_at IS NULL</update>
+    <update id="revokeType">UPDATE user_identity SET status = 'REVOKED', updated_at = CURRENT_TIMESTAMP WHERE user_id = #{id} AND identity_type = #{type} AND issuer = 'local' AND status = 'ACTIVE'</update>
+    <insert id="insertIdentity">
+        <!-- 旧身份先REVOKED但保留唯一占用；并发冲突只返回0，外层事务回滚旧身份撤销，绝不更新所有者。 -->
+        INSERT INTO user_identity(id, user_id, identity_type, issuer, identifier, normalized_identifier, status, verified_at)
+        VALUES(#{id}, #{userId}, #{type}, 'local', #{identifier}, #{identifier}, 'ACTIVE', CURRENT_TIMESTAMP)
+        ON CONFLICT (identity_type, issuer, normalized_identifier) DO NOTHING
+    </insert>
+    <update id="securityChange">
+        UPDATE user_account SET security_version = security_version + 1, updated_at = CURRENT_TIMESTAMP
+        <if test="updateEmail">, email = #{email}</if>
+         WHERE id = #{id} AND deleted_at IS NULL
+    </update>
+    <update id="deactivate">UPDATE user_account SET status = 'DISABLED', deleted_at = CURRENT_TIMESTAMP, security_version = security_version + 1, updated_at = CURRENT_TIMESTAMP WHERE id = #{id} AND deleted_at IS NULL</update>
+    <update id="revokeAll">UPDATE user_identity SET status = 'REVOKED', updated_at = CURRENT_TIMESTAMP WHERE user_id = #{id} AND status = 'ACTIVE'</update>
+    <!-- 所有自助注销在账户锁之前取得同一事务锁，最后管理员计数与禁用不可并发穿透。 -->
+    <select id="lockAdminDeletion" resultType="java.lang.String">SELECT pg_advisory_xact_lock(711729430001)</select>
+    <select id="activeAdminCount" resultType="int">SELECT COUNT(*) FROM user_account WHERE platform_role = 'PLATFORM_ADMIN' AND status = 'ACTIVE' AND deleted_at IS NULL</select>
+    <insert id="reserveBudget">
+        <!-- ON CONFLICT原子检查冷却及小时额度；窗口过期才重置，发送结果不确定或失败都不归还预算。 -->
+        INSERT INTO email_binding_rate_limit(budget_key, window_started_at, sends, next_allowed_at)
+        VALUES(#{key}, CURRENT_TIMESTAMP, 1, CURRENT_TIMESTAMP + make_interval(secs => #{cooldown}))
+        ON CONFLICT(budget_key) DO UPDATE SET
+          sends = CASE WHEN email_binding_rate_limit.window_started_at + INTERVAL '1 hour' &lt;= CURRENT_TIMESTAMP THEN 1 ELSE email_binding_rate_limit.sends + 1 END,
+          window_started_at = CASE WHEN email_binding_rate_limit.window_started_at + INTERVAL '1 hour' &lt;= CURRENT_TIMESTAMP THEN CURRENT_TIMESTAMP ELSE email_binding_rate_limit.window_started_at END,
+          next_allowed_at = CURRENT_TIMESTAMP + make_interval(secs => #{cooldown})
+        WHERE email_binding_rate_limit.next_allowed_at &lt;= CURRENT_TIMESTAMP
+          AND (email_binding_rate_limit.window_started_at + INTERVAL '1 hour' &lt;= CURRENT_TIMESTAMP OR email_binding_rate_limit.sends &lt; #{limit})
+    </insert>
+    <update id="supersede">UPDATE email_binding_challenge SET status = 'SUPERSEDED' WHERE user_id = #{userId} AND status IN ('PENDING', 'SENT')</update>
+    <insert id="insertChallenge">
+        INSERT INTO email_binding_challenge(id, user_id, email_fingerprint, browser_fingerprint, code_digest, status, attempts, expires_at)
+        VALUES(#{id}, #{userId}, #{emailFingerprint}, #{browserFingerprint}, #{codeDigest}, 'PENDING', 0, #{expiresAt})
+    </insert>
+    <update id="sent">UPDATE email_binding_challenge SET status = 'SENT' WHERE id = #{id} AND status = 'PENDING' AND expires_at &gt; CURRENT_TIMESTAMP</update>
+    <update id="failed">UPDATE email_binding_challenge SET status = 'FAILED' WHERE id = #{id} AND status = 'PENDING'</update>
+    <select id="challenge" resultType="com.promptoptimizer.identity.settings.EmailBindingChallenge">
+        SELECT id, user_id, email_fingerprint, browser_fingerprint, code_digest, status, attempts, expires_at
+          FROM email_binding_challenge WHERE id = #{id} FOR UPDATE
+    </select>
+    <update id="badAttempt">UPDATE email_binding_challenge SET attempts = attempts + 1, status = CASE WHEN attempts + 1 &gt;= 5 THEN 'FAILED' ELSE status END WHERE id = #{id} AND status = 'SENT'</update>
+    <update id="consume">UPDATE email_binding_challenge SET status = 'CONSUMED', consumed_at = CURRENT_TIMESTAMP WHERE id = #{id} AND status = 'SENT' AND attempts &lt; 5 AND expires_at &gt; CURRENT_TIMESTAMP</update>
+</mapper>

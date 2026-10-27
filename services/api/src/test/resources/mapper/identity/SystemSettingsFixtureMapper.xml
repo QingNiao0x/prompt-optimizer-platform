@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.promptoptimizer.identity.settings.SystemSettingsFixtureMapper">
+    <insert id="history">
+        INSERT INTO optimization_session(id, tenant_id, workspace_id, created_by, title)
+        VALUES (#{id}, #{tenant}, #{workspace}, #{user}, '合成设置验收历史')
+    </insert>
+    <!-- 按当前用户聚合原业务关联，不连接其他账户、不把注销误当作删除历史。 -->
+    <select id="snapshot" resultType="com.promptoptimizer.identity.settings.SystemSettingsFixtureMapper$Snapshot">
+        SELECT a.status, a.deleted_at AS deleted, a.security_version AS version, a.locale,
+               (SELECT COUNT(*) FROM user_identity i WHERE i.user_id=a.id AND i.status='ACTIVE') AS identities,
+               (SELECT COUNT(*) FROM optimization_session s WHERE s.created_by=a.id) AS histories,
+               (SELECT COUNT(*) FROM workspace_member m WHERE m.user_id=a.id) AS memberships
+          FROM user_account a WHERE a.id=#{user}
+    </select>
+    <update id="revoke">UPDATE user_identity SET status='REVOKED' WHERE user_id=#{user}</update>
+    <update id="expire">UPDATE email_binding_challenge SET expires_at=CURRENT_TIMESTAMP - INTERVAL '1 second' WHERE id=#{id}</update>
+    <select id="challenge" resultType="com.promptoptimizer.identity.settings.SystemSettingsFixtureMapper$ChallengeSnapshot">
+        SELECT status, attempts, consumed_at AS consumed FROM email_binding_challenge WHERE id=#{id}
+    </select>
+</mapper>

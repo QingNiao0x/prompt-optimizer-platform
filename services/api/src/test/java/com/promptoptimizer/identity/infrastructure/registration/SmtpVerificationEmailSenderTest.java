@@ -84,6 +84,20 @@ class SmtpVerificationEmailSenderTest {
     }
 
     @Test
+    void shouldUseBindingTemplateAndKeepBindingFailurePurpose(CapturedOutput output) throws Exception {
+        sender(true).sendBinding("recipient@example.test", "012345", Duration.ofMinutes(5));
+        ArgumentCaptor<MimeMessage> captor = ArgumentCaptor.forClass(MimeMessage.class);
+        verify(mailSender).send(captor.capture());
+        assertThat(captor.getValue().getSubject()).isEqualTo("【PromptOptimizer】｜邮箱绑定验证");
+        assertThat(captor.getValue().getContent()).isEqualTo(
+                VerificationEmailTemplate.EMAIL_BINDING.render("012345", Duration.ofMinutes(5)).body());
+        doThrow(new MailAuthenticationException("private-provider-detail")).when(mailSender).send(any(MimeMessage.class));
+        assertDeliveryUnavailable(() -> sender(true).sendBinding("recipient@example.test", "012345", Duration.ofMinutes(5)));
+        assertThat(output.getAll()).contains("purpose=EMAIL_BINDING")
+                .doesNotContain("private-provider-detail", "012345", "recipient@example.test");
+    }
+
+    @Test
     void shouldReportUnavailableWhenMailClientIsMissing(CapturedOutput output) {
         assertDeliveryUnavailable(() -> sender(false).send("recipient@example.test", "012345", Duration.ofMinutes(5)));
         verify(mailSender, never()).send(any(MimeMessage.class));

@@ -5,9 +5,9 @@
 
     <select id="selectById" resultType="com.promptoptimizer.identity.entity.UserAccountEntity">
         SELECT id, tenant_id, email, display_name, password_hash, status, platform_role,
-               last_login_at, updated_at
+               last_login_at, updated_at, locale, security_version, deleted_at
           FROM user_account
-         WHERE id = #{id}
+         WHERE id = #{id} AND deleted_at IS NULL
     </select>
 
     <select id="selectDefaultWorkspaceId" resultType="java.util.UUID">

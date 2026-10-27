@@ -6,10 +6,12 @@ import BrandMark from '@/components/brand/BrandMark.vue';
 import GitHubIcon from '@/components/brand/GitHubIcon.vue';
 import AccountMenu from '@/components/layout/AccountMenu.vue';
 import { useAuthStore } from '@/stores/auth';
+import { useLocaleStore } from '@/stores/locale';
 
 const GITHUB_REPOSITORY_URL = 'https://github.com/QingNiao0x/prompt-optimizer-platform';
 
 const auth = useAuthStore();
+const language = useLocaleStore();
 onMounted(() => { void auth.initialize().catch(() => undefined); });
 
 interface Emits {
@@ -26,8 +28,8 @@ const closeMenu = (): void => {
 </script>
 
 <template>
-  <nav class="landing-nav" aria-label="首页导航">
-    <RouterLink class="landing-nav__brand" to="/" aria-label="PromptOptimizer 首页">
+  <nav class="landing-nav" :aria-label="language.t('homeNavigation')">
+    <RouterLink class="landing-nav__brand" to="/" :aria-label="language.t('brandHome')">
       <BrandMark />
       <span>
         <strong>PromptOptimizer</strong>
@@ -36,14 +38,15 @@ const closeMenu = (): void => {
     </RouterLink>
 
     <div class="landing-nav__links">
-      <a href="#features" @click="closeMenu">功能特性</a>
+      <a href="#features" @click="closeMenu">{{ language.t('features') }}</a>
+      <RouterLink v-if="auth.isAuthenticated" to="/settings" @click="closeMenu">{{ language.t('settings') }}</RouterLink>
       <!-- 备案期间隐藏「定价」入口：个人性质备案不得展示经营性内容，恢复时与首页版块一并取消注释 -->
       <!-- <a href="#pricing" @click="closeMenu">定价</a> -->
       <a
         :href="GITHUB_REPOSITORY_URL"
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="GitHub 仓库（在新标签页打开）"
+        :aria-label="language.t('github')"
         @click="closeMenu"
       >
         <ElIcon :size="16" aria-hidden="true"><GitHubIcon /></ElIcon>
@@ -59,7 +62,7 @@ const closeMenu = (): void => {
         type="button"
         @click="emit('login')"
       >
-        登录
+        {{ language.t('login') }}
       </button>
       <button
         v-if="!auth.isAuthenticated"
@@ -67,14 +70,14 @@ const closeMenu = (): void => {
         type="button"
         @click="emit('register')"
       >
-        注册
+        {{ language.t('register') }}
       </button>
       <button
         class="landing-nav__menu"
         type="button"
         :aria-expanded="menuOpen"
         aria-controls="landing-nav-menu"
-        aria-label="打开导航菜单"
+        :aria-label="language.t('openNavigation')"
         @click="menuOpen = !menuOpen"
       >
         <span></span>
@@ -89,14 +92,15 @@ const closeMenu = (): void => {
     id="landing-nav-menu"
     class="landing-nav__drawer"
   >
-    <a href="#features" @click="closeMenu">功能特性</a>
+    <a href="#features" @click="closeMenu">{{ language.t('features') }}</a>
+    <RouterLink v-if="auth.isAuthenticated" to="/settings" @click="closeMenu">{{ language.t('settings') }}</RouterLink>
     <!-- 备案期间隐藏「定价」入口：个人性质备案不得展示经营性内容，恢复时与首页版块一并取消注释 -->
     <!-- <a href="#pricing" @click="closeMenu">定价</a> -->
     <a
       :href="GITHUB_REPOSITORY_URL"
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="GitHub 仓库（在新标签页打开）"
+      :aria-label="language.t('github')"
       @click="closeMenu"
     >
       <ElIcon :size="16" aria-hidden="true"><GitHubIcon /></ElIcon>

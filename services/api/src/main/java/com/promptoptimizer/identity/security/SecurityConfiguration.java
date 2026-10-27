@@ -44,7 +44,8 @@ public class SecurityConfiguration {
             HttpSecurity http,
             SecurityContextRepository securityContextRepository,
             CsrfTokenRepository csrfTokenRepository,
-            SecurityErrorWriter errorWriter
+            SecurityErrorWriter errorWriter,
+            org.springframework.beans.factory.ObjectProvider<com.promptoptimizer.identity.settings.AccountSessionValidator> validators
     ) throws Exception {
         CsrfTokenRequestAttributeHandler csrfRequestHandler = new CsrfTokenRequestAttributeHandler();
         csrfRequestHandler.setCsrfRequestAttributeName("_csrf");
@@ -106,6 +107,9 @@ public class SecurityConfiguration {
                                 "当前用户无权执行该操作。"
                         )));
 
+        // 显式加入安全链，位于会话上下文加载之后、CSRF和业务授权之前。
+        http.addFilterAfter(new AccountSessionFilter(validators.getIfAvailable(), errorWriter, securityContextRepository),
+                org.springframework.security.web.context.SecurityContextHolderFilter.class);
         return http.build();
     }
 

@@ -78,6 +78,13 @@ export const useAuthStore = defineStore('auth', () => {
     initialized.value = true;
   };
 
+  /** 仅在服务端已成功撤销会话后清除本机认证，不追加可能失败或重放的安全写请求。 */
+  const clearLocalSession = (): void => {
+    identityRevision += 1;
+    user.value = undefined;
+    initialized.value = true;
+  };
+
   /** 能力查询失败只关闭新入口，原有邮箱登录仍然可用。 */
   const loadCapabilities = async (): Promise<void> => {
     try { capabilities.value = (await getAuthCapabilities()).data; } catch {
@@ -121,6 +128,7 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     register,
     logout,
+    clearLocalSession,
     capabilities,
     loadCapabilities,
     registerPhone,

@@ -1,12 +1,26 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
+import { ElConfigProvider } from 'element-plus';
 import { useRoute } from 'vue-router';
 
 import ThemeToggle from '@/components/layout/ThemeToggle.vue';
 import WorkbenchTopBar from '@/components/layout/WorkbenchTopBar.vue';
 import { useUiTheme } from '@/composables/useUiTheme';
+import { useAuthStore } from '@/stores/auth';
+import { useLocaleStore } from '@/stores/locale';
+import { useSystemSettingsStore } from '@/stores/systemSettings';
 
 const route = useRoute();
+const auth = useAuthStore();
+const language = useLocaleStore();
+const settings = useSystemSettingsStore();
+// 登录恢复后同步账号语言；设置查询失败不阻断原有登录和工具功能。
+watch(() => auth.user?.userId, userId => {
+  if (userId) void settings.load().catch(() => undefined);
+}, { immediate: true });
+watch([() => route.fullPath, () => language.locale], () => {
+  document.title = language.pageTitle(route.name, typeof route.meta.title === 'string' ? route.meta.title : 'Prompt Optimizer');
+}, { immediate: true, flush: 'post' });
 const isWorkbench = computed(() => route.name === 'workbench' || route.name === 'image-to-prompt' || route.name === 'text-polish');
 // 统计表格需要完整可用宽度，其余页面继续使用原有居中容器。
 const isAnalytics = computed(() => route.name === 'admin-analytics');
@@ -23,6 +37,7 @@ useUiTheme();
 </script>
 
 <template>
+  <ElConfigProvider :locale="language.elementLocale">
   <div class="app-shell">
     <WorkbenchTopBar v-if="!isStandalone" />
     <main
@@ -37,6 +52,7 @@ useUiTheme();
     </main>
     <ThemeToggle />
   </div>
+  </ElConfigProvider>
 </template>
 
 <style scoped>

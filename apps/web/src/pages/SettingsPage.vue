@@ -17,8 +17,11 @@ import { computed, onMounted } from 'vue';
 
 import { useProjectContextSettingsStore } from '@/stores/projectContextSettings';
 import PhoneBindingCard from '@/components/auth/PhoneBindingCard.vue';
+import SystemSettingsPanel from '@/components/home/SystemSettingsPanel.vue';
+import { useLocaleStore } from '@/stores/locale';
 
 const projectContextSettingsStore = useProjectContextSettingsStore();
+const language = useLocaleStore();
 const {
   settings: contextSettings,
   storageStatus,
@@ -78,11 +81,12 @@ onMounted(() => {
     <header class="page-heading">
       <div>
         <span class="eyebrow">Settings</span>
-        <h1>设置</h1>
-        <p>管理本地项目索引、上下文处理方式和隐私选项。</p>
+        <h1>{{ language.t('systemSettings') }}</h1>
+        <p>{{ language.t('settingsDescription') }}</p>
       </div>
     </header>
 
+    <SystemSettingsPanel />
     <PhoneBindingCard />
     <section class="settings-card context-settings-card" aria-labelledby="context-settings-title">
       <div class="section-heading">

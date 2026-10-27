@@ -39,6 +39,15 @@ public class UserAccountEntity {
     /** USER=普通平台用户；PLATFORM_ADMIN=平台管理员。取值与数据库 CHECK 一致，且独立于工作区角色。 */
     private String platformRole = "USER";
 
+    /** 界面语言：zh-CN=简体中文，en=英文；数据库默认中文。 */
+    private String locale = "zh-CN";
+
+    /** 全设备认证版本；安全操作递增后，旧会话在下一请求失效。 */
+    private long securityVersion;
+
+    /** 账户逻辑注销时间；为空表示尚未注销，历史和租户关联仍保留。 */
+    private OffsetDateTime deletedAt;
+
     /** 最近一次成功登录时间；从未登录时为空。 */
     private OffsetDateTime lastLoginAt;
 
@@ -104,6 +113,13 @@ public class UserAccountEntity {
     public OffsetDateTime getLastLoginAt() {
         return lastLoginAt;
     }
+
+    public String getLocale() { return locale; }
+    public void setLocale(String locale) { this.locale = locale; }
+    public long getSecurityVersion() { return securityVersion; }
+    public void setSecurityVersion(long securityVersion) { this.securityVersion = securityVersion; }
+    public OffsetDateTime getDeletedAt() { return deletedAt; }
+    public void setDeletedAt(OffsetDateTime deletedAt) { this.deletedAt = deletedAt; }
 
     public void setLastLoginAt(OffsetDateTime lastLoginAt) {
         this.lastLoginAt = lastLoginAt;

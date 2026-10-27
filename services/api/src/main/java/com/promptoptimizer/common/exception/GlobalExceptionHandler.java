@@ -43,6 +43,14 @@ import java.util.regex.Pattern;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /** 设置冲突、重验失败、验证码错误和暂不可用均使用稳定公开代码，不泄露身份明细。 */
+    @ExceptionHandler(com.promptoptimizer.identity.settings.AccountSettingsException.class)
+    public ResponseEntity<ApiErrorResponse> handleAccountSettings(
+            com.promptoptimizer.identity.settings.AccountSettingsException exception, HttpServletRequest request) {
+        return buildResponse(request, HttpStatus.valueOf(exception.status()), exception.code(), exception.getMessage(),
+                exception.status() >= 500, Map.of());
+    }
+
     /** 额度用尽返回429引导注册；会话缺失与存储故障分别为401和503，不泄露访客凭证。 */
     @ExceptionHandler(com.promptoptimizer.trial.TrialException.class)
     public ResponseEntity<ApiErrorResponse> handleTrial(com.promptoptimizer.trial.TrialException exception, HttpServletRequest request) {
