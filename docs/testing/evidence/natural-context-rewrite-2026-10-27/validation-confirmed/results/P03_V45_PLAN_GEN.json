@@ -1,0 +1,56 @@
+{
+  "id": "P03_V45_PLAN_GEN",
+  "phase": "GENERATION",
+  "version": "45",
+  "caseId": "P03",
+  "status": 200,
+  "body": {
+    "requestId": "P03_V45_PLAN_GEN",
+    "data": {
+      "optimizedPrompt": "请在重点记录模块 `synthetic-survey-workspace/src/views/records` 的新增和导入功能中增加调查时间限制。调查时间允许填写今天，但不得晚于今天（即最大可选日期为当天）。新增和导入两处都要按这一边界处理：新增时限制调查时间的选择或校验，导入时对调查时间晚于今天的记录做相应拦截或提示，具体交互方式结合现有代码实现。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 5892,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "45",
+      "framework": "APE",
+      "recordId": "a3708a1b-f42d-4f3c-88d4-5e2a6daca81d",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

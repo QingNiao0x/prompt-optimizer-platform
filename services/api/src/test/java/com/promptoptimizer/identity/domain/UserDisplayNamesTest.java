@@ -9,7 +9,11 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
-/** 注册资料的可选、边界及Unicode保真验证，不发送验证码或创建实际账号。 */
+/**
+ * 注册资料的可选、边界及Unicode保真验证，不发送验证码或创建实际账号。
+ * @author QingNiao
+ * @since 0.1.0
+ */
 class UserDisplayNamesTest {
     @Test
     void optionalNamesKeepDefaultsAndPreserveUnicode() {

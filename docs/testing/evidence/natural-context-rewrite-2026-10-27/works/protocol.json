@@ -1,0 +1,48 @@
+{
+  "batch": "natural-context-rewrite45-works-2026-10-27",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 200,
+  "maximumNewActualCalls": 42,
+  "versions": [
+    "31",
+    "45"
+  ],
+  "candidateVersions": [
+    "45"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 0,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "45": [
+      "45"
+    ]
+  },
+  "phaseLimits": {
+    "GENERATION": 24,
+    "PLAN": 6,
+    "EXECUTION": 12
+  },
+  "allowedJobs": [
+    "C01_ORIGINAL_EXEC_R1",
+    "C01_ORIGINAL_EXEC_R2",
+    "C01_V31_EXEC_R1",
+    "C01_V31_EXEC_R2",
+    "C01_V45_EXEC_R1",
+    "C01_V45_EXEC_R2"
+  ],
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false
+}

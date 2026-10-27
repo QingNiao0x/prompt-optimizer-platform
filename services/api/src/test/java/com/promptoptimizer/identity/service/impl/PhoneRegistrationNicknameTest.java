@@ -16,7 +16,11 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-/** 实际短信注册服务与账户事务组合验证昵称流转，验证码供应商和持久化边界使用受控夹具。 */
+/**
+ * 实际短信注册服务与账户事务组合验证昵称流转，验证码供应商和持久化边界使用受控夹具。
+ * @author QingNiao
+ * @since 0.1.0
+ */
 class PhoneRegistrationNicknameTest {
     private final SmsChallengeMapper challenges = mock(SmsChallengeMapper.class);
     private final SmsChallengeTransactions verification = mock(SmsChallengeTransactions.class);

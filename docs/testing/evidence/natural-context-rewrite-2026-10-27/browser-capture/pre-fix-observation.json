@@ -1,0 +1,14 @@
+{
+  "stage": "controlled-browser-before-relative-dependency-resolution-fix",
+  "modelCalls": 0,
+  "verdict": "FAILED",
+  "observed": "真实工作台选取79个文件建立完整索引后，指定records目录的实际POST包含目标3个文件，同时包含records-old/create.js；目标精确边界断言失败。",
+  "assertion": "expect(basePaths.some(path => path.startsWith('src/views/records-old/'))).toBe(false)",
+  "actualBoolean": true,
+  "expectedBoolean": false,
+  "reasonConfirmedByReport": "r3实际检索报告中records-old/create.js的理由为内容与任务匹配、被高相关代码直接依赖；目标测试文件的相对create.js导入被全局同名文件匹配错误扩展。",
+  "rawRequest": "pre-fix-input.json",
+  "retrievalReport": "pre-fix-retrieval.json",
+  "artifacts": "apps/web/test-results-natural-context-rewrite-r3/natural-context-rewrite-自然增强从真实项目索引召回指定目录，显示复制与历史正文一致-desktop-chrome/",
+  "limitation": "首次r1和r2未持久化内存JSON附件，只保留失败日志及截图；这里的DTO和检索报告来自实际r3调用，不冒充首次原件。所有结果均为受控API浏览器机制证据，不是模型质量评测。"
+}

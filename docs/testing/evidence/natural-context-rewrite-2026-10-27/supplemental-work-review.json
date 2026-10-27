@@ -1,0 +1,639 @@
+{
+  "purpose": "补充离线归因；不修改冻结协议、原始FAIL或采用标准",
+  "actualNewModelCalls": 0,
+  "projectionIsNotOriginalDeliveryPass": true,
+  "records": [
+    {
+      "id": "C01_ORIGINAL_EXEC_R1",
+      "version": "ORIGINAL",
+      "originalResultSha256": "3c1f2fe69be8c9b252450d8b344716bff821d6bc9dc3797b819452375707e4b4",
+      "frozenVerdictSha256": "b8b092c0997b590ab105c929200b7c1bd55690c6c359001d0340e44ceca8918b",
+      "frozenProtocolPassed": true,
+      "diagnosisOnlyProjection": {
+        "statement": "仅排除额外文件进行业务归因；不重判原始交付协议，不代替原始完整作品验收",
+        "projectedPaths": [
+          "src/views/records/dateRules.js",
+          "src/views/records/create.js",
+          "src/views/records/import.js"
+        ],
+        "excludedPaths": [],
+        "businessAcceptance": {
+          "allowToday": true,
+          "checks": [
+            {
+              "id": "create-past",
+              "passed": true
+            },
+            {
+              "id": "create-today",
+              "passed": true
+            },
+            {
+              "id": "create-future",
+              "passed": true
+            },
+            {
+              "id": "create-invalid-calendar",
+              "passed": true
+            },
+            {
+              "id": "create-invalid-format",
+              "passed": true
+            },
+            {
+              "id": "create-keeps-other-fields",
+              "passed": true
+            },
+            {
+              "id": "import-today",
+              "passed": true
+            },
+            {
+              "id": "import-row-errors-and-partial-success",
+              "passed": true
+            },
+            {
+              "id": "empty-import",
+              "passed": true
+            },
+            {
+              "id": "cross-year-future",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "nonTargetFilesPreserved": 76
+      },
+      "extraReviews": []
+    },
+    {
+      "id": "C01_ORIGINAL_EXEC_R2",
+      "version": "ORIGINAL",
+      "originalResultSha256": "7f5bb9785cf352fea738ea58187f96d04a35d5cc7602fa7e6ece521d976489a0",
+      "frozenVerdictSha256": "79dd22b8116e9d706c178d9a2e937195cdcfd8dde31a7068b975ffa000ced3ba",
+      "frozenProtocolPassed": true,
+      "diagnosisOnlyProjection": {
+        "statement": "仅排除额外文件进行业务归因；不重判原始交付协议，不代替原始完整作品验收",
+        "projectedPaths": [
+          "src/views/records/dateRules.js",
+          "src/views/records/create.js",
+          "src/views/records/import.js"
+        ],
+        "excludedPaths": [],
+        "businessAcceptance": {
+          "allowToday": true,
+          "checks": [
+            {
+              "id": "create-past",
+              "passed": true
+            },
+            {
+              "id": "create-today",
+              "passed": true
+            },
+            {
+              "id": "create-future",
+              "passed": true
+            },
+            {
+              "id": "create-invalid-calendar",
+              "passed": true
+            },
+            {
+              "id": "create-invalid-format",
+              "passed": true
+            },
+            {
+              "id": "create-keeps-other-fields",
+              "passed": true
+            },
+            {
+              "id": "import-today",
+              "passed": true
+            },
+            {
+              "id": "import-row-errors-and-partial-success",
+              "passed": true
+            },
+            {
+              "id": "empty-import",
+              "passed": true
+            },
+            {
+              "id": "cross-year-future",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "nonTargetFilesPreserved": 76
+      },
+      "extraReviews": []
+    },
+    {
+      "id": "C01_V31_EXEC_R1",
+      "version": "31",
+      "originalResultSha256": "53a5945443db7725d6eecee25854d4f3d85064cb20a6496afef3b600270eb98d",
+      "frozenVerdictSha256": "4af1ff17e3671eb3b0fd8757b35a2d6b71a77d897e2df2df3f7b4a1ee35e45ec",
+      "frozenProtocolPassed": true,
+      "diagnosisOnlyProjection": {
+        "statement": "仅排除额外文件进行业务归因；不重判原始交付协议，不代替原始完整作品验收",
+        "projectedPaths": [
+          "src/views/records/dateRules.js",
+          "src/views/records/create.js",
+          "src/views/records/import.js"
+        ],
+        "excludedPaths": [],
+        "businessAcceptance": {
+          "allowToday": true,
+          "checks": [
+            {
+              "id": "create-past",
+              "passed": true
+            },
+            {
+              "id": "create-today",
+              "passed": true
+            },
+            {
+              "id": "create-future",
+              "passed": true
+            },
+            {
+              "id": "create-invalid-calendar",
+              "passed": true
+            },
+            {
+              "id": "create-invalid-format",
+              "passed": true
+            },
+            {
+              "id": "create-keeps-other-fields",
+              "passed": true
+            },
+            {
+              "id": "import-today",
+              "passed": true
+            },
+            {
+              "id": "import-row-errors-and-partial-success",
+              "passed": true
+            },
+            {
+              "id": "empty-import",
+              "passed": true
+            },
+            {
+              "id": "cross-year-future",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "nonTargetFilesPreserved": 76
+      },
+      "extraReviews": []
+    },
+    {
+      "id": "C01_V31_EXEC_R2",
+      "version": "31",
+      "originalResultSha256": "3e9ba8c97895484b7847baa18180a753f883fcf05025aa9992dee489955cf802",
+      "frozenVerdictSha256": "52c3114e9ba5178115514bc30b951adb7c314b02c5ede5dada25715642780b9b",
+      "frozenProtocolPassed": true,
+      "diagnosisOnlyProjection": {
+        "statement": "仅排除额外文件进行业务归因；不重判原始交付协议，不代替原始完整作品验收",
+        "projectedPaths": [
+          "src/views/records/dateRules.js",
+          "src/views/records/create.js",
+          "src/views/records/import.js"
+        ],
+        "excludedPaths": [],
+        "businessAcceptance": {
+          "allowToday": true,
+          "checks": [
+            {
+              "id": "create-past",
+              "passed": true
+            },
+            {
+              "id": "create-today",
+              "passed": true
+            },
+            {
+              "id": "create-future",
+              "passed": true
+            },
+            {
+              "id": "create-invalid-calendar",
+              "passed": true
+            },
+            {
+              "id": "create-invalid-format",
+              "passed": true
+            },
+            {
+              "id": "create-keeps-other-fields",
+              "passed": true
+            },
+            {
+              "id": "import-today",
+              "passed": true
+            },
+            {
+              "id": "import-row-errors-and-partial-success",
+              "passed": true
+            },
+            {
+              "id": "empty-import",
+              "passed": true
+            },
+            {
+              "id": "cross-year-future",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "nonTargetFilesPreserved": 76
+      },
+      "extraReviews": []
+    },
+    {
+      "id": "C01_V45_EXEC_R1",
+      "version": "45",
+      "originalResultSha256": "783a3c5544f8d02a5d10e40be35b9770e6fc2f109bdbc55d0f9f2729540a9a39",
+      "frozenVerdictSha256": "e7888934c9e78db80923f2c01e5940442855e8fe7916ab4d11ec0aebdc0627d3",
+      "frozenProtocolPassed": false,
+      "diagnosisOnlyProjection": {
+        "statement": "仅排除额外文件进行业务归因；不重判原始交付协议，不代替原始完整作品验收",
+        "projectedPaths": [
+          "src/views/records/dateRules.js"
+        ],
+        "excludedPaths": [
+          "src/views/records/dateRules.spec.js"
+        ],
+        "businessAcceptance": {
+          "allowToday": true,
+          "checks": [
+            {
+              "id": "create-past",
+              "passed": true
+            },
+            {
+              "id": "create-today",
+              "passed": true
+            },
+            {
+              "id": "create-future",
+              "passed": true
+            },
+            {
+              "id": "create-invalid-calendar",
+              "passed": true
+            },
+            {
+              "id": "create-invalid-format",
+              "passed": true
+            },
+            {
+              "id": "create-keeps-other-fields",
+              "passed": true
+            },
+            {
+              "id": "import-today",
+              "passed": true
+            },
+            {
+              "id": "import-row-errors-and-partial-success",
+              "passed": true
+            },
+            {
+              "id": "empty-import",
+              "passed": true
+            },
+            {
+              "id": "cross-year-future",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "nonTargetFilesPreserved": 76
+      },
+      "extraReviews": [
+        {
+          "path": "src/views/records/dateRules.spec.js",
+          "sha256": "e319bd1e1ff27ee281ebe095753c407b9b2a3870d8e475ea6d47de4044b496ed",
+          "allowedByFrozenWorkProtocol": false,
+          "relation": "目标模块的日期校验回归测试",
+          "execution": "仅支持本次实际使用的同步node:test与strict断言；由隔离realm实现，不加载Node宿主测试模块",
+          "preservesOriginalTestTextUnderLineEndingNormalization": true,
+          "runs": {
+            "originalBaseline": {
+              "passed": false,
+              "checks": [
+                {
+                  "name": "新增保留有效日历日期和其他字段",
+                  "passed": true
+                },
+                {
+                  "name": "导入按行返回无效日历日期，保留其他有效行",
+                  "passed": true
+                },
+                {
+                  "name": "新增拒绝晚于今天的日期",
+                  "passed": false,
+                  "message": "deep strict equality mismatch"
+                },
+                {
+                  "name": "导入中未来日期行报错，其他有效行保留",
+                  "passed": false,
+                  "message": "deep strict equality mismatch"
+                }
+              ]
+            },
+            "projectedActualBusiness": {
+              "passed": true,
+              "checks": [
+                {
+                  "name": "新增保留有效日历日期和其他字段",
+                  "passed": true
+                },
+                {
+                  "name": "导入按行返回无效日历日期，保留其他有效行",
+                  "passed": true
+                },
+                {
+                  "name": "新增拒绝晚于今天的日期",
+                  "passed": true
+                },
+                {
+                  "name": "导入中未来日期行报错，其他有效行保留",
+                  "passed": true
+                }
+              ]
+            },
+            "handwrittenCorrectControl": {
+              "passed": true,
+              "checks": [
+                {
+                  "name": "新增保留有效日历日期和其他字段",
+                  "passed": true
+                },
+                {
+                  "name": "导入按行返回无效日历日期，保留其他有效行",
+                  "passed": true
+                },
+                {
+                  "name": "新增拒绝晚于今天的日期",
+                  "passed": true
+                },
+                {
+                  "name": "导入中未来日期行报错，其他有效行保留",
+                  "passed": true
+                }
+              ]
+            },
+            "omittedImportValidationControl": {
+              "passed": false,
+              "checks": [
+                {
+                  "name": "新增保留有效日历日期和其他字段",
+                  "passed": true
+                },
+                {
+                  "name": "导入按行返回无效日历日期，保留其他有效行",
+                  "passed": true
+                },
+                {
+                  "name": "新增拒绝晚于今天的日期",
+                  "passed": true
+                },
+                {
+                  "name": "导入中未来日期行报错，其他有效行保留",
+                  "passed": false,
+                  "message": "deep strict equality mismatch"
+                }
+              ]
+            },
+            "excludedTodayControl": {
+              "passed": false,
+              "checks": [
+                {
+                  "name": "新增保留有效日历日期和其他字段",
+                  "passed": true
+                },
+                {
+                  "name": "导入按行返回无效日历日期，保留其他有效行",
+                  "passed": true
+                },
+                {
+                  "name": "新增拒绝晚于今天的日期",
+                  "passed": true
+                },
+                {
+                  "name": "导入中未来日期行报错，其他有效行保留",
+                  "passed": false,
+                  "message": "deep strict equality mismatch"
+                }
+              ]
+            }
+          },
+          "demonstratedRegressionValue": true
+        }
+      ]
+    },
+    {
+      "id": "C01_V45_EXEC_R2",
+      "version": "45",
+      "originalResultSha256": "2a8f02d5de29895c2d17cf6f4553e43d9d6cefefae5057495b3ad445b2db5d9d",
+      "frozenVerdictSha256": "1654e5a00104388ffa2587b3192c631925780617c79692aa31da2132c47d5c85",
+      "frozenProtocolPassed": false,
+      "diagnosisOnlyProjection": {
+        "statement": "仅排除额外文件进行业务归因；不重判原始交付协议，不代替原始完整作品验收",
+        "projectedPaths": [
+          "src/views/records/dateRules.js"
+        ],
+        "excludedPaths": [
+          "src/views/records/dateRules.spec.js"
+        ],
+        "businessAcceptance": {
+          "allowToday": true,
+          "checks": [
+            {
+              "id": "create-past",
+              "passed": true
+            },
+            {
+              "id": "create-today",
+              "passed": true
+            },
+            {
+              "id": "create-future",
+              "passed": true
+            },
+            {
+              "id": "create-invalid-calendar",
+              "passed": true
+            },
+            {
+              "id": "create-invalid-format",
+              "passed": true
+            },
+            {
+              "id": "create-keeps-other-fields",
+              "passed": true
+            },
+            {
+              "id": "import-today",
+              "passed": true
+            },
+            {
+              "id": "import-row-errors-and-partial-success",
+              "passed": true
+            },
+            {
+              "id": "empty-import",
+              "passed": true
+            },
+            {
+              "id": "cross-year-future",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "nonTargetFilesPreserved": 76
+      },
+      "extraReviews": [
+        {
+          "path": "src/views/records/dateRules.spec.js",
+          "sha256": "a3efa5c5d9e90b2bbf072f999504045842c34e86bce47fedeb94f6487bf1c052",
+          "allowedByFrozenWorkProtocol": false,
+          "relation": "目标模块的日期校验回归测试",
+          "execution": "仅支持本次实际使用的同步node:test与strict断言；由隔离realm实现，不加载Node宿主测试模块",
+          "preservesOriginalTestTextUnderLineEndingNormalization": true,
+          "runs": {
+            "originalBaseline": {
+              "passed": false,
+              "checks": [
+                {
+                  "name": "新增保留有效日历日期和其他字段",
+                  "passed": true
+                },
+                {
+                  "name": "导入按行返回无效日历日期，保留其他有效行",
+                  "passed": true
+                },
+                {
+                  "name": "新增拒绝晚于今天的调查日期",
+                  "passed": false,
+                  "message": "deep strict equality mismatch"
+                },
+                {
+                  "name": "导入中未来日期行报错，其他有效行保留",
+                  "passed": false,
+                  "message": "deep strict equality mismatch"
+                }
+              ]
+            },
+            "projectedActualBusiness": {
+              "passed": true,
+              "checks": [
+                {
+                  "name": "新增保留有效日历日期和其他字段",
+                  "passed": true
+                },
+                {
+                  "name": "导入按行返回无效日历日期，保留其他有效行",
+                  "passed": true
+                },
+                {
+                  "name": "新增拒绝晚于今天的调查日期",
+                  "passed": true
+                },
+                {
+                  "name": "导入中未来日期行报错，其他有效行保留",
+                  "passed": true
+                }
+              ]
+            },
+            "handwrittenCorrectControl": {
+              "passed": true,
+              "checks": [
+                {
+                  "name": "新增保留有效日历日期和其他字段",
+                  "passed": true
+                },
+                {
+                  "name": "导入按行返回无效日历日期，保留其他有效行",
+                  "passed": true
+                },
+                {
+                  "name": "新增拒绝晚于今天的调查日期",
+                  "passed": true
+                },
+                {
+                  "name": "导入中未来日期行报错，其他有效行保留",
+                  "passed": true
+                }
+              ]
+            },
+            "omittedImportValidationControl": {
+              "passed": false,
+              "checks": [
+                {
+                  "name": "新增保留有效日历日期和其他字段",
+                  "passed": true
+                },
+                {
+                  "name": "导入按行返回无效日历日期，保留其他有效行",
+                  "passed": true
+                },
+                {
+                  "name": "新增拒绝晚于今天的调查日期",
+                  "passed": true
+                },
+                {
+                  "name": "导入中未来日期行报错，其他有效行保留",
+                  "passed": false,
+                  "message": "deep strict equality mismatch"
+                }
+              ]
+            },
+            "excludedTodayControl": {
+              "passed": false,
+              "checks": [
+                {
+                  "name": "新增保留有效日历日期和其他字段",
+                  "passed": true
+                },
+                {
+                  "name": "导入按行返回无效日历日期，保留其他有效行",
+                  "passed": true
+                },
+                {
+                  "name": "新增拒绝晚于今天的调查日期",
+                  "passed": true
+                },
+                {
+                  "name": "导入中未来日期行报错，其他有效行保留",
+                  "passed": false,
+                  "message": "deep strict equality mismatch"
+                }
+              ]
+            }
+          },
+          "demonstratedRegressionValue": true
+        }
+      ]
+    }
+  ],
+  "interpretation": {
+    "business": "业务投影结果仅说明实际返回的业务修改是否满足独立行为检查。",
+    "tests": "只有原基线失败、正确实现通过、导入遗漏控制失败，才证明新增测试具有本例可观察的回归价值。",
+    "protocol": "额外测试与任务相关也不改变未遵守三业务文件写入白名单的事实。",
+    "limits": "同一合成开发题、每臂两次；不能推导跨任务稳定收益、真人修改耗时或正式采用结论。"
+  }
+}

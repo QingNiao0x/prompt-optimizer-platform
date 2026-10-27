@@ -91,8 +91,13 @@ class NicknameProfileDatabaseTest {
     void phoneRegistrationStoresTheNicknameInTheSameAccountTransaction() {
         var challenges = session.getMapper(SmsChallengeMapper.class);
         UUID id = UUID.randomUUID(); OffsetDateTime now = OffsetDateTime.now();
-        challenges.insert(new SmsChallenge(id, SmsPurpose.REGISTER, "phone-hash", "browser-hash", null, "synthetic", SmsChallengeState.VERIFIED,
+        challenges.insert(new SmsChallenge(id, SmsPurpose.REGISTER, "phone-hash", "browser-hash", null, "synthetic", SmsChallengeState.SENDING,
                 0, null, now.plusMinutes(5), null, null, now));
+        // INSERT固定初态SENDING；按正式迁移完成核验，不能把DTO中的状态误当作数据库已验证。
+        UUID token = UUID.randomUUID();
+        assertThat(challenges.markSent(id)).isEqualTo(1);
+        assertThat(challenges.reserve(id, token)).isEqualTo(1);
+        assertThat(challenges.verified(id, token, true)).isEqualTo(1);
         var transactions = new SmsAccountTransactions(challenges, session.getMapper(SmsAccountMapper.class), users, identities, provision, mock(PasswordEncoder.class));
         var outcome = transactions.complete(id, SmsPurpose.REGISTER, "+8613800000000", "phone-hash", "browser-hash", null, "synthetic-hash", null, "星河🌟");
         outcome.requireSuccess();

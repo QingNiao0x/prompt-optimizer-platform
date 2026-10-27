@@ -1,0 +1,254 @@
+{
+  "syntheticOnly": true,
+  "provenance": "仅C01/N01原始项目题有独立真实UI捕获，本bundle新增题目不冒称UI评测。所有验收卡仅供评估，不发送模型。",
+  "callBoundary": {
+    "taskMaximum": 200,
+    "previousActual": 158,
+    "maximumNewAcrossAllStages": 42,
+    "phaseLimitsAcrossAllStages": {
+      "GENERATION": 24,
+      "PLAN": 6,
+      "EXECUTION": 12
+    },
+    "qualityRetriesAllowed": false,
+    "executions": 0,
+    "paidReviews": 0
+  },
+  "nextStep": "初始作业仅准备，不在works阶段运行中启动第二个9013。P02真实Plan返回后使用bind-validation-answer.mjs，另建validation-confirmed阶段冻结回答后生成，不能改写本阶段作业。",
+  "cases": [
+    {
+      "id": "V01",
+      "family": "read-understand-wait",
+      "rawPrompt": "请先阅读并理解@synthetic-survey-workspace/src/views/records 的现有实现，然后等待我的下一步需求；当前不要修改代码，也不要额外交付说明文档。",
+      "origin": "合法API DTO脚本构造；V01仅复用C01实际UI捕获的项目材料，当前需求本身未经UI捕获。P01/P02按Plan协议无文件正文。",
+      "contextDescription": "",
+      "files": [
+        {
+          "path": "src/views/records/dateRules.js#chunk-1",
+          "content": "/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n",
+          "language": "javascript"
+        },
+        {
+          "path": "src/views/records/import.js#chunk-1",
+          "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n",
+          "language": "javascript"
+        },
+        {
+          "path": "src/views/records/create.js#chunk-1",
+          "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n",
+          "language": "javascript"
+        },
+        {
+          "path": "src/views/records/dateRules.spec.js#chunk-1",
+          "content": "import assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n",
+          "language": "javascript"
+        },
+        {
+          "path": "package.json#chunk-1",
+          "content": "{\n  \"name\": \"synthetic-survey-workspace\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": { \"test\": \"node --test src/views/records/dateRules.spec.js\" }\n}\n",
+          "language": "json"
+        }
+      ],
+      "executorMaterials": [],
+      "acceptance": [
+        "保留阅读、理解和等待，以及当前不修改代码和不额外交付文档的明确限制。",
+        "45实际完成BODY_GENERATION；充分内容允许持平，不能把持平计为质量收益。",
+        "使用项目材料帮助表达，但最终正文不倾倒整份源码，不新增实现任务或准备报告。"
+      ]
+    },
+    {
+      "id": "V02",
+      "family": "sufficient-format",
+      "rawPrompt": "只输出三行，第一行1，第二行2，第三行3；不要添加任何其他内容。",
+      "origin": "合法API DTO脚本构造；V01仅复用C01实际UI捕获的项目材料，当前需求本身未经UI捕获。P01/P02按Plan协议无文件正文。",
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": [],
+      "acceptance": [
+        "保留只输出三行1、2、3且无其他内容的下游交付要求。",
+        "增强阶段交付的是可执行提示词，不能直接完成下游任务输出三个数字。",
+        "45实际执行正文生成，允许少改或保持原文；不添加前言、解释、额外格式或交付物。"
+      ]
+    },
+    {
+      "id": "V03",
+      "family": "ordinary-public-query",
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "origin": "合法API DTO脚本构造；V01仅复用C01实际UI捕获的项目材料，当前需求本身未经UI捕获。P01/P02按Plan协议无文件正文。",
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": [],
+      "acceptance": [
+        "继续指导下游查询职业和行业，提供对理解结果有用的组织和执行表达。",
+        "没有附件不等于现实没有资料；公开检索和普通整理由AI承担，不变成先补资料的问卷。",
+        "统计口径和来源只在支撑结果时说明，不机械取代职业、行业及实际应用内容。",
+        "不凭空确定全球统一排名、虚构数据或给用户新增未经确认的研究限制。"
+      ]
+    },
+    {
+      "id": "P01",
+      "family": "plan-no-important-unknown",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：调查时间不能超过今天。",
+      "origin": "合法API DTO脚本构造；V01仅复用C01实际UI捕获的项目材料，当前需求本身未经UI捕获。P01/P02按Plan协议无文件正文。",
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": [],
+      "acceptance": [
+        "调查时间不能超过今天已经清楚地包含今天，不再把这一边界变成待确认问题。",
+        "Plan应零题；定位代码、选择实现方式和普通检索属于AI受托工作。",
+        "本Plan请求没有文件正文；不能将增强阶段未见材料判定为用户现实没有材料。"
+      ]
+    },
+    {
+      "id": "P02",
+      "family": "plan-user-owned-boundary-conflict",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制。业务要求一处写“只能填写当日之前的日期”，另一处写“可以填写今天，但不超过今日”；这两处边界尚未统一，是否允许填写今天由我确认。",
+      "origin": "合法API DTO脚本构造；V01仅复用C01实际UI捕获的项目材料，当前需求本身未经UI捕获。P01/P02按Plan协议无文件正文。",
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": [],
+      "acceptance": [
+        "识别今天是否允许这一真正影响结果、且用户保留决定权的冲突。",
+        "只询问这一关键日期边界；不将普通实现、材料读取或检索变成额外前置问题。",
+        "不能把推荐选项写成用户已确认；保留真实Plan会话、题干、题号和期限供后续回答。"
+      ]
+    }
+  ],
+  "jobs": [
+    {
+      "id": "V01_V45_GEN",
+      "phase": "GENERATION",
+      "caseId": "V01",
+      "version": "45",
+      "inputOrigin": "SCRIPT_CONSTRUCTED_LEGAL_API_DTO",
+      "approvedEnhancementInput": {
+        "rawPrompt": "请先阅读并理解@synthetic-survey-workspace/src/views/records 的现有实现，然后等待我的下一步需求；当前不要修改代码，也不要额外交付说明文档。",
+        "modelId": "deepseek:deepseek-flash",
+        "context": {
+          "customDescription": "",
+          "files": [
+            {
+              "path": "src/views/records/dateRules.js#chunk-1",
+              "content": "/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n",
+              "language": "javascript"
+            },
+            {
+              "path": "src/views/records/import.js#chunk-1",
+              "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n",
+              "language": "javascript"
+            },
+            {
+              "path": "src/views/records/create.js#chunk-1",
+              "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n",
+              "language": "javascript"
+            },
+            {
+              "path": "src/views/records/dateRules.spec.js#chunk-1",
+              "content": "import assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n",
+              "language": "javascript"
+            },
+            {
+              "path": "package.json#chunk-1",
+              "content": "{\n  \"name\": \"synthetic-survey-workspace\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": { \"test\": \"node --test src/views/records/dateRules.spec.js\" }\n}\n",
+              "language": "json"
+            }
+          ]
+        },
+        "enhancement": {
+          "templateCode": "AUTO",
+          "includeConversationHistory": false,
+          "includePermissionBoundaries": true,
+          "promptFormat": "COMPACT"
+        },
+        "conversationHistory": [],
+        "permissionPolicy": {
+          "protectedPaths": [],
+          "requireConfirmationFor": []
+        },
+        "planConfirmation": null
+      }
+    },
+    {
+      "id": "V02_V45_GEN",
+      "phase": "GENERATION",
+      "caseId": "V02",
+      "version": "45",
+      "inputOrigin": "SCRIPT_CONSTRUCTED_LEGAL_API_DTO",
+      "approvedEnhancementInput": {
+        "rawPrompt": "只输出三行，第一行1，第二行2，第三行3；不要添加任何其他内容。",
+        "modelId": "deepseek:deepseek-flash",
+        "context": {
+          "customDescription": "",
+          "files": []
+        },
+        "enhancement": {
+          "templateCode": "AUTO",
+          "includeConversationHistory": false,
+          "includePermissionBoundaries": true,
+          "promptFormat": "COMPACT"
+        },
+        "conversationHistory": [],
+        "permissionPolicy": {
+          "protectedPaths": [],
+          "requireConfirmationFor": []
+        },
+        "planConfirmation": null
+      }
+    },
+    {
+      "id": "V03_V45_GEN",
+      "phase": "GENERATION",
+      "caseId": "V03",
+      "version": "45",
+      "inputOrigin": "SCRIPT_CONSTRUCTED_LEGAL_API_DTO",
+      "approvedEnhancementInput": {
+        "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+        "modelId": "deepseek:deepseek-flash",
+        "context": {
+          "customDescription": "",
+          "files": []
+        },
+        "enhancement": {
+          "templateCode": "AUTO",
+          "includeConversationHistory": false,
+          "includePermissionBoundaries": true,
+          "promptFormat": "COMPACT"
+        },
+        "conversationHistory": [],
+        "permissionPolicy": {
+          "protectedPaths": [],
+          "requireConfirmationFor": []
+        },
+        "planConfirmation": null
+      }
+    },
+    {
+      "id": "P01_V45_PLAN",
+      "phase": "PLAN",
+      "caseId": "P01",
+      "version": "45",
+      "inputOrigin": "SCRIPT_CONSTRUCTED_LEGAL_API_DTO",
+      "approvedEnhancementInput": {
+        "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：调查时间不能超过今天。",
+        "modelId": "deepseek:deepseek-flash",
+        "contextDescription": "",
+        "conversationHistory": [],
+        "planningContext": null
+      }
+    },
+    {
+      "id": "P02_V45_PLAN",
+      "phase": "PLAN",
+      "caseId": "P02",
+      "version": "45",
+      "inputOrigin": "SCRIPT_CONSTRUCTED_LEGAL_API_DTO",
+      "approvedEnhancementInput": {
+        "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制。业务要求一处写“只能填写当日之前的日期”，另一处写“可以填写今天，但不超过今日”；这两处边界尚未统一，是否允许填写今天由我确认。",
+        "modelId": "deepseek:deepseek-flash",
+        "contextDescription": "",
+        "conversationHistory": [],
+        "planningContext": null
+      }
+    }
+  ]
+}

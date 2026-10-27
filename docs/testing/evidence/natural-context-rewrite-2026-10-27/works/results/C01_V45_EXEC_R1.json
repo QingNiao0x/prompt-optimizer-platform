@@ -1,0 +1,24 @@
+{
+  "id": "C01_V45_EXEC_R1",
+  "phase": "EXECUTION",
+  "version": "45",
+  "caseId": "C01",
+  "status": 200,
+  "body": {
+    "requestId": "C01_V45_EXEC_R1",
+    "data": {
+      "usage": {
+        "prompt_tokens": 1346,
+        "completion_tokens": 698,
+        "total_tokens": 2044,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1346
+      },
+      "finishReason": "stop",
+      "content": "{\"files\":[{\"path\":\"src/views/records/dateRules.js\",\"content\":\"/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\\nexport function validateSurveyDate(value, today) {\\n  if (typeof value !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(value)) return 'INVALID_DATE';\\n  const parsed = new Date(`${value}T00:00:00.000Z`);\\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\\n  if (typeof today === 'string' && value > today) return 'FUTURE_DATE';\\n  return null;\\n}\\n\"},{\"path\":\"src/views/records/dateRules.spec.js\",\"content\":\"import assert from 'node:assert/strict';\\nimport { test } from 'node:test';\\nimport { createSurvey } from './create.js';\\nimport { importSurveys } from './import.js';\\n\\ntest('新增保留有效日历日期和其他字段', () => {\\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\\n});\\n\\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\\n  });\\n});\\n\\ntest('新增拒绝晚于今天的日期', () => {\\n  const input = { id: 'synthetic-b', surveyDate: '2026-10-28', category: 'sample' };\\n  assert.deepEqual(createSurvey(input, '2026-10-27'), {\\n    ok: false, fieldErrors: { surveyDate: 'FUTURE_DATE' },\\n  });\\n});\\n\\ntest('导入中未来日期行报错，其他有效行保留', () => {\\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\\n  const third = { id: 'synthetic-c', surveyDate: '2026-10-27' };\\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-10-28' }, third], '2026-10-27'), {\\n    inserted: [first, third],\\n    errors: [{ row: 2, field: 'surveyDate', code: 'FUTURE_DATE' }],\\n  });\\n});\\n\"}]}"
+    }
+  }
+}

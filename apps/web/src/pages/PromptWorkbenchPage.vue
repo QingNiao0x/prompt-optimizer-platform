@@ -131,6 +131,15 @@ const contextWarnings = computed(() => Array.from(new Set([
   ...(contextSnapshot.value?.warnings ?? []),
   ...(indexErrorMessage.value ? [indexErrorMessage.value] : []),
   ...(contextCleanupWarning.value ? [contextCleanupWarning.value] : []),
+  ...(contextRetrieval.value?.references?.flatMap((reference) => {
+    if (reference.status === 'NO_MATCHING_CHUNKS') return [
+      `本次索引未召回引用路径 ${reference.reference} 的可用片段；这不代表该路径不存在。`,
+    ];
+    if (reference.status === 'OUTSIDE_SELECTION_BUDGET') return [
+      `已找到引用路径 ${reference.reference}，但本次上下文预算未包含其片段。`,
+    ];
+    return [];
+  }) ?? []),
 ])));
 const hasContextSource = computed(() => files.value.length > 0
   || projectIndex.value?.status === 'READY');

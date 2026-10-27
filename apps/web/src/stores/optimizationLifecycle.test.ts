@@ -61,6 +61,23 @@ describe('P0 task lifecycle regressions', () => {
     vi.mocked(optimizePrompt).mockResolvedValue({ requestId: 'b', data: result('B 结果') });
   });
 
+  it.each([false, true])('retains referenced-path diagnostics after the final transmission budget (full=%s)', async full => {
+    const store = useOptimizationStore();
+    store.setProjectIndex(readyIndex());
+    if (full) store.addFile({ path: 'manual.txt', language: 'text', content: 'M'.repeat(120_000) });
+    vi.mocked(retrieveProjectContextWithReport).mockResolvedValueOnce({
+      files: [{ path: 'src/target.ts#chunk-1', language: 'typescript', content: 'export const target = 1;' }],
+      selections: [], totalCharacters: 24,
+      references: [{ reference: 'src/target.ts', matchedPaths: ['src/target.ts'], selectedPaths: ['src/target.ts'], status: 'FOUND' },
+        { reference: 'src/missing', matchedPaths: [], selectedPaths: [], status: 'NO_MATCHING_CHUNKS' }],
+    });
+    await store.prepareContextFiles('请处理 @src/target.ts 与 @src/missing');
+    expect(store.contextRetrieval?.references?.[0]).toMatchObject({
+      selectedPaths: full ? [] : ['src/target.ts'], status: full ? 'OUTSIDE_SELECTION_BUDGET' : 'FOUND',
+    });
+    expect(store.contextRetrieval?.references?.[1]?.status).toBe('NO_MATCHING_CHUNKS');
+  });
+
   it.each(['attachment', 'folder', 'index'] as const)(
     'A attachments cannot reappear after loading B and adding a new %s', async mode => {
     const store = useOptimizationStore();

@@ -1,0 +1,61 @@
+{
+  "authorizedMaximum": 200,
+  "previousActualCalls": 158,
+  "actualNewCalls": 24,
+  "actualTaskCalls": 182,
+  "remainingUnused": 18,
+  "newPhases": {
+    "GENERATION": 14,
+    "EXECUTION": 6,
+    "PLAN": 4
+  },
+  "combinedPhases": {
+    "GENERATION": 72,
+    "PLAN": 8,
+    "EXECUTION": 54,
+    "REVIEW": 48
+  },
+  "stages": [
+    {
+      "stage": "live",
+      "actualCalls": 6,
+      "phases": {
+        "GENERATION": 6
+      },
+      "closed": true
+    },
+    {
+      "stage": "works",
+      "actualCalls": 6,
+      "phases": {
+        "EXECUTION": 6
+      },
+      "closed": true
+    },
+    {
+      "stage": "validation",
+      "actualCalls": 10,
+      "phases": {
+        "GENERATION": 6,
+        "PLAN": 4
+      },
+      "closed": true
+    },
+    {
+      "stage": "validation-confirmed",
+      "actualCalls": 2,
+      "phases": {
+        "GENERATION": 2
+      },
+      "closed": true
+    }
+  ],
+  "qualityRetries": 0,
+  "paidReviewCallsThisRound": 0,
+  "protocolRepairCallsThisRound": 0,
+  "counting": "Every upstream scope/body/Plan/execution attempt is counted; old158 carry forward once; no source/account/cookie file is counted as a model call.",
+  "defaultVersion": "31",
+  "candidateVersion": "45",
+  "candidateAdopted": false,
+  "productionDeployed": false
+}

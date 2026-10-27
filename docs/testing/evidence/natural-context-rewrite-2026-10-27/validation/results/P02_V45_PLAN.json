@@ -1,0 +1,52 @@
+{
+  "id": "P02_V45_PLAN",
+  "phase": "PLAN",
+  "version": "45",
+  "caseId": "P02",
+  "status": 200,
+  "body": {
+    "requestId": "P02_V45_PLAN",
+    "data": {
+      "summary": "原任务是在重点记录模块的新增和导入功能中增加调查时间限制，但两处业务要求对是否允许填写今天存在冲突，且用户明确保留该决定，因此需先确认边界口径，再据此给出实现方案。",
+      "questions": [
+        {
+          "id": "q1",
+          "question": "调查时间是否允许填写今天？",
+          "hint": "该边界由用户明确保留确认，不同答案会直接改变新增与导入功能的校验上限和提示文案，并决定两处冲突业务要求的统一口径。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "allow_today",
+              "label": "允许填写今天",
+              "description": "调查时间上限为今日（含今日），统一为“可以填写今天，但不超过今日”",
+              "answer": "允许填写今天，调查时间不得超过今日（含今日）",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "before_today",
+              "label": "不允许填写今天",
+              "description": "调查时间上限为昨日（不含今日），统一为“只能填写当日之前的日期”",
+              "answer": "不允许填写今天，调查时间必须早于今日",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "AUTO",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 5627,
+      "planId": "3b0399ff-ab13-4242-b177-c4791f2a484e",
+      "planningContext": null,
+      "expiresAt": "2026-10-26T20:48:52.917248Z"
+    }
+  }
+}

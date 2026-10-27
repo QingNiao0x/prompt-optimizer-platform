@@ -342,7 +342,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                         || NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION.equals(input.strategyVersion())
                         || NaturalPromptContentQualityInstructions.VERSION.equals(input.strategyVersion())
                         || NaturalPromptGroundedCompletionInstructions.VERSION.equals(input.strategyVersion())
-                        || NaturalPromptMultidimensionalInstructions.VERSION.equals(input.strategyVersion()))
+                        || NaturalPromptMultidimensionalInstructions.VERSION.equals(input.strategyVersion())
+                        || NaturalPromptContextualRewriteInstructions.VERSION.equals(input.strategyVersion()))
                         ? scope.resolveAdvisory(input) : scope.resolve(input), metadata);
             } catch (IOException | IllegalArgumentException failure) {
                 throw invalid("任务动作与回应边界协议无效");
@@ -526,7 +527,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         try {
             var payload = json.valueToTree(input);
             if ((NaturalPromptMaterialInstructions.VERSION.equals(input.strategyVersion())
-                    || usesAdvisoryScope(input.strategyVersion()))
+                    || usesAdvisoryScope(input.strategyVersion())
+                    || NaturalPromptContextualRewriteInstructions.VERSION.equals(input.strategyVersion()))
                     && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode layered) {
                 layered.putObject("inputBoundary").put("stage", "PROMPT_OPTIMIZATION")
                         .put("contextMeaning", "本次增强可见的材料，不是下游执行现场的完整资料或工具清单");

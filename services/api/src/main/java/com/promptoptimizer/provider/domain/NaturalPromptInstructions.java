@@ -55,6 +55,7 @@ public final class NaturalPromptInstructions {
             case NaturalPromptContentQualityInstructions.VERSION -> NaturalPromptContentQualityInstructions.ENHANCE;
             case NaturalPromptGroundedCompletionInstructions.VERSION -> NaturalPromptGroundedCompletionInstructions.ENHANCE;
             case NaturalPromptMultidimensionalInstructions.VERSION -> NaturalPromptMultidimensionalInstructions.ENHANCE;
+            case NaturalPromptContextualRewriteInstructions.VERSION -> NaturalPromptContextualRewriteInstructions.ENHANCE;
             case NaturalPromptCompletionGuidance.GUIDANCE_VERSION -> NaturalPromptCompletionGuidance.ENHANCE;
             case NaturalPromptCompletionGuidance.EXEMPLAR_VERSION -> NaturalPromptCompletionGuidance.ENHANCE_WITH_DEMONSTRATIONS;
             case NaturalPromptActionGuidance.GUIDANCE_VERSION -> NaturalPromptActionGuidance.ENHANCE;
@@ -99,6 +100,7 @@ public final class NaturalPromptInstructions {
             case NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION, NaturalPromptContentQualityInstructions.VERSION,
                     NaturalPromptGroundedCompletionInstructions.VERSION, NaturalPromptMultidimensionalInstructions.VERSION
                     -> NaturalPromptRoutingRepairInstructions.OWNED_PLAN;
+            case NaturalPromptContextualRewriteInstructions.VERSION -> NaturalPromptContextualRewriteInstructions.PLAN;
             // 本轮只检验正文补全，不同时改变提问策略；已绑定题答仍进入同一生成和保护路径。
             case NaturalPromptCompletionGuidance.GUIDANCE_VERSION, NaturalPromptCompletionGuidance.EXEMPLAR_VERSION -> PLAN;
             case NaturalPromptActionGuidance.GUIDANCE_VERSION, NaturalPromptActionGuidance.EXEMPLAR_VERSION -> PLAN;

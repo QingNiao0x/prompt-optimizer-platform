@@ -331,6 +331,15 @@ export const useOptimizationStore = defineStore('optimization', () => {
           (total, file) => total + file.content.length,
           0,
         ),
+        // 手动附件优先的最终预算可能再次排除索引片段；引用状态应反映实际发送范围。
+        references: retrieval.references?.map((reference) => {
+          const transmittedSourcePaths = new Set(preparedFiles.map((file) =>
+            normalizePath(file.path.split('#chunk-')[0] ?? file.path)));
+          const selectedPaths = reference.matchedPaths.filter((path) => transmittedSourcePaths.has(normalizePath(path)));
+          return { ...reference, selectedPaths,
+            status: reference.matchedPaths.length === 0 ? 'NO_MATCHING_CHUNKS'
+              : selectedPaths.length === 0 ? 'OUTSIDE_SELECTION_BUDGET' : 'FOUND' };
+        }),
       };
     } else {
       contextRetrieval.value = undefined;

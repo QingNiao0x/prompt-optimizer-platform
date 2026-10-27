@@ -1,0 +1,12 @@
+请在重点记录模块 src/views/records 的新增和导入功能中增加调查时间限制：调查时间不能超过今天。
+
+当前两个入口共用 src/views/records/dateRules.js 中的 validateSurveyDate(value, today) 做日历日期校验，create.js 的 createSurvey 在失败时返回 { ok: false, fieldErrors: { surveyDate: code } }，import.js 的 importSurveys 按行返回 { inserted, errors }，无效日期只影响所属行。请在该共用校验中补充“晚于今天”的判断，使新增和导入同时生效，并保持现有返回结构和按行部分成功的语义不变。
+
+实现要求：
+- 在 validateSurveyDate 中，当日期格式合法但 value 晚于 today 时返回一个新的错误代码（如 FUTURE_DATE），与现有 INVALID_DATE 区分；格式非法或日历日期不存在的判断保持原样。
+- 比较按 YYYY-MM-DD 字符串或等价的日期比较进行，today 由调用方传入，不在此处读取系统时间。
+- 新增入口：未来日期返回 ok: false，fieldErrors.surveyDate 为该新错误代码；有效日期仍原样保留其他字段。
+- 导入入口：未来日期只让该行进入 errors（含 row、field: 'surveyDate'、code），其他有效行照常 inserted。
+- 在 src/views/records/dateRules.spec.js 中补充测试：新增未来日期被拒、导入中未来日期行报错且其他行保留，并确保原有测试仍通过（npm test）。
+
+完成后简要说明改了哪些文件、新增的错误代码及测试结果。

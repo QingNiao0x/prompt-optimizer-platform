@@ -5,6 +5,7 @@ import type {
   ProjectIndexSummary,
 } from './projectIndexer';
 import type { DirectoryHandleLike } from './fileSystemDirectorySource';
+import { referencedPathVariants } from './projectPathReferences';
 
 const DATABASE_NAME = 'prompt-optimizer-project-index';
 const DATABASE_VERSION = 3;
@@ -174,16 +175,42 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     if (paths.length === 0 || limit <= 0) {
       return [];
     }
+    const project = await this.findProject(projectId);
+    const variants = Array.from(new Set(paths.flatMap((path) => referencedPathVariants(path, project?.rootName))));
+    if (variants.length === 0) return [];
+    // 先从文件元数据解析文件/目录，不扫描源码全文，也不让普通词候选名额挤掉明确目标。
+    const fileTransaction = await this.createTransaction(FILE_STORE, 'readonly');
+    const fileCompletion = transactionComplete(fileTransaction);
+    const fileIndex = fileTransaction.objectStore(FILE_STORE).index('projectPath');
+    const fileRequests = variants.flatMap((path) => [
+      requestResult<IndexedProjectFile[]>(fileIndex.getAll(IDBKeyRange.only([projectId, path]), 1)),
+      requestResult<IndexedProjectFile[]>(fileIndex.getAll(
+        IDBKeyRange.bound([projectId, `${path}/`], [projectId, `${path}/\uffff`]), limit,
+      )),
+    ]);
+    const fileGroups = await Promise.all(fileRequests);
+    await fileCompletion;
+    const resolvedPaths = Array.from(new Set(fileGroups.flat().map((file) => file.path))).slice(0, limit);
+    if (resolvedPaths.length === 0) return [];
     const transaction = await this.createTransaction(CHUNK_STORE, 'readonly');
     const completion = transactionComplete(transaction);
     const index = transaction.objectStore(CHUNK_STORE).index('projectPath');
-    const requests = paths.map((path) =>
+    const perPathLimit = Math.max(1, Math.ceil(limit / resolvedPaths.length));
+    const requests = resolvedPaths.map((path) =>
       requestResult<IndexedProjectChunk[]>(
-        index.getAll(IDBKeyRange.only([projectId, path]), limit),
+        index.getAll(IDBKeyRange.only([projectId, path]), perPathLimit),
       ));
     const groups = await Promise.all(requests);
     await completion;
-    return groups.flat().slice(0, limit).map(normalizeChunk);
+    // 同一目录先覆盖不同文件，再补后续片段，避免目录首个大文件占满召回预算。
+    const result: IndexedProjectChunk[] = [];
+    for (let offset = 0; offset < perPathLimit && result.length < limit; offset += 1) {
+      for (const group of groups) {
+        const chunk = group[offset];
+        if (chunk && result.length < limit) result.push(normalizeChunk(chunk));
+      }
+    }
+    return result;
   }
 
   async deleteProject(projectId: string): Promise<void> {

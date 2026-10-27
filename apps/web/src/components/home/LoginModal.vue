@@ -476,7 +476,7 @@ const enterWorkbench = (): void => {
               昵称（选填）
               <ElInput v-model="displayName" name="displayName" autocomplete="nickname" :maxlength="80"
                 :disabled="submitting" aria-label="昵称" placeholder="请输入昵称（选填）" />
-              <small>用于账户展示，最多80个字符；不填写将自动生成。</small>
+              <small class="login-modal__field-hint">用于账户展示，最多80个字符；不填写将自动生成。</small>
             </label>
             <div v-if="view === 'password' && loginPhone" class="login-modal__field-hint" aria-live="polite">
               {{ loginAsUsername ? '当前按用户名登录。' : '已识别为手机号。' }}
@@ -743,6 +743,9 @@ const enterWorkbench = (): void => {
 
 .login-modal__panel--register {
   width: min(100%, 760px);
+  /* 可选资料和短信校验会增加高度；桌面低窗口与手机均须能滚动到注册及已有账号入口。 */
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
 }
 
 .login-modal__panel::before {

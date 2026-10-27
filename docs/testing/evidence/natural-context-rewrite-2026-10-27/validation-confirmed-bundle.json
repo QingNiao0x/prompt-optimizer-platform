@@ -1,0 +1,74 @@
+{
+  "syntheticOnly": true,
+  "provenance": "回答后生成使用真实Plan响应的会话与题号。明确回答来自本轮用户授权选择包含今天，不取推荐项。输入为脚本构造合法DTO，不冒称UI捕获。",
+  "decision": {
+    "selectedBy": "本轮明确选择",
+    "answer": "允许填写今天，调查时间不得晚于今天。",
+    "recommendationAccepted": false,
+    "actualQuestionId": "q1",
+    "actualQuestion": "调查时间是否允许填写今天？",
+    "actualPlanId": "3b0399ff-ab13-4242-b177-c4791f2a484e"
+  },
+  "cases": [
+    {
+      "id": "P03",
+      "family": "plan-confirmed-generation",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制。业务要求一处写“只能填写当日之前的日期”，另一处写“可以填写今天，但不超过今日”；这两处边界尚未统一，是否允许填写今天由我确认。",
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": [],
+      "origin": "真实P02 Plan回答后生成，不是新独立留出题。",
+      "acceptance": [
+        "今天是否允许按真实回答确定为允许，保留不得晚于今天的边界。",
+        "保留新增和导入两个入口，不再要求用户重复确认已经回答的边界。",
+        "不声称用户没有资料或代码不存在；没有材料只限制依赖源码的断言。",
+        "45记录实际正文生成；所有真实题答有出处且在最终正文得到保留。"
+      ]
+    }
+  ],
+  "jobs": [
+    {
+      "id": "P03_V45_PLAN_GEN",
+      "phase": "GENERATION",
+      "caseId": "P03",
+      "version": "45",
+      "inputOrigin": "ACTUAL_PLAN_ID_AND_QUESTION_WITH_EXPLICIT_ANSWER",
+      "approvedEnhancementInput": {
+        "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制。业务要求一处写“只能填写当日之前的日期”，另一处写“可以填写今天，但不超过今日”；这两处边界尚未统一，是否允许填写今天由我确认。",
+        "modelId": "deepseek:deepseek-flash",
+        "context": {
+          "customDescription": "",
+          "files": []
+        },
+        "enhancement": {
+          "templateCode": "AUTO",
+          "includeConversationHistory": false,
+          "includePermissionBoundaries": true,
+          "promptFormat": "COMPACT"
+        },
+        "conversationHistory": [],
+        "permissionPolicy": {
+          "protectedPaths": [],
+          "requireConfirmationFor": []
+        },
+        "planConfirmation": {
+          "planId": "3b0399ff-ab13-4242-b177-c4791f2a484e",
+          "planningContext": null,
+          "answers": [
+            {
+              "questionId": "q1",
+              "question": "调查时间是否允许填写今天？",
+              "answer": "允许填写今天，调查时间不得晚于今天。"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "sourcePlanResult": {
+    "path": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-context-rewrite-2026-10-27\\validation\\results\\P02_V45_PLAN.json",
+    "sha256": "116a4a7515850416cb524b93d31e6f4c5f68225c5ffa96a3647856291b9aa8d6",
+    "originalJob": "P02_V45_PLAN",
+    "originalRawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制。业务要求一处写“只能填写当日之前的日期”，另一处写“可以填写今天，但不超过今日”；这两处边界尚未统一，是否允许填写今天由我确认。"
+  }
+}

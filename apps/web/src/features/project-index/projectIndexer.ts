@@ -1,6 +1,8 @@
 import type { ContextFileInput } from '@/types/api';
 import { isSafeRelativeFilePath, isSensitiveFile as isProtectedContextFile } from '@/workers/fileReaderCore';
 
+import { extractProjectPathReferences } from './projectPathReferences';
+
 export const INDEX_CHUNK_CHARACTERS = 6_000;
 export const MAX_INDEXABLE_FILE_BYTES = 50 * 1024 * 1024;
 export const DEFAULT_CONTEXT_CHARACTERS = 120_000;
@@ -21,6 +23,7 @@ const PROGRESS_FILE_INTERVAL = 32;
 const PROGRESS_TIME_INTERVAL_MS = 150;
 const PROGRESS_BYTE_INTERVAL = 2 * 1024 * 1024;
 const RETRIEVAL_SCORE = {
+  referencedPath: 20_000,
   activeFile: 10_000,
   pinnedFile: 8_000,
   symbolMatch: 1_200,
@@ -257,6 +260,15 @@ export interface ProjectContextRetrievalResult {
   files: ContextFileInput[];
   selections: ProjectContextSelection[];
   totalCharacters: number;
+  /** 仅说明本次索引召回情况，未命中不代表用户的文件在现实中不存在。 */
+  references?: ProjectContextReferenceResolution[];
+}
+
+export interface ProjectContextReferenceResolution {
+  reference: string;
+  matchedPaths: string[];
+  selectedPaths: string[];
+  status: 'FOUND' | 'NO_MATCHING_CHUNKS' | 'OUTSIDE_SELECTION_BUDGET';
 }
 
 interface FileClassification {
@@ -679,41 +691,67 @@ export const retrieveProjectContextWithReport = async (
 ): Promise<ProjectContextRetrievalResult> => {
   const maxCharacters = options.maxCharacters ?? DEFAULT_CONTEXT_CHARACTERS;
   const maxChunks = options.maxChunks ?? 40;
-  const terms = extractTerms(options.query);
+  const references = extractProjectPathReferences(options.query);
+  // @路径拥有独立、精确的召回入口，避免项目名、src 和扩展名给无关源码累计分数。
+  let taskText = options.query;
+  for (const reference of [...references].reverse()) {
+    taskText = taskText.slice(0, reference.start) + ' ' + taskText.slice(reference.end);
+  }
+  const terms = extractTerms(taskText);
   const pathHints = createPathHints(options);
   const preferredPaths = createPreferredPaths(options);
   const candidateLimit = Math.max(200, maxChunks * 10);
-  const [matchedChunks, preferredChunks] = await Promise.all([
+  const [matchedChunks, preferredChunks, referencedGroups] = await Promise.all([
     repository.findCandidateChunks(options.projectId, terms, candidateLimit),
     preferredPaths.length > 0
       ? repository.findChunksByPaths(options.projectId, preferredPaths, candidateLimit)
       : Promise.resolve([]),
+    Promise.all(references.map((reference) =>
+      repository.findChunksByPaths(options.projectId, [reference.path], candidateLimit))),
   ]);
-  const candidates = uniqueChunks([...matchedChunks, ...preferredChunks]);
+  const referencedChunks = referencedGroups.flat();
+  for (const chunk of referencedChunks) {
+    const path = normalizePath(chunk.path);
+    const reasons = pathHints.get(path) ?? [];
+    addReason(reasons, '用户明确引用路径');
+    pathHints.set(path, reasons);
+  }
+  const candidates = uniqueChunks([...matchedChunks, ...preferredChunks, ...referencedChunks]);
   const seedChunks = rankChunks(candidates, terms, pathHints, new Set())
+    .filter((item) => hasTaskRelevance(item.reasons)
+      && hasScopedRelevance(item.reasons, references.length > 0))
     .slice(0, Math.min(8, maxChunks));
   const dependencyTerms = new Set(
     seedChunks.flatMap(({ chunk }) => chunk.imports ?? []).slice(0, 64),
   );
+  const dependencyPaths = resolveRelativeDependencyPaths(seedChunks.map(({ chunk }) => chunk));
 
-  if (dependencyTerms.size > 0) {
-    const relatedChunks = await repository.findCandidateChunks(
-      options.projectId,
-      Array.from(dependencyTerms),
-      candidateLimit,
-    );
+  if (dependencyTerms.size > 0 || dependencyPaths.size > 0) {
+    const relatedChunks = (await Promise.all([
+      repository.findCandidateChunks(options.projectId, Array.from(dependencyTerms), candidateLimit),
+      repository.findChunksByPaths(options.projectId, Array.from(dependencyPaths), candidateLimit),
+    ])).flat();
     for (const chunk of relatedChunks) {
       candidates.set(chunk.id, normalizeChunk(chunk));
     }
   }
 
-  const ranked = rankChunks(candidates, terms, pathHints, dependencyTerms);
+  const ranked = prioritizeReferencedFiles(rankChunks(candidates, terms, pathHints, dependencyTerms,
+    references.length > 0 ? new Set(Array.from(dependencyPaths, normalizePath)) : undefined));
 
   const selected: ContextFileInput[] = [];
   const selections: ProjectContextSelection[] = [];
   const chunksPerPath = new Map<string, number>();
   let usedCharacters = 0;
+  let configurationChunks = 0;
   for (const { chunk, score, reasons } of ranked) {
+    // 预算是上限。仅有工程优先级或仓库兜底命中，不足以把源码作为任务材料发送。
+    const isConfigurationFallback = !hasTaskRelevance(reasons) && reasons.includes('关键工程配置');
+    // 技术栈分析仍可读取少量工程配置；不能用几十份配置或无关源码填满预算。
+    if (isConfigurationFallback) {
+      if (configurationChunks >= getChunkSelectionLimit(['关键工程配置'])) continue;
+    } else if (!hasTaskRelevance(reasons)
+      || !hasScopedRelevance(reasons, references.length > 0)) continue;
     if (selected.length >= maxChunks || usedCharacters >= maxCharacters) {
       break;
     }
@@ -738,9 +776,18 @@ export const retrieveProjectContextWithReport = async (
       reasons,
     });
     chunksPerPath.set(chunk.path, selectedFromPath + 1);
+    if (isConfigurationFallback) configurationChunks += 1;
     usedCharacters += content.length;
   }
-  return { files: selected, selections, totalCharacters: usedCharacters };
+  return { files: selected, selections, totalCharacters: usedCharacters,
+    references: references.map((reference, index) => {
+      const matchedPaths = Array.from(new Set(referencedGroups[index]?.map((chunk) => chunk.path) ?? []));
+      const selectedPaths = matchedPaths.filter((path) => selections.some((item) => item.path === path));
+      return { reference: reference.path, matchedPaths, selectedPaths,
+        status: matchedPaths.length === 0 ? 'NO_MATCHING_CHUNKS'
+          : selectedPaths.length === 0 ? 'OUTSIDE_SELECTION_BUDGET' : 'FOUND' };
+    }),
+  };
 };
 
 /**
@@ -749,6 +796,7 @@ export const retrieveProjectContextWithReport = async (
  */
 export const getChunkSelectionLimit = (reasons: readonly string[]): number => {
   const reasonSet = new Set(reasons);
+  if (reasonSet.has('用户明确引用路径')) return DYNAMIC_CHUNK_LIMITS.pinnedFile;
   if (reasonSet.has('用户固定文件')) {
     return DYNAMIC_CHUNK_LIMITS.pinnedFile;
   }
@@ -1103,25 +1151,35 @@ const rankChunks = (
   terms: string[],
   pathHints: Map<string, string[]>,
   dependencyTerms: Set<string>,
-): RankedChunk[] => Array.from(chunks.values())
-  .map((chunk) => scoreChunk(chunk, terms, pathHints, dependencyTerms))
+  dependencyPaths?: Set<string>,
+): RankedChunk[] => {
+  const items = Array.from(chunks.values());
+  // 共享路径片段（例如所有候选的 src）不具有定位能力，不靠它们填满上下文。
+  const discriminatingPathTerms = new Set(terms.filter((term) => items.length < 5
+    || items.filter((chunk) => chunk.path.toLowerCase().includes(term)).length / items.length < 0.7));
+  return items
+  .map((chunk) => scoreChunk(chunk, terms, pathHints, dependencyTerms, discriminatingPathTerms, dependencyPaths))
   .sort((left, right) =>
     right.score - left.score
     || left.chunk.priority - right.chunk.priority
     || left.chunk.path.localeCompare(right.chunk.path)
     || left.chunk.chunkIndex - right.chunk.chunkIndex);
+};
 
 const scoreChunk = (
   chunk: IndexedProjectChunk,
   terms: string[],
   pathHints: Map<string, string[]>,
   dependencyTerms: Set<string>,
+  discriminatingPathTerms: Set<string>,
+  dependencyPaths?: Set<string>,
 ): RankedChunk => {
   const path = chunk.path.toLowerCase();
   const content = chunk.content.toLowerCase();
   const symbols = chunk.symbols ?? [];
   const reasons = [...(pathHints.get(normalizePath(chunk.path)) ?? [])];
   let score = Math.max(0, 30 - chunk.priority);
+  if (reasons.includes('用户明确引用路径')) score += RETRIEVAL_SCORE.referencedPath;
   if (reasons.includes('当前打开文件')) {
     score += RETRIEVAL_SCORE.activeFile;
   }
@@ -1136,11 +1194,11 @@ const scoreChunk = (
     reasons.push('关键工程配置');
   }
   for (const term of terms) {
-    if (symbols.some((symbol) => symbol.includes(term) || term.includes(symbol))) {
+    if (symbols.some((symbol) => symbol === term || (term.length >= 4 && symbol.includes(term)))) {
       score += RETRIEVAL_SCORE.symbolMatch;
       addReason(reasons, '任务中的符号');
     }
-    if (path.includes(term)) {
+    if (term.length >= 3 && discriminatingPathTerms.has(term) && path.includes(term)) {
       score += RETRIEVAL_SCORE.pathMatch;
       addReason(reasons, '路径与任务匹配');
     }
@@ -1149,9 +1207,12 @@ const scoreChunk = (
       addReason(reasons, '内容与任务匹配');
     }
   }
-  const pathTerms = extractTerms(path);
-  const isDependency = symbols.some((symbol) => dependencyTerms.has(symbol))
-    || pathTerms.some((term) => dependencyTerms.has(term));
+  // import 目录和扩展名本身不能证明直接依赖，否则 vue/ts/src 会扩展到整个工程。
+  const fileName = path.split('/').at(-1) ?? path;
+  const moduleName = fileName.replace(/\.[^.]+$/, '');
+  const isDependency = dependencyPaths
+    ? dependencyPaths.has(normalizePath(chunk.path))
+    : symbols.some((symbol) => dependencyTerms.has(symbol)) || dependencyTerms.has(moduleName);
   if (isDependency) {
     score += RETRIEVAL_SCORE.directDependency;
     addReason(reasons, '被高相关代码直接依赖');
@@ -1160,6 +1221,64 @@ const scoreChunk = (
     reasons.push('项目索引候选');
   }
   return { chunk, score, reasons };
+};
+
+const hasTaskRelevance = (reasons: readonly string[]): boolean => reasons.some((reason) =>
+  !['关键工程配置', '项目索引候选'].includes(reason));
+
+/**
+ * 明确模块范围内的相对import按所属文件解析。只认实际路径，不把同名create.js或目录词
+ * 认作直接依赖；裸包名/项目别名未解析时继续保留为输入线索，不冒称已定位其源码。
+ */
+const resolveRelativeDependencyPaths = (chunks: IndexedProjectChunk[]): Set<string> => {
+  const paths = new Set<string>();
+  let imports = 0;
+  for (const chunk of chunks) {
+    const pattern = /\b(?:from\s*|import\s*(?:\(\s*)?|require\s*\(\s*)["'](\.{1,2}\/[^"']+)["']/g;
+    for (const match of chunk.content.matchAll(pattern)) {
+      if (imports >= 64) return paths;
+      imports += 1;
+      const segments = chunk.path.replace(/\\/g, '/').split('/').slice(0, -1);
+      let outside = false;
+      for (const segment of (match[1] ?? '').split('/')) {
+        if (segment === '..') {
+          if (segments.length === 0) { outside = true; break; }
+          segments.pop();
+        } else if (segment && segment !== '.') segments.push(segment);
+      }
+      if (outside) continue;
+      const path = segments.join('/');
+      const variants = [path];
+      if (!/\.[^/]+$/.test(path)) {
+        for (const extension of ['ts', 'tsx', 'js', 'jsx', 'vue', 'mjs', 'cjs']) {
+          variants.push(`${path}.${extension}`, `${path}/index.${extension}`);
+        }
+      }
+      for (const variant of variants) paths.add(variant);
+    }
+  }
+  return paths;
+};
+
+/** 用户已明确指定目标时，共享正文词不足以让其他模块补位，未召回也保留该范围。 */
+const hasScopedRelevance = (reasons: readonly string[], hasExplicitReference: boolean): boolean =>
+  !hasExplicitReference || reasons.some((reason) => ![
+    // 首次全量索引也会把文件记为changed；该状态不能推翻用户本次明确的模块范围。
+    '关键工程配置', '项目索引候选', '内容与任务匹配', '最近变更文件',
+  ].includes(reason));
+
+/** 明确目录先覆盖各个已召回文件，再增加同文件片段；单文件引用仍按相关性选择。 */
+const prioritizeReferencedFiles = (ranked: RankedChunk[]): RankedChunk[] => {
+  const seen = new Set<string>();
+  const first: RankedChunk[] = [];
+  const remaining: RankedChunk[] = [];
+  for (const item of ranked) {
+    if (item.reasons.includes('用户明确引用路径') && !seen.has(item.chunk.path)) {
+      seen.add(item.chunk.path);
+      first.push(item);
+    } else remaining.push(item);
+  }
+  return [...first, ...remaining];
 };
 
 const normalizePath = (path: string): string => path.replace(/\\/g, '/').toLowerCase();

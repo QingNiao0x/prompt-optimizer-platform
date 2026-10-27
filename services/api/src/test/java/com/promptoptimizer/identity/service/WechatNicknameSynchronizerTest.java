@@ -10,7 +10,11 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-/** 可信回调扩展点只同步关联资料；没有微信网络请求或客户端身份指定入口。 */
+/**
+ * 可信回调扩展点只同步关联资料；没有微信网络请求或客户端身份指定入口。
+ * @author QingNiao
+ * @since 0.1.0
+ */
 class WechatNicknameSynchronizerTest {
     private final UserIdentityMapper identities = mock(UserIdentityMapper.class);
     private final WechatNicknameSynchronizer service = new WechatNicknameSynchronizer(identities);

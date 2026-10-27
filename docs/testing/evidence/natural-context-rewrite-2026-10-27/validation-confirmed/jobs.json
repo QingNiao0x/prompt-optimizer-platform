@@ -1,0 +1,39 @@
+[
+  {
+    "id": "P03_V45_PLAN_GEN",
+    "phase": "GENERATION",
+    "caseId": "P03",
+    "version": "45",
+    "inputOrigin": "ACTUAL_PLAN_ID_AND_QUESTION_WITH_EXPLICIT_ANSWER",
+    "approvedEnhancementInput": {
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制。业务要求一处写“只能填写当日之前的日期”，另一处写“可以填写今天，但不超过今日”；这两处边界尚未统一，是否允许填写今天由我确认。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": {
+        "planId": "3b0399ff-ab13-4242-b177-c4791f2a484e",
+        "planningContext": null,
+        "answers": [
+          {
+            "questionId": "q1",
+            "question": "调查时间是否允许填写今天？",
+            "answer": "允许填写今天，调查时间不得晚于今天。"
+          }
+        ]
+      }
+    }
+  }
+]

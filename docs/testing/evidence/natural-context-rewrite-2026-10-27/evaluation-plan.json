@@ -1,0 +1,31 @@
+{
+  "status": "DRAFT_NOT_EXECUTABLE",
+  "date": "2026-10-27",
+  "goal": "验证自然增强实际执行正文生成、正确使用指定项目上下文、避免源码倾倒，并用同信息可运行代码作品决定采用。",
+  "candidateVersion": "45",
+  "defaultRemains": "31 until the current repair passes its frozen adoption checks",
+  "budget": {
+    "authorizedTaskMaximum": 200,
+    "previousActualCalls": 158,
+    "maximumNewActualCalls": 42,
+    "priorLedger": "docs/testing/evidence/natural-multidimensional-2026-10-24/actual-call-ledger.json",
+    "releasedReservations": [
+      {"path": "docs/testing/evidence/natural-multidimensional-2026-10-24/regression/closure.json", "unusedStageReservationReleased": 26},
+      {"path": "docs/testing/evidence/natural-multidimensional-2026-10-24/works/closure.json", "unusedStageReservationReleased": 16}
+    ],
+    "policy": "新阶段独立冻结；承接158次已用，不重开任何旧闭批入口。失败、准备和协议修复均计数，零质量重试，零付费评审。",
+    "phaseLimits": {"GENERATION": 24, "PLAN": 6, "EXECUTION": 12}
+  },
+  "destination": "https://api.deepseek.com/chat/completions",
+  "dataBoundary": "仅新增合成项目、合成需求及其派生Plan、优化提示词和代码作品；不发送用户原附件或真实业务源码。新载荷清单须在首次调用前具体冻结。旧确认仅覆盖旧冻结题目，不冒充新载荷确认。",
+  "model": {"id": "deepseek:deepseek-flash", "upstream": "deepseek-flash", "temperature": 0.2, "thinking": "disabled", "stream": false},
+  "runtime": {"backendPort": 9013, "frontendPort": 5183, "account": "tmp/local-acceptance/account.json", "newAccountAllowed": false, "flywayAllowed": false},
+  "gates": [
+    {"stage": "offline", "required": ["原文加大量源码故障可判失败", "目标目录优先召回", "相似模块和无关文件不挤出目标", "目标缺失仅记录未找到", "来源和实际Plan题答完整", "正常阅读等待不增加成果义务"]},
+    {"stage": "browser", "required": ["从工作台选择合成文件夹并真实建立IndexedDB索引", "捕获实际上下文请求，不能由脚本另造简化材料", "真实后台模型生成", "记录实际完成阶段及版本", "显示、复制、保存和历史逐字一致", "不能把模拟接口正文作为质量证据"]},
+    {"stage": "works", "required": ["原始、31、45使用同一项目副本及相同模型参数和材料", "各臂只改变提示词", "代码作品实际落盘并运行独立验收", "新增和导入双入口均核查", "日期昨天今天明天及非法输入核查", "原要求遗漏、无依据新增和必要修改逐项记录", "候选冻结后再启用新题", "严重意图事实授权错误阻断，不以整体平均分抵消"]}
+  ],
+  "workContract": "模型按统一文件变更JSON协议返回代码；程序只允许写入合成项目白名单文件，然后以独立隐藏检查执行。格式协议只服务代码落盘，三臂相同，不向模型提供答案卡。不能仅凭生成文本声称已运行或修复。",
+  "adoption": "先证明共同工程缺陷消除与正常变体不退步，再依据相同信息下的实际作品判断目标收益。充分需求持平可接受但不计收益。仅证明门控修复时只能报告局部结果，不宣称整体质量稳定提升。",
+  "notYetVerified": ["新候选尚未真实调用", "尚未启动临时服务", "具体合成夹具和执行清单待冻结", "当前日常运行版本未核实"]
+}

@@ -11,6 +11,7 @@ import {
   type ProjectIndexSummary,
   type ProjectSourceEntry,
 } from './projectIndexer';
+import { matchesReferencedPath, referencedPathVariants } from './projectPathReferences';
 
 class MemoryProjectIndexRepository implements ProjectIndexRepository {
   readonly files: IndexedProjectFile[] = [];
@@ -102,9 +103,10 @@ class MemoryProjectIndexRepository implements ProjectIndexRepository {
     paths: string[],
     limit: number,
   ): Promise<IndexedProjectChunk[]> {
-    const acceptedPaths = new Set(paths);
+    const acceptedPaths = paths.flatMap((path) => referencedPathVariants(path, this.summary?.rootName));
     return this.chunks
-      .filter((chunk) => chunk.projectId === projectId && acceptedPaths.has(chunk.path))
+      .filter((chunk) => chunk.projectId === projectId && acceptedPaths.some((path) =>
+        matchesReferencedPath(chunk.path, path)))
       .slice(0, limit);
   }
 
@@ -467,6 +469,120 @@ describe('indexProject', () => {
 });
 
 describe('retrieveProjectContext', () => {
+  it('should recall an explicit directory before generic matches exhaust the candidate budget', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    const noise = Array.from({ length: 450 }, (_, index) => sourceFile(
+      `src/utils/noise${index}.ts`, 'export const shared = "调查时间 新增 导入";',
+    ));
+    await indexProject({ projectId: 'explicit-directory', rootName: 'sample-project', repository,
+      entries: sourceOf([...noise,
+        sourceFile('src/views/records/Entry.vue', 'const entryDate = "日期录入";'),
+        sourceFile('src/views/records/Import.vue', 'const importedDate = "日期校验";'),
+        sourceFile('src/views/records-old/Old.vue', 'const oldDate = "调查时间 新增 导入";'),
+      ]) });
+    const result = await retrieveProjectContextWithReport(repository, {
+      projectId: 'explicit-directory', query: '请在模块@sample-project/src/views/records 新增和导入时限制调查时间',
+      maxChunks: 40,
+      changedPaths: [...noise.map((entry) => entry.path), 'src/views/records-old/Old.vue'],
+    });
+    expect(result.selections.map((item) => item.path)).toEqual([
+      'src/views/records/Entry.vue', 'src/views/records/Import.vue',
+    ]);
+    expect(result.selections.every((item) => item.reasons.includes('用户明确引用路径'))).toBe(true);
+  });
+
+  it('should not fill the context from shared path words and short substring symbol matches', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    await indexProject({ projectId: 'weak-matches', rootName: 'sample', repository,
+      entries: sourceOf(Array.from({ length: 20 }, (_, index) => sourceFile(
+        `src/utils/example${index}.ts`, 'export const it = true; export const as = "ready";',
+      ))) });
+    const result = await retrieveProjectContextWithReport(repository, {
+      projectId: 'weak-matches', query: 'src ts capacity', maxChunks: 40,
+    });
+    expect(result.files).toEqual([]);
+  });
+
+  it('should retain bounded project configuration for standalone technology analysis', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    await indexProject({ projectId: 'technology-context', rootName: 'sample', repository,
+      entries: sourceOf([
+        sourceFile('package.json', '{"dependencies":{"vue":"3"}}'),
+        sourceFile('pom.xml', '<project>spring-boot</project>'),
+        sourceFile('tsconfig.json', '{"compilerOptions":{"strict":true}}'),
+        sourceFile('src/unrelated.ts', 'export const example = 1;'),
+      ]) });
+    const result = await retrieveProjectContextWithReport(repository, {
+      projectId: 'technology-context', query: '技术栈 依赖 项目结构 配置', maxChunks: 40,
+    });
+    expect(result.files).toHaveLength(2);
+    expect(result.files.every((file) => !file.path.startsWith('src/'))).toBe(true);
+  });
+
+  it('should record an unresolved reference without substituting a similarly named directory', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    await indexProject({ projectId: 'missing-target', rootName: 'sample', repository,
+      entries: sourceOf([
+        sourceFile('src/views/records-old/Old.vue', 'const old = "调查时间 新增 导入 日期限制";'),
+        ...Array.from({ length: 20 }, (_, index) => sourceFile(
+          `src/other/Noise${index}.vue`, 'const shared = "调查时间 新增 导入 日期限制";',
+        )),
+      ]) });
+    const result = await retrieveProjectContextWithReport(repository, {
+      projectId: 'missing-target', query: '修改 @sample/src/views/records 的调查时间，新增和导入功能都增加日期限制',
+      changedPaths: repository.files.map((file) => file.path),
+    });
+    expect(result.files).toEqual([]);
+    expect(result.references).toEqual([
+      { reference: 'sample/src/views/records', matchedPaths: [], selectedPaths: [], status: 'NO_MATCHING_CHUNKS' },
+    ]);
+  });
+
+  it('should not expand a vue import to unrelated vue files', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    await indexProject({ projectId: 'bounded-dependencies', rootName: 'sample', repository,
+      entries: sourceOf([
+        sourceFile('src/target/Entry.vue', 'import { ref } from "vue"; import { dateRule } from "./dateRule"; const entry = ref(0);'),
+        sourceFile('src/target/dateRule.ts', 'export function dateRule() { return true; }'),
+        ...Array.from({ length: 12 }, (_, index) => sourceFile(`src/other/Other${index}.vue`, 'const unrelated = 1;')),
+      ]) });
+    const result = await retrieveProjectContextWithReport(repository, {
+      projectId: 'bounded-dependencies', query: '修改 @src/target/Entry.vue', maxChunks: 20,
+    });
+    expect(result.selections.map((item) => item.path)).toEqual(['src/target/Entry.vue', 'src/target/dateRule.ts']);
+  });
+
+  it('should cover separate files in an explicit directory before repeating a large file', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    await indexProject({ projectId: 'directory-diversity', rootName: 'sample', repository,
+      entries: sourceOf([
+        sourceFile('src/forms/Entry.vue', `const form = 1;\n/*${'large source content '.repeat(2_000)}*/`),
+        sourceFile('src/forms/Import.vue', 'const imported = 1;'),
+      ]) });
+    const result = await retrieveProjectContextWithReport(repository, {
+      projectId: 'directory-diversity', query: '修改 @sample/src/forms', maxChunks: 2,
+    });
+    expect(result.selections.map((item) => item.path)).toEqual(['src/forms/Entry.vue', 'src/forms/Import.vue']);
+  });
+
+  it('should resolve relative dependencies by full path instead of importing every same-named module', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    await indexProject({ projectId: 'relative-dependencies', rootName: 'sample', repository,
+      entries: sourceOf([
+        sourceFile('src/views/records/dateRules.spec.js', 'import { createSurvey } from "./create.js"; import { check } from "../../shared/DateCheck.js";'),
+        sourceFile('src/views/records/create.js', 'export function createSurvey() { return true; }'),
+        sourceFile('src/views/records-old/create.js', 'export function createSurvey() { return "legacy"; }'),
+        sourceFile('src/shared/DateCheck.js', 'export function check() { return true; }'),
+      ]) });
+    const result = await retrieveProjectContextWithReport(repository, {
+      projectId: 'relative-dependencies', query: '修改 @sample/src/views/records',
+      changedPaths: repository.files.map((file) => file.path), maxChunks: 40,
+    });
+    expect(result.selections.some((item) => item.path === 'src/views/records-old/create.js')).toBe(false);
+    expect(result.selections.find((item) => item.path === 'src/shared/DateCheck.js')?.reasons)
+      .toContain('被高相关代码直接依赖');
+  });
+
   it('should allocate dynamic per-file chunk limits by retrieval reason', () => {
     expect(getChunkSelectionLimit([])).toBe(3);
     expect(getChunkSelectionLimit(['最近变更文件'])).toBe(4);

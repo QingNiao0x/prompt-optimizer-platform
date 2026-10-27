@@ -1,0 +1,20 @@
+{
+  "syntheticOnly": true,
+  "cases": [
+    {
+      "id": "P03",
+      "family": "plan-confirmed-generation",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制。业务要求一处写“只能填写当日之前的日期”，另一处写“可以填写今天，但不超过今日”；这两处边界尚未统一，是否允许填写今天由我确认。",
+      "contextDescription": "",
+      "files": [],
+      "executorMaterials": [],
+      "origin": "真实P02 Plan回答后生成，不是新独立留出题。",
+      "acceptance": [
+        "今天是否允许按真实回答确定为允许，保留不得晚于今天的边界。",
+        "保留新增和导入两个入口，不再要求用户重复确认已经回答的边界。",
+        "不声称用户没有资料或代码不存在；没有材料只限制依赖源码的断言。",
+        "45记录实际正文生成；所有真实题答有出处且在最终正文得到保留。"
+      ]
+    }
+  ]
+}

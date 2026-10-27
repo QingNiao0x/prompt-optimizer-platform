@@ -7,7 +7,9 @@ package com.promptoptimizer.identity.domain;
  * @since 0.1.0
  */
 public final class UserDisplayNames {
+    /** 与当前VARCHAR(80)及浏览器maxlength保持一致，用户输入超限应拒绝而非静默截断。 */
     public static final int MAX_LENGTH = 80;
+    /** 昵称为单行展示资料，允许中文和表情；排除换行及其他控制字符。 */
     public static final String SINGLE_LINE_PATTERN = "[^\\p{Cc}]*";
 
     private UserDisplayNames() { }
