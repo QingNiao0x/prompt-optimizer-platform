@@ -38,6 +38,12 @@
         <if test="updateEmail">, email = #{email}</if>
          WHERE id = #{id} AND deleted_at IS NULL
     </update>
+    <!-- 账户已由事务锁定；密码哈希与安全版本必须同一次更新，避免旧会话继续有效。 -->
+    <update id="changePassword">
+        UPDATE user_account SET password_hash = #{passwordHash}, security_version = security_version + 1,
+               updated_at = CURRENT_TIMESTAMP
+         WHERE id = #{id} AND status = 'ACTIVE' AND deleted_at IS NULL
+    </update>
     <update id="deactivate">UPDATE user_account SET status = 'DISABLED', deleted_at = CURRENT_TIMESTAMP, security_version = security_version + 1, updated_at = CURRENT_TIMESTAMP WHERE id = #{id} AND deleted_at IS NULL</update>
     <update id="revokeAll">UPDATE user_identity SET status = 'REVOKED', updated_at = CURRENT_TIMESTAMP WHERE user_id = #{id} AND status = 'ACTIVE'</update>
     <!-- 所有自助注销在账户锁之前取得同一事务锁，最后管理员计数与禁用不可并发穿透。 -->

@@ -21,5 +21,7 @@ export const saveInterfaceLocale = (locale: InterfaceLocale): Promise<SystemSett
 export const requestSettingsEmailCode = (payload: { email: string; currentPassword: string }): Promise<SettingsEmailChallenge> => write('post', '/email-challenges', payload);
 export const bindSettingsEmail = (payload: { email: string; currentPassword: string; challengeId: string; verificationCode: string }): Promise<SystemSettingsView> => write('post', '/email', payload);
 export const saveSettingsUsername = (payload: { username: string; currentPassword: string }): Promise<SystemSettingsView> => write('patch', '/username', payload);
+/** 密码只发送至当前已登录账户的安全接口；服务端成功后会注销全部会话。 */
+export const changeSettingsPassword = (payload: { currentPassword: string; newPassword: string }): Promise<void> => write('patch', '/password', payload);
 export const logoutAllSettingsSessions = (currentPassword: string): Promise<void> => write('post', '/logout-all', { currentPassword });
 export const deactivateSettingsAccount = (currentPassword: string): Promise<void> => write('post', '/deactivate', { currentPassword, confirmation: 'DELETE' });

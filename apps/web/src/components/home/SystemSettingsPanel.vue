@@ -2,7 +2,8 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { ElAlert, ElButton, ElForm, ElFormItem, ElInput, ElMessage, ElMessageBox, ElOption, ElSelect, ElSkeleton } from 'element-plus';
 
-import { bindSettingsEmail, deactivateSettingsAccount, logoutAllSettingsSessions, requestSettingsEmailCode, saveSettingsUsername } from '@/services/systemSettingsApi';
+import { validRegistrationPassword } from '@/features/auth/registrationAccount';
+import { bindSettingsEmail, changeSettingsPassword, deactivateSettingsAccount, logoutAllSettingsSessions, requestSettingsEmailCode, saveSettingsUsername } from '@/services/systemSettingsApi';
 import { getApiErrorMessage } from '@/services/http';
 import { useAuthStore } from '@/stores/auth';
 import { useLocaleStore } from '@/stores/locale';
@@ -19,6 +20,9 @@ const emailPassword = ref('');
 const verificationCode = ref('');
 const username = ref('');
 const usernamePassword = ref('');
+const passwordChangeCurrent = ref('');
+const newPassword = ref('');
+const confirmNewPassword = ref('');
 const securityPassword = ref('');
 const confirmation = ref('');
 const busy = ref('');
@@ -53,6 +57,7 @@ watch(() => auth.user?.userId, () => {
   identityRevision += 1;
   challenge.value = undefined;
   emailPassword.value = usernamePassword.value = securityPassword.value = verificationCode.value = confirmation.value = '';
+  passwordChangeCurrent.value = newPassword.value = confirmNewPassword.value = '';
 }, { flush: 'sync' });
 
 const load = async (): Promise<void> => {
@@ -147,6 +152,18 @@ const saveUsername = async (): Promise<void> => {
   });
 };
 
+/** 复用注册密码规则；确认字段只在浏览器校验，不作为额外凭据提交。 */
+const changePassword = async (): Promise<void> => {
+  if (!hasPassword(passwordChangeCurrent.value)) { errorMessage.value = t('passwordRequired'); return; }
+  if (!validRegistrationPassword(newPassword.value)) { errorMessage.value = t('invalidNewPassword'); return; }
+  if (newPassword.value !== confirmNewPassword.value) { errorMessage.value = t('passwordMismatch'); return; }
+  const payload = { currentPassword: passwordChangeCurrent.value, newPassword: newPassword.value };
+  await perform('password', async revision => {
+    await changeSettingsPassword(payload);
+    finishSecurityAction(revision, '/login?reason=security', t('relogin'));
+  });
+};
+
 const confirmSecurityAction = async (deactivate: boolean): Promise<void> => {
   if (busy.value || !hasPassword(securityPassword.value)) { errorMessage.value = t('passwordRequired'); return; }
   if (deactivate && (confirmation.value !== 'DELETE' || !settings.view?.accountDeletionAvailable)) return;
@@ -175,6 +192,7 @@ onBeforeUnmount(() => {
   identityRevision += 1;
   if (clock) clearInterval(clock);
   emailPassword.value = usernamePassword.value = securityPassword.value = verificationCode.value = '';
+  passwordChangeCurrent.value = newPassword.value = confirmNewPassword.value = '';
 });
 </script>
 
@@ -236,6 +254,23 @@ onBeforeUnmount(() => {
             <ElInput id="settings-username-password" v-model="usernamePassword" :aria-label="t('usernamePassword')" type="password" autocomplete="current-password" show-password :disabled="Boolean(busy)" />
           </ElFormItem>
           <ElButton type="primary" native-type="submit" :loading="busy === 'username'" :disabled="Boolean(busy) || !validUsername || !hasPassword(usernamePassword)">{{ t('saveUsername') }}</ElButton>
+        </ElForm>
+
+        <ElForm class="account-form" data-testid="system-password-form" label-position="top" :aria-label="t('changePassword')" @submit.prevent="changePassword">
+          <h3>{{ t('changePassword') }}</h3>
+          <p class="hint">{{ t('passwordChangeHint') }}</p>
+          <ElFormItem :label="t('currentPassword')" for="settings-password-current">
+            <ElInput id="settings-password-current" v-model="passwordChangeCurrent" :aria-label="t('passwordChangeCurrent')" type="password" autocomplete="current-password" show-password :disabled="Boolean(busy)" />
+          </ElFormItem>
+          <ElFormItem :label="t('newPassword')" for="settings-password-new">
+            <ElInput id="settings-password-new" v-model="newPassword" type="password" autocomplete="new-password" show-password :disabled="Boolean(busy)" />
+          </ElFormItem>
+          <p v-if="newPassword && !validRegistrationPassword(newPassword)" class="hint" role="status">{{ t('invalidNewPassword') }}</p>
+          <ElFormItem :label="t('confirmNewPassword')" for="settings-password-confirm">
+            <ElInput id="settings-password-confirm" v-model="confirmNewPassword" type="password" autocomplete="new-password" show-password :disabled="Boolean(busy)" />
+          </ElFormItem>
+          <p v-if="confirmNewPassword && newPassword !== confirmNewPassword" class="hint" role="status">{{ t('passwordMismatch') }}</p>
+          <ElButton type="primary" native-type="submit" :loading="busy === 'password'" :disabled="Boolean(busy) || !hasPassword(passwordChangeCurrent) || !validRegistrationPassword(newPassword) || newPassword !== confirmNewPassword">{{ t('changePassword') }}</ElButton>
         </ElForm>
       </div>
     </section>

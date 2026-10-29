@@ -121,6 +121,12 @@ public class AccountSettingsService {
         guarded(principal, request, () -> { transactions.logoutAll(principal, password); return null; });
     }
 
+    /** 使用现有密码失败限流处理修改密码，不记录或返回密码。 */
+    public void changePassword(String currentPassword, String newPassword, HttpServletRequest request) {
+        var principal = principal();
+        guarded(principal, request, () -> { transactions.changePassword(principal, currentPassword, newPassword); return null; });
+    }
+
     /** 二次确认后逻辑注销，不删除历史、成员关系或租户。 */
     public void deactivate(String password, String confirmation, HttpServletRequest request) {
         var principal = principal();

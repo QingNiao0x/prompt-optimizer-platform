@@ -32,6 +32,8 @@ public interface AccountSettingsMapper {
             @Param("type") String type, @Param("identifier") String identifier);
     /** 邮箱兼容字段同步和全设备版本递增须与身份替换同事务。 */
     int securityChange(@Param("id") UUID id, @Param("email") String email, @Param("updateEmail") boolean updateEmail);
+    /** 原子更新BCrypt哈希并递增全设备会话版本。 */
+    int changePassword(@Param("id") UUID id, @Param("passwordHash") String passwordHash);
     /** 逻辑注销并禁用账户，业务资源保持原归属。 */
     int deactivate(@Param("id") UUID id);
     /** 注销同时撤销该账户所有身份，不释放唯一键。 */

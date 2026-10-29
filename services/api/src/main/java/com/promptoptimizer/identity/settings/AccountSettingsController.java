@@ -101,6 +101,14 @@ public class AccountSettingsController {
         return success(request, null);
     }
 
+    /** 更换密码提交后退出当前设备，其他设备的旧会话在后续请求时失效。 */
+    @PatchMapping("/password")
+    public ApiResponse<Void> password(@Valid @RequestBody ChangePassword body, HttpServletRequest request, HttpServletResponse response) {
+        service().changePassword(body.currentPassword(), body.newPassword(), request);
+        logout(request, response);
+        return success(request, null);
+    }
+
     /** 二次确认逻辑注销；保留历史与租户，不宣称完成物理数据删除。 */
     @PostMapping("/deactivate")
     public ApiResponse<Void> deactivate(@Valid @RequestBody Deactivate body, HttpServletRequest request, HttpServletResponse response) {
@@ -146,6 +154,11 @@ public class AccountSettingsController {
     /** 密码只用于本次重新认证；禁止自动生成对象字符串泄露。 */
     public record Password(@NotBlank @Size(max = 256) String currentPassword) {
         @Override public String toString() { return "Password[redacted]"; }
+    }
+    /** 当前密码和新密码仅在本次请求中用于验证与哈希，禁止默认字符串表示泄漏。 */
+    public record ChangePassword(@NotBlank @Size(max = 256) String currentPassword,
+            @NotBlank @Size(max = 200) String newPassword) {
+        @Override public String toString() { return "ChangePassword[redacted]"; }
     }
     /** 发码请求不允许客户端选择目标账户。 */
     public record EmailChallenge(@NotBlank @Email @Size(max = 254) String email, @NotBlank @Size(max = 256) String currentPassword) {

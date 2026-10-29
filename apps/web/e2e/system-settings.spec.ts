@@ -76,6 +76,7 @@ async function environment(page: Page, authenticated = true) {
         if (state.usernameConflict) return failure(409, 'USERNAME_ALREADY_BOUND', '该用户名已被其他账号占用。');
         state.settings.username = String(body.username).trim().toLowerCase(); state.authenticated = false; return ok(state.settings);
       }
+      if (path.endsWith('/password') && method === 'PATCH') { state.authenticated = false; return ok(); }
       if (path.endsWith('/logout-all') && method === 'POST') { state.authenticated = false; return ok(); }
       if (path.endsWith('/deactivate') && method === 'POST') {
         if (body.confirmation !== 'DELETE') return failure(400, 'CONFIRMATION_REQUIRED', '请确认注销账号。');
@@ -96,7 +97,7 @@ async function openSettings(page: Page) {
   await expect(page.getByRole('textbox', { name: '显示名称', exact: true })).toHaveValue('设置测试用户');
 }
 
-const form = (page: Page, kind: 'profile' | 'email' | 'username' | 'security') => page.getByTestId(`system-${kind}-form`);
+const form = (page: Page, kind: 'profile' | 'email' | 'username' | 'password' | 'security') => page.getByTestId(`system-${kind}-form`);
 const safetyDialog = (page: Page, name: string) => page.getByRole('dialog', { name, exact: true });
 
 test.beforeEach(async ({ page }, testInfo) => {
@@ -234,6 +235,32 @@ test('用户名占用不覆盖账号，合法用户名规范化保存并退出�
   await expect(page).toHaveURL(/\/login(?:\?|$)/);
   expect(state.settings.username).toBe('mixed.user');
   expect(writes('/username').at(-1)?.body).toEqual({ username: 'Mixed.User', currentPassword: password });
+});
+
+test('修改密码校验格式与确认，当前密码错误不退出，成功后引导重新登录', async ({ page }) => {
+  const { state, writes } = await environment(page);
+  await openSettings(page);
+  const passwordForm = form(page, 'password');
+  const submit = passwordForm.getByRole('button', { name: '修改密码', exact: true });
+  await passwordForm.getByLabel('修改密码的当前密码', { exact: true }).fill('wrong-current');
+  await passwordForm.getByLabel('新密码', { exact: true }).fill('letters-only');
+  await passwordForm.getByLabel('确认新密码', { exact: true }).fill('letters-only');
+  await expect(submit).toBeDisabled();
+  await expect(passwordForm.getByText(/新密码需至少 8 个字符/)).toBeVisible();
+  await passwordForm.getByLabel('新密码', { exact: true }).fill('ValidNewPass2');
+  await expect(passwordForm.getByText('两次输入的新密码不一致。')).toBeVisible();
+  await expect(submit).toBeDisabled();
+  expect(writes('/password')).toHaveLength(0);
+  await passwordForm.getByLabel('确认新密码', { exact: true }).fill('ValidNewPass2');
+  await submit.click();
+  await expect(page.getByText('当前密码错误，请重试。', { exact: true }).first()).toBeVisible();
+  await expect(page).toHaveURL(/\/settings$/);
+  expect(state.authenticated).toBe(true);
+  await passwordForm.getByLabel('修改密码的当前密码', { exact: true }).fill(password);
+  await submit.click();
+  await expect(page).toHaveURL(/\/login(?:\?|$)/);
+  expect(state.authenticated).toBe(false);
+  expect(writes('/password').at(-1)?.body).toEqual({ currentPassword: password, newPassword: 'ValidNewPass2' });
 });
 
 test('登出所有设备密码失败保持登录，确认成功后清空本机身份', async ({ page }) => {

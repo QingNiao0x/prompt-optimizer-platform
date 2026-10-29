@@ -140,6 +140,37 @@ class SystemSettingsHttpDatabaseTest {
     }
 
     @Test
+    void passwordChangeEnforcesCsrfAndPolicyAndRevokesOnlyCurrentAccountsSessions() throws Exception {
+        var account = account(false); var other = account(false);
+        var first = login(account.email()); var second = login(account.email()); var unrelated = login(other.email());
+        String replacement = "SyntheticNewPassword2";
+        String validBody = body(Map.of("currentPassword", PASSWORD, "newPassword", replacement));
+        assertStatus(send(new Browser(), patch(SETTINGS + "/password").content(validBody), true), 401);
+        assertStatus(send(first, patch(SETTINGS + "/password").content(validBody), false), 403);
+        assertStatus(send(first, patch(SETTINGS + "/password").content(body(Map.of("currentPassword", "incorrect", "newPassword", replacement))), true), 403);
+        assertStatus(send(first, patch(SETTINGS + "/password").content(body(Map.of("currentPassword", PASSWORD, "newPassword", "letters-only"))), true), 400);
+        assertStatus(send(first, patch(SETTINGS + "/password").content(body(Map.of("currentPassword", PASSWORD, "newPassword", "字".repeat(24) + "Ab1"))), true), 400);
+        assertThat(fixture.snapshot(account.user()).version()).isZero();
+        assertThat(encoder.matches(PASSWORD, userDetails.loadUserByUsername(account.email()).getPassword())).isTrue();
+        assertStatus(send(second, get(SETTINGS), false), 200);
+
+        var changed = send(first, patch(SETTINGS + "/password").content(validBody), true);
+        assertStatus(changed, 200);
+        assertThat(changed.getContentAsString()).doesNotContain(PASSWORD, replacement);
+        String storedHash = userDetails.loadUserByUsername(account.email()).getPassword();
+        assertThat(storedHash).startsWith("$2").isNotEqualTo(replacement);
+        assertThat(encoder.matches(replacement, storedHash)).isTrue();
+        assertThat(encoder.matches(PASSWORD, storedHash)).isFalse();
+        assertThat(fixture.snapshot(account.user())).extracting("histories", "memberships", "version").containsExactly(1L, 1L, 1L);
+        assertStatus(send(first, get("/api/v1/auth/me"), false), 401);
+        assertStatus(send(second, get("/api/v1/auth/me"), false), 401);
+        assertStatus(send(unrelated, get(SETTINGS), false), 200);
+        var oldCredentials = new Browser();
+        assertStatus(send(oldCredentials, post("/api/v1/auth/login").content(body(Map.of("identifier", account.email(), "password", PASSWORD, "captcha", "ABCD"))), true), 401);
+        assertStatus(send(login(account.email(), replacement), get(SETTINGS), false), 200);
+    }
+
+    @Test
     void usernameChangeNormalizesAndPreservesRevokedOwnership() throws Exception {
         var account = account(false); var other = account(false); var browser = login(account.email());
         String occupied = "taken-" + UUID.randomUUID().toString().substring(0, 12);
@@ -253,8 +284,12 @@ class SystemSettingsHttpDatabaseTest {
     }
 
     private Browser login(String identifier) throws Exception {
+        return login(identifier, PASSWORD);
+    }
+
+    private Browser login(String identifier, String password) throws Exception {
         var browser = new Browser();
-        assertStatus(send(browser, post("/api/v1/auth/login").content(body(Map.of("identifier", identifier, "password", PASSWORD, "captcha", "ABCD"))), true), 200);
+        assertStatus(send(browser, post("/api/v1/auth/login").content(body(Map.of("identifier", identifier, "password", password, "captcha", "ABCD"))), true), 200);
         return browser;
     }
 

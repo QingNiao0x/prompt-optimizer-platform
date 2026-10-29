@@ -5,6 +5,7 @@ import com.promptoptimizer.identity.domain.UserIdentityStatus;
 import com.promptoptimizer.identity.entity.UserAccountEntity;
 import com.promptoptimizer.identity.entity.UserIdentityEntity;
 import com.promptoptimizer.identity.security.AuthenticatedUser;
+import com.promptoptimizer.identity.service.PasswordPolicy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -110,6 +111,19 @@ public class AccountSettingsTransactions {
     public void logoutAll(AuthenticatedUser principal, String password) {
         var account = reauthenticate(principal, password);
         mapper.securityChange(account.getId(), null, false);
+    }
+
+    /** 重验当前账户及密码，原子保存新哈希和会话版本；任何失败都保留原凭据。 */
+    @Transactional
+    public void changePassword(AuthenticatedUser principal, String currentPassword, String newPassword) {
+        var account = reauthenticate(principal, currentPassword);
+        if (!PasswordPolicy.meets(newPassword)) {
+            throw invalid("PASSWORD_INVALID", PasswordPolicy.rejectionMessage());
+        }
+        // 用户身份与状态在账户行锁下复核；BCrypt和版本更新属于同一事务。
+        if (mapper.changePassword(account.getId(), passwords.encode(newPassword)) != 1) {
+            throw new IllegalStateException("账户密码更新失败。");
+        }
     }
 
     /** 注销保留所有业务数据与身份占用，并串行保护最后一位活动平台管理员。 */

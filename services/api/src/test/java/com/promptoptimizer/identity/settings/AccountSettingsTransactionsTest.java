@@ -132,4 +132,33 @@ class AccountSettingsTransactionsTest {
         verify(mapper, never()).profile(any(), any());
         verify(mapper, never()).locale(any(), any());
     }
+
+    @Test
+    void passwordChangeRequiresCurrentCredentialsAndValidNewPassword() {
+        assertThatThrownBy(() -> transactions.changePassword(principal, "wrong", "ValidNew123"))
+                .isInstanceOf(AccountSettingsException.class).extracting("code").isEqualTo("CURRENT_PASSWORD_INVALID");
+        assertThatThrownBy(() -> transactions.changePassword(principal, "synthetic-password", "letters-only"))
+                .isInstanceOf(AccountSettingsException.class).extracting("code").isEqualTo("PASSWORD_INVALID");
+        assertThatThrownBy(() -> transactions.changePassword(principal, "synthetic-password", "字".repeat(24) + "Ab1"))
+                .isInstanceOf(AccountSettingsException.class).extracting("code").isEqualTo("PASSWORD_INVALID");
+        verify(mapper, never()).changePassword(any(), any());
+        verify(passwords, never()).encode(anyString());
+
+        when(passwords.encode("ValidNew123")).thenReturn("synthetic-new-bcrypt-hash");
+        when(mapper.changePassword(userId, "synthetic-new-bcrypt-hash")).thenReturn(1);
+        transactions.changePassword(principal, "synthetic-password", "ValidNew123");
+        verify(mapper).changePassword(userId, "synthetic-new-bcrypt-hash");
+    }
+
+    @Test
+    void passwordChangeRejectsStaleSessionOrFailedWrite() {
+        account.setSecurityVersion(4L);
+        assertThatThrownBy(() -> transactions.changePassword(principal, "synthetic-password", "ValidNew123"))
+                .isInstanceOf(AccountSettingsException.class).extracting("code").isEqualTo("SESSION_REVOKED");
+        verify(mapper, never()).changePassword(any(), any());
+        account.setSecurityVersion(3L);
+        when(passwords.encode("ValidNew123")).thenReturn("synthetic-new-bcrypt-hash");
+        assertThatThrownBy(() -> transactions.changePassword(principal, "synthetic-password", "ValidNew123"))
+                .isInstanceOf(IllegalStateException.class);
+    }
 }
