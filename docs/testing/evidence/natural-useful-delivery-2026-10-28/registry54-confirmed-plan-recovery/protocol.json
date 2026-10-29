@@ -1,0 +1,72 @@
+{
+  "batch": "natural-useful-delivery-registry54-confirmed-plan-recovery-2026-10-28",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 500,
+  "maximumNewActualCalls": 4,
+  "captureOnly": false,
+  "versions": [
+    "54"
+  ],
+  "candidateVersions": [
+    "54"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 0,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "45": [
+      "45"
+    ],
+    "46": [
+      "46"
+    ],
+    "47": [
+      "47"
+    ],
+    "48": [
+      "48"
+    ],
+    "49": [
+      "49"
+    ],
+    "50": [
+      "50"
+    ],
+    "51": [
+      "51"
+    ],
+    "52": [
+      "52"
+    ],
+    "54": [
+      "54"
+    ]
+  },
+  "phaseLimits": {
+    "GENERATION": 0,
+    "PLAN": 4,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "prerequisiteStages": [
+    "registry54-confirmed-capture-recovery-r2"
+  ],
+  "allowedJobs": [
+    "P02_CONFIRMED_V54_PLAN_RECOVERY"
+  ],
+  "frozenBundleSha256": "c64e86bc8d58bd32309d36b67b76fe03d47d82a650dd0facad8247f49c781106",
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false
+}

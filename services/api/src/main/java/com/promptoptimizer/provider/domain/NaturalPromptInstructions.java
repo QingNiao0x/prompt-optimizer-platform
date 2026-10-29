@@ -56,6 +56,23 @@ public final class NaturalPromptInstructions {
             case NaturalPromptGroundedCompletionInstructions.VERSION -> NaturalPromptGroundedCompletionInstructions.ENHANCE;
             case NaturalPromptMultidimensionalInstructions.VERSION -> NaturalPromptMultidimensionalInstructions.ENHANCE;
             case NaturalPromptContextualRewriteInstructions.VERSION -> NaturalPromptContextualRewriteInstructions.ENHANCE;
+            case NaturalPromptUsefulDeliveryInstructions.VERSION -> NaturalPromptUsefulDeliveryInstructions.ENHANCE;
+            case NaturalPromptEffectiveRequestInstructions.VERSION -> NaturalPromptEffectiveRequestInstructions.ENHANCE;
+            case NaturalPromptBoundedRepairInstructions.VERSION -> NaturalPromptBoundedRepairInstructions.ENHANCE;
+            case NaturalPromptRequirementRegistryInstructions.VERSION -> NaturalPromptRequirementRegistryInstructions.ENHANCE;
+            case NaturalPromptContextBoundaryRegistryInstructions.VERSION -> NaturalPromptContextBoundaryRegistryInstructions.ENHANCE;
+            case NaturalPromptRegistryDiagnosticInstructions.VERSION -> NaturalPromptRegistryDiagnosticInstructions.ENHANCE;
+            case NaturalPromptEffectiveRegistryInstructions.VERSION -> NaturalPromptEffectiveRegistryInstructions.ENHANCE;
+            case NaturalPromptRequirementsOnlyInstructions.VERSION -> NaturalPromptRequirementsOnlyInstructions.ENHANCE;
+            case NaturalPromptBodyFirstInstructions.VERSION, NaturalPromptBodyFirstInstructions.CONTENT_FIRST_VERSION,
+                    NaturalPromptBodyFirstInstructions.EFFECTIVE_ANSWERS_VERSION, NaturalPromptBodyFirstInstructions.SOURCE_REFERENCE_REPAIR_VERSION,
+                    NaturalPromptBodyFirstInstructions.PREPARED_BODY_VERSION, NaturalPromptBodyFirstInstructions.CURRENT_REQUIREMENTS_VERSION,
+                    NaturalPromptBodyFirstInstructions.CONTENT_EXEMPLAR_VERSION, NaturalPromptCompletionPreparationInstructions.VERSION, NaturalPromptCompletionPreparationInstructions.CORRECTED_VERSION, NaturalPromptDiagnosticRoles.VERSION, NaturalPromptBodyFirstInstructions.WRITER_INPUT_VERSION
+                    -> NaturalPromptBodyFirstInstructions.bodyInstruction(version);
+            case NaturalPromptSinglePassInstructions.VERSION, NaturalPromptSinglePassInstructions.REASONING_VERSION,
+                    NaturalPromptSinglePassInstructions.GOAL_ROLE_VERSION, NaturalPromptSinglePassInstructions.METADATA_REPAIR_VERSION,
+                    NaturalPromptSinglePassInstructions.INPUT_ROLES_VERSION, NaturalPromptSinglePassInstructions.RESPONSIBILITY_VERSION
+                    -> NaturalPromptSinglePassInstructions.enhancementInstruction(version);
             case NaturalPromptCompletionGuidance.GUIDANCE_VERSION -> NaturalPromptCompletionGuidance.ENHANCE;
             case NaturalPromptCompletionGuidance.EXEMPLAR_VERSION -> NaturalPromptCompletionGuidance.ENHANCE_WITH_DEMONSTRATIONS;
             case NaturalPromptActionGuidance.GUIDANCE_VERSION -> NaturalPromptActionGuidance.ENHANCE;
@@ -101,6 +118,23 @@ public final class NaturalPromptInstructions {
                     NaturalPromptGroundedCompletionInstructions.VERSION, NaturalPromptMultidimensionalInstructions.VERSION
                     -> NaturalPromptRoutingRepairInstructions.OWNED_PLAN;
             case NaturalPromptContextualRewriteInstructions.VERSION -> NaturalPromptContextualRewriteInstructions.PLAN;
+            case NaturalPromptUsefulDeliveryInstructions.VERSION -> NaturalPromptUsefulDeliveryInstructions.PLAN;
+            case NaturalPromptEffectiveRequestInstructions.VERSION -> NaturalPromptEffectiveRequestInstructions.PLAN;
+            case NaturalPromptBoundedRepairInstructions.VERSION -> NaturalPromptBoundedRepairInstructions.PLAN;
+            case NaturalPromptRequirementRegistryInstructions.VERSION -> NaturalPromptRequirementRegistryInstructions.PLAN;
+            case NaturalPromptContextBoundaryRegistryInstructions.VERSION -> NaturalPromptContextBoundaryRegistryInstructions.PLAN;
+            case NaturalPromptRegistryDiagnosticInstructions.VERSION -> NaturalPromptRegistryDiagnosticInstructions.PLAN;
+            case NaturalPromptEffectiveRegistryInstructions.VERSION -> NaturalPromptEffectiveRegistryInstructions.PLAN;
+            case NaturalPromptRequirementsOnlyInstructions.VERSION -> NaturalPromptRequirementsOnlyInstructions.PLAN;
+            case NaturalPromptBodyFirstInstructions.VERSION, NaturalPromptBodyFirstInstructions.CONTENT_FIRST_VERSION,
+                    NaturalPromptBodyFirstInstructions.EFFECTIVE_ANSWERS_VERSION, NaturalPromptBodyFirstInstructions.SOURCE_REFERENCE_REPAIR_VERSION,
+                    NaturalPromptBodyFirstInstructions.PREPARED_BODY_VERSION, NaturalPromptBodyFirstInstructions.CURRENT_REQUIREMENTS_VERSION,
+                    NaturalPromptBodyFirstInstructions.CONTENT_EXEMPLAR_VERSION, NaturalPromptCompletionPreparationInstructions.VERSION, NaturalPromptCompletionPreparationInstructions.CORRECTED_VERSION, NaturalPromptDiagnosticRoles.VERSION, NaturalPromptBodyFirstInstructions.WRITER_INPUT_VERSION
+                    -> NaturalPromptBodyFirstInstructions.PLAN;
+            case NaturalPromptSinglePassInstructions.VERSION, NaturalPromptSinglePassInstructions.REASONING_VERSION,
+                    NaturalPromptSinglePassInstructions.GOAL_ROLE_VERSION, NaturalPromptSinglePassInstructions.METADATA_REPAIR_VERSION,
+                    NaturalPromptSinglePassInstructions.INPUT_ROLES_VERSION, NaturalPromptSinglePassInstructions.RESPONSIBILITY_VERSION
+                    -> NaturalPromptSinglePassInstructions.PLAN;
             // 本轮只检验正文补全，不同时改变提问策略；已绑定题答仍进入同一生成和保护路径。
             case NaturalPromptCompletionGuidance.GUIDANCE_VERSION, NaturalPromptCompletionGuidance.EXEMPLAR_VERSION -> PLAN;
             case NaturalPromptActionGuidance.GUIDANCE_VERSION, NaturalPromptActionGuidance.EXEMPLAR_VERSION -> PLAN;

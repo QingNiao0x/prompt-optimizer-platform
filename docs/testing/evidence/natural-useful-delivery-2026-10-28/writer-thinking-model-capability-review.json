@@ -1,0 +1,60 @@
+{
+  "scope": "Readonly current model listing and nonsecret configuration; no model call or product configuration change.",
+  "modelListing": {
+    "httpStatus": 200,
+    "selectedDefaultId": "deepseek:deepseek-flash",
+    "displayName": "DeepSeek-V4.1-Flash",
+    "provider": "deepseek"
+  },
+  "catalogHasMaxTokensField": false,
+  "capacityConfiguration": {
+    "modelId": "deepseek:deepseek-flash",
+    "contextTokens": 1000000,
+    "maxOutputTokens": 32768,
+    "safetyMarginTokens": 2048,
+    "verifiedAt": "2026-10-16"
+  },
+  "providerPropertyMaxTokensValidationUpperBound": 32768,
+  "ordinaryConfiguredDefaults": {
+    "maxTokens": 10000,
+    "readTimeoutSeconds": 60,
+    "temperature": 0.2,
+    "jsonResponseFormatEnabled": true,
+    "browserTimeoutMs": 70000
+  },
+  "nonsecretOverrideChecks": {
+    "names": [
+      "MODEL_MAX_TOKENS",
+      "MODEL_READ_TIMEOUT",
+      "MODEL_TEMPERATURE",
+      "MODEL_JSON_RESPONSE_FORMAT_ENABLED"
+    ],
+    "userValuesAllNull": true,
+    "machineValuesAllNull": true,
+    "toolProcessValuesAllNull": true
+  },
+  "limitation": "These are source defaults and checked environment scopes, not a claimed daily-service live request. Temporary mechanism execute payload uses its frozen 32768 cap directly; it does not prove ordinary product writer budget is already 32768.",
+  "futureBoundary": "If a thinking candidate is later authorized, pass its writer-only output profile explicitly; raising the global cap would also affect preparation/Plan. Keep current catalog and timeouts unchanged until a separate implementation decision.",
+  "effectiveApiRule": "RequestCapacityPolicy returns min(requested property maxTokens, model capacity cap) after context safety checks.",
+  "observedOnElapsedMs": [
+    {
+      "caseId": "Q01",
+      "elapsedMs": 16100
+    },
+    {
+      "caseId": "U02",
+      "elapsedMs": 102113
+    },
+    {
+      "caseId": "U03",
+      "elapsedMs": 81075
+    }
+  ],
+  "sourceFiles": [
+    "services/api/src/main/java/com/promptoptimizer/provider/service/PlatformModelCatalog.java",
+    "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleProperties.java",
+    "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/RequestCapacityPolicy.java",
+    "services/api/src/main/resources/application.yml",
+    "apps/web/src/services/http.ts"
+  ]
+}

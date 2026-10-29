@@ -1,0 +1,68 @@
+{
+  "status": "OFFLINE_BOUNDARIES_PASS_NOT_QUALITY_OR_ADOPTION",
+  "modelCallsDuringProfilePreparation": 0,
+  "actualTaskCalls": 118,
+  "thinkingStageFrozen": false,
+  "actualCapturedFirstWriterRequestsValidated": 3,
+  "tests": [
+    {
+      "suite": "Existing freezer regression",
+      "passed": 13,
+      "failed": 0,
+      "fixtureDirectory": "tmp/useful-delivery-infrastructure-check-eikVlf"
+    },
+    {
+      "suite": "Writer profile freezer boundary",
+      "passed": 21,
+      "failed": 0,
+      "fixtureDirectory": "tmp/writer-thinking-infrastructure-check-sbmV96"
+    },
+    {
+      "suite": "Java transport profile/legacy/single-pass/closure",
+      "passed": 20,
+      "failed": 0,
+      "fixtureDirectory": "tmp/writer-thinking-java-check-10135162538662959521"
+    }
+  ],
+  "syntaxChecks": {
+    "node": true,
+    "powershell": true,
+    "javac21": true
+  },
+  "correctedZeroCallToolingError": {
+    "code": "ERR_UNSUPPORTED_ESM_URL_SCHEME",
+    "cause": "Windows absolute import path in one ad-hoc read-only validator command; corrected with pathToFileURL, no stage frozen and no network call"
+  },
+  "taskProtocolSha256": "49d09f7525edb2aa16e15f1c707066788e7f59a2abc1af7c8fb64827ecd33c19",
+  "bundleSha256": "8fcc1a3150b15675f6d80044474ff097b8f81c33be43bd2eb68b8b76d1e3d3f5",
+  "files": [
+    {
+      "path": "writer-thinking-profile.mjs",
+      "sha256": "897c29f621f5341f2f50c7ae76399b111c1ba8445a92ce1b88229e69ff44835e"
+    },
+    {
+      "path": "writer-thinking-profile-selftest.mjs",
+      "sha256": "d15c3e1b72511fa9c5228e7ba3c5e36b1e4d467ae4747d7156f8f9b436e5214a"
+    },
+    {
+      "path": "WriterThinkingProfileSelfTest.java",
+      "sha256": "6845fce7f5dc46243b4b22728d088cd402319ff3ba6a4b4e7df317b6e26ef4bf"
+    },
+    {
+      "path": "freeze-live.mjs",
+      "sha256": "ebc6f12d2ad2dcabaaf2e117a40fbe23e2471235720ff6e2813a9d71c92db2d0"
+    },
+    {
+      "path": "NaturalUsefulDeliveryEvaluationServer.java",
+      "sha256": "78c62df8e5639239d8a20de89763dd2901caa2b9b68702f2df27344c156fdf62"
+    },
+    {
+      "path": "start-live.ps1",
+      "sha256": "b9b6371e27c5afd945e3199ca942dbac0de3042a95b395179fe0264a5751b2cc"
+    },
+    {
+      "path": "run-live.mjs",
+      "sha256": "0797dc602eccf2b92ed752efc0db31bde3a24b51141c2d5ea93b0c9df3e011ed"
+    }
+  ]
+}

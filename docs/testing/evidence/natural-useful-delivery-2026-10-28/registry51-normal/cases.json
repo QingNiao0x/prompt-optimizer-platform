@@ -1,0 +1,45 @@
+{
+  "syntheticOnly": true,
+  "cases": [
+    {
+      "id": "C01",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：调查时间不能超过今天。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "contract": "本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "allowedWritePaths": [
+        "src/views/records/dateRules.js",
+        "src/views/records/create.js",
+        "src/views/records/import.js",
+        "src/views/records/dateRules.spec.js"
+      ],
+      "todayBoundary": "允许今天，拒绝今天之后的日期",
+      "provenance": "旧失败的明确交付范围变体，开发/回归题，不是未见题"
+    },
+    {
+      "id": "C02",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：调查时间不能超过今天。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js；不得新增文件，也不得修改测试文件或其他文件。",
+      "contract": "本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js；不得新增文件，也不得修改测试文件或其他文件。",
+      "allowedWritePaths": [
+        "src/views/records/dateRules.js",
+        "src/views/records/create.js",
+        "src/views/records/import.js"
+      ],
+      "todayBoundary": "允许今天，拒绝今天之后的日期",
+      "provenance": "旧失败的明确交付范围变体，开发/回归题，不是未见题"
+    },
+    {
+      "id": "V01",
+      "rawPrompt": "只输出三行：第一行是1，第二行是2，第三行是3，不要其他内容。",
+      "useProject": false
+    },
+    {
+      "id": "V02",
+      "rawPrompt": "请只阅读 @synthetic-survey-workspace/src/views/records 的新增与导入实现，熟悉调用关系后等待我给具体任务，不修改代码，也不交付说明文档。",
+      "useProject": true
+    },
+    {
+      "id": "V03",
+      "rawPrompt": "没有相关资料，请解释为什么同一张照片在不同屏幕上颜色不一样，并给普通用户可操作的排查建议。",
+      "useProject": false
+    }
+  ]
+}

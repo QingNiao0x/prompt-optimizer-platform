@@ -1,0 +1,50 @@
+{
+  "batch": "natural-useful-delivery-plan-completion46-2026-10-28",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 500,
+  "maximumNewActualCalls": 8,
+  "captureOnly": false,
+  "versions": [
+    "46"
+  ],
+  "candidateVersions": [
+    "46"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 0,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "45": [
+      "45"
+    ],
+    "46": [
+      "46"
+    ]
+  },
+  "phaseLimits": {
+    "GENERATION": 8,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "prerequisiteStages": [],
+  "allowedJobs": [
+    "P01_V46_CONFIRMED_GEN",
+    "P02_V46_CONFIRMED_GEN"
+  ],
+  "frozenBundleSha256": "671365a328c59354c8766fe8044e9d72094ccecd39de909c2dc157a81af56b41",
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false
+}

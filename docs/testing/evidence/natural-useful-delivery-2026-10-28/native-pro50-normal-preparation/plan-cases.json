@@ -1,0 +1,43 @@
+{
+  "syntheticOnly": true,
+  "status": "TEMPLATES_REQUIRE_FRESH_REAL_CONTEXT_AND_PLAN",
+  "modelId": "deepseek:deepseek-v4-pro",
+  "strategyVersion": "50",
+  "plannedPlanProfileName": "NATIVE_PRO50_PLAN_V1",
+  "plannedCompletionProfileName": "NATIVE_PRO50_PLAN_COMPLETION_V1",
+  "finiteProfilesRegistered": false,
+  "relatedNormalFlowBudget": {
+    "maximumActualAcrossNormalAndPlanStages": 36,
+    "allocatedGenerationDirect": 20,
+    "allocatedPlan": 8,
+    "allocatedGenerationAfterActualPlan": 8,
+    "unallocated": 0,
+    "normalEstimatedActual": 18,
+    "failedAndProtocolRepairAttemptsCount": true,
+    "qualityRetriesAllowed": false
+  },
+  "cases": [
+    {
+      "id": "P01",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：调查时间不能超过今天。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "expectedPath": "ZERO_QUESTIONS_THEN_GENERATION",
+      "futurePlanJobId": "P01_V50_PRO_PLAN",
+      "futureGenerationJobId": "P01_V50_PRO_CONFIRMED_GEN"
+    },
+    {
+      "id": "P02",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "expectedPath": "IMPORTANT_USER_RESERVED_UNKNOWN_THEN_ACTUAL_ANSWER_THEN_GENERATION",
+      "futurePlanJobId": "P02_V50_PRO_PLAN",
+      "futureGenerationJobId": "P02_V50_PRO_CONFIRMED_GEN"
+    }
+  ],
+  "materialContract": "Complete 79-file project, real UI context preparation; keep all actually prepared material in the final service request and its original planningContext reference.",
+  "prohibited": [
+    "Old planId/contextId",
+    "Invented actualAnswers",
+    "Automatic recommendation treated as selection",
+    "Silent expiry rebinding",
+    "Using old Flash31 as a same-model strategy comparison"
+  ]
+}

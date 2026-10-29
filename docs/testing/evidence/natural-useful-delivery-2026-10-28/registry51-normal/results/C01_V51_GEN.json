@@ -1,0 +1,107 @@
+{
+  "id": "C01_V51_GEN",
+  "caseId": "C01",
+  "phase": "GENERATION",
+  "version": "51",
+  "status": 200,
+  "body": {
+    "requestId": "C01_V51_GEN",
+    "data": {
+      "optimizedPrompt": "请在重点记录模块 synthetic-survey-workspace/src/views/records 的新增和导入功能中增加调查时间限制：调查时间不能超过今天。\n\n当前 dateRules.js 的 validateSurveyDate 只校验字符串格式和是否为真实日历日期，尚未比较今天；create.js 的新增和 import.js 的导入都调用这个共用校验，新增失败返回 surveyDate 字段错误，导入按行部分成功、无效日期只影响所属行。请在这套共用校验中补上“调查日期不得晚于今天”的判断，并让新增和导入两个入口都按各自现有方式返回该错误（新增走字段错误，导入走对应行的错误记录，其他有效行照常保留），同时保持现有格式与日历日期校验行为不变。错误代码沿用现有风格，便于表单和导入行提示。\n\n请按需补充已有的 src/views/records/dateRules.spec.js 回归测试，覆盖今天、过去日期、未来日期在新增和导入中的结果，并确认原有有效日期和其他字段保留、导入按行部分成功的用例仍通过；可用 package.json 中的 npm test 运行。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [
+          {
+            "name": "Node.js",
+            "source": "package.json",
+            "confidence": 0.9
+          }
+        ],
+        "dependencies": [],
+        "directoryTree": [
+          "package.json",
+          "src/",
+          "src/views/",
+          "src/views/records/",
+          "src/views/records/create.js",
+          "src/views/records/dateRules.js",
+          "src/views/records/dateRules.spec.js",
+          "src/views/records/import.js"
+        ],
+        "fileSnippets": [
+          {
+            "path": "src/views/records/import.js",
+            "language": "javascript",
+            "content": "[片段 1/1]\nimport { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n",
+            "summary": "JavaScript代码文件，主要定义：importSurveys、inserted、errors、code。关键内容：import { validateSurveyDate } from './dateRules.js';；/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。",
+            "truncated": false
+          },
+          {
+            "path": "src/views/records/create.js",
+            "language": "javascript",
+            "content": "[片段 1/1]\nimport { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n",
+            "summary": "JavaScript代码文件，主要定义：createSurvey、error。关键内容：import { validateSurveyDate } from './dateRules.js';；/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。",
+            "truncated": false
+          },
+          {
+            "path": "src/views/records/dateRules.js",
+            "language": "javascript",
+            "content": "[片段 1/1]\n/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n",
+            "summary": "JavaScript代码文件，主要定义：validateSurveyDate、parsed。关键内容：/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。；*/",
+            "truncated": false
+          },
+          {
+            "path": "src/views/records/dateRules.spec.js",
+            "language": "javascript",
+            "content": "[片段 1/1]\nimport assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n",
+            "summary": "JavaScript代码文件，主要定义：input、first。关键内容：import assert from 'node:assert/strict';；import { test } from 'node:test';",
+            "truncated": false
+          },
+          {
+            "path": "package.json",
+            "language": "json",
+            "content": "[片段 1/1]\n{\n  \"name\": \"synthetic-survey-workspace\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": { \"test\": \"node --test src/views/records/dateRules.spec.js\" }\n}\n",
+            "summary": "Node.js 项目清单。{；\"name\": \"synthetic-survey-workspace\",；\"type\": \"module\",；\"scripts\": { \"test\": \"node --test src/views/records/dateRules.spec.js\" }；}",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 9056,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "51",
+      "framework": "APE",
+      "recordId": "60e53551-2cf4-4d3a-9e1e-3fbc92da2630",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "status": "preregistered_before_any_generation",
+  "visibility": "author_and_later_evaluators_only; never send this evaluation card to enhancement or execution models",
+  "evidence_rule": "Judge the actual work against the raw prompt and all shared materials. A model self-check or evaluator label is not independent proof. Preserve exact offending spans and the relevant source when recording a failure.",
+  "fairness_rule": "A faithful raw baseline may succeed. Do not reward added length, different headings, paraphrase, or a chosen design merely for differing from the raw baseline. Do not demand one preferred design.",
+  "authorship_review": "Only the independent author performed internal consistency review. No external expert review, real user editing session, or editing minutes are claimed.",
+  "failure_boundary": "A material error requiring a user to correct facts, recover an omitted necessary action, remove an unavailable dependency, or supply the central deliverable is a user-repair failure. Minor copy preferences are not automatically failures.",
+  "comparison_rule": "Report usable-delivery and serious failures separately from style. When facts are uncertain, keep mixed or undecided attribution until source, prompt, assembled prompt and work are compared.",
+  "case_id": "native-pro50-holdout-02",
+  "deliverable": "An executable family paper-shadow-story workshop plan that three ordinary volunteers can prepare and run.",
+  "hard_condition_card": [
+    {
+      "id": "B1",
+      "condition": "交付本次活动的具体完整方案，核心仍是孩子动手制作简单纸影并与成人讲自己选择的小故事，不能替换成讲座、纯观看节目或后续调研方案。"
+    },
+    {
+      "id": "B2",
+      "condition": "以十二组、二十四名参与者及三位志愿者为现有资源，现场活动可在十四点至十四点五十分完成，准备与复原也在允许时段内；不能依赖第四位工作人员或无人照管儿童。"
+    },
+    {
+      "id": "B3",
+      "condition": "关键玩法、材料使用和现场衔接足够具体，志愿者无需自行补设计整场核心内容。无需提供逐字主持稿或精密分钟表，但不能只列原则、阶段名或留空白。"
+    },
+    {
+      "id": "B4",
+      "condition": "现有材料数量和空间使用可行；新增耗材若有，给合理数量或费用范围且总额不超过二百元，不要求家庭自带或额外付费，不依赖未确认赞助。"
+    },
+    {
+      "id": "B5",
+      "condition": "不依赖插电灯具、电脑、投影仪、音响、专业支架、刀具或热熔胶枪；影幕与布局不得挡唯一出入口和通道，不能全场熄黑。"
+    },
+    {
+      "id": "B6",
+      "condition": "成人全程陪同，儿童用剪刀和手电有可理解的安全提醒；不得安排无人监管、光照眼睛或在不可见地面上走动的做法。"
+    },
+    {
+      "id": "B7",
+      "condition": "保留家庭自主故事和造型空间，不把每个孩子独自上台表演设为必过关卡，不评选第一名；不愿公开讲的家庭有完成方式。"
+    },
+    {
+      "id": "B8",
+      "condition": "收尾要能处理作品带走和馆内物品集中归位；不把拍脸、署名公开、手机互动或线上发布设为完成条件，若涉及相应记录则须保留授权边界。"
+    },
+    {
+      "id": "B9",
+      "condition": "未知的个别协助需要不能编造为已知，也不能以此推迟整个交付；在现有资源内给合理调整或确认办法即可。"
+    }
+  ],
+  "reasonable_design_variants": [
+    "可让两组家庭共享一支手电，也可设置轮换的小站、使用两处幕面或另选不挡通行的纸影方式，满足容量和时间即可。",
+    "可选自由创作、宽松主题、故事接龙或短提示卡；无需采用作者偏好的故事、角色或结局。",
+    "可先看短示范再制作，也可边试影子边制作；可安排自愿小组分享、成人代述或家庭内部讲述。",
+    "可以不花新增预算；如采购，合理估算即可，不要求精确单价、唯一品牌或采购链接。",
+    "可用时间段、顺序步骤、简表或流畅文字；没有标题数量、字数或逐分钟脚本的硬性要求。",
+    "普通物料失效或到场变化的可行回退可以简短；无需穷举风险或加入超出活动需要的专业规范。"
+  ],
+  "errors_requiring_user_repair": [
+    {
+      "kind": "unavailable_dependency",
+      "examples": [
+        "主流程需要电脑投影或插电舞台灯",
+        "默认另有摄影师和托管人员",
+        "让每个家庭必须自带手电和纸影套装",
+        "新增耗材总额明显超过二百元且没有可用替代"
+      ]
+    },
+    {
+      "kind": "unsafe_or_exclusionary",
+      "examples": [
+        "用横跨唯一通道的幕布搭舞台",
+        "要求全场熄灯后换位走动",
+        "安排每个孩子独自上台作为完成标准",
+        "将没有监护人同意的拍脸发布作为必做成果"
+      ]
+    },
+    {
+      "kind": "missing_deliverable",
+      "examples": [
+        "只有活动目标和原则，缺少孩子实际怎么做和怎么讲",
+        "把核心玩法写成待工作人员设计",
+        "必须先收齐特殊需要调查才能给方案",
+        "改成志愿者讲故事、家庭全程观看"
+      ]
+    },
+    {
+      "kind": "capacity_or_time",
+      "examples": [
+        "同一时刻需要十二支手电且无共享或预算补足办法",
+        "现场总流程明显超过五十分钟且没有可行压缩",
+        "方案依赖三位志愿者同时承担互相冲突的固定岗位而没有安排"
+      ]
+    }
+  ],
+  "quality_observations_not_automatic_failure": [
+    "主持人、材料志愿者和现场协助者能否看懂各自要做什么，活动是否有自然的进入、创作、故事和结束。",
+    "第一次参与且手工能力不同的儿童是否都有可完成的小成果，成人有支持而不包办的参与方式。",
+    "时间、共享资源和收尾是否互相衔接；示例是否启发创作而不是强加统一答案。",
+    "不把提供更多备选、更多规章、表格更多或文案更长当成实质收益。"
+  ]
+}

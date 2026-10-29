@@ -54,8 +54,20 @@ public record NaturalTaskReview(InputReadiness inputReadiness, List<Coverage> re
     void validateUnderstanding(NaturalTaskUnderstanding task, NaturalPromptInput input) {
         if (inputReadiness == null || task.requirements().isEmpty() || requirementCoverage.size() > 256
                 || additionCoverage.size() > 256 || planImpacts.size() > 64) throw invalid("覆盖检查记录不完整或超出容量");
+        validateRequirementSources(task.requirements(), input);
+        for (var addition : task.additions()) check(addition.gap());
+        requirementCoverage.forEach(NaturalTaskReview::checkCoverage);
+        additionCoverage.forEach(NaturalTaskReview::checkCoverage);
+        for (var impact : planImpacts) {
+            if (impact == null) throw invalid("Plan影响记录为空");
+            check(impact.questionId()); check(impact.whyAsk()); check(impact.answerDifference());
+        }
+    }
+
+    /** 已核验出处的要求仍需逐份关联原始需求与实际题答；准备阶段不需要创建task/readiness载体。 */
+    static void validateRequirementSources(List<NaturalTaskUnderstanding.Requirement> requirements, NaturalPromptInput input) {
         Set<String> referenced = new HashSet<>();
-        for (var requirement : task.requirements()) {
+        for (var requirement : requirements) {
             if (requirement.dimensions().isEmpty() || requirement.dimensions().size() > NaturalTaskUnderstanding.Dimension.values().length
                     || new HashSet<>(requirement.dimensions()).size() != requirement.dimensions().size()) {
                 throw invalid("任务要求缺少有效核对维度");
@@ -70,13 +82,6 @@ public record NaturalTaskReview(InputReadiness inputReadiness, List<Coverage> re
             var missing = new java.util.TreeSet<>(userSources);
             missing.removeAll(referenced);
             throw new MissingSources(missing);
-        }
-        for (var addition : task.additions()) check(addition.gap());
-        requirementCoverage.forEach(NaturalTaskReview::checkCoverage);
-        additionCoverage.forEach(NaturalTaskReview::checkCoverage);
-        for (var impact : planImpacts) {
-            if (impact == null) throw invalid("Plan影响记录为空");
-            check(impact.questionId()); check(impact.whyAsk()); check(impact.answerDifference());
         }
     }
 
@@ -143,6 +148,9 @@ public record NaturalTaskReview(InputReadiness inputReadiness, List<Coverage> re
             super(ProviderFailureType.INVALID_RESPONSE, "覆盖记录遗漏原始需求或实际题答来源", false);
             this.sourceIds = Set.copyOf(sourceIds);
         }
+
+        /** 返回校验器计算的不可变缺失编号，供新协议复用同一定位信息；不暴露原题答或用户值。 */
+        public Set<String> sourceIds() { return sourceIds; }
 
         /** 精确指出待核对的编号，不把引用缺失当成不同题答语义等价，也不要求扩写已充分正文。 */
         public String repairInstruction() {

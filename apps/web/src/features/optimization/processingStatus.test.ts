@@ -6,6 +6,13 @@ const base = { provider: { mock: false, provider: 'fixture', model: 'fixture' },
 type Processing = NonNullable<OptimizationResult['processing']>;
 
 describe('natural processing status', () => {
+  it('accepts requirements preparation without pretending scope classification occurred', () => {
+    const prepared = { ...base, processing: { completedStages: ['REQUIREMENT_PREPARATION'], originalPreserved: true } satisfies Processing };
+    expect(processingStatusLabel(prepared)).toBe('保留原请求，未执行正文改写');
+    const generated = { ...base, processing: { completedStages: ['REQUIREMENT_PREPARATION', 'BODY_GENERATION'], originalPreserved: false } satisfies Processing };
+    expect(processingStatusLabel(generated)).toBe('已生成优化正文');
+    expect(optimizationCompletionNotice(generated)).toEqual({ type: 'success', message: '最终提示词已生成。' });
+  });
   it('distinguishes preparation-only from a real body call even if a model was used', () => {
     const result = { ...base, processing: { completedStages: ['SCOPE_ANALYSIS'], originalPreserved: true } satisfies Processing };
     expect(processingStatusLabel(result)).toBe('保留原请求，未执行正文改写');

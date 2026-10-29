@@ -1,0 +1,65 @@
+{
+  "version": "55",
+  "frozenAt": "2026-10-28T13:01:49.482Z",
+  "actualModelCalls": 0,
+  "sources": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptSinglePassInstructions.java",
+      "sha256": "e3a19eec8ba933ca85066ada1e40477ac26c89b70ecdf91ae0484c9ca6fc735f"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "b4db3348ef3fe8959e1ccc198a577323a0a2dd32c50e36164eea3390b4e49539"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptStageInstructions.java",
+      "sha256": "e54b150ec44cd810d54081dd07ffd2d33c169cd4cc02608e31079af45d3334f9"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "703018857fc5c9fdb8ddea88640b69730e77954e543f59dcbdcad0e634f6c0ba"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleProviderConfiguration.java",
+      "sha256": "99c2ee86288020f04c9c3c616a11e40890201ca8833a312aba3c02d4121a3edd"
+    },
+    {
+      "path": "services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/NaturalReasoningProviderTest.java",
+      "sha256": "158264892610e8f858c6b1ef931c4315fa57fddd779beb48ed77c19dd9fd3e94"
+    }
+  ],
+  "tests": [
+    {
+      "path": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalReasoningProviderTest.xml",
+      "sha256": "9e74eb38584e3305244acd7603fbe279304080e61e9993defae0beb593d1214e",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalSinglePassProviderTest.xml",
+      "sha256": "486f13b78ffe711aa3dbe8e6dc8011557fe0014b32f0e197fece80c45214bd53",
+      "tests": 23,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "writingAndPlanGuidanceUnchangedFrom54": true,
+  "oldRequestFixtureCount": 35,
+  "oldGuideFixtureCount": 25,
+  "inference": {
+    "adapter": "Official DeepSeek Flash/Pro",
+    "body": "thinking enabled/high, max_tokens32768 within configured capacity",
+    "transport": "Dedicated 180-second client preserving shared interceptors; wrapper avoids changing RestClient injection",
+    "planAndOtherRoutes": "Original parameters and transport"
+  },
+  "priorToolFailures": [
+    "Windows selector loopback failed until using the existing IPv4/tmp JVM flags",
+    "New Plan test initially used an incorrect overload; fixed in tests"
+  ],
+  "qualityAdoptionClaimed": false,
+  "defaultVersion": "31",
+  "service9000Updated": false
+}

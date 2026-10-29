@@ -1,0 +1,24 @@
+{
+  "kind": "EXPLICIT_OPERATOR_SELECTION",
+  "caseId": "P02_CONFIRMED",
+  "planId": "e0c947a1-747a-4a5d-b0fc-1a38d3a42d6e",
+  "planningContext": {
+    "contextId": "4d828c7c-44da-4724-a2c2-ab22b3705c7b",
+    "version": "sha256:0e2c7ef193875980f1d3c1882e18829aa84ee0e6fc0eafca49452dfbc8ea6dd7"
+  },
+  "actorScopeSha256": "f74ffb510da7bb6fca3019248030401e1fbb378ebe87678d406f9efa90c6b56a",
+  "selectedAt": "2026-10-27T23:46:59.885Z",
+  "decisionQuestionId": "q1",
+  "answers": [
+    {
+      "questionId": "q1",
+      "question": "调查日期是否允许填写今天（today）？",
+      "optionIds": [
+        "allow_today"
+      ],
+      "customAnswer": "",
+      "answer": "允许填写今天：日期等于 today 时校验通过，晚于 today 时返回错误。"
+    }
+  ],
+  "authorization": "Root approved allow-today and explicitly-still-unknown synthetic states before new Plan calls; no actual end-user decision is claimed."
+}

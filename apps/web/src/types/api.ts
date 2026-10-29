@@ -661,7 +661,7 @@ export interface PromptDocumentMetadata {
   editRevision?: number;
   /** 服务端记录的生成阶段和原文比较，不表示语义质量或实质收益。旧历史可能缺失。 */
   processing?: {
-    completedStages: ('SCOPE_ANALYSIS' | 'BODY_GENERATION')[];
+    completedStages: ('SCOPE_ANALYSIS' | 'REQUIREMENT_PREPARATION' | 'BODY_GENERATION' | 'RECORD_LINKING')[];
     originalPreserved: boolean;
   } | null;
 }

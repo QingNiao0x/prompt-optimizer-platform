@@ -1,0 +1,79 @@
+{
+  "batch": "natural-useful-delivery-native-pro52-prepare-2026-10-28",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 500,
+  "maximumNewActualCalls": 2,
+  "captureOnly": false,
+  "versions": [
+    "52"
+  ],
+  "candidateVersions": [
+    "52"
+  ],
+  "modelId": "deepseek:deepseek-v4-pro",
+  "upstreamModel": "deepseek-v4-pro",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 0,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "45": [
+      "45"
+    ],
+    "46": [
+      "46"
+    ],
+    "47": [
+      "47"
+    ],
+    "48": [
+      "48"
+    ],
+    "49": [
+      "49"
+    ],
+    "50": [
+      "50"
+    ],
+    "51": [
+      "51"
+    ],
+    "52": [
+      "52"
+    ]
+  },
+  "phaseLimits": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 2,
+    "REVIEW": 0
+  },
+  "prerequisiteStages": [],
+  "allowedJobs": [
+    "P02_CONFIRMED_V52_PRO_PREPARE",
+    "P02_UNKNOWN_V52_PRO_PREPARE"
+  ],
+  "modelSelectionProfile": {
+    "name": "NATIVE_PRO52_PREPARE_MECHANISM_V1",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "upstreamModel": "deepseek-v4-pro",
+    "routeKey": "deepseek",
+    "endpoint": "https://api.deepseek.com/chat/completions",
+    "baselineStage": "registry52-plan-completion",
+    "baselineJobsSha256": "ee1c13561f21cb3269ed9ad81d538ebe11f150c2e6b6638e18aae003dd61f79e",
+    "baselineProtocolSha256": "d734df85301d071b1be687cf35cf4e7662aef3152c1a591c654d3ad8b868a679",
+    "maximumActualCalls": 2
+  },
+  "frozenBundleSha256": "4d693460eaac471db5b50b2c69720a0cc64c86cbc8cebbb61273d9938dd3cba8",
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false
+}

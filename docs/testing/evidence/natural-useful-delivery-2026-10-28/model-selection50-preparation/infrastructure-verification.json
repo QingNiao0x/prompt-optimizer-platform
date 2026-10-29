@@ -1,0 +1,74 @@
+{
+  "status": "PRO50_FUTURE_PROFILE_PREPARATION_COMPLETE_NOT_LIVE_OR_QUALITY",
+  "preparedAt": "2026-10-27T21:38:21.818Z",
+  "actualModelCalls": 0,
+  "taskActual": 137,
+  "remainingOf500": 363,
+  "stageFrozen": false,
+  "serviceStarted": false,
+  "modelCatalogReadFromLiveService": false,
+  "globalDefaultOrCatalogOrUserPreferenceModified": false,
+  "strictProfile": {
+    "name": "OFFICIAL_MODEL_SELECTION_ABLATION_V1",
+    "onlyPublicModelIdChange": "deepseek:deepseek-flash -> deepseek:deepseek-v4-pro",
+    "version": "50",
+    "normalCalls": 6,
+    "maximumCalls": 12,
+    "parameters": "8192/.2/JSON/disabled/streamfalse",
+    "profileMayNotCoexistWithThinkingProfile": true
+  },
+  "validation": {
+    "javaNewParameterChecks": 13,
+    "nodeNewProfileChecks": 11,
+    "preflightReadOnlyChecks": 21,
+    "total": 45,
+    "oldFullSuitesRepeated": false,
+    "productCompiled": false,
+    "isolatedRunner": "tmp/native-pro50-offline-runner",
+    "baselineRuntime": "tmp/natural-useful-delivery-2026-10-28/registry50-development/runtime/classes",
+    "syntaxChecked": true
+  },
+  "oldBoundary": {
+    "closedStages": 21,
+    "keyOldFilesChecked": 67,
+    "oldKeyHashesUnchanged": true,
+    "taskProtocolUnchanged": true,
+    "fullClassTreeNotRehashedDuringPreparation": true
+  },
+  "hashes": [
+    {
+      "path": "official-model-selection-profile.mjs",
+      "sha256": "3eb16c17f5b39e2d25b434519d7aa9e00c8f3a7a75a42d4b54c33b42a452b130"
+    },
+    {
+      "path": "freeze-live.mjs",
+      "sha256": "f0aab655ada684047b9d4472341cda9a5706cf37f5711bc22d5addae72f03b54"
+    },
+    {
+      "path": "NaturalUsefulDeliveryEvaluationServer.java",
+      "sha256": "404793bd5013f1990463a8de73139f1077a8dbe17b2b65f7faed234529be2261"
+    },
+    {
+      "path": "start-live.ps1",
+      "sha256": "5fcb3065f3a663ee0bc5a69f4758a0078ed3c0e4f681efca994e1c01e0b08369"
+    },
+    {
+      "path": "NativeModelSelectionProfileSelfTest.java",
+      "sha256": "ee20c14a541bf05c1a3b94fb365cba742e3be78d05b444fbeb16cb9cc6a9b5ae"
+    },
+    {
+      "path": "model-selection50-preparation/development-bundle.json",
+      "sha256": "5bd4df7ff14e0e2239740d2e7748de1c54b930dc7936f3bc4f4db65570252167"
+    },
+    {
+      "path": "model-selection50-preparation/verify-model-selection.mjs",
+      "sha256": "0277779d6c2bb5b2ab0929193e39cb21bb0934c8fa373dbbcdcddd438a79ce5a"
+    },
+    {
+      "path": "model-selection50-preparation/feasibility.md",
+      "sha256": "273fc31c94cf23b1833c6b257b3475ec2ab6e4decac14230d8266fa38ebe2428"
+    }
+  ],
+  "approvedNextStepNeeded": "Root confirmation before formal freeze/start, then fixed account LOGIN and zero-upstream actual catalog/route GET before any three native Pro jobs. No normal/works/new question authorization.",
+  "toolingFailureRetained": "First offline Java parameter test omitted the helper static evidence path property and failed NPE before any network; corrected only the synthetic test bootstrap. 0 upstream attempts."
+}

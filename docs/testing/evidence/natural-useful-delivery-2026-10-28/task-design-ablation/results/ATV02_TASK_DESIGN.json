@@ -1,0 +1,24 @@
+{
+  "id": "ATV02_TASK_DESIGN",
+  "phase": "EXECUTION",
+  "version": "46",
+  "caseId": "ATV02",
+  "status": 200,
+  "body": {
+    "requestId": "ATV02_TASK_DESIGN",
+    "data": {
+      "content": "{\"optimizedPrompt\":\"请只阅读 synthetic-survey-workspace 中 src/views/records 目录下与“新增”和“导入”相关的实现，重点看 create.js、import.js 以及它们共同依赖的 dateRules.js，并参考 dateRules.spec.js 了解现有行为约定。阅读时请理清调用关系：新增入口和导入入口分别如何调用共用的日期校验，校验失败时各自返回什么结构，导入如何按行处理部分成功与逐行错误，以及测试用例覆盖了哪些场景。熟悉这些内容后请停下，等待我给出具体任务。不要修改任何代码，也不要撰写或交付说明文档。\",\"framework\":\"APE\",\"taskUnderstanding\":{\"goal\":\"只阅读 src/views/records 的新增与导入实现，熟悉调用关系后等待用户给出具体任务\",\"deliverable\":\"无独立交付物；阅读并熟悉后等待用户下一步指令\",\"requirements\":[{\"text\":\"只阅读 src/views/records 的新增与导入实现，熟悉调用关系\",\"dimensions\":[\"GOAL\",\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请只阅读 @synthetic-survey-workspace/src/views/records 的新增与导入实现，熟悉调用关系后等待我给具体任务\"}]},{\"text\":\"熟悉调用关系后等待用户给出具体任务\",\"dimensions\":[\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"熟悉调用关系后等待我给具体任务\"}]},{\"text\":\"不修改代码\",\"dimensions\":[\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"不修改代码，也不交付说明文档。\"}]},{\"text\":\"不交付说明文档\",\"dimensions\":[\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"不修改代码，也不交付说明文档。\"}]}],\"additions\":[{\"text\":\"将阅读重点具体化为 create.js、import.js 与共用 dateRules.js 的调用关系，以及新增失败返回字段错误、导入按行部分成功与逐行错误、测试覆盖场景\",\"gap\":\"原文只说“熟悉调用关系”，未点明需要理解的具体关系与行为，执行者可能只浏览文件而漏掉共用校验、失败返回结构和按行部分成功等关键点\",\"benefit\":\"让执行者在等待具体任务前建立与后续任务直接相关的准确理解，减少后续返工\"}],\"openDecisions\":[],\"review\":{\"inputReadiness\":\"SUFFICIENT\",\"requirementCoverage\":[{\"index\":0,\"quotes\":[\"请只阅读 synthetic-survey-workspace 中 src/views/records 目录下与“新增”和“导入”相关的实现\"]},{\"index\":1,\"quotes\":[\"熟悉这些内容后请停下，等待我给出具体任务\"]},{\"index\":2,\"quotes\":[\"不要修改任何代码\"]},{\"index\":3,\"quotes\":[\"也不要撰写或交付说明文档\"]}],\"additionCoverage\":[{\"index\":0,\"quotes\":[\"重点看 create.js、import.js 以及它们共同依赖的 dateRules.js\",\"导入如何按行处理部分成功与逐行错误\"]}],\"planImpacts\":[]}}",
+      "usage": {
+        "prompt_tokens": 3232,
+        "completion_tokens": 669,
+        "total_tokens": 3901,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 2080
+      },
+      "finishReason": "stop"
+    }
+  }
+}

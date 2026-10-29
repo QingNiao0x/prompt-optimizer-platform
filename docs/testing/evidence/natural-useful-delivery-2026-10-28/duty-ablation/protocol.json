@@ -1,0 +1,50 @@
+{
+  "batch": "natural-useful-delivery-duty-ablation-2026-10-28",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 500,
+  "maximumNewActualCalls": 2,
+  "captureOnly": false,
+  "versions": [
+    "46"
+  ],
+  "candidateVersions": [
+    "46"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 0,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "45": [
+      "45"
+    ],
+    "46": [
+      "46"
+    ]
+  },
+  "phaseLimits": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 2,
+    "REVIEW": 0
+  },
+  "prerequisiteStages": [],
+  "allowedJobs": [
+    "ADQ01_SCOPED_DUTIES",
+    "ADV03_SCOPED_DUTIES"
+  ],
+  "frozenBundleSha256": "b556b553fd76edcf1abb9136ea41c3ecb30999ee3c4b5b7c723f1866ce81ff78",
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false
+}

@@ -1,0 +1,24 @@
+{
+  "id": "H04_ORIGINAL_EXEC",
+  "phase": "EXECUTION",
+  "version": "ORIGINAL",
+  "caseId": "H04",
+  "status": 200,
+  "body": {
+    "requestId": "H04_ORIGINAL_EXEC",
+    "data": {
+      "content": "```javascript\nexport function mergeShoppingItems(items) {\n  if (!Array.isArray(items)) {\n    throw new TypeError('items must be an array');\n  }\n\n  const merged = new Map();\n\n  for (const item of items) {\n    if (item === null || typeof item !== 'object' || Array.isArray(item)) {\n      throw new TypeError('each item must be a non-null, non-array object');\n    }\n\n    const { name, quantity } = item;\n\n    if (typeof name !== 'string' || name.trim() === '') {\n      throw new TypeError('name must be a non-empty string');\n    }\n\n    if (\n      typeof quantity !== 'number' ||\n      !Number.isSafeInteger(quantity) ||\n      quantity <= 0\n    ) {\n      throw new TypeError('quantity must be a positive safe integer');\n    }\n\n    const trimmedName = name.trim();\n    const key = trimmedName.toLowerCase();\n\n    if (merged.has(key)) {\n      const existing = merged.get(key);\n      const sum = existing.quantity + quantity;\n\n      if (!Number.isSafeInteger(sum)) {\n        throw new RangeError('merged quantity exceeds safe integer range');\n      }\n\n      existing.quantity = sum;\n    } else {\n      merged.set(key, { name: trimmedName, quantity });\n    }\n  }\n\n  return Array.from(merged.values(), (entry) => ({\n    name: entry.name,\n    quantity: entry.quantity,\n  }));\n}\n```",
+      "usage": {
+        "prompt_tokens": 434,
+        "completion_tokens": 302,
+        "total_tokens": 736,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 434
+      },
+      "finishReason": "stop"
+    }
+  }
+}

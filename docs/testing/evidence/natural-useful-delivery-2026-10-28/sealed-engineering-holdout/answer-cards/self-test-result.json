@@ -1,0 +1,205 @@
+{
+  "passed": true,
+  "baselineFailed": true,
+  "referencePassed": true,
+  "businessAndUiChecks": 28,
+  "mutationCases": 5,
+  "pathGuards": 4,
+  "sandboxProbes": 4,
+  "noHostObjectsOrFunctionsInjected": true,
+  "virtualCompilerFilesystemOnly": true,
+  "dependencyDownloads": 0,
+  "realModelCalls": 0,
+  "results": [
+    {
+      "id": "original",
+      "accepted": false,
+      "stage": "runtime",
+      "checks": 28,
+      "passedChecks": 11,
+      "failedIds": [
+        "B01",
+        "B02",
+        "B04",
+        "B05",
+        "B06",
+        "B07",
+        "B09",
+        "B10",
+        "B11",
+        "B12",
+        "U01",
+        "U02",
+        "U03",
+        "U04",
+        "U05",
+        "U07",
+        "U10"
+      ]
+    },
+    {
+      "id": "reference",
+      "accepted": true,
+      "stage": "runtime",
+      "checks": 28,
+      "passedChecks": 28,
+      "failedIds": []
+    },
+    {
+      "id": "mutant-stale-preview",
+      "accepted": false,
+      "stage": "runtime",
+      "checks": 28,
+      "passedChecks": 25,
+      "failedIds": [
+        "B11",
+        "B12",
+        "U10"
+      ]
+    },
+    {
+      "id": "mutant-status",
+      "accepted": false,
+      "stage": "runtime",
+      "checks": 28,
+      "passedChecks": 14,
+      "failedIds": [
+        "B01",
+        "B04",
+        "B05",
+        "B06",
+        "B07",
+        "B08",
+        "B11",
+        "B12",
+        "U01",
+        "U02",
+        "U03",
+        "U05",
+        "U06",
+        "U10"
+      ]
+    },
+    {
+      "id": "mutant-scope",
+      "accepted": false,
+      "stage": "runtime",
+      "checks": 28,
+      "passedChecks": 14,
+      "failedIds": [
+        "B01",
+        "B02",
+        "B04",
+        "B05",
+        "B06",
+        "B07",
+        "B11",
+        "B12",
+        "U01",
+        "U02",
+        "U03",
+        "U05",
+        "U07",
+        "U10"
+      ]
+    },
+    {
+      "id": "mutant-self-exclusion",
+      "accepted": false,
+      "stage": "runtime",
+      "checks": 28,
+      "passedChecks": 23,
+      "failedIds": [
+        "B05",
+        "B06",
+        "B12",
+        "U02",
+        "U05"
+      ]
+    },
+    {
+      "id": "mutant-quantity",
+      "accepted": false,
+      "stage": "runtime",
+      "checks": 28,
+      "passedChecks": 25,
+      "failedIds": [
+        "B09",
+        "B10",
+        "U04"
+      ]
+    },
+    {
+      "id": "guard-protected-module",
+      "accepted": false,
+      "stage": "artifact",
+      "checks": 0,
+      "passedChecks": 0,
+      "failedIds": [],
+      "error": "FORBIDDEN_OR_INVALID_FILE_REPLACEMENT"
+    },
+    {
+      "id": "guard-traversal",
+      "accepted": false,
+      "stage": "artifact",
+      "checks": 0,
+      "passedChecks": 0,
+      "failedIds": [],
+      "error": "FORBIDDEN_OR_INVALID_FILE_REPLACEMENT"
+    },
+    {
+      "id": "guard-package",
+      "accepted": false,
+      "stage": "artifact",
+      "checks": 0,
+      "passedChecks": 0,
+      "failedIds": [],
+      "error": "FORBIDDEN_OR_INVALID_FILE_REPLACEMENT"
+    },
+    {
+      "id": "guard-duplicate",
+      "accepted": false,
+      "stage": "artifact",
+      "checks": 0,
+      "passedChecks": 0,
+      "failedIds": [],
+      "error": "FORBIDDEN_OR_INVALID_FILE_REPLACEMENT"
+    },
+    {
+      "id": "sandbox-native-module",
+      "accepted": false,
+      "stage": "runtime",
+      "checks": 0,
+      "passedChecks": 0,
+      "failedIds": [],
+      "error": "EXTERNAL_MODULE_DENIED"
+    },
+    {
+      "id": "sandbox-constructor",
+      "accepted": false,
+      "stage": "runtime",
+      "checks": 0,
+      "passedChecks": 0,
+      "failedIds": [],
+      "error": "Code generation from strings disallowed for this context"
+    },
+    {
+      "id": "sandbox-global-constructor",
+      "accepted": false,
+      "stage": "runtime",
+      "checks": 0,
+      "passedChecks": 0,
+      "failedIds": [],
+      "error": "Code generation from strings disallowed for this context"
+    },
+    {
+      "id": "sandbox-timeout",
+      "accepted": false,
+      "stage": "runtime",
+      "checks": 0,
+      "passedChecks": 0,
+      "failedIds": [],
+      "error": "Script execution timed out after 150ms"
+    }
+  ]
+}

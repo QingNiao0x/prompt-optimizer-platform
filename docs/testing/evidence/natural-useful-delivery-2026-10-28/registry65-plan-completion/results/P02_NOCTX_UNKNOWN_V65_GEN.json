@@ -1,0 +1,57 @@
+{
+  "id": "P02_NOCTX_UNKNOWN_V65_GEN",
+  "phase": "GENERATION",
+  "version": "65",
+  "caseId": "P02_NOCTX_UNKNOWN",
+  "status": 200,
+  "body": {
+    "requestId": "P02_NOCTX_UNKNOWN_V65_GEN",
+    "data": {
+      "optimizedPrompt": "请在 @synthetic-survey-workspace/src/views/records 重点记录模块的新增和导入功能中增加调查时间限制：调查时间不得晚于今日。今日（当日）是否允许填写目前尚未决定，请保留为用户确认项，不要代选，也不要擅自把今日定为允许或禁止；待用户确认后再据此确定当日边界。\n\n修改范围仅限 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js；可按需补充已有的 src/views/records/dateRules.spec.js 回归测试。不得新增文件或修改其他文件。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 58980,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "65",
+      "framework": "APE",
+      "recordId": "548ad21e-b656-4768-b03f-6735f87344a2",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "REQUIREMENT_PREPARATION",
+          "BODY_GENERATION",
+          "RECORD_LINKING"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

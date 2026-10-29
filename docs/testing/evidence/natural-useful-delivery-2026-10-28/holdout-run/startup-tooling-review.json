@@ -1,0 +1,26 @@
+{
+  "status": "PRE_MODEL_TOOLING_FAILURES_RETAINED",
+  "events": [
+    {
+      "event": "INITIAL_FREEZE_PATH_NOT_FOUND",
+      "source": "Root task report; no raw stderr reconstructed",
+      "cause": "The freeze helper resolves its bundle argument relative to the repository root. An initial shorter evidence-relative path did not identify the existing generation bundle.",
+      "modelCalls": 0,
+      "correction": "Use the repository-relative path to the existing bundle. No case, candidate or acceptance criterion changed."
+    },
+    {
+      "event": "MISSING_PREREQUISITE_REGRESSION_GATE",
+      "stage": "holdout47",
+      "cause": "The frozen stage required effective47/regression-gate.json, which had not yet been registered. Startup failed closed before model transmission.",
+      "modelCalls": 0,
+      "originalStageClosure": "../holdout47/closure.json",
+      "correction": "Root reviewed the six effective47 results and separately registered PASS as permission to enter holdout validation, not candidate adoption. A new holdout47-r2 stage was frozen; the old stage remains closed with all jobs undelivered."
+    }
+  ],
+  "guardsLoosened": false,
+  "oldStageReopened": false,
+  "oldOriginalsRewritten": false,
+  "candidateAdoptionClaimed": false,
+  "taskActualBeforeNewHoldout": 67,
+  "taskAuthorizedMaximum": 500
+}

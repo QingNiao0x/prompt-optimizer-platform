@@ -1,0 +1,97 @@
+{
+  "actualModelCalls": 0,
+  "method": "实际indexProject与retrieveProjectContextWithReport，仓库使用原有单测等价内存实现；无生成指导改动",
+  "sourceSha256": "afb534355e28a1ecc3d5c1993fb08cebf0b3340796fb48d7ec9ef7fb9e58cc3b",
+  "completeSymbolShadow": {
+    "query": "修改 @sample/src/current 的 createSurvey，限制未来日期",
+    "actual": {
+      "files": [
+        {
+          "path": "src/current/create.js#chunk-1",
+          "content": "export function createSurvey() { return \"current\"; }",
+          "language": "javascript"
+        },
+        {
+          "path": "src/legacy/create.js#chunk-1",
+          "content": "export function createSurvey() { return \"legacy\"; }",
+          "language": "javascript"
+        }
+      ],
+      "selections": [
+        {
+          "path": "src/current/create.js",
+          "chunkIndex": 0,
+          "score": 21260,
+          "reasons": [
+            "用户明确引用路径",
+            "任务中的符号",
+            "任务中的完整符号",
+            "内容与任务匹配"
+          ]
+        },
+        {
+          "path": "src/legacy/create.js",
+          "chunkIndex": 0,
+          "score": 1260,
+          "reasons": [
+            "任务中的符号",
+            "任务中的完整符号",
+            "内容与任务匹配"
+          ]
+        }
+      ],
+      "totalCharacters": 103,
+      "references": [
+        {
+          "reference": "sample/src/current",
+          "matchedPaths": [
+            "src/current/create.js"
+          ],
+          "selectedPaths": [
+            "src/current/create.js"
+          ],
+          "status": "FOUND"
+        }
+      ]
+    },
+    "oldModuleIncluded": true,
+    "expectedPaths": [
+      "src/current/create.js"
+    ]
+  },
+  "unmatchedBarePath": {
+    "query": "解释 src/missing/retryPayment.ts 的实现",
+    "actual": {
+      "files": [],
+      "selections": [],
+      "totalCharacters": 0,
+      "references": []
+    },
+    "control": {
+      "files": [
+        {
+          "path": "src/shared/retry.ts#chunk-1",
+          "content": "export function retryPayment() { return true; }",
+          "language": "typescript"
+        }
+      ],
+      "selections": [
+        {
+          "path": "src/shared/retry.ts",
+          "chunkIndex": 0,
+          "score": 1260,
+          "reasons": [
+            "任务中的符号",
+            "任务中的完整符号",
+            "内容与任务匹配"
+          ]
+        }
+      ],
+      "totalCharacters": 47,
+      "references": []
+    },
+    "symbolQueryFindsSource": true,
+    "fileNameSemanticTermLost": true,
+    "interpretation": "非@普通路径未命中时不应假称该路径已找到，但移除整个词也会失去原本可用于常规定位的符号线索。"
+  }
+}

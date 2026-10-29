@@ -1,0 +1,254 @@
+{
+  "syntheticOnly": true,
+  "description": "Only actual51 Plan completion. Real question identifiers and exact option answers, no metadata relabel/fake actualAnswers/context rebinding. All prior guards remain; root authorized important today boundary selection.",
+  "parameters": {
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "temperature": 0.2,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "phaseLimits": {
+    "GENERATION": 8,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "cases": [
+    {
+      "id": "P01",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：调查时间不能超过今天。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "contextDescription": "",
+      "actualPlanId": "92116483-d209-43d1-84dc-adf29400cf48",
+      "actualContextReference": {
+        "contextId": "94fd15b6-674c-4e7e-868c-9aef2f7aa091",
+        "version": "sha256:4d27cdad8594de279b2aa21e0dd3f225736891d4b3b7187151aa56e2617f1593"
+      },
+      "actualPlanExpiresAt": "2026-10-27T23:15:17.142399Z",
+      "actualQuestionCount": 0,
+      "actualAnswers": [],
+      "origin": "Real owned51 Plan+explicit authorized synthetic operator selection; complete original prepare material retained. Service protocol, not full UI Plan-answer clicking.",
+      "requiredChecks": [
+        "Preserve both entry points and exact allowed-write scope",
+        "P02 actual confirmed<=today overrides original unresolved contradiction only for this same date boundary",
+        "No full-source paste or invented material/state"
+      ]
+    },
+    {
+      "id": "P02",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "contextDescription": "",
+      "actualPlanId": "90cc2066-e782-4976-a9e6-c044b9a1364f",
+      "actualContextReference": {
+        "contextId": "129f4306-ab89-44c4-ac73-0835f61bb776",
+        "version": "sha256:0e2c7ef193875980f1d3c1882e18829aa84ee0e6fc0eafca49452dfbc8ea6dd7"
+      },
+      "actualPlanExpiresAt": "2026-10-27T23:15:41.761645900Z",
+      "actualQuestionCount": 1,
+      "actualAnswers": [
+        {
+          "questionId": "q1",
+          "question": "调查日期是否允许填写今天（等于 today 的日期）？",
+          "answer": "今日允许填写：校验条件为调查日期不晚于 today（value <= today），今天通过、未来日期报错"
+        }
+      ],
+      "origin": "Real owned51 Plan+explicit authorized synthetic operator selection; complete original prepare material retained. Service protocol, not full UI Plan-answer clicking.",
+      "requiredChecks": [
+        "Preserve both entry points and exact allowed-write scope",
+        "P02 actual confirmed<=today overrides original unresolved contradiction only for this same date boundary",
+        "No full-source paste or invented material/state"
+      ]
+    }
+  ],
+  "jobs": [
+    {
+      "id": "P01_V51_CONFIRMED_GEN",
+      "caseId": "P01",
+      "phase": "GENERATION",
+      "version": "51",
+      "approvedEnhancementInput": {
+        "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：调查时间不能超过今天。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+        "modelId": "deepseek:deepseek-flash",
+        "context": {
+          "customDescription": "",
+          "files": [
+            {
+              "path": "src/views/records/import.js#chunk-1",
+              "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n",
+              "language": "javascript"
+            },
+            {
+              "path": "src/views/records/create.js#chunk-1",
+              "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n",
+              "language": "javascript"
+            },
+            {
+              "path": "src/views/records/dateRules.js#chunk-1",
+              "content": "/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n",
+              "language": "javascript"
+            },
+            {
+              "path": "src/views/records/dateRules.spec.js#chunk-1",
+              "content": "import assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n",
+              "language": "javascript"
+            }
+          ]
+        },
+        "enhancement": {
+          "templateCode": "AUTO",
+          "includeConversationHistory": false,
+          "includePermissionBoundaries": true,
+          "promptFormat": "COMPACT"
+        },
+        "conversationHistory": [],
+        "permissionPolicy": {
+          "protectedPaths": [],
+          "requireConfirmationFor": []
+        },
+        "planConfirmation": {
+          "planId": "92116483-d209-43d1-84dc-adf29400cf48",
+          "planningContext": {
+            "contextId": "94fd15b6-674c-4e7e-868c-9aef2f7aa091",
+            "version": "sha256:4d27cdad8594de279b2aa21e0dd3f225736891d4b3b7187151aa56e2617f1593"
+          },
+          "answers": []
+        }
+      },
+      "purpose": "FLASH51_ACTUAL_PLAN_COMPLETION"
+    },
+    {
+      "id": "P02_V51_CONFIRMED_GEN",
+      "caseId": "P02",
+      "phase": "GENERATION",
+      "version": "51",
+      "approvedEnhancementInput": {
+        "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+        "modelId": "deepseek:deepseek-flash",
+        "context": {
+          "customDescription": "",
+          "files": [
+            {
+              "path": "src/views/records/import.js#chunk-1",
+              "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n",
+              "language": "javascript"
+            },
+            {
+              "path": "src/views/records/dateRules.js#chunk-1",
+              "content": "/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n",
+              "language": "javascript"
+            },
+            {
+              "path": "src/views/records/create.js#chunk-1",
+              "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n",
+              "language": "javascript"
+            },
+            {
+              "path": "src/views/records/dateRules.spec.js#chunk-1",
+              "content": "import assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n",
+              "language": "javascript"
+            }
+          ]
+        },
+        "enhancement": {
+          "templateCode": "AUTO",
+          "includeConversationHistory": false,
+          "includePermissionBoundaries": true,
+          "promptFormat": "COMPACT"
+        },
+        "conversationHistory": [],
+        "permissionPolicy": {
+          "protectedPaths": [],
+          "requireConfirmationFor": []
+        },
+        "planConfirmation": {
+          "planId": "90cc2066-e782-4976-a9e6-c044b9a1364f",
+          "planningContext": {
+            "contextId": "129f4306-ab89-44c4-ac73-0835f61bb776",
+            "version": "sha256:0e2c7ef193875980f1d3c1882e18829aa84ee0e6fc0eafca49452dfbc8ea6dd7"
+          },
+          "answers": [
+            {
+              "questionId": "q1",
+              "question": "调查日期是否允许填写今天（等于 today 的日期）？",
+              "answer": "今日允许填写：校验条件为调查日期不晚于 today（value <= today），今天通过、未来日期报错"
+            }
+          ]
+        }
+      },
+      "purpose": "FLASH51_ACTUAL_PLAN_COMPLETION"
+    }
+  ],
+  "actualArtifacts": [
+    {
+      "caseId": "P01",
+      "path": "registry51-plan/results/P01_V51_PLAN.json",
+      "sha256": "391b5e87ff58a962f75fbb68f105ed362dbde83ea7873d0455b21c7f5fa84f27"
+    },
+    {
+      "caseId": "P01",
+      "path": "registry51-normal-preparation/operator-selections/P01.json",
+      "sha256": "33a74bb09a0780e7e721d61fecb00261224696cdd9617f6672ad31b017fe16fd"
+    },
+    {
+      "caseId": "P01",
+      "path": "registry51-normal-preparation/completion-input-bases/P01.json",
+      "sha256": "cdd2a4856470021519afdc595e8a4e433a4525ea8cde10318bb802b20371a320"
+    },
+    {
+      "caseId": "P01",
+      "path": "registry51-normal-preparation/plan-captures/registry51-normal/P01/prepare-input.json",
+      "sha256": "31e0b8c2287cc2a1bc34a4cd3841955765e163b5a8713ba0fc3b70b81521770f"
+    },
+    {
+      "caseId": "P01",
+      "path": "registry51-normal-preparation/plan-captures/registry51-normal/P01/prepare-response.json",
+      "sha256": "9725590c3caff6063cd09735df71490d781c6c19f2ad31c5d15c5e9fb9681598"
+    },
+    {
+      "caseId": "P01",
+      "path": "registry51-normal-preparation/plan-captures/registry51-normal/P01/plan-input.json",
+      "sha256": "11a9ac4f6799ef2b567867944d937758bc8931a8bb739cc16900fa8916af2855"
+    },
+    {
+      "caseId": "P01",
+      "path": "registry51-normal-preparation/plan-captures/registry51-normal/P01/verdict.json",
+      "sha256": "ce9afbbe4f1edef262f99a714f51ffca2c5a87fe328b912b2619fa9822ccab72"
+    },
+    {
+      "caseId": "P02",
+      "path": "registry51-plan/results/P02_V51_PLAN.json",
+      "sha256": "ddfc42089127bb08f52f568b783a81cfd6878d27ef848eca40b3e06257f32da5"
+    },
+    {
+      "caseId": "P02",
+      "path": "registry51-normal-preparation/operator-selections/P02.json",
+      "sha256": "995b406cbebcaa4e071bf162e0cea8e72606821c468fb8b3b03e558579c708cf"
+    },
+    {
+      "caseId": "P02",
+      "path": "registry51-normal-preparation/completion-input-bases/P02.json",
+      "sha256": "7c67dda068a29564d56f199fb60c96ed972032e55237f3f3a348fd34b511789d"
+    },
+    {
+      "caseId": "P02",
+      "path": "registry51-normal-preparation/plan-captures/registry51-normal/P02/prepare-input.json",
+      "sha256": "fd25458fc6c2661b7eba6420fa198467171e9308b663f80b71ac347888f11bf7"
+    },
+    {
+      "caseId": "P02",
+      "path": "registry51-normal-preparation/plan-captures/registry51-normal/P02/prepare-response.json",
+      "sha256": "0fe167754c62212b954941977fd0c8ac559dea62f723fa414f851efac80238b6"
+    },
+    {
+      "caseId": "P02",
+      "path": "registry51-normal-preparation/plan-captures/registry51-normal/P02/plan-input.json",
+      "sha256": "b42354dd2589082bff969c19f95731eb12b1155978ced47865fa9d16380d5293"
+    },
+    {
+      "caseId": "P02",
+      "path": "registry51-normal-preparation/plan-captures/registry51-normal/P02/verdict.json",
+      "sha256": "698adea6128d03e83aacf9d5c337fbf434c15fa6cab4e2519f2674d2367a8349"
+    }
+  ],
+  "relatedThreeStageMaximum": 36
+}

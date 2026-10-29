@@ -1,0 +1,39 @@
+{
+  "taskId": "natural-writer-input70-2026-10-29",
+  "authorizedAdditionalMaximum": 48,
+  "authorizedOn": "2026-10-29",
+  "authorizationSource": "用户回复：授权新增最多48次实际调用；同时批准冻结合成材料及派生内容发送至DeepSeek官方端点。",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "oldTaskClosedActual": 500,
+  "oldTaskReopened": false,
+  "proposalPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/writer70-offline/next-evaluation-plan.json",
+  "proposalSha256": "a01773ec664ade83cf1e587538e23a094b0b0a5e7aea6635e3809997fcfa3e80",
+  "phases": [
+    {
+      "name": "Known regression",
+      "maximumCalls": 8,
+      "purpose": "two first70 generations including any protocol repair; existing frozen inputs and failures reused"
+    },
+    {
+      "name": "New cases",
+      "maximumCalls": 18,
+      "purpose": "two new frozen synthetic cases;31 current baseline,69 complete-input control and70 projected-input candidate;31 frozen legacy parameters,69/70 equal native parameters"
+    },
+    {
+      "name": "Actual works",
+      "maximumCalls": 16,
+      "purpose": "two new cases; ORIGINAL/31/69/70 each two repetitions with identical material/model/parameters/permissions"
+    },
+    {
+      "name": "Real workbench",
+      "maximumCalls": 6,
+      "purpose": "candidate or ordinary default verification after original work quality adoption gate; otherwise keep31"
+    }
+  ],
+  "paidReviewCalls": 0,
+  "qualityRetriesAllowed": false,
+  "failedAndProtocolRepairAttemptsCount": true,
+  "adoptionGateUnchanged": true,
+  "defaultVersion": "31",
+  "syntheticOnly": true
+}

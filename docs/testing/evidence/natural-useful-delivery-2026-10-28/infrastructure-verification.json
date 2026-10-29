@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-10-28",
+  "javaCompilation": { "passed": true, "jdk": "E:/Delelop/Java/jdk-21", "release": 21 },
+  "nodeSyntaxChecks": { "passed": true, "files": ["freeze-live.mjs", "run-live.mjs", "close-stage.mjs"] },
+  "powerShellSyntaxCheck": { "passed": true, "file": "start-live.ps1" },
+  "freezeBoundaryTests": {
+    "passed": 13,
+    "cases": ["unknown-version", "duplicate-job", "excess-budget", "different-input", "non-synthetic", "independent-500-and-frozen-stage", "closed-task", "capture-only-has-zero-model-jobs-and-zero-budget", "future-stage-16384-same-information-output-capacity", "mixed-execution-output-capacity-rejected", "declared-execution-output-capacity-mismatch-rejected", "sealed-single-execution-output-capacity-10000", "sealed-single-execution-output-capacity-2600"]
+  },
+  "actualReservationFunctionTests": {
+    "passed": 6,
+    "cases": ["cross-stage task limit", "phase limit and empty reservation", "closed-stage", "closed-task", "wrong-budget", "capture-only-zero-budget"]
+  },
+  "fixturesIsolatedFromActualTaskRuntime": true,
+  "modelCallsMade": 0,
+  "productQualityClaimed": false
+}

@@ -1,0 +1,52 @@
+{
+  "batch" : "natural-useful-delivery-holdout-works47-2026-10-28",
+  "jobId" : "H04_ORIGINAL_EXEC",
+  "phase" : "EXECUTION",
+  "caseId" : "H04",
+  "request" : {
+    "model" : "deepseek-flash",
+    "stream" : false,
+    "temperature" : 0.2,
+    "max_tokens" : 2600,
+    "thinking" : {
+      "type" : "disabled"
+    },
+    "messages" : [ {
+      "role" : "system",
+      "content" : "请执行用户要求，遵守原定范围和输出格式。只使用本次提供的信息和附件，不联网。当前没有可调用的执行工具，不要声称已经实际运行代码。"
+    }, {
+      "role" : "user",
+      "content" : "我有个不带界面的 Node.js 小工具，附件里是现有 package.json 和 src/mergeShoppingItems.js。请补完里面的命名导出函数 mergeShoppingItems(items)，用来合并购物清单，保持 ES module 和现有函数签名。\n\n要求已经定好了：\n\n- 参数必须是数组；每项必须是非 null、非数组的对象，name 必须是原始字符串且 trim 后不为空，quantity 必须是大于 0 的安全整数。任一项不符合就抛 TypeError，额外字段忽略。\n- 用 name.trim().toLowerCase() 作为合并键，不做其他名称替换。相同键的 quantity 相加；返回顺序按键首次出现的顺序，返回对象只有 name 和 quantity，name 用第一次出现时 trim 后的原始大小写。\n- 如果某一项合并后的 quantity 超出安全整数范围，抛 RangeError。\n- 空数组返回新的空数组；所有情况下都不修改传入数组或其中的对象，返回项也是新对象。\n- 不加依赖，不读写文件，不使用网络，不新增界面。\n\n例如 [{name:' Milk ',quantity:2},{name:'milk',quantity:3},{name:'Egg',quantity:1}] 应得到 [{name:'Milk',quantity:5},{name:'Egg',quantity:1}]。\n\n只输出 src/mergeShoppingItems.js 的完整替换内容，放在一个 javascript 代码块里，不需要额外说明或其他文件。\n\n\n以下是本次用户提供的完整附件（所有执行臂逐字一致）：\n--- 附件：package.json ---\n{\n  \"name\": \"synthetic-shopping-list-helper\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"engines\": {\n    \"node\": \">=20\"\n  }\n}\n\n\n--- 附件：src/mergeShoppingItems.js ---\nexport function mergeShoppingItems(items) {\n  throw new Error('TODO');\n}\n"
+    } ]
+  },
+  "httpStatus" : 200,
+  "responseBytes" : 1777,
+  "responseSha256" : "df0e66f732f0a68bf91b900eee084d6dedb69007cc96a592c0f56ddf0aadd116",
+  "elapsedMs" : 1288,
+  "response" : {
+    "id" : "356f865d-7d04-4ba5-9bf9-cceabb4207d1",
+    "object" : "chat.completion",
+    "created" : 1793127197,
+    "model" : "deepseek-flash",
+    "choices" : [ {
+      "index" : 0,
+      "message" : {
+        "role" : "assistant",
+        "content" : "```javascript\nexport function mergeShoppingItems(items) {\n  if (!Array.isArray(items)) {\n    throw new TypeError('items must be an array');\n  }\n\n  const merged = new Map();\n\n  for (const item of items) {\n    if (item === null || typeof item !== 'object' || Array.isArray(item)) {\n      throw new TypeError('each item must be a non-null, non-array object');\n    }\n\n    const { name, quantity } = item;\n\n    if (typeof name !== 'string' || name.trim() === '') {\n      throw new TypeError('name must be a non-empty string');\n    }\n\n    if (\n      typeof quantity !== 'number' ||\n      !Number.isSafeInteger(quantity) ||\n      quantity <= 0\n    ) {\n      throw new TypeError('quantity must be a positive safe integer');\n    }\n\n    const trimmedName = name.trim();\n    const key = trimmedName.toLowerCase();\n\n    if (merged.has(key)) {\n      const existing = merged.get(key);\n      const sum = existing.quantity + quantity;\n\n      if (!Number.isSafeInteger(sum)) {\n        throw new RangeError('merged quantity exceeds safe integer range');\n      }\n\n      existing.quantity = sum;\n    } else {\n      merged.set(key, { name: trimmedName, quantity });\n    }\n  }\n\n  return Array.from(merged.values(), (entry) => ({\n    name: entry.name,\n    quantity: entry.quantity,\n  }));\n}\n```"
+      },
+      "logprobs" : null,
+      "finish_reason" : "stop"
+    } ],
+    "usage" : {
+      "prompt_tokens" : 434,
+      "completion_tokens" : 302,
+      "total_tokens" : 736,
+      "prompt_tokens_details" : {
+        "cached_tokens" : 0
+      },
+      "prompt_cache_hit_tokens" : 0,
+      "prompt_cache_miss_tokens" : 434
+    },
+    "system_fingerprint" : "bc19ba97cbe016479903222bb1578db6"
+  }
+}

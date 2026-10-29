@@ -1,0 +1,102 @@
+{
+  "status": "CLOSED_ENGINEERING_DELIVERY_ONLY_NOT_SEMANTIC_OR_ADOPTION_PASS",
+  "actualCalls": 6,
+  "actualTaskCalls": 130,
+  "phaseTotals": {
+    "GENERATION": 76,
+    "PLAN": 4,
+    "EXECUTION": 50
+  },
+  "executionPurposeSplit": {
+    "actualWorks": 33,
+    "mechanismExperiments": 17
+  },
+  "jobsDelivered": true,
+  "normalCallsPerJob": 2,
+  "protocolRepairs": 0,
+  "qualityRetries": 0,
+  "stageMaximum": 12,
+  "unusedReservationReleased": 6,
+  "serviceStopped": true,
+  "pid": 24832,
+  "defaultVersion": "31",
+  "defaultChanged": false,
+  "downstreamWorksStarted": false,
+  "preparedResponses": "Actual live49 upstream; no synthetic registry used in this stage",
+  "guardFailures": 0,
+  "traces": [
+    {
+      "file": "001.json",
+      "id": "Q01_V49_GEN",
+      "callStage": "REQUIREMENT_PREPARATION",
+      "preparedTrace": null,
+      "requirements": 0,
+      "elapsedMs": 1739,
+      "upstreamStatus": 200,
+      "finishReason": "stop",
+      "promptTokens": 873,
+      "completionTokens": 185
+    },
+    {
+      "file": "002.json",
+      "id": "Q01_V49_GEN",
+      "callStage": "BODY_GENERATION",
+      "preparedTrace": "001.json",
+      "requirements": 2,
+      "elapsedMs": 2574,
+      "upstreamStatus": 200,
+      "finishReason": "stop",
+      "promptTokens": 1655,
+      "completionTokens": 361
+    },
+    {
+      "file": "003.json",
+      "id": "U02_V49_GEN",
+      "callStage": "REQUIREMENT_PREPARATION",
+      "preparedTrace": null,
+      "requirements": 0,
+      "elapsedMs": 1983,
+      "upstreamStatus": 200,
+      "finishReason": "stop",
+      "promptTokens": 1582,
+      "completionTokens": 334
+    },
+    {
+      "file": "004.json",
+      "id": "U02_V49_GEN",
+      "callStage": "BODY_GENERATION",
+      "preparedTrace": "003.json",
+      "requirements": 4,
+      "elapsedMs": 6877,
+      "upstreamStatus": 200,
+      "finishReason": "stop",
+      "promptTokens": 2525,
+      "completionTokens": 1107
+    },
+    {
+      "file": "005.json",
+      "id": "U03_V49_GEN",
+      "callStage": "REQUIREMENT_PREPARATION",
+      "preparedTrace": null,
+      "requirements": 0,
+      "elapsedMs": 1615,
+      "upstreamStatus": 200,
+      "finishReason": "stop",
+      "promptTokens": 2154,
+      "completionTokens": 286
+    },
+    {
+      "file": "006.json",
+      "id": "U03_V49_GEN",
+      "callStage": "BODY_GENERATION",
+      "preparedTrace": "005.json",
+      "requirements": 3,
+      "elapsedMs": 6846,
+      "upstreamStatus": 200,
+      "finishReason": "stop",
+      "promptTokens": 3043,
+      "completionTokens": 1036
+    }
+  ],
+  "semanticReviewPending": true
+}

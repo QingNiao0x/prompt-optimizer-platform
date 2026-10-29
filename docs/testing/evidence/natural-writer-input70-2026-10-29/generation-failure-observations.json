@@ -1,0 +1,30 @@
+{
+  "control69": {
+    "status": 500,
+    "code": "INTERNAL_ERROR",
+    "actualCalls": 2,
+    "hiddenReasoningInspected": false,
+    "attribution": "准备记录/会话提交混合，尚未唯一归因",
+    "observations": [
+      "两次上游HTTP200，均返回准备响应",
+      "response.evidence均只有项目来源",
+      "服务日志存在RedisSessionRepository.save的Session was invalidated；不能将HTTP500简单归为写作质量或供应商超时"
+    ],
+    "caseId": "W70-N2"
+  },
+  "resampling": false,
+  "productionFixApplied": false,
+  "baseline31": {
+    "status": 502,
+    "code": "RESULT_INVALID",
+    "actualCalls": 2,
+    "attribution": "模型内部记录未满足来源约定；不属于未提供业务资料",
+    "stage": "SCOPE_ANALYSIS",
+    "observations": [
+      "原始任务动作已识别",
+      "新增CURRENT动作及response的evidence仅引用项目材料",
+      "NaturalTaskScope.evidence对CURRENT和response要求用户来源；原引文存在并不足以通过此项校验"
+    ],
+    "caseId": "W70-N2"
+  }
+}

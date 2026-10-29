@@ -86,20 +86,7 @@ public record NaturalTaskUnderstanding(String goal, String deliverable, List<Req
         if (requirements.size() > 256 || additions.size() > 256 || openDecisions.size() > 64) {
             throw invalid("任务理解记录超出协议容量");
         }
-        Map<String, NaturalTaskSource> sources = input.taskSources().stream()
-                .collect(Collectors.toMap(NaturalTaskSource::id, Function.identity()));
-        List<Requirement> resolved = requirements.stream().map(requirement -> {
-            if (requirement == null) throw invalid("任务要求为空");
-            check(requirement.text(), true);
-            if (requirement.evidence().isEmpty() || requirement.evidence().size() > 64) throw invalid("任务要求缺少有效出处");
-            return new Requirement(requirement.text(), requirement.evidence().stream().map(evidence -> {
-                if (evidence == null) throw invalid("任务出处为空");
-                NaturalTaskSource source = sources.get(evidence.sourceId());
-                check(evidence.quote(), true);
-                if (source == null || !source.text().contains(evidence.quote())) throw invalid("任务理解引用不属于当前可用来源");
-                return new Evidence(source.id(), evidence.quote(), source.kind());
-            }).toList(), requirement.dimensions());
-        }).toList();
+        List<Requirement> resolved = resolveRequirements(input, requirements);
         additions.forEach(addition -> {
             if (addition == null) throw invalid("任务补充为空");
             check(addition.text(), true); check(addition.benefit(), true);
@@ -114,6 +101,24 @@ public record NaturalTaskUnderstanding(String goal, String deliverable, List<Req
             review.validateUnderstanding(result, input);
         }
         return result;
+    }
+
+    /** 53仅准备要求时复用同一原句/类别核验，不为调用完整task校验而伪造goal或回应。 */
+    static List<Requirement> resolveRequirements(NaturalPromptInput input, List<Requirement> requirements) {
+        Map<String, NaturalTaskSource> sources = input.taskSources().stream()
+                .collect(Collectors.toMap(NaturalTaskSource::id, Function.identity()));
+        return requirements.stream().map(requirement -> {
+            if (requirement == null) throw invalid("任务要求为空");
+            check(requirement.text(), true);
+            if (requirement.evidence().isEmpty() || requirement.evidence().size() > 64) throw invalid("任务要求缺少有效出处");
+            return new Requirement(requirement.text(), requirement.evidence().stream().map(evidence -> {
+                if (evidence == null) throw invalid("任务出处为空");
+                NaturalTaskSource source = sources.get(evidence.sourceId());
+                check(evidence.quote(), true);
+                if (source == null || !source.text().contains(evidence.quote())) throw invalid("任务理解引用不属于当前可用来源");
+                return new Evidence(source.id(), evidence.quote(), source.kind());
+            }).toList(), requirement.dimensions());
+        }).toList();
     }
 
     /** 统一检查内部生成字段，避免敏感值通过诊断记录绕过正文扫描；不做场景关键词判断。 */

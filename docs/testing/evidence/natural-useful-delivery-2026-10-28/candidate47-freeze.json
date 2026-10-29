@@ -1,0 +1,66 @@
+{
+  "frozenAt": "2026-10-27T18:06:20.133Z",
+  "version": "47",
+  "revision": "effective-confirmation",
+  "defaultBeforeAdoption": "31",
+  "previousFreeze": "frontend-r2-freeze.json",
+  "hypothesis": "Only resolve current effective requirements using actual scoped answers; retain original sources internally instead of repeating superseded conditions as active instructions",
+  "bodyGuidanceOtherThanConfirmationUnchanged": true,
+  "planGuidanceUnchanged": true,
+  "failedAblationsNotAdopted": [
+    "Output-protocol removal",
+    "Derived taskScope removal",
+    "Mechanical editorial-duty labels"
+  ],
+  "holdoutOpenedByImplementer": false,
+  "holdoutManifestSha256": "0e7ef34d134d57736b04e6747a987cae790e227ad2356e7e07f63c2c776fbab0",
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "thinking": "disabled",
+  "files": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "cd6e2d57673fe661e3a65bde07833a6c0a5a99d086dcc831aa88a24a8847c603"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRoutingRepairInstructions.java",
+      "sha256": "8b1ba5c590dd6e660f614daff6008668a5faa657823004188ac1437e3228dfb8"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptContextualRewriteInstructions.java",
+      "sha256": "a1ab793728e33dce18c074a2425954e028037ac401f1030627ee0f9c62a47452"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptUsefulDeliveryInstructions.java",
+      "sha256": "7c27f4db7f4da5339364e70374eaebd3ad343b9d2214d6d09aa7dd09a88755e7"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "288a10dd2a507e9ca9048bf6ee8932ad7cc30bbeb697d81dc4011612400d2acb"
+    },
+    {
+      "path": "apps/web/src/features/project-index/projectIndexer.ts",
+      "sha256": "5627874f1eb1cb571406c59e2157d53e065f65b61717e0a41459fa6b116272d8"
+    },
+    {
+      "path": "apps/web/src/features/project-index/projectPathReferences.ts",
+      "sha256": "b8b56a68fcbc6a1184d05002f7ca6587fc3dfa9ace7feff4c76e3de5f99cdebf"
+    },
+    {
+      "path": "apps/web/src/features/project-index/indexedDbProjectIndexRepository.ts",
+      "sha256": "00b019ef8988f193d9a633066eef3e5f150c1468e02ff24eb703d0f062003d83"
+    },
+    {
+      "path": "apps/web/src/stores/optimization.ts",
+      "sha256": "ab848ad68cf102b6fdef8bbfe6cbbfb96dccd56d8e778e3951bd00f597ae706d"
+    },
+    {
+      "path": "apps/web/src/pages/PromptWorkbenchPage.vue",
+      "sha256": "9606b2df6041d13e16ad8f69bbd25c295fceaa2bbd82658022a7be11c9b19918"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptEffectiveRequestInstructions.java",
+      "sha256": "8147b74cf05231e744b7c371e48b435953496ad4ec851b7b62e20903ee1583c9"
+    }
+  ]
+}

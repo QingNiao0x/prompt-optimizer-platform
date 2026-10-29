@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "package_id": "sealed-native-pro50-holdout-2026-10-28",
+  "frozen_at_utc": "2026-10-27T22:06:19.048Z",
+  "purpose": "Two independently authored short Chinese native content-delivery holdouts for frozen Natural31/Natural50 Pro comparison.",
+  "author_isolation": {
+    "product_code_read": false,
+    "development_cases_read": false,
+    "existing_model_results_read": false,
+    "other_sealed_cases_read": false,
+    "model_calls": 0,
+    "api_calls": 0,
+    "browser_runs": 0,
+    "review": "author_internal_only"
+  },
+  "opening_gate": "root_must_not_open_payload_until_normal_passes",
+  "candidate_freeze_reference": {
+    "natural50_frozen_at_utc": "2026-10-27T21:13:38.282Z",
+    "natural50_bundle_sha256": "a0570823edf124d6bf0fd07a58e07f610a675a23accafb95813700d61b812ba6",
+    "source": "provided_by_parent_not_independently_reopened"
+  },
+  "case_count": 2,
+  "shared_materials_contract": {
+    "files_per_case": 1,
+    "same_complete_materials_for_enhancement_and_execution": true,
+    "same_execution_contract_across_arms": true,
+    "evaluation_card_sent_to_models": false,
+    "han_character_count_range": [
+      800,
+      1500
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "native-pro50-holdout-01",
+      "directory": "case-01",
+      "original_prompt": "case-01/original-prompt.txt",
+      "shared_materials": [
+        "case-01/shared-materials.md"
+      ],
+      "execution_contract": "case-01/execution-contract.txt",
+      "evaluation_card": "case-01/preregistered-evaluation.json",
+      "shared_materials_han_character_count": 1088
+    },
+    {
+      "case_id": "native-pro50-holdout-02",
+      "directory": "case-02",
+      "original_prompt": "case-02/original-prompt.txt",
+      "shared_materials": [
+        "case-02/shared-materials.md"
+      ],
+      "execution_contract": "case-02/execution-contract.txt",
+      "evaluation_card": "case-02/preregistered-evaluation.json",
+      "shared_materials_han_character_count": 1243
+    }
+  ],
+  "generation_plan": {
+    "author_execution": "none",
+    "endpoint": "https://api.deepseek.com/chat/completions",
+    "enhancement": {
+      "arms": [
+        "Natural31Pro",
+        "Natural50Pro"
+      ],
+      "generations_per_arm_per_case": 1,
+      "public_model_id": "deepseek:deepseek-v4-pro",
+      "upstream_model_id": "deepseek-v4-pro",
+      "temperature": 0.2,
+      "max_tokens": 8192,
+      "response_format": {
+        "type": "json_object"
+      },
+      "thinking": {
+        "type": "disabled"
+      },
+      "stream": false,
+      "top_p": "omitted_default",
+      "effort": "omitted"
+    },
+    "execution": {
+      "arms": [
+        "original",
+        "Natural31Pro",
+        "Natural50Pro"
+      ],
+      "generations_per_arm_per_case": 2,
+      "public_model_id": "deepseek:deepseek-flash",
+      "upstream_model_id": "deepseek-flash",
+      "temperature": 0.2,
+      "max_tokens": 2600,
+      "response_format": "text_default; natural deliverable, no forced JSON",
+      "thinking": {
+        "type": "disabled"
+      },
+      "stream": false,
+      "top_p": "omitted_default",
+      "effort": "omitted"
+    },
+    "planned_call_counts": {
+      "enhancement": 4,
+      "execution": 12,
+      "total": 16
+    },
+    "count_note": "Planned accounting only; this author ran zero calls. Failed or repair calls are not authorized by this file and must remain within the parent-approved stage and total limits."
+  },
+  "files": [
+    {
+      "path": "AUTHOR-BOUNDARY.md",
+      "sha256": "e3103e20ebca40c4d99c8e77a53211ebd2cb151c4aceffc154fe0571510104d3",
+      "bytes": 1059
+    },
+    {
+      "path": "case-01/execution-contract.txt",
+      "sha256": "6790ae496c1140379fb9a06b6e8d99422d7e56a2056b15f07f192dabd66c4c85",
+      "bytes": 432
+    },
+    {
+      "path": "case-01/original-prompt.txt",
+      "sha256": "98120bac3d0d159311885a55d4ea00eea3bf490ddecca4ddaea43b0e3db38dd6",
+      "bytes": 319
+    },
+    {
+      "path": "case-01/preregistered-evaluation.json",
+      "sha256": "bf5281a55bf60425bee492a5d57c325202d776b4dbe5e618c446e6788292d64e",
+      "bytes": 5305
+    },
+    {
+      "path": "case-01/shared-materials.md",
+      "sha256": "6adb684f09eea8df558486df8533d87df50f1e630c017999371cd7d62e532c05",
+      "bytes": 3557
+    },
+    {
+      "path": "case-02/execution-contract.txt",
+      "sha256": "d7f1ccfbf98e8275807c4b0bc79a52485e2acc7fd456bc7fe01be1b8f7cac37d",
+      "bytes": 474
+    },
+    {
+      "path": "case-02/original-prompt.txt",
+      "sha256": "68552b24bacd274860df5895a62b2a885de8887ba2d543503336b9d0b708748a",
+      "bytes": 328
+    },
+    {
+      "path": "case-02/preregistered-evaluation.json",
+      "sha256": "38b422ace1dd8aec06d6cfef1726f585225038c0032bb77d14f3390d7687a7b5",
+      "bytes": 6282
+    },
+    {
+      "path": "case-02/shared-materials.md",
+      "sha256": "8ddcb403e58d2e37de2ec02f4f8d9f2d13abfda84c4a0b7fd20fbcd5263118d7",
+      "bytes": 4069
+    }
+  ]
+}

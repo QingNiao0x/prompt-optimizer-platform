@@ -1,0 +1,576 @@
+{
+  "modelCallsMade" : 0,
+  "originalCandidateEdited" : false,
+  "originalVerdictChanged" : false,
+  "semanticCorrectnessClaimed" : false,
+  "counterfactualOnly" : true,
+  "jobId" : "Q01_V50_GEN",
+  "closureSha256" : "b30ab2d35be8663ec08bbe11e71d543b6cd96df2176c84efef347492e1d08c3c",
+  "sourceOriginals" : [ {
+    "sha256" : "223f372dfec99278510718edbb9af5ecade90b1ba5a9b0d07a465a124639ead7",
+    "path" : "docs\\testing\\evidence\\natural-useful-delivery-2026-10-28\\registry50-development\\traces\\001.json"
+  }, {
+    "sha256" : "d841531cb959d696d93bebee817a86b8f1825921d72c9c413cacf2ed848e8268",
+    "path" : "docs\\testing\\evidence\\natural-useful-delivery-2026-10-28\\registry50-development\\traces\\002.json"
+  }, {
+    "sha256" : "79e59e00110222c0bd9a7a0fca60556a3003aaf4dfea246bb1c3ff21227ea244",
+    "path" : "docs\\testing\\evidence\\natural-useful-delivery-2026-10-28\\registry50-development\\traces\\003.json"
+  } ],
+  "strictActualFirst" : {
+    "accepted" : false,
+    "stage" : "normalize",
+    "rejection" : {
+      "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+      "type" : "INVALID_RESPONSE",
+      "message" : "原要求引用协议列表缺失、为空条目或超出容量"
+    }
+  },
+  "strictActualRepair" : {
+    "accepted" : false,
+    "stage" : "strictWriterReader",
+    "rejection" : {
+      "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+      "fieldPath" : [ "coverage", "[0]", "bodyQuotes_note" ]
+    }
+  },
+  "strictCopyOnlyRemovedField" : "/coverage/0/bodyQuotes_note",
+  "strictCopyOnlyRemovedScalar" : {
+    "normalizedSha256" : "27a836ea486a3c7bb712b402ab17c9a00ecdbd626572669aaf22c87c719fa99f",
+    "bodySha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703",
+    "steps" : [ {
+      "status" : "PASS",
+      "stage" : "application.secondResolve"
+    }, {
+      "status" : "PASS",
+      "stage" : "application.validateBodySafetyAndAssemble"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.raw"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.assembled"
+    } ],
+    "accepted" : true,
+    "assembledSha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703"
+  },
+  "unchangedRepairWithFrozen24MapperCopy" : {
+    "normalizedSha256" : "27a836ea486a3c7bb712b402ab17c9a00ecdbd626572669aaf22c87c719fa99f",
+    "bodySha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703",
+    "steps" : [ {
+      "status" : "PASS",
+      "stage" : "application.secondResolve"
+    }, {
+      "status" : "PASS",
+      "stage" : "application.validateBodySafetyAndAssemble"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.raw"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.assembled"
+    } ],
+    "accepted" : true,
+    "assembledSha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703"
+  },
+  "unchangedRepairWithGuarded24MapperCopy" : {
+    "normalizedSha256" : "27a836ea486a3c7bb712b402ab17c9a00ecdbd626572669aaf22c87c719fa99f",
+    "bodySha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703",
+    "steps" : [ {
+      "status" : "PASS",
+      "stage" : "application.secondResolve"
+    }, {
+      "status" : "PASS",
+      "stage" : "application.validateBodySafetyAndAssemble"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.raw"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.assembled"
+    } ],
+    "accepted" : true,
+    "assembledSha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703"
+  },
+  "unchanged24MisplacedGoalGap" : {
+    "normalizedSha256" : "27a836ea486a3c7bb712b402ab17c9a00ecdbd626572669aaf22c87c719fa99f",
+    "bodySha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703",
+    "steps" : [ {
+      "status" : "PASS",
+      "stage" : "application.secondResolve"
+    }, {
+      "status" : "PASS",
+      "stage" : "application.validateBodySafetyAndAssemble"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.raw"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.assembled"
+    } ],
+    "accepted" : true,
+    "assembledSha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703"
+  },
+  "controls" : [ {
+    "id" : "actual-first-with-guarded24-still-missing-bodyQuotes",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "normalize",
+      "rejection" : {
+        "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+        "type" : "INVALID_RESPONSE",
+        "message" : "原要求引用协议列表缺失、为空条目或超出容量"
+      }
+    }
+  }, {
+    "id" : "misplaced-protocol-or-server-field-goal",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "coverage", "[0]", "goal" ]
+      }
+    }
+  }, {
+    "id" : "misplaced-protocol-or-server-field-reqId",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "normalize",
+      "rejection" : {
+        "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+        "type" : "INVALID_RESPONSE",
+        "message" : "正文覆盖引用未知、重复或已补正编号"
+      }
+    }
+  }, {
+    "id" : "misplaced-protocol-or-server-field-replacesId",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "coverage", "[0]", "replacesId" ]
+      }
+    }
+  }, {
+    "id" : "misplaced-protocol-or-server-field-requirementChanges",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "coverage", "[0]", "requirementChanges" ]
+      }
+    }
+  }, {
+    "id" : "misplaced-protocol-or-server-field-index",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "coverage", "[0]", "index" ]
+      }
+    }
+  }, {
+    "id" : "misplaced-protocol-or-server-field-origin",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "coverage", "[0]", "origin" ]
+      }
+    }
+  }, {
+    "id" : "misplaced-protocol-or-server-field-questions",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "coverage", "[0]", "questions" ]
+      }
+    }
+  }, {
+    "id" : "misplaced-protocol-or-server-field-actualAnswers",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "coverage", "[0]", "actualAnswers" ]
+      }
+    }
+  }, {
+    "id" : "misplaced-protocol-or-server-field-preparedRequirements",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "coverage", "[0]", "preparedRequirements" ]
+      }
+    }
+  }, {
+    "id" : "misplaced-protocol-or-server-field-actions",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "coverage", "[0]", "actions" ]
+      }
+    }
+  }, {
+    "id" : "misplaced-protocol-or-server-field-inputReadiness",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "coverage", "[0]", "inputReadiness" ]
+      }
+    }
+  }, {
+    "id" : "unknown-object",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "auditHint" ]
+      }
+    }
+  }, {
+    "id" : "unknown-array",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "auditHint" ]
+      }
+    }
+  }, {
+    "id" : "unknown-sensitiveValue",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "auditHint" ]
+      }
+    }
+  }, {
+    "id" : "unknown-longValue",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "auditHint" ]
+      }
+    }
+  }, {
+    "id" : "unknown-longName",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" ]
+      }
+    }
+  }, {
+    "id" : "unknown-sensitiveName",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "<redacted>" ]
+      }
+    }
+  }, {
+    "id" : "unlisted-harmless-scalar-string",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : true,
+    "actual" : {
+      "normalizedSha256" : "27a836ea486a3c7bb712b402ab17c9a00ecdbd626572669aaf22c87c719fa99f",
+      "bodySha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703",
+      "steps" : [ {
+        "status" : "PASS",
+        "stage" : "application.secondResolve"
+      }, {
+        "status" : "PASS",
+        "stage" : "application.validateBodySafetyAndAssemble"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.validateEnhancement.raw"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.validateEnhancement.assembled"
+      } ],
+      "accepted" : true,
+      "assembledSha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703"
+    }
+  }, {
+    "id" : "unlisted-harmless-scalar-boolean",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : true,
+    "actual" : {
+      "normalizedSha256" : "27a836ea486a3c7bb712b402ab17c9a00ecdbd626572669aaf22c87c719fa99f",
+      "bodySha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703",
+      "steps" : [ {
+        "status" : "PASS",
+        "stage" : "application.secondResolve"
+      }, {
+        "status" : "PASS",
+        "stage" : "application.validateBodySafetyAndAssemble"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.validateEnhancement.raw"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.validateEnhancement.assembled"
+      } ],
+      "accepted" : true,
+      "assembledSha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703"
+    }
+  }, {
+    "id" : "unlisted-harmless-scalar-number",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : true,
+    "actual" : {
+      "normalizedSha256" : "27a836ea486a3c7bb712b402ab17c9a00ecdbd626572669aaf22c87c719fa99f",
+      "bodySha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703",
+      "steps" : [ {
+        "status" : "PASS",
+        "stage" : "application.secondResolve"
+      }, {
+        "status" : "PASS",
+        "stage" : "application.validateBodySafetyAndAssemble"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.validateEnhancement.raw"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.validateEnhancement.assembled"
+      } ],
+      "accepted" : true,
+      "assembledSha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703"
+    }
+  }, {
+    "id" : "unlisted-harmless-scalar-null",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : true,
+    "actual" : {
+      "normalizedSha256" : "27a836ea486a3c7bb712b402ab17c9a00ecdbd626572669aaf22c87c719fa99f",
+      "bodySha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703",
+      "steps" : [ {
+        "status" : "PASS",
+        "stage" : "application.secondResolve"
+      }, {
+        "status" : "PASS",
+        "stage" : "application.validateBodySafetyAndAssemble"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.validateEnhancement.raw"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.validateEnhancement.assembled"
+      } ],
+      "accepted" : true,
+      "assembledSha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703"
+    }
+  }, {
+    "id" : "known-field-coercion-still-rejected",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "stage" : "strictWriterReader",
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.InvalidFormatException",
+        "fieldPath" : [ "goal" ]
+      }
+    }
+  }, {
+    "id" : "known-source-quote-still-validated",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "rejection" : {
+        "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+        "type" : "INVALID_RESPONSE",
+        "message" : "任务理解引用不属于当前可用来源"
+      }
+    }
+  }, {
+    "id" : "source-server-field-reqId",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "requirements", "[0]", "evidence", "[0]", "reqId" ]
+      }
+    }
+  }, {
+    "id" : "source-server-field-kind",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "requirements", "[0]", "evidence", "[0]", "kind" ]
+      }
+    }
+  }, {
+    "id" : "source-server-field-origin",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "requirements", "[0]", "evidence", "[0]", "origin" ]
+      }
+    }
+  }, {
+    "id" : "source-server-field-index",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "rejection" : {
+        "exception" : "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+        "fieldPath" : [ "requirements", "[0]", "evidence", "[0]", "index" ]
+      }
+    }
+  }, {
+    "id" : "raw-body-quote-still-validated",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "normalizedSha256" : "24259f0d05614f9a721e3b26b8abcfe43751bcd512e1f5bc15698a5557d3d53e",
+      "bodySha256" : "e6060dde1832ef614e780abfb9e4b5c9e643e88677acfdd818d3f7c73927b703",
+      "steps" : [ {
+        "status" : "PASS",
+        "stage" : "application.secondResolve"
+      }, {
+        "status" : "PASS",
+        "stage" : "application.validateBodySafetyAndAssemble"
+      }, {
+        "stage" : "product.validateEnhancement.raw",
+        "status" : "FAIL",
+        "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+        "type" : "INVALID_RESPONSE",
+        "message" : "正文覆盖记录越界、重复或缺少对应原句"
+      }, {
+        "stage" : "product.validateEnhancement.assembled",
+        "diagnosticOnlyAfterFirstRejection" : true,
+        "status" : "FAIL",
+        "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+        "type" : "INVALID_RESPONSE",
+        "message" : "正文覆盖记录越界、重复或缺少对应原句"
+      } ],
+      "accepted" : false,
+      "rejection" : {
+        "stage" : "product.validateEnhancement.raw",
+        "status" : "FAIL",
+        "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+        "type" : "INVALID_RESPONSE",
+        "message" : "正文覆盖记录越界、重复或缺少对应原句"
+      }
+    }
+  }, {
+    "id" : "original-body-safety-still-validates",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "normalizedSha256" : "4a4e85ffcdf519020513aa396356a3467856ba77922e948bce99678a5f5f350c",
+      "bodySha256" : "cc22ed2c7b15a75390adb2a5133ff3fba1a239b31d7f190ba1757ca17061ef68",
+      "steps" : [ {
+        "status" : "PASS",
+        "stage" : "application.secondResolve"
+      }, {
+        "stage" : "application.validateBodySafetyAndAssemble",
+        "status" : "FAIL",
+        "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+        "type" : "INVALID_RESPONSE",
+        "message" : "自然正文包含疑似敏感凭据"
+      } ],
+      "accepted" : false,
+      "rejection" : {
+        "stage" : "application.validateBodySafetyAndAssemble",
+        "status" : "FAIL",
+        "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+        "type" : "INVALID_RESPONSE",
+        "message" : "自然正文包含疑似敏感凭据"
+      }
+    }
+  }, {
+    "id" : "synthetic-complete-input-answer-source-cannot-be-omitted",
+    "syntheticCopyControl" : true,
+    "expectedAccepted" : false,
+    "actual" : {
+      "accepted" : false,
+      "rejection" : {
+        "exception" : "com.promptoptimizer.provider.domain.NaturalTaskReview$MissingSources",
+        "type" : "INVALID_RESPONSE",
+        "message" : "覆盖记录遗漏原始需求或实际题答来源"
+      }
+    }
+  } ],
+  "controlCount" : 31,
+  "loadedFrozenProductClassSha256" : {
+    "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleNaturalPromptProvider" : "d18b117d09111627a9ca9411b0a4f5864f5dda56b156a9502386f71a96ed58fc",
+    "com.promptoptimizer.provider.infrastructure.openai.NaturalPromptDiagnosticFieldHandler" : "de2365567f3c6b5d69b08384fd7d5d7bf4cf8250638e7820e06a02bfb695cd56",
+    "com.promptoptimizer.provider.domain.NaturalPromptReferencedEnhancement" : "83bd9bb4b80d7a77368c1c7fc683f339eadfea24eef33f5cae861f100e8a1196",
+    "com.promptoptimizer.provider.domain.NaturalPromptRequirementRegistry" : "dcccc444a6a03dd511374c20b4b4420dbb3bb3cae762dd56b56ffd5be5002006",
+    "com.promptoptimizer.provider.domain.NaturalTaskUnderstanding" : "4a9eac037e975edfb730a5531ba999579539abcd7d8fda56787ceb89828f2324",
+    "com.promptoptimizer.provider.domain.NaturalTaskReview" : "7cdf1e6c9e0e0242c2b55f8e64ed6f295e97a8152703109dd9ad007b19c57355",
+    "com.promptoptimizer.enhancement.service.impl.NaturalEnhancementService" : "cc3e8858edc8f8d549e6bb6536bca4b0d08c3b19f5f4ee1d3bc99e5ff152b1a3"
+  }
+}

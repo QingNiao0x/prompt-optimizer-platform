@@ -1,0 +1,55 @@
+{
+  "batch" : "natural-useful-delivery-works-2026-10-28",
+  "jobId" : "W70-N2_VORIGINAL_EXEC_R1",
+  "phase" : "EXECUTION",
+  "caseId" : "W70-N2",
+  "request" : {
+    "model" : "deepseek-flash",
+    "temperature" : 0.2,
+    "max_tokens" : 8192,
+    "thinking" : {
+      "type" : "disabled"
+    },
+    "stream" : false,
+    "messages" : [ {
+      "role" : "system",
+      "content" : "请直接完成用户的任务，交付可阅读且能实际使用的结果。可使用自然段、标题、要点或表格。仅使用本次提供的共同材料和通用知识，没有外部工具；不得声称已联网或已运行。"
+    }, {
+      "role" : "user",
+      "content" : "写个Python脚本，按附件规则把订单CSV汇总成每天各渠道的净收入，能在命令行直接运行。"
+    }, {
+      "role" : "user",
+      "content" : "本次共同材料（所有作品臂完全相同）：\n--- order-summary-rules.md ---\n全部订单字段、渠道及文件均为合成评测数据，不对应真实经营记录。运行环境Python3.11，只用标准库。命令为 python daily_net.py input.csv output.csv。交付一个JSON对象 {\"files\":[{\"path\":\"daily_net.py\",\"content\":\"完整源码\"}]}，只给这一个文件，不附Markdown、说明、命令或新增测试文件。\n输入CSV为UTF-8，允许BOM和合法CSV引号。表头至少含 paid_at,channel,status,amount,refund_amount，缺任一字段整批失败。status只允许PAID、REFUNDED、CANCELLED；未知状态报错。识别为CANCELLED后直接忽略该数据行，不再校验其日期、渠道或金额。\n其余行paid_at须是合法YYYY-MM-DD日期，按该日汇总，不换时区；channel去掉两端空白，保留大小写，不能为空。amount和refund_amount用十进制精确金额，不允许NaN、无穷、负数或超过两位小数；refund_amount不能大于amount。PAID也按amount-refund_amount计入；REFUNDED同样按该差额计入，不重复扣款。\n输出UTF-8 CSV，表头date,channel,net_amount；按date、channel升序，净收入固定两位小数。不按订单行数计算收入。只有表头的空数据输入成功，输出也只有表头。输入路径和输出路径解析后相同则拒绝。任何坏行使整批失败，stderr指出数据行序号（表头后第一条为1）和字段名，退出码2，已有输出文件必须完全不变。全部检查成功后才写输出；成功时允许替换原有输出。"
+    } ]
+  },
+  "httpStatus" : 200,
+  "responseBytes" : 4907,
+  "responseSha256" : "7365d369a237849c4f7526e3adcf34e9097465be463664cabb03f1f51feeee62",
+  "elapsedMs" : 5522,
+  "response" : {
+    "id" : "a4e3901c-9fcf-4b14-9eb3-363ddaaf0fb7",
+    "object" : "chat.completion",
+    "created" : 1793242556,
+    "model" : "deepseek-flash",
+    "choices" : [ {
+      "index" : 0,
+      "message" : {
+        "role" : "assistant",
+        "content" : "{\"files\":[{\"path\":\"daily_net.py\",\"content\":\"import csv\\nimport sys\\nimport os\\nfrom decimal import Decimal, InvalidOperation\\nfrom datetime import datetime\\n\\nFIELDS = [\\\"paid_at\\\", \\\"channel\\\", \\\"status\\\", \\\"amount\\\", \\\"refund_amount\\\"]\\nSTATUSES = {\\\"PAID\\\", \\\"REFUNDED\\\", \\\"CANCELLED\\\"}\\n\\n\\ndef fail(msg):\\n    sys.stderr.write(msg + \\\"\\\\n\\\")\\n    sys.exit(2)\\n\\n\\ndef parse_amount(s, rowno, field):\\n    t = s.strip()\\n    if t == \\\"\\\":\\n        fail(f\\\"row {rowno}: {field}: empty amount\\\")\\n    low = t.lower()\\n    if low in (\\\"nan\\\", \\\"inf\\\", \\\"+inf\\\", \\\"-inf\\\", \\\"infinity\\\", \\\"+infinity\\\", \\\"-infinity\\\"):\\n        fail(f\\\"row {rowno}: {field}: invalid amount\\\")\\n    try:\\n        d = Decimal(t)\\n    except InvalidOperation:\\n        fail(f\\\"row {rowno}: {field}: invalid amount\\\")\\n    if not d.is_finite():\\n        fail(f\\\"row {rowno}: {field}: invalid amount\\\")\\n    if d < 0:\\n        fail(f\\\"row {rowno}: {field}: negative amount\\\")\\n    exp = d.as_tuple().exponent\\n    if exp < -2:\\n        fail(f\\\"row {rowno}: {field}: more than two decimal places\\\")\\n    return d\\n\\n\\ndef main():\\n    if len(sys.argv) != 3:\\n        sys.stderr.write(\\\"usage: python daily_net.py input.csv output.csv\\\\n\\\")\\n        sys.exit(2)\\n    inpath, outpath = sys.argv[1], sys.argv[2]\\n    try:\\n        if os.path.abspath(inpath) == os.path.abspath(outpath):\\n            fail(\\\"input and output paths are the same\\\")\\n    except Exception:\\n        pass\\n\\n    try:\\n        with open(inpath, \\\"r\\\", encoding=\\\"utf-8-sig\\\", newline=\\\"\\\") as f:\\n            reader = csv.reader(f)\\n            try:\\n                header = next(reader)\\n            except StopIteration:\\n                fail(\\\"missing header\\\")\\n            header = [h.strip() for h in header]\\n            idx = {}\\n            for name in FIELDS:\\n                if name not in header:\\n                    fail(f\\\"missing field: {name}\\\")\\n                idx[name] = header.index(name)\\n\\n            totals = {}\\n            rowno = 0\\n            for row in reader:\\n                rowno += 1\\n                if len(row) == 0:\\n                    continue\\n                if len(row) < len(header):\\n                    row = row + [\\\"\\\"] * (len(header) - len(row))\\n                status = row[idx[\\\"status\\\"]].strip()\\n                if status not in STATUSES:\\n                    fail(f\\\"row {rowno}: status: unknown status {status!r}\\\")\\n                if status == \\\"CANCELLED\\\":\\n                    continue\\n                paid_at = row[idx[\\\"paid_at\\\"]].strip()\\n                try:\\n                    dt = datetime.strptime(paid_at, \\\"%Y-%m-%d\\\")\\n                    if dt.strftime(\\\"%Y-%m-%d\\\") != paid_at:\\n                        raise ValueError\\n                except ValueError:\\n                    fail(f\\\"row {rowno}: paid_at: invalid date\\\")\\n                channel = row[idx[\\\"channel\\\"]].strip()\\n                if channel == \\\"\\\":\\n                    fail(f\\\"row {rowno}: channel: empty channel\\\")\\n                amount = parse_amount(row[idx[\\\"amount\\\"]], rowno, \\\"amount\\\")\\n                refund = parse_amount(row[idx[\\\"refund_amount\\\"]], rowno, \\\"refund_amount\\\")\\n                if refund > amount:\\n                    fail(f\\\"row {rowno}: refund_amount: refund exceeds amount\\\")\\n                net = amount - refund\\n                key = (paid_at, channel)\\n                totals[key] = totals.get(key, Decimal(\\\"0\\\")) + net\\n\\n        lines = []\\n        for (date, channel) in sorted(totals.keys()):\\n            net = totals[(date, channel)]\\n            lines.append([date, channel, f\\\"{net:.2f}\\\"])\\n\\n        tmp = outpath + \\\".tmp\\\"\\n        with open(tmp, \\\"w\\\", encoding=\\\"utf-8\\\", newline=\\\"\\\") as f:\\n            w = csv.writer(f)\\n            w.writerow([\\\"date\\\", \\\"channel\\\", \\\"net_amount\\\"])\\n            for line in lines:\\n                w.writerow(line)\\n        os.replace(tmp, outpath)\\n    except SystemExit:\\n        raise\\n    except Exception as e:\\n        fail(f\\\"error: {e}\\\")\\n\\n\\nif __name__ == \\\"__main__\\\":\\n    main()\\n\"}]}"
+      },
+      "logprobs" : null,
+      "finish_reason" : "stop"
+    } ],
+    "usage" : {
+      "prompt_tokens" : 459,
+      "completion_tokens" : 1150,
+      "total_tokens" : 1609,
+      "prompt_tokens_details" : {
+        "cached_tokens" : 256
+      },
+      "prompt_cache_hit_tokens" : 256,
+      "prompt_cache_miss_tokens" : 203
+    },
+    "system_fingerprint" : "bc19ba97cbe016479903222bb1578db6"
+  }
+}

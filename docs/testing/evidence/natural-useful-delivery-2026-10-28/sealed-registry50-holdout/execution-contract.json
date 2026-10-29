@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "dataset_id": "registry50-independent-holdout-2026-10-28",
+  "candidate_freeze": {
+    "candidate": "50",
+    "frozen_at": "2026-10-27T21:13:38.282Z",
+    "protocol_sha256": "95700ef24d33f21ad2dccac8620f3847f029779e80ea3eb90cb76340af7a3330",
+    "protocol_content_read_by_author": false
+  },
+  "unseal_gate": "Root须先完成并确认已知回归及正常变体通过，才可解封本目录的题目、材料与答案卡。不能用本题调候选；发现缺陷后如用于回归，不再称未见留出。",
+  "author_model_calls": 0,
+  "author_product_changes": 0,
+  "model": {
+    "public_model": "deepseek:deepseek-flash",
+    "upstream_model": "deepseek-flash",
+    "endpoint": "https://api.deepseek.com/chat/completions",
+    "temperature": 0.2,
+    "top_p": "omit; upstream default",
+    "thinking": "disabled",
+    "stream": false
+  },
+  "enhancement": {
+    "registry_versions": [
+      "31",
+      "50"
+    ],
+    "freezes_per_case_per_version": 1,
+    "max_tokens": 8192,
+    "response_format": {
+      "type": "json_object"
+    },
+    "route": "31与50各走自身原产品路径，保留既有有界流程；不读取或改变实现。",
+    "call_count_note": "共4个预定增强作业；实际内部调用、失败和协议修复均按真实调用计数，不假定每作业只有一次付费请求。",
+    "qualification": "遵守事先验收计划的产品门：来源、必要材料、BODY、意图与交付范围、展示/复制/历史。流程无法通过时停止相应后续付费作品并保存失败。",
+    "downstream_prompt": "每题每版本只冻结一次合格最终优化正文，两次作品共用其完全相同的字节；不为第二次作品重新增强或挑选更好正文。"
+  },
+  "works": {
+    "arms": [
+      "original",
+      "registry31",
+      "registry50"
+    ],
+    "repeats_per_case_per_arm": 2,
+    "total_scheduled_calls": 12,
+    "max_tokens": 2600,
+    "format": "plain text",
+    "tools": "none; no browsing, retrieval, code execution, or external services",
+    "information": "每题原始提示词与两个完整材料文件共用；原始臂可直接完成，不弱化原始提示词，不隐藏材料，不带答案卡、判据或评测说明。",
+    "system": "三个臂、两次重复使用同一系统合同：直接按给定任务完成作品，仅使用本次提供的材料，不调用外部工具；不额外加入某臂专属格式、义务或答案。",
+    "job_ids": [
+      "R50-P01-original-r1",
+      "R50-P01-registry31-r1",
+      "R50-P01-registry50-r1",
+      "R50-P01-original-r2",
+      "R50-P01-registry31-r2",
+      "R50-P01-registry50-r2",
+      "R50-P02-original-r1",
+      "R50-P02-registry31-r1",
+      "R50-P02-registry50-r1",
+      "R50-P02-original-r2",
+      "R50-P02-registry31-r2",
+      "R50-P02-registry50-r2"
+    ],
+    "execution_order": "按job_ids固定顺序逐个执行；预定重复是独立编号观察，不能因前一份的内容质量重试、跳过或增加。"
+  },
+  "request_freeze": {
+    "when": "解封后，每次实际调用前",
+    "retain": [
+      "prepare与writer各自实际完整源输入及哈希",
+      "原始提示词原字节哈希和任何运输归一化说明",
+      "增强正文原字节哈希",
+      "材料原字节哈希",
+      "完整system/user消息与完整请求参数哈希",
+      "返回原件、协议修复、失败、截断和调用计数",
+      "展示、复制、历史核对及产品门结论"
+    ],
+    "identical_prompts": "原始与31若原样或等效原样，仍保留预定观察编号；不得把请求完全相同产生的差异归功于增强，报告同一提示词条件下的采样差异。",
+    "parameters": "同一作品模型与参数、材料、输出权限和预算固定；top_p不发送的事实也写入实际请求记录，不另行选择。"
+  },
+  "budget_and_stop": {
+    "scope": "本任务总授权500次实际调用内的子批次；封存不新增授权。Root在调用前按总账冻结本子批次包含有界增强内部调用与修复的实际阶段上限；不足则不启动，不静默扩大总额。",
+    "no_quality_retry": true,
+    "cutoff": "产品门失败或新增严重违约触发停止时保留原件并结算未用额度，不换题补胜；正常胜负反转按预定次数收口为未定，不追采到赢。",
+    "sufficient_output": "两题均以2600 token为足够完成原任务的统一预算；若实际截断，保留并计数，不以更长输出重试一臂。"
+  },
+  "assessment": {
+    "identity": "仅报告内部匿名AI审阅，不冒充真人、专家或实测编辑耗时。",
+    "blinding": "审阅前隐藏臂与版本，使用本题各自答案卡；同一判据用于全部作品。答案卡不进入任何生成请求。",
+    "evidence_chain": "逐项记录原要求/材料依据→真正缺口→增强新增内容→作品变化。持平、未定与原始臂已能交付均为正常结果。",
+    "required_repairs": "先判断能否直接交付，再按答案卡记录达到原要求所需的最小修改及原句位置；事实、语义、格式和可选文风分列，同因传播单列。",
+    "adoption": "本题不新增采用阈值，完整沿用acceptance-plan.md：真实产品流程修复、正常变体无新增严重退步、不止一种受影响任务中有可解释且关键重复保持的交付收益、必要修改减少。字数、格式变化与一次偶然胜出不代替条件。"
+  }
+}

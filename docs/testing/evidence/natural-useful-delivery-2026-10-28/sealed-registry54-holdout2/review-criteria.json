@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "criteriaFrozenBeforeAnyCandidateOrWorkForTheseCases": true,
+  "hiddenRequirements": false,
+  "uniqueIdealAnswer": false,
+  "scope": "Internal holdout authored after candidate engineering freeze by an agent that has seen earlier development inputs and failures, but no version54 source or generated drafts. This is not external or statistically independent expert evaluation.",
+  "common": {
+    "promptProductGateBeforeWorks": [
+      "The output is an executable optimization prompt for the original deliverable, not the completed user work, a different deliverable, an empty template or a task-wide request for missing input.",
+      "Review the actual final body against the raw request, all supplied material, actual answers and permissions. Current facts, source observations, unresolved causes, unapproved proposals and delegated designs retain their proper states.",
+      "Independent scope, negations and conditions are preserved without current contradictions. Correct later text, material completeness, evidence citations, self-ratings, HTTP and protocol validity cannot cancel a conflicting current instruction.",
+      "Material need not be copied sentence by sentence. Useful task information may remain in shared full materials, but current instructions may not contradict it or substitute bulk source paste for needed task design.",
+      "Capture actual prepared input, first response, platform-delivered body, displayed/copy/history body and version through the real product path where that gate applies. Unverified product evidence is not a pass."
+    ],
+    "workReview": [
+      "Review full actual works anonymously with the same raw request, exact materials, actual answers and shared execution permissions; do not expose arm/version before judgments are frozen.",
+      "Judge whether the original deliverable is substantively usable, whether facts and any calculations are correct, whether important requested content is present, and what user edits or additional invention are necessary before use.",
+      "No fixed headings, framework, paragraph counts, source counts or mandatory exhaustive restatement are introduced. Rational design variants and different justified prioritizations are accepted.",
+      "Distinguish objective defects from wording preference. A longer or more polished-looking text is not a win by itself. Sufficient-input fidelity with no regression may be a tie.",
+      "Record exact offending sentences, affected original requirements and necessary repairs; do not infer actual human editor time or expert approval. Missing/truncated works and both-failed pairs are not ties or candidate wins.",
+      "Compare both pre-registered repeats. Describe observed useful differences and consistency, without turning two samples into a universal stability claim. Retain all failures and mixed/undetermined responsibility."
+    ],
+    "judgmentValues": ["WIN", "TIE", "LOSS", "BOTH_FAIL", "UNDETERMINED"],
+    "editingBurdenValues": ["READY_OR_TRIVIAL_WORDING", "LOCAL_REQUIRED_CORRECTIONS", "MAJOR_REWRITE_OR_MISSING_CONTENT", "UNUSABLE_OR_MISSING"],
+    "editingBurdenNote": "Categorical required changes supported by actual text, not estimated minutes or a fabricated exact score.",
+    "adoptionBoundary": "No severe new intent, fact, authorization or hard-condition violation may be offset by another benefit. Actual usefulness improvements must be explained across more than one affected task, with key repeats considered. A tie is acceptable but does not by itself establish useful-delivery improvement. This holdout alone does not authorize adoption or release."
+  },
+  "cases": [
+    {
+      "id": "H54_01",
+      "originalDeliverables": ["Ready-to-use product listing copy", "Ready-to-use first-use card text"],
+      "sourceBoundaries": [
+        "The finalized L1 product has USB power and no battery; it requires a suitable power source, comes with a cable and no adapter. These purchase/preparation facts must not be reversed or hidden from the listing as requested in the materials.",
+        "The first-use control actions, brightness/color behavior, power-reset behavior and basic care/troubleshooting come from the supplied operating notes. Do not change long-press to power-off or invent offline runtime, extra functions, diagnostics or contact channels.",
+        "A limited internal tryout is not professional proof, universal fault diagnosis, certification or health evidence. Another product's old copy and unadopted brainstorming are not facts about L1.",
+        "The requested deliverable is text only, with an A6 two-sided card as a practical space context and no exact word/heading requirement. No actual publication, image/PDF production, shop edits or purchases are authorized."
+      ],
+      "usefulnessQuestions": [
+        "Can a buyer understand the product's relevant functions and essential preparation without reading contradictory sales claims?",
+        "Can a first-time user follow the card to connect, turn on, adjust, stop and find a reasonable next step if it does not light, without inventing the main procedure?",
+        "Are listing and card organized for their different uses with an appropriate compactness, rather than two duplicated long parameter dumps?"
+      ],
+      "allowedDesignSpace": "Wording, highlights, sectioning, order, concise explanations and reasonable distribution of detail between the two texts are delegated. There is no single correct sales angle or mandatory restatement of every dimension and observation.",
+      "notRequired": ["A fixed number of selling points", "Every numeric specification in both texts", "Medical or certified claims", "An external market investigation", "Print-ready graphics", "A unique prescribed headline"]
+    },
+    {
+      "id": "H54_02",
+      "originalDeliverables": ["Evidence-based choice of what to improve first", "Practical next-round work arrangement for the team"],
+      "sourceBoundaries": [
+        "The audit is 240 sampled parcels, 18 parcels with at least one error and 21 category records because 3 parcels each have two categories. Do not merge feedback counts into this denominator or infer total-volume/person performance without data. Percentages are optional; if used, denominator and units must be correct.",
+        "Recorded observations support candidate mechanisms, not proof that a label, printer, person or one observed near-miss caused all actual errors. Team proposals and external complaints keep their stated statuses.",
+        "The next five shifts retain staffing, existing scans/checks, normal dispatch and existing system/codes. Only available supplies and arrangement/instructions can be changed; no unapproved procurement, extra staff, full-order shutdown, routine overtime or per-order supervisor signoff beyond the stated capacity.",
+        "The scope is warehouse wrong-item, missing-item and wrong-label errors. Adjacent logistics, purchase-selection and outer-packaging concerns may be referred appropriately without replacing the requested warehouse arrangement.",
+        "The output is a reply-text analysis/arrangement, not actual warehouse changes, personal sanctions, a new system or a promise of zero errors."
+      ],
+      "usefulnessQuestions": [
+        "Does the work choose and justify practical priorities using the actual evidence instead of only restating rows, giving generic slogans, or asking the team to choose the main approach?",
+        "Are proposed actions concrete enough that the existing team knows what to do and when, with workload and retained controls compatible with the supplied constraints?",
+        "Is there an affordable way to observe next-round execution/results without treating incomplete causal knowledge as a reason to defer the entire arrangement?"
+      ],
+      "allowedDesignSpace": "Different reasoned priorities, sequencing, shelf/table organization, lightweight records and checks are permitted. No fixed first action, mandatory table fields, exhaustive reply to every comment or prescribed causal theory.",
+      "notRequired": ["All optional percentages", "A numerical improvement target", "A full causal experiment", "A new questionnaire", "An annual savings calculation", "One fixed intervention order", "A complete plan for other departments"]
+    }
+  ]
+}

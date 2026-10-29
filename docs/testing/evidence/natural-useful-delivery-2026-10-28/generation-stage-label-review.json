@@ -1,0 +1,13 @@
+{
+  "status": "AUXILIARY_TRACE_LABEL_CORRECTION_WITH_ORIGINALS_RETAINED",
+  "affectedClosedStages": ["plan-completion46", "effective47"],
+  "affectedJobs": ["P01_V46_CONFIRMED_GEN", "P02_V46_CONFIRMED_GEN", "P01_V47_CONFIRMED_GEN", "P02_V47_CONFIRMED_GEN"],
+  "originalAuxiliaryLabel": "DIRECT",
+  "actualInvocationPath": "PLAN_CONFIRMED",
+  "cause": "The inherited evaluation helper inferred generationStage from a job-id suffix _PLAN_GEN. Current jobs use _CONFIRMED_GEN, so the auxiliary label was wrong.",
+  "evidence": "Frozen input planConfirmation contains real server planId/contextId and actual answer bindings; the real NaturalEnhancementService validated them, model payload includes actualAnswers, final body and saved history reflect the bound answers.",
+  "originalTracesRewritten": false,
+  "actualCallCountsChanged": false,
+  "futureHelperFix": "After all affected stages closed, derive the label from the frozen request's actual nonempty planConfirmation.planId instead of the job name.",
+  "boundary": "This corrects helper metadata only; it does not change any model response, product processing stages, semantic score or quality adoption verdict."
+}

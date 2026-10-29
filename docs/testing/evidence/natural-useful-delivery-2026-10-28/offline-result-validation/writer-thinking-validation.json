@@ -1,0 +1,360 @@
+{
+  "modelCallsMadeByReplay" : 0,
+  "candidateEdited" : false,
+  "scope" : "Protocol, exact sources, all answer-source linkage, body safety, and raw/assembled quote guards only. Factual/intent/condition completeness requires independent semantic review.",
+  "stage" : "docs\\testing\\evidence\\natural-useful-delivery-2026-10-28\\writer-thinking-ablation",
+  "closureSha256" : "4f2cc29a2a95ed3903b5826056c48b2c1eeeb129e6d430cc5a491f78b0a7b018",
+  "protocolSha256" : "67a78050fe0304c56c4f795eab17684985d6b8883a3b36100efb30ce5d639629",
+  "mapperProfile" : "Spring Jackson2ObjectMapperBuilder defaults; Provider constructs its original strict response reader internally",
+  "loadedProductClassSha256" : {
+    "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleNaturalPromptProvider" : "aa08b56333e6c59793caddc6f2f0389c3203c518dcb370af6c68a7b8d4c2fe13",
+    "com.promptoptimizer.provider.domain.NaturalTaskUnderstanding" : "4a9eac037e975edfb730a5531ba999579539abcd7d8fda56787ceb89828f2324",
+    "com.promptoptimizer.provider.domain.NaturalTaskReview" : "7cdf1e6c9e0e0242c2b55f8e64ed6f295e97a8152703109dd9ad007b19c57355",
+    "com.promptoptimizer.enhancement.service.impl.NaturalEnhancementService" : "cc3e8858edc8f8d549e6bb6536bca4b0d08c3b19f5f4ee1d3bc99e5ff152b1a3",
+    "com.promptoptimizer.provider.infrastructure.openai.NaturalPromptRepairContext" : "829722092b8fc61064ae5a7520ca73ea42e60134ef0137a9f1a81dee8d76413b"
+  },
+  "results" : [ {
+    "jobId" : "Q01_V48_WRITER_OFF",
+    "semanticReviewRequired" : true,
+    "semanticCorrectnessClaimed" : false,
+    "inputProvenance" : {
+      "jobsSha256" : "811567d450a192aff2a441f832272eafc06e9b8a7024894a44351af4ce686d2e",
+      "resultSha256" : "572c07d1e4dd1b29d7795c10d24455a0645084c4e3c85df18f68608895fb70c3",
+      "traceSha256" : "d0bbda179f6fd6c590c8bedc6bd31361ddf640744c9eb08c61151acafa3a9429",
+      "approvedRequestSha256" : "5347b224d7d3d009607789c6d98a08028bfc22ec85d594c58ba936eb891e195d",
+      "actualContentSha256" : "6f92160da13147f934ff75eedccc9d94931449843efa231d4636f610c9b04910",
+      "userMessageSha256" : "0dd9d1ad05b2a54e7393318e843cfb1ad933f9bd5701f3be6020c1db8a59f7f2",
+      "naturalInputSha256" : "fb20e1a18b74fc4fa78c65c349a28d9c55e7f91bce526dc5ea1ee564b1a85996",
+      "strategyVersion" : "48",
+      "sourceCount" : 1,
+      "actualAnswerCount" : 0,
+      "protocolRepairPresent" : false,
+      "mandatoryRuleCount" : 0,
+      "providerOptimizedPromptSha256" : "f946027077b14762bb58086c332ffa63b2e94a1bc12a2ceb7020ab880e565f7e",
+      "assembledBodySha256" : "f946027077b14762bb58086c332ffa63b2e94a1bc12a2ceb7020ab880e565f7e"
+    },
+    "steps" : [ {
+      "status" : "PASS",
+      "stage" : "frozenInputReconstruction"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.unwrapAndReadResponse"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.requiredOptimizedPrompt"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.understandingAndResolve"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.framework"
+    }, {
+      "status" : "PASS",
+      "stage" : "application.secondResolve"
+    }, {
+      "status" : "PASS",
+      "stage" : "application.validateBodySafetyAndAssemble"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.raw"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.assembled"
+    } ],
+    "httpStatus" : 200,
+    "upstreamHttpStatus" : 200,
+    "finishReason" : "stop",
+    "upstreamFinishReason" : "stop",
+    "outcome" : "VALID_PRODUCT_DELIVERY_PROTOCOL_ONLY",
+    "deterministicRepairDiagnostics" : [ ]
+  }, {
+    "jobId" : "Q01_V48_WRITER_ON",
+    "semanticReviewRequired" : true,
+    "semanticCorrectnessClaimed" : false,
+    "inputProvenance" : {
+      "jobsSha256" : "811567d450a192aff2a441f832272eafc06e9b8a7024894a44351af4ce686d2e",
+      "resultSha256" : "10521e3a2699e64cef6634b7b93bd2c6c3a32de3ba725c65082160211445a43f",
+      "traceSha256" : "36cbdfab417f4b25111ccb3cb2b6e7388dcde6d1a5422641a6d3d4704fc4c6aa",
+      "approvedRequestSha256" : "8e2dad40e7ee6271c440c918786608054eeca4bfc19d24fb07f68c53e7d9b8cb",
+      "actualContentSha256" : "e65c177589ced7beaefe82121d9967b1e09be03ff0d36404e08d51a4c8789fde",
+      "userMessageSha256" : "0dd9d1ad05b2a54e7393318e843cfb1ad933f9bd5701f3be6020c1db8a59f7f2",
+      "naturalInputSha256" : "fb20e1a18b74fc4fa78c65c349a28d9c55e7f91bce526dc5ea1ee564b1a85996",
+      "strategyVersion" : "48",
+      "sourceCount" : 1,
+      "actualAnswerCount" : 0,
+      "protocolRepairPresent" : false,
+      "mandatoryRuleCount" : 0,
+      "providerOptimizedPromptSha256" : "f32a56f2df2bb4107fa8583789d29339b289c5088e485a791501939704a8b4c6",
+      "assembledBodySha256" : "f32a56f2df2bb4107fa8583789d29339b289c5088e485a791501939704a8b4c6"
+    },
+    "steps" : [ {
+      "status" : "PASS",
+      "stage" : "frozenInputReconstruction"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.unwrapAndReadResponse"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.requiredOptimizedPrompt"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.understandingAndResolve"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.framework"
+    }, {
+      "status" : "PASS",
+      "stage" : "application.secondResolve"
+    }, {
+      "status" : "PASS",
+      "stage" : "application.validateBodySafetyAndAssemble"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.raw"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.assembled"
+    } ],
+    "httpStatus" : 200,
+    "upstreamHttpStatus" : 200,
+    "finishReason" : "stop",
+    "upstreamFinishReason" : "stop",
+    "outcome" : "VALID_PRODUCT_DELIVERY_PROTOCOL_ONLY",
+    "deterministicRepairDiagnostics" : [ ]
+  }, {
+    "jobId" : "U02_V48_WRITER_OFF",
+    "semanticReviewRequired" : true,
+    "semanticCorrectnessClaimed" : false,
+    "inputProvenance" : {
+      "jobsSha256" : "811567d450a192aff2a441f832272eafc06e9b8a7024894a44351af4ce686d2e",
+      "resultSha256" : "e2846ad210f1b4dd04f7cd054f3e1fb4c05e1917c69144367140b42256b03def",
+      "traceSha256" : "bf4645354d45899ac7e9a45731359bdc75b2b1a2c81ceb251bf115ca0d4d7795",
+      "approvedRequestSha256" : "60967f51f332677f3a14b8a978e5192c90b9d108e348075ebee7b3db04535245",
+      "actualContentSha256" : "10bdcd629e55ba0799a3df80eeae4b6b0409a3ccfc2019a1d3c63aed3645c529",
+      "userMessageSha256" : "a45c434de989b42f94d75dcd92aa33bda2de30af06bada96ed07d3b7e3cf1c30",
+      "naturalInputSha256" : "ddbdd12c17edc9571fe1e3c57efb9cfd79fbf0445ab4bd75a6a04de064129364",
+      "strategyVersion" : "48",
+      "sourceCount" : 4,
+      "actualAnswerCount" : 0,
+      "protocolRepairPresent" : false,
+      "mandatoryRuleCount" : 0,
+      "providerOptimizedPromptSha256" : "b15b75591bee94d449022c4b77ec4c752ef82dfc4ff5b544fe2b8b870f444abc",
+      "assembledBodySha256" : "b15b75591bee94d449022c4b77ec4c752ef82dfc4ff5b544fe2b8b870f444abc"
+    },
+    "steps" : [ {
+      "status" : "PASS",
+      "stage" : "frozenInputReconstruction"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.unwrapAndReadResponse"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.requiredOptimizedPrompt"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.understandingAndResolve"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.framework"
+    }, {
+      "status" : "PASS",
+      "stage" : "application.secondResolve"
+    }, {
+      "status" : "PASS",
+      "stage" : "application.validateBodySafetyAndAssemble"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.raw"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.assembled"
+    } ],
+    "httpStatus" : 200,
+    "upstreamHttpStatus" : 200,
+    "finishReason" : "stop",
+    "upstreamFinishReason" : "stop",
+    "outcome" : "VALID_PRODUCT_DELIVERY_PROTOCOL_ONLY",
+    "deterministicRepairDiagnostics" : [ ]
+  }, {
+    "jobId" : "U02_V48_WRITER_ON",
+    "semanticReviewRequired" : true,
+    "semanticCorrectnessClaimed" : false,
+    "inputProvenance" : {
+      "jobsSha256" : "811567d450a192aff2a441f832272eafc06e9b8a7024894a44351af4ce686d2e",
+      "resultSha256" : "49af6421bfeba28f8229f1f31facc87b3c0652a1e535f8766a150e6e45bf1d64",
+      "traceSha256" : "c91afad7d110f67beb0a9ed42aa7314b3fe43fb8582c85591251a7d6fdfeaf45",
+      "approvedRequestSha256" : "828f02f1f8504c4f5a4e00b881ad8d5d227fb4fae6598ccacfc61e40e4c8c941",
+      "actualContentSha256" : "ec1932317d0ce5fa5b52004dfca4e0aa4b675dfff62e335ede55a0d3ab1eed1e",
+      "userMessageSha256" : "a45c434de989b42f94d75dcd92aa33bda2de30af06bada96ed07d3b7e3cf1c30",
+      "naturalInputSha256" : "ddbdd12c17edc9571fe1e3c57efb9cfd79fbf0445ab4bd75a6a04de064129364",
+      "strategyVersion" : "48",
+      "sourceCount" : 4,
+      "actualAnswerCount" : 0,
+      "protocolRepairPresent" : false,
+      "mandatoryRuleCount" : 0,
+      "providerOptimizedPromptSha256" : "f757f3a5247b5ece7d4fc69ebc9ee747b0fab40f0097eec1a3af74f544dcb920",
+      "assembledBodySha256" : "f757f3a5247b5ece7d4fc69ebc9ee747b0fab40f0097eec1a3af74f544dcb920"
+    },
+    "steps" : [ {
+      "status" : "PASS",
+      "stage" : "frozenInputReconstruction"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.unwrapAndReadResponse"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.requiredOptimizedPrompt"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.understandingAndResolve"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.framework"
+    }, {
+      "status" : "PASS",
+      "stage" : "application.secondResolve"
+    }, {
+      "status" : "PASS",
+      "stage" : "application.validateBodySafetyAndAssemble"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.raw"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.assembled"
+    } ],
+    "httpStatus" : 200,
+    "upstreamHttpStatus" : 200,
+    "finishReason" : "stop",
+    "upstreamFinishReason" : "stop",
+    "outcome" : "VALID_PRODUCT_DELIVERY_PROTOCOL_ONLY",
+    "deterministicRepairDiagnostics" : [ ]
+  }, {
+    "jobId" : "U03_V48_WRITER_OFF",
+    "semanticReviewRequired" : true,
+    "semanticCorrectnessClaimed" : false,
+    "inputProvenance" : {
+      "jobsSha256" : "811567d450a192aff2a441f832272eafc06e9b8a7024894a44351af4ce686d2e",
+      "resultSha256" : "9473f3998eac52a46947ba3a996d61517ac0a41eaec7bcd51eea6eedf3975e87",
+      "traceSha256" : "36d8ab985cd0b63e4eca1e35c485ec7aa0da2b9d5499ff0d12eec1f93e668a02",
+      "approvedRequestSha256" : "0d39e785707767cd970c357834bfe81f625c435ee21f3621058ed8d01716e953",
+      "actualContentSha256" : "d861a4f36abaa7a83bd3759ac6c92d1952e65d1e5845641766ed2d89cf490ea6",
+      "userMessageSha256" : "73919fe80654d06c0956258d5baa79046459de76c4064934189911a9307d052e",
+      "naturalInputSha256" : "7a43e92c7c9590ac5784061d4b8fbc321dabf09071cf5047576bf33d9e2a3a60",
+      "strategyVersion" : "48",
+      "sourceCount" : 7,
+      "actualAnswerCount" : 0,
+      "protocolRepairPresent" : false,
+      "mandatoryRuleCount" : 0,
+      "providerOptimizedPromptSha256" : "6156d7f1af6cc4618ce7d9b13189e9949367947366c3a3af634018f2d2906cdc",
+      "assembledBodySha256" : "6156d7f1af6cc4618ce7d9b13189e9949367947366c3a3af634018f2d2906cdc"
+    },
+    "steps" : [ {
+      "status" : "PASS",
+      "stage" : "frozenInputReconstruction"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.unwrapAndReadResponse"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.requiredOptimizedPrompt"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.understandingAndResolve"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.framework"
+    }, {
+      "status" : "PASS",
+      "stage" : "application.secondResolve"
+    }, {
+      "status" : "PASS",
+      "stage" : "application.validateBodySafetyAndAssemble"
+    }, {
+      "stage" : "product.validateEnhancement.raw",
+      "status" : "FAIL",
+      "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+      "type" : "INVALID_RESPONSE",
+      "message" : "正文覆盖记录越界、重复或缺少对应原句"
+    }, {
+      "stage" : "product.validateEnhancement.assembled",
+      "diagnosticOnlyAfterFirstRejection" : true,
+      "status" : "FAIL",
+      "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+      "type" : "INVALID_RESPONSE",
+      "message" : "正文覆盖记录越界、重复或缺少对应原句"
+    } ],
+    "httpStatus" : 200,
+    "upstreamHttpStatus" : 200,
+    "finishReason" : "stop",
+    "upstreamFinishReason" : "stop",
+    "firstRejection" : {
+      "stage" : "product.validateEnhancement.raw",
+      "status" : "FAIL",
+      "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+      "type" : "INVALID_RESPONSE",
+      "message" : "正文覆盖记录越界、重复或缺少对应原句"
+    },
+    "outcome" : "REJECTED_BY_PRODUCT",
+    "deterministicRepairDiagnostics" : [ {
+      "sourceId" : "",
+      "code" : "BODY_QUOTE_MISSING",
+      "path" : "/taskUnderstanding/review/requirementCoverage/5/quotes/0"
+    } ]
+  }, {
+    "jobId" : "U03_V48_WRITER_ON",
+    "semanticReviewRequired" : true,
+    "semanticCorrectnessClaimed" : false,
+    "inputProvenance" : {
+      "jobsSha256" : "811567d450a192aff2a441f832272eafc06e9b8a7024894a44351af4ce686d2e",
+      "resultSha256" : "a16c939f2315221fc7c7cda5f5f1179be8c59198e37760bc4454e76109fc2e49",
+      "traceSha256" : "0f23f8ac8a96c9b4ca1a9b87eb4c9f10921c5622b06fdc9da62bc61fe6d3bfb1",
+      "approvedRequestSha256" : "6e88506fce595b97a79ce567cc6694c8878cac902d972b115de7b48e3fadf7eb",
+      "actualContentSha256" : "dab0214bf48fd7134e0455d08d6739ca7c66326870b2a408ee3bd36cfb7d01aa",
+      "userMessageSha256" : "73919fe80654d06c0956258d5baa79046459de76c4064934189911a9307d052e",
+      "naturalInputSha256" : "7a43e92c7c9590ac5784061d4b8fbc321dabf09071cf5047576bf33d9e2a3a60",
+      "strategyVersion" : "48",
+      "sourceCount" : 7,
+      "actualAnswerCount" : 0,
+      "protocolRepairPresent" : false,
+      "mandatoryRuleCount" : 0,
+      "providerOptimizedPromptSha256" : "87ddf371a50f8c00d67fa2198c46058f0654e15ceda2eb2f488103bf18baf062",
+      "assembledBodySha256" : "87ddf371a50f8c00d67fa2198c46058f0654e15ceda2eb2f488103bf18baf062"
+    },
+    "steps" : [ {
+      "status" : "PASS",
+      "stage" : "frozenInputReconstruction"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.unwrapAndReadResponse"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.requiredOptimizedPrompt"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.understandingAndResolve"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.framework"
+    }, {
+      "status" : "PASS",
+      "stage" : "application.secondResolve"
+    }, {
+      "status" : "PASS",
+      "stage" : "application.validateBodySafetyAndAssemble"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.raw"
+    }, {
+      "status" : "PASS",
+      "stage" : "product.validateEnhancement.assembled"
+    } ],
+    "httpStatus" : 200,
+    "upstreamHttpStatus" : 200,
+    "finishReason" : "stop",
+    "upstreamFinishReason" : "stop",
+    "outcome" : "VALID_PRODUCT_DELIVERY_PROTOCOL_ONLY",
+    "deterministicRepairDiagnostics" : [ ]
+  } ],
+  "replayerClassSha256" : "f6febba7b9c1e13768e6c1125d9acd7d4f051ccc75511707f52d07cec167c0af"
+}

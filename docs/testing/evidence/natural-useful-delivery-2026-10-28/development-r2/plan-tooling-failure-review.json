@@ -1,0 +1,12 @@
+{
+  "status": "TOOLING_INPUT_FAILURE_NOT_PRODUCT_OR_MODEL_QUALITY_RESULT",
+  "jobs": ["P01_V46_PLAN", "P02_V46_PLAN"],
+  "originalHttpStatusRetained": 500,
+  "upstreamModelCalls": 0,
+  "cause": "The frozen Plan jobs supplied an OptimizationRequest DTO instead of the distinct OptimizationPlanRequest. Spring's HTTP mapping ignored extra generation fields; the evaluation server's strict normalization then rejected unrecognized fields before any model request.",
+  "actualPlanRequestFields": ["rawPrompt", "contextDescription", "conversationHistory", "planningContext", "modelId"],
+  "incorrectFrozenFields": ["context", "enhancement", "permissionPolicy", "planConfirmation"],
+  "guardsLoosened": false,
+  "oldResponsesRewritten": false,
+  "followUp": "Freeze new correctly shaped Plan inputs; use the actual context-summary reference flow for file-backed Plan. Do not silently discard context files or retry the same closed jobs."
+}

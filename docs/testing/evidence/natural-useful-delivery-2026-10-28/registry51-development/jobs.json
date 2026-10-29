@@ -1,0 +1,100 @@
+[
+  {
+    "id": "Q01_V51_GEN",
+    "caseId": "Q01",
+    "phase": "GENERATION",
+    "version": "51",
+    "purpose": "VERSION_SCOPED_SCALAR_READER_COMPATIBILITY_DEVELOPMENT",
+    "approvedEnhancementInput": {
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    }
+  },
+  {
+    "id": "U02_V51_GEN",
+    "caseId": "U02",
+    "phase": "GENERATION",
+    "version": "51",
+    "purpose": "VERSION_SCOPED_SCALAR_READER_COMPATIBILITY_DEVELOPMENT",
+    "approvedEnhancementInput": {
+      "rawPrompt": "我们这家社区书店想试办两周的周末亲子共读活动，请依据现有条件设计一份店员能照着执行的方案，活动形式由你安排。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "U02-M01.md",
+            "content": "# 小树书店的现状和试办条件\n\n小树书店位于一个普通住宅社区，工作日主要售书，周末偶尔有人在阅读区坐一会儿，还没有举办过正式的亲子活动。附近居民问过能不能让孩子来一起读书，但店里并不知道实际会有多少家庭参加。店主想先用连续两个周六下午试办，看看家庭是否愿意参与、孩子能否投入，以及店员能不能长期承担，不准备据此估算整个社区的市场规模。\n\n试办对象是6至9岁儿童及其陪同成人，每个孩子限一位成人同行。阅读区可坐八组家庭，通道需要保持畅通，不能把书架前和收银台旁也改成活动区。书店周六14:00至17:00可以安排活动，其中任意一个连续的一小时可供亲子活动使用，其余时间留给正常营业和整理。两个周六都只有店主和一名店员值班，一人可主持活动，另一人需要继续接待顾客和收银，不能长时间同时带活动，也不打算额外聘请老师。\n\n店内已有八张小桌、十六把椅子、白纸、彩笔和一块可擦写的小白板，没有投影仪、音响或可腾出的游戏场地。可供共读的绘本和短篇故事集有十六册，题材包括日常生活、自然观察和朋友相处，每册可独立读完一则短故事，长短与难度不同。孩子和家长也可以带自己的书，但店员无法事先知道具体书名。书店不安排餐饮，现场只提供饮用水。\n\n两周合计可新增支出600元，用于必要耗材和简单宣传；桌椅及现有图书不用另付钱。试办免费，不设购书门槛，没有礼品赞助，也不以现场卖出多少书评价成败。店里已有一个发布营业消息的居民群，可在柜台口头介绍活动，也能用纸笔登记家庭。没有独立公众号、预约小程序或专门负责线上报名的人。\n\n店主曾观察到，有的孩子愿意安静看书，有的孩子需要别人先带着进入故事；成人有时会替孩子抢答，也有成人希望只在旁边陪着。店员读故事比较自然，但不熟悉课堂管理。阅读区与销售区相邻，平时其他顾客仍会走动、翻书。此前两次零散的读书聊天都在结束后没有留下记录，后来只能凭印象争论活动好不好。",
+            "language": "markdown"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    }
+  },
+  {
+    "id": "U03_V51_GEN",
+    "caseId": "U03",
+    "phase": "GENERATION",
+    "version": "51",
+    "purpose": "VERSION_SCOPED_SCALAR_READER_COMPATIBILITY_DEVELOPMENT",
+    "approvedEnhancementInput": {
+      "rawPrompt": "这是我们试行社区工具借用服务时的反馈，帮我分析主要卡点，并提出下一轮能落地的调整建议；优先顺序由你判断。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "U03-M01.md",
+            "content": "# 工具借用服务的运行背景\n\n青禾社区共享柜是虚构的邻里项目，试行了五周。柜内有电钻两把、折叠小推车两辆、人字梯两架，以及几套普通手工具。服务对象是已登记的本社区家庭，目前有32户完成登记。工具没有统一在线预约页面，居民在群里询问，志愿者看到后在共享表格里登记，领取和归还时再核对实物。表格目前只有工具名、借用家庭编号、借出时间、约定归还时间和实际归还时间，未单独记录未借成的询问。\n\n两名志愿者轮班值守，每周二、周四18:30至19:30和周六9:00至11:00办理领还。柜子在社区活动室内，其余时间不能进入，也没有自助取还条件。普通工具每次借用三天，同一家庭同时最多借一件。值守时可确认是否有人等候；遇到有人临时要求延长，志愿者有时直接在群里答应，有时请对方先归还再问，尚未形成一致做法。\n\n五周共有58次成功借出，其中51次在约定期限内归还，7次逾期；这7次里有2次事先在群里问过延期。一次完整借出到归还记为一次，不能从58次推得有58个不同家庭。曾有一把电钻因缺少充电器停借两天，后来在柜子深处找回，尚无工具丢失。没有记录居民未借到工具后去哪里解决需求，也没有记录每条群消息对应哪一次借用。\n\n下一轮仍由原来的两名志愿者承担，固定值守时段不能增加。可以继续用现有群和共享表格，允许调整登记方式、说明文字和柜内摆放。社区可拿出300元购买标签、收纳或其他小耗材，近期没有购买新工具、开发软件或新增收费系统的预算。社区希望服务可靠、居民容易理解，志愿者的额外处理工作也不要越积越多。",
+            "language": "markdown"
+          },
+          {
+            "path": "U03-M02.md",
+            "content": "# 试行期间留下的十二条反馈\n\n下面是志愿者从群消息和现场便笺中整理出的十二条反馈。整理时没有保存家庭编号，同一家庭可能留下不止一条，未主动反馈的家庭没有另做访问，文字只做了匿名和断句处理。\n\nF01：周六拿到小推车，搬花盆很方便。如果每次都能看见柜里现在有什么，就不用先在群里问一圈了。\n\nF02：我问电钻还有没有，下午没回复，以为都借出去了，第二天志愿者说其实有。我后来已经向邻居借到了。\n\nF03：晚上七点来还梯子，门已经关了。才发现群公告写的是周二、周四，我记成了每天晚上都有人。希望领的时候就知道哪天能还。\n\nF04：只用半小时也要赶固定时段，工作忙时确实不方便。不过能借到的话，比自己买一个省事。\n\nF05：我前一天问能不能多借一天，群里没人回。第二天有人说我超时了，我也不知道该按哪个消息算。\n\nF06：大家把电钻、梯子叫的名字不一样，我说小梯子，登记里写的是人字梯，差一点以为柜里没有。\n\nF07：领工具的时候找充电器找了十分钟，志愿者也着急。要是配件和工具能放一起，可能好找些。\n\nF08：最好再买两把电钻，周末肯定都用得上。我只问过一次，那天没借成。\n\nF09：有人晚还就全体不许再借，才能长记性吧。我没有遇到过，只是看到群里在讨论。\n\nF10：我周四还工具很顺利，志愿者还提醒检查有没有少东西。流程讲清楚其实不复杂，继续办我还会用。\n\nF11：我没在群里问过，消息太多，怕打扰别人。公告最后一次更新是试行第一周，不知道现在照不照那个办。\n\nF12：能不能把三天统一改成一周？有时拆开了才发现还缺个零件，一下做不完。但如果别人急用，也可以提前联系我商量。",
+            "language": "markdown"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    }
+  }
+]

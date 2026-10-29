@@ -1,0 +1,52 @@
+{
+  "batch" : "natural-useful-delivery-holdout-works47-2026-10-28",
+  "jobId" : "H03_V47_EXEC",
+  "phase" : "EXECUTION",
+  "caseId" : "H03",
+  "request" : {
+    "model" : "deepseek-flash",
+    "stream" : false,
+    "temperature" : 0.2,
+    "max_tokens" : 2600,
+    "thinking" : {
+      "type" : "disabled"
+    },
+    "messages" : [ {
+      "role" : "system",
+      "content" : "请执行用户要求，遵守原定范围和输出格式。只使用本次提供的信息和附件，不联网。当前没有可调用的执行工具，不要声称已经实际运行代码。"
+    }, {
+      "role" : "user",
+      "content" : "我经营一家虚构的小便当店，请根据附件 orders.csv（已结清的账）和 ledger-notes.md（字段口径），分析 2026 年 10 月 1—4 日的订单，直接做一份可发店内工作群的小结。\n\n小结先用一张表，按“线上、电话、合计”三行，列出净餐费、实际交付份数、每份平均净餐费、取消订单率四项。计算严格按 ledger-notes.md 的口径：净餐费＝所有订单实付餐费之和－实际退款之和；每份平均净餐费＝净餐费÷实际交付份数，按渠道和合计分别计算；取消订单率＝整单取消订单数÷全部订单数，分母包含完成和取消订单。注意 O04 原订 5 份、最终交付 4 份、已退 22 元；O05 的 8 元优惠已含在实付 80 元中，不再另减。金额保留两位小数，百分比保留一位小数。\n\n表格之后写三条短结论：两条是你设计的下周可做的小试验，另一条说明这些数据还不能支持什么结论。试验只作为拟议建议，不要写成已经批准的安排。表格以外的文字合计不超过 350 字。\n\n只根据附件分析，不上网补行业数据。现在没有食材、人力、配送等成本资料，也没有取消原因、宣传曝光、回头客和其他日期的数据，先完成能算出的内容，不要编造这些缺失信息。\n\n以下是本次用户提供的完整附件（所有执行臂逐字一致）：\n--- 附件：orders.csv ---\norder_id,date,channel,status,ordered_qty,delivered_qty,paid_meal_amount,refunded_meal_amount\nO01,2026-10-01,ONLINE,COMPLETED,3,3,66.00,0.00\nO02,2026-10-01,PHONE,COMPLETED,2,2,44.00,0.00\nO03,2026-10-02,ONLINE,CANCELLED,4,0,88.00,88.00\nO04,2026-10-02,PHONE,COMPLETED,5,4,110.00,22.00\nO05,2026-10-03,ONLINE,COMPLETED,4,4,80.00,0.00\nO06,2026-10-03,ONLINE,COMPLETED,1,1,22.00,0.00\nO07,2026-10-03,PHONE,CANCELLED,2,0,44.00,44.00\nO08,2026-10-04,PHONE,COMPLETED,3,3,66.00,0.00\n\n\n--- 附件：ledger-notes.md ---\n# 合成账本的字段口径\n\n这些订单全部虚构。数据覆盖 2026 年 10 月 1—4 日，每行是一张独立订单，没有重复行；账已结清，没有待退款。\n\n- `channel`：`ONLINE` 为线上，`PHONE` 为电话。\n- `status`：`COMPLETED` 为完成，`CANCELLED` 为整单取消。完成订单也可能少交付并部分退款。\n- `ordered_qty` 是下单份数；`delivered_qty` 是最终实际交付份数。取消订单的实际交付为 0。\n- `paid_meal_amount` 是客户实际支付的餐费，单位元，已减优惠，不含配送费；`refunded_meal_amount` 是之后实际退还的餐费，单位元。\n- 净餐费＝所有订单实付餐费之和－实际退款之和；每份平均净餐费＝净餐费÷实际交付份数。按渠道和合计分别按此计算。\n- 取消订单率＝整单取消订单数÷全部订单数，分母包含完成和取消订单。\n- O04 原订 5 份，最终交付 4 份，已退 22 元。O05 有一笔 8 元优惠，已包含在实付 80 元中，不再另减。\n- 没有提供食材、人力、配送成本或取消原因；这份账本也没有统计宣传曝光、回头客和其他日期的订单。\n"
+    } ]
+  },
+  "httpStatus" : 200,
+  "responseBytes" : 1206,
+  "responseSha256" : "0fd32cf41ada194ef336aff8e27419e87be5759713c6019a83c27a8eac728e2b",
+  "elapsedMs" : 1669,
+  "response" : {
+    "id" : "db575e18-9506-412c-905a-7c0a6d220f21",
+    "object" : "chat.completion",
+    "created" : 1793127191,
+    "model" : "deepseek-flash",
+    "choices" : [ {
+      "index" : 0,
+      "message" : {
+        "role" : "assistant",
+        "content" : "**2026 年 10 月 1—4 日订单小结**\n\n| 渠道 | 净餐费（元） | 实际交付份数 | 每份平均净餐费（元） | 取消订单率 |\n|---|---:|---:|---:|---:|\n| 线上 | 168.00 | 8 | 21.00 | 40.0% |\n| 电话 | 154.00 | 9 | 17.11 | 33.3% |\n| 合计 | 322.00 | 17 | 18.94 | 37.5% |\n\n**三条短结论（拟议，未批准）**\n1. 下周拟做小试验：线上完成订单随餐附一句“少送即退”提示，观察是否减少少交付退款。\n2. 下周拟做小试验：电话下单时复述份数并请客户确认，观察整单取消是否变化。\n3. 现有数据不能支持“哪个渠道更好”或“取消原因是什么”的结论：缺少成本、取消原因、曝光、回头客及其他日期数据。"
+      },
+      "logprobs" : null,
+      "finish_reason" : "stop"
+    } ],
+    "usage" : {
+      "prompt_tokens" : 998,
+      "completion_tokens" : 236,
+      "total_tokens" : 1234,
+      "prompt_tokens_details" : {
+        "cached_tokens" : 0
+      },
+      "prompt_cache_hit_tokens" : 0,
+      "prompt_cache_miss_tokens" : 998
+    },
+    "system_fingerprint" : "bc19ba97cbe016479903222bb1578db6"
+  }
+}

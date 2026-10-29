@@ -1,0 +1,143 @@
+{
+  "candidate": "50",
+  "status": "ENGINEERING_CHECKS_PASSED_ONLY",
+  "modelCallsMade": 0,
+  "unseenCasesRead": false,
+  "defaultVersion": "31",
+  "planGuidance": "47 unchanged",
+  "wireSchema": "49 unchanged",
+  "maxAttemptsPerStage": 2,
+  "scope": "Natural prompt only; new prepare/writer context registration responsibilities",
+  "semanticCorrectnessClaimed": false,
+  "semanticReviewRequired": true,
+  "tdd": {
+    "redTest": "contextBoundariesUseExistingRegistryAndOnlyNewProcessingUsesAdditions",
+    "redExitCode": 1,
+    "redFailure": "ProviderException: 自然链路版本不受支持",
+    "greenExitCode": 0,
+    "redBeforeProduct50Implementation": true
+  },
+  "totals": {
+    "testClasses": 4,
+    "tests": 97.0,
+    "failures": 0.0,
+    "errors": 0.0,
+    "skipped": 0.0
+  },
+  "suites": [
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.openai.NaturalContextBoundaryRegistryProviderTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportPath": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalContextBoundaryRegistryProviderTest.xml",
+      "reportSha256": "df6ea4476ef547d1299b4c4afad4ebf71948bd41eb394c266bb962e593e999cb"
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.openai.NaturalRequirementRegistryProviderTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportPath": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalRequirementRegistryProviderTest.xml",
+      "reportSha256": "8298617de6402a54ce27101eea8bfb8122b09804012b9ceb6c378898a64ff97d"
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.openai.NaturalBoundedRepairProviderTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportPath": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalBoundedRepairProviderTest.xml",
+      "reportSha256": "2009cc550e92cad7789d72b46905cbb5906bcbc1719495197bde5930a045a814"
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.openai.NaturalRoutingRepairProviderTest",
+      "tests": 48,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportPath": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalRoutingRepairProviderTest.xml",
+      "reportSha256": "a3afd4f7a3b30db2f3d02fdce4ea67a0255d4fcba864dc296339d9909df81bff"
+    }
+  ],
+  "frozenSourceComparison": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRequirementRegistryInstructions.java",
+      "beforeSha256": "1f8d038b6f479f2367f4131aa267873ded86382101fb968dc4465a195cdff303",
+      "afterSha256": "1f8d038b6f479f2367f4131aa267873ded86382101fb968dc4465a195cdff303"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRequirementRegistry.java",
+      "beforeSha256": "b2fd03c7094cf82b17acfec09aef587b5b145ef0ba6cc1ed60c090eee4a6623d",
+      "afterSha256": "b2fd03c7094cf82b17acfec09aef587b5b145ef0ba6cc1ed60c090eee4a6623d"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptReferencedEnhancement.java",
+      "beforeSha256": "d8ceacd0611b9abbe219f1c1b09704006ea839bcabf47fa22971303d5df2f6d7",
+      "afterSha256": "d8ceacd0611b9abbe219f1c1b09704006ea839bcabf47fa22971303d5df2f6d7"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptEffectiveRequestInstructions.java",
+      "beforeSha256": "8147b74cf05231e744b7c371e48b435953496ad4ec851b7b62e20903ee1583c9",
+      "afterSha256": "8147b74cf05231e744b7c371e48b435953496ad4ec851b7b62e20903ee1583c9"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptUsefulDeliveryInstructions.java",
+      "beforeSha256": "7c27f4db7f4da5339364e70374eaebd3ad343b9d2214d6d09aa7dd09a88755e7",
+      "afterSha256": "7c27f4db7f4da5339364e70374eaebd3ad343b9d2214d6d09aa7dd09a88755e7"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptContextBoundaryRegistryInstructions.java",
+      "sha256": "c67fe8b6802733a0b04763028dbe319d86743246b8dfbfc0bfef1fc6c1419cfc"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "5a40ea2bd429ee7b2a03b5d09ceeae59e3d3201bdb70d906acf216e121517a07"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRoutingRepairInstructions.java",
+      "sha256": "21b87a0d1bbe73ceeb09ede22c699b71ac94e0d3945b70515d893500f3016ca0"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "bcf7db271cecdf1e311baa34ee0f4cdb96c9ddda229fdc1b9f82bffe0dbe7e28"
+    },
+    {
+      "path": "services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/NaturalContextBoundaryRegistryProviderTest.java",
+      "sha256": "6d620df7644bb5ba91f9a8f6334dbc137f921b556b9fbef2c6d2e5608b3fac6c"
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry50-design-memo.md",
+      "sha256": "c22913060476d3bd8ff502788986c616d0ea322ec9238d75431057f1010a16b4"
+    }
+  ],
+  "logs": [
+    {
+      "path": "tmp/natural-useful-delivery-2026-10-28/registry50-red.log",
+      "sha256": "b13884017f971e7c68ea3b518b5fa746176a9ecd3d4d4e201a2f2a5542dfba43"
+    },
+    {
+      "path": "tmp/natural-useful-delivery-2026-10-28/registry50-green.log",
+      "sha256": "69e755e2d50b3e04d5d242213910412c508402b76134cec5e135feae6a233177"
+    },
+    {
+      "path": "tmp/natural-useful-delivery-2026-10-28/registry50-tests.log",
+      "sha256": "826b8e084b77c1097ca34f584ec251a78435cca24ca4eff90391ffe70dd46a0e"
+    }
+  ],
+  "newBranches": [
+    "Explicit strategyVersion 50 selects new guidance and the existing49 strict registry path. No subject, occupation, task wording, causal pattern or inferred semantic branch."
+  ],
+  "limitations": [
+    "Controlled HTTP responses are synthetic and do not prove real preparation extraction or downstream work gains.",
+    "Existing exact source/QA/body quote guards do not prove interpretation fidelity or complete hard-requirement retention.",
+    "No new real model calls or acceptance/adoption/publication decision.",
+    "No full497 suite rerun; only four affected test classes."
+  ],
+  "java": "E:/Delelop/Java/jdk-21",
+  "command": "mvn -o -q -Dtest=NaturalContextBoundaryRegistryProviderTest,NaturalRequirementRegistryProviderTest,NaturalBoundedRepairProviderTest,NaturalRoutingRepairProviderTest -DargLine='-Djdk.net.URLClassPath.disableClassPathURLCheck=true -XX:+EnableDynamicAgentLoading' test"
+}

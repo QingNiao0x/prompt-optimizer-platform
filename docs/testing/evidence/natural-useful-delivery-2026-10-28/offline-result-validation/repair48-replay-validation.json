@@ -1,0 +1,136 @@
+{
+  "modelCallsMadeByReplay" : 0,
+  "candidateEdited" : false,
+  "scope" : "Protocol, exact sources, all answer-source linkage, body safety, and raw/assembled quote guards only. Factual/intent/condition completeness requires independent semantic review.",
+  "stage" : "docs\\testing\\evidence\\natural-useful-delivery-2026-10-28\\repair48-replay",
+  "closureSha256" : "4a75a2f8f8a4b5e088db6e4259475491a115385930d1fe8a2cf23deabf721041",
+  "protocolSha256" : "34308b84c51da3bc8a3c8a2fc4fc9bf4a714cfec5b48b15c366eb57a50818fbb",
+  "mapperProfile" : "Spring Jackson2ObjectMapperBuilder defaults; Provider constructs its original strict response reader internally",
+  "loadedProductClassSha256" : {
+    "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleNaturalPromptProvider" : "aa08b56333e6c59793caddc6f2f0389c3203c518dcb370af6c68a7b8d4c2fe13",
+    "com.promptoptimizer.provider.domain.NaturalTaskUnderstanding" : "4a9eac037e975edfb730a5531ba999579539abcd7d8fda56787ceb89828f2324",
+    "com.promptoptimizer.provider.domain.NaturalTaskReview" : "7cdf1e6c9e0e0242c2b55f8e64ed6f295e97a8152703109dd9ad007b19c57355",
+    "com.promptoptimizer.enhancement.service.impl.NaturalEnhancementService" : "cc3e8858edc8f8d549e6bb6536bca4b0d08c3b19f5f4ee1d3bc99e5ff152b1a3",
+    "com.promptoptimizer.provider.infrastructure.openai.NaturalPromptRepairContext" : "829722092b8fc61064ae5a7520ca73ea42e60134ef0137a9f1a81dee8d76413b"
+  },
+  "results" : [ {
+    "jobId" : "U02_V48_REPAIR_REPLAY",
+    "semanticReviewRequired" : true,
+    "semanticCorrectnessClaimed" : false,
+    "inputProvenance" : {
+      "jobsSha256" : "fe94ab7d2380602ef8513a6b922a26e82077e6e8e0ffa84701185e6fca0907a3",
+      "resultSha256" : "ddee576ea7ffcd9485e9b29a559553981da27c63a81dcae4d38a4bdca8fde049",
+      "traceSha256" : "ca46f9487b802dd45e83cf56ca714e035061eafcc389de492165c077d51266ba",
+      "approvedRequestSha256" : "1043d212998685feb8e0c90cc5e828d30130884ec7a219ef9899f3279001c3fd",
+      "actualContentSha256" : "ab2e93ba43cf2a34e96b8bff3155e2fabc25945f75a413b150cd456ad33a2eb6",
+      "userMessageSha256" : "1e0488a33c26b1ff36ca97b6647eadbe40302378a88aabd26261f865ff89b83a",
+      "naturalInputSha256" : "ddbdd12c17edc9571fe1e3c57efb9cfd79fbf0445ab4bd75a6a04de064129364",
+      "strategyVersion" : "48",
+      "sourceCount" : 4,
+      "actualAnswerCount" : 0,
+      "protocolRepairPresent" : true,
+      "mandatoryRuleCount" : 0,
+      "providerOptimizedPromptSha256" : "0072bf7372270d8be6e627608fdf5a46e3dd6504eeca151ea2064b3a2c2e7478",
+      "assembledBodySha256" : "0072bf7372270d8be6e627608fdf5a46e3dd6504eeca151ea2064b3a2c2e7478"
+    },
+    "steps" : [ {
+      "stage" : "frozenInputReconstruction",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.unwrapAndReadResponse",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.requiredOptimizedPrompt",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.understandingAndResolve",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.framework",
+      "status" : "PASS"
+    }, {
+      "stage" : "application.secondResolve",
+      "status" : "PASS"
+    }, {
+      "stage" : "application.validateBodySafetyAndAssemble",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.validateEnhancement.raw",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.validateEnhancement.assembled",
+      "status" : "PASS"
+    } ],
+    "httpStatus" : 200,
+    "upstreamHttpStatus" : 200,
+    "finishReason" : "stop",
+    "upstreamFinishReason" : "stop",
+    "outcome" : "VALID_PRODUCT_DELIVERY_PROTOCOL_ONLY",
+    "deterministicRepairDiagnostics" : [ ]
+  }, {
+    "jobId" : "U03_V48_REPAIR_REPLAY",
+    "semanticReviewRequired" : true,
+    "semanticCorrectnessClaimed" : false,
+    "inputProvenance" : {
+      "jobsSha256" : "fe94ab7d2380602ef8513a6b922a26e82077e6e8e0ffa84701185e6fca0907a3",
+      "resultSha256" : "4a271d9081ecb1927ed3e42a4d6113cd7adf46dbf50b661113b11ff667b24f5f",
+      "traceSha256" : "c722422038952915cce6ddbf82929c92a8556e3317efda9c6a2018a8b706be47",
+      "approvedRequestSha256" : "0046451a0f2392609b788aae17a3644cb7d9a2e08d67bbff395f1751d1c896cb",
+      "actualContentSha256" : "54e083c136425add87cd426cb8ebe4d845f6edb82220e81d81f9bb9df3c75424",
+      "userMessageSha256" : "2892b9e164e0d4ff99474fa36dbb2baf9d9cbdb743c54b97a8d29ffc50c321e8",
+      "naturalInputSha256" : "7a43e92c7c9590ac5784061d4b8fbc321dabf09071cf5047576bf33d9e2a3a60",
+      "strategyVersion" : "48",
+      "sourceCount" : 7,
+      "actualAnswerCount" : 0,
+      "protocolRepairPresent" : true,
+      "mandatoryRuleCount" : 0,
+      "providerOptimizedPromptSha256" : "c4dfc23d926f14f5981eb8f1577508d286a3c8985896f1de2e326db3dc341564",
+      "assembledBodySha256" : "c4dfc23d926f14f5981eb8f1577508d286a3c8985896f1de2e326db3dc341564"
+    },
+    "steps" : [ {
+      "stage" : "frozenInputReconstruction",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.unwrapAndReadResponse",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.requiredOptimizedPrompt",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.understandingAndResolve",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.framework",
+      "status" : "PASS"
+    }, {
+      "stage" : "application.secondResolve",
+      "status" : "PASS"
+    }, {
+      "stage" : "application.validateBodySafetyAndAssemble",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.validateEnhancement.raw",
+      "status" : "FAIL",
+      "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+      "type" : "INVALID_RESPONSE",
+      "message" : "正文覆盖记录越界、重复或缺少对应原句"
+    } ],
+    "httpStatus" : 200,
+    "upstreamHttpStatus" : 200,
+    "finishReason" : "stop",
+    "upstreamFinishReason" : "stop",
+    "firstRejection" : {
+      "stage" : "product.validateEnhancement.raw",
+      "status" : "FAIL",
+      "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+      "type" : "INVALID_RESPONSE",
+      "message" : "正文覆盖记录越界、重复或缺少对应原句"
+    },
+    "outcome" : "REJECTED_BY_PRODUCT",
+    "deterministicRepairDiagnostics" : [ {
+      "sourceId" : "",
+      "code" : "BODY_QUOTE_MISSING",
+      "path" : "/taskUnderstanding/review/requirementCoverage/6/quotes/0"
+    } ]
+  } ]
+}

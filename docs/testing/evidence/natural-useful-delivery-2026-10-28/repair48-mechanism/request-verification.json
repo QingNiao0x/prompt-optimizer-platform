@@ -1,0 +1,45 @@
+{
+  "status": "PASS",
+  "construction": "Product Provider mock HTTP request body captured, never sent to a real model",
+  "reports": [
+    {
+      "name": "U02-from-008",
+      "requestSha256": "1043d212998685feb8e0c90cc5e828d30130884ec7a219ef9899f3279001c3fd",
+      "sameOriginalInputExceptVersionAndRepairData": true,
+      "exactOriginalInvalidCandidate": true,
+      "model": "deepseek-flash",
+      "maxTokens": 8192,
+      "temperature": 0.2,
+      "thinking": {
+        "type": "disabled"
+      },
+      "issues": [
+        {
+          "code": "SOURCE_QUOTE_MISMATCH",
+          "path": "/taskUnderstanding/requirements/4/evidence/0/quote",
+          "sourceId": "context.fileSnippets.0"
+        }
+      ],
+      "realModelCalls": 0
+    },
+    {
+      "name": "U03-from-013",
+      "requestSha256": "0046451a0f2392609b788aae17a3644cb7d9a2e08d67bbff395f1751d1c896cb",
+      "sameOriginalInputExceptVersionAndRepairData": true,
+      "exactOriginalInvalidCandidate": true,
+      "model": "deepseek-flash",
+      "maxTokens": 8192,
+      "temperature": 0.2,
+      "thinking": {
+        "type": "disabled"
+      },
+      "issues": [
+        {
+          "code": "BODY_QUOTE_MISSING",
+          "path": "/taskUnderstanding/review/requirementCoverage/6/quotes/0"
+        }
+      ],
+      "realModelCalls": 0
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "batch": "natural-useful-delivery-content-works46-2026-10-28",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 500,
+  "maximumNewActualCalls": 10,
+  "captureOnly": false,
+  "versions": [
+    "46",
+    "31"
+  ],
+  "candidateVersions": [
+    "46"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 0,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "45": [
+      "45"
+    ],
+    "46": [
+      "46"
+    ]
+  },
+  "phaseLimits": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 10,
+    "REVIEW": 0
+  },
+  "prerequisiteStages": [],
+  "allowedJobs": [
+    "V03_V46_EXEC_R1",
+    "V03_ORIGINAL_EXEC_R1",
+    "V03_V46_EXEC_R2",
+    "Q01_V31_EXEC_R1",
+    "Q01_ORIGINAL_EXEC_R1",
+    "Q01_V46_EXEC_R1",
+    "V03_ORIGINAL_EXEC_R2",
+    "Q01_V46_EXEC_R2",
+    "Q01_V31_EXEC_R2",
+    "Q01_ORIGINAL_EXEC_R2"
+  ],
+  "frozenBundleSha256": "d386872a3f4715cfb70d841f20dad1c029a47dd5cd1deacd3378a8f31318ece0",
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false
+}

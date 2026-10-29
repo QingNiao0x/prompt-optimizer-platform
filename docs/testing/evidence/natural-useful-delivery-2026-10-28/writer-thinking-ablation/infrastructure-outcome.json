@@ -1,0 +1,133 @@
+{
+  "status": "CLOSED_MECHANISM_EXECUTION_ONLY_NOT_QUALITY_OR_ADOPTION_PASS",
+  "actualStageCalls": 6,
+  "actualTaskCalls": 124,
+  "taskMaximum": 500,
+  "phases": {
+    "GENERATION": 70,
+    "PLAN": 4,
+    "EXECUTION": 50
+  },
+  "executionPurposeSplit": {
+    "actualDownstreamWorks": 33,
+    "mechanismExperiments": 17
+  },
+  "serial": true,
+  "qualityRetries": 0,
+  "protocolRepairs": 0,
+  "allFinishReasonStop": true,
+  "allOnArmsHavePositiveOfficialReasoningUsage": true,
+  "profile": "WRITER_THINKING_ABLATION_V1",
+  "temporaryService": {
+    "pid": 34044,
+    "port": 9014,
+    "stopped": true,
+    "readTimeoutSeconds": 300,
+    "runnerTimeoutMs": 360000
+  },
+  "defaultVersionChanged": false,
+  "independentHoldout": false,
+  "productValidationPending": true,
+  "semanticReviewPending": true,
+  "jobs": [
+    {
+      "id": "Q01_V48_WRITER_OFF",
+      "caseId": "Q01",
+      "arm": "OFF",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "elapsedMs": 3753,
+      "promptTokens": 1631,
+      "completionTokens": 434,
+      "reasoningTokens": null,
+      "reasoningModeObserved": "OFF_REQUEST_STATISTIC_OMITTED",
+      "hiddenReasoningRetained": false,
+      "exceedsCurrentProductReadTimeout": false,
+      "exceedsCurrentBrowserTimeout": false
+    },
+    {
+      "id": "Q01_V48_WRITER_ON",
+      "caseId": "Q01",
+      "arm": "ON",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "elapsedMs": 16100,
+      "promptTokens": 1656,
+      "completionTokens": 2651,
+      "reasoningTokens": 1498,
+      "reasoningModeObserved": true,
+      "hiddenReasoningRetained": false,
+      "exceedsCurrentProductReadTimeout": false,
+      "exceedsCurrentBrowserTimeout": false
+    },
+    {
+      "id": "U02_V48_WRITER_OFF",
+      "caseId": "U02",
+      "arm": "OFF",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "elapsedMs": 12777,
+      "promptTokens": 2400,
+      "completionTokens": 2920,
+      "reasoningTokens": null,
+      "reasoningModeObserved": "OFF_REQUEST_STATISTIC_OMITTED",
+      "hiddenReasoningRetained": false,
+      "exceedsCurrentProductReadTimeout": false,
+      "exceedsCurrentBrowserTimeout": false
+    },
+    {
+      "id": "U02_V48_WRITER_ON",
+      "caseId": "U02",
+      "arm": "ON",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "elapsedMs": 102113,
+      "promptTokens": 2425,
+      "completionTokens": 17779,
+      "reasoningTokens": 14618,
+      "reasoningModeObserved": true,
+      "hiddenReasoningRetained": false,
+      "exceedsCurrentProductReadTimeout": true,
+      "exceedsCurrentBrowserTimeout": true
+    },
+    {
+      "id": "U03_V48_WRITER_OFF",
+      "caseId": "U03",
+      "arm": "OFF",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "elapsedMs": 10205,
+      "promptTokens": 2993,
+      "completionTokens": 1736,
+      "reasoningTokens": null,
+      "reasoningModeObserved": "OFF_REQUEST_STATISTIC_OMITTED",
+      "hiddenReasoningRetained": false,
+      "exceedsCurrentProductReadTimeout": false,
+      "exceedsCurrentBrowserTimeout": false
+    },
+    {
+      "id": "U03_V48_WRITER_ON",
+      "caseId": "U03",
+      "arm": "ON",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "elapsedMs": 81075,
+      "promptTokens": 3018,
+      "completionTokens": 14801,
+      "reasoningTokens": 12810,
+      "reasoningModeObserved": true,
+      "hiddenReasoningRetained": false,
+      "exceedsCurrentProductReadTimeout": true,
+      "exceedsCurrentBrowserTimeout": true
+    }
+  ],
+  "zeroCallToolingEvents": [
+    {
+      "action": "Host readonly readiness probe",
+      "outcome": "Automatic permission review did not finish before its deadline; command did not execute. Authorized normal LOGIN subsequently succeeded.",
+      "actualModelCalls": 0
+    }
+  ],
+  "bundleSha256": "8fcc1a3150b15675f6d80044474ff097b8f81c33be43bd2eb68b8b76d1e3d3f5",
+  "taskProtocolSha256": "49d09f7525edb2aa16e15f1c707066788e7f59a2abc1af7c8fb64827ecd33c19"
+}

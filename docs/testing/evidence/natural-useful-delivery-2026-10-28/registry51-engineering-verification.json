@@ -1,0 +1,267 @@
+{
+  "candidate": "51",
+  "status": "ENGINEERING_CHECKS_PASSED_ONLY",
+  "modelCallsMade": 0,
+  "semanticCorrectnessClaimed": false,
+  "semanticReviewRequired": true,
+  "scope": "Writer-only bounded scalar compatibility. No model guidance, schema, source/QA/body/safety predicate or stage-count change.",
+  "defaultVersion": "31",
+  "guidance": {
+    "prepare": "Exact50 alias; actual HTTP equality verified",
+    "enhance": "Exact50 alias; actual HTTP equality verified",
+    "plan": "Exact50/47 alias; actual HTTP equality verified"
+  },
+  "readerRouting": {
+    "writer51": "referencedDiagnosticEnhancementReader",
+    "writer49and50": "referencedEnhancementReader unchanged strict",
+    "preparation": "requirementPreparationReader unchanged strict",
+    "legacy24": "original handler and reader behavior unchanged"
+  },
+  "tdd": {
+    "redExitCode": 1,
+    "redFailure": "ProviderException: 自然链路版本不受支持",
+    "redBeforeProduct51Implementation": true,
+    "initialGreenSetupFailure": "Offline Mock model allowlist lacked the original route-prefixed model ID; only test configuration corrected; original input and product routes unchanged.",
+    "greenAfterMockSetupCorrectionExitCode": 0
+  },
+  "totals": {
+    "testClasses": 3,
+    "tests": 176,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.openai.NaturalContextBoundaryRegistryProviderTest",
+      "tests": 117,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportPath": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalContextBoundaryRegistryProviderTest.xml",
+      "reportSha256": "d17889684910f31747ffc627e9b7556254d9c497226d071cdae28d7370de3b34"
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.openai.NaturalRequirementRegistryProviderTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportPath": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalRequirementRegistryProviderTest.xml",
+      "reportSha256": "fa5d9bd8126c7b13512c5c65eeddca4b335b6bd61a60b0b0180f836a64c3d91e"
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleNaturalPhaseProtocolTest",
+      "tests": 38,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "reportPath": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleNaturalPhaseProtocolTest.xml",
+      "reportSha256": "9cf7889fbeb8e7a713ced014c1f4e27020c56513cfe53d7cff56d6faff48786e"
+    }
+  ],
+  "selectedLegacy24Methods": [
+    "harmlessScalarDiagnosticsAreDiscardedInBothPhasesWithoutEnteringReturnedRecords",
+    "existingStageReadersRemainStrictForUnrelatedDiagnostics",
+    "diagnosticCompatibilityStillRejectsAuthorityAndStageFields",
+    "diagnosticCompatibilityCannotRepairInvalidKnownSemanticsOrInventAuthority",
+    "planningDiagnosticsDoNotWeakenPhaseOrActualAnswerRequirements",
+    "diagnosticCandidateKeepsExactlyTheSameGuidanceAsRequiredFrameworkPhaseCandidate",
+    "ambiguousJsonCannotEraseQuestionsOrRequirementEvidence"
+  ],
+  "contextRegistryTestBreakdown": [
+    {
+      "method": "applicationSafetyStillRejectsSensitiveBody",
+      "cases": 2
+    },
+    {
+      "method": "assembledQuoteCheckStillRejectsEvidenceLostByOriginalBoundaryAssembly",
+      "cases": 2
+    },
+    {
+      "method": "contextBoundariesUseExistingRegistryAndOnlyNewProcessingUsesAdditions",
+      "cases": 1
+    },
+    {
+      "method": "diagnosticCandidateKeepsPreparationStrict",
+      "cases": 1
+    },
+    {
+      "method": "diagnosticWriterCannotHideDuplicateUnknownScalarKeys",
+      "cases": 1
+    },
+    {
+      "method": "diagnosticWriterCannotIgnoreMisplacedProtocolOrServerFields",
+      "cases": 78
+    },
+    {
+      "method": "diagnosticWriterCannotRelaxStructuredUnknownsBoundsOrKnownTypes",
+      "cases": 9
+    },
+    {
+      "method": "diagnosticWriterReplaysFrozen50FirstAndRepairWithoutChangingKnownContent",
+      "cases": 1
+    },
+    {
+      "method": "existingTwoAttemptLimitAndSourceOnlyHintsApplyToBothStagesWithout48CandidateRepairData",
+      "cases": 2
+    },
+    {
+      "method": "frozenReferencedReadersStillRejectTheSameRepairScalar",
+      "cases": 2
+    },
+    {
+      "method": "instructionsQuotedOnlyInMaterialsCannotAuthorizeACurrentAction",
+      "cases": 1
+    },
+    {
+      "method": "planKeepsFrozen47GuidanceAndProtocolAndDefaultRemains31",
+      "cases": 2
+    },
+    {
+      "method": "referencedWriterStillRejectsUnknownSourcesMissingAnswersAndInvalidBodyEvidence",
+      "cases": 10
+    },
+    {
+      "method": "sparseCorrectionCanReplaceAnExistingDefectInterpretationAndRegisterAnOmittedBoundary",
+      "cases": 1
+    },
+    {
+      "method": "sufficientAndWaitingInputsCanRemainUnexpandedWithoutCurrentClassificationGate",
+      "cases": 3
+    },
+    {
+      "method": "unlistedBoundedScalarsAreDiscardedWithoutChangingTheTaskOrSources",
+      "cases": 1
+    }
+  ],
+  "realOriginalRegression": {
+    "fixture": "services/api/src/test/resources/natural-registry-diagnostics/frozen50-q01.json",
+    "originals": [
+      {
+        "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry50-development/traces/001.json",
+        "expectedSha256": "223f372dfec99278510718edbb9af5ecade90b1ba5a9b0d07a465a124639ead7",
+        "actualSha256": "223f372dfec99278510718edbb9af5ecade90b1ba5a9b0d07a465a124639ead7"
+      },
+      {
+        "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry50-development/traces/002.json",
+        "expectedSha256": "d841531cb959d696d93bebee817a86b8f1825921d72c9c413cacf2ed848e8268",
+        "actualSha256": "d841531cb959d696d93bebee817a86b8f1825921d72c9c413cacf2ed848e8268"
+      },
+      {
+        "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry50-development/traces/003.json",
+        "expectedSha256": "79e59e00110222c0bd9a7a0fca60556a3003aaf4dfea246bb1c3ff21227ea244",
+        "actualSha256": "79e59e00110222c0bd9a7a0fca60556a3003aaf4dfea246bb1c3ff21227ea244"
+      }
+    ],
+    "first002": "All four additions lack bodyQuotes; actual51 Provider rejects before its existing sole body repair.",
+    "repair003": "Original content accepted through actual51 Provider, normalize and original application source/QA/safety/raw/assembled checks; no field removal or quote supplementation.",
+    "knownContentUnchanged": true,
+    "fullWriterUserByteEqualityExceptStrategyVersion": true,
+    "diagnosticAbsentFromReturnedDto": true,
+    "actualCallsInMockWorkflow": 3,
+    "original50VerdictChanged": false
+  },
+  "protectionMechanism": {
+    "schemaBasis": "Finite explicitly listed public natural protocol/canonical/input/server record schemas plus explicit derived server JSON fields; collected once, no classpath or user-content scan.",
+    "misplacedSchemaAndServerFieldCases": 78,
+    "scalarBoundary": "Unchanged24 delegate; unknown objects/arrays, sensitive names/values and over-limit scalars rejected.",
+    "unknownFieldAllowlist": false,
+    "perQuestionBranches": false,
+    "noNewCausalPatternRules": true,
+    "maxAttemptsPerStage": 2
+  },
+  "frozenSourceComparison": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptContextBoundaryRegistryInstructions.java",
+      "beforeSha256": "c67fe8b6802733a0b04763028dbe319d86743246b8dfbfc0bfef1fc6c1419cfc",
+      "afterSha256": "c67fe8b6802733a0b04763028dbe319d86743246b8dfbfc0bfef1fc6c1419cfc"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRequirementRegistryInstructions.java",
+      "beforeSha256": "1f8d038b6f479f2367f4131aa267873ded86382101fb968dc4465a195cdff303",
+      "afterSha256": "1f8d038b6f479f2367f4131aa267873ded86382101fb968dc4465a195cdff303"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRequirementRegistry.java",
+      "beforeSha256": "b2fd03c7094cf82b17acfec09aef587b5b145ef0ba6cc1ed60c090eee4a6623d",
+      "afterSha256": "b2fd03c7094cf82b17acfec09aef587b5b145ef0ba6cc1ed60c090eee4a6623d"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptReferencedEnhancement.java",
+      "beforeSha256": "d8ceacd0611b9abbe219f1c1b09704006ea839bcabf47fa22971303d5df2f6d7",
+      "afterSha256": "d8ceacd0611b9abbe219f1c1b09704006ea839bcabf47fa22971303d5df2f6d7"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/NaturalPromptDiagnosticFieldHandler.java",
+      "beforeSha256": "15e0a090e5d95ccb862d8664877b9e0aca27c9100643824d5016424c60750078",
+      "afterSha256": "15e0a090e5d95ccb862d8664877b9e0aca27c9100643824d5016424c60750078"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptPhasePayloads.java",
+      "beforeSha256": "3f0b90546b60d3713ee0061a240da4546890a5670c4835bf980895cae8bae17d",
+      "afterSha256": "3f0b90546b60d3713ee0061a240da4546890a5670c4835bf980895cae8bae17d"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRegistryDiagnosticInstructions.java",
+      "sha256": "26c4c28b05cce9a09d99cff127b8704c5ced22ba9def24bcf09cc19ac93abc03"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/NaturalPromptRegistryDiagnosticFieldHandler.java",
+      "sha256": "8ef2a9f785160cfd13ccce98e5efc802abc5c7a11114a91d4843729d1a095067"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "71eda4414c827f555f7da4962a741690f4ba3d0d2cfdcac72ed280267f399eb0"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRoutingRepairInstructions.java",
+      "sha256": "a3dd17e0e89783652a4200bdd3e8f9697a8bff87987550744b9deb0a0139bdc4"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "e64af4a3c4533e55468402d6b45a73eb3cd1a83d6e9029a761e2affec6cbced5"
+    },
+    {
+      "path": "services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/NaturalContextBoundaryRegistryProviderTest.java",
+      "sha256": "1d0b5729f500d332fdebea70628b9a7cc38eedce3ffe3210d1a6432060b74a1d"
+    },
+    {
+      "path": "services/api/src/test/resources/natural-registry-diagnostics/frozen50-q01.json",
+      "sha256": "71c6a7e09818830e697430bf377b23e1e4e9eb5da9177d0c38e2ca922f54a15e"
+    }
+  ],
+  "logs": [
+    {
+      "path": "tmp/natural-useful-delivery-2026-10-28/registry51-red.log",
+      "sha256": "6daffd72c72a7416264f221c33be3c7e6162d8b69862ddb11fea7ea5fb82a6d2"
+    },
+    {
+      "path": "tmp/natural-useful-delivery-2026-10-28/registry51-green.log",
+      "sha256": "8742656e2110a669fd4897d2e559b33453447cffa91cd2eb41028503e1abf1ad"
+    },
+    {
+      "path": "tmp/natural-useful-delivery-2026-10-28/registry51-green-actual.log",
+      "sha256": "7085947af554e9e0e5626962327304b2518845cf14f6fb1ad60d7fbf42ce45d3"
+    },
+    {
+      "path": "tmp/natural-useful-delivery-2026-10-28/registry51-tests.log",
+      "sha256": "de57964b23dae9546ffcc3f813f1d25371b428b30b75853891302f18ffc3fe72"
+    }
+  ],
+  "environment": {
+    "javaHome": "E:/Delelop/Java/jdk-21",
+    "maven": "E:/Delelop/apache-maven-3.9.14/bin/mvn.cmd",
+    "targetUsedForAuthorizedCompilation": true,
+    "frozenRuntimeEdited": false,
+    "infraHelpersOrStageEntriesEdited": false
+  },
+  "limitations": [
+    "Controlled HTTP assertions and offline original replay do not establish semantic completeness, downstream quality gains, adoption or release.",
+    "Original50 502 and all closed-stage originals are retained.",
+    "No real model call, unseen-case read or new evaluation stage was performed.",
+    "Only the affected3 test classes/selected methods were run; the497-case suite was not rerun."
+  ]
+}

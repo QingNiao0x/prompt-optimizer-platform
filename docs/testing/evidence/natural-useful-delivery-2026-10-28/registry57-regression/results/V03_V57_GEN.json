@@ -1,0 +1,55 @@
+{
+  "id": "V03_V57_GEN",
+  "phase": "GENERATION",
+  "version": "57",
+  "caseId": "V03",
+  "status": 200,
+  "body": {
+    "requestId": "V03_V57_GEN",
+    "data": {
+      "optimizedPrompt": "目前没有可参考的相关资料，请直接依据通用的显示与色彩管理常识作答，不要编造资料、参数或引用不存在的来源，也不要因为缺少资料而停下来索要资料或把回答改成问卷。\n\n请向普通用户解释：同一张照片在不同屏幕上看起来颜色不一样，通常不是照片本身“变了”，而是照片的数字颜色值要经过图片内嵌色彩配置、操作系统/浏览器/看图软件的色域转换，再由不同屏幕的色域、面板、亮度、白点、出厂调校和表面反光呈现出来；同时观看环境光、屏幕显示模式以及护眼/夜览/色彩滤镜等设置也会改变观感。把原因按“照片与软件如何解释颜色”“屏幕硬件与设置差异”“观看环境与视觉适应差异”三类讲清楚，并说明哪类差异是正常的、哪类可以通过设置排查。\n\n然后给普通用户一份可照着做的排查建议，按从简单到深入的顺序组织，至少覆盖：先在同一设备换一个看图应用或浏览器打开，判断是否应用色彩管理导致；再对比另一台屏幕或让照片发送者在自己的设备上看，判断是否文件本身或嵌入配置问题；检查屏幕亮度、护眼模式、夜览、色彩滤镜、显示模式（如鲜艳/标准/专业）和 HDR 开关；查看系统显示颜色配置文件是否被更改，外接显示器时检查是否选错输入色彩范围或显示模式；在稳定、中性光环境下用灰底或白底对比，避免环境光和背景干扰；如果照片带 ICC 配置文件而应用不支持，解释可能出现的过饱和或发灰；最后说明需要准确颜色时可用系统自带校准、显示器出厂校准模式或校色仪，但日常判断不必追求绝对一致。\n\n建议要具体到“检查什么、在哪里看、看到什么现象说明什么、下一步怎么做”，避免只讲原理；对普通用户少用术语，必须使用“色域、ICC 配置文件、色彩管理”等词时随手用一句话解释。最后用简短小结帮用户记住：先排除设置和环境，再判断应用/文件，最后才考虑屏幕硬件和校准。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 40170,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "57",
+      "framework": "APE",
+      "recordId": "1605fa2b-9538-471b-954f-10bcc89c87fc",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

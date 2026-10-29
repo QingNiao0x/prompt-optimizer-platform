@@ -469,6 +469,86 @@ describe('indexProject', () => {
 });
 
 describe('retrieveProjectContext', () => {
+  it('should not expand an explicit directory from file names repeated in the delivery scope', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    await indexProject({ projectId: 'delivery-path-terms', rootName: 'sample', repository,
+      entries: sourceOf([
+        sourceFile('src/entries/create.js', 'export function createEntry() { return true; }'),
+        sourceFile('src/entries/import.js', 'export function importEntries() { return true; }'),
+        sourceFile('src/entries-old/create.js', 'export function createLegacyEntry() { return "legacy"; }'),
+        sourceFile('src/other/import.js', 'export function importLegacyEntries() { return "other"; }'),
+      ]) });
+    const result = await retrieveProjectContextWithReport(repository, {
+      projectId: 'delivery-path-terms',
+      query: '修改 @sample/src/entries，只允许修改 src/entries/create.js 和 src/entries/import.js，不新增文件',
+      changedPaths: repository.files.map((file) => file.path),
+    });
+    expect(result.selections.map((item) => item.path).sort()).toEqual(['src/entries/create.js', 'src/entries/import.js']);
+  });
+
+  it('should retain an explicitly named complete symbol outside the referenced module', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    await indexProject({ projectId: 'explicit-complete-symbol', rootName: 'sample', repository,
+      entries: sourceOf([
+        sourceFile('src/entries/create.js', 'export function createEntry() { return true; }'),
+        sourceFile('src/shared/normalize.js', 'export function normalizeBusinessDate() { return true; }'),
+        sourceFile('src/legacy/normalize.js', 'export function normalizeLegacyBusinessDate() { return true; }'),
+      ]) });
+    const result = await retrieveProjectContextWithReport(repository, {
+      projectId: 'explicit-complete-symbol', query: '修改 @sample/src/entries 并检查 normalizeBusinessDate',
+    });
+    expect(result.selections.map((item) => item.path).sort()).toEqual(['src/entries/create.js', 'src/shared/normalize.js']);
+  });
+
+  it('should retain a separate complete relative path alongside an at-directory reference', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    await indexProject({ projectId: 'parallel-relative-target', rootName: 'sample', repository,
+      entries: sourceOf([
+        sourceFile('src/entries/create.js', 'export function createEntry() { return true; }'),
+        sourceFile('src/shared/normalize.ts', 'export const normalize = true;'),
+        sourceFile('src/legacy/normalize.ts', 'export const normalize = false;'),
+      ]) });
+    const result = await retrieveProjectContextWithReport(repository, {
+      projectId: 'parallel-relative-target', query: '修改 @sample/src/entries，同时修改 src/shared/normalize.ts',
+    });
+    expect(result.selections.map((item) => item.path).sort()).toEqual(['src/entries/create.js', 'src/shared/normalize.ts']);
+  });
+
+  it('should not restrict ordinary retrieval to a bare file that is not in the index', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    await indexProject({ projectId: 'unmatched-bare-file', rootName: 'sample', repository,
+      entries: sourceOf([sourceFile('src/guide/format.ts', 'export const guide = "日期格式规则";')]) });
+    const result = await retrieveProjectContextWithReport(repository, {
+      projectId: 'unmatched-bare-file', query: '了解 src/missing/file.ts 的日期格式规则',
+    });
+    expect(result.selections.map(item => item.path)).toEqual(['src/guide/format.ts']);
+    expect(result.references).toEqual([]);
+  });
+
+  it('should bind an unqualified complete symbol to the explicitly referenced module before same-named legacy symbols', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    await indexProject({ projectId: 'scoped-symbol-shadow', rootName: 'sample', repository,
+      entries: sourceOf([
+        sourceFile('src/current/create.js', 'export function createSurvey() { return "current"; }'),
+        sourceFile('src/legacy/create.js', 'export function createSurvey() { return "legacy"; }'),
+      ]) });
+    const result = await retrieveProjectContextWithReport(repository, {
+      projectId: 'scoped-symbol-shadow', query: '修改 @sample/src/current 的 createSurvey，限制未来日期',
+    });
+    expect(result.selections.map(item => item.path)).toEqual(['src/current/create.js']);
+  });
+
+  it('should retain the symbol clue of an unmatched bare file without claiming the requested path was found', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    await indexProject({ projectId: 'unmatched-symbol-clue', rootName: 'sample', repository,
+      entries: sourceOf([sourceFile('src/shared/retry.ts', 'export function retryPayment() { return true; }')]) });
+    const result = await retrieveProjectContextWithReport(repository, {
+      projectId: 'unmatched-symbol-clue', query: '解释 src/missing/retryPayment.ts 的实现',
+    });
+    expect(result.selections.map(item => item.path)).toEqual(['src/shared/retry.ts']);
+    expect(result.references).toEqual([]);
+  });
+
   it('should recall an explicit directory before generic matches exhaust the candidate budget', async () => {
     const repository = new MemoryProjectIndexRepository();
     const noise = Array.from({ length: 450 }, (_, index) => sourceFile(

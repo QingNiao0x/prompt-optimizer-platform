@@ -1,0 +1,24 @@
+{
+  "id": "C02_V58_EXEC_R2",
+  "phase": "EXECUTION",
+  "version": "58",
+  "caseId": "C02",
+  "status": 200,
+  "body": {
+    "requestId": "C02_V58_EXEC_R2",
+    "data": {
+      "finishReason": "stop",
+      "content": "{\"files\":[{\"path\":\"src/views/records/dateRules.js\",\"content\":\"/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\\nexport function validateSurveyDate(value, today) {\\n  if (typeof value !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(value)) return 'INVALID_DATE';\\n  const parsed = new Date(`${value}T00:00:00.000Z`);\\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\\n  const todayValue = today === undefined ? localToday() : today;\\n  if (typeof todayValue !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(todayValue)) return 'INVALID_DATE';\\n  const todayParsed = new Date(`${todayValue}T00:00:00.000Z`);\\n  if (Number.isNaN(todayParsed.valueOf()) || todayParsed.toISOString().slice(0, 10) !== todayValue) return 'INVALID_DATE';\\n  if (value > todayValue) return 'FUTURE_DATE';\\n  return null;\\n}\\n\\nfunction localToday() {\\n  const now = new Date();\\n  const year = now.getFullYear();\\n  const month = String(now.getMonth() + 1).padStart(2, '0');\\n  const day = String(now.getDate()).padStart(2, '0');\\n  return `${year}-${month}-${day}`;\\n}\\n\"},{\"path\":\"src/views/records/create.js\",\"content\":\"import { validateSurveyDate } from './dateRules.js';\\n\\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\\nexport function createSurvey(input, today) {\\n  const error = validateSurveyDate(input.surveyDate, today);\\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\\n    : { ok: true, record: { ...input } };\\n}\\n\"},{\"path\":\"src/views/records/import.js\",\"content\":\"import { validateSurveyDate } from './dateRules.js';\\n\\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\\nexport function importSurveys(rows, today) {\\n  const inserted = [];\\n  const errors = [];\\n  rows.forEach((record, index) => {\\n    const code = validateSurveyDate(record.surveyDate, today);\\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\\n    else inserted.push({ ...record });\\n  });\\n  return { inserted, errors };\\n}\\n\"}],\"summary\":\"在共用校验中增加未来日期检查（稳定错误代码 FUTURE_DATE），today 可选并统一使用本地当日基准；新增与导入沿用该错误，导入仍按行部分成功。\"}",
+      "usage": {
+        "prompt_tokens": 1439,
+        "completion_tokens": 703,
+        "total_tokens": 2142,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1439
+      }
+    }
+  }
+}

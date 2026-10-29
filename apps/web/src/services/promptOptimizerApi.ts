@@ -18,6 +18,9 @@ import type {
   ReoptimizationResult,
 } from '@/types/api';
 
+// 自然增强推理阶段最多两次各180秒，并留出协议/组装时间；不改变全局HTTP超时或其他工作台。
+const NATURAL_GENERATION_TIMEOUT_MS = 390_000;
+
 /** 读取管理员发布的可选模型目录；浏览器不会收到上游端点或 API Key。 */
 export const listAvailableModels = async (): Promise<ApiResponse<AvailableModel[]>> => {
   const response = await httpClient.get<ApiResponse<AvailableModel[]>>(trialEndpoint('/api/v1/models', '/models'));
@@ -60,7 +63,8 @@ export const optimizePrompt = async (
   const response = await httpClient.post<ApiResponse<OptimizationResult>>(
     trialEndpoint('/api/v2/optimizations', '/optimizations'),
     request,
-    { headers: { 'X-Trial-Request-Id': crypto.randomUUID() } },
+    { headers: { 'X-Trial-Request-Id': crypto.randomUUID() },
+      ...(request.enhancement.promptFormat === 'COMPACT' ? { timeout: NATURAL_GENERATION_TIMEOUT_MS } : {}) },
   );
   // TEXT协议不返回sections；空集合仅兼容集合操作，不制造四个假段落或重建正文。
   return response.data.data.resultKind === 'TEXT'
@@ -110,6 +114,9 @@ export const reoptimizeHistory = async (
 ): Promise<ApiResponse<ReoptimizationResult>> => {
   const response = await httpClient.post<ApiResponse<ReoptimizationResult>>(
     `/api/v2/optimization-history/${id}/re-optimize`,
+    undefined,
+    // 历史沿记录版本再次生成，可能是推理版本；普通失败仍由后端原有超时及时返回。
+    { timeout: NATURAL_GENERATION_TIMEOUT_MS },
   );
   return response.data.data.result.resultKind === 'TEXT'
     ? { ...response.data, data: { ...response.data.data, result: { ...response.data.data.result, sections: [] } } }

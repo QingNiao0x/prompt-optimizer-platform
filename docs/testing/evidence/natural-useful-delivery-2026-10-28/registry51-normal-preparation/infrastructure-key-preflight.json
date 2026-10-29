@@ -1,0 +1,88 @@
+{
+  "status": "FLASH51_NORMAL_KEY_PREFLIGHT_PASS_NOT_FROZEN_OR_LIVE",
+  "checkedAt": "2026-10-27T22:27:57.619Z",
+  "actualModelCalls": 0,
+  "actualHttpRequests": 0,
+  "serviceStarted": false,
+  "formalStageFrozen": false,
+  "defaultVersion": "31",
+  "currentTaskActual": 151,
+  "generationCases": [
+    {
+      "caseId": "C01",
+      "jobId": "C01_V51_GEN",
+      "exactDtoUtf8Equal50": true,
+      "contextFiles": 5
+    },
+    {
+      "caseId": "C02",
+      "jobId": "C02_V51_GEN",
+      "exactDtoUtf8Equal50": true,
+      "contextFiles": 5
+    },
+    {
+      "caseId": "V01",
+      "jobId": "V01_V51_GEN",
+      "exactDtoUtf8Equal50": true,
+      "contextFiles": 0
+    },
+    {
+      "caseId": "V02",
+      "jobId": "V02_V51_GEN",
+      "exactDtoUtf8Equal50": true,
+      "contextFiles": 5
+    },
+    {
+      "caseId": "V03",
+      "jobId": "V03_V51_GEN",
+      "exactDtoUtf8Equal50": true,
+      "contextFiles": 0
+    }
+  ],
+  "profileAbsent": true,
+  "stageCaps": {
+    "normalGENERATION": 20,
+    "PLAN": 8,
+    "confirmedGENERATION": 8,
+    "total36": 36,
+    "normalEstimatedActual": 18
+  },
+  "toolingCorrection": {
+    "previous": "New thin adapter incorrectly required <stage>/classes for every .class",
+    "corrected": "Resolve and allow only <stage>/runtime/classes or <stage>/runner, with all original hashes still checked",
+    "closed51ManifestUsedAsReadOnlyPathSample": true,
+    "ownClassPathsSampled": 900,
+    "currentTargetRejected": true,
+    "otherStageRejected": true,
+    "closedStageReopened": false
+  },
+  "planBoundary": "Only P01/P02 raw templates now; future actual fresh context -> actual51 Plan -> explicit answers then completion DTO with TTL/source/QA checks. No planId/contextId synthesized.",
+  "actualUiScope": {
+    "C01": "Real native Flash option + full79 picker/Worker/index/recall +51BODY +native copy +exact record history",
+    "C02_V01_V02_V03": "Frozen actual UI DTOs via real API; no fresh full UI claim",
+    "P01_P02": "UI only to real context then409 at Plan; later Plan/answer completion are real service protocol, not complete UI"
+  },
+  "hashes": [
+    {
+      "path": "generation-bundle.json",
+      "sha256": "5eeb88e77046c4a5c52861945128008b2ba4ac819051291759f89ccc8347e36b"
+    },
+    {
+      "path": "browser-support.mjs",
+      "sha256": "dc24b97ed059c4acbbdf05f9fc34d552682b3754aaff53ecc77319c1254517ec"
+    },
+    {
+      "path": "live-browser.mjs",
+      "sha256": "e35f3133c11a5b9196cdb962b31c723565d762c3a62aeea44bbcb5fb6de1ca2e"
+    },
+    {
+      "path": "build-plan-completion.mjs",
+      "sha256": "8d02b455fd8368707fd97a23af03fc9956a2cb76ff372e3b00215f0307f96072"
+    },
+    {
+      "path": "plan-cases.json",
+      "sha256": "7fbfd689847ca18f37c42fccdfffc1d22e2fb60bd7cf54695f1109959c751943"
+    }
+  ],
+  "stillNotAuthorized": "Freeze/start/real calls in all3 stages need root approval. Sealed new questions remain unopened."
+}

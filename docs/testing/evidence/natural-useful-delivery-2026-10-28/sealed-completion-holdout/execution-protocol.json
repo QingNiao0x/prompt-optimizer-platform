@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "sealed-completion-holdout.protocol.v1",
+  "collectionId": "completion-20261028",
+  "status": "sealed; execution requires explicit unseal instruction from the parent task",
+  "classification": "Internal author-isolated holdout authored after the parent reported candidate 47 frozen; not external expert evaluation and not a pre-candidate chronological holdout.",
+  "arms": ["original", "version-31", "candidate-47"],
+  "sharedInputs": {
+    "source": "input-cases.json",
+    "rule": "For each case, preserve the same original request and every material, with identical text, ordering and boundaries across all arms. Original uses the original request; the two enhancement arms produce their prompt from the same source request and materials. Downstream execution receives the corresponding original or optimized prompt and the same complete materials, once each, without adding acceptance cards or arm-specific facts.",
+    "evaluationOnly": ["acceptance-cards.json", "author-isolation.json", "execution-protocol.json", "manifest.json"]
+  },
+  "downstreamExecution": {
+    "maxOutputTokens": 2600,
+    "temperature": 0.2,
+    "internetAllowed": false,
+    "externalFactSupplementationAllowed": false,
+    "formalWorksPerCasePerArm": 1,
+    "totalFormalWorks": 9,
+    "model": "Must be frozen by parent before execution; author does not select or invoke a model.",
+    "noResampling": "Do not replace a formal work because it performs poorly. Preserve truncation, refusal, protocol and tool failures and attribute them using actual evidence. No execution was performed by this author."
+  },
+  "assessment": {
+    "basis": "Original request, the identical shared materials, and the actual usability of the work for the requested goal.",
+    "separation": "Keep fidelity and useful completion distinct. More text, more sections, terminology, reordering or synonym replacement alone do not establish useful completion. A valid alternative design must remain eligible even if it differs from examples on an acceptance card.",
+    "judging": "Blind arm identities where feasible, retain all formal works, and report hard defects separately from practical-value differences. Missing useful design is judged by its effect on delivering the goal, not by matching a hidden canonical answer.",
+    "limits": "Three authored synthetic tasks provide bounded internal evidence. Do not generalize success to all task classes, call this external expert evidence, or count merely faithful restatement as a proved gain."
+  }
+}

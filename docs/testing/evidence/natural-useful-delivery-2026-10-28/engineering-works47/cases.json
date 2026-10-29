@@ -1,0 +1,142 @@
+{
+  "syntheticOnly": true,
+  "cases": [
+    {
+      "id": "E01",
+      "rawPrompt": "这个附件是我们社区器材借用台的完整合成 Vue 3 + TypeScript 工程，没有后端。请修复“新建借用”和“修改借用”两个现有入口共用的余量与提交校验，保持现有页面和错误码。\n\n业务口径已经定好：同一地点、同一器材，只有 CONFIRMED 和 COLLECTED 借用单占用库存；DRAFT、RETURNED、CANCELLED 都不占用，别的地点和器材也不能算进来。新建可借数量＝该地点器材总库存－上述占用，显示至少为 0。修改时输入的是整单的新数量，不是增量；算上限时要排除当前这张单，只扣其他有效占用。\n\n两个页面显示的数字和直接调用业务服务都要遵守这一个口径。预览后其他人可能又确认了借用，点击确认或保存时必须重新读取仓库并检查，不能用先前预览放行。数量必须是 number 类型的正安全整数，小数、非有限值等都用现有 INVALID_QUANTITY 错误。数量超过最新余量时用现有 INSUFFICIENT_STOCK；没有配置库存、借用单不存在及非 CONFIRMED 状态只读的现有边界保留。\n\n保存失败不应改仓库、借用状态或版本，也别清掉页面里用户刚输入的数量和用途；成功后保留既有的用途 trim、版本递增和余量刷新。请检查两个实际页面入口，不只修一份脱离调用链的函数。\n\n只修改当前器材借用链路中确实必要的文件：src/domain/availability.ts、src/domain/quantity.ts、src/application/loanDeskService.ts、src/composables/useNewLoan.ts、src/composables/useLoanEdit.ts、src/components/AvailabilityPanel.vue、src/components/LoanDraftForm.vue、src/views/NewLoanPage.vue、src/views/EditLoanPage.vue。旧台账 src/legacy、活动报名 src/events、押金预览、合成数据、类型与错误码、依赖和其他文件都保持不变，不增删文件或安装依赖。\n\n交付一个 JSON 对象，格式为 {\"files\":[{\"path\":\"src/实际路径\",\"content\":\"该文件完整替换内容\"}]}。files 只列本次真的修改的文件，路径相对附件工程根目录。不要输出 Markdown 围栏、说明、命令或额外脚本；我会把这些完整文件应用到同一份工程后验收。",
+      "contextDescription": "",
+      "executorMaterials": [
+        {
+          "path": "README.md",
+          "content": "# 社区器材借用台（合成工程）\n\n这是一个完整的小型 Vue 3 + TypeScript 单页工程，所有地点、器材、借用单和金额均为虚构，不连接后端、模型或网络服务。两个当前业务入口是“新建借用”和“修改借用”，另有押金预览页面。数据仓库为可注入、每次读取都返回副本的内存实现，刷新页面会恢复初始数据。\n\n依赖版本固定在 package.json，与本次环境已有依赖一致。不要安装或下载依赖。若在已有 Vue 工作区导入，可复用现有 node_modules；评测检查器会自行加载现有依赖并编译内存中的源码，不执行该工程的 npm 脚本、配置文件或作品脚本。\n\nsrc/views 是当前页面，src/composables 管理页面状态，src/application 编排业务，src/domain 保存规则，src/data 提供合成仓库。src/legacy 是已退役旧台账；src/events 是另一套活动名额逻辑。它们不参与器材借用链路。押金页面只读，独立于器材可借数量。\n\n当前版本有待用户修复的问题，验收要求见工程外的原始需求。请按现有边界修复，不把旧模块和当前链路合并。\n",
+          "language": "markdown"
+        },
+        {
+          "path": "index.html",
+          "content": "<!doctype html>\n<html lang=\"zh-CN\">\n  <head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>社区器材借用台</title></head>\n  <body><div id=\"app\"></div><script type=\"module\" src=\"/src/main.ts\"></script></body>\n</html>\n",
+          "language": "html"
+        },
+        {
+          "path": "package.json",
+          "content": "{\n  \"name\": \"community-kit-desk-holdout\",\n  \"version\": \"1.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": { \"dev\": \"vite\", \"build\": \"vite build\" },\n  \"dependencies\": { \"vue\": \"3.5.41\" },\n  \"devDependencies\": { \"@vitejs/plugin-vue\": \"5.2.4\", \"typescript\": \"5.7.3\", \"vite\": \"6.4.3\" }\n}\n",
+          "language": "json"
+        },
+        {
+          "path": "src/App.vue",
+          "content": "<script setup lang=\"ts\">\nimport { ref } from 'vue';\nimport NewLoanPage from './views/NewLoanPage.vue';\nimport EditLoanPage from './views/EditLoanPage.vue';\nimport DepositPage from './views/DepositPage.vue';\nconst activeView = ref<'new' | 'edit' | 'deposit'>('new');\n</script>\n\n<template>\n  <div class=\"app-shell\">\n    <aside class=\"sidebar\"><p class=\"brand\">KIT DESK</p><h2>社区器材借用台</h2><nav aria-label=\"业务入口\"><button :class=\"{ active: activeView === 'new' }\" @click=\"activeView = 'new'\">新建借用</button><button :class=\"{ active: activeView === 'edit' }\" @click=\"activeView = 'edit'\">修改借用</button><button :class=\"{ active: activeView === 'deposit' }\" @click=\"activeView = 'deposit'\">押金预览</button></nav><p>合成演示数据<br>不连接任何外部服务</p></aside>\n    <main><NewLoanPage v-if=\"activeView === 'new'\" /><EditLoanPage v-else-if=\"activeView === 'edit'\" /><DepositPage v-else /></main>\n  </div>\n</template>\n",
+          "language": "vue"
+        },
+        {
+          "path": "src/composables/useDepositPreview.ts",
+          "content": "import { computed, ref } from 'vue';\nimport { deskRuntime } from '../application/deskRuntime';\nimport type { LoanDesk } from '../domain/types';\n\n/** 押金只读预览与借用余量无关，不承担支付或退款。 */\nexport function useDepositPreview(desk: LoanDesk = deskRuntime) {\n  const snapshot = desk.snapshot();\n  const loanId = ref('L101');\n  const loan = computed(() => snapshot.loans.find((row) => row.id === loanId.value));\n  const kit = computed(() => snapshot.kits.find((row) => row.id === loan.value?.kitId));\n  const deposit = computed(() => (loan.value?.quantity ?? 0) * (kit.value?.depositPerUnit ?? 0));\n  const explanation = computed(() => loan.value?.status === 'RETURNED'\n    ? '已归还：请按原流程核对押金，不在此页面退款。'\n    : '这里仅按套数显示参考押金，不代表支付状态。');\n  return { snapshot, loanId, loan, kit, deposit, explanation };\n}\n",
+          "language": "typescript"
+        },
+        {
+          "path": "src/data/memoryLoanRepository.ts",
+          "content": "import { DeskError } from '../domain/errors';\nimport type { DeskSnapshot, Loan, LoanRepository, NewLoanCommand } from '../domain/types';\n\nfunction copySnapshot(value: DeskSnapshot): DeskSnapshot {\n  return {\n    sites: value.sites.map((row) => ({ ...row })),\n    kits: value.kits.map((row) => ({ ...row })),\n    stocks: value.stocks.map((row) => ({ ...row })),\n    loans: value.loans.map((row) => ({ ...row })),\n  };\n}\n\n/** 仓库持有内部副本；调用方不能通过 snapshot 修改库存或借用单。 */\nexport function createMemoryLoanRepository(seed: DeskSnapshot): LoanRepository {\n  const state = copySnapshot(seed);\n  let nextSequence = 301;\n\n  return {\n    snapshot() {\n      return copySnapshot(state);\n    },\n    insert(command: NewLoanCommand): Loan {\n      const row: Loan = {\n        id: `L${nextSequence++}`,\n        siteId: command.siteId,\n        kitId: command.kitId,\n        quantity: command.quantity,\n        purpose: command.purpose.trim(),\n        status: 'CONFIRMED',\n        revision: 1,\n      };\n      state.loans.push(row);\n      return { ...row };\n    },\n    update(loanId: string, quantity: number, purpose: string): Loan {\n      const row = state.loans.find((loan) => loan.id === loanId);\n      if (!row) throw new DeskError('LOAN_NOT_FOUND');\n      row.quantity = quantity;\n      row.purpose = purpose.trim();\n      row.revision += 1;\n      return { ...row };\n    },\n  };\n}\n",
+          "language": "typescript"
+        },
+        {
+          "path": "src/data/seed.ts",
+          "content": "import type { DeskSnapshot } from '../domain/types';\n\n/** 全部数据为合成夹具，不含真实人员或真实单位。 */\nexport function createSeedSnapshot(): DeskSnapshot {\n  return {\n    sites: [{ id: 'harbor', name: '港湾活动室' }, { id: 'hill', name: '山坡活动室' }],\n    kits: [\n      { id: 'camera', name: '记录相机套装', depositPerUnit: 80, description: '相机、挂绳及收纳包作为一套借用' },\n      { id: 'tripod', name: '轻便三脚架', depositPerUnit: 30, description: '按支记录，归还时检查锁扣' },\n      { id: 'speaker', name: '小型音箱', depositPerUnit: 50, description: '只在配置了该器材的地点申请' },\n    ],\n    stocks: [\n      { siteId: 'harbor', kitId: 'camera', total: 8 },\n      { siteId: 'hill', kitId: 'camera', total: 4 },\n      { siteId: 'harbor', kitId: 'tripod', total: 6 },\n      { siteId: 'hill', kitId: 'tripod', total: 2 },\n      { siteId: 'hill', kitId: 'speaker', total: 3 },\n    ],\n    loans: [\n      { id: 'L101', siteId: 'harbor', kitId: 'camera', quantity: 2, status: 'CONFIRMED', purpose: '社区短片记录', revision: 1 },\n      { id: 'L102', siteId: 'harbor', kitId: 'camera', quantity: 1, status: 'COLLECTED', purpose: '活动拍摄', revision: 2 },\n      { id: 'L103', siteId: 'harbor', kitId: 'camera', quantity: 3, status: 'DRAFT', purpose: '尚未确认的构想', revision: 1 },\n      { id: 'L104', siteId: 'harbor', kitId: 'camera', quantity: 2, status: 'RETURNED', purpose: '已结束的读书会', revision: 3 },\n      { id: 'L105', siteId: 'harbor', kitId: 'camera', quantity: 1, status: 'CANCELLED', purpose: '已经取消', revision: 2 },\n      { id: 'L201', siteId: 'hill', kitId: 'camera', quantity: 3, status: 'CONFIRMED', purpose: '山坡社区记录', revision: 1 },\n      { id: 'L106', siteId: 'harbor', kitId: 'tripod', quantity: 4, status: 'CONFIRMED', purpose: '定点拍摄', revision: 1 },\n    ],\n  };\n}\n",
+          "language": "typescript"
+        },
+        {
+          "path": "src/env.d.ts",
+          "content": "declare module '*.vue' {\n  import type { DefineComponent } from 'vue';\n  const component: DefineComponent<Record<string, unknown>, Record<string, unknown>, unknown>;\n  export default component;\n}\n",
+          "language": "typescript"
+        },
+        {
+          "path": "src/events/availability.ts",
+          "content": "export interface Signup { id: string; eventId: string; seats: number; state: 'BOOKED' | 'WAITING' | 'CANCELLED'; }\n\n/** 活动报名采用独立名额口径：候补不占正式席位。 */\nexport function availabilityFor(capacity: number, eventId: string, signups: Signup[]): number {\n  const used = signups.filter((row) => row.eventId === eventId && row.state === 'BOOKED')\n    .reduce((sum, row) => sum + row.seats, 0);\n  return Math.max(0, capacity - used);\n}\n",
+          "language": "typescript"
+        },
+        {
+          "path": "src/events/eventSignupService.ts",
+          "content": "import { availabilityFor, type Signup } from './availability';\n\nexport interface EventDefinition { id: string; title: string; capacity: number; }\n\nexport function previewSignup(event: EventDefinition, seats: number, signups: Signup[]) {\n  if (!Number.isSafeInteger(seats) || seats < 1) return { allowed: false, reason: '席位数量无效', remaining: 0 };\n  const remaining = availabilityFor(event.capacity, event.id, signups);\n  return { allowed: seats <= remaining, reason: seats <= remaining ? '' : '可进入候补名单', remaining };\n}\n\nexport function eventCountSummary(eventId: string, signups: Signup[]) {\n  const selected = signups.filter((row) => row.eventId === eventId);\n  return {\n    booked: selected.filter((row) => row.state === 'BOOKED').reduce((sum, row) => sum + row.seats, 0),\n    waiting: selected.filter((row) => row.state === 'WAITING').reduce((sum, row) => sum + row.seats, 0),\n  };\n}\n",
+          "language": "typescript"
+        },
+        {
+          "path": "src/legacy/LoanDesk.vue",
+          "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue';\nimport { availabilityFor, legacySummary } from './availability';\nconst rows = [\n  { deviceCode: 'legacy-camera', pieces: 2, closed: false },\n  { deviceCode: 'legacy-camera', pieces: 1, closed: true },\n];\nconst remaining = computed(() => availabilityFor(5, 'legacy-camera', rows));\n</script>\n\n<template>\n  <section class=\"legacy-panel\"><h2>旧台账回看</h2><p>{{ legacySummary(rows) }}</p><p>原口径剩余 {{ remaining }} 件</p><p>旧台账不创建新的借用单。</p></section>\n</template>\n",
+          "language": "vue"
+        },
+        {
+          "path": "src/legacy/availability.ts",
+          "content": "export interface LegacyBorrowRow { deviceCode: string; pieces: number; closed: boolean; }\n\n/** 退役工作台的旧口径，只供旧记录回看；没有地点维度。 */\nexport function availabilityFor(total: number, deviceCode: string, rows: LegacyBorrowRow[]): number {\n  return Math.max(0, total - rows.filter((row) => row.deviceCode === deviceCode && !row.closed)\n    .reduce((sum, row) => sum + row.pieces, 0));\n}\n\nexport function legacySummary(rows: LegacyBorrowRow[]): string {\n  const open = rows.filter((row) => !row.closed);\n  return `旧台账未结 ${open.length} 单，共 ${open.reduce((sum, row) => sum + row.pieces, 0)} 件`;\n}\n",
+          "language": "typescript"
+        },
+        {
+          "path": "src/main.ts",
+          "content": "import { createApp } from 'vue';\nimport App from './App.vue';\nimport './styles.css';\n\ncreateApp(App).mount('#app');\n",
+          "language": "typescript"
+        },
+        {
+          "path": "src/styles.css",
+          "content": ":root{font-family:system-ui,sans-serif;color:#263343;background:#f1f4f6;font-synthesis:none}*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer;border:1px solid #bac8d2;border-radius:8px;background:white;color:#263343;padding:10px 15px}button:disabled{cursor:default;opacity:.5}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #71a7cb;outline-offset:2px}.app-shell{min-height:100vh;display:grid;grid-template-columns:230px 1fr}.sidebar{background:#163c48;color:#eff8fa;padding:30px 24px}.brand{font-size:12px;letter-spacing:3px;color:#b2d7df}.sidebar h2{font-size:20px;line-height:1.5}.sidebar nav{display:grid;gap:10px;margin:32px 0}.sidebar nav button{text-align:left;background:transparent;color:inherit;border-color:#4d6d78}.sidebar nav button.active{background:#eaf6f7;color:#153c48}.sidebar>p:last-child{font-size:12px;line-height:1.8;color:#bfd4da}main{padding:28px;min-width:0}.desk-page{max-width:1000px;margin:0 auto;background:#fff;border:1px solid #dce5eb;border-radius:14px;padding:28px}.desk-page header h1{margin:6px 0 10px;font-size:26px}.desk-page header p{line-height:1.6}.eyebrow{font-size:12px;letter-spacing:1px;color:#537484}.selector-row{display:flex;align-items:end;gap:16px;flex-wrap:wrap;margin-top:22px}label{display:grid;gap:8px;font-size:14px}select,input,textarea{width:100%;padding:10px;border:1px solid #bac8d2;border-radius:7px;background:white;color:inherit}select{min-width:190px}.description{color:#647580;margin:15px 0 22px}.form-columns{display:grid;grid-template-columns:1fr 1.2fr;gap:24px}.availability-panel{background:#eef5f6;border:1px solid #d7e6e9;border-radius:11px;padding:22px}.availability-panel>div:first-child{display:flex;justify-content:space-between;align-items:center}.availability-panel strong{font-size:32px;color:#1f6477}.availability-panel dl>div{display:flex;justify-content:space-between;margin:12px 0}.availability-panel dd{margin:0}.availability-panel p{font-size:13px;line-height:1.7;color:#526b75}.draft-form{display:grid;gap:16px}.primary-button{background:#236e83;color:white;border-color:#236e83}.notice{color:#6d7780;font-size:13px;line-height:1.7}.error,.success{padding:12px 16px;border-radius:8px;line-height:1.5}.error{background:#fff0ee;color:#a33b30}.success{background:#eef7ed;color:#356b36}.ledger{margin-top:28px}.ledger h3{font-size:17px}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #e0e8ed}th{color:#526977;background:#f8fafb}.legacy-panel{padding:20px;border:1px dashed #9faeb8}@media(max-width:800px){.app-shell{grid-template-columns:1fr}.sidebar{padding:18px}.sidebar nav{display:flex;flex-wrap:wrap;margin:16px 0}.sidebar>p:last-child{display:none}main{padding:14px}.desk-page{padding:20px}.form-columns{grid-template-columns:1fr}table{font-size:12px}th,td{padding:9px 5px}}\n",
+          "language": "css"
+        },
+        {
+          "path": "src/views/DepositPage.vue",
+          "content": "<script setup lang=\"ts\">\nimport { useDepositPreview } from '../composables/useDepositPreview';\nconst { snapshot, loanId, loan, kit, deposit, explanation } = useDepositPreview();\nfunction changeLoan(event: Event): void { loanId.value = (event.target as HTMLSelectElement).value; }\n</script>\n\n<template>\n  <article class=\"desk-page\" data-test=\"deposit-page\">\n    <header><p class=\"eyebrow\">独立只读业务</p><h1>押金预览</h1></header>\n    <label>借用单<select data-test=\"deposit-select\" :value=\"loanId\" @change=\"changeLoan\"><option v-for=\"row in snapshot.loans\" :key=\"row.id\" :value=\"row.id\">{{ row.id }}</option></select></label>\n    <section class=\"availability-panel\"><h2>{{ kit?.name }}</h2><p>{{ loan?.quantity }} 份 × {{ kit?.depositPerUnit }} 元</p><strong data-test=\"deposit-value\">{{ deposit.toFixed(2) }} 元</strong><p>{{ explanation }}</p></section>\n    <p class=\"notice\">本页没有支付按钮，不会创建交易或改变借用状态。</p>\n  </article>\n</template>\n",
+          "language": "vue"
+        },
+        {
+          "path": "tsconfig.json",
+          "content": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\", \"module\": \"ESNext\", \"moduleResolution\": \"Bundler\", \"strict\": true,\n    \"lib\": [\"ES2022\", \"DOM\"], \"skipLibCheck\": true, \"isolatedModules\": true,\n    \"allowImportingTsExtensions\": false, \"noEmit\": true, \"types\": []\n  },\n  \"include\": [\"src/**/*.ts\", \"src/**/*.vue\"]\n}\n",
+          "language": "json"
+        },
+        {
+          "path": "vite.config.ts",
+          "content": "import { defineConfig } from 'vite';\nimport vue from '@vitejs/plugin-vue';\n\nexport default defineConfig({ plugins: [vue()], server: { host: '127.0.0.1' } });\n",
+          "language": "typescript"
+        }
+      ],
+      "originalSealedPrompt": "这个附件是我们社区器材借用台的完整合成 Vue 3 + TypeScript 工程，没有后端。请修复“新建借用”和“修改借用”两个现有入口共用的余量与提交校验，保持现有页面和错误码。\n\n业务口径已经定好：同一地点、同一器材，只有 CONFIRMED 和 COLLECTED 借用单占用库存；DRAFT、RETURNED、CANCELLED 都不占用，别的地点和器材也不能算进来。新建可借数量＝该地点器材总库存－上述占用，显示至少为 0。修改时输入的是整单的新数量，不是增量；算上限时要排除当前这张单，只扣其他有效占用。\n\n两个页面显示的数字和直接调用业务服务都要遵守这一个口径。预览后其他人可能又确认了借用，点击确认或保存时必须重新读取仓库并检查，不能用先前预览放行。数量必须是 number 类型的正安全整数，小数、非有限值等都用现有 INVALID_QUANTITY 错误。数量超过最新余量时用现有 INSUFFICIENT_STOCK；没有配置库存、借用单不存在及非 CONFIRMED 状态只读的现有边界保留。\n\n保存失败不应改仓库、借用状态或版本，也别清掉页面里用户刚输入的数量和用途；成功后保留既有的用途 trim、版本递增和余量刷新。请检查两个实际页面入口，不只修一份脱离调用链的函数。\n\n只修改当前器材借用链路中确实必要的文件：src/domain/availability.ts、src/domain/quantity.ts、src/application/loanDeskService.ts、src/composables/useNewLoan.ts、src/composables/useLoanEdit.ts、src/components/AvailabilityPanel.vue、src/components/LoanDraftForm.vue、src/views/NewLoanPage.vue、src/views/EditLoanPage.vue。旧台账 src/legacy、活动报名 src/events、押金预览、合成数据、类型与错误码、依赖和其他文件都保持不变，不增删文件或安装依赖。\n\n交付一个 JSON 对象，格式为 {\"files\":[{\"path\":\"src/实际路径\",\"content\":\"该文件完整替换内容\"}]}。files 只列本次真的修改的文件，路径相对附件工程根目录。不要输出 Markdown 围栏、说明、命令或额外脚本；我会把这些完整文件应用到同一份工程后验收。\n",
+      "blocked": [],
+      "workStatus": "Root product gate allows a single work attempt per admitted arm; no work quality pass yet",
+      "executionProjectPath": "engineering-run/execution-project.json",
+      "executionProjectSha256": "20bc837311633b5477dd8eed00d6ebc3ea9173027045afdd496600137c8bd569",
+      "commonAttachmentPayloadSha256": "08c8bd9939ab3d565b425d3cecbc8204e196e64346e7a45e3e41e40d4e99f755",
+      "workContract": {
+        "caseId": "E01",
+        "source": "../sealed-engineering-holdout/RUN_CONTRACT.md",
+        "sourceSha256": "eb3cba49a0f967147a055bd696b65dac6c90d1e32d76991fc4318138e99aca20",
+        "rawPromptSource": "../sealed-engineering-holdout/inputs/prompt.md",
+        "rawPromptSourceSha256": "4064b0f7f911b670b89f5bb6e3c77d6fe47b9e1df3334ad74163cdbc563c3567",
+        "sourceProject": "../sealed-engineering-holdout/inputs/project",
+        "projectFiles": 30,
+        "generationMaxTokens": 8192,
+        "executionMaxTokens": 10000,
+        "executionArms": [
+          "ORIGINAL",
+          "V31",
+          "V47"
+        ],
+        "identicalExecutionSourceFilesForAllArms": true,
+        "sourceBytesFromSealedProjectOnly": true,
+        "allowedReplacementPaths": [
+          "src/domain/availability.ts",
+          "src/domain/quantity.ts",
+          "src/application/loanDeskService.ts",
+          "src/composables/useNewLoan.ts",
+          "src/composables/useLoanEdit.ts",
+          "src/components/AvailabilityPanel.vue",
+          "src/components/LoanDraftForm.vue",
+          "src/views/NewLoanPage.vue",
+          "src/views/EditLoanPage.vue"
+        ],
+        "outputFormat": "JSON full-file replacement package",
+        "hostCapabilitiesForArtifacts": [],
+        "artifactValidation": "sealed checker, in-memory TS/SFC compilation and isolated real Vue VM renderer",
+        "realCallsPerformedByThisPreparation": 0,
+        "originalPromptBytesPreserved": true,
+        "sourceFileCount": 30,
+        "inputInformationIdenticalAcrossArms": true,
+        "sourceReconstructedFromChunks": false,
+        "productGateSha256": "59ce5ea88e22470c96a9935269918c2e56babbd1f407625b68dadbee0bf5f5e1",
+        "repetitionsPerArm": 1
+      }
+    }
+  ]
+}

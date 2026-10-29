@@ -1,0 +1,59 @@
+{
+  "actualModelCalls": 0,
+  "result": {
+    "passed": false,
+    "formatPassed": false,
+    "formatError": "代码块外不能有额外说明\n\n'额外说明' !== ''\n",
+    "artifactSha256": "c646ca2ef6fba0a89ad0c6f08a3ed910cf5975531e447066cbb744203d723672",
+    "behavior": {
+      "passed": true,
+      "artifactLoadFailed": false,
+      "checks": [
+        {
+          "id": "normal_merge",
+          "passed": true
+        },
+        {
+          "id": "key_and_display_name",
+          "passed": true
+        },
+        {
+          "id": "first_seen_order",
+          "passed": true
+        },
+        {
+          "id": "empty_fresh_array",
+          "passed": true
+        },
+        {
+          "id": "invalid_parameter",
+          "passed": true
+        },
+        {
+          "id": "invalid_item_and_name",
+          "passed": true
+        },
+        {
+          "id": "invalid_quantity",
+          "passed": true
+        },
+        {
+          "id": "safe_integer_and_overflow",
+          "passed": true
+        },
+        {
+          "id": "immutability_and_shape",
+          "passed": true
+        },
+        {
+          "id": "valid_object_and_string_keys",
+          "passed": true
+        }
+      ],
+      "sealedCheckerSha256": "74e3066fb53629c1ca9978cd5abdace173b7ecb45102794677f472aea59ee149",
+      "isolation": "same-realm inputs/assertions/errors; no Node host module imports, package scripts, filesystem or network"
+    },
+    "actualModelCalls": 0
+  },
+  "conclusion": "格式与行为分别判定，不把一项格式失败扩成全部失败。"
+}

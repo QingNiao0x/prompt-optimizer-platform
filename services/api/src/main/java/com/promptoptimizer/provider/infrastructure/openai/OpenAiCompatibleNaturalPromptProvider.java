@@ -41,6 +41,7 @@ import java.util.function.Function;
 public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvider {
     private static final int MAX_ATTEMPTS = 2;
     private final RestClient client;
+    private final RestClient reasoningClient;
     private final ObjectMapper json;
     private final ObjectReader enhancementPhaseReader;
     private final ObjectReader planningPhaseReader;
@@ -48,6 +49,11 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     private final ObjectReader diagnosticPlanningReader;
     private final ObjectReader scopeReader;
     private final ObjectReader materialPreparationReader;
+    private final ObjectReader requirementPreparationReader;
+    private final ObjectReader completionPreparationReader;
+    private final ObjectReader requirementsOnlyPreparationReader;
+    private final ObjectReader referencedEnhancementReader;
+    private final ObjectReader referencedDiagnosticEnhancementReader;
     private final ObjectReader responseReader;
     private final OpenAiCompatibleProperties properties;
     private final PlatformModelCatalog catalog;
@@ -55,15 +61,23 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     /** 复用服务端路由和受限HTTP客户端，密钥不进入浏览器或模型业务输入。 */
     @Autowired
     public OpenAiCompatibleNaturalPromptProvider(
-            @Qualifier("openAiCompatibleRestClient") RestClient client, ObjectMapper json,
+            @Qualifier("openAiCompatibleRestClient") RestClient client,
+            OpenAiCompatibleProviderConfiguration.NaturalReasoningTransport reasoningTransport, ObjectMapper json,
             OpenAiCompatibleProperties properties, ObjectProvider<PlatformModelCatalog> catalog) {
-        this(client, json, properties, catalog.getIfAvailable());
+        this(client, reasoningTransport.client(), json, properties, catalog.getIfAvailable());
     }
 
     /** 允许受控 HTTP 测试注入本地路由；生产只通过服务端模型目录选择已发布模型。 */
     public OpenAiCompatibleNaturalPromptProvider(RestClient client, ObjectMapper json,
             OpenAiCompatibleProperties properties, PlatformModelCatalog catalog) {
+        this(client, client, json, properties, catalog);
+    }
+
+    /** 受控测试可分别核对普通及推理传输；两个客户端必须保留同一来源与计量保护。 */
+    OpenAiCompatibleNaturalPromptProvider(RestClient client, RestClient reasoningClient, ObjectMapper json,
+            OpenAiCompatibleProperties properties, PlatformModelCatalog catalog) {
         this.client = client;
+        this.reasoningClient = reasoningClient;
         this.json = json;
         // 阶段DTO默认拒绝未知字段和标量类型猜换；局部副本不改变第四版及其它业务的Jackson兼容行为。
         ObjectMapper phases = json.copy().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
@@ -88,6 +102,16 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         this.diagnosticPlanningReader = diagnostics.readerFor(NaturalPromptPhasePayloads.Planning.class);
         this.scopeReader = phases.readerFor(NaturalTaskScope.class);
         this.materialPreparationReader = phases.readerFor(NaturalTaskPreparation.class);
+        // 49独立严格DTO不改变旧scope/正文reader，防止新字段被旧协议忽略后伪造成功。
+        this.requirementPreparationReader = phases.readerFor(NaturalPromptRequirementRegistry.Preparation.class);
+        // 补全提案只由67准备读取；旧准备协议仍拒绝该新字段，防止兼容范围扩散。
+        this.completionPreparationReader = phases.readerFor(NaturalPromptCompletionPreparation.class);
+        // 53只登记要求：旧scope字段及诊断标量在此阶段均不能被静默丢弃。
+        this.requirementsOnlyPreparationReader = phases.readerFor(NaturalPromptRequirementsOnlyPreparation.class);
+        this.referencedEnhancementReader = phases.readerFor(NaturalPromptReferencedEnhancement.class);
+        // 51只复制writer reader；原phases、49/50 reader及准备reader不变，防止兼容扩散到其它阶段。
+        this.referencedDiagnosticEnhancementReader = phases.copy().addHandler(new NaturalPromptRegistryDiagnosticFieldHandler())
+                .readerFor(NaturalPromptReferencedEnhancement.class);
         // 在转为树之前拒绝重复键，避免后一个questions空数组静默覆盖前面真实题目；不改变全局Jackson配置。
         this.responseReader = json.copy().enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY,
                 DeserializationFeature.FAIL_ON_TRAILING_TOKENS).readerFor(JsonNode.class);
@@ -98,6 +122,50 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     @Override
     public <T> T enhance(NaturalPromptInput input, Function<NaturalPromptDraft, T> validation) {
         if (!NaturalPromptInstructions.supports(input.strategyVersion())) throw invalid("自然链路版本不受支持");
+        if (NaturalPromptBodyFirstInstructions.supports(input.strategyVersion())) {
+            return enhanceBodyFirst(input, validation);
+        }
+        if (NaturalPromptSinglePassInstructions.supports(input.strategyVersion())) {
+            // 54只执行正文阶段：24 DTO先做原来源/全部题答/正文校验，再沿53的角色检查核对已有GOAL。
+            // 不创建scope、预登记ID或临时goal；状态由真实完成阶段写入，旧24的未知阶段元数据不回改。
+            return invoke(input, NaturalPromptSinglePassInstructions.enhancementInstruction(input.strategyVersion()), "prompt.optimize", (body, metadata) -> {
+                var draft = readEnhancementPhase(body, input, metadata);
+                NaturalPromptRequirementsOnlyPreparation.validateUserGoals(draft.taskUnderstanding());
+                return validation.apply(draft.withStages(List.of(NaturalProcessing.Stage.BODY_GENERATION)));
+            });
+        }
+        if (NaturalPromptRequirementsOnlyInstructions.VERSION.equals(input.strategyVersion())) {
+            var registered = prepareRequirementsOnly(input);
+            return invokeRegistered(input, NaturalPromptRequirementsOnlyInstructions.ENHANCE, "prompt.optimize", null, null, null,
+                    false, null, null, registered.requirements(), (body, metadata) -> {
+                        try {
+                            NaturalPromptReferencedEnhancement payload = referencedDiagnosticEnhancementReader.readValue(body);
+                            var draft = payload.normalize(input, metadata, registered.requirements()).draft();
+                            // 补正也不能把原用户目标替换为仅由材料或助手提供的新委托。
+                            NaturalPromptRequirementsOnlyPreparation.validateUserGoals(draft.taskUnderstanding());
+                            return validation.apply(draft.withStages(List.of(NaturalProcessing.Stage.REQUIREMENT_PREPARATION,
+                                    NaturalProcessing.Stage.BODY_GENERATION)));
+                        } catch (IOException | IllegalArgumentException failure) {
+                            throw invalid("自然要求引用正文协议无效");
+                        }
+                    });
+        }
+        if (usesRequirementRegistry(input.strategyVersion())) {
+            var prepared = prepareRequirementRegistry(input);
+            ObjectReader writerReader = (NaturalPromptRegistryDiagnosticInstructions.VERSION.equals(input.strategyVersion())
+                    || NaturalPromptEffectiveRegistryInstructions.VERSION.equals(input.strategyVersion()))
+                    ? referencedDiagnosticEnhancementReader : referencedEnhancementReader;
+            return invoke(input, NaturalPromptInstructions.enhancementInstruction(input.strategyVersion()), "prompt.optimize", null, null, null,
+                    false, prepared.scope(), null, prepared, (body, metadata) -> {
+                        try {
+                            NaturalPromptReferencedEnhancement payload = writerReader.readValue(body);
+                            return validation.apply(payload.toDraft(input, metadata, prepared)
+                                    .withStages(List.of(NaturalProcessing.Stage.SCOPE_ANALYSIS, NaturalProcessing.Stage.BODY_GENERATION)));
+                        } catch (IOException | IllegalArgumentException failure) {
+                            throw invalid("自然原要求引用正文协议无效");
+                        }
+                    });
+        }
         if (NaturalPromptRoutingRepairInstructions.supports(input.strategyVersion())) {
             var prepared = prepareScope(input, "prompt.optimize");
             // 范围分类不再关闭正文生成。按版本选择正文指导，使42只改变写作方式；完整来源和原覆盖保护继续有效。
@@ -202,6 +270,41 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     }
 
     /**
+     * 59/61先只写正文；62/63在有实际题答时准备，64将同一准备扩到全部请求，再用完整原输入建立记录。
+     * 首稿由服务端固定，记录补正永远不能重开正文写作；准备分类也不能关闭生成。
+     * 各阶段分别计量且各最多一次协议修复；最终仍经过全部原来源、题答、正文和组装保护后才保存。
+     */
+    private <T> T enhanceBodyFirst(NaturalPromptInput input, Function<NaturalPromptDraft, T> validation) {
+        // 准备时机只由冻结版本与实际题答是否存在决定，不根据答案文字、职业或任务关键词路由。
+        // 准备只核验当前解释；原始input和全部题答仍同时进入写作、登记及最终应用校验。
+        var completion = NaturalPromptCompletionPreparationInstructions.supports(input.strategyVersion())
+                ? prepareCompletion(input) : null;
+        var prepared = completion != null ? completion.registry()
+                : NaturalPromptBodyFirstInstructions.preparesRequirements(input.strategyVersion(), !input.actualAnswers().isEmpty())
+                        ? prepareRequirementRegistry(input) : null;
+        var first = invoke(input, NaturalPromptBodyFirstInstructions.bodyInstruction(input.strategyVersion(), prepared != null), "prompt.optimize",
+                completion == null ? null : completion.suggestions(), null, null, false,
+                prepared == null ? null : prepared.scope(), null, prepared, (body, metadata) -> {
+            if (body.size() != 1 || !body.has("optimizedPrompt")) throw invalid("自然正文阶段只接受正文");
+            String text = requiredText(body, "optimizedPrompt");
+            if (text.length() > 200_000 || new com.promptoptimizer.common.security.SensitiveValueScanner().containsCredential(text)) {
+                throw invalid("自然正文含敏感值或超出容量");
+            }
+            return new NaturalPromptDraft(text, NaturalPromptDraft.Framework.APE, metadata);
+        });
+        return invoke(input, NaturalPromptBodyFirstInstructions.RECORD, "prompt.optimize", null, first, null, false,
+                prepared == null ? null : prepared.scope(), null, prepared,
+                (body, metadata) -> {
+                    var result = NaturalPromptDiagnosticRoles.normalize(readEnhancementPhase(body, input, metadata), input);
+                    NaturalPromptRequirementsOnlyPreparation.validateUserGoals(result.taskUnderstanding());
+                    return validation.apply(result.withStages(prepared == null
+                            ? List.of(NaturalProcessing.Stage.BODY_GENERATION, NaturalProcessing.Stage.RECORD_LINKING)
+                            : List.of(NaturalProcessing.Stage.REQUIREMENT_PREPARATION, NaturalProcessing.Stage.BODY_GENERATION,
+                                    NaturalProcessing.Stage.RECORD_LINKING)));
+                });
+    }
+
+    /**
      * 先按原回调完整预检首稿，再独立核对来源语义；未通过必要保护的首稿不发送给审阅阶段。
      * 回调契约无副作用，历史仍由应用层最终保存一次；最终再次调用可纳入审阅耗时，不返回预检时的旧计时。
      */
@@ -275,7 +378,10 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     @Override
     public <T> T plan(NaturalPromptInput input, Function<PlanningProviderResponse, T> validation) {
         if (!NaturalPromptInstructions.supports(input.strategyVersion())) throw invalid("自然链路版本不受支持");
-        if (NaturalPromptRoutingRepairInstructions.supports(input.strategyVersion())) {
+        // 54仅增强采用24 wire；Plan仍沿52的范围准备和canonical记录，不能因DTO许可误选24 Plan reader。
+        if (NaturalPromptRoutingRepairInstructions.supports(input.strategyVersion())
+                || NaturalPromptSinglePassInstructions.supports(input.strategyVersion())
+                || NaturalPromptBodyFirstInstructions.supports(input.strategyVersion())) {
             var scope = prepareScope(input, "plan.generate").scope();
             return invoke(input, NaturalPromptInstructions.planningInstruction(input.strategyVersion()), "plan.generate", null, null, null, false, scope,
                     (body, metadata) -> {
@@ -343,7 +449,13 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                         || NaturalPromptContentQualityInstructions.VERSION.equals(input.strategyVersion())
                         || NaturalPromptGroundedCompletionInstructions.VERSION.equals(input.strategyVersion())
                         || NaturalPromptMultidimensionalInstructions.VERSION.equals(input.strategyVersion())
-                        || NaturalPromptContextualRewriteInstructions.VERSION.equals(input.strategyVersion()))
+                        || NaturalPromptContextualRewriteInstructions.VERSION.equals(input.strategyVersion())
+                        || NaturalPromptUsefulDeliveryInstructions.VERSION.equals(input.strategyVersion())
+                        || NaturalPromptEffectiveRequestInstructions.VERSION.equals(input.strategyVersion())
+                        || NaturalPromptBoundedRepairInstructions.VERSION.equals(input.strategyVersion())
+                        || NaturalPromptSinglePassInstructions.supports(input.strategyVersion())
+                        || NaturalPromptBodyFirstInstructions.supports(input.strategyVersion())
+                        || usesRequirementRegistry(input.strategyVersion()))
                         ? scope.resolveAdvisory(input) : scope.resolve(input), metadata);
             } catch (IOException | IllegalArgumentException failure) {
                 throw invalid("任务动作与回应边界协议无效");
@@ -353,6 +465,63 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
 
     /** 准备调用的模型身份仍随确定性结果返回；不伪造第二次调用或额外用量。 */
     private record ScopePreparation(NaturalTaskScope scope, ProviderMetadata metadata) { }
+
+    /** 引用候选共用来源修复及输入边界；53增强优先走独立准备，Plan仍沿旧scope路径。 */
+    private static boolean usesRequirementRegistry(String version) {
+        return NaturalPromptRequirementRegistryInstructions.VERSION.equals(version)
+                || NaturalPromptContextBoundaryRegistryInstructions.VERSION.equals(version)
+                || NaturalPromptRegistryDiagnosticInstructions.VERSION.equals(version)
+                || NaturalPromptEffectiveRegistryInstructions.VERSION.equals(version)
+                || NaturalPromptRequirementsOnlyInstructions.VERSION.equals(version);
+    }
+
+    /** 67复用同一个准备调用，严格核验原有要求及分开的补全提案，不增加模型阶段。 */
+    private NaturalPromptCompletionPreparation.Prepared prepareCompletion(NaturalPromptInput input) {
+        return invoke(input, NaturalPromptCompletionPreparationInstructions.preparationInstruction(input.strategyVersion()), "prompt.optimize", null, true, (body, metadata) -> {
+            try {
+                NaturalPromptCompletionPreparation payload = completionPreparationReader.readValue(body);
+                return payload.resolve(input);
+            } catch (IOException | IllegalArgumentException failure) {
+                throw invalid("自然补全准备协议无效");
+            }
+        });
+    }
+
+    /** 原scope调用按版本登记要求；出处通过后再编号，不另发准备或审阅请求。 */
+    private NaturalPromptRequirementRegistry.Prepared prepareRequirementRegistry(NaturalPromptInput input) {
+        String instruction = switch (input.strategyVersion()) {
+            case NaturalPromptBodyFirstInstructions.CURRENT_REQUIREMENTS_VERSION, NaturalPromptBodyFirstInstructions.CONTENT_EXEMPLAR_VERSION
+                    -> NaturalPromptBodyFirstInstructions.CURRENT_REQUIREMENTS_PREPARE;
+            // 由服务端绑定的题答决定是否需要生效合并；未知回答也进入同一指导，不能在代码中猜测其取值。
+            case NaturalPromptEffectiveRegistryInstructions.VERSION, NaturalPromptBodyFirstInstructions.EFFECTIVE_ANSWERS_VERSION,
+                    NaturalPromptBodyFirstInstructions.SOURCE_REFERENCE_REPAIR_VERSION,
+                    NaturalPromptBodyFirstInstructions.PREPARED_BODY_VERSION -> input.actualAnswers().isEmpty()
+                    ? NaturalPromptEffectiveRegistryInstructions.PREPARE : NaturalPromptEffectiveRegistryInstructions.PREPARE_WITH_ANSWERS;
+            case NaturalPromptRegistryDiagnosticInstructions.VERSION -> NaturalPromptRegistryDiagnosticInstructions.PREPARE;
+            case NaturalPromptContextBoundaryRegistryInstructions.VERSION -> NaturalPromptContextBoundaryRegistryInstructions.PREPARE;
+            default -> NaturalPromptRequirementRegistryInstructions.PREPARE;
+        };
+        return invoke(input, instruction, "prompt.optimize", null, true, (body, metadata) -> {
+            try {
+                NaturalPromptRequirementRegistry.Preparation payload = requirementPreparationReader.readValue(body);
+                return payload.resolve(input);
+            } catch (IOException | IllegalArgumentException failure) {
+                throw invalid("自然原要求准备协议无效");
+            }
+        });
+    }
+
+    /** 53在同一次既有准备调用中只登记当前有效要求，不生成或伪造scope。 */
+    private NaturalPromptRequirementsOnlyPreparation.Registered prepareRequirementsOnly(NaturalPromptInput input) {
+        return invoke(input, NaturalPromptRequirementsOnlyInstructions.PREPARE, "prompt.optimize", null, true, (body, metadata) -> {
+            try {
+                NaturalPromptRequirementsOnlyPreparation payload = requirementsOnlyPreparationReader.readValue(body);
+                return payload.resolve(input);
+            } catch (IOException | IllegalArgumentException failure) {
+                throw invalid("自然要求准备协议无效");
+            }
+        });
+    }
 
     /** 35沿用现有准备次数；新增责任只引用原输入，不加入事实来源或持久化用户资料。 */
     private MaterialPreparation prepareMaterials(NaturalPromptInput input, String operation) {
@@ -520,24 +689,60 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     private <T> T invoke(NaturalPromptInput input, String instruction, String operation,
             NaturalTaskUnderstanding suggestions, NaturalPromptDraft fidelityDraft, NaturalPromptFidelityFindings findings,
             boolean preparation, NaturalTaskScope scope, NaturalTaskPreparation materialPreparation, ResponseReader<T> reader) {
+        return invoke(input, instruction, operation, suggestions, fidelityDraft, findings, preparation, scope, materialPreparation, null, reader);
+    }
+
+    /** 49的条目仅为writer辅助输入；原始input及来源目录不变，旧版本经上方重载传null保持请求原样。 */
+    private <T> T invoke(NaturalPromptInput input, String instruction, String operation,
+            NaturalTaskUnderstanding suggestions, NaturalPromptDraft fidelityDraft, NaturalPromptFidelityFindings findings,
+            boolean preparation, NaturalTaskScope scope, NaturalTaskPreparation materialPreparation,
+            NaturalPromptRequirementRegistry.Prepared registry, ResponseReader<T> reader) {
+        return invokeRegistered(input, instruction, operation, suggestions, fidelityDraft, findings, preparation, scope, materialPreparation,
+                registry == null ? null : registry.requirements(), reader);
+    }
+
+    /** 原引用候选与53共用传输；null列表使旧非registry请求逐字不增加辅助字段。 */
+    private <T> T invokeRegistered(NaturalPromptInput input, String instruction, String operation,
+            NaturalTaskUnderstanding suggestions, NaturalPromptDraft fidelityDraft, NaturalPromptFidelityFindings findings,
+            boolean preparation, NaturalTaskScope scope, NaturalTaskPreparation materialPreparation,
+            List<NaturalPromptRequirementRegistry.Entry> requirements, ResponseReader<T> reader) {
         var selection = resolve(input.modelId());
         var route = selection.route();
+        boolean reasoning = usesReasoning(input.strategyVersion(), operation, selection);
         String modelVersion = catalog == null ? "" : catalog.resolve(selection.publicModelId()).displayName();
         String user;
+        JsonNode payload;
         try {
-            var payload = json.valueToTree(input);
+            payload = json.valueToTree(input);
             if ((NaturalPromptMaterialInstructions.VERSION.equals(input.strategyVersion())
                     || usesAdvisoryScope(input.strategyVersion())
-                    || NaturalPromptContextualRewriteInstructions.VERSION.equals(input.strategyVersion()))
+                    || NaturalPromptContextualRewriteInstructions.VERSION.equals(input.strategyVersion())
+                    || NaturalPromptUsefulDeliveryInstructions.VERSION.equals(input.strategyVersion())
+                    || NaturalPromptEffectiveRequestInstructions.VERSION.equals(input.strategyVersion())
+                    || NaturalPromptBoundedRepairInstructions.VERSION.equals(input.strategyVersion())
+                    || NaturalPromptSinglePassInstructions.supports(input.strategyVersion())
+                    || NaturalPromptBodyFirstInstructions.supports(input.strategyVersion())
+                    || usesRequirementRegistry(input.strategyVersion()))
                     && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode layered) {
                 layered.putObject("inputBoundary").put("stage", "PROMPT_OPTIMIZATION")
                         .put("contextMeaning", "本次增强可见的材料，不是下游执行现场的完整资料或工具清单");
+                if ((NaturalPromptSinglePassInstructions.INPUT_ROLES_VERSION.equals(input.strategyVersion())
+                        || NaturalPromptSinglePassInstructions.RESPONSIBILITY_VERSION.equals(input.strategyVersion())
+                        || NaturalPromptBodyFirstInstructions.supports(input.strategyVersion()))
+                        && "prompt.optimize".equals(operation)) {
+                    // 58只声明引用的通用角色，既不根据路径猜权限，也不解析或覆盖用户真正的文件限制。
+                    ((com.fasterxml.jackson.databind.node.ObjectNode) layered.get("inputBoundary"))
+                            .set("referenceRoles", json.valueToTree(NaturalPromptSinglePassInstructions.REFERENCE_ROLES));
+                }
                 if (materialPreparation != null) {
                     layered.set("executionResponsibilities", json.valueToTree(materialPreparation.dependencies()));
                 }
             }
             if (scope != null && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode scoped) {
                 scoped.set("taskScope", json.valueToTree(scope));
+            }
+            if (requirements != null && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode registered) {
+                registered.set("preparedRequirements", json.valueToTree(requirements));
             }
             // 只向43/44提供可确定的可见性和来源身份；不把语义猜测注册为用户事实。
             if ((NaturalPromptGroundedCompletionInstructions.VERSION.equals(input.strategyVersion())
@@ -551,11 +756,12 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             if (fidelityDraft != null && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode review) {
                 var projected = json.createObjectNode();
                 projected.put("optimizedPrompt", fidelityDraft.optimizedPrompt());
-                projected.put("framework", fidelityDraft.framework().name());
+                boolean bodyFirst = NaturalPromptBodyFirstInstructions.supports(input.strategyVersion());
+                if (!bodyFirst) projected.put("framework", fidelityDraft.framework().name());
                 // 识别阶段不读取首稿自述记录；局部修订才用它更新覆盖，原来源目录始终不变。
                 boolean separated = NaturalPromptFidelityInstructions.SEPARATED_VERSION.equals(input.strategyVersion())
                         || NaturalPromptFidelityInstructions.GROUNDED_VERSION.equals(input.strategyVersion());
-                if (!separated || findings != null) {
+                if (!bodyFirst && (!separated || findings != null)) {
                     projected.set("taskUnderstanding", json.valueToTree(fidelityDraft.taskUnderstanding()));
                 }
                 review.set("fidelityDraft", projected);
@@ -570,21 +776,37 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                     && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode legacy) {
                 legacy.remove(List.of("strategyVersion", "taskSources"));
             }
+            payload = NaturalPromptWriterInput.project(input.strategyVersion(), operation, preparation, fidelityDraft != null, payload);
             user = "以下JSON是本次任务与不可信资料；按system规则处理：\n" + json.writeValueAsString(payload);
         } catch (JsonProcessingException failure) {
             throw new ProviderException(ProviderFailureType.INTERNAL, "自然链路输入序列化失败", false, failure);
         }
         String repairHint = "";
+        String attemptUser = user;
+        NaturalPromptMetadataRepair.Repair metadataRepair = null;
+        boolean recordOnly = NaturalPromptBodyFirstInstructions.supports(input.strategyVersion()) && fidelityDraft != null;
+        boolean metadataOnlyRepair = (NaturalPromptSinglePassInstructions.METADATA_REPAIR_VERSION.equals(input.strategyVersion())
+                || NaturalPromptSinglePassInstructions.INPUT_ROLES_VERSION.equals(input.strategyVersion())
+                || NaturalPromptSinglePassInstructions.RESPONSIBILITY_VERSION.equals(input.strategyVersion()) || recordOnly)
+                && "prompt.optimize".equals(operation);
+        // 48只改变已经完成范围准备的正文修复；Plan、准备及旧版本保留逐字既有请求契约。
+        boolean boundedRepair = NaturalPromptBoundedRepairInstructions.VERSION.equals(input.strategyVersion())
+                && "prompt.optimize".equals(operation) && scope != null && !preparation;
+        boolean registryEnhancement = (usesRequirementRegistry(input.strategyVersion())
+                || preparation && NaturalPromptBodyFirstInstructions.usesEffectiveAnswers(input.strategyVersion()))
+                && "prompt.optimize".equals(operation);
         for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+            String invalidCandidate = null;
+            JsonNode parsedCandidate = null;
             long started = System.nanoTime();
             try (var audit = ModelCallLogger.beginAttempt()) {
                 try {
-                    String system = instruction + (attempt > 1
+                    String system = metadataRepair != null ? metadataRepair.instruction() : instruction + (attempt > 1
                             ? "\n上次响应未满足协议或必要保护。请重新按完整输入生成合法JSON并保留全部要求；每个字段只出现一次，不添加额外内容。" + repairHint : "");
-                    JsonNode response = client.post().uri(route.endpoint())
+                    JsonNode response = (reasoning ? reasoningClient : client).post().uri(route.endpoint())
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + route.apiKey())
                             .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
-                            .body(request(selection, system, user)).retrieve().body(JsonNode.class);
+                            .body(request(selection, system, attemptUser, reasoning)).retrieve().body(JsonNode.class);
                     // 用量先于解析/业务校验采集，拒绝和截断不是免费调用。
                     if (response != null) ModelCallLogger.captureTokenUsage(ModelTokenUsageReader.readErrorUsage(
                             json.writeValueAsBytes(response)));
@@ -596,7 +818,17 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                     if (!message.path("refusal").asText("").isBlank()) {
                         throw new ProviderException(ProviderFailureType.REQUEST_REJECTED, "模型拒绝了本次请求", false);
                     }
-                    JsonNode body = readResponse(unwrap(message.path("content").asText("")));
+                    invalidCandidate = message.path("content").asText("");
+                    JsonNode body = readResponse(unwrap(invalidCandidate));
+                    if (metadataRepair != null) body = metadataRepair.apply(body);
+                    else if (recordOnly) {
+                        // 模型不能回显或改写正文；只在本地绑定固定首稿，随后沿原DTO和覆盖校验。
+                        if (!(body instanceof com.fasterxml.jackson.databind.node.ObjectNode record) || body.has("optimizedPrompt")) {
+                            throw invalid("来源登记阶段不得返回正文");
+                        }
+                        body = record.deepCopy().put("optimizedPrompt", fidelityDraft.optimizedPrompt());
+                    }
+                    parsedCandidate = body;
                     if (body == null || !body.isObject()) throw invalid("自然链路响应不是JSON对象");
                     T result = reader.read(body, new ProviderMetadata(route.key(), selection.publicModelId(), false, modelVersion));
                     ModelCallLogger.completed(operation, route.key(), selection.publicModelId(), "PLATFORM_CATALOG",
@@ -625,6 +857,10 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                     throw mapped;
                 } catch (JsonProcessingException failure) {
                     var mapped = invalid("自然链路响应JSON无效");
+                    if (boundedRepair && attempt < MAX_ATTEMPTS) {
+                        attemptUser = NaturalPromptRepairContext.userMessage(json, payload, invalidCandidate, parsedCandidate, input, true);
+                        repairHint = NaturalPromptBoundedRepairInstructions.REPAIR;
+                    }
                     fail(operation, selection, mapped, null, attempt < MAX_ATTEMPTS, attempt, started);
                     if (attempt == MAX_ATTEMPTS) throw mapped;
                 } catch (ProviderException failure) {
@@ -632,9 +868,23 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                     // 仅追加服务端生成的编号提示，不能把异常原文、上游响应或用户答案拼回system。
                     // 新阶段Plan没有正文锚点字段，只修复requirements出处；旧版正文/Plan及准备分支保留原修复契约。
                     repairHint = "";
-                    if (retry && failure instanceof NaturalTaskReview.MissingSources missing) {
-                        if (preparation) repairHint = missing.preparationRepairInstruction();
-                        else if ("plan.generate".equals(operation) && NaturalPromptStageInstructions.supports(input.strategyVersion())) {
+                    if (retry && metadataOnlyRepair) {
+                        metadataRepair = NaturalPromptMetadataRepair.inspect(payload, parsedCandidate, input).orElse(null);
+                    }
+                    if (retry && metadataRepair != null) {
+                        // 只替换服务端定位的元数据路径；首稿正文和要求文本始终由服务端持有且不可写。
+                        attemptUser = metadataRepair.userMessage(json);
+                    } else if (retry && boundedRepair) {
+                        // 无效候选留在独立user数据中；诊断只定位确定性错误，不把错误出处或助手建议升级为来源。
+                        attemptUser = NaturalPromptRepairContext.userMessage(json, payload, invalidCandidate, parsedCandidate, input, false);
+                        repairHint = NaturalPromptBoundedRepairInstructions.REPAIR;
+                    } else if (retry && failure instanceof NaturalTaskReview.MissingSources missing) {
+                        // 49/50只适配同一服务端编号提示的字段位置；Plan和旧版仍调用冻结提示，不带候选原稿。
+                        if (registryEnhancement) repairHint = NaturalPromptRequirementRegistryInstructions.missingSourcesRepair(missing, preparation);
+                        else if (preparation) repairHint = missing.preparationRepairInstruction();
+                        else if ("plan.generate".equals(operation) && NaturalPromptStageInstructions.supports(input.strategyVersion())
+                                && !NaturalPromptSinglePassInstructions.supports(input.strategyVersion())
+                                && !NaturalPromptBodyFirstInstructions.supports(input.strategyVersion())) {
                             repairHint = missing.phasePlanningRepairInstruction();
                         } else repairHint = missing.repairInstruction();
                     }
@@ -672,12 +922,18 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
 
     /** 兼容现有服务端路由参数，不从用户输入或模型文本推测接口能力。 */
     private Map<String, Object> request(OpenAiCompatibleProperties.ModelSelection selection, String system, String user) {
+        return request(selection, system, user, false);
+    }
+
+    /** 只有显式推理正文提高输出预留，模型容量上限仍优先，不放宽其他请求的 token 预算。 */
+    private Map<String, Object> request(OpenAiCompatibleProperties.ModelSelection selection, String system, String user,
+            boolean reasoning) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("model", selection.model());
         body.put("messages", List.of(Map.of("role", "system", "content", system), Map.of("role", "user", "content", user)));
         body.put("stream", false);
         int output = new RequestCapacityPolicy().outputLimit(selection.publicModelId(),
-                List.of(system, user), properties.getMaxTokens(), properties.getCapacityLimits());
+                List.of(system, user), reasoning ? 32_768 : properties.getMaxTokens(), properties.getCapacityLimits());
         boolean tokenHub = "tokenhub".equalsIgnoreCase(selection.route().key());
         if (tokenHub && "kimi-k3".equalsIgnoreCase(selection.model())) body.put("max_completion_tokens", output);
         else {
@@ -692,7 +948,29 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 body.put("thinking", Map.of("type", "disabled"));
             }
         }
+        if (reasoning) {
+            body.put("thinking", Map.of("type", "enabled"));
+            body.put("reasoning_effort", "high");
+        }
         return body;
+    }
+
+    /**
+     * 55仅在正文阶段使用已适配的官方 DeepSeek 推理协议；Plan、旧版本及其他路由保持原参数。
+     * 此处分支描述供应商接口能力，不读取原始提示词或按业务场景选择模板。
+     */
+    private boolean usesReasoning(String version, String operation, OpenAiCompatibleProperties.ModelSelection selection) {
+        boolean officialAdapter = "deepseek".equalsIgnoreCase(selection.route().key())
+                || ("deepseek".equalsIgnoreCase(selection.route().providerName())
+                    && "api.deepseek.com".equalsIgnoreCase(selection.route().endpoint().getHost()));
+        return (NaturalPromptSinglePassInstructions.REASONING_VERSION.equals(version)
+                || NaturalPromptSinglePassInstructions.GOAL_ROLE_VERSION.equals(version)
+                || NaturalPromptSinglePassInstructions.METADATA_REPAIR_VERSION.equals(version)
+                || NaturalPromptSinglePassInstructions.INPUT_ROLES_VERSION.equals(version)
+                || NaturalPromptSinglePassInstructions.RESPONSIBILITY_VERSION.equals(version)
+                || NaturalPromptBodyFirstInstructions.supports(version))
+                && "prompt.optimize".equals(operation) && officialAdapter
+                && Set.of("deepseek-flash", "deepseek-v4-pro").contains(selection.model());
     }
 
     /** 目录校验先于网络调用，公开模型标识与服务端上游模型名分别处理。 */

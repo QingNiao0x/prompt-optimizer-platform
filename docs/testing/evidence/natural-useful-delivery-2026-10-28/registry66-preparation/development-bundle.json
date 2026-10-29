@@ -1,0 +1,274 @@
+{
+  "syntheticOnly": true,
+  "description": "66 only internal writing examples; all65 original inputs/requirements/Plan/protocol unchanged. Reserved decision and hard normal boundaries first, then query/activity. No quality retries or topic-specific rules.",
+  "cases": [
+    {
+      "id": "P02_DIRECT",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "contextDescription": "",
+      "knownDevelopmentCase": true
+    },
+    {
+      "id": "V05",
+      "rawPrompt": "只允许阅读 src/views/records/create.js 和 src/views/records/import.js 这两个文件，禁止读取任何其他文件，包括它们引用的外部依赖。仅根据这两个文件理解新增与导入的调用入口，读完等待下一步，不修改代码，不交付说明文档。",
+      "contextDescription": "",
+      "knownDevelopmentCase": true
+    },
+    {
+      "id": "V01",
+      "rawPrompt": "只输出三行：第一行是1，第二行是2，第三行是3，不要其他内容。",
+      "contextDescription": "",
+      "knownDevelopmentCase": true
+    },
+    {
+      "id": "V03",
+      "rawPrompt": "没有相关资料，请解释为什么同一张照片在不同屏幕上颜色不一样，并给普通用户可操作的排查建议。",
+      "contextDescription": "",
+      "knownDevelopmentCase": true
+    },
+    {
+      "id": "Q01",
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "contextDescription": "",
+      "knownDevelopmentCase": true
+    },
+    {
+      "id": "U02",
+      "rawPrompt": "我们这家社区书店想试办两周的周末亲子共读活动，请依据现有条件设计一份店员能照着执行的方案，活动形式由你安排。",
+      "contextDescription": "",
+      "knownDevelopmentCase": true
+    }
+  ],
+  "jobs": [
+    {
+      "id": "P02_DIRECT_V66_GEN",
+      "caseId": "P02_DIRECT",
+      "phase": "GENERATION",
+      "version": "66",
+      "approvedEnhancementInput": {
+        "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+        "modelId": "deepseek:deepseek-flash",
+        "context": {
+          "customDescription": "",
+          "files": [
+            {
+              "path": "src/views/records/import.js#chunk-1",
+              "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n",
+              "language": "javascript"
+            },
+            {
+              "path": "src/views/records/dateRules.js#chunk-1",
+              "content": "/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n",
+              "language": "javascript"
+            },
+            {
+              "path": "src/views/records/create.js#chunk-1",
+              "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n",
+              "language": "javascript"
+            },
+            {
+              "path": "src/views/records/dateRules.spec.js#chunk-1",
+              "content": "import assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n",
+              "language": "javascript"
+            }
+          ]
+        },
+        "enhancement": {
+          "templateCode": "AUTO",
+          "includeConversationHistory": false,
+          "includePermissionBoundaries": true,
+          "promptFormat": "COMPACT"
+        },
+        "conversationHistory": [],
+        "permissionPolicy": {
+          "protectedPaths": [],
+          "requireConfirmationFor": []
+        },
+        "planConfirmation": null
+      }
+    },
+    {
+      "id": "V05_V66_GEN",
+      "caseId": "V05",
+      "phase": "GENERATION",
+      "version": "66",
+      "approvedEnhancementInput": {
+        "rawPrompt": "只允许阅读 src/views/records/create.js 和 src/views/records/import.js 这两个文件，禁止读取任何其他文件，包括它们引用的外部依赖。仅根据这两个文件理解新增与导入的调用入口，读完等待下一步，不修改代码，不交付说明文档。",
+        "modelId": "deepseek:deepseek-flash",
+        "context": {
+          "customDescription": "",
+          "files": [
+            {
+              "path": "src/views/records/create.js#chunk-1",
+              "content": "import { validateSurveyDate } from '../../shared/dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n",
+              "language": "javascript"
+            },
+            {
+              "path": "src/shared/dateRules.js#chunk-1",
+              "content": "/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n",
+              "language": "javascript"
+            },
+            {
+              "path": "src/views/records/import.js#chunk-1",
+              "content": "import { validateSurveyDate } from '../../shared/dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n",
+              "language": "javascript"
+            },
+            {
+              "path": "src/views/records/dateRules.spec.js#chunk-1",
+              "content": "import assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n",
+              "language": "javascript"
+            },
+            {
+              "path": "package.json#chunk-1",
+              "content": "{\n  \"name\": \"synthetic-survey-workspace\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": { \"test\": \"node --test src/views/records/dateRules.spec.js\" }\n}\n",
+              "language": "json"
+            }
+          ]
+        },
+        "enhancement": {
+          "templateCode": "AUTO",
+          "includeConversationHistory": false,
+          "includePermissionBoundaries": true,
+          "promptFormat": "COMPACT"
+        },
+        "conversationHistory": [],
+        "permissionPolicy": {
+          "protectedPaths": [],
+          "requireConfirmationFor": []
+        },
+        "planConfirmation": null
+      },
+      "purpose": "CONTENT_FIRST_BODY_WITH_INDEPENDENT_RECORD"
+    },
+    {
+      "id": "V01_V66_GEN",
+      "caseId": "V01",
+      "phase": "GENERATION",
+      "version": "66",
+      "approvedEnhancementInput": {
+        "rawPrompt": "只输出三行：第一行是1，第二行是2，第三行是3，不要其他内容。",
+        "modelId": "deepseek:deepseek-flash",
+        "context": {
+          "customDescription": "",
+          "files": []
+        },
+        "enhancement": {
+          "templateCode": "AUTO",
+          "includeConversationHistory": false,
+          "includePermissionBoundaries": true,
+          "promptFormat": "COMPACT"
+        },
+        "conversationHistory": [],
+        "permissionPolicy": {
+          "protectedPaths": [],
+          "requireConfirmationFor": []
+        },
+        "planConfirmation": null
+      }
+    },
+    {
+      "id": "V03_V66_GEN",
+      "caseId": "V03",
+      "phase": "GENERATION",
+      "version": "66",
+      "approvedEnhancementInput": {
+        "rawPrompt": "没有相关资料，请解释为什么同一张照片在不同屏幕上颜色不一样，并给普通用户可操作的排查建议。",
+        "modelId": "deepseek:deepseek-flash",
+        "context": {
+          "customDescription": "",
+          "files": []
+        },
+        "enhancement": {
+          "templateCode": "AUTO",
+          "includeConversationHistory": false,
+          "includePermissionBoundaries": true,
+          "promptFormat": "COMPACT"
+        },
+        "conversationHistory": [],
+        "permissionPolicy": {
+          "protectedPaths": [],
+          "requireConfirmationFor": []
+        },
+        "planConfirmation": null
+      }
+    },
+    {
+      "id": "Q01_V66_GEN",
+      "caseId": "Q01",
+      "phase": "GENERATION",
+      "version": "66",
+      "approvedEnhancementInput": {
+        "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+        "modelId": "deepseek:deepseek-flash",
+        "context": {
+          "customDescription": "",
+          "files": []
+        },
+        "enhancement": {
+          "templateCode": "AUTO",
+          "includeConversationHistory": false,
+          "includePermissionBoundaries": true,
+          "promptFormat": "COMPACT"
+        },
+        "conversationHistory": [],
+        "permissionPolicy": {
+          "protectedPaths": [],
+          "requireConfirmationFor": []
+        },
+        "planConfirmation": null
+      },
+      "purpose": "CONTENT_FIRST_BODY_WITH_INDEPENDENT_RECORD"
+    },
+    {
+      "id": "U02_V66_GEN",
+      "caseId": "U02",
+      "phase": "GENERATION",
+      "version": "66",
+      "approvedEnhancementInput": {
+        "rawPrompt": "我们这家社区书店想试办两周的周末亲子共读活动，请依据现有条件设计一份店员能照着执行的方案，活动形式由你安排。",
+        "modelId": "deepseek:deepseek-flash",
+        "context": {
+          "customDescription": "",
+          "files": [
+            {
+              "path": "U02-M01.md",
+              "content": "# 小树书店的现状和试办条件\n\n小树书店位于一个普通住宅社区，工作日主要售书，周末偶尔有人在阅读区坐一会儿，还没有举办过正式的亲子活动。附近居民问过能不能让孩子来一起读书，但店里并不知道实际会有多少家庭参加。店主想先用连续两个周六下午试办，看看家庭是否愿意参与、孩子能否投入，以及店员能不能长期承担，不准备据此估算整个社区的市场规模。\n\n试办对象是6至9岁儿童及其陪同成人，每个孩子限一位成人同行。阅读区可坐八组家庭，通道需要保持畅通，不能把书架前和收银台旁也改成活动区。书店周六14:00至17:00可以安排活动，其中任意一个连续的一小时可供亲子活动使用，其余时间留给正常营业和整理。两个周六都只有店主和一名店员值班，一人可主持活动，另一人需要继续接待顾客和收银，不能长时间同时带活动，也不打算额外聘请老师。\n\n店内已有八张小桌、十六把椅子、白纸、彩笔和一块可擦写的小白板，没有投影仪、音响或可腾出的游戏场地。可供共读的绘本和短篇故事集有十六册，题材包括日常生活、自然观察和朋友相处，每册可独立读完一则短故事，长短与难度不同。孩子和家长也可以带自己的书，但店员无法事先知道具体书名。书店不安排餐饮，现场只提供饮用水。\n\n两周合计可新增支出600元，用于必要耗材和简单宣传；桌椅及现有图书不用另付钱。试办免费，不设购书门槛，没有礼品赞助，也不以现场卖出多少书评价成败。店里已有一个发布营业消息的居民群，可在柜台口头介绍活动，也能用纸笔登记家庭。没有独立公众号、预约小程序或专门负责线上报名的人。\n\n店主曾观察到，有的孩子愿意安静看书，有的孩子需要别人先带着进入故事；成人有时会替孩子抢答，也有成人希望只在旁边陪着。店员读故事比较自然，但不熟悉课堂管理。阅读区与销售区相邻，平时其他顾客仍会走动、翻书。此前两次零散的读书聊天都在结束后没有留下记录，后来只能凭印象争论活动好不好。",
+              "language": "markdown"
+            }
+          ]
+        },
+        "enhancement": {
+          "templateCode": "AUTO",
+          "includeConversationHistory": false,
+          "includePermissionBoundaries": true,
+          "promptFormat": "COMPACT"
+        },
+        "conversationHistory": [],
+        "permissionPolicy": {
+          "protectedPaths": [],
+          "requireConfirmationFor": []
+        },
+        "planConfirmation": null
+      },
+      "purpose": "CONTENT_FIRST_BODY_WITH_INDEPENDENT_RECORD"
+    }
+  ],
+  "phaseLimits": {
+    "GENERATION": 36,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "preparationArtifacts": [
+    "registry66-hypothesis.md",
+    "registry65-decision.md"
+  ]
+}

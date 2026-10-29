@@ -2,6 +2,21 @@ import { describe, expect, it } from 'vitest';
 import { extractProjectPathReferences, matchesReferencedPath, referencedPathVariants } from './projectPathReferences';
 
 describe('explicit project path references', () => {
+  it('should recognize a complete relative file alongside an at-directory without duplicating spans', () => {
+    const query = '修改 @sample/src/forms，并检查 src/shared/dateRule.ts';
+    const references = extractProjectPathReferences(query);
+    expect(references.map(reference => reference.path)).toEqual(['sample/src/forms', 'src/shared/dateRule.ts']);
+    expect(references[1]?.indexedFileCandidate).toBe(true);
+    expect(query.slice(references[1]!.start, references[1]!.end)).toBe('src/shared/dateRule.ts');
+    expect(extractProjectPathReferences('修改 @src/shared/dateRule.ts')).toHaveLength(1);
+  });
+
+  it.each(['查询职业/行业', '参考 https://example.com/src/file.ts', '参考 /absolute/file.ts',
+    '参考 C:\\private\\file.ts', '参考 ../outside/file.ts'])
+    ('should not infer a bare project file from %s', query => {
+      expect(extractProjectPathReferences(query)).toEqual([]);
+    });
+
   it.each([
     ['模块@project/src/views/records 新增', 'project/src/views/records'],
     ['修改 @src\\views\\records\\Entry.vue', 'src/views/records/Entry.vue'],

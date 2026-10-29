@@ -8,6 +8,7 @@ import com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyH
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -51,6 +52,25 @@ public class OpenAiCompatibleProviderConfiguration {
         return builder.clone().requestFactory(requestFactory)
                 .requestInterceptor(concurrencyInterceptor).build();
     }
+
+    /**
+     * 自然增强推理候选复用原客户端的拦截器，只放宽自身读取时间。
+     * 思考输出计入同一次调用，较长等待不增加重试；其他功能仍使用原客户端与超时。
+     */
+    @Bean
+    NaturalReasoningTransport naturalReasoningTransport(
+            @Qualifier("openAiCompatibleRestClient") RestClient shared,
+            OpenAiCompatibleProperties properties
+    ) {
+        var factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(properties.getConnectTimeout());
+        factory.setReadTimeout(properties.getReadTimeout().compareTo(Duration.ofSeconds(180)) > 0
+                ? properties.getReadTimeout() : Duration.ofSeconds(180));
+        return new NaturalReasoningTransport(shared.mutate().requestFactory(factory).build());
+    }
+
+    /** 包装专用传输，避免新增通用 RestClient 候选改变其他功能的注入选择。 */
+    public record NaturalReasoningTransport(RestClient client) { }
 
     /**
      * 注册 OpenAI 兼容 Provider 实现。

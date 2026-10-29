@@ -1,0 +1,41 @@
+{
+  "syntheticOnly": true,
+  "cases": [
+    {
+      "id": "P02_DIRECT",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "contextDescription": "",
+      "knownDevelopmentCase": true
+    },
+    {
+      "id": "V05",
+      "rawPrompt": "只允许阅读 src/views/records/create.js 和 src/views/records/import.js 这两个文件，禁止读取任何其他文件，包括它们引用的外部依赖。仅根据这两个文件理解新增与导入的调用入口，读完等待下一步，不修改代码，不交付说明文档。",
+      "contextDescription": "",
+      "knownDevelopmentCase": true
+    },
+    {
+      "id": "V01",
+      "rawPrompt": "只输出三行：第一行是1，第二行是2，第三行是3，不要其他内容。",
+      "contextDescription": "",
+      "knownDevelopmentCase": true
+    },
+    {
+      "id": "V03",
+      "rawPrompt": "没有相关资料，请解释为什么同一张照片在不同屏幕上颜色不一样，并给普通用户可操作的排查建议。",
+      "contextDescription": "",
+      "knownDevelopmentCase": true
+    },
+    {
+      "id": "Q01",
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "contextDescription": "",
+      "knownDevelopmentCase": true
+    },
+    {
+      "id": "U02",
+      "rawPrompt": "我们这家社区书店想试办两周的周末亲子共读活动，请依据现有条件设计一份店员能照着执行的方案，活动形式由你安排。",
+      "contextDescription": "",
+      "knownDevelopmentCase": true
+    }
+  ]
+}

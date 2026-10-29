@@ -1,0 +1,14 @@
+{
+  "syntheticOnly": true,
+  "cases": [
+    {
+      "id": "ABQ01",
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "purpose": "Output-protocol ablation on the existing actual Q01 writer input; not a downstream work or independent holdout",
+      "baselineJob": "Q01_V46_GEN",
+      "changedVariable": "Remove internal task record from writer response; business guidance and full user message unchanged",
+      "baselineSystemSha256": "c93e52f66787e5c7073cfc07da71081c70d71cb268e64364a3e4d3a99fb28871",
+      "commonUserMessageSha256": "e354a63a3cb89444de3ba0dd1a926cbb94897ca69245ae5ce5dfe1ac7974673b"
+    }
+  ]
+}

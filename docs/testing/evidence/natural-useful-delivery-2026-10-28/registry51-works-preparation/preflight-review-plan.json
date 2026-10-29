@@ -1,0 +1,88 @@
+{
+  "status": "PREDECLARED_PREPARATION_ONLY",
+  "modelCallsMade": 0,
+  "bundleSha256": "414c1ac7e620776c5cb46f194e09e07514105451c7937c11e0d06e16e6c24b6c",
+  "reuseProofSha256": "da07cd73052bde83eba458b7e07d35d8f21a70fa4db2454341cd8d62dbed71f0",
+  "prerequisites": [
+    "Root confirms all required51 normal variants and prompt-level product gates; known50 risks and failures remain unchanged.",
+    "Root approves this concrete14-EXEC/0-GEN proposal and infra freezes requests, materials, source hashes, order and call cap before any live action.",
+    "Recheck no prompt or source edit and verify every new request shares exact executor model/system/materials/budget within its case."
+  ],
+  "execution": {
+    "newCalls": 14,
+    "generationCalls": 0,
+    "reusedWorkCount": 4,
+    "profileByCase": [
+      {
+        "caseId": "Q01",
+        "model": "deepseek-flash",
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      {
+        "caseId": "U02",
+        "model": "deepseek-flash",
+        "temperature": 0.2,
+        "max_tokens": 4500,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      },
+      {
+        "caseId": "U03",
+        "model": "deepseek-flash",
+        "temperature": 0.2,
+        "max_tokens": 4500,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false
+      }
+    ],
+    "workSystemIsOnlyGenericTaskCompletion": true,
+    "firstUserMessageIsExactRawOrDeliveredPrompt": true,
+    "commonMaterialsAreSourceInputsOnly": true,
+    "noQualityCardInSystemOrUserMessages": true,
+    "noToolsOrAdditionalTaskSpecificObligationsAdded": true,
+    "failurePolicy": "Keep HTTP errors, refusals,empty output and truncation as failures.200 alone does not pass. Do not replace or sample again after observing an arm or candidate; do not call a failed work a tie."
+  },
+  "review": {
+    "mode": "Independent anonymous review after closure",
+    "reviewerReceives": [
+      "Original raw question",
+      "Exact common original materials/source snapshot",
+      "Verbatim final work bodies or anonymous failure state"
+    ],
+    "reviewerDoesNotReceive": [
+      "Versions or arm labels",
+      "Optimized prompts",
+      "Job IDs, generation order or source-stage names",
+      "Tokens, latencies, model trace or coordinator mapping"
+    ],
+    "labelAssignment": "Coordinator assigns labels without looking at quality; include both repeats for every eligible arm and preserve all failures. This preparation author knows source mappings and does not perform the later blind review.",
+    "criteria": [
+      "Does the work actually answer the original user request and preserve its output type and delegated design space?",
+      "Are source-based facts, observations, attribution, uncertainty, resource limits, conditions and permissions accurate within their original scope?",
+      "Is useful task content delivered rather than only methodology, gaps, a questionnaire or a general blank template?",
+      "Can the original intended reader use the answer directly, allowing reasonable alternatives and natural headings/points?",
+      "What concrete deletions, corrections or additions would be needed? Cite the work and original source; do not infer human editing minutes."
+    ],
+    "notHardRequirements": [
+      "Extra application scenarios absent from the original request",
+      "Every outline or table introduced by an enhanced prompt",
+      "Longer answers, more headings or all conceivable aspects"
+    ],
+    "interpretation": "Judge the actual work, not compliance with candidate-added obligations. Report ties and mixed outcomes. Small-repeat consistency is descriptive only; no adoption or general quality claim from protocol success."
+  },
+  "preservation": {
+    "old50And51FirstAttemptFailuresRetained": true,
+    "noClosedReportRewrite": true,
+    "noSyntheticRegistryOrAnswerCard": true,
+    "noSealedMaterialRead": true
+  }
+}

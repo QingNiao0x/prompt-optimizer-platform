@@ -1,0 +1,142 @@
+{
+  "reviewType": "INTERNAL_AGENT_ANONYMOUS_BODY_SEMANTIC_REVIEW",
+  "actualExternalModelCalls": 0,
+  "scope": "Only anonymous optimizedPrompt text, original request/materials and preregistered criteria. Not downstream works, protocol acceptance, human expert assessment or adoption approval.",
+  "unblindedAtReview": false,
+  "coordinatorMappingRead": false,
+  "rawStageResultsOrUsageRead": false,
+  "inputHashes": {
+    "Q01.json": "6511d6e7b5cc0ceca538bd0d58da192853626af63f15dc1be5fdb1fc01495d95",
+    "U02.json": "b54d1017a0210931b7d52760c48005aff2922cb49249d092dc6a1da8ba3ac85c",
+    "U03.json": "93fbe8c19cb571bbac650f729dab1cc161acd2988aabfac2e19bb179ec967be7",
+    "experiment-plan.md": "c275c6ed8e17d52f995dc3665b3e486b5151dfa2e8c49de2923472c5ebf0a413"
+  },
+  "extractionCaveat": "U02 A packet says NO_EXTRACTABLE_BODY. This review reads its visible optimizedPrompt string inside rawResponseWhenNoBody only. Parent independently reported actual product can extract it; this review makes no protocol success/failure claim and does not use taskUnderstanding self-report as quality evidence.",
+  "cases": [
+    {
+      "caseId": "Q01",
+      "preference": "B_FOR_SCOPE_AND_COMPACTNESS_NEITHER_MEETS_FULL_CONTENT_IMPROVEMENT_CRITERION",
+      "confidence": "MEDIUM",
+      "A": {
+        "preserved": ["全球范围", "职业和行业两个层面", "有依据地回答使用AI最多的问题"],
+        "usefulAdditions": ["职业人数少但使用率高与行业采用率高但集中于少数岗位的区分", "排名或分层允许无统一排名的数据现实"],
+        "issues": [
+          {
+            "severity": "MEDIUM_OVERPRESCRIPTION",
+            "quote": "这里的‘使用AI’不能只用一种统计标准，请同时覆盖至少三类可比的衡量方式",
+            "assessment": "原始问题没有要求完成三套统计研究。强制同时覆盖使用率、使用强度和人数或市场规模，把可能有用的比较方法变成必须填满的交付任务；市场规模也不能直接代替职业人员的AI使用。",
+            "minimumEdit": "把多口径改为必要时解释差异，围绕能够回答原问题的可靠证据展开。"
+          },
+          {
+            "severity": "MEDIUM_CONTENT_FOCUS",
+            "quote": "不同衡量标准、样本和地区造成的差异与数据局限",
+            "assessment": "主体仍由衡量标准、来源、年份、地区和局限驱动，没有明确要求说明领先职业/行业实际用AI做什么，未解决本轮预先定义的实质内容重点。",
+            "minimumEdit": "让职业/行业发现、比较和实际应用成为主要内容，依据与局限就近支撑结论。"
+          },
+          {
+            "severity": "LOW_EVIDENCE_RULE_RISK",
+            "quote": "如果最新数据与较早数据结论冲突，以最新数据为准并注明差异",
+            "assessment": "较新不自动意味着统计对象与覆盖更适合原问题，可能让不可比新调查覆盖更合适旧数据。",
+            "minimumEdit": "按相关性、覆盖和方法比较冲突，年份作为判断因素之一。"
+          }
+        ]
+      },
+      "B": {
+        "preserved": ["全球范围", "职业和行业", "给出查询结果"],
+        "usefulAdditions": ["职业与行业分开列出领先项及依据", "来源结论不一致时解释差异"],
+        "issues": [
+          {
+            "severity": "MEDIUM_LIMITED_COMPLETION",
+            "quote": "请说明统计口径……注明数据来源、统计时间范围和覆盖地区",
+            "assessment": "补充主要仍是证据规则，查询内容只到列出排名和依据。没有补到主要使用场景、使用方式或比较后的发现，内容增益有限。",
+            "minimumEdit": "补上直接帮助回答职业/行业使用情况的内容维度，避免扩大成固定多口径研究。"
+          }
+        ]
+      },
+      "seriousFactualOrIntentViolationProved": false,
+      "summary": "B更接近原始简短查询的范围；A虽更细，却主要扩大统计与来源义务，不能据此判为实质质量升级。"
+    },
+    {
+      "caseId": "U02",
+      "preference": "A_FOR_BOUNDARY_FIDELITY_B_HAS_LOCAL_EXECUTION_DETAIL_BUT_REQUIRES_CORRECTION",
+      "confidence": "MEDIUM",
+      "A": {
+        "preserved": ["两周连续两个周六", "14:00—17:00内一个连续小时，其他时间营业整理", "6—9岁、每孩一成人、八组、通道和活动区域限制", "两人值班一人主持一人营业、不额外聘师", "现有桌椅书籍耗材、无投影音响游戏场地、只饮水", "600元耗材和简单宣传、免费无购书门槛、无赞助且不以售书量评成败", "居民群、柜台及纸笔，不增加线上报名人员或系统", "自带书未知、儿童与成人参与差异、店员课堂管理经验不足", "记录参与、投入和长期负担，不推算社区市场规模"],
+        "usefulAdditions": ["把时间安排、两人分工、自带书应对、具体主持做法、预算用途及当场短记录转成执行者要完成的内容"],
+        "issues": [],
+        "assessment": "能够把材料条件融合为可执行方案要求，未把未见书名或报名量转成用户问卷，给下游保留了活动设计空间。"
+      },
+      "B": {
+        "preserved": ["主要人员、年龄、容量、场地、资源、费用和评估边界", "活动设计仍由执行者承担", "过去无记录和店员管理经验的实际问题"],
+        "usefulAdditions": ["分钟流程、主持话术、选书标准及短替代故事", "候补、迟到和报名不足的现场处理", "纸面记录字段与两周复盘"],
+        "issues": [
+          {
+            "severity": "MEDIUM_BOUNDARY_AMBIGUITY",
+            "quote": "核心活动固定在周六14:30—15:30这一连续一小时，14:00—14:30签到入座，15:30后恢复营业和整理",
+            "assessment": "原材料只划出一个连续小时供亲子活动，其余留正常营业和整理。正文先复述此限制，随后额外划30分钟签到入座；若这是独立占用场地和人员的活动环节，会超出原限制。普通柜台零散登记可与营业并行，但正文没有讲清。",
+            "minimumEdit": "将签到入座纳入同一小时，或明确为不额外占用活动区/主持人员的正常营业柜台登记。14:30—15:30本身是合理受托设计，问题在额外半小时边界。"
+          },
+          {
+            "severity": "MEDIUM_INTERNAL_TENSION",
+            "quote": "共读材料只从现有16册绘本和短篇故事集中选，不买新书；家庭可带自己的书",
+            "assessment": "前半句的‘只从’可能排除原材料允许的家庭自带书，后半句又保留自带书但没说明其可用于哪个环节。",
+            "minimumEdit": "明确核心故事从现有书选择，家庭自主共读可以使用自带书。"
+          },
+          {
+            "severity": "LOW_UNNECESSARY_FIXED_DETAIL",
+            "quote": "两周都按同一基本流程执行，第二周换核心故事……第二周可优先第一周家庭报名",
+            "assessment": "这类安排可属于用户已委托AI设计的合理方案，不是编造用户事实，不能一概禁止；但在增强阶段提前固定会缩小下游方案空间，应按是否实际帮助执行取舍。",
+            "minimumEdit": "需要时保留为拟议设计，避免把所有细节都写成必须执行的固定条款。"
+          }
+        ]
+      },
+      "seriousFactualOrIntentViolationProved": false,
+      "summary": "B的具体化具有局部执行价值，但当前还带来时间边界和自带书规则的可修正歧义。A已经完整保留独立条件并明确必要交付，比B更稳妥；不能以B更长、更多细节判其整体更好。"
+    },
+    {
+      "caseId": "U03",
+      "preference": "NO_CLEAR_OVERALL_WINNER",
+      "confidence": "MEDIUM",
+      "A": {
+        "preserved": ["两份实际材料共同分析、优先顺序由AI判断", "匿名反馈不等于家庭人数或代表比例", "两名志愿者、固定时段不得增加、300元、群和现有表格", "没有买工具、开发软件和新增收费系统预算"],
+        "usefulAdditions": ["从具体服务环节定位卡点而非逐条转述反馈", "每项改什么、谁在哪环节做、耗材和额外工作量", "不照单全收增购、全体停借、一周借期诉求", "排序理由及可低成本观察的改进效果"],
+        "issues": [
+          {
+            "severity": "LOW_INCOMPLETE_EXPLICIT_BOUNDARY",
+            "quote": "固定值守时段不能增加",
+            "assessment": "保留不能增加时段，但没有像B那样显式融合活动室其余时间不可进入、无自助取还条件。源文件被明确引用，不能因此直接判遗漏或严重违约；不过后续提出非值守自助取还方案的风险需要下游作品检查。",
+            "minimumEdit": "若正文需要独立携带执行边界，补上室内访问和无自助条件。"
+          }
+        ],
+        "workloadGoal": "提到每项建议额外工作量，并在表格调整处明确要求减少志愿者额外处理负担；全球性的‘不要越积越多’目标可表达得更直接。"
+      },
+      "B": {
+        "preserved": ["两份材料和AI负责排序", "反馈非代表样本、58借次非58家庭、7逾期中2问延期", "三天一件、具体值守时段、非值守时间无进入条件且无自助", "两人、300元及不增工具/软件/收费/值守边界"],
+        "usefulAdditions": ["卡点—证据—后果—调整环节有助于避免空泛意见", "具体调整、责任环节、资源、效果观察", "关键反馈诉求按可采纳程度评估并给统一建议", "优先2—3项和低成本观察指标"],
+        "issues": [
+          {
+            "severity": "MEDIUM_WEAKENED_GOAL_EXPRESSION",
+            "quote": "按优先级排序，并说明排序依据，例如……志愿者额外工作量",
+            "assessment": "把额外工作量纳入权衡，但没有直接保留‘额外处理工作不要越积越多’这个运行目标。‘低成本采集’也不能自动保证不形成持续积累的处理负担。不能只因未逐字引用判错，需看最终作品是否把工作量当可无限换取改善的成本。",
+            "minimumEdit": "把不持续增加志愿者处理负担作为所有建议的设计目标，与服务可靠、居民易理解并列。"
+          },
+          {
+            "severity": "LOW_POTENTIAL_DEFERRAL",
+            "quote": "涉及延期、归还宽限、借用期等规则变化时，给出建议的统一口径，并标明哪些仍需社区确认",
+            "assessment": "建议状态不应冒充已批准规则，标明实际实施需社区决策可以合理；但原用户已委托分析和排序，不能据此只交待确认清单或把建议退回用户决定。正文仍要求先给建议，因此当前不构成明确范围降级。",
+            "minimumEdit": "保留可执行的拟议规则，不把社区确认作为完成分析建议的前置条件。"
+          }
+        ]
+      },
+      "sharedCaveat": "两份都把配件分离写成查找成本原因。材料支持缺充电器、找配件耗时和同置诉求，但是否所有配件实际分开放仍属待论证机制；可作为有依据的解释或改善假设，不宜无条件扩展成已证实的统一现状。",
+      "seriousFactualOrIntentViolationProved": false,
+      "summary": "B更完整地把运行硬边界带入正文，A更紧凑且更直接强调减少额外处理负担。二者都有实际分析内容，没有足够依据判定其中一份稳定优于另一份，更不能由此推导实际作品收益。"
+    }
+  ],
+  "overall": {
+    "stableSubstantiveImprovementDemonstrated": false,
+    "seriousNewViolationProvedByThisBodyReview": false,
+    "recommendation": "不按篇幅或协议成功采用任何臂。Q01统计要求主导的问题仍在；U02具体化有局部收益也引入待修正边界；U03两份各有长短。先由协调者结合独立产品校验、时间成本与映射解释机制，当前审查不支持宣称通用质量明显提升。",
+    "limits": ["每题每臂仅一份正文，不能估计稳定性", "没有运行下游作品，不能量化最终质量或用户实际修改时间", "内部代理审查不等于人类专家评审", "U02 A只审可见正文字符串，物化器提取错误应单独修复"]
+  }
+}

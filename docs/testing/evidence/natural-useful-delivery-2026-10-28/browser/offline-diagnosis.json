@@ -1,0 +1,58 @@
+{
+  "actualNewModelCalls": 0,
+  "historicalVerdictsPreserved": true,
+  "oldProtocolConflict": {
+    "optimizedPromptRequested": [
+      "src/views/records/dateRules.spec.js",
+      "完成后简要说明改了哪些文件、新增的错误代码及测试结果"
+    ],
+    "executionSystemAllowedOnly": [
+      "src/views/records/dateRules.js",
+      "src/views/records/create.js",
+      "src/views/records/import.js"
+    ],
+    "meaning": "增强阶段未见后续wrapper的三文件限制；下游实际违反更高优先system。不能归为日期逻辑失败，也不重判旧FAIL。",
+    "sha256": {
+      "oldCopy": "db93a01d2c78a84822fd0e993e8f5530458741f1f75a7bd55ed15df7f933349e",
+      "oldFailedVerdict": "e7888934c9e78db80923f2c01e5940442855e8fe7916ab4d11ec0aebdc0627d3"
+    }
+  },
+  "newContracts": {
+    "source": "../fixtures/manifest.json",
+    "scopeSentenceIdenticalInRawAndExecutionSystem": true,
+    "C01": "仅三个业务文件及按需已有回归测试，不新增文件",
+    "C02": "仅三个业务文件，禁止改测试或新增文件"
+  },
+  "browserRetrieval": {
+    "firstNewAttempt": {
+      "dtoSaved": false,
+      "artifact": "capture/C01/failure.png",
+      "limitation": "初次工具仅内存持有DTO；未冒充已保存原件"
+    },
+    "savedFailure": {
+      "input": "capture/r2-C01/input.json",
+      "retrieval": "capture/r2-C01/retrieval.json",
+      "symptom": "范围句路径拆成create等普通词，旧模块通过模糊符号/路径词越过明确目录"
+    },
+    "fix": "相对完整文件路径索引命中后精确召回；只有完整符号/真实依赖/明确引用或主动指定文件能越过范围；不按目录名称定制排除",
+    "preservedRegression": "@目录和普通完整相对文件的并列目标；未命中的非@文件不收缩常规检索；URL/绝对路径/职业斜杠不作为文件",
+    "finalCapturedCases": [
+      "C01",
+      "C02",
+      "Q01",
+      "V01",
+      "V02",
+      "V03"
+    ],
+    "finalLocation": "captures-r2/<id>/",
+    "allFilesIndexed": 79,
+    "selectedC01C02V02": 5,
+    "selectedCharacters": 1917
+  },
+  "verification": {
+    "unitTests": 60,
+    "typecheck": "PASS",
+    "sandboxBrowserFailure": "本机ERR_NETWORK_ACCESS_DENIED后获准host执行，未产生外部调用",
+    "unrelatedSettingsMockFailure": "r3首次捕获检索已干净，但未模拟新增me/settings导致工具unexpected断言失败；补齐后六题通过"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "syntheticOnly": true,
+  "cases": [
+    {
+      "id": "Q01",
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "inputProvenance": "Actual workbench directory picker/Worker/IndexedDB or no-project flow; intercepted before model send",
+      "inputSha256": "2acad13fcc8df44d6287be68e348f65af352d0204fc32487660d6016a3c2e3dd",
+      "controlPurpose": "确认优先级修复不得改变无回答任务的原意；生成波动不当作新补全收益"
+    },
+    {
+      "id": "U02",
+      "rawPrompt": "我们这家社区书店想试办两周的周末亲子共读活动，请依据现有条件设计一份店员能照着执行的方案，活动形式由你安排。",
+      "originalSealedPrompt": "我们这家社区书店想试办两周的周末亲子共读活动，请依据现有条件设计一份店员能照着执行的方案，活动形式由你安排。",
+      "sealedCaseId": "C02",
+      "sourceCollectionId": "completion-20261028",
+      "kind": "简略委托补全",
+      "collection": "candidate47冻结并正式解封后的内部留出",
+      "originalAttachments": [
+        {
+          "path": "inputs/U02/U02-M01.md",
+          "content": "# 小树书店的现状和试办条件\n\n小树书店位于一个普通住宅社区，工作日主要售书，周末偶尔有人在阅读区坐一会儿，还没有举办过正式的亲子活动。附近居民问过能不能让孩子来一起读书，但店里并不知道实际会有多少家庭参加。店主想先用连续两个周六下午试办，看看家庭是否愿意参与、孩子能否投入，以及店员能不能长期承担，不准备据此估算整个社区的市场规模。\n\n试办对象是6至9岁儿童及其陪同成人，每个孩子限一位成人同行。阅读区可坐八组家庭，通道需要保持畅通，不能把书架前和收银台旁也改成活动区。书店周六14:00至17:00可以安排活动，其中任意一个连续的一小时可供亲子活动使用，其余时间留给正常营业和整理。两个周六都只有店主和一名店员值班，一人可主持活动，另一人需要继续接待顾客和收银，不能长时间同时带活动，也不打算额外聘请老师。\n\n店内已有八张小桌、十六把椅子、白纸、彩笔和一块可擦写的小白板，没有投影仪、音响或可腾出的游戏场地。可供共读的绘本和短篇故事集有十六册，题材包括日常生活、自然观察和朋友相处，每册可独立读完一则短故事，长短与难度不同。孩子和家长也可以带自己的书，但店员无法事先知道具体书名。书店不安排餐饮，现场只提供饮用水。\n\n两周合计可新增支出600元，用于必要耗材和简单宣传；桌椅及现有图书不用另付钱。试办免费，不设购书门槛，没有礼品赞助，也不以现场卖出多少书评价成败。店里已有一个发布营业消息的居民群，可在柜台口头介绍活动，也能用纸笔登记家庭。没有独立公众号、预约小程序或专门负责线上报名的人。\n\n店主曾观察到，有的孩子愿意安静看书，有的孩子需要别人先带着进入故事；成人有时会替孩子抢答，也有成人希望只在旁边陪着。店员读故事比较自然，但不熟悉课堂管理。阅读区与销售区相邻，平时其他顾客仍会走动、翻书。此前两次零散的读书聊天都在结束后没有留下记录，后来只能凭印象争论活动好不好。",
+          "sha256": "7b2b6af63ce0b6a4f0651e1ded5254a349a73be18ff78cdde2369e275c76f6ec"
+        }
+      ],
+      "capture": "completion-holdout-run/captures/U02/input.json",
+      "attachmentVisibility": "all sealed attachments available to enhancer and executor; none execution-only",
+      "inputSha256": "410f96fdff84b9d816a61e31b5cd6effda2246f103b8d53f14ab863e52f9febd",
+      "workContract": {
+        "maximumOutputTokens": 2600,
+        "officialExecutionRepeatsPerArm": 1,
+        "externalTools": false,
+        "internet": false,
+        "answerCardsExcludedFromInputs": true,
+        "outputRestrictions": "原封存prompt中的格式/字数/文件要求，模型与三臂共同执行材料一致"
+      }
+    },
+    {
+      "id": "V02",
+      "rawPrompt": "请只阅读 @synthetic-survey-workspace/src/views/records 的新增与导入实现，熟悉调用关系后等待我给具体任务，不修改代码，也不交付说明文档。",
+      "useProject": true
+    },
+    {
+      "id": "V03",
+      "rawPrompt": "没有相关资料，请解释为什么同一张照片在不同屏幕上颜色不一样，并给普通用户可操作的排查建议。",
+      "useProject": false
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "id": "H03_V31_GEN",
+  "phase": "GENERATION",
+  "version": "31",
+  "caseId": "H03",
+  "status": 200,
+  "body": {
+    "requestId": "H03_V31_GEN",
+    "data": {
+      "optimizedPrompt": "我经营一家虚构的小便当店，请根据附件 orders.csv（已结清的账）和 ledger-notes.md（字段口径）分析 2026 年 10 月 1—4 日的订单，直接产出一份可发到店内工作群的小结。只依据这两个附件，不上网补充行业数据；现在没有成本资料，先完成能算出的内容。\n\n先做一张表，按“线上、电话、合计”三行列出：净餐费、实际交付份数、每份平均净餐费、取消订单率。净餐费＝所有订单实付餐费之和－实际退款之和；每份平均净餐费＝净餐费÷实际交付份数；取消订单率＝整单取消订单数÷全部订单数，分母包含完成和取消订单。金额保留两位小数，百分比保留一位小数。\n\n表格之后写三条短结论：其中两条是你设计的下周可做的小试验，要写成尚未批准的拟议建议，不要写成已经安排好的事项；另一条说明这些数据还不能支持什么结论（例如涉及成本、取消原因、曝光、回头客或其他日期时，应指出账本没有这些信息）。表格以外的文字不超过 350 字。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [
+          "ledger-notes.md",
+          "orders.csv"
+        ],
+        "fileSnippets": [
+          {
+            "path": "orders.csv",
+            "language": "csv",
+            "content": "[片段 1/1]\norder_id,date,channel,status,ordered_qty,delivered_qty,paid_meal_amount,refunded_meal_amount\nO01,2026-10-01,ONLINE,COMPLETED,3,3,66.00,0.00\nO02,2026-10-01,PHONE,COMPLETED,2,2,44.00,0.00\nO03,2026-10-02,ONLINE,CANCELLED,4,0,88.00,88.00\nO04,2026-10-02,PHONE,COMPLETED,5,4,110.00,22.00\nO05,2026-10-03,ONLINE,COMPLETED,4,4,80.00,0.00\nO06,2026-10-03,ONLINE,COMPLETED,1,1,22.00,0.00\nO07,2026-10-03,PHONE,CANCELLED,2,0,44.00,44.00\nO08,2026-10-04,PHONE,COMPLETED,3,3,66.00,0.00\n",
+            "summary": "文件内容摘要：order_id,date,channel,status,ordered_qty,delivered_qty,paid_meal_amount,refunded_meal_amount；O02,2026-10-01,PHONE,COMPLETED,2,2,44.00,0.00；O04,2026-10-02,PHONE,COMPLETED,5,4,110.00,22.00；O06,2026-10-03,ONLINE,COMPLETED,1,1,22.00,0.00；O08,2026-10-04,PHONE,COMPLETED,3,3,66.00,0.00",
+            "truncated": false
+          },
+          {
+            "path": "ledger-notes.md",
+            "language": "markdown",
+            "content": "[片段 1/1]\n# 合成账本的字段口径\n\n这些订单全部虚构。数据覆盖 2026 年 10 月 1—4 日，每行是一张独立订单，没有重复行；账已结清，没有待退款。\n\n- `channel`：`ONLINE` 为线上，`PHONE` 为电话。\n- `status`：`COMPLETED` 为完成，`CANCELLED` 为整单取消。完成订单也可能少交付并部分退款。\n- `ordered_qty` 是下单份数；`delivered_qty` 是最终实际交付份数。取消订单的实际交付为 0。\n- `paid_meal_amount` 是客户实际支付的餐费，单位元，已减优惠，不含配送费；`refunded_meal_amount` 是之后实际退还的餐费，单位元。\n- 净餐费＝所有订单实付餐费之和－实际退款之和；每份平均净餐费＝净餐费÷实际交付份数。按渠道和合计分别按此计算。\n- 取消订单率＝整单取消订单数÷全部订单数，分母包含完成和取消订单。\n- O04 原订 5 份，最终交付 4 份，已退 22 元。O05 有一笔 8 元优惠，已包含在实付 80 元中，不再另减。\n- 没有提供食材、人力、配送成本或取消原因；这份账本也没有统计宣传曝光、回头客和其他日期的订单。\n",
+            "summary": "Markdown 文档摘要：合成账本的字段口径；- `status`：`COMPLETED` 为完成，`CANCELLED` 为整单取消。；取消订单的实际交付为 0。；- 取消订单率＝整单取消订单数÷全部订单数，分母包含完成和取消订单。；- 没有提供食材、人力、配送成本或取消原因；这份账本也没有统计宣传曝光、回头客和其他日期的订单。",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 7945,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "31",
+      "framework": "APE",
+      "recordId": "a22d9bc2-10e7-4796-be83-24ff6bde2c69",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

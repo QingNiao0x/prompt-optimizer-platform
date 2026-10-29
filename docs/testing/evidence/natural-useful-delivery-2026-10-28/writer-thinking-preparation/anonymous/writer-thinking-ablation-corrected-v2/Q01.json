@@ -1,0 +1,46 @@
+{
+  "caseId": "Q01",
+  "scope": "已见开发题的内部匿名正文对照，不是未见题或实际作品评测",
+  "task": {
+    "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+    "context": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [],
+      "fileSnippets": [],
+      "analysisStatus": "EMPTY",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "actualAnswers": [],
+    "conversation": [],
+    "mandatoryRules": [],
+    "planningContext": null
+  },
+  "works": [
+    {
+      "label": "A",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "extractionState": "BODY_EXTRACTED_NOT_PRODUCT_VALIDATED",
+      "optimizedPrompt": "请调研并回答：全球范围内，哪些职业和行业使用AI最多。这里的“使用AI”不能只用一种统计标准，请同时覆盖至少三类可比的衡量方式：使用率/渗透率（某职业或行业中用AI的人或企业占比）、使用强度（日常工作中使用AI的频率或深度）、绝对使用人数或市场规模；如果生成式AI与传统AI（机器学习、自动化分析等）的数据不同，请分开说明，不要混在一起。时间上以最近两三年公开数据为主，注明每项数据的统计年份。地域上以全球为主，如果有分地区（北美、欧洲、亚太等）或分国家的差异，请补充说明，并标明数据覆盖范围。\n\n信息优先取自可核查的一手或权威二手来源，例如各国官方劳动力或企业调查（如美国BLS/OED、欧盟Eurostat、OECD）、有公开方法说明的行业报告（如Stanford AI Index、McKinsey State of AI、Microsoft Work Trend Index、Lightcast、世界经济论坛未来就业报告等），以及大型平台或招聘数据研究。每项关键数字都要给出处（机构、报告名、年份、链接或可检索标题）；找不到可靠数据的部分直接说明证据不足，不要用估计冒充事实。如果最新数据与较早数据结论冲突，以最新数据为准并注明差异。\n\n最后交付一份条理清晰的中文调研答复，包含：（1）职业维度的排名或分层，说明哪些职业使用AI最多、依据是什么；（2）行业维度的排名或分层，同样说明依据；（3）两类统计角度的结论是否一致；如果不一致，解释原因（例如某职业人数少但使用率高，某行业总体采用率高但集中在少数岗位）；（4）不同衡量标准、样本和地区造成的差异与数据局限；（5）一段简短总结，指出目前证据最强的结论和最不确定的部分。可以用表格呈现排名和关键数字，篇幅控制在能一次读完的范围，不需要写成学术综述。"
+    },
+    {
+      "label": "B",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "extractionState": "BODY_EXTRACTED_NOT_PRODUCT_VALIDATED",
+      "optimizedPrompt": "请帮我查询全球范围内使用AI最多的职业和行业，并给出查询结果。请说明统计口径（例如按使用人数、使用频率、渗透率或采用率衡量），区分职业与行业两个层面，列出排名靠前的职业和行业及相应依据，注明数据来源、统计时间范围和覆盖地区；如果不同来源的结论不一致，请说明差异。"
+    }
+  ],
+  "criteria": [
+    "保留原目标、事实状态、全部独立条件及真正委托范围",
+    "补充具体处理内容和可执行要求，直接帮助原定交付；篇幅、重排或同义改写不计收益",
+    "资料尚未随输入传入不等于现实不存在；不制造问卷或填空模板",
+    "合理设计变体允许；指出最小必要删改，不依赖模型自报或内部检查表"
+  ],
+  "boundary": "只审正文语义。产品原校验另外运行，BODY_EXTRACTED不代表来源/安全/覆盖或采用通过。隐藏臂身份、用量、思考、内部自评。"
+}

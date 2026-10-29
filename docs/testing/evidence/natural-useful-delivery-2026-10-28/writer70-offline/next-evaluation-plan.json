@@ -1,0 +1,83 @@
+{
+  "requestedAdditionalMaximum": 48,
+  "authorizedAdditionalMaximum": 0,
+  "previousTaskActual": 500,
+  "oldTaskReopened": false,
+  "scope": "Only writer input projection70 versus complete-input69; source/QA/coverage/permission protections unchanged",
+  "destination": "https://api.deepseek.com/chat/completions",
+  "syntheticFrozenMaterialOnly": true,
+  "phases": [
+    {
+      "name": "Known regression",
+      "maximumCalls": 8,
+      "purpose": "two first70 generations including any protocol repair; existing frozen inputs and failures reused"
+    },
+    {
+      "name": "New cases",
+      "maximumCalls": 18,
+      "purpose": "two new frozen synthetic cases;31 current baseline,69 complete-input control and70 projected-input candidate;31 frozen legacy parameters,69/70 equal native parameters"
+    },
+    {
+      "name": "Actual works",
+      "maximumCalls": 16,
+      "purpose": "two new cases; ORIGINAL/31/69/70 each two repetitions with identical material/model/parameters/permissions"
+    },
+    {
+      "name": "Real workbench",
+      "maximumCalls": 6,
+      "purpose": "candidate or ordinary default verification after original work quality adoption gate; otherwise keep31"
+    }
+  ],
+  "generationParameters": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "thinking": "enabled",
+    "reasoningEffort": "high",
+    "maxTokens": 32768,
+    "appliesTo": [
+      "69",
+      "70"
+    ]
+  },
+  "executionParameters": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "thinking": "disabled",
+    "maxTokens": 8192
+  },
+  "paidModelReviewCalls": 0,
+  "failureAndProtocolRepairsCount": true,
+  "noQualityRetries": true,
+  "planInstructionsUnchanged": true,
+  "freshPlanLiveValidationNotClaimed": true,
+  "adoptionGateUnchanged": true,
+  "freezeTopicsAndStageBudgetsBeforeAnyCall": true,
+  "noNewLiveCallUntilNewAuthorization": true,
+  "frozenPayloadFiles": [
+    {
+      "path": "regression-inputs.json",
+      "sha256": "0562fb3de623fe827a50fd1dde4072e8992ff875e916d7c2e43c44217fb0476a"
+    },
+    {
+      "path": "future-cases.json",
+      "sha256": "1d00babf2d417979d4e091d283ceabd93ee307b4bf56cf5cab51b43ec396d511"
+    }
+  ],
+  "reviewCriteriaFileNotForModelInput": "future-review-criteria.json",
+  "newCaseAuthorDisclosure": "root after code freeze; aware of prior implementation/failures, not isolated external author",
+  "comparisonArms": [
+    "ORIGINAL",
+    "31",
+    "69",
+    "70"
+  ],
+  "baseline31GenerationParameters": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "thinking": "disabled",
+    "maxTokens": 8192,
+    "frozenLegacyParameters": true
+  },
+  "nativeGenerationsFrozenInSeparateVersionStages": true,
+  "old500CallBatchesStayClosed": true
+}

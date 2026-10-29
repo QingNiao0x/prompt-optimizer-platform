@@ -1,0 +1,74 @@
+{
+  "syntheticOnly": true,
+  "description": "Fresh65 real service Plan without project attachments: sufficient zero-question, important user-owned boundary then actual confirm/unknown operator choices. No old plan ids, no synthetic server answers, no UI click claim.",
+  "cases": [
+    {
+      "id": "P00",
+      "rawPrompt": "只输出三行：第一行是1，第二行是2，第三行是3，不要其他内容。"
+    },
+    {
+      "id": "P02_NOCTX_CONFIRMED",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。"
+    },
+    {
+      "id": "P02_NOCTX_UNKNOWN",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "P00_V65_PLAN",
+      "caseId": "P00",
+      "version": "65",
+      "phase": "PLAN",
+      "approvedEnhancementInput": {
+        "rawPrompt": "只输出三行：第一行是1，第二行是2，第三行是3，不要其他内容。",
+        "modelId": "deepseek:deepseek-flash",
+        "contextDescription": "",
+        "conversationHistory": []
+      }
+    },
+    {
+      "id": "P02_NOCTX_CONFIRMED_V65_PLAN",
+      "caseId": "P02_NOCTX_CONFIRMED",
+      "version": "65",
+      "phase": "PLAN",
+      "approvedEnhancementInput": {
+        "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+        "modelId": "deepseek:deepseek-flash",
+        "contextDescription": "",
+        "conversationHistory": []
+      }
+    },
+    {
+      "id": "P02_NOCTX_UNKNOWN_V65_PLAN",
+      "caseId": "P02_NOCTX_UNKNOWN",
+      "version": "65",
+      "phase": "PLAN",
+      "approvedEnhancementInput": {
+        "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+        "modelId": "deepseek:deepseek-flash",
+        "contextDescription": "",
+        "conversationHistory": []
+      }
+    }
+  ],
+  "phaseLimits": {
+    "GENERATION": 0,
+    "PLAN": 12,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 8192,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "preparationArtifacts": [
+    "registry65-hypothesis.md",
+    "registry65-preparation/normal-review.json"
+  ]
+}

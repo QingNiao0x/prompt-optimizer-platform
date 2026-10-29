@@ -1,0 +1,224 @@
+{
+  "status": "CLOSED_NATIVE_MODEL_COMPARISON_DELIVERED_NOT_QUALITY_OR_ADOPTION",
+  "actualCalls": 6,
+  "taskActualAfter": 143,
+  "taskMaximum": 500,
+  "remaining": 357,
+  "phaseTotals": {
+    "GENERATION": 89,
+    "PLAN": 4,
+    "EXECUTION": 50
+  },
+  "protocolRepairCalls": 0,
+  "qualityRetries": 0,
+  "guardFailures": 0,
+  "ownProcessPid": 6776,
+  "ownProcessStopped": true,
+  "productRuntime": "ClosedFlash50snapshot copied byte-identical after all frozen classes hash verification",
+  "currentSourceOrTargetReadDuringGeneration": false,
+  "catalogVerifiedThroughActualResolve": true,
+  "publicModelId": "deepseek:deepseek-v4-pro",
+  "upstreamModel": "deepseek-v4-pro",
+  "routeKey": "deepseek",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "catalogDefaultModelIds": [
+    "deepseek:deepseek-flash"
+  ],
+  "defaultModelStateUnchanged": true,
+  "catalogMutations": false,
+  "readOnlyGetCount": 6,
+  "readOnlyGetModelCalls": 0,
+  "allJobsDelivered": true,
+  "unusedReservationReleased": 6,
+  "summaries": [
+    {
+      "jobId": "Q01_V50_PRO_GEN",
+      "status": 200,
+      "chainVersion": "50",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      },
+      "attempts": [
+        {
+          "trace": "001.json",
+          "stage": "REQUIREMENT_PREPARATION",
+          "preparedTrace": null,
+          "preparedRequirementCount": 0,
+          "httpStatus": 200,
+          "finishReason": "stop",
+          "usage": {
+            "prompt_tokens": 1009,
+            "completion_tokens": 223,
+            "total_tokens": 1232,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 1009
+          },
+          "systemExactlySameAsFlash50": true,
+          "completeOriginalInputEqualExceptModelId": true
+        },
+        {
+          "trace": "002.json",
+          "stage": "BODY_GENERATION",
+          "preparedTrace": "001.json",
+          "preparedRequirementCount": 1,
+          "httpStatus": 200,
+          "finishReason": "stop",
+          "usage": {
+            "prompt_tokens": 1784,
+            "completion_tokens": 360,
+            "total_tokens": 2144,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 1784
+          },
+          "systemExactlySameAsFlash50": true,
+          "completeOriginalInputEqualExceptModelId": true
+        }
+      ],
+      "semanticReview": "PENDING_ROOT_REVIEW_NOT_HTTP_PASS"
+    },
+    {
+      "jobId": "U02_V50_PRO_GEN",
+      "status": 200,
+      "chainVersion": "50",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      },
+      "attempts": [
+        {
+          "trace": "003.json",
+          "stage": "REQUIREMENT_PREPARATION",
+          "preparedTrace": null,
+          "preparedRequirementCount": 0,
+          "httpStatus": 200,
+          "finishReason": "stop",
+          "usage": {
+            "prompt_tokens": 1718,
+            "completion_tokens": 1965,
+            "total_tokens": 3683,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 1718
+          },
+          "systemExactlySameAsFlash50": true,
+          "completeOriginalInputEqualExceptModelId": true
+        },
+        {
+          "trace": "004.json",
+          "stage": "BODY_GENERATION",
+          "preparedTrace": "003.json",
+          "preparedRequirementCount": 17,
+          "httpStatus": 200,
+          "finishReason": "stop",
+          "usage": {
+            "prompt_tokens": 3921,
+            "completion_tokens": 1151,
+            "total_tokens": 5072,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 3921
+          },
+          "systemExactlySameAsFlash50": true,
+          "completeOriginalInputEqualExceptModelId": true
+        }
+      ],
+      "semanticReview": "PENDING_ROOT_REVIEW_NOT_HTTP_PASS"
+    },
+    {
+      "jobId": "U03_V50_PRO_GEN",
+      "status": 200,
+      "chainVersion": "50",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-v4-pro",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4-Pro-0813"
+      },
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      },
+      "attempts": [
+        {
+          "trace": "005.json",
+          "stage": "REQUIREMENT_PREPARATION",
+          "preparedTrace": null,
+          "preparedRequirementCount": 0,
+          "httpStatus": 200,
+          "finishReason": "stop",
+          "usage": {
+            "prompt_tokens": 2290,
+            "completion_tokens": 705,
+            "total_tokens": 2995,
+            "prompt_tokens_details": {
+              "cached_tokens": 768
+            },
+            "prompt_cache_hit_tokens": 768,
+            "prompt_cache_miss_tokens": 1522
+          },
+          "systemExactlySameAsFlash50": true,
+          "completeOriginalInputEqualExceptModelId": true
+        },
+        {
+          "trace": "006.json",
+          "stage": "BODY_GENERATION",
+          "preparedTrace": "005.json",
+          "preparedRequirementCount": 5,
+          "httpStatus": 200,
+          "finishReason": "stop",
+          "usage": {
+            "prompt_tokens": 3468,
+            "completion_tokens": 1359,
+            "total_tokens": 4827,
+            "prompt_tokens_details": {
+              "cached_tokens": 1408
+            },
+            "prompt_cache_hit_tokens": 1408,
+            "prompt_cache_miss_tokens": 2060
+          },
+          "systemExactlySameAsFlash50": true,
+          "completeOriginalInputEqualExceptModelId": true
+        }
+      ],
+      "semanticReview": "PENDING_ROOT_REVIEW_NOT_HTTP_PASS"
+    }
+  ],
+  "normalVariants": false,
+  "downstreamWorks": false,
+  "unseenUnsealed": false,
+  "defaultChainVersion": "31",
+  "protocolSha256": "955fd379a9bd662ce209acddb3c3fda6d7e79da8aeab63a5bf54170a40da1cff",
+  "frozenBundleSha256": "5bd4df7ff14e0e2239740d2e7748de1c54b930dc7936f3bc4f4db65570252167"
+}

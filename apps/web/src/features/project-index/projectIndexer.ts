@@ -288,6 +288,11 @@ interface RankedChunk {
   reasons: string[];
 }
 
+interface ScopedSymbolMatching {
+  completeTerms: Set<string>;
+  referencedSymbols: Set<string>;
+}
+
 /**
  * 流式消费目录项并写入仓库。实现过程中只保留有限批次，不会把完整项目装入内存。
  */
@@ -691,25 +696,33 @@ export const retrieveProjectContextWithReport = async (
 ): Promise<ProjectContextRetrievalResult> => {
   const maxCharacters = options.maxCharacters ?? DEFAULT_CONTEXT_CHARACTERS;
   const maxChunks = options.maxChunks ?? 40;
-  const references = extractProjectPathReferences(options.query);
-  // @路径拥有独立、精确的召回入口，避免项目名、src 和扩展名给无关源码累计分数。
-  let taskText = options.query;
-  for (const reference of [...references].reverse()) {
-    taskText = taskText.slice(0, reference.start) + ' ' + taskText.slice(reference.end);
-  }
-  const terms = extractTerms(taskText);
+  const requestedReferences = extractProjectPathReferences(options.query);
   const pathHints = createPathHints(options);
   const preferredPaths = createPreferredPaths(options);
   const candidateLimit = Math.max(200, maxChunks * 10);
-  const [matchedChunks, preferredChunks, referencedGroups] = await Promise.all([
-    repository.findCandidateChunks(options.projectId, terms, candidateLimit),
+  const [preferredChunks, requestedGroups] = await Promise.all([
     preferredPaths.length > 0
       ? repository.findChunksByPaths(options.projectId, preferredPaths, candidateLimit)
       : Promise.resolve([]),
-    Promise.all(references.map((reference) =>
+    Promise.all(requestedReferences.map((reference) =>
       repository.findChunksByPaths(options.projectId, [reference.path], candidateLimit))),
   ]);
+  // 普通文件名必须在当前索引中精确命中才收紧范围；拼错、尚未创建或URL片段不应让普通检索失效。
+  // 显式@即使未命中仍保留诊断，避免拿近似模块替代用户明确目标。
+  const resolvedReferences = requestedReferences.flatMap((reference, index) =>
+    reference.indexedFileCandidate && requestedGroups[index]?.length === 0 ? []
+      : [{ reference, chunks: requestedGroups[index] ?? [] }]);
+  const references = resolvedReferences.map(item => item.reference);
+  const referencedGroups = resolvedReferences.map(item => item.chunks);
   const referencedChunks = referencedGroups.flat();
+  // 仅移除已解析文件及显式@的原始片段。普通路径尚未命中时仍可提供常规语义线索，
+  // 但不标记为FOUND；引用过的文件名也不能伪装成正文明确点名的函数。
+  const terms = extractTerms(omitReferenceSpans(options.query, references));
+  const matchedChunks = await repository.findCandidateChunks(options.projectId, terms, candidateLimit);
+  const symbolScope: ScopedSymbolMatching | undefined = references.length > 0 ? {
+    completeTerms: new Set(extractTerms(omitReferenceSpans(options.query, requestedReferences))),
+    referencedSymbols: new Set(referencedChunks.flatMap(chunk => chunk.symbols ?? [])),
+  } : undefined;
   for (const chunk of referencedChunks) {
     const path = normalizePath(chunk.path);
     const reasons = pathHints.get(path) ?? [];
@@ -717,7 +730,7 @@ export const retrieveProjectContextWithReport = async (
     pathHints.set(path, reasons);
   }
   const candidates = uniqueChunks([...matchedChunks, ...preferredChunks, ...referencedChunks]);
-  const seedChunks = rankChunks(candidates, terms, pathHints, new Set())
+  const seedChunks = rankChunks(candidates, terms, pathHints, new Set(), undefined, symbolScope)
     .filter((item) => hasTaskRelevance(item.reasons)
       && hasScopedRelevance(item.reasons, references.length > 0))
     .slice(0, Math.min(8, maxChunks));
@@ -737,7 +750,7 @@ export const retrieveProjectContextWithReport = async (
   }
 
   const ranked = prioritizeReferencedFiles(rankChunks(candidates, terms, pathHints, dependencyTerms,
-    references.length > 0 ? new Set(Array.from(dependencyPaths, normalizePath)) : undefined));
+    references.length > 0 ? new Set(Array.from(dependencyPaths, normalizePath)) : undefined, symbolScope));
 
   const selected: ContextFileInput[] = [];
   const selections: ProjectContextSelection[] = [];
@@ -1105,6 +1118,15 @@ const extractTerms = (value: string): string[] => {
   return Array.from(terms);
 };
 
+/** 从后向前按原始偏移移除引用，避免多条路径替换后错删其余用户文本。 */
+const omitReferenceSpans = (query: string, references: readonly { start: number; end: number }[]): string => {
+  let text = query;
+  for (const reference of [...references].reverse()) {
+    text = text.slice(0, reference.start) + ' ' + text.slice(reference.end);
+  }
+  return text;
+};
+
 const createPreferredPaths = (options: RetrieveProjectContextOptions): string[] =>
   Array.from(new Set([
     options.activeFilePath,
@@ -1152,13 +1174,14 @@ const rankChunks = (
   pathHints: Map<string, string[]>,
   dependencyTerms: Set<string>,
   dependencyPaths?: Set<string>,
+  symbolScope?: ScopedSymbolMatching,
 ): RankedChunk[] => {
   const items = Array.from(chunks.values());
   // 共享路径片段（例如所有候选的 src）不具有定位能力，不靠它们填满上下文。
   const discriminatingPathTerms = new Set(terms.filter((term) => items.length < 5
     || items.filter((chunk) => chunk.path.toLowerCase().includes(term)).length / items.length < 0.7));
   return items
-  .map((chunk) => scoreChunk(chunk, terms, pathHints, dependencyTerms, discriminatingPathTerms, dependencyPaths))
+  .map((chunk) => scoreChunk(chunk, terms, pathHints, dependencyTerms, discriminatingPathTerms, dependencyPaths, symbolScope))
   .sort((left, right) =>
     right.score - left.score
     || left.chunk.priority - right.chunk.priority
@@ -1173,6 +1196,7 @@ const scoreChunk = (
   dependencyTerms: Set<string>,
   discriminatingPathTerms: Set<string>,
   dependencyPaths?: Set<string>,
+  symbolScope?: ScopedSymbolMatching,
 ): RankedChunk => {
   const path = chunk.path.toLowerCase();
   const content = chunk.content.toLowerCase();
@@ -1197,6 +1221,12 @@ const scoreChunk = (
     if (symbols.some((symbol) => symbol === term || (term.length >= 4 && symbol.includes(term)))) {
       score += RETRIEVAL_SCORE.symbolMatch;
       addReason(reasons, '任务中的符号');
+      // 未限定文件的符号先绑定用户明确目录中的同名定义；外部独有完整符号仍可召回。
+      // 真实import、固定文件和当前文件通过各自依据保留，不因同名被误删。
+      if (symbols.includes(term) && (!symbolScope || (symbolScope.completeTerms.has(term)
+        && (reasons.includes('用户明确引用路径') || !symbolScope.referencedSymbols.has(term))))) {
+        addReason(reasons, '任务中的完整符号');
+      }
     }
     if (term.length >= 3 && discriminatingPathTerms.has(term) && path.includes(term)) {
       score += RETRIEVAL_SCORE.pathMatch;
@@ -1260,11 +1290,12 @@ const resolveRelativeDependencyPaths = (chunks: IndexedProjectChunk[]): Set<stri
   return paths;
 };
 
-/** 用户已明确指定目标时，共享正文词不足以让其他模块补位，未召回也保留该范围。 */
+/** 明确目标之外只接收完整符号、真实依赖或用户主动指定的文件，路径碎片和模糊符号不能扩大范围。 */
 const hasScopedRelevance = (reasons: readonly string[], hasExplicitReference: boolean): boolean =>
   !hasExplicitReference || reasons.some((reason) => ![
     // 首次全量索引也会把文件记为changed；该状态不能推翻用户本次明确的模块范围。
     '关键工程配置', '项目索引候选', '内容与任务匹配', '最近变更文件',
+    '路径与任务匹配', '任务中的符号',
   ].includes(reason));
 
 /** 明确目录先覆盖各个已召回文件，再增加同文件片段；单文件引用仍按相关性选择。 */

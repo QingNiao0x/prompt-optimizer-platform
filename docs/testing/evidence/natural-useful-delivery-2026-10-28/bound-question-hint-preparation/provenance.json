@@ -1,0 +1,53 @@
+{
+  "externalModelCalls": 0,
+  "strategyVersion": "52",
+  "productCandidate53Created": false,
+  "changedInformation": "Only the actual stored PlanQuestion.hint for each actual bound answer; no scope projection or fabricated analysis",
+  "authorityBoundary": "Hints remain Plan-time model analysis; not new taskSources, facts, selected options, answers or permissions. All original actualAnswers remain byte-identical.",
+  "sources": [
+    {
+      "jobId": "P02_CONFIRMED_V52_BOUND_HINT_PREPARE",
+      "requestPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/bound-question-hint-preparation/requests/CONFIRMED.request.json",
+      "requestSha256": "55816fdd2329e830d982350ee61c8df0a3c10e63c6efcc857c86ec464c675242",
+      "prepareTrace": {
+        "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry52-plan-completion/traces/001.json",
+        "sha256": "c854f59468e241fe0faa1b0e60f6300d5623b9ae36b116d7f7a541bcf55cb84c"
+      },
+      "planResult": {
+        "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry52-plan/results/P02_CONFIRMED_V52_PLAN.json",
+        "sha256": "45691af2d9f53c948a67f2447c3b23d0bef108b1474f53d3583b3496488efbca"
+      },
+      "hintPointers": [
+        {
+          "sourceId": "actualAnswers.0",
+          "questionId": "q1",
+          "pointer": "/body/data/questions/0/hint",
+          "hintUtf8Sha256": "e92aea7b9c4888e124295f9523502d6a14da9e1ed9faf9a4016432ea1eed87c2",
+          "actualAnswerPointer": "/request/messages/1/content JSON.actualAnswers/0"
+        }
+      ]
+    },
+    {
+      "jobId": "P02_UNKNOWN_V52_BOUND_HINT_PREPARE",
+      "requestPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/bound-question-hint-preparation/requests/UNKNOWN.request.json",
+      "requestSha256": "6efe2fbbfa9d08ebd5d3708026d89e2c85c908b8f965cdafd7ffa6a261ae550a",
+      "prepareTrace": {
+        "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry52-plan-completion/traces/003.json",
+        "sha256": "0c3554a113cd4ed02aa5cd01b531dffa41c8db2d9dea5c25be1cd645df39ed22"
+      },
+      "planResult": {
+        "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry52-plan/results/P02_UNKNOWN_V52_PLAN.json",
+        "sha256": "cd330346145ee99f4b9166ff0cf3e56a861f6795f7c18b241a3a63f3ceec4322"
+      },
+      "hintPointers": [
+        {
+          "sourceId": "actualAnswers.0",
+          "questionId": "q1",
+          "pointer": "/body/data/questions/0/hint",
+          "hintUtf8Sha256": "2a5c905643f0978e948b58973f31814a769e3f0122205cc0505a60cdd19f2188",
+          "actualAnswerPointer": "/request/messages/1/content JSON.actualAnswers/0"
+        }
+      ]
+    }
+  ]
+}

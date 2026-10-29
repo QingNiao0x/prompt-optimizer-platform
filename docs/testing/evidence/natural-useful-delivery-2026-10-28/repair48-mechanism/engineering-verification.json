@@ -1,0 +1,74 @@
+{
+  "status": "ENGINEERING_CHECKS_PASSED_REAL_MECHANISM_NOT_RUN_BY_THIS_AGENT",
+  "realModelCalls": 0,
+  "affectedTests": [
+    {
+      "suite": "NaturalBoundedRepairProviderTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report": "TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalBoundedRepairProviderTest.xml"
+    },
+    {
+      "suite": "NaturalRoutingRepairProviderTest",
+      "tests": 48,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report": "TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalRoutingRepairProviderTest.xml"
+    },
+    {
+      "suite": "NaturalTaskUnderstandingTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report": "TEST-com.promptoptimizer.provider.domain.NaturalTaskUnderstandingTest.xml"
+    },
+    {
+      "suite": "NaturalTaskReviewTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report": "TEST-com.promptoptimizer.provider.domain.NaturalTaskReviewTest.xml"
+    },
+    {
+      "suite": "OpenAiCompatibleNaturalSourceReviewTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report": "TEST-com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleNaturalSourceReviewTest.xml"
+    }
+  ],
+  "distinctAffectedTestCount": 97,
+  "allHardValidationMethodsUnchanged": true,
+  "old47FailuresRetained": true,
+  "seenCasesNotIndependentHoldout": true,
+  "mechanismClaim": "No adoption claim. Existing attempt2 receives untrusted candidate and deterministic repair diagnostics only for version48 body; Plan and old retry requests remain unchanged.",
+  "productSources": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptBoundedRepairInstructions.java",
+      "sha256": "cfd0839e7ba2f1e8e9e264e5ba5b16778c041b78895efec6dc2aba2e5c2f17a5"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "4623e8a4e80f4ec0e3ffbc5906845c7af9a6b85f3c92531e661c467c1c5d9963"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRoutingRepairInstructions.java",
+      "sha256": "3211c4df41943d3ae438587678b3ea270988439149b05a05804cb397276dd5ca"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/NaturalPromptRepairContext.java",
+      "sha256": "2af82e28af26f20ec09ff86dd948d9f380635c0be0281e7954d6ce0e91f6e993"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "4b3e4b7169b719b1ced81aa51b2fdea894095415f0af783a3ea13dbb2ab6956d"
+    }
+  ],
+  "captureBoundary": "All exported requests came from controlled Mock HTTP; no headers, endpoint, authentication or environment exported."
+}

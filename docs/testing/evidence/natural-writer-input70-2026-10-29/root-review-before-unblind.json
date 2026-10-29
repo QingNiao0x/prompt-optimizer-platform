@@ -1,0 +1,89 @@
+{
+  "recordedAt": "2026-10-29T03:01:44.8225599+00:00",
+  "reviewedBeforeUnblinding": true,
+  "versionLabelsMasked": true,
+  "rootHasSeenGenerationPrompts": true,
+  "externalExpert": false,
+  "qualityRetries": 0,
+  "notification": [
+    {
+      "requiredEdits": 0,
+      "workId": "W01",
+      "directlyUsable": true
+    },
+    {
+      "requiredEdits": 0,
+      "workId": "W03",
+      "directlyUsable": true
+    },
+    {
+      "requiredEdits": 0,
+      "workId": "W05",
+      "directlyUsable": true
+    },
+    {
+      "requiredEdits": 0,
+      "workId": "W06",
+      "directlyUsable": true
+    },
+    {
+      "requiredEdits": 0,
+      "workId": "W09",
+      "directlyUsable": true
+    },
+    {
+      "issue": "交付中附带正文长度和合规性的解释，违反只给外发正文；整份文本236汉字包含该解释，不把它冒称为主体正文的字数",
+      "directlyUsable": false,
+      "repair": "删除元说明及发送提示包装",
+      "workId": "W10",
+      "severity": "FORMAT_REPAIR_REQUIRED",
+      "requiredEdits": 1
+    },
+    {
+      "requiredEdits": 0,
+      "workId": "W11",
+      "directlyUsable": true
+    },
+    {
+      "requiredEdits": 0,
+      "workId": "W12",
+      "directlyUsable": true
+    }
+  ],
+  "code": [
+    {
+      "passed": 16,
+      "workId": "W02",
+      "requiredEditsInTestedScope": 0,
+      "predeclaredChecks": 16
+    },
+    {
+      "passed": 16,
+      "workId": "W04",
+      "requiredEditsInTestedScope": 0,
+      "predeclaredChecks": 16
+    },
+    {
+      "passed": 16,
+      "workId": "W07",
+      "requiredEditsInTestedScope": 0,
+      "predeclaredChecks": 16
+    },
+    {
+      "repair": "使用csv.writer或正确CSV编码输出渠道",
+      "issue": "channel含逗号时未做CSV引用，输出列错位",
+      "passed": 15,
+      "workId": "W08",
+      "severity": "FUNCTIONAL_REPAIR_REQUIRED",
+      "predeclaredChecks": 16,
+      "requiredEditsInTestedScope": 1
+    }
+  ],
+  "limits": [
+    "不是双盲或外部专业评审",
+    "同信息下游无联网或真实用户数据",
+    "本机Python3.12运行及3.11语法检查，未实跑3.11",
+    "测试通过只说明这些明确业务边界；不是任意输入正确性保证",
+    "不把合理的写作顺序或额外设计空间当违约"
+  ]
+}

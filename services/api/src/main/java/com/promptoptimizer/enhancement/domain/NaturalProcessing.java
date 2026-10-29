@@ -14,7 +14,9 @@ public record NaturalProcessing(List<Stage> completedStages, boolean originalPre
     /** 阶段按实际调用路径记录，不按模型返回的分类或自检声明推断。 */
     public enum Stage {
         /** 完成动作与回应范围识别，尚不表示正文生成或需求充分。 */ SCOPE_ANALYSIS,
-        /** 完成正文生成及应用层校验；不等于获得了实质增强收益。 */ BODY_GENERATION
+        /** 完成正文生成及应用层校验；不等于获得了实质增强收益。 */ BODY_GENERATION,
+        /** 53完成原要求来源登记；没有执行动作/回应分类，不代表语义理解或正文已通过。 */ REQUIREMENT_PREPARATION,
+        /** 正文先行候选固定正文后完成来源/覆盖登记和原有形式校验，不代表语义质量评审通过。 */ RECORD_LINKING
     }
 
     public NaturalProcessing {

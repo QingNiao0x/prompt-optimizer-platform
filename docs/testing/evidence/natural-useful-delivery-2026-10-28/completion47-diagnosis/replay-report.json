@@ -1,0 +1,138 @@
+{
+  "modelCalls" : 0,
+  "runtime" : "closed completion47 runtime/classes",
+  "reports" : [ {
+    "trace" : "008",
+    "jobId" : "U02_V47_GEN",
+    "upstreamHttp" : 200,
+    "finishReason" : "stop",
+    "badSourceAnchors" : [ {
+      "index" : 4,
+      "quote" : "店内已有八张小桌、十六把椅子、白纸、彩笔和一块可擦写的小白板，没有投影仪、音响或不能腾出的游戏场地。",
+      "sourceId" : "context.fileSnippets.0"
+    } ],
+    "badBodyAnchors" : [ ],
+    "stages" : [ {
+      "stage" : "actualProvider.readResponse",
+      "status" : "PASS"
+    }, {
+      "stage" : "actualProvider.understanding",
+      "status" : "FAIL",
+      "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+      "message" : "任务理解引用不属于当前可用来源"
+    }, {
+      "stage" : "isolatedCounterfactual.correctOnlySourceAnchorNoBodyChange",
+      "status" : "PASS"
+    } ]
+  }, {
+    "trace" : "009",
+    "jobId" : "U02_V47_GEN",
+    "upstreamHttp" : 200,
+    "finishReason" : "stop",
+    "badSourceAnchors" : [ ],
+    "badBodyAnchors" : [ {
+      "kind" : "requirementCoverage",
+      "quote" : "有的孩子愿意安静看书，有的孩子需要别人先带着进入故事；成人有时会替孩子抢答，也有成人希望只在旁边陪着",
+      "index" : 12
+    }, {
+      "kind" : "requirementCoverage",
+      "quote" : "店员读故事比较自然，但不熟悉课堂管理",
+      "index" : 13
+    }, {
+      "kind" : "requirementCoverage",
+      "quote" : "阅读区与销售区相邻，平时其他顾客仍会走动、翻书",
+      "index" : 14
+    }, {
+      "kind" : "requirementCoverage",
+      "quote" : "此前两次零散的读书聊天都在结束后没有留下记录，后来只能凭印象争论活动好不好",
+      "index" : 15
+    }, {
+      "kind" : "requirementCoverage",
+      "quote" : "店主想先用连续两个周六下午试办，看看家庭是否愿意参与、孩子能否投入，以及店员能不能长期承担，不准备据此估算整个社区的市场规模",
+      "index" : 16
+    } ],
+    "stages" : [ {
+      "stage" : "actualProvider.readResponse",
+      "status" : "PASS"
+    }, {
+      "stage" : "actualProvider.understanding",
+      "status" : "PASS"
+    }, {
+      "stage" : "actualApplication.secondResolve",
+      "status" : "PASS"
+    }, {
+      "stage" : "actualApplication.validateBody",
+      "status" : "PASS"
+    }, {
+      "stage" : "actualReview.validateEnhancement.raw",
+      "status" : "FAIL",
+      "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+      "message" : "正文覆盖记录越界、重复或缺少对应原句"
+    }, {
+      "stage" : "actualReview.validateEnhancement.assembled",
+      "status" : "FAIL",
+      "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+      "message" : "正文覆盖记录越界、重复或缺少对应原句"
+    } ]
+  }, {
+    "trace" : "013",
+    "jobId" : "U03_V47_GEN",
+    "upstreamHttp" : 200,
+    "finishReason" : "stop",
+    "badSourceAnchors" : [ ],
+    "badBodyAnchors" : [ {
+      "kind" : "requirementCoverage",
+      "quote" : "志愿者的额外处理工作不要越积越多",
+      "index" : 6
+    } ],
+    "stages" : [ {
+      "stage" : "actualProvider.readResponse",
+      "status" : "PASS"
+    }, {
+      "stage" : "actualProvider.understanding",
+      "status" : "PASS"
+    }, {
+      "stage" : "actualApplication.secondResolve",
+      "status" : "PASS"
+    }, {
+      "stage" : "actualApplication.validateBody",
+      "status" : "PASS"
+    }, {
+      "stage" : "actualReview.validateEnhancement.raw",
+      "status" : "FAIL",
+      "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+      "message" : "正文覆盖记录越界、重复或缺少对应原句"
+    }, {
+      "stage" : "actualReview.validateEnhancement.assembled",
+      "status" : "FAIL",
+      "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+      "message" : "正文覆盖记录越界、重复或缺少对应原句"
+    } ]
+  }, {
+    "trace" : "014",
+    "jobId" : "U03_V47_GEN",
+    "upstreamHttp" : 200,
+    "finishReason" : "stop",
+    "badSourceAnchors" : [ ],
+    "badBodyAnchors" : [ ],
+    "stages" : [ {
+      "stage" : "actualProvider.readResponse",
+      "status" : "PASS"
+    }, {
+      "stage" : "actualProvider.understanding",
+      "status" : "PASS"
+    }, {
+      "stage" : "actualApplication.secondResolve",
+      "status" : "PASS"
+    }, {
+      "stage" : "actualApplication.validateBody",
+      "status" : "PASS"
+    }, {
+      "stage" : "actualReview.validateEnhancement.raw",
+      "status" : "PASS"
+    }, {
+      "stage" : "actualReview.validateEnhancement.assembled",
+      "status" : "PASS"
+    } ]
+  } ]
+}

@@ -1,0 +1,48 @@
+{
+  "caseId": "R52-HO-A",
+  "recordedAt": "2026-10-29T03:44:38.0250699+00:00",
+  "qualityRetries": 0,
+  "verdict": "KNOWN_EXECUTION_WEAKNESS_NOT_CLOSED",
+  "knownRegression": true,
+  "platformSolelyExonerated": false,
+  "sourceFactsInEnhancedPrompt": [
+    "14人",
+    "12张空白卡",
+    "75分钟",
+    "大厅最多10分钟"
+  ],
+  "newlyUnseenClaim": false,
+  "paidReviewCalls": 0,
+  "userEditingTimeMeasured": false,
+  "works": [
+    {
+      "severity": "EXECUTION_CLARIFICATION_REQUIRED",
+      "directlyUsableWithoutClarification": false,
+      "repeat": 1,
+      "notCountedAsViolation": [
+        "签到与场地准备可在教学前进行；源要求是签到后的开场计入75分钟",
+        "流程表合计75分钟，且大厅后明确返回活动室收尾"
+      ],
+      "issues": [
+        "14人重新编三人小组，未说明余下两人的分组/观察角色",
+        "空白卡在多段发放及收尾带走的流转办法未明确；不把所有提及卡片机械相加，未认定明确超库存"
+      ]
+    },
+    {
+      "severity": "EXECUTION_CLARIFICATION_REQUIRED",
+      "directlyUsableWithoutClarification": false,
+      "repeat": 2,
+      "notCountedAsViolation": [
+        "明确给出了两人共用的可行分支；不判为完全忽视12卡/14人",
+        "65分钟流程加10分钟机动满足75分钟，不判为时间少10分钟",
+        "轮换2次且总9分钟意味着3轮，不误判为只做两轮"
+      ],
+      "issues": [
+        "开场要求每人自取一张空白卡，与随后两人共用/先发12张的备选说明不一致，需统一一套可执行发放方式",
+        "3、3、3、3、2分组总数正确；2人组又被分配讲解/访客/观察三角色，教师多巡未交代角色怎样合并"
+      ]
+    }
+  ],
+  "firstExplicitExecutionAmbiguities": "DOWNSTREAM_WORK",
+  "promptMaintainsOriginalTask": true
+}

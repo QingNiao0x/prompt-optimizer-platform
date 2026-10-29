@@ -1,0 +1,66 @@
+{
+  "batch": "natural-useful-delivery-holdout-works47-2026-10-28",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 500,
+  "maximumNewActualCalls": 12,
+  "captureOnly": false,
+  "versions": [
+    "31",
+    "47"
+  ],
+  "candidateVersions": [
+    "47"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 2600,
+    "reviewMaxTokens": 0,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "45": [
+      "45"
+    ],
+    "46": [
+      "46"
+    ],
+    "47": [
+      "47"
+    ]
+  },
+  "phaseLimits": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 12,
+    "REVIEW": 0
+  },
+  "prerequisiteStages": [
+    "holdout47-r2"
+  ],
+  "allowedJobs": [
+    "H02_V31_EXEC",
+    "H01_ORIGINAL_EXEC",
+    "H03_V47_EXEC",
+    "H01_V31_EXEC",
+    "H04_ORIGINAL_EXEC",
+    "H03_V31_EXEC",
+    "H01_V47_EXEC",
+    "H02_ORIGINAL_EXEC",
+    "H04_V31_EXEC",
+    "H02_V47_EXEC",
+    "H04_V47_EXEC",
+    "H03_ORIGINAL_EXEC"
+  ],
+  "frozenBundleSha256": "676584dc6577914bd3a158ade1fa07940c07877bc65e7e20dff8d60b22b64fd3",
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false
+}

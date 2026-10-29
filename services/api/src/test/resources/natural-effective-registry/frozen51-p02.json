@@ -1,0 +1,130 @@
+{
+  "counterexampleOnly": true,
+  "originalInput": {
+    "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+    "context": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "src/",
+        "src/views/",
+        "src/views/records/",
+        "src/views/records/create.js",
+        "src/views/records/dateRules.js",
+        "src/views/records/dateRules.spec.js",
+        "src/views/records/import.js"
+      ],
+      "fileSnippets": [
+        {
+          "path": "src/views/records/import.js",
+          "language": "javascript",
+          "content": "[片段 1/1]\nimport { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n",
+          "summary": "JavaScript代码文件，主要定义：importSurveys、inserted、errors、code。关键内容：import { validateSurveyDate } from './dateRules.js';；/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。",
+          "truncated": false
+        },
+        {
+          "path": "src/views/records/dateRules.js",
+          "language": "javascript",
+          "content": "[片段 1/1]\n/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n",
+          "summary": "JavaScript代码文件，主要定义：validateSurveyDate、parsed。关键内容：/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。；*/",
+          "truncated": false
+        },
+        {
+          "path": "src/views/records/create.js",
+          "language": "javascript",
+          "content": "[片段 1/1]\nimport { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n",
+          "summary": "JavaScript代码文件，主要定义：createSurvey、error。关键内容：import { validateSurveyDate } from './dateRules.js';；/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。",
+          "truncated": false
+        },
+        {
+          "path": "src/views/records/dateRules.spec.js",
+          "language": "javascript",
+          "content": "[片段 1/1]\nimport assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n",
+          "summary": "JavaScript代码文件，主要定义：input、first。关键内容：import assert from 'node:assert/strict';；import { test } from 'node:test';",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "actualAnswers": [
+      {
+        "questionId": "q1",
+        "question": "调查日期是否允许填写今天（等于 today 的日期）？",
+        "answer": "今日允许填写：校验条件为调查日期不晚于 today（value <= today），今天通过、未来日期报错"
+      }
+    ],
+    "conversation": [],
+    "mandatoryRules": [],
+    "modelId": "deepseek:deepseek-flash",
+    "planningContext": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [
+        "src/",
+        "src/views/",
+        "src/views/records/",
+        "src/views/records/create.js",
+        "src/views/records/dateRules.js",
+        "src/views/records/dateRules.spec.js",
+        "src/views/records/import.js"
+      ],
+      "fileSnippets": [
+        {
+          "path": "src/views/records/import.js",
+          "language": "javascript",
+          "content": "[片段 1/1]\nimport { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n",
+          "summary": "JavaScript代码文件，主要定义：importSurveys、inserted、errors、code。关键内容：import { validateSurveyDate } from './dateRules.js';；/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。",
+          "truncated": false
+        },
+        {
+          "path": "src/views/records/dateRules.js",
+          "language": "javascript",
+          "content": "[片段 1/1]\n/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n",
+          "summary": "JavaScript代码文件，主要定义：validateSurveyDate、parsed。关键内容：/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。；*/",
+          "truncated": false
+        },
+        {
+          "path": "src/views/records/create.js",
+          "language": "javascript",
+          "content": "[片段 1/1]\nimport { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n",
+          "summary": "JavaScript代码文件，主要定义：createSurvey、error。关键内容：import { validateSurveyDate } from './dateRules.js';；/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。",
+          "truncated": false
+        },
+        {
+          "path": "src/views/records/dateRules.spec.js",
+          "language": "javascript",
+          "content": "[片段 1/1]\nimport assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n",
+          "summary": "JavaScript代码文件，主要定义：input、first。关键内容：import assert from 'node:assert/strict';；import { test } from 'node:test';",
+          "truncated": false
+        }
+      ],
+      "analysisStatus": "COMPLETE",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "strategyVersion": "51"
+  },
+  "preparationContent": "{\"actions\":[{\"text\":\"在重点记录模块 src/views/records 的新增和导入功能中增加调查时间限制：调查日期只能填写当日之前的日期，同时不能超过今日\",\"timing\":\"CURRENT\",\"condition\":\"\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。\"}]},{\"text\":\"按用户确认结果处理今日是否允许填写：今日允许填写，校验条件为调查日期不晚于 today（value <= today），今天通过、未来日期报错\",\"timing\":\"CONDITIONAL\",\"condition\":\"今天是否允许填写由用户确认，不代选；用户已确认今日允许填写\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"今天是否允许填写由我确认，不要代选。\"},{\"sourceId\":\"actualAnswers.0\",\"quote\":\"今日允许填写：校验条件为调查日期不晚于 today（value <= today），今天通过、未来日期报错\"}]}],\"response\":{\"basis\":\"EXPLICIT\",\"description\":\"交付在 src/views/records 新增和导入功能中增加调查时间限制的代码修改，并附按需补充的 dateRules.spec.js 回归测试\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。\"},{\"sourceId\":\"rawPrompt\",\"quote\":\"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。\"}]},\"requirements\":[{\"text\":\"在重点记录模块 src/views/records 的新增和导入功能中增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日\",\"dimensions\":[\"GOAL\",\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。\"}]},{\"text\":\"今天是否允许填写由用户确认，不代选；用户已确认今日允许填写，校验条件为调查日期不晚于 today（value <= today），今天通过、未来日期报错\",\"dimensions\":[\"CONDITION\",\"USER_CONFIRMATION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"今天是否允许填写由我确认，不要代选。\"},{\"sourceId\":\"actualAnswers.0\",\"quote\":\"今日允许填写：校验条件为调查日期不晚于 today（value <= today），今天通过、未来日期报错\"}]},{\"text\":\"只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试\",\"dimensions\":[\"CONDITION\",\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。\"}]},{\"text\":\"不得新增文件或修改其他文件\",\"dimensions\":[\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。\"}]}]}",
+  "writerContent": "{\"optimizedPrompt\":\"请在重点记录模块 src/views/records 的新增和导入功能中增加调查时间限制：调查日期只能填写当日之前的日期，同时不能超过今日。今天是否允许填写已由我确认：今日允许填写，校验条件为调查日期不晚于 today（value <= today），今天通过、未来日期报错。\\n\\n请基于现有实现完成修改：src/views/records/dateRules.js 中的 validateSurveyDate 目前只校验字符串格式和日历日期有效性，需要在此基础上增加“不晚于 today”的日期范围校验，并沿用现有错误代码机制供表单和导入行提示使用；src/views/records/create.js 的新增入口和 src/views/records/import.js 的导入入口都通过该函数校验，请确保两处行为一致——新增失败返回字段错误，导入保持按行部分成功、无效日期只影响所属行。\\n\\n请按需补充已有的 src/views/records/dateRules.spec.js 回归测试，覆盖今天通过、未来日期报错，以及新增和导入两个入口在边界日期上的表现，并保留原有有效日期和无效日历日期的测试。\\n\\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。完成后请说明改了哪些文件、校验规则如何落地，以及测试覆盖了哪些日期情形。\",\"framework\":\"APE\",\"goal\":\"在重点记录模块 src/views/records 的新增和导入功能中增加调查时间限制：调查日期只能填写当日之前的日期，同时不能超过今日；今日是否允许填写已由用户确认为允许（value <= today）。\",\"deliverable\":\"在限定文件范围内完成调查日期范围校验的代码修改，并按需补充 dateRules.spec.js 回归测试，说明修改内容与测试覆盖情形。\",\"inputReadiness\":\"SUFFICIENT\",\"coverage\":[{\"reqId\":\"r0\",\"bodyQuotes\":[\"请在重点记录模块 src/views/records 的新增和导入功能中增加调查时间限制：调查日期只能填写当日之前的日期，同时不能超过今日。\"]},{\"reqId\":\"r1\",\"bodyQuotes\":[\"今天是否允许填写已由我确认：今日允许填写，校验条件为调查日期不晚于 today（value <= today），今天通过、未来日期报错。\"]},{\"reqId\":\"r2\",\"bodyQuotes\":[\"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；\"]},{\"reqId\":\"r3\",\"bodyQuotes\":[\"不得新增文件或修改其他文件。\"]}],\"requirementChanges\":[],\"additions\":[{\"text\":\"在 validateSurveyDate 现有格式与日历有效性校验基础上增加“不晚于 today”的范围校验，并沿用现有错误代码机制\",\"gap\":\"原文只说明限制目标，未指明校验落点；现有函数已承担两个入口的共用校验\",\"benefit\":\"让执行者直接在共用校验函数中实现，避免在新增和导入两处重复或行为不一致\",\"bodyQuotes\":[\"src/views/records/dateRules.js 中的 validateSurveyDate 目前只校验字符串格式和日历日期有效性，需要在此基础上增加“不晚于 today”的日期范围校验，并沿用现有错误代码机制供表单和导入行提示使用\"]},{\"text\":\"回归测试覆盖今天通过、未来日期报错，以及新增和导入两个入口在边界日期上的表现，并保留原有有效日期和无效日历日期测试\",\"gap\":\"原文只说按需补充回归测试，未说明应覆盖哪些日期情形\",\"benefit\":\"确保今日允许、未来拒绝的确认结果和两个入口的一致性都有测试保障\",\"bodyQuotes\":[\"请按需补充已有的 src/views/records/dateRules.spec.js 回归测试，覆盖今天通过、未来日期报错，以及新增和导入两个入口在边界日期上的表现，并保留原有有效日期和无效日历日期的测试。\"]}],\"openDecisions\":[]}",
+  "preparationContentSha256": "d35236fd5c0ff25ae7d7a49394123908d4e5b1c8babb52fb09d3c00dc41292e0",
+  "writerContentSha256": "1d7254a7c86cf42b1c0bcb72df8633943782d744f757f31f80862b37d3ce27f6",
+  "originals": [
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry51-plan-completion/traces/003.json",
+      "sha256": "c0b7f6ef367921f18ed46721ea9314bb295536f0f351123a1c7df6d1d66dddef"
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry51-plan-completion/traces/004.json",
+      "sha256": "c8979f77fb5699a957b14d1934e86a13c86b09dff2ebbff36f338e7577b7286e"
+    }
+  ],
+  "sourceClosureSha256": "a421a68e1733446fc8e4b53fa101ed00111abcccb13be7661c77f053d35b6e88"
+}

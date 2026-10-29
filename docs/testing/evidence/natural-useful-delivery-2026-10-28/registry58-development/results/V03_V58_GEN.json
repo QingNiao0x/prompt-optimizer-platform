@@ -1,0 +1,55 @@
+{
+  "id": "V03_V58_GEN",
+  "phase": "GENERATION",
+  "version": "58",
+  "caseId": "V03",
+  "status": 200,
+  "body": {
+    "requestId": "V03_V58_GEN",
+    "data": {
+      "optimizedPrompt": "没有相关资料，请解释为什么同一张照片在不同屏幕上颜色不一样，并给普通用户可操作的排查建议。\n\n回答用普通用户能懂的语言，先给结论：同一张照片的颜色通常没有变，变化的是从文件颜色数值到屏幕发光、再到人眼观看的整条显示链路。解释时把这条链路讲清楚：照片文件里的颜色数值和可能内嵌的色彩描述（ICC配置文件）、屏幕面板与背光的光谱和色域、显示器和系统是否做色彩管理及如何把内容色域映射到屏幕色域、应用软件是否读取色彩配置、HDR/夜间模式/护眼模式等显示处理、亮度对比度、观看环境光和视角，都会让同一个颜色数值看起来不同。说明不同屏幕之间存在硬件和校准差异是正常现象，不能只归因于“屏幕坏了”或“照片坏了”。\n\n然后给普通用户可操作的排查建议。建议按从简单、可逆到深入的顺序编排，并说明每一步看什么、如何判断问题出在应用、系统、显示器还是环境。至少覆盖：\n- 固定变量对比：同一张照片在同一台设备的不同看图软件和浏览器中打开，观察是只有某个应用偏色，还是所有应用都偏色；再把两台屏幕调至相近亮度和显示模式并排观看。\n- 检查容易被忽略的显示设置：夜间模式、护眼模式、色彩滤镜、HDR、显示器预设模式（如标准/sRGB/鲜艳）、亮度对比度、输入范围和连接线/接口；每次只改一项并记录原设置，便于还原。\n- 检查系统色彩管理：查看当前加载的显示器颜色配置文件，先用系统标准配置或sRGB模式做可逆测试，不要直接删除或覆盖原配置。\n- 检查应用和图片：确认看图软件/浏览器是否启用色彩管理，对比支持和不支持色彩管理的应用；网页图片可留意是否内嵌色彩配置。\n- 检查观看条件：环境光色温、屏幕反光、观看角度和两台屏幕的亮度是否一致。\n- 给出判断线索：如果同一屏幕所有应用都偏，优先查系统、显示器和连接设置；只有某个应用偏，优先查该应用的色彩管理；换线或换接口后变化，优先查输出设置；不同屏幕之间始终有差异，则多为面板、背光和校准差异。\n- 最后说明普通用户不必追求两块屏幕完全一致；如果工作对颜色一致性要求高，再考虑使用校色仪、选择支持sRGB且可校准的显示器，或请专业人员校色。\n\n不要编造具体品牌、型号、参数或测试结论；无法确定具体设备原因时，用通用原理和分步自查说明。回答直接给出解释和排查步骤，不要反问用户或要求用户先补充资料。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 35614,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "58",
+      "framework": "APE",
+      "recordId": "6aa3e1f8-04da-4956-963a-7a601a3e8c65",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

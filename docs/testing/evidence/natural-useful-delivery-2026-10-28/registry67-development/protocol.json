@@ -1,0 +1,84 @@
+{
+  "batch": "natural-useful-delivery-registry67-development-2026-10-28",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 500,
+  "maximumNewActualCalls": 16,
+  "captureOnly": false,
+  "versions": [
+    "67"
+  ],
+  "candidateVersions": [
+    "67"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 0,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "45": [
+      "45"
+    ],
+    "46": [
+      "46"
+    ],
+    "47": [
+      "47"
+    ],
+    "48": [
+      "48"
+    ],
+    "49": [
+      "49"
+    ],
+    "50": [
+      "50"
+    ],
+    "51": [
+      "51"
+    ],
+    "52": [
+      "52"
+    ],
+    "54": [
+      "54"
+    ]
+  },
+  "phaseLimits": {
+    "GENERATION": 16,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "prerequisiteStages": [],
+  "allowedJobs": [
+    "P02_DIRECT_V67_GEN",
+    "V05_V67_GEN",
+    "V01_V67_GEN",
+    "Q01_V67_GEN"
+  ],
+  "naturalInferenceProfile": {
+    "name": "BODY_FIRST_REASONING_V1",
+    "version": "67",
+    "generationMaxTokens": 32768,
+    "thinking": "enabled",
+    "reasoningEffort": "high",
+    "readTimeoutSeconds": 180,
+    "runnerTimeoutMs": 1140000,
+    "planMaxTokens": 8192,
+    "planThinking": "disabled"
+  },
+  "frozenBundleSha256": "cb1279427107d3308dfe09275b431a29e6b26f3d21ddae4d1ba6af287fb88ae1",
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false
+}

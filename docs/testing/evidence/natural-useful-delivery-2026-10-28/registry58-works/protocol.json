@@ -1,0 +1,109 @@
+{
+  "batch": "natural-useful-delivery-registry58-works-2026-10-28",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 500,
+  "maximumNewActualCalls": 28,
+  "captureOnly": false,
+  "versions": [
+    "58",
+    "31"
+  ],
+  "candidateVersions": [
+    "58"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 0,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "45": [
+      "45"
+    ],
+    "46": [
+      "46"
+    ],
+    "47": [
+      "47"
+    ],
+    "48": [
+      "48"
+    ],
+    "49": [
+      "49"
+    ],
+    "50": [
+      "50"
+    ],
+    "51": [
+      "51"
+    ],
+    "52": [
+      "52"
+    ],
+    "54": [
+      "54"
+    ]
+  },
+  "phaseLimits": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 28,
+    "REVIEW": 0
+  },
+  "prerequisiteStages": [],
+  "allowedJobs": [
+    "Q01_V58_EXEC_R1",
+    "C01_V31_EXEC_R2",
+    "U02_V31_EXEC_R1",
+    "C02_V58_EXEC_R2",
+    "Q01_V58_EXEC_R2",
+    "Q01_V31_EXEC_R1",
+    "U02_V31_EXEC_R2",
+    "C02_RAW_EXEC_R2",
+    "U03_V31_EXEC_R2",
+    "U03_V58_EXEC_R1",
+    "C01_V58_EXEC_R1",
+    "U03_RAW_EXEC_R2",
+    "U02_RAW_EXEC_R2",
+    "U02_RAW_EXEC_R1",
+    "U03_V58_EXEC_R2",
+    "C01_V31_EXEC_R1",
+    "C01_RAW_EXEC_R1",
+    "U02_V58_EXEC_R2",
+    "Q01_RAW_EXEC_R1",
+    "C02_V58_EXEC_R1",
+    "Q01_RAW_EXEC_R2",
+    "U03_RAW_EXEC_R1",
+    "Q01_V31_EXEC_R2",
+    "C02_RAW_EXEC_R1",
+    "U03_V31_EXEC_R1",
+    "U02_V58_EXEC_R1",
+    "C01_RAW_EXEC_R2",
+    "C01_V58_EXEC_R2"
+  ],
+  "naturalInferenceProfile": {
+    "name": "SINGLE_PASS_REASONING_V1",
+    "version": "58",
+    "generationMaxTokens": 32768,
+    "thinking": "enabled",
+    "reasoningEffort": "high",
+    "readTimeoutSeconds": 180,
+    "runnerTimeoutMs": 420000,
+    "planMaxTokens": 8192,
+    "planThinking": "disabled"
+  },
+  "frozenBundleSha256": "94a53acf9877281157c188e03e8ad58af356baad2aa6a337bec5eb9ea2a937a6",
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false
+}

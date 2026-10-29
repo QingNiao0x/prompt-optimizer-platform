@@ -1,0 +1,54 @@
+{
+  "caseId": "Q01",
+  "scope": "三道已见开发题的内部匿名最终产品正文审阅；不是未见题、实际作品或整体采用验收。",
+  "originalInput": {
+    "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+    "context": {
+      "customDescription": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "variants": [
+    {
+      "label": "A",
+      "deliveryState": "NOT_DELIVERED",
+      "publicHttpStatus": 502,
+      "optimizedPrompt": null,
+      "publicError": {
+        "code": "RESULT_INVALID",
+        "message": "模型响应未通过结构、内容或安全校验，本次增强未完成。",
+        "retryable": false
+      }
+    },
+    {
+      "label": "B",
+      "deliveryState": "DELIVERED",
+      "publicHttpStatus": 200,
+      "optimizedPrompt": "请查询全球范围内使用AI最多的职业或行业，并给出结果。需要说明判断“使用最多”所依据的指标（如从业者中使用AI的比例、采用AI的企业数量、AI相关岗位规模或行业AI支出等），并列出排名靠前的职业或行业，附上数据来源和统计时间。若不同指标下结果不同，请分别说明。",
+      "publicError": null
+    }
+  ],
+  "criteria": {
+    "originalRequirementsAndAllowedVariants": "| 类别 | 原要求及审阅边界 |\n| --- | --- |\n| 目标 | 保持查询、比较并回答“全球使用AI最多的职业/行业”的目标，不改成只交研究步骤、让用户先收集数据，或只讨论AI对就业的影响。职业/行业两个维度不能被无说明地换成其他对象；不强制各给一份穷尽排名。 |\n| 条件与未知 | 本批没有统计资料、时间范围、使用指标或人群口径，也没有用户确认选择。不能先断言某职业/行业全球第一，不能把旧作品的百分比、特定调查或AI代理数据当本次已给事实。 |\n| 授权及可选补全 | 可补比较口径、查询时点、来源核实和不同样本可比性的处理，帮助下游真正作答；不固定报告体例、榜单数量、来源数量或某一种统计口径。不能把资料不足变成整项任务暂停。 |\n| 提示词与材料分工 | 提示词须保留原目标和必要的证据边界；将来执行材料中的原表、出处和长段统计不必逐字抄入。若证据只支持局部人群/地区或一侧维度，应保留相应限制，不能升格为全球结论。当前本批没有这些附件，不能假装已分析。 |",
+    "common": [
+      "保留原目标、事实状态、全部独立条件及真正委托范围。",
+      "补充具体处理内容和可执行要求，直接帮助原定交付；篇幅、重排或同义改写不计收益。",
+      "共享材料仍为执行输入，不要求逐句重抄；正文若主动安排相反做法，材料中的正确原句不能抵消误导。",
+      "接受原计划允许的合理设计变体；指出最小必要删改，不依赖模型自报或内部检查表。"
+    ],
+    "failureBoundary": "未交付仅计产品交付失败，不存在可审正文；不得以另一臂存在正文认定其语义胜出，不补看中间稿。"
+  },
+  "reviewRequest": "分别判断每个已交付正文的意图、硬条件、事实/建议/推断状态及有用补全，引用实际原句；两份均交付时再比较必要修改，允许持平、混合或都不通过。"
+}

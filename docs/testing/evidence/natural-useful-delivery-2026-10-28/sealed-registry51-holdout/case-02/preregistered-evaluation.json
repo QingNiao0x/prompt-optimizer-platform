@@ -1,0 +1,120 @@
+{
+  "status": "preregistered_before_any_model_generation",
+  "model_visibility": "Do not pass this evaluation card or author review to any enhancement or work-execution model.",
+  "source_of_truth": "Raw prompt plus complete shared materials; evaluate the actual work, not a self-check label.",
+  "fairness": "The original prompt may already be sufficient and a raw baseline may succeed. Do not require expansion, a preferred design, exact wording or a particular format. Extra length alone is not benefit.",
+  "evidence": "For each material error preserve the work span and relevant source. Do not infer root cause solely from where an error first appears.",
+  "author_review": "Internal author consistency review only. No external expert review or actual user editing time is claimed.",
+  "user_repair_definition": "A substantive correction a user must make before real use: correcting a material fact or status, restoring a necessary part of the requested work, removing an unavailable or unsafe dependency, or designing the missing central content. Copy preferences and harmless variants do not automatically count.",
+  "comparison": "Report serious failures and usable delivery separately from style. No answer card is sent to the executor.",
+  "case_id": "registry51-holdout-02",
+  "deliverable": "A complete five-weekday household dinner, shopping and preparation arrangement using the supplied ordinary household conditions.",
+  "requirement_gap_card": {
+    "already_specified": [
+      "三人五天晚餐、预算、已有食材、厨房与储存条件、不同日期可用时间和口味偏好。",
+      "需要能据以买菜、备餐、做饭，而不是饮食原则或空菜单。"
+    ],
+    "delegated_design": [
+      "具体菜式、搭配、食材共享、采购拆分、可执行的提前处理和当天做法。"
+    ],
+    "necessary_synthesis": [
+      "将周二十五分钟与晚归留饭、周四二十分钟与可能加人放进同一套可执行安排。",
+      "安排鲜豆腐和菠菜优先消耗，控制总采购成本与实际储存空间。"
+    ],
+    "unknowns_not_blocking": [
+      "周四亲戚是否到场未定，给条件式加量办法即可。",
+      "披萨与整周冷冻均为未确认建议，普通设计可选别的合理方案。"
+    ],
+    "must_ask_before_delivery": [],
+    "note": "菜名和品牌不属于必须先问的未知；不以没有唯一菜单认定无法交付，也不强求增强扩写。"
+  },
+  "hard_condition_card": [
+    {
+      "id": "D1",
+      "condition": "交付周一至周五三人晚餐的完整具体安排，含能支持采购、提前处理和当天开饭的信息，不能只列原则、空菜单或把菜式设计留给用户。"
+    },
+    {
+      "id": "D2",
+      "condition": "总体采购估计在三百五十元内，已给食材和基础调味品合理扣除或标明，不能把预算当成每日额度。数量和价格允许合理近似，不要求实时比价或精确称重。"
+    },
+    {
+      "id": "D3",
+      "condition": "在已有两灶、电饭煲和普通锅具下可做，不依赖烤箱、空气炸锅、额外洗切设备或新买大件。"
+    },
+    {
+      "id": "D4",
+      "condition": "尊重各晚可用时间，尤其周二十五分钟、周四二十分钟；需提前完成的步骤有可行安排，周日集中准备在约五十分钟内，不能用未说明的预处理伪造速度。"
+    },
+    {
+      "id": "D5",
+      "condition": "鲜豆腐与菠菜在前两天优先安排，储存和共享食材符合有限冰箱空间，不把一周大量成品默认全冷冻，生熟分开。无需对所有现有食材强行清空。"
+    },
+    {
+      "id": "D6",
+      "condition": "照顾不辣、避免明显鱼刺和不放香菜等偏好，三人可以共吃正餐，不把普通偏好写成过敏或疾病限制。"
+    },
+    {
+      "id": "D7",
+      "condition": "周二能给晚归大人留一份便于加热的晚餐；不另做完整第二餐，留放方式应可理解且安全。"
+    },
+    {
+      "id": "D8",
+      "condition": "周四先按三人安排，并给确认加人后的简单加量或补菜办法；不能将未定来客当成已确认四人或因其未定推迟整周交付。"
+    },
+    {
+      "id": "D9",
+      "condition": "披萨和整周冷冻只是建议，不是硬性方案。可以不选；如果选用，需仍满足现有厨具、储存、预算和时间。"
+    }
+  ],
+  "reasonable_design_variants": [
+    "可用米饭、面、炒饭、焖饭、汤面或其他普通家常组合，允许合理重复和变化，不要求固定荤素比例或几菜一汤。",
+    "可以不用鱼；若使用容易处理的少刺鱼肉，也可通过合理采购与做法满足偏好。",
+    "可在周日切配、分份、预煮部分食材，也可少量提前烹调，只要五十分钟和储存空间真实可行。",
+    "可以一次主采购加周三少量补买，也可在储存允许下减少补买；数量和总价只需可信估计。",
+    "周四额外一人可以通过加主食、添蛋豆类小菜或其他普通做法处理，不存在指定备用菜。",
+    "可用一张整合表，也可按日期写步骤并给采购和准备段落；没有必须使用的栏目名、字数或营养数值。"
+  ],
+  "substantive_user_modification_card": [
+    {
+      "type": "缺失核心设计",
+      "examples": [
+        "五天只写主食加蛋白质加蔬菜但不选菜",
+        "只有菜名，没有采购与预处理信息，用户仍需从头统筹",
+        "把所有实际做法留成自行安排"
+      ]
+    },
+    {
+      "type": "资源与时间修正",
+      "examples": [
+        "周二现场从零炖煮四十五分钟且无提前安排",
+        "依赖烤箱做唯一周五主餐",
+        "计划冷冻十余盒成品而不处理空间限制",
+        "五天采购金额明显超出三百五十元且无替代"
+      ]
+    },
+    {
+      "type": "重要条件修正",
+      "examples": [
+        "前两天完全没有处理豆腐和菠菜却安排存到周五",
+        "周二只按先吃两人的份量做饭",
+        "把周四来客写成已确认并改成全周四人",
+        "连续三晚直接吃同一锅成品或必须每人另做一餐"
+      ]
+    },
+    {
+      "type": "事实与安全修正",
+      "examples": [
+        "把不喜欢香菜说成过敏并扩大医学禁忌",
+        "整份计划靠没有说明的提前处理撑住时限",
+        "将晚归饭菜默认长时间保温在不明确条件下且不给可用留放方式"
+      ]
+    }
+  ],
+  "quality_observations": [
+    "家人能否少作临时决定就完成买菜和做饭，已有食材与采购量是否互相对得上。",
+    "备餐是否真的降低周二和周四负担，而非把大量未核算工作藏到周日。",
+    "菜式是否普通可做、口味有适度变化、不过度采购一次性用料。",
+    "替代办法是否只处理现实的不确定性，而不扩成庞大菜单或专业营养方案。",
+    "不因更长、表格更多、声称更健康或新增精确热量而自动加分。"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "status": "SEALED_DO_NOT_EXECUTE_OR_OPEN_BEFORE_GATES",
+  "opensOnlyAfter": ["The root records fresh version54 Plan gates passing", "The root records fresh version54 normal gates passing", "The engineering freeze SHA-256 still matches the author-bound freeze"],
+  "authority": "This seal pre-registers comparison conditions only. It adds no call authorization and does not reopen prior stages. The root must freeze actual per-stage allowances under the existing remaining task total before calls, counting all native generation stages, repairs, failures and works.",
+  "arms": ["ORIGINAL", "31", "54"],
+  "enhancement": {
+    "jobCount": 4,
+    "perCase": "One native generation job for31 and one for54; preserve the native chain and all actual calls, without simulating a cheaper chain or hiding repair calls.",
+    "modelId": "deepseek:deepseek-flash",
+    "upstreamModel": "deepseek-v4-flash",
+    "endpoint": "https://api.deepseek.com/chat/completions",
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": "disabled",
+    "stream": false,
+    "promptFormat": "COMPACT",
+    "includeConversationHistory": false,
+    "includePermissionBoundaries": true,
+    "qualityRetries": 0,
+    "baselineRule": "Freeze and record the actual31 implementation/guidance hashes before native generation, after the prior gates but before any output.54 remains bound to the already-authorized engineering freeze. A changed candidate requires a new holdout, not reuse as unseen."
+  },
+  "works": {
+    "caseCount": 2,
+    "armsPerCase": 3,
+    "independentPreRegisteredRepeatsPerArm": 2,
+    "preRegisteredMaximumInitialCallCount": 12,
+    "maximumCondition": "Only if each corresponding actual prompt passes its product gate. Failed-gate jobs remain pre-registered but unexecuted; no replacement or filling calls.",
+    "modelId": "deepseek:deepseek-flash",
+    "upstreamModel": "deepseek-v4-flash",
+    "endpoint": "https://api.deepseek.com/chat/completions",
+    "temperature": 0.2,
+    "max_tokens": 4500,
+    "thinking": "disabled",
+    "stream": false,
+    "system": "你是本次任务的执行者。请直接完成用户任务，在回复中给出可使用的成品。附件是各次执行共享的完整材料。本轮只交回复正文，不进行发布、采购、文件写入或外部系统操作，不联网。",
+    "qualityRetries": 0,
+    "repairCalls": 0,
+    "reviewModelCalls": 0,
+    "materialRule": "For each case, every arm/repeat gets the exact same complete ordered material bytes, contextDescription, actual answers (empty in both cases) and execution system. ORIGINAL gets the rawPrompt;31/54 get their actual final copied prompt. No answer key, review criteria, candidate analysis or source projection is sent to work calls.",
+    "repeatRule": "Each repeat is an independent pre-registered first execution. Reuse the same frozen prompt within its arm, not a newly sampled enhancement. Do not overwrite failures or truncate/timeout responses by rerunning.",
+    "anonymousOrderFile": "PRIVATE_COORDINATOR_ONLY_HASH_BOUND_IN_SEAL",
+    "reviewPacketBoundary": "Anonymous labels and order are pre-registered privately. Do not put arm/version mapping into public criteria, reviewer packet bodies or original sealed payload files."
+  },
+  "productGate": {
+    "beforeAnyWorkCall": true,
+    "requirements": "Complete actual prompt-product checks before works; semantic gate uses the original request and all inputs, not only parser/HTTP or coverage labels. Capture real UI/copy/history evidence where required by the main protocol.",
+    "failedPrompt": "Do not execute paid works for a prompt that fails its product gate. Preserve it and report incomplete corresponding comparisons; never turn an absent/failed baseline into a candidate win. No quality retry or fixture rewrite.",
+    "limitedProtocolRepairs": "Only native, predeclared protocol repair already allowed by the stage may run, with every call counted. It is not permission for semantic retry."
+  },
+  "review": {
+    "input": "Original raw request, exact same materials/answers/permissions and anonymous actual full works only; hide arms, strategy and model/provider brands until judgments are locked. Retain original fictional scenario names as input facts.",
+    "criteriaProjection": "Give reviewers only the common work-review rules and the applicable case requirements/usefulness/design-space criteria; exclude author/provenance metadata, arm lists, coordinator mapping and optimizer-specific product-check reports. This projection must not rewrite the frozen substantive criteria.",
+    "reference": "review-criteria.json",
+    "firstRecord": "Textual required edits and evidence, severe failures and win/tie/loss/both-fail/undetermined; then compare pre-registered repeats and disclose internal evaluation limits.",
+    "forbidden": "No posterior thresholds, hidden required headings, ideal-answer matching, replacement samples, invented editor time, or relaxing old failures."
+  }
+}

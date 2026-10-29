@@ -1,0 +1,107 @@
+{
+  "id": "C02_V46_GEN",
+  "phase": "GENERATION",
+  "version": "46",
+  "caseId": "C02",
+  "status": 200,
+  "body": {
+    "requestId": "C02_V46_GEN",
+    "data": {
+      "optimizedPrompt": "请在重点记录模块 `synthetic-survey-workspace/src/views/records` 的新增和导入功能中增加调查时间限制：调查时间不能超过今天。\n\n当前 `dateRules.js` 中的 `validateSurveyDate(value, today)` 只校验日期格式和日历有效性，需要在此基础上增加“晚于今天”的校验，并返回一个明确的错误代码，供新增表单和导入行提示使用。`create.js` 的 `createSurvey` 和 `import.js` 的 `importSurveys` 都通过该函数校验 `surveyDate`，请让两个入口都应用这一新限制，同时保持现有行为：新增失败时返回字段错误，成功时保留调用者给出的其他字段；导入保持按行部分成功，无效日期只影响所属行，不改变其他记录。\n\n本次只允许修改 `src/views/records/dateRules.js`、`src/views/records/create.js`、`src/views/records/import.js`；不得新增文件，也不得修改测试文件或其他文件。完成后请说明改动内容，以及新增和导入两个入口在“调查时间晚于今天”时的返回结果。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [
+          {
+            "name": "Node.js",
+            "source": "package.json",
+            "confidence": 0.9
+          }
+        ],
+        "dependencies": [],
+        "directoryTree": [
+          "package.json",
+          "src/",
+          "src/views/",
+          "src/views/records/",
+          "src/views/records/create.js",
+          "src/views/records/dateRules.js",
+          "src/views/records/dateRules.spec.js",
+          "src/views/records/import.js"
+        ],
+        "fileSnippets": [
+          {
+            "path": "src/views/records/import.js",
+            "language": "javascript",
+            "content": "[片段 1/1]\nimport { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n",
+            "summary": "JavaScript代码文件，主要定义：importSurveys、inserted、errors、code。关键内容：import { validateSurveyDate } from './dateRules.js';；/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。",
+            "truncated": false
+          },
+          {
+            "path": "src/views/records/create.js",
+            "language": "javascript",
+            "content": "[片段 1/1]\nimport { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n",
+            "summary": "JavaScript代码文件，主要定义：createSurvey、error。关键内容：import { validateSurveyDate } from './dateRules.js';；/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。",
+            "truncated": false
+          },
+          {
+            "path": "src/views/records/dateRules.js",
+            "language": "javascript",
+            "content": "[片段 1/1]\n/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n",
+            "summary": "JavaScript代码文件，主要定义：validateSurveyDate、parsed。关键内容：/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。；*/",
+            "truncated": false
+          },
+          {
+            "path": "src/views/records/dateRules.spec.js",
+            "language": "javascript",
+            "content": "[片段 1/1]\nimport assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n",
+            "summary": "JavaScript代码文件，主要定义：input、first。关键内容：import assert from 'node:assert/strict';；import { test } from 'node:test';",
+            "truncated": false
+          },
+          {
+            "path": "package.json",
+            "language": "json",
+            "content": "[片段 1/1]\n{\n  \"name\": \"synthetic-survey-workspace\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": { \"test\": \"node --test src/views/records/dateRules.spec.js\" }\n}\n",
+            "summary": "Node.js 项目清单。{；\"name\": \"synthetic-survey-workspace\",；\"type\": \"module\",；\"scripts\": { \"test\": \"node --test src/views/records/dateRules.spec.js\" }；}",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 6649,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "46",
+      "framework": "APE",
+      "recordId": "e63f0890-0c53-45a9-8a59-aa33274905b1",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

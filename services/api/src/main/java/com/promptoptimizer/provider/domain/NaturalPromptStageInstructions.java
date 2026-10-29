@@ -78,6 +78,8 @@ public final class NaturalPromptStageInstructions {
                 || NaturalPromptContentScopeInstructions.VERSION.equals(version)
                 || VERSION.equals(version) || OPTIONAL_FRAMEWORK_VERSION.equals(version) || NO_FRAMEWORK_VERSION.equals(version)
                 || DIAGNOSTIC_COMPATIBILITY_VERSION.equals(version) || NaturalPromptActionContractInstructions.VERSION.equals(version)
+                || NaturalPromptSinglePassInstructions.supports(version)
+                || NaturalPromptBodyFirstInstructions.supports(version)
                 || NaturalPromptScopedInstructions.supports(version);
     }
 
@@ -89,7 +91,9 @@ public final class NaturalPromptStageInstructions {
                 || NaturalPromptIntentCompletionInstructions.VERSION.equals(version)
                 || NaturalPromptContentScopeInstructions.VERSION.equals(version)) return false;
         return VERSION.equals(version) || DIAGNOSTIC_COMPATIBILITY_VERSION.equals(version)
-                || NaturalPromptActionContractInstructions.VERSION.equals(version) || NaturalPromptScopedInstructions.supports(version);
+                || NaturalPromptActionContractInstructions.VERSION.equals(version)
+                || NaturalPromptSinglePassInstructions.supports(version) || NaturalPromptBodyFirstInstructions.supports(version)
+                || NaturalPromptScopedInstructions.supports(version);
     }
 
     /** 24及其动作契约候选沿用相同诊断兼容；已知语义字段、来源和跨阶段字段仍严格校验。 */
@@ -98,12 +102,16 @@ public final class NaturalPromptStageInstructions {
                 || NaturalPromptIntentCompletionInstructions.VERSION.equals(version)
                 || NaturalPromptContentScopeInstructions.VERSION.equals(version)
                 || DIAGNOSTIC_COMPATIBILITY_VERSION.equals(version) || NaturalPromptActionContractInstructions.VERSION.equals(version)
+                || NaturalPromptSinglePassInstructions.supports(version)
+                || NaturalPromptBodyFirstInstructions.supports(version)
                 || NaturalPromptScopedInstructions.supports(version);
     }
 
     /** 21—23逐一消融协议、框架必填及框架指导；24必须逐字复用21，兼容处理仅发生在读取端。 */
     public static String enhancementInstruction(String version) {
         if (!supports(version)) throw new IllegalArgumentException("分阶段自然增强版本不受支持");
+        if (NaturalPromptSinglePassInstructions.supports(version)) return NaturalPromptSinglePassInstructions.enhancementInstruction(version);
+        if (NaturalPromptBodyFirstInstructions.supports(version)) return NaturalPromptBodyFirstInstructions.bodyInstruction(version);
         if (NaturalPromptContentScopeInstructions.VERSION.equals(version)) return NaturalPromptContentScopeInstructions.ENHANCE;
         if (NaturalPromptIntentCompletionInstructions.VERSION.equals(version)) return NaturalPromptIntentCompletionInstructions.ENHANCE;
         if (NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION.equals(version)) return NaturalPromptInstructions.ENHANCE;
@@ -121,12 +129,17 @@ public final class NaturalPromptStageInstructions {
     /** 阶段候选使用同一Plan协议，解析兼容和框架消融不改变提问要求或真实题答绑定。 */
     public static String planningInstruction(String version) {
         if (!supports(version)) throw new IllegalArgumentException("分阶段自然Plan版本不受支持");
+        if (NaturalPromptSinglePassInstructions.supports(version)) return NaturalPromptSinglePassInstructions.PLAN;
+        if (NaturalPromptBodyFirstInstructions.supports(version)) return NaturalPromptBodyFirstInstructions.PLAN;
         if (NaturalPromptContentScopeInstructions.VERSION.equals(version)) return NaturalPromptContentScopeInstructions.PLAN;
         if (NaturalPromptIntentCompletionInstructions.VERSION.equals(version)) return NaturalPromptIntentCompletionInstructions.PLAN;
         if (NaturalPromptScopedInstructions.supports(version)) return NaturalPromptScopedInstructions.PLAN;
         if (NaturalPromptActionContractInstructions.VERSION.equals(version)) return NaturalPromptActionContractInstructions.PLAN;
         return PLANNING_GUIDANCE + PLANNING_PROTOCOL;
     }
+
+    /** 54复用既有增强wire文本，调用方仅替换成果说明；原24指导和字段契约均不重新生成。 */
+    static String enhancementTaskProtocol() { return ENHANCEMENT_PROTOCOL; }
 
     /** 定位冻结指导中的唯一边界，避免字符串模板漂移被当成协议单变量。 */
     private static int boundary(String source, String marker) {

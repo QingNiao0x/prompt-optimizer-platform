@@ -1,0 +1,65 @@
+{
+  "batch": "natural-useful-delivery-registry51-plan-completion-2026-10-28",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 500,
+  "maximumNewActualCalls": 8,
+  "captureOnly": false,
+  "versions": [
+    "51"
+  ],
+  "candidateVersions": [
+    "51"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 0,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "45": [
+      "45"
+    ],
+    "46": [
+      "46"
+    ],
+    "47": [
+      "47"
+    ],
+    "48": [
+      "48"
+    ],
+    "49": [
+      "49"
+    ],
+    "50": [
+      "50"
+    ],
+    "51": [
+      "51"
+    ]
+  },
+  "phaseLimits": {
+    "GENERATION": 8,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "prerequisiteStages": [],
+  "allowedJobs": [
+    "P01_V51_CONFIRMED_GEN",
+    "P02_V51_CONFIRMED_GEN"
+  ],
+  "frozenBundleSha256": "80c70588615917af987535c2a2c0fdc37ea76d0be46c2221054afb1bb60e100d",
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false
+}

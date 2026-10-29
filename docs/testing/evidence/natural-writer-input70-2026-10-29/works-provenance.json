@@ -1,0 +1,114 @@
+{
+  "provenance": [
+    {
+      "caseId": "W70-N1",
+      "sources": [
+        {
+          "version": "31",
+          "path": "new-31/results/W70-N1_V31_GEN.json",
+          "sha256": "66157f91419d144da669887d095fe31e4622c7fd4eec2dba985f26ff227d3956",
+          "firstDeliveredBodyUsed": true,
+          "qualitySelection": false,
+          "processing": {
+            "completedStages": [
+              "SCOPE_ANALYSIS",
+              "BODY_GENERATION"
+            ],
+            "originalPreserved": false
+          }
+        },
+        {
+          "version": "69",
+          "path": "new-69/results/W70-N1_V69_GEN.json",
+          "sha256": "099e9e7e95bc336b23fc7349c012f78028bc1a0126cace88b532241206c1bcba",
+          "firstDeliveredBodyUsed": true,
+          "qualitySelection": false,
+          "processing": {
+            "completedStages": [
+              "REQUIREMENT_PREPARATION",
+              "BODY_GENERATION",
+              "RECORD_LINKING"
+            ],
+            "originalPreserved": false
+          }
+        },
+        {
+          "version": "70",
+          "path": "new-70-allocated/results/W70-N1_V70_GEN.json",
+          "sha256": "9447da184522e83bab63ad1eea1ecf1fc9d27af0f9c52ce28a928e9367082311",
+          "firstDeliveredBodyUsed": true,
+          "qualitySelection": false,
+          "processing": {
+            "completedStages": [
+              "REQUIREMENT_PREPARATION",
+              "BODY_GENERATION",
+              "RECORD_LINKING"
+            ],
+            "originalPreserved": false
+          }
+        }
+      ],
+      "commonMaterialSha256": "d47f9e31496a56383f663d70afc7ed8966c8c7e7e03a98179a8350ad79a36229",
+      "commonSystemSha256": "3f2e697f89fff90ce3832122059cfbdcd696e9e0525adbc19d9b8e86d9081169",
+      "onlyPromptDiffersWithinCase": true,
+      "reviewerCriteriaInModelInput": false
+    },
+    {
+      "caseId": "W70-N2",
+      "sources": [
+        {
+          "version": "31",
+          "unavailable": true,
+          "status": 502,
+          "sha256": "40a8d758d992034b13b7af169403289e8fd696c0e48a5d8b7fbbe6fe9741ac8b"
+        },
+        {
+          "version": "69",
+          "unavailable": true,
+          "status": 500,
+          "sha256": "a346ace61660bfab1cf86bfaa0699a84d31a8b417a31ef0fb3419761a658bb7d"
+        },
+        {
+          "version": "70",
+          "path": "new-70-allocated/results/W70-N2_V70_GEN.json",
+          "sha256": "a05f0964fd9494055174925db80ffc7c04ef5e709b559b62d724b26cc2a2f1bd",
+          "firstDeliveredBodyUsed": true,
+          "qualitySelection": false,
+          "processing": {
+            "completedStages": [
+              "REQUIREMENT_PREPARATION",
+              "BODY_GENERATION",
+              "RECORD_LINKING"
+            ],
+            "originalPreserved": false
+          }
+        }
+      ],
+      "commonMaterialSha256": "4eb753a47003c6b7ec01b54a383a69b59f4b25a52034fa9967ccfd908f5e1033",
+      "commonSystemSha256": "3f2e697f89fff90ce3832122059cfbdcd696e9e0525adbc19d9b8e86d9081169",
+      "onlyPromptDiffersWithinCase": true,
+      "reviewerCriteriaInModelInput": false
+    }
+  ],
+  "unavailableArms": [
+    {
+      "caseId": "W70-N2",
+      "version": "31",
+      "status": 502,
+      "errorCode": "RESULT_INVALID",
+      "sourceSha256": "40a8d758d992034b13b7af169403289e8fd696c0e48a5d8b7fbbe6fe9741ac8b",
+      "downstreamWorks": 0
+    },
+    {
+      "caseId": "W70-N2",
+      "version": "69",
+      "status": 500,
+      "errorCode": "INTERNAL_ERROR",
+      "sourceSha256": "a346ace61660bfab1cf86bfaa0699a84d31a8b417a31ef0fb3419761a658bb7d",
+      "downstreamWorks": 0
+    }
+  ],
+  "fullFourArmComparisonAvailable": false,
+  "allAvailableFirstTwoRepetitionsIncluded": true,
+  "qualityRetries": 0
+}

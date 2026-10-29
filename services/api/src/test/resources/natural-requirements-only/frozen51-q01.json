@@ -1,0 +1,36 @@
+{
+  "description": "Actual closed51 Q01 preparation and final writer, immutable strings; synthetic53 fixtures only test protocol construction, not real extraction",
+  "originalInput": {
+    "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+    "context": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [],
+      "fileSnippets": [],
+      "analysisStatus": "EMPTY",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "actualAnswers": [],
+    "conversation": [],
+    "mandatoryRules": [],
+    "modelId": "deepseek:deepseek-flash",
+    "planningContext": null,
+    "strategyVersion": "51"
+  },
+  "preparationContent": "{\"actions\":[{\"text\":\"查询全球使用AI最多的职业/行业\",\"timing\":\"CURRENT\",\"condition\":\"\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请帮我查询全球使用AI最多的职业/行业\"}]}],\"response\":{\"basis\":\"EXPLICIT\",\"description\":\"查询并给出全球使用AI最多的职业/行业的结果\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请帮我查询全球使用AI最多的职业/行业\"}]},\"requirements\":[{\"text\":\"查询范围为全球\",\"dimensions\":[\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请帮我查询全球使用AI最多的职业/行业\"}]},{\"text\":\"查询对象为使用AI最多的职业/行业\",\"dimensions\":[\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请帮我查询全球使用AI最多的职业/行业\"}]}]}",
+  "writerContent": "{\"optimizedPrompt\":\"请帮我查询全球范围内使用AI最多的职业和行业，并给出查询结果。结果中请说明哪些职业或行业在AI使用上排名靠前，并尽量交代判断依据，例如所依据的统计数据、调查或报告来源、统计口径（如使用频率、采用率或使用人数）以及大致时间范围；如果不同来源的结论不一致，请说明差异。若无法获得可靠的全球性数据，请如实说明数据缺口，不要编造来源或数字。\",\"framework\":\"APE\",\"goal\":\"查询全球使用AI最多的职业/行业并给出结果\",\"deliverable\":\"全球使用AI最多的职业/行业的查询结果，含排名靠前的职业/行业及判断依据说明\",\"inputReadiness\":\"SUFFICIENT\",\"coverage\":[{\"reqId\":\"r0\",\"bodyQuotes\":[\"请帮我查询全球范围内使用AI最多的职业和行业\"]},{\"reqId\":\"r1\",\"bodyQuotes\":[\"请帮我查询全球范围内使用AI最多的职业和行业，并给出查询结果\"]}],\"requirementChanges\":[],\"additions\":[{\"text\":\"结果中说明排名靠前的职业/行业及判断依据，包括统计来源、统计口径和时间范围，并说明来源间差异\",\"gap\":\"原需求未说明结果应如何呈现，执行者可能只给结论而缺少依据\",\"benefit\":\"让查询结果可核验、可比较，直接满足用户对“最多”的判断需求\",\"bodyQuotes\":[\"结果中请说明哪些职业或行业在AI使用上排名靠前，并尽量交代判断依据\"]},{\"text\":\"无法获得可靠全球数据时如实说明数据缺口，不编造来源或数字\",\"gap\":\"全球性AI使用数据可能不完整或口径不一，需明确处理方式\",\"benefit\":\"避免给出无依据的排名，保证结果可信\",\"bodyQuotes\":[\"若无法获得可靠的全球性数据，请如实说明数据缺口，不要编造来源或数字\"]}],\"openDecisions\":[]}",
+  "sources": [
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry51-development/traces/001.json",
+      "sha256": "7390f5a428eeb92248d3b72cdfbd47433fc2f14655ee13aeb996344d541bbd13"
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry51-development/traces/003.json",
+      "sha256": "bcecbbc9076cdf29a8cd27b533b70e476c754e51de37618915215d139827837d"
+    }
+  ]
+}

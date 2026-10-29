@@ -1,0 +1,52 @@
+{
+  "status": "FROZEN",
+  "experimentProfile": "SINGLE_PASS54_THINKING_V1",
+  "versions": [
+    "54"
+  ],
+  "maximumNewActualCalls": 2,
+  "phaseLimits": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 2,
+    "REVIEW": 0
+  },
+  "allowedJobs": [
+    "P02_CONFIRMED_54_OFF",
+    "P02_CONFIRMED_54_ON"
+  ],
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "actualAtFreeze": 209,
+  "taskMaximum": 500,
+  "model": "deepseek-flash",
+  "outputCap": 32768,
+  "thinkingArms": [
+    "OFF",
+    "ON"
+  ],
+  "sourceTrace": {
+    "path": "tmp/natural-useful-delivery-2026-10-28/registry54-confirmed-generation-recovery-r3/traces/001.json",
+    "sha256": "f150e526f9b1d0474ed9ee274ecbbf05ae029d7db994580be08d1cecfe5eac60"
+  },
+  "frozenScriptSha256": "b05082b790ecb5f0a95ca01e7392ba12294196737adb2abc7f0d69b7488209fb",
+  "jobsSha256": "7a3de14088daffab6b3fe70e65c5b802a9598a14f5dff5e1c9f8431f43a60919",
+  "qualityRetriesAllowed": false,
+  "protocolRepairsAllowed": false,
+  "actualWorkEvidence": false,
+  "stoppingRule": "Run one OFF and one ON, retain all outputs; do not run UNKNOWN or works on severe ON error.",
+  "acceptance": "Inspect final prompt and task separately: confirmed current condition, original independent restrictions, no authorization expansion; parsing alone is insufficient.",
+  "unchanged": [
+    "full system and user messages",
+    "source material",
+    "actual bound question and answer",
+    "model",
+    "temperature",
+    "stream",
+    "JSON response format"
+  ],
+  "changed": [
+    "max_tokens 8192 to 32768 in both arms",
+    "ON only: thinking enabled and reasoning_effort high"
+  ],
+  "source": "https://api-docs.deepseek.com/guides/thinking_mode/"
+}

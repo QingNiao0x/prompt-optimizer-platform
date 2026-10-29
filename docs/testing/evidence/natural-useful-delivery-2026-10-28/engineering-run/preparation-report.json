@@ -1,0 +1,75 @@
+{
+  "status": "PREPARED_ONLY",
+  "caseId": "E01",
+  "modelCalls": 0,
+  "capture": "capture/r3-E01",
+  "sourceManifestVerifiedFiles": 44,
+  "selectedDirectoryFiles": 30,
+  "indexedFiles": 30,
+  "enhancementSelectedFiles": 13,
+  "enhancementContextCharacters": 15812,
+  "indexedMiss": [],
+  "targetMiss": [],
+  "recursiveDependencyMiss": [
+    "src/data/memoryLoanRepository.ts",
+    "src/data/seed.ts"
+  ],
+  "selectedNoise": [],
+  "targetCoverage": "PASS",
+  "recursiveDependencyCoverage": "PARTIAL",
+  "fullProjectSentToEnhancer": false,
+  "dtoEnriched": false,
+  "absentFilesClaimedAnalyzed": false,
+  "atSyntaxValidation": false,
+  "promptUiEqualsSealed": true,
+  "transportNormalization": "existing trim removes one terminal LF only",
+  "generationBundle": "generation-bundle.json",
+  "generationBundleSha256": "0bace5c3e9834cf8f0dc09f41354febd599b099784d31cf7162168765599fb80",
+  "generationJobs": [
+    "E01_V31_GEN",
+    "E01_V47_GEN"
+  ],
+  "generationPhaseLimit": 8,
+  "generationMaxTokens": 8192,
+  "executionProject": "execution-project.json",
+  "executionProjectSha256": "20bc837311633b5477dd8eed00d6ebc3ea9173027045afdd496600137c8bd569",
+  "executionWholeFiles": 30,
+  "executorOnlyUnseenFiles": 17,
+  "executorOnlyAndSharedContentDuplicates": [],
+  "executionArms": [
+    "ORIGINAL",
+    "V31",
+    "V47"
+  ],
+  "executionMaxTokens": 10000,
+  "executionOriginalPrompt": "sealed full text including terminal LF",
+  "allowedPaths": "execution-contract.json",
+  "liveBrowserScript": "live-browser.mjs",
+  "liveBrowserScriptSha256": "627e99fa11f233a93c28588660ed5d411425c8fd09fa93cc5ea2189a18e40aec",
+  "liveBrowserExecuted": false,
+  "liveBrowserExactJob": "E01_V47_GEN",
+  "liveBrowserRequires": "LOGIN_READY plus explicit root/infrastructure exclusive notification; no CLI concurrency",
+  "liveBrowserGuards": [
+    "frozen protocol/bundle",
+    "candidate source hashes",
+    "runtime class/source-pack manifest hashes",
+    "engineering manifest hashes",
+    "fixed real account auth",
+    "exact actual DTO",
+    "one business POST, no retry",
+    "version47 and BODY_GENERATION and mock=false",
+    "display, clipboard, actual history and exact UI record"
+  ],
+  "toolFailuresRetained": [
+    {
+      "directory": "capture/E01",
+      "reason": "browser loopback network access denied before workbench"
+    },
+    {
+      "directory": "capture/r2-E01",
+      "reason": "tool exact-string assertion rejected the existing single-terminal-LF normalization before DTO/retrieval save"
+    }
+  ],
+  "productOrSealedFilesModified": false,
+  "claimsBusinessQualityPass": false
+}

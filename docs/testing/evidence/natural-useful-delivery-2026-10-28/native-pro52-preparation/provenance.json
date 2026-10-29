@@ -1,0 +1,38 @@
+{
+  "actualModelCalls": 0,
+  "taskActual": 198,
+  "sources": [
+    {
+      "caseId": "P02_CONFIRMED",
+      "sourceTrace": "registry52-plan-completion/traces/001.json",
+      "sourceTraceSha256": "c854f59468e241fe0faa1b0e60f6300d5623b9ae36b116d7f7a541bcf55cb84c",
+      "requestSha256": "d0e8e2b9178fcd505879013a0ce9428a267005cf3e7670b8170ca388fb3b4a66",
+      "onlyTopLevelModelChanged": true,
+      "innerModelIdIsHistoricalMetadata": "deepseek:deepseek-flash",
+      "actualUpstreamModel": "deepseek-v4-pro",
+      "notAProductProPlan": true
+    },
+    {
+      "caseId": "P02_UNKNOWN",
+      "sourceTrace": "registry52-plan-completion/traces/003.json",
+      "sourceTraceSha256": "0c3554a113cd4ed02aa5cd01b531dffa41c8db2d9dea5c25be1cd645df39ed22",
+      "requestSha256": "61323ab3bfb3f0c2978beeba654dedd96e83a2383d5cb98196627a5bdecf1a6b",
+      "onlyTopLevelModelChanged": true,
+      "innerModelIdIsHistoricalMetadata": "deepseek:deepseek-flash",
+      "actualUpstreamModel": "deepseek-v4-pro",
+      "notAProductProPlan": true
+    }
+  ],
+  "profile": {
+    "name": "NATIVE_PRO52_PREPARE_MECHANISM_V1",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "upstreamModel": "deepseek-v4-pro",
+    "routeKey": "deepseek",
+    "endpoint": "https://api.deepseek.com/chat/completions",
+    "baselineStage": "registry52-plan-completion",
+    "baselineJobsSha256": "ee1c13561f21cb3269ed9ad81d538ebe11f150c2e6b6638e18aae003dd61f79e",
+    "baselineProtocolSha256": "d734df85301d071b1be687cf35cf4e7662aef3152c1a591c654d3ad8b868a679",
+    "maximumActualCalls": 2
+  },
+  "scope": "No hint or additional message; no new facts, registry, policy, system, parameters, endpoint or product change."
+}

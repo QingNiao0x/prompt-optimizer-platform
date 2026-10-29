@@ -1,0 +1,49 @@
+{
+  "syntheticOnly": true,
+  "cases": [
+    {
+      "id": "P01",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：调查时间不能超过今天。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "contextDescription": "",
+      "actualPlanId": "92116483-d209-43d1-84dc-adf29400cf48",
+      "actualContextReference": {
+        "contextId": "94fd15b6-674c-4e7e-868c-9aef2f7aa091",
+        "version": "sha256:4d27cdad8594de279b2aa21e0dd3f225736891d4b3b7187151aa56e2617f1593"
+      },
+      "actualPlanExpiresAt": "2026-10-27T23:15:17.142399Z",
+      "actualQuestionCount": 0,
+      "actualAnswers": [],
+      "origin": "Real owned51 Plan+explicit authorized synthetic operator selection; complete original prepare material retained. Service protocol, not full UI Plan-answer clicking.",
+      "requiredChecks": [
+        "Preserve both entry points and exact allowed-write scope",
+        "P02 actual confirmed<=today overrides original unresolved contradiction only for this same date boundary",
+        "No full-source paste or invented material/state"
+      ]
+    },
+    {
+      "id": "P02",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "contextDescription": "",
+      "actualPlanId": "90cc2066-e782-4976-a9e6-c044b9a1364f",
+      "actualContextReference": {
+        "contextId": "129f4306-ab89-44c4-ac73-0835f61bb776",
+        "version": "sha256:0e2c7ef193875980f1d3c1882e18829aa84ee0e6fc0eafca49452dfbc8ea6dd7"
+      },
+      "actualPlanExpiresAt": "2026-10-27T23:15:41.761645900Z",
+      "actualQuestionCount": 1,
+      "actualAnswers": [
+        {
+          "questionId": "q1",
+          "question": "调查日期是否允许填写今天（等于 today 的日期）？",
+          "answer": "今日允许填写：校验条件为调查日期不晚于 today（value <= today），今天通过、未来日期报错"
+        }
+      ],
+      "origin": "Real owned51 Plan+explicit authorized synthetic operator selection; complete original prepare material retained. Service protocol, not full UI Plan-answer clicking.",
+      "requiredChecks": [
+        "Preserve both entry points and exact allowed-write scope",
+        "P02 actual confirmed<=today overrides original unresolved contradiction only for this same date boundary",
+        "No full-source paste or invented material/state"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": "ATC01_TASK_DESIGN",
+  "phase": "EXECUTION",
+  "version": "46",
+  "caseId": "ATC01",
+  "status": 200,
+  "body": {
+    "requestId": "ATC01_TASK_DESIGN",
+    "data": {
+      "content": "{\"optimizedPrompt\":\"请在重点记录模块 synthetic-survey-workspace/src/views/records 的新增和导入功能中增加调查时间限制：调查时间不能超过今天。\\n\\n当前 dateRules.js 的 validateSurveyDate 只校验字符串格式和是否为真实日历日期，create.js 的新增与 import.js 的导入都通过它做字段校验；请在该共用校验中补上“晚于今天即不通过”的判断，使新增和导入两个入口都生效。新增入口应继续返回字段错误结构，导入入口应继续按行部分成功：无效日期只影响所属行，其他有效行照常插入，错误仍带行号、字段名和错误代码。请沿用现有错误代码风格，为“超过今天”给出可区分的错误代码，并让表单和导入行提示能据此区分格式错误与超期错误；比较时以传入的 today 为基准，按日历日期比较，避免时区导致边界日误判。\\n\\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。请在 dateRules.spec.js 中补充覆盖：调查日期等于今天可通过、晚于今天被拒绝（新增返回字段错误、导入对应行报错且其他行保留）、原有格式/非法日历日期校验不回归。完成后运行 package.json 中的 test 脚本确认通过，并简要说明改了哪些文件、新增的错误代码及测试结果。\",\"framework\":\"APE\",\"taskUnderstanding\":{\"goal\":\"在重点记录模块 src/views/records 的新增和导入功能中增加调查时间不能超过今天的限制\",\"deliverable\":\"完成该限制所需的代码修改，并按需补充已有回归测试\",\"requirements\":[{\"text\":\"在重点记录模块 src/views/records 的新增和导入功能中增加调查时间限制：调查时间不能超过今天\",\"dimensions\":[\"GOAL\",\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：调查时间不能超过今天。\"}]},{\"text\":\"仅修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件\",\"dimensions\":[\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。\"}]}],\"additions\":[{\"text\":\"在共用 validateSurveyDate 中实现“晚于今天即不通过”，新增与导入两个入口同时生效\",\"gap\":\"原文只说增加限制，未指明落在共用校验还是各入口分别实现，影响改动位置与一致性\",\"benefit\":\"确保新增和导入行为一致，且改动集中在允许修改的文件内\"},{\"text\":\"为“超过今天”给出可区分的错误代码，并保持新增字段错误结构与导入按行部分成功语义\",\"gap\":\"原文未说明超期错误如何表达，影响表单和导入行提示能否区分格式错误与超期错误\",\"benefit\":\"让调用方和用户能识别具体失败原因，且不破坏现有返回结构\"},{\"text\":\"按传入 today 以日历日期比较，避免时区导致边界日误判\",\"gap\":\"原文未说明比较基准与边界处理，影响“等于今天”是否被误判\",\"benefit\":\"保证边界日期判断正确\"},{\"text\":\"在 dateRules.spec.js 补充等于今天通过、晚于今天被拒绝、原有校验不回归的测试，并运行 test 脚本\",\"gap\":\"原文只说按需补充回归测试，未明确覆盖点与验证方式\",\"benefit\":\"用可执行测试确认限制生效且未破坏原有行为\"}],\"openDecisions\":[],\"review\":{\"inputReadiness\":\"SUFFICIENT\",\"requirementCoverage\":[{\"index\":0,\"quotes\":[\"请在重点记录模块 synthetic-survey-workspace/src/views/records 的新增和导入功能中增加调查时间限制：调查时间不能超过今天。\"]},{\"index\":1,\"quotes\":[\"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。\"]}],\"additionCoverage\":[{\"index\":0,\"quotes\":[\"请在该共用校验中补上“晚于今天即不通过”的判断，使新增和导入两个入口都生效。\"]},{\"index\":1,\"quotes\":[\"新增入口应继续返回字段错误结构，导入入口应继续按行部分成功：无效日期只影响所属行，其他有效行照常插入，错误仍带行号、字段名和错误代码。\"]},{\"index\":2,\"quotes\":[\"比较时以传入的 today 为基准，按日历日期比较，避免时区导致边界日误判。\"]},{\"index\":3,\"quotes\":[\"请在 dateRules.spec.js 中补充覆盖：调查日期等于今天可通过、晚于今天被拒绝（新增返回字段错误、导入对应行报错且其他行保留）、原有格式/非法日历日期校验不回归。\"]}],\"planImpacts\":[]}}}",
+      "usage": {
+        "prompt_tokens": 3367,
+        "completion_tokens": 1224,
+        "total_tokens": 4591,
+        "prompt_tokens_details": {
+          "cached_tokens": 1152
+        },
+        "prompt_cache_hit_tokens": 1152,
+        "prompt_cache_miss_tokens": 2215
+      },
+      "finishReason": "stop"
+    }
+  }
+}

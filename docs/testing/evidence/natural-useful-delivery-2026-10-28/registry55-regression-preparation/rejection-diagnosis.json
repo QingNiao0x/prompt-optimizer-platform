@@ -1,0 +1,98 @@
+{
+  "semanticCorrectnessClaimed" : false,
+  "attempts" : [ {
+    "trace" : "001.json",
+    "jobId" : "Q01_V55_GEN",
+    "actualReaderAndResolve" : "PASS",
+    "originalGoalRoleGuard" : "PASS",
+    "remainingOriginalChecks" : [ {
+      "stage" : "application.secondResolve",
+      "status" : "PASS"
+    }, {
+      "stage" : "application.validateBodySafetyAndAssemble",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.validateEnhancement.raw",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.validateEnhancement.assembled",
+      "status" : "PASS"
+    } ],
+    "remainingChecksPassed" : true,
+    "assemblyChangedBody" : false,
+    "goalsAndOrigins" : [ {
+      "origins" : [ "ORIGINAL_REQUEST" ],
+      "text" : "查询全球使用AI最多的职业/行业。"
+    } ]
+  }, {
+    "trace" : "002.json",
+    "jobId" : "U02_V55_GEN",
+    "actualReaderAndResolve" : "PASS",
+    "originalGoalRoleGuard" : "FAIL",
+    "goalRejection" : {
+      "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+      "type" : "INVALID_RESPONSE",
+      "message" : "任务目标要求缺少用户来源"
+    },
+    "remainingOriginalChecks" : [ {
+      "stage" : "application.secondResolve",
+      "status" : "PASS"
+    }, {
+      "stage" : "application.validateBodySafetyAndAssemble",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.validateEnhancement.raw",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.validateEnhancement.assembled",
+      "status" : "PASS"
+    } ],
+    "remainingChecksPassed" : true,
+    "assemblyChangedBody" : false,
+    "goalsAndOrigins" : [ {
+      "origins" : [ "ORIGINAL_REQUEST" ],
+      "text" : "依据现有条件设计两周周末亲子共读活动方案，写成店员能照着执行的稿子，活动形式由设计者安排。"
+    }, {
+      "origins" : [ "PROJECT_CONTEXT" ],
+      "text" : "试办目的是看家庭是否愿意参与、孩子能否投入、店员能否长期承担。"
+    }, {
+      "origins" : [ "PROJECT_CONTEXT" ],
+      "text" : "方案要解决过去读书聊天结束后没留记录、只能凭印象争论的问题。"
+    } ]
+  }, {
+    "trace" : "003.json",
+    "jobId" : "U02_V55_GEN",
+    "actualReaderAndResolve" : "PASS",
+    "originalGoalRoleGuard" : "FAIL",
+    "goalRejection" : {
+      "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+      "type" : "INVALID_RESPONSE",
+      "message" : "任务目标要求缺少用户来源"
+    },
+    "remainingOriginalChecks" : [ {
+      "stage" : "application.secondResolve",
+      "status" : "PASS"
+    }, {
+      "stage" : "application.validateBodySafetyAndAssemble",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.validateEnhancement.raw",
+      "status" : "PASS"
+    }, {
+      "stage" : "product.validateEnhancement.assembled",
+      "status" : "PASS"
+    } ],
+    "remainingChecksPassed" : true,
+    "assemblyChangedBody" : false,
+    "goalsAndOrigins" : [ {
+      "origins" : [ "ORIGINAL_REQUEST" ],
+      "text" : "围绕连续两个周六下午的亲子共读试办，设计活动形式由执行者安排的可执行方案。"
+    }, {
+      "origins" : [ "PROJECT_CONTEXT", "PROJECT_CONTEXT" ],
+      "text" : "试办目标用于判断家庭是否愿意参与、孩子能否投入、店员能否长期承担，不要求估算社区市场规模；结合此前无记录的问题，方案要留下可复盘依据。"
+    } ]
+  } ],
+  "originalDeliveryStatusesUnchanged" : true,
+  "modelContentModified" : false,
+  "actualModelCalls" : 0
+}

@@ -1,0 +1,5 @@
+请在重点记录模块 @synthetic-survey-workspace/src/views/records 的新增和导入功能中增加调查日期限制：调查日期不得晚于今日；今日当天是否允许填写，保留由我确认。未确认前，请不要在实现或测试中替我做选择；如果需要明确今日边界，请先向我确认。
+
+实现时建议把日期上限比较集中到 dateRules.js 的共享校验中，由 create.js 和 import.js 复用同一规则，避免两个入口不一致。导入仍需保持按行部分成功：无效日期只记录所属行的错误，不影响其他记录。
+
+只能修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，并按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。回归测试覆盖已确定的日期限制即可，今日边界在确认前不要写成通过或拒绝的断言。

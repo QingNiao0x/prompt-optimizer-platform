@@ -1,0 +1,74 @@
+{
+  "version": "61",
+  "frozenAt": "2026-10-28T17:03:16.8807447Z",
+  "sources": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptBodyFirstInstructions.java",
+      "sha256": "b69f879775c90120ba745fa9a0154c0f2558606ac7654da8b7e86ac5e2780ef3"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "f20a071e32c6a80e6fb803e564ebf95014942c10312042a1de55b7f110fd250c"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptStageInstructions.java",
+      "sha256": "fb6f698999e6a78e954f7c09f3100dc67e0c3dde9730c5316858c3585b3fa169"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "8c4d390560c4287979c963221e1ee6e60e2dac527677e97bf6322f0d4752ad26"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/domain/NaturalProcessing.java",
+      "sha256": "2d47afe4c1c8987faa080ad6c31bc30ed2876a0ab2bb563d91a2236965f30c13"
+    }
+  ],
+  "junit": [
+    {
+      "path": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalBodyFirstProviderTest.xml",
+      "sha256": "4e94213d235123d5f7f8fba1acfd88c5274431e043206bec7b50a79a32e23531",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalReasoningProviderTest.xml",
+      "sha256": "06bad5f113dbb94c0b96b429a859ed2ac70d813a9be3b87527f270ed54069033",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalMetadataRepairProviderTest.xml",
+      "sha256": "f6f2d069ae27ee998bfeed80749e122534f820c32cc716a5e036567a59afdeb0",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalPromptMetadataRepairTest.xml",
+      "sha256": "d6ff4f2872e2add248d3d2de64b41c312e7e5d32ddd0be1c2ef86b114d89ffa4",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalSinglePassProviderTest.xml",
+      "sha256": "0387dc156cc1c9e44a091037cce0c19f188d025263ba37c9cb9baaf9700a1dd0",
+      "tests": 23,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "guardChecks61": 11,
+  "actualCalls": 0,
+  "defaultVersion": "31",
+  "qualityAdopted": false,
+  "comparedTo59": "Only replace writer guidance with independently written concise task-content instructions. Record protocol, fixed first body, full inputs, source/answer/assembly protection and parameters unchanged.",
+  "maximumCallsPerEnhancement": 4
+}

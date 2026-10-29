@@ -1,0 +1,81 @@
+{
+  "status": "PASS",
+  "candidateVersion": "47",
+  "unresolvedSevereRegressions": 0,
+  "reviewedAt": "2026-10-27T18:34:40.617Z",
+  "scope": "允许进入独立留出验证的已知故障/正常变体回归门，不是正文总体收益、采用或发布通过",
+  "results": [
+    {
+      "id": "P02_V47_CONFIRMED_GEN",
+      "status": 200,
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ],
+      "originalPreserved": false
+    },
+    {
+      "id": "P01_V47_CONFIRMED_GEN",
+      "status": 200,
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ],
+      "originalPreserved": false
+    },
+    {
+      "id": "C01_V47_GEN",
+      "status": 200,
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ],
+      "originalPreserved": false
+    },
+    {
+      "id": "Q01_V47_GEN",
+      "status": 200,
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ],
+      "originalPreserved": false
+    },
+    {
+      "id": "V01_V47_GEN",
+      "status": 200,
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ],
+      "originalPreserved": true
+    },
+    {
+      "id": "V02_V47_GEN",
+      "status": 200,
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ],
+      "originalPreserved": false
+    }
+  ],
+  "semanticReview": [
+    "C01保留双入口、共用校验、按行部分成功、INVALID_DATE及四文件范围，无源码包",
+    "P01真实零题Plan后完成正文",
+    "P02实际确认允许今天，正文当前规则统一为<=today，不将旧排除today条件并列生效",
+    "Q01保持职业和行业查询，没有新增实际数据；补全收益仍未证明",
+    "V01只三行要求在正文生成后保留原文，不伪称实质提升",
+    "V02仅阅读依赖与调用关系后等待，明确不改代码、不交文档"
+  ],
+  "evidence": [
+    "browser/real/effective47/C01_V47_GEN/verdict.json",
+    "offline-verification.json",
+    "frontend-r2-freeze.json"
+  ],
+  "remaining": [
+    "实际作品整体收益",
+    "独立未见题",
+    "默认采用及日常服务验证"
+  ]
+}

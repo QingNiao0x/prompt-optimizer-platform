@@ -1,0 +1,24 @@
+{
+  "id": "P02_CONFIRMED_V52_QA_CHANNEL_PREPARE_EXEC",
+  "phase": "EXECUTION",
+  "version": "52",
+  "caseId": "P02_CONFIRMED",
+  "status": 200,
+  "body": {
+    "requestId": "P02_CONFIRMED_V52_QA_CHANNEL_PREPARE_EXEC",
+    "data": {
+      "finishReason": "stop",
+      "content": "{\"actions\":[{\"text\":\"在重点记录模块 src/views/records 的新增和导入功能中增加调查时间限制：调查日期只能填写当日之前或当日，不能晚于今日；日期等于 today 时校验通过，晚于 today 时返回错误。\",\"timing\":\"CURRENT\",\"condition\":\"\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。\"},{\"sourceId\":\"actualAnswers.0\",\"quote\":\"允许填写今天：日期等于 today 时校验通过，晚于 today 时返回错误。\"}]}],\"response\":{\"basis\":\"EXPLICIT\",\"description\":\"交付对 src/views/records 新增与导入功能的调查日期限制修改，仅涉及指定文件，并按需补充已有回归测试。\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。\"}]},\"requirements\":[{\"text\":\"调查日期限制适用于重点记录模块 src/views/records 的新增和导入功能。\",\"dimensions\":[\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制\"}]},{\"text\":\"调查日期只能填写当日之前或当日，不能晚于今日；日期等于 today 时校验通过，晚于 today 时返回错误。\",\"dimensions\":[\"GOAL\",\"CONDITION\",\"USER_CONFIRMATION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"只能填写当日之前的日期，同时又不能超过今日。\"},{\"sourceId\":\"actualAnswers.0\",\"quote\":\"允许填写今天：日期等于 today 时校验通过，晚于 today 时返回错误。\"}]},{\"text\":\"只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。\",\"dimensions\":[\"FORMAT\",\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。\"}]}]}",
+      "usage": {
+        "prompt_tokens": 4087,
+        "completion_tokens": 588,
+        "total_tokens": 4675,
+        "prompt_tokens_details": {
+          "cached_tokens": 3840
+        },
+        "prompt_cache_hit_tokens": 3840,
+        "prompt_cache_miss_tokens": 247
+      }
+    }
+  }
+}

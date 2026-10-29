@@ -1,0 +1,31 @@
+{
+  "rawPrompt": "我经营一家虚构的小便当店，想看 10 月 1—4 日这一小段订单。附件 orders.csv 是已结清的账，ledger-notes.md 写了字段口径。请直接做一份可发店内工作群的小结。\n\n先用一张表按“线上、电话、合计”列出净餐费、实际交付份数、每份平均净餐费、取消订单率；钱保留两位小数，百分比保留一位小数。再写三条短结论：两条是你设计的下周可做的小试验，另一条说明这些数据还不能支持什么结论。表格以外不超过 350 字。\n\n只根据附件分析，不上网补行业数据。可以提出试验，但别把建议写成我们已经批准的安排。现在没有成本资料，先完成能算出的内容。",
+  "modelId": "deepseek:deepseek-flash",
+  "context": {
+    "customDescription": "",
+    "files": [
+      {
+        "path": "orders.csv",
+        "content": "order_id,date,channel,status,ordered_qty,delivered_qty,paid_meal_amount,refunded_meal_amount\nO01,2026-10-01,ONLINE,COMPLETED,3,3,66.00,0.00\nO02,2026-10-01,PHONE,COMPLETED,2,2,44.00,0.00\nO03,2026-10-02,ONLINE,CANCELLED,4,0,88.00,88.00\nO04,2026-10-02,PHONE,COMPLETED,5,4,110.00,22.00\nO05,2026-10-03,ONLINE,COMPLETED,4,4,80.00,0.00\nO06,2026-10-03,ONLINE,COMPLETED,1,1,22.00,0.00\nO07,2026-10-03,PHONE,CANCELLED,2,0,44.00,44.00\nO08,2026-10-04,PHONE,COMPLETED,3,3,66.00,0.00\n",
+        "language": "csv"
+      },
+      {
+        "path": "ledger-notes.md",
+        "content": "# 合成账本的字段口径\n\n这些订单全部虚构。数据覆盖 2026 年 10 月 1—4 日，每行是一张独立订单，没有重复行；账已结清，没有待退款。\n\n- `channel`：`ONLINE` 为线上，`PHONE` 为电话。\n- `status`：`COMPLETED` 为完成，`CANCELLED` 为整单取消。完成订单也可能少交付并部分退款。\n- `ordered_qty` 是下单份数；`delivered_qty` 是最终实际交付份数。取消订单的实际交付为 0。\n- `paid_meal_amount` 是客户实际支付的餐费，单位元，已减优惠，不含配送费；`refunded_meal_amount` 是之后实际退还的餐费，单位元。\n- 净餐费＝所有订单实付餐费之和－实际退款之和；每份平均净餐费＝净餐费÷实际交付份数。按渠道和合计分别按此计算。\n- 取消订单率＝整单取消订单数÷全部订单数，分母包含完成和取消订单。\n- O04 原订 5 份，最终交付 4 份，已退 22 元。O05 有一笔 8 元优惠，已包含在实付 80 元中，不再另减。\n- 没有提供食材、人力、配送成本或取消原因；这份账本也没有统计宣传曝光、回头客和其他日期的订单。\n",
+        "language": "markdown"
+      }
+    ]
+  },
+  "enhancement": {
+    "templateCode": "AUTO",
+    "includeConversationHistory": false,
+    "includePermissionBoundaries": true,
+    "promptFormat": "COMPACT"
+  },
+  "conversationHistory": [],
+  "permissionPolicy": {
+    "protectedPaths": [],
+    "requireConfirmationFor": []
+  },
+  "planConfirmation": null
+}

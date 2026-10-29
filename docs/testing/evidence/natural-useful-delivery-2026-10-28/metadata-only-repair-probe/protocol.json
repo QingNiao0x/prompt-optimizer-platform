@@ -1,0 +1,52 @@
+{
+  "status": "FROZEN",
+  "versions": [
+    "56"
+  ],
+  "metadataMechanismOnly": true,
+  "maximumNewActualCalls": 2,
+  "phaseLimits": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 2,
+    "REVIEW": 0
+  },
+  "allowedJobs": [
+    "U02_META_PATCH",
+    "V02_META_PATCH"
+  ],
+  "frozenFiles": [
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/run-metadata-probe.mjs",
+      "sha256": "d610c19ec76feb095d47a1f2d8590c0f1b3fbd0016347dabb98319a6ed4ac48a"
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/MetadataRepairProbe.java",
+      "sha256": "39e1fdc5cf1a7bdb6e179a81a0e84510f1d91919fec5e75beb0316b7b7fd5134"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/NaturalPromptMetadataRepair.java",
+      "sha256": "a4f4dd509d6281920667ecd595eee326ab482b334c85c15997bb063648b47ebd"
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/metadata-only-repair-probe/jobs.json",
+      "sha256": "73aef5c9a884f1d8f934fc3efbffaca2e58edc8e2f03c649188f70231fccd48b"
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry56-regression/traces/001.json",
+      "sha256": "9363c9cfaf2b8494ec2124d0697dc3f1c6aabfaf60d7aa72564ca5e21d20a48c"
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry56-regression/traces/007.json",
+      "sha256": "d016305e94a0e991cd473b1dfab00f1da6142f274b6cd6d7d7fc782e86196abb"
+    }
+  ],
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "actualAtFreeze": 228,
+  "taskMaximumActualCalls": 500,
+  "protocolRepairsAllowed": false,
+  "qualityRetriesAllowed": false,
+  "candidateSelection": "Always the first draft, before any protocol regeneration; no semantic best-of selection.",
+  "acceptance": "Patch only listed metadata, exact first body unchanged, all original Java checks; semantic review remains separate.",
+  "stoppingRule": "One call per case; retain failure, no further attempts or full body generation."
+}

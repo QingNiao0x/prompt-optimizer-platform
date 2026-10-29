@@ -1,0 +1,340 @@
+{
+  "modelCallsMadeByReplay" : 0,
+  "candidateEdited" : false,
+  "stage" : "docs\\testing\\evidence\\natural-useful-delivery-2026-10-28\\registry50-development",
+  "closureSha256" : "b30ab2d35be8663ec08bbe11e71d543b6cd96df2176c84efef347492e1d08c3c",
+  "protocolSha256" : "95700ef24d33f21ad2dccac8620f3847f029779e80ea3eb90cb76340af7a3330",
+  "scope" : "Actual49/50 strict preparation.resolve, immutable registry linkage, writer.normalize, original sources/all QA and original application safety/raw/assembled guards. Source/quote legality is not semantic completeness or adoption.",
+  "loadedProductClassSha256" : {
+    "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleNaturalPromptProvider" : "d18b117d09111627a9ca9411b0a4f5864f5dda56b156a9502386f71a96ed58fc",
+    "com.promptoptimizer.provider.domain.NaturalPromptRequirementRegistry" : "dcccc444a6a03dd511374c20b4b4420dbb3bb3cae762dd56b56ffd5be5002006",
+    "com.promptoptimizer.provider.domain.NaturalPromptReferencedEnhancement" : "83bd9bb4b80d7a77368c1c7fc683f339eadfea24eef33f5cae861f100e8a1196",
+    "com.promptoptimizer.provider.domain.NaturalTaskUnderstanding" : "4a9eac037e975edfb730a5531ba999579539abcd7d8fda56787ceb89828f2324",
+    "com.promptoptimizer.provider.domain.NaturalTaskReview" : "7cdf1e6c9e0e0242c2b55f8e64ed6f295e97a8152703109dd9ad007b19c57355",
+    "com.promptoptimizer.enhancement.service.impl.NaturalEnhancementService" : "cc3e8858edc8f8d549e6bb6536bca4b0d08c3b19f5f4ee1d3bc99e5ff152b1a3"
+  },
+  "results" : [ {
+    "jobId" : "Q01_V50_GEN",
+    "semanticReviewRequired" : true,
+    "semanticCorrectnessClaimed" : false,
+    "jobsSha256" : "4c9e8c7fbe49687e0b8bf398c3febd43769b5e642986c2fef76b31f419d6014e",
+    "platformResultSha256" : "4e01966b67e56da38f9332068c2be14e1224e77a8d3a7fc8a410e318f419965a",
+    "approvedPublicDtoSha256" : "fd455cfef597e687a19d621f0f099faa1cdbc531236a1934a8403cf8ebc11387",
+    "attempts" : [ {
+      "trace" : "001.json",
+      "traceSha256" : "223f372dfec99278510718edbb9af5ecade90b1ba5a9b0d07a465a124639ead7",
+      "phase" : "REQUIREMENT_PREPARATION",
+      "upstreamHttpStatus" : 200,
+      "requestSha256" : "806024690f82a894458570b7ed15d581bb62825c6a22615027bc61c750d63591",
+      "originalNaturalInputSha256" : "b782a910517f994a97233931f3ee4118c00bace738e55f4fbfd45524b994e4f7",
+      "steps" : [ {
+        "stage" : "product.unwrapAndReadResponse",
+        "status" : "PASS"
+      }, {
+        "stage" : "product.strictPreparationReaderAndResolve",
+        "status" : "PASS"
+      } ],
+      "finishReason" : "stop",
+      "actualContentSha256" : "36690ef8be1f71fda224bef0cc5efb76c4668eaa86c67971a5a1ea8128d132ec",
+      "outcome" : "PREPARATION_SOURCE_PROTOCOL_VALID_ONLY",
+      "registrySha256" : "f49e0f51bbfa662bd3235d75280a439927adcf8b3f38b12dcde14c4d0987702f",
+      "reqIds" : [ "r0", "r1" ]
+    }, {
+      "trace" : "002.json",
+      "traceSha256" : "d841531cb959d696d93bebee817a86b8f1825921d72c9c413cacf2ed848e8268",
+      "phase" : "BODY_GENERATION",
+      "upstreamHttpStatus" : 200,
+      "requestSha256" : "41233ea818eb8d038b65471b946de49763e46bdfb4e9be22a298e99f0f051143",
+      "originalNaturalInputSha256" : "b782a910517f994a97233931f3ee4118c00bace738e55f4fbfd45524b994e4f7",
+      "steps" : [ {
+        "stage" : "product.unwrapAndReadResponse",
+        "status" : "PASS"
+      }, {
+        "stage" : "product.strictWriterReaderAndNormalize",
+        "status" : "FAIL",
+        "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+        "type" : "INVALID_RESPONSE",
+        "message" : "原要求引用协议列表缺失、为空条目或超出容量"
+      } ],
+      "finishReason" : "stop",
+      "actualContentSha256" : "d72ab6898fa09546a663c9f59cf866062eade9a8a0d976da8f007f573e8a8826",
+      "outcome" : "REJECTED_BY_PRODUCT",
+      "firstRejection" : {
+        "stage" : "product.strictWriterReaderAndNormalize",
+        "status" : "FAIL",
+        "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+        "type" : "INVALID_RESPONSE",
+        "message" : "原要求引用协议列表缺失、为空条目或超出容量"
+      }
+    }, {
+      "trace" : "003.json",
+      "traceSha256" : "79e59e00110222c0bd9a7a0fca60556a3003aaf4dfea246bb1c3ff21227ea244",
+      "phase" : "BODY_GENERATION",
+      "upstreamHttpStatus" : 200,
+      "requestSha256" : "8924756c36210b215df7211996d6c728cd16849dd9401837c1ff5a8cb19f28d9",
+      "originalNaturalInputSha256" : "b782a910517f994a97233931f3ee4118c00bace738e55f4fbfd45524b994e4f7",
+      "steps" : [ {
+        "stage" : "product.unwrapAndReadResponse",
+        "status" : "PASS"
+      }, {
+        "stage" : "product.strictWriterReaderAndNormalize",
+        "status" : "FAIL",
+        "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+        "type" : "INVALID_RESPONSE",
+        "message" : "自然原要求引用正文协议无效"
+      } ],
+      "finishReason" : "stop",
+      "actualContentSha256" : "f81194f7ffb83b9c0009ccfc653c00c14c35d7dff4ff1d8be6c6accf28e369a2",
+      "outcome" : "REJECTED_BY_PRODUCT",
+      "firstRejection" : {
+        "stage" : "product.strictWriterReaderAndNormalize",
+        "status" : "FAIL",
+        "exception" : "com.promptoptimizer.provider.domain.ProviderException",
+        "type" : "INVALID_RESPONSE",
+        "message" : "自然原要求引用正文协议无效"
+      }
+    } ],
+    "platformHttpStatus" : 502,
+    "preparationAttempts" : 1,
+    "writerAttempts" : 2,
+    "outcome" : "REJECTED_BY_PRODUCT"
+  }, {
+    "jobId" : "U02_V50_GEN",
+    "semanticReviewRequired" : true,
+    "semanticCorrectnessClaimed" : false,
+    "jobsSha256" : "4c9e8c7fbe49687e0b8bf398c3febd43769b5e642986c2fef76b31f419d6014e",
+    "platformResultSha256" : "7b0494b7d2fbeeded07506e7a6eb16c2ade92ea622ac6623791a23dbb667b869",
+    "approvedPublicDtoSha256" : "410f96fdff84b9d816a61e31b5cd6effda2246f103b8d53f14ab863e52f9febd",
+    "attempts" : [ {
+      "trace" : "004.json",
+      "traceSha256" : "585448bf8b25411e517b4cf3cc61c2ce5e60ccdc970ba51ddd92609241c75705",
+      "phase" : "REQUIREMENT_PREPARATION",
+      "upstreamHttpStatus" : 200,
+      "requestSha256" : "e82a22f624a53d20caa1725399ddc6976efe606795d61c5d271333cd5af849ad",
+      "originalNaturalInputSha256" : "58cdc3e5d240c2f5f71378ce5f7675ee75a526f47d47220c6a19135b45798bea",
+      "steps" : [ {
+        "stage" : "product.unwrapAndReadResponse",
+        "status" : "PASS"
+      }, {
+        "stage" : "product.strictPreparationReaderAndResolve",
+        "status" : "PASS"
+      } ],
+      "finishReason" : "stop",
+      "actualContentSha256" : "26def3a64f63f8935b76f051238784bb7a52de96f26059dc6099fcd04c9f66ae",
+      "outcome" : "PREPARATION_SOURCE_PROTOCOL_VALID_ONLY",
+      "registrySha256" : "44cf0dac2ed798ecf60e101133cd9157274f2aded446844217e36b97a6ae04a7",
+      "reqIds" : [ "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "r16", "r17" ]
+    }, {
+      "trace" : "005.json",
+      "traceSha256" : "cd7c869127c20ab368cf39fa3e0c8fba06f02c0f2838ce9159cfbf8589f3d10b",
+      "phase" : "BODY_GENERATION",
+      "upstreamHttpStatus" : 200,
+      "requestSha256" : "b1f37cf6ebce37b1a8f9d652aa3d341bfc4dfc55b7e77f918d64401bf3494d39",
+      "originalNaturalInputSha256" : "58cdc3e5d240c2f5f71378ce5f7675ee75a526f47d47220c6a19135b45798bea",
+      "steps" : [ {
+        "stage" : "product.unwrapAndReadResponse",
+        "status" : "PASS"
+      }, {
+        "stage" : "product.strictWriterReaderAndNormalize",
+        "status" : "PASS"
+      }, {
+        "stage" : "application.secondResolve",
+        "status" : "PASS"
+      }, {
+        "stage" : "application.validateBodySafetyAndAssemble",
+        "status" : "PASS"
+      }, {
+        "stage" : "product.validateEnhancement.raw",
+        "status" : "PASS"
+      }, {
+        "stage" : "product.validateEnhancement.assembled",
+        "status" : "PASS"
+      } ],
+      "finishReason" : "stop",
+      "actualContentSha256" : "13318974114e13c3bee410b6e8122887db47d22755a1cb34996ac244c206820b",
+      "preparedTraceSha256" : "585448bf8b25411e517b4cf3cc61c2ce5e60ccdc970ba51ddd92609241c75705",
+      "normalizedBindings" : [ {
+        "reqId" : "r0",
+        "requirementIndex" : 0,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r1",
+        "requirementIndex" : 1,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r2",
+        "requirementIndex" : 2,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r3",
+        "requirementIndex" : 3,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r4",
+        "requirementIndex" : 4,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r5",
+        "requirementIndex" : 5,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r6",
+        "requirementIndex" : 6,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r7",
+        "requirementIndex" : 7,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r8",
+        "requirementIndex" : 8,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r9",
+        "requirementIndex" : 9,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r10",
+        "requirementIndex" : 10,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r11",
+        "requirementIndex" : 11,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r12",
+        "requirementIndex" : 12,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r13",
+        "requirementIndex" : 13,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r14",
+        "requirementIndex" : 14,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r15",
+        "requirementIndex" : 15,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r16",
+        "requirementIndex" : 16,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r17",
+        "requirementIndex" : 17,
+        "changeIndex" : null
+      } ],
+      "canonicalUnderstandingSha256" : "bf8d8a3aa126ee48dbe38470abdef2759803b70ef765a333403abe95b99cbde9",
+      "providerOptimizedPromptSha256" : "75e20f7f10fda8c1bda924a60adeb4cb33711400f2b2208f7ddef302cfbeba1f",
+      "assembledBodySha256" : "75e20f7f10fda8c1bda924a60adeb4cb33711400f2b2208f7ddef302cfbeba1f",
+      "outcome" : "VALID_PRODUCT_DELIVERY_PROTOCOL_ONLY"
+    } ],
+    "platformHttpStatus" : 200,
+    "preparationAttempts" : 1,
+    "writerAttempts" : 1,
+    "outcome" : "VALID_PRODUCT_DELIVERY_PROTOCOL_ONLY"
+  }, {
+    "jobId" : "U03_V50_GEN",
+    "semanticReviewRequired" : true,
+    "semanticCorrectnessClaimed" : false,
+    "jobsSha256" : "4c9e8c7fbe49687e0b8bf398c3febd43769b5e642986c2fef76b31f419d6014e",
+    "platformResultSha256" : "a28ef55abc631501a4b36c092e3421da610044a1f3d9885af750609f847b5441",
+    "approvedPublicDtoSha256" : "dbedc91e3cf04fd9c55d9da86c7438ef5acc472e82ded77243f099809220cf3d",
+    "attempts" : [ {
+      "trace" : "006.json",
+      "traceSha256" : "7b92941cb4e3a379e00ccbce7fc86c217c8d00babb5ff51103d25f8590231765",
+      "phase" : "REQUIREMENT_PREPARATION",
+      "upstreamHttpStatus" : 200,
+      "requestSha256" : "f831b5be3bbe87cd5cdad355aedbd57ce0b0f318e3d3972883eeefd7bdfffdf4",
+      "originalNaturalInputSha256" : "1ac5c9a0563f09294e587fd003c96afc4945f3dac5c9fe73d880f6c21ecd8ab0",
+      "steps" : [ {
+        "stage" : "product.unwrapAndReadResponse",
+        "status" : "PASS"
+      }, {
+        "stage" : "product.strictPreparationReaderAndResolve",
+        "status" : "PASS"
+      } ],
+      "finishReason" : "stop",
+      "actualContentSha256" : "38fe22eb3f8eeeca20e9f3c81fc934ad43d83d9c06186544416df55acce322ef",
+      "outcome" : "PREPARATION_SOURCE_PROTOCOL_VALID_ONLY",
+      "registrySha256" : "f59821aa0bde32ff4626b6aeb18145908295a17e961be8bd3f4a4b8ac8cdb63c",
+      "reqIds" : [ "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8" ]
+    }, {
+      "trace" : "007.json",
+      "traceSha256" : "b366b53dbcb716c0cdd0e2893b43d31933b5e57972520f166bed14da46f7089d",
+      "phase" : "BODY_GENERATION",
+      "upstreamHttpStatus" : 200,
+      "requestSha256" : "9a2d683102070e635871da7103f31572986a8ba5fea174adfa7db154311428d2",
+      "originalNaturalInputSha256" : "1ac5c9a0563f09294e587fd003c96afc4945f3dac5c9fe73d880f6c21ecd8ab0",
+      "steps" : [ {
+        "stage" : "product.unwrapAndReadResponse",
+        "status" : "PASS"
+      }, {
+        "stage" : "product.strictWriterReaderAndNormalize",
+        "status" : "PASS"
+      }, {
+        "stage" : "application.secondResolve",
+        "status" : "PASS"
+      }, {
+        "stage" : "application.validateBodySafetyAndAssemble",
+        "status" : "PASS"
+      }, {
+        "stage" : "product.validateEnhancement.raw",
+        "status" : "PASS"
+      }, {
+        "stage" : "product.validateEnhancement.assembled",
+        "status" : "PASS"
+      } ],
+      "finishReason" : "stop",
+      "actualContentSha256" : "457e4e16270a15a291c992e858d30feaa562d27e6d998855df8e9b728eef6359",
+      "preparedTraceSha256" : "7b92941cb4e3a379e00ccbce7fc86c217c8d00babb5ff51103d25f8590231765",
+      "normalizedBindings" : [ {
+        "reqId" : "r0",
+        "requirementIndex" : 0,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r1",
+        "requirementIndex" : 1,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r2",
+        "requirementIndex" : 2,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r3",
+        "requirementIndex" : 3,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r4",
+        "requirementIndex" : 4,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r5",
+        "requirementIndex" : 5,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r6",
+        "requirementIndex" : 6,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r7",
+        "requirementIndex" : 7,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r8",
+        "requirementIndex" : 8,
+        "changeIndex" : null
+      } ],
+      "canonicalUnderstandingSha256" : "16113a5b4a979d9edf6334f638c961d7b54f1007237d7c3e7fce2940f17bbc94",
+      "providerOptimizedPromptSha256" : "74b42918f196cda4a7418a16a379d99eab62526807bce19cccaddf30a1413263",
+      "assembledBodySha256" : "74b42918f196cda4a7418a16a379d99eab62526807bce19cccaddf30a1413263",
+      "outcome" : "VALID_PRODUCT_DELIVERY_PROTOCOL_ONLY"
+    } ],
+    "platformHttpStatus" : 200,
+    "preparationAttempts" : 1,
+    "writerAttempts" : 1,
+    "outcome" : "VALID_PRODUCT_DELIVERY_PROTOCOL_ONLY"
+  } ]
+}

@@ -1,0 +1,175 @@
+{
+  "syntheticOnly": true,
+  "cases": [
+    {
+      "id": "C01",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：调查时间不能超过今天。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "contract": "本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "allowedWritePaths": [
+        "src/views/records/dateRules.js",
+        "src/views/records/create.js",
+        "src/views/records/import.js",
+        "src/views/records/dateRules.spec.js"
+      ],
+      "todayBoundary": "允许今天，拒绝今天之后的日期",
+      "provenance": "旧失败的明确交付范围变体，开发/回归题，不是未见题",
+      "blockedArms": [
+        {
+          "version": "31",
+          "reason": "未完成BODY_GENERATION，先判产品门失败，不为原文加源码作品继续付费。"
+        }
+      ],
+      "executorMaterials": [
+        {
+          "path": "package.json",
+          "content": "{\n  \"name\": \"synthetic-survey-workspace\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": { \"test\": \"node --test src/views/records/dateRules.spec.js\" }\n}\n"
+        },
+        {
+          "path": "README.md",
+          "content": "# 合成调查记录项目\n\n本项目完全合成，不含真实业务代码或人员数据。重点记录模块位于 `src/views/records`，旧模块位于 `src/views/records-old`，二者互不替代。\n\n新增通过 `createSurvey` 提交；导入通过 `importSurveys` 按行处理，允许部分成功，失败行返回从 1 开始的行号及稳定错误代码。两个入口共用 `validateSurveyDate`。现有日期校验只检查日期格式及日历有效性。\n\n`surveyDate` 为不带时刻的 `YYYY-MM-DD` 日历日期，执行者可传入同格式 `today` 以便确定性检查。已有测试记录现有契约；本轮新要求的独立验收在项目副本之外运行。\n"
+        },
+        {
+          "path": "src/views/records/dateRules.js",
+          "content": "/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n"
+        },
+        {
+          "path": "src/views/records/create.js",
+          "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n"
+        },
+        {
+          "path": "src/views/records/import.js",
+          "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n"
+        },
+        {
+          "path": "src/views/records/dateRules.spec.js",
+          "content": "import assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n"
+        },
+        {
+          "path": "src/views/records-old/create.js",
+          "content": "/** 旧模块拥有独立业务规则，不是本次指定的新增和导入入口。 */\nexport const createLegacySurvey = (record) => ({ legacy: true, record });\n"
+        }
+      ],
+      "workContract": {
+        "contractInRawAndExecutionSystemIdentical": true,
+        "allowedWritePaths": [
+          "src/views/records/dateRules.js",
+          "src/views/records/create.js",
+          "src/views/records/import.js",
+          "src/views/records/dateRules.spec.js"
+        ],
+        "repeatsPerArm": 2,
+        "model": "deepseek-flash",
+        "temperature": 0.2,
+        "paidReviews": 0,
+        "commonMaterialsSha256": "2da4f906d9ea11a1a066dcc8ffd82b4d5a4f7477b8b9846afe41a202cf3e52da",
+        "onlyPromptChanges": true,
+        "testChangesOptional": true,
+        "output": {
+          "required": [
+            "files"
+          ],
+          "optional": [
+            "summary"
+          ],
+          "summaryPresenceIsNotQualityScore": true,
+          "noToolExecutionClaims": true
+        },
+        "testsMustNotBeReturned": false
+      },
+      "sourceGenerationRef": {
+        "stage": "registry51-normal",
+        "jobId": "C01_V51_GEN",
+        "version": "51",
+        "resultRelativePath": "results/C01_V51_GEN.json",
+        "requiresClosedStage": true,
+        "expectedSerializedDtoSha256": "4b33921719cd89aaa178af89d033f5cdd691ae39ba7428a1d4766e4a027c1dc0"
+      },
+      "actualFinalPromptSha256": "c6fac3486670a8bd02086e0c5cab98ea56484c8763d23c20557001688a17c081",
+      "rootPromptScopeReviewStillRequired": true
+    },
+    {
+      "id": "C02",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：调查时间不能超过今天。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js；不得新增文件，也不得修改测试文件或其他文件。",
+      "contract": "本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js；不得新增文件，也不得修改测试文件或其他文件。",
+      "allowedWritePaths": [
+        "src/views/records/dateRules.js",
+        "src/views/records/create.js",
+        "src/views/records/import.js"
+      ],
+      "todayBoundary": "允许今天，拒绝今天之后的日期",
+      "provenance": "旧失败的明确交付范围变体，开发/回归题，不是未见题",
+      "blockedArms": [
+        {
+          "version": "31",
+          "reason": "未完成BODY_GENERATION，先判产品门失败，不为原文加源码作品继续付费。"
+        }
+      ],
+      "executorMaterials": [
+        {
+          "path": "package.json",
+          "content": "{\n  \"name\": \"synthetic-survey-workspace\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": { \"test\": \"node --test src/views/records/dateRules.spec.js\" }\n}\n"
+        },
+        {
+          "path": "README.md",
+          "content": "# 合成调查记录项目\n\n本项目完全合成，不含真实业务代码或人员数据。重点记录模块位于 `src/views/records`，旧模块位于 `src/views/records-old`，二者互不替代。\n\n新增通过 `createSurvey` 提交；导入通过 `importSurveys` 按行处理，允许部分成功，失败行返回从 1 开始的行号及稳定错误代码。两个入口共用 `validateSurveyDate`。现有日期校验只检查日期格式及日历有效性。\n\n`surveyDate` 为不带时刻的 `YYYY-MM-DD` 日历日期，执行者可传入同格式 `today` 以便确定性检查。已有测试记录现有契约；本轮新要求的独立验收在项目副本之外运行。\n"
+        },
+        {
+          "path": "src/views/records/dateRules.js",
+          "content": "/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n"
+        },
+        {
+          "path": "src/views/records/create.js",
+          "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n"
+        },
+        {
+          "path": "src/views/records/import.js",
+          "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n"
+        },
+        {
+          "path": "src/views/records/dateRules.spec.js",
+          "content": "import assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n"
+        },
+        {
+          "path": "src/views/records-old/create.js",
+          "content": "/** 旧模块拥有独立业务规则，不是本次指定的新增和导入入口。 */\nexport const createLegacySurvey = (record) => ({ legacy: true, record });\n"
+        }
+      ],
+      "workContract": {
+        "contractInRawAndExecutionSystemIdentical": true,
+        "allowedWritePaths": [
+          "src/views/records/dateRules.js",
+          "src/views/records/create.js",
+          "src/views/records/import.js"
+        ],
+        "repeatsPerArm": 2,
+        "model": "deepseek-flash",
+        "temperature": 0.2,
+        "paidReviews": 0,
+        "commonMaterialsSha256": "2da4f906d9ea11a1a066dcc8ffd82b4d5a4f7477b8b9846afe41a202cf3e52da",
+        "onlyPromptChanges": true,
+        "testChangesOptional": false,
+        "output": {
+          "required": [
+            "files"
+          ],
+          "optional": [
+            "summary"
+          ],
+          "summaryPresenceIsNotQualityScore": true,
+          "noToolExecutionClaims": true
+        },
+        "testsMustNotBeReturned": true
+      },
+      "sourceGenerationRef": {
+        "stage": "registry51-normal",
+        "jobId": "C02_V51_GEN",
+        "version": "51",
+        "resultRelativePath": "results/C02_V51_GEN.json",
+        "requiresClosedStage": true,
+        "expectedSerializedDtoSha256": "85ebeaebdcb9430714607572415dfbc47164ce68d2625fd5fd0403686c3fa977"
+      },
+      "actualFinalPromptSha256": "f8d943bff75d6237023bc9c5b67c961a9976a7a9e4c833a5e4773a205283c803",
+      "rootPromptScopeReviewStillRequired": true
+    }
+  ]
+}

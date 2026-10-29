@@ -1,0 +1,80 @@
+{
+  "id": "H04_V47_GEN",
+  "phase": "GENERATION",
+  "version": "47",
+  "caseId": "H04",
+  "status": 200,
+  "body": {
+    "requestId": "H04_V47_GEN",
+    "data": {
+      "optimizedPrompt": "项目里有一个不带界面的 Node.js 小工具，现有 src/mergeShoppingItems.js 中只有 `export function mergeShoppingItems(items) { throw new Error('TODO'); }`，package.json 声明了 `\"type\": \"module\"` 且 Node.js >= 20。请补完这个命名导出函数 mergeShoppingItems(items)，用于合并购物清单，保持 ES module 和现有函数签名不变。\n\n实现要求：\n\n- 参数必须是数组；每项必须是非 null、非数组的对象，name 必须是原始字符串且 trim 后不为空，quantity 必须是大于 0 的安全整数。任一项不符合就抛 TypeError，额外字段忽略。\n- 用 name.trim().toLowerCase() 作为合并键，不做其他名称替换。相同键的 quantity 相加；返回顺序按键首次出现的顺序，返回对象只有 name 和 quantity，name 用第一次出现时 trim 后的原始大小写。\n- 如果某一项合并后的 quantity 超出安全整数范围，抛 RangeError。\n- 空数组返回新的空数组；所有情况下都不修改传入数组或其中的对象，返回项也是新对象。\n- 不加依赖，不读写文件，不使用网络，不新增界面。\n\n例如 [{name:' Milk ',quantity:2},{name:'milk',quantity:3},{name:'Egg',quantity:1}] 应得到 [{name:'Milk',quantity:5},{name:'Egg',quantity:1}]。\n\n只输出 src/mergeShoppingItems.js 的完整替换内容，放在一个 javascript 代码块里，不需要额外说明或其他文件。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [
+          {
+            "name": "Node.js",
+            "source": "package.json",
+            "confidence": 0.9
+          }
+        ],
+        "dependencies": [],
+        "directoryTree": [
+          "mergeShoppingItems.js",
+          "package.json"
+        ],
+        "fileSnippets": [
+          {
+            "path": "package.json",
+            "language": "json",
+            "content": "[片段 1/1]\n{\n  \"name\": \"synthetic-shopping-list-helper\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"engines\": {\n    \"node\": \">=20\"\n  }\n}\n",
+            "summary": "Node.js 项目清单。{；\"private\": true,；\"engines\": {；\"node\": \">=20\"；}",
+            "truncated": false
+          },
+          {
+            "path": "mergeShoppingItems.js",
+            "language": "javascript",
+            "content": "[片段 1/1]\nexport function mergeShoppingItems(items) {\n  throw new Error('TODO');\n}\n",
+            "summary": "JavaScript代码文件，主要定义：mergeShoppingItems。关键内容：export function mergeShoppingItems(items) {；throw new Error('TODO');",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 7429,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "47",
+      "framework": "APE",
+      "recordId": "db2320dd-c8fa-4d64-a951-e2b15cca8572",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+# 既有24单调用机制（不是53单变量）
+
+根任务已授权最多2次EXEC，当前201/500；先CONFIRMED，任何严重语义错误或既有保护失败均停止UNKNOWN。实际Provider24只构造一次正文＋task请求，没有scope／registry准备；复用完整历史已绑定题答，不冒称新鲜Plan或普通入口。
+
+24的业务与协议共同改变：沿第四版增强指导、framework必填（十二参考枚举）、原目标／交付先表述、未指定交付可用一般表达；同时正文与task一次生成，不按52当前有效准备指导或53要求登记策略。24既有传输不含52派生inputBoundary说明，原raw/context/actualAnswers/权限/来源等核心input仅version24。不手写system、不手补字段或expected records，不是纯粹消融PREPARE，更不能因此采用24。
+
+先审用户实际复制的optimizedPrompt是否统一当前要求，再独立审task记录是否将历史旧条件继续作为执行约束。历史值仅在evidence或明确历史说明出现，不按词误判；正文与内部记录分开归因。正文正确不证明内部全对，内部错也不能直接说正文语义已错。层级差异先报根任务，不自行换标准。
+
+机制响应经实际diagnosticEnhancementReader／PhasePayloads.Enhancement.toDraft与resolve，再走现有应用安全／组装及原稿、组装覆盖保护，并额外复用53 validateUserGoals检查（仅机制侧，不修改24业务）。这些是结构、来源和可确定保护，不冒称完整语义正确。无协议修复或质量重试，旧52／53失败不重判，默认31不变，不读封存、不新建54。

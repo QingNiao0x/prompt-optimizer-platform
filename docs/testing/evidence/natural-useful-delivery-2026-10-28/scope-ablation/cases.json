@@ -1,0 +1,25 @@
+{
+  "syntheticOnly": true,
+  "cases": [
+    {
+      "id": "ASQ01",
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "purpose": "开发题的派生范围摘要锚定消融；不是下游作品或独立留出题",
+      "baselineJob": "Q01_V46_GEN",
+      "changedVariable": "仅移除 writer user JSON 的 taskScope；原始来源、system、内部记录协议、参数不变",
+      "baselineSystemSha256": "c93e52f66787e5c7073cfc07da71081c70d71cb268e64364a3e4d3a99fb28871",
+      "baselineUserSha256": "e354a63a3cb89444de3ba0dd1a926cbb94897ca69245ae5ce5dfe1ac7974673b",
+      "preregisteredDecision": "Q01须出现有用的对象相关工作展开，且V03不损失原动作与边界；若仍仅核查要求，停止此假设，不重复采样。"
+    },
+    {
+      "id": "ASV03",
+      "rawPrompt": "没有相关资料，请解释为什么同一张照片在不同屏幕上颜色不一样，并给普通用户可操作的排查建议。",
+      "purpose": "开发题的派生范围摘要锚定消融；不是下游作品或独立留出题",
+      "baselineJob": "V03_V46_GEN",
+      "changedVariable": "仅移除 writer user JSON 的 taskScope；原始来源、system、内部记录协议、参数不变",
+      "baselineSystemSha256": "c93e52f66787e5c7073cfc07da71081c70d71cb268e64364a3e4d3a99fb28871",
+      "baselineUserSha256": "ca26550a46d081e06f0e1964b527e858304a1a69293025664cdc1fc412321161",
+      "preregisteredDecision": "Q01须出现有用的对象相关工作展开，且V03不损失原动作与边界；若仍仅核查要求，停止此假设，不重复采样。"
+    }
+  ]
+}

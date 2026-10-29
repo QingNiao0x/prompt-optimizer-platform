@@ -1,0 +1,54 @@
+{
+  "kind": "OFFLINE_SCOPE_AND_CHECKER_USAGE_REVIEW",
+  "actualHttpRequests": 0,
+  "actualModelCalls": 0,
+  "realWorksExecuted": false,
+  "adoptionClaimed": false,
+  "records": [
+    {
+      "caseId": "C01",
+      "sourceResultPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry51-normal/results/C01_V51_GEN.json",
+      "sourceResultSha256": "45b2d6f8da7e2dc0821926ba148448c90a228b49f12e37bbace61decbefa43a6",
+      "finalPromptSha256": "c6fac3486670a8bd02086e0c5cab98ea56484c8763d23c20557001688a17c081",
+      "originalFileContractPreservedVerbatim": true,
+      "allowedWritePaths": [
+        "src/views/records/dateRules.js",
+        "src/views/records/create.js",
+        "src/views/records/import.js",
+        "src/views/records/dateRules.spec.js"
+      ],
+      "scopeContradictionFound": false,
+      "basis": "正文仅按需补充已有dateRules.spec.js，完整保留三业务文件与已有测试白名单、禁止新增或其他修改。"
+    },
+    {
+      "caseId": "C02",
+      "sourceResultPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry51-normal/results/C02_V51_GEN.json",
+      "sourceResultSha256": "a5cd42b3374753cea251e074b4c5740db089400e8892fbead5af83cafc6e1776",
+      "finalPromptSha256": "f8d943bff75d6237023bc9c5b67c961a9976a7a9e4c833a5e4773a205283c803",
+      "originalFileContractPreservedVerbatim": true,
+      "allowedWritePaths": [
+        "src/views/records/dateRules.js",
+        "src/views/records/create.js",
+        "src/views/records/import.js"
+      ],
+      "scopeContradictionFound": false,
+      "basis": "正文完整保留三业务文件白名单，明确禁止新增及修改测试或其他文件；要求运行已有测试不扩大文件修改范围。"
+    }
+  ],
+  "checker": {
+    "entry": "checkers/run-code-results.mjs registry51-code-works",
+    "runOnlyAfterClosureAndExplicitScheduling": true,
+    "rerunWouldRefuseOverwrite": true,
+    "checks": [
+      "交付范围",
+      "新增与导入的日期边界",
+      "今天包含与传入today使用",
+      "导入逐行部分成功和错误反馈",
+      "未改文件保留",
+      "独立边界检查",
+      "已有/改动测试实际行为及是否捕获旧bug"
+    ],
+    "executionBoundary": "受限VM/合成项目，不直接在宿主执行模型代码；不证明真实Vue页面或真人修改时间。",
+    "toolClaimBoundary": "作品生成时无工具，不得把正文要求运行测试误记为模型实际已运行；独立检查器结果与模型自称分开。"
+  }
+}

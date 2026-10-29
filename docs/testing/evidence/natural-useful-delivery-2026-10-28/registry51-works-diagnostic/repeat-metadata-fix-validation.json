@@ -1,0 +1,43 @@
+{
+  "kind": "ZERO_CALL_MATERIALIZER_REPEAT_METADATA_FIX",
+  "firstFailure": {
+    "reportedBy": "quality_eval_infrastructure",
+    "location": "materialize.mjs:60",
+    "expected": [
+      1,
+      2
+    ],
+    "actual": [
+      "undefined",
+      "undefined"
+    ],
+    "rootCause": "Frozen execution IDs encode _R1/_R2 while some jobs omit optional repeat",
+    "originalMaterializerSha256": "51ac496387c4ef5aa9961924a54941ccf6a521e56e87fb698added7a9a097266"
+  },
+  "outputExistenceBeforeRepair": {
+    "publicPackets": false,
+    "privateMap": false
+  },
+  "change": "Read repeat only from frozen job ID; if repeat field exists require exact numeric agreement; never mutate job or body",
+  "syntaxChecks": 3,
+  "positiveBoundaries": 2,
+  "negativeBoundaries": 4,
+  "actualHttpRequests": 0,
+  "actualModelCalls": 0,
+  "materializerRerun": false,
+  "closedArtifactsModified": false,
+  "files": [
+    {
+      "path": "support.mjs",
+      "sha256": "115b372a0cf9d0553a31e23ad18e92de9f0294978be4423bfb09549623554ba1"
+    },
+    {
+      "path": "materialize.mjs",
+      "sha256": "67bf99f497be33e4b76a30f81a1b4bfdc1bf3b0cf4615e7093bb45193f8276d5"
+    },
+    {
+      "path": "self-test.mjs",
+      "sha256": "a8ddeb56b5eb61b21ba0a851a05a3c63f4b08d10e1de9beeda4798fff780d37e"
+    }
+  ]
+}

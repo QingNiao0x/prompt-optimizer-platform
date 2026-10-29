@@ -1,0 +1,301 @@
+{
+  "files": [
+    {
+      "path": "src/components/LoanDraftForm.vue#chunk-1",
+      "content": "<script setup lang=\"ts\">\nimport { quantityFromInput } from '../domain/quantity';\ndefineProps<{ quantity: number; purpose: string; readonly?: boolean; submitText: string }>();\nconst emit = defineEmits<{\n  'update:quantity': [value: number];\n  'update:purpose': [value: string];\n  submit: [];\n}>();\n\nfunction updateQuantity(event: Event): void {\n  emit('update:quantity', quantityFromInput((event.target as HTMLInputElement).value));\n}\n\nfunction updatePurpose(event: Event): void {\n  emit('update:purpose', (event.target as HTMLTextAreaElement).value);\n}\n</script>\n\n<template>\n  <section class=\"draft-form\">\n    <label>借用数量\n      <input data-test=\"quantity-input\" type=\"number\" min=\"1\" step=\"1\" :value=\"quantity\"\n        :disabled=\"readonly\" @input=\"updateQuantity\">\n    </label>\n    <label>用途备注\n      <textarea data-test=\"purpose-input\" rows=\"3\" :value=\"purpose\" :disabled=\"readonly\"\n        placeholder=\"简单说明用途，失败时保留当前草稿\" @input=\"updatePurpose\" />\n    </label>\n    <p v-if=\"readonly\" class=\"notice\" data-test=\"readonly-note\">该状态只读，不能在此修改。</p>\n    <button data-test=\"submit-loan\" class=\"primary-button\" type=\"button\" :disabled=\"readonly\" @click=\"emit('submit')\">\n      {{ submitText }}\n    </button>\n  </section>\n</template>\n",
+      "language": "vue"
+    },
+    {
+      "path": "src/domain/quantity.ts#chunk-1",
+      "content": "import { DeskError } from './errors';\n\n/** 对业务数量做集中检查，表单和直接调用都经这里进入。 */\nexport function assertRequestedQuantity(quantity: number): void {\n  if (!Number.isFinite(quantity) || quantity < 1) {\n    throw new DeskError('INVALID_QUANTITY');\n  }\n}\n\n/** 表单空值保留为 0，由业务层给出已有错误信息。 */\nexport function quantityFromInput(value: string): number {\n  return value.trim() === '' ? 0 : Number(value);\n}\n\nexport function remainingUnits(total: number, occupied: number): number {\n  return Math.max(0, total - occupied);\n}\n",
+      "language": "typescript"
+    },
+    {
+      "path": "src/composables/useLoanEdit.ts#chunk-1",
+      "content": "import { computed, ref } from 'vue';\nimport { deskRuntime } from '../application/deskRuntime';\nimport { readableError } from '../domain/errors';\nimport type { AvailabilityQuote, LoanDesk } from '../domain/types';\n\nexport function useLoanEdit(desk: LoanDesk = deskRuntime) {\n  const snapshot = ref(desk.snapshot());\n  const loanId = ref('L101');\n  const quantity = ref(2);\n  const purpose = ref('社区短片记录');\n  const error = ref('');\n  const success = ref('');\n  const revision = ref(0);\n\n  const loan = computed(() => snapshot.value.loans.find((row) => row.id === loanId.value));\n  const readonly = computed(() => loan.value?.status !== 'CONFIRMED');\n  const quote = computed<AvailabilityQuote | null>(() => {\n    void revision.value;\n    try { return desk.quoteEdit(loanId.value); }\n    catch { return null; }\n  });\n  const kit = computed(() => snapshot.value.kits.find((row) => row.id === loan.value?.kitId));\n  const site = computed(() => snapshot.value.sites.find((row) => row.id === loan.value?.siteId));\n\n  function selectLoan(value: string): void {\n    loanId.value = value;\n    const selected = desk.getLoan(value);\n    quantity.value = selected.quantity;\n    purpose.value = selected.purpose;\n    error.value = '';\n    success.value = '';\n    revision.value += 1;\n  }\n\n  function refresh(): void {\n    snapshot.value = desk.snapshot();\n    revision.value += 1;\n  }\n\n  function submit(): void {\n    error.value = '';\n    success.value = '';\n    try {\n      const result = desk.updateLoan({ loanId: loanId.value, quantity: quantity.value, purpose: purpose.value });\n      success.value = `已保存 ${result.id}，版本 ${result.revision}`;\n      refresh();\n    } catch (cause) {\n      error.value = readableError(cause);\n    }\n  }\n\n  return { snapshot, loanId, quantity, purpose, error, success, loan, readonly, quote, kit, site, selectLoan, refresh, submit };\n}\n",
+      "language": "typescript"
+    },
+    {
+      "path": "src/components/AvailabilityPanel.vue#chunk-1",
+      "content": "<script setup lang=\"ts\">\nimport type { AvailabilityQuote } from '../domain/types';\ndefineProps<{ quote: AvailabilityQuote | null; editing?: boolean }>();\n</script>\n\n<template>\n  <section class=\"availability-panel\" aria-label=\"器材余量\">\n    <template v-if=\"quote\">\n      <div><span>可借数量</span><strong data-test=\"available-count\">{{ quote.available }}</strong></div>\n      <dl>\n        <div><dt>地点总库存</dt><dd data-test=\"total-count\">{{ quote.total }}</dd></div>\n        <div><dt>{{ editing ? '其他借用占用' : '当前借用占用' }}</dt><dd data-test=\"occupied-count\">{{ quote.occupied }}</dd></div>\n      </dl>\n      <p>{{ editing ? '本单修改数量以当前可容纳的整单数量为准。' : '页面数字是预览，提交仍需检查最新余量。' }}</p>\n    </template>\n    <p v-else data-test=\"unknown-stock\">该地点未配置此器材库存</p>\n  </section>\n</template>\n",
+      "language": "vue"
+    },
+    {
+      "path": "src/composables/useNewLoan.ts#chunk-1",
+      "content": "import { computed, ref } from 'vue';\nimport { deskRuntime } from '../application/deskRuntime';\nimport { readableError } from '../domain/errors';\nimport type { AvailabilityQuote, LoanDesk, SiteId } from '../domain/types';\n\nexport function useNewLoan(desk: LoanDesk = deskRuntime) {\n  const snapshot = ref(desk.snapshot());\n  const siteId = ref<SiteId>('harbor');\n  const kitId = ref('camera');\n  const quantity = ref(1);\n  const purpose = ref('');\n  const error = ref('');\n  const success = ref('');\n  const revision = ref(0);\n\n  const quote = computed<AvailabilityQuote | null>(() => {\n    void revision.value;\n    try { return desk.quoteNew(siteId.value, kitId.value); }\n    catch { return null; }\n  });\n  const kit = computed(() => snapshot.value.kits.find((row) => row.id === kitId.value));\n  const site = computed(() => snapshot.value.sites.find((row) => row.id === siteId.value));\n  const ledger = computed(() => snapshot.value.loans.filter((row) => row.siteId === siteId.value && row.kitId === kitId.value));\n\n  function refresh(): void {\n    snapshot.value = desk.snapshot();\n    revision.value += 1;\n  }\n\n  function submit(): void {\n    error.value = '';\n    success.value = '';\n    try {\n      const result = desk.createLoan({ siteId: siteId.value, kitId: kitId.value,\n        quantity: quantity.value, purpose: purpose.value });\n      success.value = `已创建 ${result.id}，${result.quantity} 份`;\n      refresh();\n    } catch (cause) {\n      error.value = readableError(cause);\n    }\n  }\n\n  return { snapshot, siteId, kitId, quantity, purpose, error, success, quote, kit, site, ledger, refresh, submit };\n}\n",
+      "language": "typescript"
+    },
+    {
+      "path": "src/domain/availability.ts#chunk-1",
+      "content": "import { DeskError } from './errors';\nimport { remainingUnits } from './quantity';\nimport type { AvailabilityQuery, AvailabilityQuote, DeskSnapshot } from './types';\n\n/** 从快照计算借用台展示与提交使用的余量，不修改快照。 */\nexport function availabilityFor(snapshot: DeskSnapshot, query: AvailabilityQuery): AvailabilityQuote {\n  const stock = snapshot.stocks.find((row) => row.siteId === query.siteId && row.kitId === query.kitId);\n  if (!stock) throw new DeskError('UNKNOWN_STOCK');\n\n  const occupied = snapshot.loans\n    .filter((loan) => loan.kitId === query.kitId && loan.status !== 'CANCELLED')\n    .reduce((sum, loan) => sum + loan.quantity, 0);\n\n  return {\n    siteId: query.siteId,\n    kitId: query.kitId,\n    total: stock.total,\n    occupied,\n    available: remainingUnits(stock.total, occupied),\n  };\n}\n",
+      "language": "typescript"
+    },
+    {
+      "path": "src/views/EditLoanPage.vue#chunk-1",
+      "content": "<script setup lang=\"ts\">\nimport AvailabilityPanel from '../components/AvailabilityPanel.vue';\nimport LoanDraftForm from '../components/LoanDraftForm.vue';\nimport { useLoanEdit } from '../composables/useLoanEdit';\nimport type { LoanDesk } from '../domain/types';\n\nconst props = defineProps<{ desk?: LoanDesk }>();\nconst { snapshot, loanId, quantity, purpose, error, success, loan, readonly, quote, kit, site, selectLoan, refresh, submit } = useLoanEdit(props.desk);\n\nfunction changeLoan(event: Event): void {\n  selectLoan((event.target as HTMLSelectElement).value);\n}\n</script>\n\n<template>\n  <article class=\"desk-page\" data-test=\"edit-page\">\n    <header><p class=\"eyebrow\">当前业务 · 修改</p><h1>修改已确认借用</h1><p>保存整单新数量，不是在旧数量上追加。</p></header>\n    <div class=\"selector-row\">\n      <label>借用单<select data-test=\"loan-select\" :value=\"loanId\" @change=\"changeLoan\"><option v-for=\"row in snapshot.loans\" :key=\"row.id\" :value=\"row.id\">{{ row.id }} · {{ row.purpose }}</option></select></label>\n      <button type=\"button\" data-test=\"refresh-edit\" @click=\"refresh\">刷新余量</button>\n    </div>\n    <p class=\"description\" data-test=\"editing-context\">{{ site?.name }} · {{ kit?.name }} · 当前数量 {{ loan?.quantity }}</p>\n    <div class=\"form-columns\">\n      <AvailabilityPanel :quote=\"quote\" editing />\n      <LoanDraftForm v-model:quantity=\"quantity\" v-model:purpose=\"purpose\" :readonly=\"readonly\" submit-text=\"保存修改\" @submit=\"submit\" />\n    </div>\n    <p v-if=\"error\" role=\"alert\" class=\"error\" data-test=\"error-message\">{{ error }}</p>\n    <p v-if=\"success\" role=\"status\" class=\"success\" data-test=\"success-message\">{{ success }}</p>\n  </article>\n</template>\n",
+      "language": "vue"
+    },
+    {
+      "path": "src/views/NewLoanPage.vue#chunk-1",
+      "content": "<script setup lang=\"ts\">\nimport AvailabilityPanel from '../components/AvailabilityPanel.vue';\nimport LoanDraftForm from '../components/LoanDraftForm.vue';\nimport LoanLedger from '../components/LoanLedger.vue';\nimport { useNewLoan } from '../composables/useNewLoan';\nimport type { LoanDesk, SiteId } from '../domain/types';\n\nconst props = defineProps<{ desk?: LoanDesk }>();\nconst { snapshot, siteId, kitId, quantity, purpose, error, success, quote, kit, ledger, refresh, submit } = useNewLoan(props.desk);\n\nfunction changeSite(event: Event): void {\n  siteId.value = (event.target as HTMLSelectElement).value as SiteId;\n}\nfunction changeKit(event: Event): void {\n  kitId.value = (event.target as HTMLSelectElement).value;\n}\n</script>\n\n<template>\n  <article class=\"desk-page\" data-test=\"new-page\">\n    <header><p class=\"eyebrow\">当前业务 · 新建</p><h1>新建器材借用</h1><p>地点之间分别管理库存，确认前可调整用途。</p></header>\n    <div class=\"selector-row\">\n      <label>地点<select data-test=\"site-select\" :value=\"siteId\" @change=\"changeSite\"><option v-for=\"site in snapshot.sites\" :key=\"site.id\" :value=\"site.id\">{{ site.name }}</option></select></label>\n      <label>器材<select data-test=\"kit-select\" :value=\"kitId\" @change=\"changeKit\"><option v-for=\"item in snapshot.kits\" :key=\"item.id\" :value=\"item.id\">{{ item.name }}</option></select></label>\n      <button type=\"button\" data-test=\"refresh-new\" @click=\"refresh\">刷新余量</button>\n    </div>\n    <p class=\"description\">{{ kit?.description }}</p>\n    <div class=\"form-columns\">\n      <AvailabilityPanel :quote=\"quote\" />\n      <LoanDraftForm v-model:quantity=\"quantity\" v-model:purpose=\"purpose\" submit-text=\"确认借用\" @submit=\"submit\" />\n    </div>\n    <p v-if=\"error\" role=\"alert\" class=\"error\" data-test=\"error-message\">{{ error }}</p>\n    <p v-if=\"success\" role=\"status\" class=\"success\" data-test=\"success-message\">{{ success }}</p>\n    <LoanLedger :loans=\"ledger\" />\n  </article>\n</template>\n",
+      "language": "vue"
+    },
+    {
+      "path": "src/application/loanDeskService.ts#chunk-1",
+      "content": "import { availabilityFor } from '../domain/availability';\nimport { DeskError } from '../domain/errors';\nimport { assertRequestedQuantity } from '../domain/quantity';\nimport type { AvailabilityQuote, EditLoanCommand, Loan, LoanDesk, LoanRepository, NewLoanCommand, SiteId } from '../domain/types';\n\n/** 页面共享业务入口，仓库可注入；不接触浏览器或持久化环境。 */\nexport function createLoanDesk(repository: LoanRepository): LoanDesk {\n  const previews = new Map<string, AvailabilityQuote>();\n  const newKey = (siteId: SiteId, kitId: string) => `new:${siteId}:${kitId}`;\n  const editKey = (loanId: string) => `edit:${loanId}`;\n\n  function getLoan(loanId: string): Loan {\n    const row = repository.snapshot().loans.find((loan) => loan.id === loanId);\n    if (!row) throw new DeskError('LOAN_NOT_FOUND');\n    return row;\n  }\n\n  function assertEditable(loan: Loan): void {\n    if (loan.status !== 'CONFIRMED') throw new DeskError('READ_ONLY_LOAN');\n  }\n\n  function quoteNew(siteId: SiteId, kitId: string): AvailabilityQuote {\n    const quote = availabilityFor(repository.snapshot(), { siteId, kitId });\n    previews.set(newKey(siteId, kitId), quote);\n    return quote;\n  }\n\n  function quoteEdit(loanId: string): AvailabilityQuote {\n    const loan = getLoan(loanId);\n    const quote = availabilityFor(repository.snapshot(), { siteId: loan.siteId, kitId: loan.kitId });\n    previews.set(editKey(loanId), quote);\n    return quote;\n  }\n\n  function createLoan(command: NewLoanCommand): Loan {\n    assertRequestedQuantity(command.quantity);\n    const quote = previews.get(newKey(command.siteId, command.kitId))\n      ?? quoteNew(command.siteId, command.kitId);\n    if (command.quantity > quote.available) throw new DeskError('INSUFFICIENT_STOCK');\n    return repository.insert(command);\n  }\n\n  function updateLoan(command: EditLoanCommand): Loan {\n    const loan = getLoan(command.loanId);\n    assertEditable(loan);\n    assertRequestedQuantity(command.quantity);\n    const quote = previews.get(editKey(command.loanId)) ?? quoteEdit(command.loanId);\n    if (command.quantity > quote.available) throw new DeskError('INSUFFICIENT_STOCK');\n    return repository.update(command.loanId, command.quantity, command.purpose);\n  }\n\n  return { snapshot: () => repository.snapshot(), getLoan, quoteNew, quoteEdit, createLoan, updateLoan };\n}\n",
+      "language": "typescript"
+    },
+    {
+      "path": "src/domain/types.ts#chunk-1",
+      "content": "export type SiteId = 'harbor' | 'hill';\nexport type LoanStatus = 'DRAFT' | 'CONFIRMED' | 'COLLECTED' | 'RETURNED' | 'CANCELLED';\n\nexport interface Site {\n  id: SiteId;\n  name: string;\n}\n\nexport interface Kit {\n  id: string;\n  name: string;\n  depositPerUnit: number;\n  description: string;\n}\n\nexport interface StockRow {\n  siteId: SiteId;\n  kitId: string;\n  total: number;\n}\n\nexport interface Loan {\n  id: string;\n  siteId: SiteId;\n  kitId: string;\n  quantity: number;\n  status: LoanStatus;\n  purpose: string;\n  revision: number;\n}\n\nexport interface DeskSnapshot {\n  sites: Site[];\n  kits: Kit[];\n  stocks: StockRow[];\n  loans: Loan[];\n}\n\nexport interface AvailabilityQuery {\n  siteId: SiteId;\n  kitId: string;\n  excludeLoanId?: string;\n}\n\nexport interface AvailabilityQuote {\n  siteId: SiteId;\n  kitId: string;\n  total: number;\n  occupied: number;\n  available: number;\n}\n\nexport interface NewLoanCommand {\n  siteId: SiteId;\n  kitId: string;\n  quantity: number;\n  purpose: string;\n}\n\nexport interface EditLoanCommand {\n  loanId: string;\n  quantity: number;\n  purpose: string;\n}\n\nexport interface LoanRepository {\n  snapshot(): DeskSnapshot;\n  insert(command: NewLoanCommand): Loan;\n  update(loanId: string, quantity: number, purpose: string): Loan;\n}\n\nexport interface LoanDesk {\n  snapshot(): DeskSnapshot;\n  getLoan(loanId: string): Loan;\n  quoteNew(siteId: SiteId, kitId: string): AvailabilityQuote;\n  quoteEdit(loanId: string): AvailabilityQuote;\n  createLoan(command: NewLoanCommand): Loan;\n  updateLoan(command: EditLoanCommand): Loan;\n}\n",
+      "language": "typescript"
+    },
+    {
+      "path": "src/domain/errors.ts#chunk-1",
+      "content": "export type DeskErrorCode = 'INVALID_QUANTITY' | 'UNKNOWN_STOCK' | 'LOAN_NOT_FOUND'\n  | 'READ_ONLY_LOAN' | 'INSUFFICIENT_STOCK';\n\nconst messages: Record<DeskErrorCode, string> = {\n  INVALID_QUANTITY: '数量必须为正整数',\n  UNKNOWN_STOCK: '该地点未配置此器材库存',\n  LOAN_NOT_FOUND: '借用单不存在',\n  READ_ONLY_LOAN: '只有已确认借用单可以修改',\n  INSUFFICIENT_STOCK: '可借数量不足，请按最新余量调整',\n};\n\nexport class DeskError extends Error {\n  readonly code: DeskErrorCode;\n\n  constructor(code: DeskErrorCode) {\n    super(messages[code]);\n    this.name = 'DeskError';\n    this.code = code;\n  }\n}\n\nexport function readableError(error: unknown): string {\n  return error instanceof Error ? error.message : '操作未完成，请重新检查输入';\n}\n",
+      "language": "typescript"
+    },
+    {
+      "path": "src/components/LoanLedger.vue#chunk-1",
+      "content": "<script setup lang=\"ts\">\nimport type { Loan, LoanStatus } from '../domain/types';\ndefineProps<{ loans: Loan[] }>();\nconst labels: Record<LoanStatus, string> = {\n  DRAFT: '草稿', CONFIRMED: '已确认', COLLECTED: '已领取', RETURNED: '已归还', CANCELLED: '已取消',\n};\n</script>\n\n<template>\n  <section class=\"ledger\">\n    <h3>当前地点与器材的台账</h3>\n    <table>\n      <thead><tr><th>单号</th><th>数量</th><th>状态</th><th>用途</th></tr></thead>\n      <tbody>\n        <tr v-for=\"loan in loans\" :key=\"loan.id\">\n          <td>{{ loan.id }}</td><td>{{ loan.quantity }}</td><td>{{ labels[loan.status] }}</td><td>{{ loan.purpose }}</td>\n        </tr>\n      </tbody>\n    </table>\n    <p v-if=\"loans.length === 0\">暂无借用记录。</p>\n  </section>\n</template>\n",
+      "language": "vue"
+    },
+    {
+      "path": "src/application/deskRuntime.ts#chunk-1",
+      "content": "import { createMemoryLoanRepository } from '../data/memoryLoanRepository';\nimport { createSeedSnapshot } from '../data/seed';\nimport { createLoanDesk } from './loanDeskService';\n\n/** 浏览器内的默认运行时；测试用例可直接注入自己的仓库和 desk。 */\nexport const deskRuntime = createLoanDesk(createMemoryLoanRepository(createSeedSnapshot()));\n",
+      "language": "typescript"
+    }
+  ],
+  "selections": [
+    {
+      "path": "src/components/LoanDraftForm.vue",
+      "chunkIndex": 0,
+      "score": 23520,
+      "reasons": [
+        "用户明确引用路径",
+        "路径与任务匹配",
+        "内容与任务匹配",
+        "任务中的符号",
+        "被高相关代码直接依赖"
+      ]
+    },
+    {
+      "path": "src/domain/quantity.ts",
+      "chunkIndex": 0,
+      "score": 23080,
+      "reasons": [
+        "用户明确引用路径",
+        "内容与任务匹配",
+        "任务中的符号",
+        "路径与任务匹配",
+        "被高相关代码直接依赖"
+      ]
+    },
+    {
+      "path": "src/composables/useLoanEdit.ts",
+      "chunkIndex": 0,
+      "score": 22360,
+      "reasons": [
+        "用户明确引用路径",
+        "内容与任务匹配",
+        "任务中的符号",
+        "任务中的完整符号",
+        "被高相关代码直接依赖"
+      ]
+    },
+    {
+      "path": "src/components/AvailabilityPanel.vue",
+      "chunkIndex": 0,
+      "score": 22280,
+      "reasons": [
+        "用户明确引用路径",
+        "路径与任务匹配",
+        "内容与任务匹配",
+        "被高相关代码直接依赖"
+      ]
+    },
+    {
+      "path": "src/composables/useNewLoan.ts",
+      "chunkIndex": 0,
+      "score": 22200,
+      "reasons": [
+        "用户明确引用路径",
+        "内容与任务匹配",
+        "任务中的符号",
+        "任务中的完整符号",
+        "被高相关代码直接依赖"
+      ]
+    },
+    {
+      "path": "src/domain/availability.ts",
+      "chunkIndex": 0,
+      "score": 21660,
+      "reasons": [
+        "用户明确引用路径",
+        "内容与任务匹配",
+        "任务中的符号",
+        "任务中的完整符号"
+      ]
+    },
+    {
+      "path": "src/views/EditLoanPage.vue",
+      "chunkIndex": 0,
+      "score": 21100,
+      "reasons": [
+        "用户明确引用路径",
+        "路径与任务匹配",
+        "内容与任务匹配"
+      ]
+    },
+    {
+      "path": "src/views/NewLoanPage.vue",
+      "chunkIndex": 0,
+      "score": 21060,
+      "reasons": [
+        "用户明确引用路径",
+        "路径与任务匹配",
+        "内容与任务匹配"
+      ]
+    },
+    {
+      "path": "src/application/loanDeskService.ts",
+      "chunkIndex": 0,
+      "score": 20380,
+      "reasons": [
+        "用户明确引用路径",
+        "内容与任务匹配"
+      ]
+    },
+    {
+      "path": "src/domain/types.ts",
+      "chunkIndex": 0,
+      "score": 2440,
+      "reasons": [
+        "内容与任务匹配",
+        "任务中的符号",
+        "被高相关代码直接依赖"
+      ]
+    },
+    {
+      "path": "src/domain/errors.ts",
+      "chunkIndex": 0,
+      "score": 2160,
+      "reasons": [
+        "内容与任务匹配",
+        "被高相关代码直接依赖"
+      ]
+    },
+    {
+      "path": "src/components/LoanLedger.vue",
+      "chunkIndex": 0,
+      "score": 1920,
+      "reasons": [
+        "路径与任务匹配",
+        "内容与任务匹配",
+        "被高相关代码直接依赖"
+      ]
+    },
+    {
+      "path": "src/application/deskRuntime.ts",
+      "chunkIndex": 0,
+      "score": 1000,
+      "reasons": [
+        "内容与任务匹配",
+        "被高相关代码直接依赖"
+      ]
+    }
+  ],
+  "totalCharacters": 15812,
+  "references": [
+    {
+      "reference": "src/domain/availability.ts",
+      "matchedPaths": [
+        "src/domain/availability.ts"
+      ],
+      "selectedPaths": [
+        "src/domain/availability.ts"
+      ],
+      "status": "FOUND"
+    },
+    {
+      "reference": "src/domain/quantity.ts",
+      "matchedPaths": [
+        "src/domain/quantity.ts"
+      ],
+      "selectedPaths": [
+        "src/domain/quantity.ts"
+      ],
+      "status": "FOUND"
+    },
+    {
+      "reference": "src/application/loanDeskService.ts",
+      "matchedPaths": [
+        "src/application/loanDeskService.ts"
+      ],
+      "selectedPaths": [
+        "src/application/loanDeskService.ts"
+      ],
+      "status": "FOUND"
+    },
+    {
+      "reference": "src/composables/useNewLoan.ts",
+      "matchedPaths": [
+        "src/composables/useNewLoan.ts"
+      ],
+      "selectedPaths": [
+        "src/composables/useNewLoan.ts"
+      ],
+      "status": "FOUND"
+    },
+    {
+      "reference": "src/composables/useLoanEdit.ts",
+      "matchedPaths": [
+        "src/composables/useLoanEdit.ts"
+      ],
+      "selectedPaths": [
+        "src/composables/useLoanEdit.ts"
+      ],
+      "status": "FOUND"
+    },
+    {
+      "reference": "src/components/AvailabilityPanel.vue",
+      "matchedPaths": [
+        "src/components/AvailabilityPanel.vue"
+      ],
+      "selectedPaths": [
+        "src/components/AvailabilityPanel.vue"
+      ],
+      "status": "FOUND"
+    },
+    {
+      "reference": "src/components/LoanDraftForm.vue",
+      "matchedPaths": [
+        "src/components/LoanDraftForm.vue"
+      ],
+      "selectedPaths": [
+        "src/components/LoanDraftForm.vue"
+      ],
+      "status": "FOUND"
+    },
+    {
+      "reference": "src/views/NewLoanPage.vue",
+      "matchedPaths": [
+        "src/views/NewLoanPage.vue"
+      ],
+      "selectedPaths": [
+        "src/views/NewLoanPage.vue"
+      ],
+      "status": "FOUND"
+    },
+    {
+      "reference": "src/views/EditLoanPage.vue",
+      "matchedPaths": [
+        "src/views/EditLoanPage.vue"
+      ],
+      "selectedPaths": [
+        "src/views/EditLoanPage.vue"
+      ],
+      "status": "FOUND"
+    }
+  ]
+}

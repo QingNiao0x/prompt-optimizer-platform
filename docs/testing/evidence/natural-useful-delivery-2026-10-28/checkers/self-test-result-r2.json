@@ -1,0 +1,179 @@
+{
+  "modelCalls": 0,
+  "baselineRejected": true,
+  "correctWithUsefulTestsPassed": true,
+  "correctNoTestsPassed": true,
+  "testFileRejectedUnderC02": true,
+  "traversalAndOtherFilesRejected": true,
+  "duplicateRejected": true,
+  "baseline": {
+    "allowToday": true,
+    "checks": [
+      {
+        "id": "create-past",
+        "passed": true
+      },
+      {
+        "id": "create-today",
+        "passed": true
+      },
+      {
+        "id": "create-future",
+        "passed": false,
+        "message": "Expected values to be strictly equal:\n\ntrue !== false\n"
+      },
+      {
+        "id": "create-invalid-calendar",
+        "passed": true
+      },
+      {
+        "id": "create-invalid-format",
+        "passed": true
+      },
+      {
+        "id": "create-keeps-other-fields",
+        "passed": true
+      },
+      {
+        "id": "import-today",
+        "passed": true
+      },
+      {
+        "id": "import-row-errors-and-partial-success",
+        "passed": false,
+        "message": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n    {\n      id: 'synthetic-1',\n      surveyDate: '2026-10-26'\n    },\n+   {\n+     surveyDate: '2026-10-28'\n+   }\n  ]\n"
+      },
+      {
+        "id": "empty-import",
+        "passed": true
+      },
+      {
+        "id": "cross-year-future",
+        "passed": false,
+        "message": "Expected values to be strictly equal:\n\ntrue !== false\n"
+      }
+    ],
+    "passed": false
+  },
+  "legalTests": {
+    "business": {
+      "allowToday": true,
+      "checks": [
+        {
+          "id": "create-past",
+          "passed": true
+        },
+        {
+          "id": "create-today",
+          "passed": true
+        },
+        {
+          "id": "create-future",
+          "passed": true
+        },
+        {
+          "id": "create-invalid-calendar",
+          "passed": true
+        },
+        {
+          "id": "create-invalid-format",
+          "passed": true
+        },
+        {
+          "id": "create-keeps-other-fields",
+          "passed": true
+        },
+        {
+          "id": "import-today",
+          "passed": true
+        },
+        {
+          "id": "import-row-errors-and-partial-success",
+          "passed": true
+        },
+        {
+          "id": "empty-import",
+          "passed": true
+        },
+        {
+          "id": "cross-year-future",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "regressionTests": {
+      "changed": true,
+      "actual": {
+        "passed": true,
+        "checks": [
+          {
+            "name": "新增保留有效日历日期和其他字段",
+            "passed": true
+          },
+          {
+            "name": "导入按行返回无效日历日期，保留其他有效行",
+            "passed": true
+          },
+          {
+            "name": "新增拒绝未来日期，接受今天",
+            "passed": true
+          },
+          {
+            "name": "导入拒绝未来行并保持有效行",
+            "passed": true
+          }
+        ]
+      },
+      "beforeFix": {
+        "passed": false,
+        "checks": [
+          {
+            "name": "新增保留有效日历日期和其他字段",
+            "passed": true
+          },
+          {
+            "name": "导入按行返回无效日历日期，保留其他有效行",
+            "passed": true
+          },
+          {
+            "name": "新增拒绝未来日期，接受今天",
+            "passed": false,
+            "message": "strict equality mismatch"
+          },
+          {
+            "name": "导入拒绝未来行并保持有效行",
+            "passed": false,
+            "message": "strict equality mismatch"
+          }
+        ]
+      },
+      "detectsOriginalBug": true
+    }
+  },
+  "wrongClockRejected": true,
+  "wrongClock": {
+    "passed": false,
+    "checks": [
+      {
+        "name": "create-supplied-today-independent-of-system-clock",
+        "passed": false,
+        "message": "strict equality mismatch"
+      },
+      {
+        "name": "import-supplied-today-independent-of-system-clock",
+        "passed": false,
+        "message": "deep strict equality mismatch"
+      },
+      {
+        "name": "create-preserves-invalid-date-code",
+        "passed": true
+      },
+      {
+        "name": "import-preserves-invalid-date-code",
+        "passed": true
+      }
+    ]
+  },
+  "originalFailedArtifactUntouched": true
+}

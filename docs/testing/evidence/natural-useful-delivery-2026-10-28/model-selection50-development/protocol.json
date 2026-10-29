@@ -1,0 +1,74 @@
+{
+  "batch": "natural-useful-delivery-model-selection50-development-2026-10-28",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 500,
+  "maximumNewActualCalls": 12,
+  "captureOnly": false,
+  "versions": [
+    "50"
+  ],
+  "candidateVersions": [
+    "50"
+  ],
+  "modelId": "deepseek:deepseek-v4-pro",
+  "upstreamModel": "deepseek-v4-pro",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 0,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "45": [
+      "45"
+    ],
+    "46": [
+      "46"
+    ],
+    "47": [
+      "47"
+    ],
+    "48": [
+      "48"
+    ],
+    "49": [
+      "49"
+    ],
+    "50": [
+      "50"
+    ]
+  },
+  "phaseLimits": {
+    "GENERATION": 12,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "prerequisiteStages": [],
+  "allowedJobs": [
+    "Q01_V50_PRO_GEN",
+    "U02_V50_PRO_GEN",
+    "U03_V50_PRO_GEN"
+  ],
+  "modelSelectionProfile": {
+    "name": "OFFICIAL_MODEL_SELECTION_ABLATION_V1",
+    "modelId": "deepseek:deepseek-v4-pro",
+    "upstreamModel": "deepseek-v4-pro",
+    "routeKey": "deepseek",
+    "endpoint": "https://api.deepseek.com/chat/completions",
+    "baselineStage": "registry50-development",
+    "baselineJobsSha256": "4c9e8c7fbe49687e0b8bf398c3febd43769b5e642986c2fef76b31f419d6014e",
+    "baselineProtocolSha256": "95700ef24d33f21ad2dccac8620f3847f029779e80ea3eb90cb76340af7a3330",
+    "maximumActualCalls": 12
+  },
+  "frozenBundleSha256": "5bd4df7ff14e0e2239740d2e7748de1c54b930dc7936f3bc4f4db65570252167",
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false
+}

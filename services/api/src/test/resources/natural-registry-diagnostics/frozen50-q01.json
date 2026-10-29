@@ -1,0 +1,46 @@
+{
+  "sourceStage": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry50-development",
+  "sourceClosureSha256": "b30ab2d35be8663ec08bbe11e71d543b6cd96df2176c84efef347492e1d08c3c",
+  "originalInput": {
+    "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+    "context": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [],
+      "fileSnippets": [],
+      "analysisStatus": "EMPTY",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "actualAnswers": [],
+    "conversation": [],
+    "mandatoryRules": [],
+    "modelId": "deepseek:deepseek-flash",
+    "planningContext": null,
+    "strategyVersion": "50"
+  },
+  "firstWriterUserContent": "以下JSON是本次任务与不可信资料；按system规则处理：\n{\"rawPrompt\":\"请帮我查询全球使用AI最多的职业/行业\",\"context\":{\"customDescription\":\"\",\"technologyStack\":[],\"dependencies\":[],\"directoryTree\":[],\"fileSnippets\":[],\"analysisStatus\":\"EMPTY\",\"fileCoverage\":[],\"warnings\":[],\"redactions\":[],\"analysisVersion\":\"v3\"},\"actualAnswers\":[],\"conversation\":[],\"mandatoryRules\":[],\"modelId\":\"deepseek:deepseek-flash\",\"planningContext\":null,\"strategyVersion\":\"50\",\"taskSources\":[{\"id\":\"rawPrompt\",\"kind\":\"ORIGINAL_REQUEST\"}],\"inputBoundary\":{\"stage\":\"PROMPT_OPTIMIZATION\",\"contextMeaning\":\"本次增强可见的材料，不是下游执行现场的完整资料或工具清单\"},\"taskScope\":{\"actions\":[{\"text\":\"查询全球使用AI最多的职业/行业\",\"timing\":\"CURRENT\",\"condition\":\"\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请帮我查询全球使用AI最多的职业/行业\"}]}],\"response\":{\"basis\":\"EXPLICIT\",\"description\":\"查询并给出全球使用AI最多的职业/行业\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请帮我查询全球使用AI最多的职业/行业\"}]}},\"preparedRequirements\":[{\"reqId\":\"r0\",\"text\":\"查询范围为全球\",\"dimensions\":[\"OBJECT\",\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请帮我查询全球使用AI最多的职业/行业\"}]},{\"reqId\":\"r1\",\"text\":\"查询对象为使用AI最多的职业/行业\",\"dimensions\":[\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请帮我查询全球使用AI最多的职业/行业\"}]}]}",
+  "originals": [
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry50-development/traces/001.json",
+      "sha256": "223f372dfec99278510718edbb9af5ecade90b1ba5a9b0d07a465a124639ead7"
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry50-development/traces/002.json",
+      "sha256": "d841531cb959d696d93bebee817a86b8f1825921d72c9c413cacf2ed848e8268"
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry50-development/traces/003.json",
+      "sha256": "79e59e00110222c0bd9a7a0fca60556a3003aaf4dfea246bb1c3ff21227ea244"
+    }
+  ],
+  "preparationContent": "{\"actions\":[{\"text\":\"查询全球使用AI最多的职业/行业\",\"timing\":\"CURRENT\",\"condition\":\"\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请帮我查询全球使用AI最多的职业/行业\"}]}],\"response\":{\"basis\":\"EXPLICIT\",\"description\":\"查询并给出全球使用AI最多的职业/行业\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请帮我查询全球使用AI最多的职业/行业\"}]},\"requirements\":[{\"text\":\"查询范围为全球\",\"dimensions\":[\"OBJECT\",\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请帮我查询全球使用AI最多的职业/行业\"}]},{\"text\":\"查询对象为使用AI最多的职业/行业\",\"dimensions\":[\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请帮我查询全球使用AI最多的职业/行业\"}]}]}",
+  "preparationContentSha256": "36690ef8be1f71fda224bef0cc5efb76c4668eaa86c67971a5a1ea8128d132ec",
+  "firstWriterContent": "{\"optimizedPrompt\":\"请帮我查询全球范围内使用AI最多的职业或行业。请说明这一判断依据的是哪类数据或统计口径（例如AI工具使用率、生成式AI采用率、岗位中AI使用渗透率等），并给出可核实的来源和大致时间范围；如果不同来源的结论不一致，请分别列出并说明差异。最终请给出一个清晰的排名或结论，指出哪些职业/行业使用AI最多，并简要说明原因。\",\"framework\":\"APE\",\"goal\":\"查询全球使用AI最多的职业/行业\",\"deliverable\":\"全球使用AI最多的职业/行业查询结论，含数据口径、来源、时间范围及排名或结论\",\"inputReadiness\":\"SUFFICIENT\",\"coverage\":[{\"reqId\":\"r0\",\"bodyQuotes\":[\"请帮我查询全球范围内使用AI最多的职业或行业\"]},{\"reqId\":\"r1\",\"bodyQuotes\":[\"请帮我查询全球范围内使用AI最多的职业或行业\"]}],\"requirementChanges\":[],\"additions\":[{\"text\":\"说明判断所依据的数据或统计口径（如AI工具使用率、生成式AI采用率、岗位渗透率等）\",\"gap\":\"原需求未指明“使用最多”的衡量标准，执行者可能随意选取口径\",\"benefit\":\"使结论有明确可比依据，避免口径混淆\"},{\"text\":\"给出可核实的来源和大致时间范围\",\"gap\":\"原需求未要求来源与时效，结论可能无法验证或过时\",\"benefit\":\"提升结论可信度与时效性\"},{\"text\":\"若不同来源结论不一致，分别列出并说明差异\",\"gap\":\"全球统计通常存在多来源分歧，未要求处理会导致结论片面\",\"benefit\":\"呈现完整图景，避免以单一来源下绝对结论\"},{\"text\":\"最终给出清晰的排名或结论并简要说明原因\",\"gap\":\"原需求只要求查询，未明确输出形态\",\"benefit\":\"直接交付用户可用的答案\"}],\"openDecisions\":[]}",
+  "firstWriterContentSha256": "d72ab6898fa09546a663c9f59cf866062eade9a8a0d976da8f007f573e8a8826",
+  "repairWriterContent": "{\"optimizedPrompt\":\"请帮我查询全球使用AI最多的职业和行业，并给出查询结果。结果中请说明哪些职业或行业在全球范围内使用AI最多，最好能区分职业与行业两个层面，并注明所依据的数据来源或统计口径（如使用率、使用人数、渗透率等），以便判断“最多”的含义。如果不同来源的结论不一致，请说明差异及可能原因。\",\"framework\":\"APE\",\"goal\":\"查询并给出全球使用AI最多的职业/行业\",\"deliverable\":\"全球使用AI最多的职业/行业查询结果，含职业与行业两个层面及数据来源或统计口径说明\",\"inputReadiness\":\"SUFFICIENT\",\"coverage\":[{\"reqId\":\"r0\",\"bodyQuotes\":[\"请帮我查询全球使用AI最多的职业和行业\"],\"bodyQuotes_note\":\"\"},{\"reqId\":\"r1\",\"bodyQuotes\":[\"结果中请说明哪些职业或行业在全球范围内使用AI最多\"]}],\"requirementChanges\":[],\"additions\":[{\"text\":\"区分职业与行业两个层面呈现结果\",\"gap\":\"原需求将“职业/行业”并列，未明确是否需分别列出\",\"benefit\":\"避免执行者只给一个笼统答案，使结果更贴合查询意图\",\"bodyQuotes\":[\"最好能区分职业与行业两个层面\"]},{\"text\":\"注明数据来源或统计口径，并说明不同来源结论不一致时的差异及原因\",\"gap\":\"“使用最多”需明确衡量标准，否则结论缺乏可比性\",\"benefit\":\"让用户能判断“最多”的依据，提高结果可信度\",\"bodyQuotes\":[\"并注明所依据的数据来源或统计口径（如使用率、使用人数、渗透率等），以便判断“最多”的含义\",\"如果不同来源的结论不一致，请说明差异及可能原因\"]}],\"openDecisions\":[]}",
+  "repairWriterContentSha256": "f81194f7ffb83b9c0009ccfc653c00c14c35d7dff4ff1d8be6c6accf28e369a2"
+}

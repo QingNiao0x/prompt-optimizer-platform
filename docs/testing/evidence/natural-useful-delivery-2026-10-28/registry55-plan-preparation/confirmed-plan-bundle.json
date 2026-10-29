@@ -1,0 +1,35 @@
+{
+  "syntheticOnly": true,
+  "cases": [
+    {
+      "id": "P02_CONFIRMED",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "futurePlanJobId": "P02_CONFIRMED_V55_PLAN",
+      "futureGenerationJobId": "P02_CONFIRMED_V55_GEN"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "P02_CONFIRMED_V55_PLAN",
+      "caseId": "P02_CONFIRMED",
+      "version": "55",
+      "phase": "PLAN",
+      "approvedEnhancementInput": {
+        "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+        "modelId": "deepseek:deepseek-flash",
+        "contextDescription": "",
+        "conversationHistory": [],
+        "planningContext": {
+          "contextId": "081152bf-38bd-4112-b672-79e436674721",
+          "version": "sha256:0e2c7ef193875980f1d3c1882e18829aa84ee0e6fc0eafca49452dfbc8ea6dd7"
+        }
+      }
+    }
+  ],
+  "phaseLimits": {
+    "PLAN": 4,
+    "GENERATION": 0,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  }
+}

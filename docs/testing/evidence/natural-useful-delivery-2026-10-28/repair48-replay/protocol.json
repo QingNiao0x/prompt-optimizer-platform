@@ -1,0 +1,56 @@
+{
+  "batch": "natural-useful-delivery-repair48-replay-2026-10-28",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 500,
+  "maximumNewActualCalls": 2,
+  "captureOnly": false,
+  "versions": [
+    "48"
+  ],
+  "candidateVersions": [
+    "48"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 0,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "45": [
+      "45"
+    ],
+    "46": [
+      "46"
+    ],
+    "47": [
+      "47"
+    ],
+    "48": [
+      "48"
+    ]
+  },
+  "phaseLimits": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 2,
+    "REVIEW": 0
+  },
+  "prerequisiteStages": [],
+  "allowedJobs": [
+    "U02_V48_REPAIR_REPLAY",
+    "U03_V48_REPAIR_REPLAY"
+  ],
+  "frozenBundleSha256": "8a3ce307ae880e290a715a9ad4bb83bf9893b3a634357a1b7c5da7001379355e",
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false
+}

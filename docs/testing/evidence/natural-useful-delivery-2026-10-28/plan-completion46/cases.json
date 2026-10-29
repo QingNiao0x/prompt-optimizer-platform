@@ -1,0 +1,41 @@
+{
+  "syntheticOnly": true,
+  "cases": [
+    {
+      "id": "P01F",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：调查时间不能超过今天。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "planId": "cee2fd7f-b106-4661-a3d6-11351f38216f",
+      "syntheticTestAnswers": [],
+      "actualSource": "browser/plan-captures/r1/P01",
+      "sourceCount": 4,
+      "path": "实际零问题Plan后生成",
+      "requiredChecks": [
+        "保留双入口与文件范围",
+        "真实正文生成",
+        "P02采用允许今天，不重复保留原矛盾或追问",
+        "不粘贴全部材料"
+      ]
+    },
+    {
+      "id": "P02F",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "planId": "dc8548f7-a07b-47aa-9a3b-2151466df8e3",
+      "syntheticTestAnswers": [
+        {
+          "questionId": "q1",
+          "question": "调查日期等于今天时，是否允许填写？",
+          "answer": "允许填写今天，校验通过条件为 surveyDate <= today。"
+        }
+      ],
+      "actualSource": "browser/plan-captures/r1/P02",
+      "sourceCount": 4,
+      "path": "测试操作者明确选择允许今天后生成",
+      "requiredChecks": [
+        "保留双入口与文件范围",
+        "真实正文生成",
+        "P02采用允许今天，不重复保留原矛盾或追问",
+        "不粘贴全部材料"
+      ]
+    }
+  ]
+}

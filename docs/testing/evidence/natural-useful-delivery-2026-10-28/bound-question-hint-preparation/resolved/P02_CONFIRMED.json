@@ -1,0 +1,63 @@
+{
+  "scope" : {
+    "actions" : [ {
+      "text" : "在重点记录模块 src/views/records 的新增和导入功能中增加调查时间限制：调查日期只能填写当日之前的日期，且不能超过今日；按用户确认，日期等于 today 时校验通过，晚于 today 时返回错误。",
+      "timing" : "CURRENT",
+      "condition" : "",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。"
+      }, {
+        "sourceId" : "actualAnswers.0",
+        "quote" : "允许填写今天：日期等于 today 时校验通过，晚于 today 时返回错误。"
+      } ]
+    }, {
+      "text" : "仅修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，并按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "timing" : "CURRENT",
+      "condition" : "",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。"
+      } ]
+    } ],
+    "response" : {
+      "basis" : "EXPLICIT",
+      "description" : "交付在 src/views/records 新增和导入功能中增加调查日期限制的代码修改：日期等于 today 时校验通过，晚于 today 时返回错误；仅改动指定文件，并按需补充已有回归测试。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。"
+      }, {
+        "sourceId" : "actualAnswers.0",
+        "quote" : "允许填写今天：日期等于 today 时校验通过，晚于 today 时返回错误。"
+      } ]
+    }
+  },
+  "requirements" : [ {
+    "reqId" : "r0",
+    "text" : "调查日期限制适用于 src/views/records 的新增和导入两个入口，共用日期校验逻辑。",
+    "dimensions" : [ "GOAL", "OBJECT" ],
+    "evidence" : [ {
+      "sourceId" : "rawPrompt",
+      "quote" : "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。"
+    } ]
+  }, {
+    "reqId" : "r1",
+    "text" : "日期等于 today 时校验通过，晚于 today 时返回错误。",
+    "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ],
+    "evidence" : [ {
+      "sourceId" : "rawPrompt",
+      "quote" : "今天是否允许填写由我确认，不要代选。"
+    }, {
+      "sourceId" : "actualAnswers.0",
+      "quote" : "允许填写今天：日期等于 today 时校验通过，晚于 today 时返回错误。"
+    } ]
+  }, {
+    "reqId" : "r2",
+    "text" : "仅允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+    "dimensions" : [ "FORMAT", "CONDITION" ],
+    "evidence" : [ {
+      "sourceId" : "rawPrompt",
+      "quote" : "本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。"
+    } ]
+  } ]
+}

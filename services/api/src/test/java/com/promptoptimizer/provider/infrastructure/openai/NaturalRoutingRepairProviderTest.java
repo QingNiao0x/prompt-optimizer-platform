@@ -71,7 +71,7 @@ class NaturalRoutingRepairProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"41", "42", "45"})
+    @ValueSource(strings = {"41", "42", "45", "46", "47", "48"})
     void zeroQuestionPlanStillGeneratesUsefulAdditions(String version) throws Exception {
         var input = input("请比较两种通勤方式。", List.of()).withStrategyVersion(version);
         expect(scope(input.rawPrompt(), "INHERENT"), NaturalPromptRoutingRepairInstructions.PREPARE, payload -> {});
@@ -97,7 +97,7 @@ class NaturalRoutingRepairProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"41", "42", "45"})
+    @ValueSource(strings = {"41", "42", "45", "46", "47", "48"})
     void allActualAnswersAndTheirBodyCoverageRemainMandatory(String version) throws Exception {
         var answers = List.of(new PlanAnswer("place", "地点？", "青禾中心二层会议室"),
                 new PlanAnswer("date", "日期？", "日期保持原定，不能承诺提前"));
@@ -111,7 +111,7 @@ class NaturalRoutingRepairProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"41", "42", "45"})
+    @ValueSource(strings = {"41", "42", "45", "46", "47", "48"})
     void forgedEvidenceStillFailsInsteadOfFallingBackToRawText(String version) throws Exception {
         var input = input("请解释事务。", List.of()).withStrategyVersion(version);
         expect(scope(input.rawPrompt(), "INHERENT"), NaturalPromptRoutingRepairInstructions.PREPARE, payload -> {});
@@ -136,8 +136,8 @@ class NaturalRoutingRepairProviderTest {
 
     /** 大材料仍完整传入理解阶段，响应类别不能把改写退化为原文加源码的确定性拼接。 */
     @ParameterizedTest
-    @ValueSource(strings = {"EXPLICIT", "INHERENT", "UNSPECIFIED"})
-    void contextualRewriteUsesTheWriterInsteadOfReturningRawTextAndTwentyOneFiles(String basis) throws Exception {
+    @CsvSource({"45,EXPLICIT", "45,INHERENT", "45,UNSPECIFIED", "46,EXPLICIT", "46,INHERENT", "46,UNSPECIFIED", "47,EXPLICIT", "47,INHERENT", "47,UNSPECIFIED", "48,EXPLICIT", "48,INHERENT", "48,UNSPECIFIED"})
+    void contextualRewriteUsesTheWriterInsteadOfReturningRawTextAndTwentyOneFiles(String version, String basis) throws Exception {
         String raw = "请在 @demo/src/views/participants 的新增和导入中限制调查时间，不允许晚于今天。";
         var snippets = new java.util.ArrayList<com.promptoptimizer.context.domain.FileSnippet>();
         for (int i = 0; i < 21; i++) {
@@ -146,13 +146,13 @@ class NaturalRoutingRepairProviderTest {
         }
         var context = new com.promptoptimizer.context.domain.ContextSnapshot("Vue项目", List.of(), List.of(), List.of(),
                 snippets, List.of(), List.of(), "fixture");
-        var input = new NaturalPromptInput(raw, context, List.of(), List.of(), List.of(), null).withStrategyVersion("45");
+        var input = new NaturalPromptInput(raw, context, List.of(), List.of(), List.of(), null).withStrategyVersion(version);
         String body = "请在 @demo/src/views/participants 的新增和导入中统一限制调查时间：允许今天及以前的日期，拒绝未来日期。"
                 + "沿用已有日期字段和错误反馈方式，分别检查新增与导入的昨天、今天、明天边界。";
         expect(scope(raw, basis), NaturalPromptRoutingRepairInstructions.PREPARE, payload -> {});
         // 此处预置正文仅证明实际执行生成及输入/输出边界；真实补全收益另外比较下游作品。
         var response = writing(input(raw, List.of()), body);
-        expect(response, NaturalPromptInstructions.enhancementInstruction("45"), payload -> {
+        expect(response, NaturalPromptInstructions.enhancementInstruction(version), payload -> {
             assertThat(payload.path("context").path("fileSnippets").size()).isEqualTo(21);
             assertThat(payload.path("context").path("fileSnippets").get(20).path("content").asText())
                     .contains("SOURCE_ONLY_20");
@@ -166,11 +166,12 @@ class NaturalRoutingRepairProviderTest {
     }
 
     /** 阅读等待也进入真实生成；保持原文须是生成结果，不能由回应标签提前决定。 */
-    @Test
-    void contextualReadAndWaitCanRemainUnchangedAfterActualBodyGeneration() throws Exception {
-        var input = input("只阅读代码并等待我提问，不修改文件，也不写说明文档。", List.of()).withStrategyVersion("45");
+    @ParameterizedTest
+    @ValueSource(strings = {"45", "46", "47", "48"})
+    void contextualReadAndWaitCanRemainUnchangedAfterActualBodyGeneration(String version) throws Exception {
+        var input = input("只阅读代码并等待我提问，不修改文件，也不写说明文档。", List.of()).withStrategyVersion(version);
         expect(scope(input.rawPrompt(), "UNSPECIFIED"), NaturalPromptRoutingRepairInstructions.PREPARE, payload -> {});
-        expect(writing(input, input.rawPrompt()), NaturalPromptInstructions.enhancementInstruction("45"), payload -> {});
+        expect(writing(input, input.rawPrompt()), NaturalPromptInstructions.enhancementInstruction(version), payload -> {});
         var draft = provider.enhance(input, value -> checked(value, input));
         assertThat(NaturalProcessing.completed(draft.completedStages(), input.rawPrompt(), draft.optimizedPrompt()).originalPreserved()).isTrue();
         assertThat(draft.completedStages()).contains(NaturalProcessing.Stage.BODY_GENERATION);

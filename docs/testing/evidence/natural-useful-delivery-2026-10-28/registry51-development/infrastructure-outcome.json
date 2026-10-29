@@ -1,0 +1,230 @@
+{
+  "status": "CLOSED51_DELIVERY_RELIABILITY_NOT_SEMANTIC_OR_ADOPTION",
+  "actualCalls": 8,
+  "taskActualAfter": 151,
+  "remainingOf500": 349,
+  "phaseTotals": {
+    "GENERATION": 97,
+    "PLAN": 4,
+    "EXECUTION": 50
+  },
+  "protocolRepairCalls": 2,
+  "qualityRetries": 0,
+  "guardFailures": 0,
+  "summaries": [
+    {
+      "jobId": "Q01_V51_GEN",
+      "status": 200,
+      "version": "51",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      },
+      "attempts": [
+        {
+          "trace": "001.json",
+          "stage": "REQUIREMENT_PREPARATION",
+          "preparedTrace": null,
+          "preparedRequirementCount": 0,
+          "httpStatus": 200,
+          "finishReason": "stop",
+          "usage": {
+            "prompt_tokens": 1011,
+            "completion_tokens": 183,
+            "total_tokens": 1194,
+            "prompt_tokens_details": {
+              "cached_tokens": 768
+            },
+            "prompt_cache_hit_tokens": 768,
+            "prompt_cache_miss_tokens": 243
+          }
+        },
+        {
+          "trace": "002.json",
+          "stage": "BODY_GENERATION",
+          "preparedTrace": "001.json",
+          "preparedRequirementCount": 2,
+          "httpStatus": 200,
+          "finishReason": "stop",
+          "usage": {
+            "prompt_tokens": 1831,
+            "completion_tokens": 314,
+            "total_tokens": 2145,
+            "prompt_tokens_details": {
+              "cached_tokens": 1408
+            },
+            "prompt_cache_hit_tokens": 1408,
+            "prompt_cache_miss_tokens": 423
+          }
+        },
+        {
+          "trace": "003.json",
+          "stage": "BODY_GENERATION",
+          "preparedTrace": "001.json",
+          "preparedRequirementCount": 2,
+          "httpStatus": 200,
+          "finishReason": "stop",
+          "usage": {
+            "prompt_tokens": 1864,
+            "completion_tokens": 416,
+            "total_tokens": 2280,
+            "prompt_tokens_details": {
+              "cached_tokens": 1408
+            },
+            "prompt_cache_hit_tokens": 1408,
+            "prompt_cache_miss_tokens": 456
+          }
+        }
+      ]
+    },
+    {
+      "jobId": "U02_V51_GEN",
+      "status": 200,
+      "version": "51",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      },
+      "attempts": [
+        {
+          "trace": "004.json",
+          "stage": "REQUIREMENT_PREPARATION",
+          "preparedTrace": null,
+          "preparedRequirementCount": 0,
+          "httpStatus": 200,
+          "finishReason": "stop",
+          "usage": {
+            "prompt_tokens": 1720,
+            "completion_tokens": 1543,
+            "total_tokens": 3263,
+            "prompt_tokens_details": {
+              "cached_tokens": 1408
+            },
+            "prompt_cache_hit_tokens": 1408,
+            "prompt_cache_miss_tokens": 312
+          }
+        },
+        {
+          "trace": "005.json",
+          "stage": "BODY_GENERATION",
+          "preparedTrace": "004.json",
+          "preparedRequirementCount": 20,
+          "httpStatus": 200,
+          "finishReason": "stop",
+          "usage": {
+            "prompt_tokens": 4008,
+            "completion_tokens": 1589,
+            "total_tokens": 5597,
+            "prompt_tokens_details": {
+              "cached_tokens": 2048
+            },
+            "prompt_cache_hit_tokens": 2048,
+            "prompt_cache_miss_tokens": 1960
+          }
+        },
+        {
+          "trace": "006.json",
+          "stage": "BODY_GENERATION",
+          "preparedTrace": "004.json",
+          "preparedRequirementCount": 20,
+          "httpStatus": 200,
+          "finishReason": "stop",
+          "usage": {
+            "prompt_tokens": 4041,
+            "completion_tokens": 1689,
+            "total_tokens": 5730,
+            "prompt_tokens_details": {
+              "cached_tokens": 1280
+            },
+            "prompt_cache_hit_tokens": 1280,
+            "prompt_cache_miss_tokens": 2761
+          }
+        }
+      ]
+    },
+    {
+      "jobId": "U03_V51_GEN",
+      "status": 200,
+      "version": "51",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      },
+      "attempts": [
+        {
+          "trace": "007.json",
+          "stage": "REQUIREMENT_PREPARATION",
+          "preparedTrace": null,
+          "preparedRequirementCount": 0,
+          "httpStatus": 200,
+          "finishReason": "stop",
+          "usage": {
+            "prompt_tokens": 2292,
+            "completion_tokens": 651,
+            "total_tokens": 2943,
+            "prompt_tokens_details": {
+              "cached_tokens": 1920
+            },
+            "prompt_cache_hit_tokens": 1920,
+            "prompt_cache_miss_tokens": 372
+          }
+        },
+        {
+          "trace": "008.json",
+          "stage": "BODY_GENERATION",
+          "preparedTrace": "007.json",
+          "preparedRequirementCount": 8,
+          "httpStatus": 200,
+          "finishReason": "stop",
+          "usage": {
+            "prompt_tokens": 3616,
+            "completion_tokens": 969,
+            "total_tokens": 4585,
+            "prompt_tokens_details": {
+              "cached_tokens": 2560
+            },
+            "prompt_cache_hit_tokens": 2560,
+            "prompt_cache_miss_tokens": 1056
+          }
+        }
+      ]
+    }
+  ],
+  "allJobsDelivered": true,
+  "unusedStageReservationReleased": 4,
+  "ownProcessPid": 13060,
+  "ownProcessStopped": true,
+  "offlineActualProtectionReview": "../offline-result-validation/registry51-development-validation.json",
+  "offlineResultMeaning": "All actual attempts retained; final accepted outputs equal actual assembled delivery; not evidence that old50 risks disappeared",
+  "defaultVersion": "31",
+  "normalVariantsExecuted": false,
+  "downstreamWorksExecuted": false,
+  "unseenUnsealed": false
+}

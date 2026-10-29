@@ -1,0 +1,14 @@
+{
+  "actualModelCalls": 0,
+  "originalGenerationPosts": 0,
+  "source": "Actual GET-only browser DOM probe and Playwright click call log",
+  "originalNamedComboboxCount": 1,
+  "fixtureReady": true,
+  "cause": "Element Plus selected-item/placeholder span intercepts pointer events over the readonly combobox input; the aria-label itself is correct.",
+  "actualInterception": "DeepSeek-V4.1-Flash span from el-select__selected-item el-select__placeholder intercepts pointer events",
+  "minimalToolFix": "Click .model-control .el-select, then the real public option; no forced click, DOM mutation, Pinia assignment or request metadata rewriting.",
+  "firstFailurePreserved": true,
+  "recovery": "Explicit --attempt r2 writes a new child directory only after first failure confirms 0 posts/0 preparation/no product and the original frozen trace/result guards still pass.",
+  "oldLiveAdapterSha256": "e35f3133c11a5b9196cdb962b31c723565d762c3a62aeea44bbcb5fb6de1ca2e",
+  "frozenBackendHelpersOrProductModified": false
+}

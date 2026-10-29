@@ -1,0 +1,24 @@
+{
+  "id": "W70-N2_VORIGINAL_EXEC_R2",
+  "phase": "EXECUTION",
+  "version": "ORIGINAL",
+  "caseId": "W70-N2",
+  "status": 200,
+  "body": {
+    "requestId": "W70-N2_VORIGINAL_EXEC_R2",
+    "data": {
+      "content": "{\"files\":[{\"path\":\"daily_net.py\",\"content\":\"import csv\\nimport sys\\nimport os\\nfrom decimal import Decimal, InvalidOperation\\nfrom datetime import datetime\\n\\nREQUIRED = [\\\"paid_at\\\", \\\"channel\\\", \\\"status\\\", \\\"amount\\\", \\\"refund_amount\\\"]\\nVALID_STATUS = {\\\"PAID\\\", \\\"REFUNDED\\\", \\\"CANCELLED\\\"}\\n\\n\\ndef fail(msg):\\n    sys.stderr.write(msg + \\\"\\\\n\\\")\\n    sys.exit(2)\\n\\n\\ndef parse_amount(s, rowno, field):\\n    t = s.strip()\\n    if t == \\\"\\\":\\n        fail(f\\\"row {rowno}: {field}: empty amount\\\")\\n    try:\\n        d = Decimal(t)\\n    except InvalidOperation:\\n        fail(f\\\"row {rowno}: {field}: invalid decimal\\\")\\n    if not d.is_finite():\\n        fail(f\\\"row {rowno}: {field}: NaN or infinite\\\")\\n    if d < 0:\\n        fail(f\\\"row {rowno}: {field}: negative\\\")\\n    exp = d.as_tuple().exponent\\n    if exp < -2:\\n        fail(f\\\"row {rowno}: {field}: more than two decimal places\\\")\\n    return d\\n\\n\\ndef main():\\n    if len(sys.argv) != 3:\\n        sys.stderr.write(\\\"usage: python daily_net.py input.csv output.csv\\\\n\\\")\\n        sys.exit(2)\\n    in_path, out_path = sys.argv[1], sys.argv[2]\\n    if os.path.abspath(in_path) == os.path.abspath(out_path):\\n        fail(\\\"input and output paths are the same\\\")\\n\\n    try:\\n        f = open(in_path, \\\"r\\\", encoding=\\\"utf-8-sig\\\", newline=\\\"\\\")\\n    except OSError as e:\\n        fail(f\\\"cannot open input: {e}\\\")\\n\\n    totals = {}\\n    with f:\\n        reader = csv.reader(f)\\n        try:\\n            header = next(reader)\\n        except StopIteration:\\n            fail(\\\"missing header\\\")\\n        header = [h.strip() for h in header]\\n        idx = {}\\n        for name in REQUIRED:\\n            if name not in header:\\n                fail(f\\\"missing required field: {name}\\\")\\n            idx[name] = header.index(name)\\n\\n        rowno = 0\\n        for row in reader:\\n            rowno += 1\\n            if len(row) == 0:\\n                continue\\n            if len(row) < len(header):\\n                row = row + [\\\"\\\"] * (len(header) - len(row))\\n\\n            status = row[idx[\\\"status\\\"]].strip()\\n            if status not in VALID_STATUS:\\n                fail(f\\\"row {rowno}: status: unknown status {status!r}\\\")\\n            if status == \\\"CANCELLED\\\":\\n                continue\\n\\n            paid_at = row[idx[\\\"paid_at\\\"]].strip()\\n            try:\\n                datetime.strptime(paid_at, \\\"%Y-%m-%d\\\")\\n                if len(paid_at) != 10:\\n                    raise ValueError\\n            except ValueError:\\n                fail(f\\\"row {rowno}: paid_at: invalid date\\\")\\n\\n            channel = row[idx[\\\"channel\\\"]].strip()\\n            if channel == \\\"\\\":\\n                fail(f\\\"row {rowno}: channel: empty\\\")\\n\\n            amount = parse_amount(row[idx[\\\"amount\\\"]], rowno, \\\"amount\\\")\\n            refund = parse_amount(row[idx[\\\"refund_amount\\\"]], rowno, \\\"refund_amount\\\")\\n            if refund > amount:\\n                fail(f\\\"row {rowno}: refund_amount: greater than amount\\\")\\n\\n            net = amount - refund\\n            key = (paid_at, channel)\\n            totals[key] = totals.get(key, Decimal(\\\"0\\\")) + net\\n\\n    lines = [\\\"date,channel,net_amount\\\"]\\n    for (date, channel) in sorted(totals.keys()):\\n        val = totals[(date, channel)]\\n        lines.append(f\\\"{date},{channel},{val:.2f}\\\")\\n    content = \\\"\\\\n\\\".join(lines) + \\\"\\\\n\\\"\\n\\n    tmp = out_path + \\\".tmp\\\"\\n    try:\\n        with open(tmp, \\\"w\\\", encoding=\\\"utf-8\\\", newline=\\\"\\\") as of:\\n            of.write(content)\\n        os.replace(tmp, out_path)\\n    except OSError as e:\\n        try:\\n            if os.path.exists(tmp):\\n                os.remove(tmp)\\n        except OSError:\\n            pass\\n        fail(f\\\"cannot write output: {e}\\\")\\n\\n\\nif __name__ == \\\"__main__\\\":\\n    main()\\n\"}]}",
+      "usage": {
+        "prompt_tokens": 459,
+        "completion_tokens": 1116,
+        "total_tokens": 1575,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 459
+      },
+      "finishReason": "stop"
+    }
+  }
+}

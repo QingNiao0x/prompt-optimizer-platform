@@ -1,0 +1,39 @@
+{
+  "state": "SAVED_BEFORE_READING_COORDINATOR_MAPPING",
+  "reviewer": "Root implementation agent; internal AI review, not independent human/expert",
+  "modelReviewIsAdvisory": true,
+  "Q01": {
+    "finding": "Do not equate more tables/caveats with value. Unverified collection dates, claims that a cohort is among the highest, and mapping conversation shares to user counts need evidence or qualified wording; they are not merely style preferences.",
+    "specific": [
+      {"workId":"W01","issue":"The source pack does not justify the recruitment-sector ordering or the assertion that 51% is among the highest occupational rates. Additional public verification is absent. Omit/qualify rather than count as a benefit."},
+      {"workId":"W06","issue":"The sentence comparing 2025-11-05 and 2026-10-28 is garbled and should be rewritten; source language/size biases are not established by the supplied pack."},
+      {"workId":"W17","issue":"Using 使用人数/任务量 for the conversation-share source blurs its measure. Replace with 对话/任务分布."}
+    ],
+    "comparisonDisposition":"No demonstrated repeated quality gain. Preserve model ties; source issues remain explicit and must not be dismissed as cosmetic. The controlled three-source snapshot does not validate autonomous global research."
+  },
+  "U02": {
+    "rejectedJudgeAssumptions": [
+      "Eight available tables do not prescribe one family per table. Pairing eight tables into four groups with sixteen chairs is an allowed proposed layout, subject to the original clear-passage constraint.",
+      "No hired teachers does not prohibit voluntary parent participation. W25 explicitly says self-selected parent helpers and provides a host fallback; calling this unauthorized external staffing is not supported.",
+      "每个孩子限一位成人 is not proof that every additional child must have a different adult. Do not invent a new lower-bound escort requirement."
+    ],
+    "confirmedWorkIssues": [
+      {"workId":"W25","quotes":["每桌配2把椅子给孩子、2把椅子给成人","摆4桌8椅"],"issue":"Internal chair-count mismatch; four groups of four require sixteen chairs. Fix the setup row."},
+      {"workId":"W25","quotes":["每场两张，A、B各填一张","8张记录表"],"issue":"Two events with two forms each yield four forms, not eight. Fix the archive count."}
+    ],
+    "uncertainExecutionDetails": [
+      {"workId":"W21","issue":"Unseated extra-child handling and a host-side table are not reconciled with the stated seats/tables; clarify available capacity. Do not infer that an added adult is mandatory."},
+      {"workId":"W22","issue":"A book side-table after using eight tables in paired seating needs an explicit arrangement within available equipment. Pairing itself is not a violation."}
+    ],
+    "comparisonDisposition":"Reject the model's unsupported layout/staffing prohibitions and its inconsistent J2 rationale (more completeness does not cancel more edits). No stable gain can be established from these two repeats without adjudicating the actual resource details. Mark affected comparisons UNRESOLVED rather than inventing a win."
+  },
+  "U03": {
+    "finding":"The judge's requirements to confirm whether a cabinet permits labels or to further restrict update frequency are suggestions, not user constraints. Do not add them to the platform.",
+    "sourceNuance":"W08 explicitly retains F02's neighbor account; register absence is not absence of all anecdotal information. Other broad statements about missing destination/demand data need their surrounding register/population scope read before classifying an error.",
+    "specific":[{"workId":"W23","quote":"需求侧信息完全缺失","issue":"Overbroad compared with twelve real qualitative feedback items. Qualify as missing systematic demand-size data, although the following sentence already restricts the inference to prevalence."}],
+    "comparisonDisposition":"No demonstrated repeated quality gain; do not convert ordinary implementation choices into prerequisite confirmations. Model ties are not proof that every factual statement was independently verified."
+  },
+  "adoptionAtThisPoint": false,
+  "defaultVersion": "31",
+  "needNext":"Unblind to report actual attribution. No confirmed new severe platform intent/permission violation in this work cohort; unopened internal holdout may proceed only under its already-frozen metadata overlay."
+}

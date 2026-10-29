@@ -20,7 +20,15 @@ public final class NaturalPromptRoutingRepairInstructions {
                 || NaturalPromptContentQualityInstructions.VERSION.equals(version)
                 || NaturalPromptGroundedCompletionInstructions.VERSION.equals(version)
                 || NaturalPromptMultidimensionalInstructions.VERSION.equals(version)
-                || NaturalPromptContextualRewriteInstructions.VERSION.equals(version);
+                || NaturalPromptContextualRewriteInstructions.VERSION.equals(version)
+                || NaturalPromptUsefulDeliveryInstructions.VERSION.equals(version)
+                || NaturalPromptEffectiveRequestInstructions.VERSION.equals(version)
+                || NaturalPromptBoundedRepairInstructions.VERSION.equals(version)
+                || NaturalPromptRequirementRegistryInstructions.VERSION.equals(version)
+                || NaturalPromptContextBoundaryRegistryInstructions.VERSION.equals(version)
+                || NaturalPromptRegistryDiagnosticInstructions.VERSION.equals(version)
+                || NaturalPromptEffectiveRegistryInstructions.VERSION.equals(version)
+                || NaturalPromptRequirementsOnlyInstructions.VERSION.equals(version);
     }
 
     /** 准备分类继续描述回应范围；不再用该分类决定是否调用正文生成。 */

@@ -1,0 +1,24 @@
+{
+  "id": "C01_V58_EXEC_R1",
+  "phase": "EXECUTION",
+  "version": "58",
+  "caseId": "C01",
+  "status": 200,
+  "body": {
+    "requestId": "C01_V58_EXEC_R1",
+    "data": {
+      "finishReason": "stop",
+      "content": "{\"files\":[{\"path\":\"src/views/records/dateRules.js\",\"content\":\"/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\\nfunction localToday() {\\n  const now = new Date();\\n  const year = now.getFullYear();\\n  const month = String(now.getMonth() + 1).padStart(2, '0');\\n  const day = String(now.getDate()).padStart(2, '0');\\n  return `${year}-${month}-${day}`;\\n}\\n\\nexport function validateSurveyDate(value, today) {\\n  if (typeof value !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(value)) return 'INVALID_DATE';\\n  const parsed = new Date(`${value}T00:00:00.000Z`);\\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\\n  const base = today === undefined ? localToday() : today;\\n  if (value > base) return 'FUTURE_DATE';\\n  return null;\\n}\\n\"},{\"path\":\"src/views/records/create.js\",\"content\":\"import { validateSurveyDate } from './dateRules.js';\\n\\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\\nexport function createSurvey(input, today) {\\n  const error = validateSurveyDate(input.surveyDate, today);\\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\\n    : { ok: true, record: { ...input } };\\n}\\n\"},{\"path\":\"src/views/records/import.js\",\"content\":\"import { validateSurveyDate } from './dateRules.js';\\n\\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\\nexport function importSurveys(rows, today) {\\n  const inserted = [];\\n  const errors = [];\\n  rows.forEach((record, index) => {\\n    const code = validateSurveyDate(record.surveyDate, today);\\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\\n    else inserted.push({ ...record });\\n  });\\n  return { inserted, errors };\\n}\\n\"},{\"path\":\"src/views/records/dateRules.spec.js\",\"content\":\"import assert from 'node:assert/strict';\\nimport { test } from 'node:test';\\nimport { createSurvey } from './create.js';\\nimport { importSurveys } from './import.js';\\nimport { validateSurveyDate } from './dateRules.js';\\n\\ntest('新增保留有效日历日期和其他字段', () => {\\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\\n});\\n\\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\\n  });\\n});\\n\\ntest('共用校验允许今天和过去，拒绝未来', () => {\\n  assert.equal(validateSurveyDate('2026-10-27', '2026-10-27'), null);\\n  assert.equal(validateSurveyDate('2026-10-26', '2026-10-27'), null);\\n  assert.equal(validateSurveyDate('2026-10-28', '2026-10-27'), 'FUTURE_DATE');\\n});\\n\\ntest('新增对未来日期返回字段错误', () => {\\n  assert.deepEqual(createSurvey({ surveyDate: '2026-10-28' }, '2026-10-27'), {\\n    ok: false, fieldErrors: { surveyDate: 'FUTURE_DATE' },\\n  });\\n});\\n\\ntest('导入中未来行失败且其他有效行成功并返回正确行号', () => {\\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\\n  const third = { id: 'synthetic-c', surveyDate: '2026-10-27' };\\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-10-28' }, third], '2026-10-27'), {\\n    inserted: [first, third], errors: [{ row: 2, field: 'surveyDate', code: 'FUTURE_DATE' }],\\n  });\\n});\\n\"}]}",
+      "usage": {
+        "prompt_tokens": 1601,
+        "completion_tokens": 1172,
+        "total_tokens": 2773,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1601
+      }
+    }
+  }
+}

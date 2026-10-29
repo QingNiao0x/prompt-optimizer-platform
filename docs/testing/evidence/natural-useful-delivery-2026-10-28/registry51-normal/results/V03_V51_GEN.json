@@ -1,0 +1,56 @@
+{
+  "id": "V03_V51_GEN",
+  "phase": "GENERATION",
+  "version": "51",
+  "caseId": "V03",
+  "status": 200,
+  "body": {
+    "requestId": "V03_V51_GEN",
+    "data": {
+      "optimizedPrompt": "请解释为什么同一张照片在不同屏幕上看起来颜色不一样，并给出普通用户能照着做的排查建议。\n\n解释部分要讲清造成差异的主要环节及其关系，例如：照片文件本身记录的颜色信息（如色彩配置文件/色彩空间）与显示设备如何解读它；屏幕的硬件差异（面板类型、色域覆盖、亮度与对比度设置）；设备或软件的色彩管理是否开启、是否正确识别照片的色彩配置；以及查看照片的软件、系统显示设置、环境光等因素。用通俗语言说明，避免堆砌术语，必要时用简单类比。\n\n排查建议部分要面向普通用户，按从易到难的顺序给出具体可操作的步骤，例如：确认照片在哪些设备/软件上偏色、检查并统一查看软件的显示设置、检查系统色彩管理或显示配置、调整屏幕亮度与色彩模式、对比同一张照片在手机与电脑上的表现、判断是照片本身问题还是显示设备问题等。每条建议说明怎么做、预期能观察到什么，帮助用户定位原因。\n\n没有可参考的资料，请仅依据问题本身作答，不要编造具体设备型号、参数或来源。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [],
+        "fileSnippets": [],
+        "analysisStatus": "EMPTY",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 4975,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "51",
+      "framework": "APE",
+      "recordId": "f48fec80-dddf-4200-8dbc-1e6c39ace43e",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

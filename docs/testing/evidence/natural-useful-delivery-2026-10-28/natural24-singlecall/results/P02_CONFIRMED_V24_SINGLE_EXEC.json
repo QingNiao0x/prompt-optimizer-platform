@@ -1,0 +1,24 @@
+{
+  "id": "P02_CONFIRMED_V24_SINGLE_EXEC",
+  "phase": "EXECUTION",
+  "version": "24",
+  "caseId": "P02_CONFIRMED",
+  "status": 200,
+  "body": {
+    "requestId": "P02_CONFIRMED_V24_SINGLE_EXEC",
+    "data": {
+      "content": "{\"optimizedPrompt\":\"请在重点记录模块 src/views/records 的新增和导入功能中增加调查时间限制：调查日期只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选；我已确认允许填写今天，即日期等于 today 时校验通过，晚于 today 时返回错误。\\n\\n请基于现有代码实现：dateRules.js 中的 validateSurveyDate(value, today) 是两个录入入口共用的日历日期校验，错误代码用于表单和导入行提示；create.js 的 createSurvey 在失败时返回字段错误，成功时保留调用者给出的其他字段；import.js 的 importSurveys 保持按行部分成功，无效日期只影响所属行，不改变其他记录。请在共用校验中落实上述日期范围规则，使新增和导入两个入口一致生效，并保持现有返回结构与错误代码风格。\\n\\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。请在 dateRules.spec.js 中补充覆盖以下情形的回归测试：早于 today 的日期通过、等于 today 的日期通过、晚于 today 的日期返回错误，并验证新增与导入两个入口的行为一致、导入时无效日期只影响所属行。完成后交付修改后的代码与测试。\",\"framework\":\"APE\",\"task\":{\"goal\":\"在重点记录模块的新增和导入功能中增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日，今天是否允许填写由用户确认\",\"deliverable\":\"修改后的 src/views/records/dateRules.js、create.js、import.js 及按需补充的 dateRules.spec.js 回归测试\",\"inputReadiness\":\"SUFFICIENT\",\"requirements\":[{\"text\":\"在重点记录模块 src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日\",\"dimensions\":[\"GOAL\",\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。\"}],\"bodyQuotes\":[\"请在重点记录模块 src/views/records 的新增和导入功能中增加调查时间限制：调查日期只能填写当日之前的日期，同时又不能超过今日。\"]},{\"text\":\"今天是否允许填写由用户确认，不要代选\",\"dimensions\":[\"CONDITION\",\"USER_CONFIRMATION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"今天是否允许填写由我确认，不要代选。\"}],\"bodyQuotes\":[\"今天是否允许填写由我确认，不要代选；\"]},{\"text\":\"用户已确认允许填写今天：日期等于 today 时校验通过，晚于 today 时返回错误\",\"dimensions\":[\"CONDITION\",\"USER_CONFIRMATION\"],\"evidence\":[{\"sourceId\":\"actualAnswers.0\",\"quote\":\"允许填写今天：日期等于 today 时校验通过，晚于 today 时返回错误。\"}],\"bodyQuotes\":[\"我已确认允许填写今天，即日期等于 today 时校验通过，晚于 today 时返回错误。\"]},{\"text\":\"只允许修改 dateRules.js、create.js、import.js，以及按需补充已有的 dateRules.spec.js 回归测试\",\"dimensions\":[\"CONDITION\",\"FORMAT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；\"}],\"bodyQuotes\":[\"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；\"]},{\"text\":\"不得新增文件或修改其他文件\",\"dimensions\":[\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"不得新增文件或修改其他文件。\"}],\"bodyQuotes\":[\"不得新增文件或修改其他文件。\"]},{\"text\":\"validateSurveyDate 是两个录入入口共用的日历日期校验，错误代码用于表单和导入行提示\",\"dimensions\":[\"OBJECT\"],\"evidence\":[{\"sourceId\":\"context.fileSnippets.1\",\"quote\":\"/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\"}],\"bodyQuotes\":[\"dateRules.js 中的 validateSurveyDate(value, today) 是两个录入入口共用的日历日期校验，错误代码用于表单和导入行提示；\"]},{\"text\":\"createSurvey 失败返回字段错误，成功时保留调用者给出的其他字段\",\"dimensions\":[\"OBJECT\"],\"evidence\":[{\"sourceId\":\"context.fileSnippets.2\",\"quote\":\"/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\"}],\"bodyQuotes\":[\"create.js 的 createSurvey 在失败时返回字段错误，成功时保留调用者给出的其他字段；\"]},{\"text\":\"importSurveys 保持按行部分成功，无效日期只影响所属行，不改变其他记录\",\"dimensions\":[\"OBJECT\",\"CONDITION\"],\"evidence\":[{\"sourceId\":\"context.fileSnippets.0\",\"quote\":\"/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\"}],\"bodyQuotes\":[\"import.js 的 importSurveys 保持按行部分成功，无效日期只影响所属行，不改变其他记录。\"]}],\"additions\":[{\"text\":\"在 dateRules.spec.js 中补充覆盖早于 today 通过、等于 today 通过、晚于 today 报错，以及新增与导入行为一致、导入无效行隔离的回归测试\",\"gap\":\"原提示词只说按需补充回归测试，未指明需覆盖的日期边界与两入口一致性，执行者可能遗漏关键回归场景\",\"benefit\":\"确保日期范围规则在新增和导入两个入口均被验证，且导入部分成功语义不被破坏\",\"bodyQuotes\":[\"请在 dateRules.spec.js 中补充覆盖以下情形的回归测试：早于 today 的日期通过、等于 today 的日期通过、晚于 today 的日期返回错误，并验证新增与导入两个入口的行为一致、导入时无效日期只影响所属行。\"]}],\"openDecisions\":[]}}",
+      "usage": {
+        "prompt_tokens": 4184,
+        "completion_tokens": 1432,
+        "total_tokens": 5616,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024
+        },
+        "prompt_cache_hit_tokens": 1024,
+        "prompt_cache_miss_tokens": 3160
+      },
+      "finishReason": "stop"
+    }
+  }
+}

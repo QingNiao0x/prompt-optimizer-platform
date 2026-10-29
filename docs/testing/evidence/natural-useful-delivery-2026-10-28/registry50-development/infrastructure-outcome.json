@@ -1,0 +1,123 @@
+{
+  "status": "CLOSED_PARTIAL_DELIVERY_NOT_QUALITY_OR_ADOPTION",
+  "stage": "registry50-development",
+  "actualCalls": 7,
+  "totalActualAfter": 137,
+  "remainingOf500": 363,
+  "phasesAfter": {
+    "GENERATION": 83,
+    "PLAN": 4,
+    "EXECUTION": 50
+  },
+  "upstreamAttemptsStop": 7,
+  "guardFailures": 0,
+  "qualityRetries": 0,
+  "protocolRepairCalls": 1,
+  "summaries": [
+    {
+      "id": "Q01_V50_GEN",
+      "status": 502,
+      "errorCode": "RESULT_INVALID",
+      "attempts": [
+        {
+          "trace": "001.json",
+          "stage": "REQUIREMENT_PREPARATION",
+          "preparedTrace": null,
+          "preparedRequirementCount": 0,
+          "httpStatus": 200,
+          "finishReason": "stop"
+        },
+        {
+          "trace": "002.json",
+          "stage": "BODY_GENERATION",
+          "preparedTrace": "001.json",
+          "preparedRequirementCount": 2,
+          "httpStatus": 200,
+          "finishReason": "stop"
+        },
+        {
+          "trace": "003.json",
+          "stage": "BODY_GENERATION",
+          "preparedTrace": "001.json",
+          "preparedRequirementCount": 2,
+          "httpStatus": 200,
+          "finishReason": "stop"
+        }
+      ],
+      "history": null,
+      "semanticJudgment": "PENDING_ROOT_REVIEW"
+    },
+    {
+      "id": "U02_V50_GEN",
+      "status": 200,
+      "errorCode": null,
+      "attempts": [
+        {
+          "trace": "004.json",
+          "stage": "REQUIREMENT_PREPARATION",
+          "preparedTrace": null,
+          "preparedRequirementCount": 0,
+          "httpStatus": 200,
+          "finishReason": "stop"
+        },
+        {
+          "trace": "005.json",
+          "stage": "BODY_GENERATION",
+          "preparedTrace": "004.json",
+          "preparedRequirementCount": 18,
+          "httpStatus": 200,
+          "finishReason": "stop"
+        }
+      ],
+      "history": {
+        "status": 200,
+        "bodyEqual": true,
+        "versionEqual": true,
+        "processingEqual": true
+      },
+      "semanticJudgment": "PENDING_ROOT_REVIEW"
+    },
+    {
+      "id": "U03_V50_GEN",
+      "status": 200,
+      "errorCode": null,
+      "attempts": [
+        {
+          "trace": "006.json",
+          "stage": "REQUIREMENT_PREPARATION",
+          "preparedTrace": null,
+          "preparedRequirementCount": 0,
+          "httpStatus": 200,
+          "finishReason": "stop"
+        },
+        {
+          "trace": "007.json",
+          "stage": "BODY_GENERATION",
+          "preparedTrace": "006.json",
+          "preparedRequirementCount": 9,
+          "httpStatus": 200,
+          "finishReason": "stop"
+        }
+      ],
+      "history": {
+        "status": 200,
+        "bodyEqual": true,
+        "versionEqual": true,
+        "processingEqual": true
+      },
+      "semanticJudgment": "PENDING_ROOT_REVIEW"
+    }
+  ],
+  "closureAllJobsDelivered": false,
+  "unusedStageReservationReleased": 5,
+  "ownProcessPid": 22344,
+  "ownProcessStopped": true,
+  "normalVariantsExecuted": false,
+  "downstreamWorksExecuted": false,
+  "unseenUnsealed": false,
+  "defaultVersion": "31",
+  "protocolSha256": "95700ef24d33f21ad2dccac8620f3847f029779e80ea3eb90cb76340af7a3330",
+  "bundleSha256": "a0570823edf124d6bf0fd07a58e07f610a675a23accafb95813700d61b812ba6",
+  "reviewPlanSha256": "db0d29dbd61213506e5171e431766c2ec1a03f155ba215e1a3e4ab82c173eae7",
+  "toolingCorrection": "A zero-call construction-report probe initially treated taskSources id/kind metadata as carrying text; corrected before freeze, with complete original-input comparison unchanged and no model call added."
+}

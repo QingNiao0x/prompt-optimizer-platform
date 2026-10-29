@@ -1,0 +1,32 @@
+{
+  "syntheticOnly": true,
+  "status": "REQUIRES_NEW_REAL_CONTEXT_PLAN_AND_OPERATOR_SELECTION",
+  "modelId": "deepseek:deepseek-flash",
+  "strategyVersion": "51",
+  "relatedNormalFlowBudget": {
+    "maximumActualAcrossNormalAndPlanStages": 36,
+    "allocatedGenerationDirect": 20,
+    "allocatedPlan": 8,
+    "allocatedGenerationAfterActualPlan": 8,
+    "unallocated": 0,
+    "normalEstimatedActual": 18,
+    "qualityRetriesAllowed": false
+  },
+  "cases": [
+    {
+      "id": "P01",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：调查时间不能超过今天。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "expectedPath": "ACTUAL_ZERO_QUESTIONS_THEN_GENERATION",
+      "futurePlanJobId": "P01_V51_PLAN",
+      "futureGenerationJobId": "P01_V51_CONFIRMED_GEN"
+    },
+    {
+      "id": "P02",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "expectedPath": "IMPORTANT_RESERVED_UNKNOWN_THEN_EXPLICIT_REAL_ANSWER",
+      "futurePlanJobId": "P02_V51_PLAN",
+      "futureGenerationJobId": "P02_V51_CONFIRMED_GEN"
+    }
+  ],
+  "planningContext": "Must come from fresh real owned UI preparation; no placeholder contextId or planId is executable."
+}

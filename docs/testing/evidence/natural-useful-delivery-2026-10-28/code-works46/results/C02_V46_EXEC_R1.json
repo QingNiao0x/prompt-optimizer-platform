@@ -1,0 +1,24 @@
+{
+  "id": "C02_V46_EXEC_R1",
+  "phase": "EXECUTION",
+  "version": "46",
+  "caseId": "C02",
+  "status": 200,
+  "body": {
+    "requestId": "C02_V46_EXEC_R1",
+    "data": {
+      "content": "{\"files\":[{\"path\":\"src/views/records/dateRules.js\",\"content\":\"/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\\nexport function validateSurveyDate(value, today) {\\n  if (typeof value !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(value)) return 'INVALID_DATE';\\n  const parsed = new Date(`${value}T00:00:00.000Z`);\\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\\n  if (typeof today === 'string' && value > today) return 'DATE_AFTER_TODAY';\\n  return null;\\n}\\n\"},{\"path\":\"src/views/records/create.js\",\"content\":\"import { validateSurveyDate } from './dateRules.js';\\n\\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\\nexport function createSurvey(input, today) {\\n  const error = validateSurveyDate(input.surveyDate, today);\\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\\n    : { ok: true, record: { ...input } };\\n}\\n\"},{\"path\":\"src/views/records/import.js\",\"content\":\"import { validateSurveyDate } from './dateRules.js';\\n\\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\\nexport function importSurveys(rows, today) {\\n  const inserted = [];\\n  const errors = [];\\n  rows.forEach((record, index) => {\\n    const code = validateSurveyDate(record.surveyDate, today);\\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\\n    else inserted.push({ ...record });\\n  });\\n  return { inserted, errors };\\n}\\n\"}],\"summary\":\"在 validateSurveyDate 中增加晚于今天的校验并返回 DATE_AFTER_TODAY；新增入口返回 surveyDate 字段错误，导入入口按行返回该错误代码，其他行为不变。\"}",
+      "usage": {
+        "prompt_tokens": 1269,
+        "completion_tokens": 507,
+        "total_tokens": 1776,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1269
+      },
+      "finishReason": "stop"
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "id": "P02_UNKNOWN_V52_PLAN",
+  "phase": "PLAN",
+  "version": "52",
+  "caseId": "P02_UNKNOWN",
+  "status": 200,
+  "body": {
+    "requestId": "P02_UNKNOWN_V52_PLAN",
+    "data": {
+      "summary": "原定任务是在指定文件范围内为新增和导入功能增加调查日期限制（当日之前且不超过今日），并补充回归测试；唯一需要用户确认的是今日是否允许填写，该选择会改变校验边界与测试预期。",
+      "questions": [
+        {
+          "id": "q1",
+          "question": "调查日期等于今天时，是否允许填写？",
+          "hint": "这决定校验边界是“严格早于今日”还是“早于或等于今日”，会改变 dateRules.js 的比较逻辑、新增/导入的通过结果及回归测试预期。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "allow_today",
+              "label": "允许填写今天",
+              "description": "调查日期可等于 today，校验条件为 value <= today。",
+              "answer": "允许填写今天：调查日期等于 today 时通过校验，仅未来日期被拒绝。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "deny_today",
+              "label": "不允许填写今天",
+              "description": "调查日期必须严格早于 today，校验条件为 value < today。",
+              "answer": "不允许填写今天：调查日期等于 today 时返回错误，仅早于 today 的日期通过。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "AUTO",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 7386,
+      "planId": "1d37abfa-f18f-48a9-a50e-9dc5378089d1",
+      "planningContext": {
+        "contextId": "7e6b1450-eb9b-43a1-abae-0b406c502a17",
+        "version": "sha256:0e2c7ef193875980f1d3c1882e18829aa84ee0e6fc0eafca49452dfbc8ea6dd7"
+      },
+      "expiresAt": "2026-10-28T00:11:14.818399600Z"
+    }
+  }
+}

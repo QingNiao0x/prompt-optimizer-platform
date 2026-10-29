@@ -1,0 +1,86 @@
+{
+  "status": "preregistered_before_any_generation",
+  "visibility": "author_and_later_evaluators_only; never send this evaluation card to enhancement or execution models",
+  "evidence_rule": "Judge the actual work against the raw prompt and all shared materials. A model self-check or evaluator label is not independent proof. Preserve exact offending spans and the relevant source when recording a failure.",
+  "fairness_rule": "A faithful raw baseline may succeed. Do not reward added length, different headings, paraphrase, or a chosen design merely for differing from the raw baseline. Do not demand one preferred design.",
+  "authorship_review": "Only the independent author performed internal consistency review. No external expert review, real user editing session, or editing minutes are claimed.",
+  "failure_boundary": "A material error requiring a user to correct facts, recover an omitted necessary action, remove an unavailable dependency, or supply the central deliverable is a user-repair failure. Minor copy preferences are not automatically failures.",
+  "comparison_rule": "Report usable-delivery and serious failures separately from style. When facts are uncertain, keep mixed or undecided attribution until source, prompt, assembled prompt and work are compared.",
+  "case_id": "native-pro50-holdout-01",
+  "deliverable": "A publishable, resident-facing courtyard-maintenance explanation, suitable for a group message or a printed entrance notice.",
+  "hard_condition_card": [
+    {
+      "id": "A1",
+      "condition": "交付完整的居民说明正文，不能只给写作建议、收集信息问卷或待填模板。"
+    },
+    {
+      "id": "A2",
+      "condition": "若写工期，保留十一月二日至九日的计划性质及天气或检查导致调整的可能；作业时段不得改成夜间或误写上午、下午时段。无需机械照抄所有日期表述，但不能保证未确认的恢复日。"
+    },
+    {
+      "id": "A3",
+      "condition": "通行信息必须足够让居民采取正确行动：中央铺装区围挡；一、二号楼原西侧穿行路径暂停，可经东侧连廊和东门走平路。不得把西门写成关闭、整小区写成封闭，或建议穿越施工区。"
+    },
+    {
+      "id": "A4",
+      "condition": "说明本轮养护的实际范围；不得把花坛改造、游乐设施或增设长椅说成本轮已批准施工。无需列尽全部背景或所有未采用建议。"
+    },
+    {
+      "id": "A5",
+      "condition": "保留可实际使用的反馈或求助渠道。使用给定服务台、意见夹、东门值班室等信息；不得发明电话、二维码、预约入口或额外服务承诺。若给具体开放或回复时限，须与资料一致。"
+    },
+    {
+      "id": "A6",
+      "condition": "若提费用，说明本轮由已批准的日常养护预算支出、不另向居民收费；不得发明合同金额或收费安排。"
+    },
+    {
+      "id": "A7",
+      "condition": "如提现场说明或新增长椅，明确尚在讨论或属于后续议题；不得将居民建议升级为确定安排。不展开这两项不判遗漏。"
+    },
+    {
+      "id": "A8",
+      "condition": "不得编造积水专业成因、施工单位、验收结论或全程无噪声承诺；不得要求居民公开敏感信息才可反馈。"
+    }
+  ],
+  "reasonable_design_variants": [
+    "可用短标题和几段正文，也可用少量分点；信息顺序可以从出行、时间或养护目的开始。",
+    "可以不写小区背景、预算细节、所有岗位名称或两个讨论建议，只要不遗漏必要通行和反馈信息，也不制造错误。",
+    "可把预计工期概括为约一周并同时保留原日期和调整性质；也可直接写计划日期。",
+    "可以选一个主要反馈渠道并补充紧急协助渠道；不强求每个来源句都进入成品。",
+    "友好提醒、简短致谢和简洁解释均可；不强求特定称呼、落款、宣传句或文风。"
+  ],
+  "errors_requiring_user_repair": [
+    {
+      "kind": "fact_or_state",
+      "examples": [
+        "保证十一月十日必然恢复使用",
+        "把现场说明写成已经确定的周六活动",
+        "把长椅列为本次新增设施",
+        "把正常噪声影响改成全程无噪声"
+      ]
+    },
+    {
+      "kind": "action_or_access",
+      "examples": [
+        "告诉一、二号楼继续走穿越围挡的西侧直线",
+        "宣布西门全门关闭",
+        "只泛称请绕行而不提供能走的替代路线",
+        "出现虚构联系人或线上入口"
+      ]
+    },
+    {
+      "kind": "missing_deliverable",
+      "examples": [
+        "仅交付说明大纲或占位符",
+        "要求先补施工合同和预算才写全文",
+        "写成内部施工管理方案而没有可发布居民说明"
+      ]
+    }
+  ],
+  "quality_observations_not_automatic_failure": [
+    "居民第一次阅读能否迅速找到时间、路线、影响和反馈方式。",
+    "是否自然融入材料，避免把内部备注逐条贴入公告。",
+    "对不确定事项是否简洁、清楚而不过度渲染；是否保留对行动不便居民的可行帮助入口。",
+    "不因篇幅更长、加更多标题或重复安全语句而自动认为更好。"
+  ]
+}

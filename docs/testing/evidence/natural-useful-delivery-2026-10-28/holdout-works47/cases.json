@@ -1,0 +1,133 @@
+{
+  "syntheticOnly": true,
+  "cases": [
+    {
+      "id": "H01",
+      "rawPrompt": "我打算连续两个月去同一家虚构自习室，每次待 3 小时。第一个月确定去 6 次，第二个月确定去 9 次，每天最多一次。两种套餐都能订同样的座位、用同样的 Wi-Fi；都要提前预约，办卡也不保证有座。\n\n- 单次套餐：29 元一次，每次最多 3 小时，没有办卡费。\n- 月卡：168 元一个自然月，包含当月 8 次，每次最多 3 小时；超出后每次 26 元。未用次数不退、不结转，下个月要重新买月卡，也没有其他费用。\n\n只根据这些信息，帮我比较这两个月都买单次套餐和这两个月都买月卡。我主要想省钱，也想知道月卡的灵活性代价。给一个四列表格：套餐、第一个月、第二个月、两个月合计；然后用不超过 180 字解释推荐哪种、总共省多少，以及为什么“有月卡”不等于“有座位”。金额保留到元就可以，直接给结果。",
+      "originalSealedPrompt": "我打算连续两个月去同一家虚构自习室，每次待 3 小时。第一个月确定去 6 次，第二个月确定去 9 次，每天最多一次。两种套餐都能订同样的座位、用同样的 Wi-Fi；都要提前预约，办卡也不保证有座。\n\n- 单次套餐：29 元一次，每次最多 3 小时，没有办卡费。\n- 月卡：168 元一个自然月，包含当月 8 次，每次最多 3 小时；超出后每次 26 元。未用次数不退、不结转，下个月要重新买月卡，也没有其他费用。\n\n只根据这些信息，帮我比较这两个月都买单次套餐和这两个月都买月卡。我主要想省钱，也想知道月卡的灵活性代价。给一个四列表格：套餐、第一个月、第二个月、两个月合计；然后用不超过 180 字解释推荐哪种、总共省多少，以及为什么“有月卡”不等于“有座位”。金额保留到元就可以，直接给结果。\n",
+      "kind": "解释与比较",
+      "collection": "candidate47冻结并正式解封后的内部留出",
+      "originalAttachments": [],
+      "capture": "holdout-run/captures/H01/input.json",
+      "attachmentVisibility": "all sealed attachments available to enhancer and executor; none execution-only",
+      "inputSha256": "b27fd192b153a47f41f2a46cae2d6e580bd616e07ac700082a1f1263588c8a7c",
+      "workContract": {
+        "maximumOutputTokens": 2600,
+        "officialExecutionRepeatsPerArm": 1,
+        "externalTools": false,
+        "internet": false,
+        "answerCardsExcludedFromInputs": true,
+        "outputRestrictions": "原封存prompt中的格式/字数/文件要求，模型与三臂共同执行材料一致",
+        "originalPromptBytesPreserved": true,
+        "inputInformationIdenticalAcrossArms": true,
+        "artifactFormatComesFromOriginalPrompt": true
+      },
+      "blocked": [],
+      "workStatus": "原始及通过产品门的增强臂各一次，不重采挑结果",
+      "commonAttachmentPayloadSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "H02",
+      "rawPrompt": "请用附件 materials.md 帮我写一份能直接发给社区志愿者群的阅读活动月报。语气平实友好，不要写成宣传口号。正文 420—550 个汉字，分三个短段，顺序是本月做了什么、反馈和不足、下月拟怎么试。\n\n这份月报由你来组织叙述，也请你自行设计两项下月可以小范围试行的改进；我们还没开会决定方案，所以要让读者看得出它们是建议。写清总到场人次、报名到场率、问卷正向反馈占比，并说清占比的分母。不要把人次写成不同人数，也不要把问卷反馈推广成所有居民的看法。只把附件中记录的事情当作已经发生的事实。\n\n正文后另起一行写一条不超过 35 字的配图说明，照片是一次活动中志愿者和参与者围坐读书的场景。不要在配图说明里添加没有记录的人名、身份或活动成果。",
+      "originalSealedPrompt": "请用附件 materials.md 帮我写一份能直接发给社区志愿者群的阅读活动月报。语气平实友好，不要写成宣传口号。正文 420—550 个汉字，分三个短段，顺序是本月做了什么、反馈和不足、下月拟怎么试。\n\n这份月报由你来组织叙述，也请你自行设计两项下月可以小范围试行的改进；我们还没开会决定方案，所以要让读者看得出它们是建议。写清总到场人次、报名到场率、问卷正向反馈占比，并说清占比的分母。不要把人次写成不同人数，也不要把问卷反馈推广成所有居民的看法。只把附件中记录的事情当作已经发生的事实。\n\n正文后另起一行写一条不超过 35 字的配图说明，照片是一次活动中志愿者和参与者围坐读书的场景。不要在配图说明里添加没有记录的人名、身份或活动成果。\n",
+      "kind": "写作与报告",
+      "collection": "candidate47冻结并正式解封后的内部留出",
+      "originalAttachments": [
+        {
+          "path": "inputs/H02/materials.md",
+          "content": "# 合成材料：2026 年 9 月社区阅读活动记录\n\n全部活动和数据均为虚构，只供本次月报写作。\n\n| 活动 | 已开展内容 | 报名人次 | 到场人次 | 回收问卷 | 正向反馈 | 中性反馈 | 负向反馈 |\n| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |\n| 第一次 | 轮流朗读短篇故事，再自由交流 | 20 | 16 | 12 | 10 | 2 | 0 |\n| 第二次 | 交换带来的旧书，并分享选书理由 | 24 | 18 | 15 | 12 | 3 | 0 |\n| 第三次 | 共读一篇散文，围绕其中一段讨论 | 16 | 14 | 10 | 8 | 1 | 1 |\n\n口径与现场记录：\n\n- 报名、到场和问卷按每次活动统计；有人重复参加，未统计本月不同参与者人数。\n- 报名到场率＝三次到场人次之和 ÷ 三次报名人次之和。\n- 正向反馈占比＝三次正向问卷之和 ÷ 三次回收问卷之和。问卷为自愿填写，每次每名到场者最多填一份；不代表没填问卷者。\n- 两次活动现场出现过大家同时说话、不容易听清的情况。\n- 有参加者在问卷自由填写处提到：希望开场先知道当天要读什么；没有统计这类建议有多少条。\n- 场地和志愿者均由现有资源支持，未提供经费金额、可新增人手、满意度前后变化或阅读能力变化的数据。\n- 下月还没有确定活动日期、活动内容和改进措施，也没有对外承诺新的预算或服务。\n",
+          "sha256": "d01f5d9f97a6c6da1bd4a5c43cbabcce36f2e94d859ca680a9f55d39148b8d2c"
+        }
+      ],
+      "capture": "holdout-run/captures/H02/input.json",
+      "attachmentVisibility": "all sealed attachments available to enhancer and executor; none execution-only",
+      "inputSha256": "91d6e2cc7cf99a8d1899d98b52e2c5033b992d6da4dbfabc4d55eea381270a5f",
+      "workContract": {
+        "maximumOutputTokens": 2600,
+        "officialExecutionRepeatsPerArm": 1,
+        "externalTools": false,
+        "internet": false,
+        "answerCardsExcludedFromInputs": true,
+        "outputRestrictions": "原封存prompt中的格式/字数/文件要求，模型与三臂共同执行材料一致",
+        "originalPromptBytesPreserved": true,
+        "inputInformationIdenticalAcrossArms": true,
+        "artifactFormatComesFromOriginalPrompt": true
+      },
+      "blocked": [],
+      "workStatus": "原始及通过产品门的增强臂各一次，不重采挑结果",
+      "commonAttachmentPayloadSha256": "586ae922fa2bb6057d6c5abe7c1a8530c76b352e1c3a4546b52562e729ad80c5"
+    },
+    {
+      "id": "H03",
+      "rawPrompt": "我经营一家虚构的小便当店，想看 10 月 1—4 日这一小段订单。附件 orders.csv 是已结清的账，ledger-notes.md 写了字段口径。请直接做一份可发店内工作群的小结。\n\n先用一张表按“线上、电话、合计”列出净餐费、实际交付份数、每份平均净餐费、取消订单率；钱保留两位小数，百分比保留一位小数。再写三条短结论：两条是你设计的下周可做的小试验，另一条说明这些数据还不能支持什么结论。表格以外不超过 350 字。\n\n只根据附件分析，不上网补行业数据。可以提出试验，但别把建议写成我们已经批准的安排。现在没有成本资料，先完成能算出的内容。",
+      "originalSealedPrompt": "我经营一家虚构的小便当店，想看 10 月 1—4 日这一小段订单。附件 orders.csv 是已结清的账，ledger-notes.md 写了字段口径。请直接做一份可发店内工作群的小结。\n\n先用一张表按“线上、电话、合计”列出净餐费、实际交付份数、每份平均净餐费、取消订单率；钱保留两位小数，百分比保留一位小数。再写三条短结论：两条是你设计的下周可做的小试验，另一条说明这些数据还不能支持什么结论。表格以外不超过 350 字。\n\n只根据附件分析，不上网补行业数据。可以提出试验，但别把建议写成我们已经批准的安排。现在没有成本资料，先完成能算出的内容。\n",
+      "kind": "基于附件的分析",
+      "collection": "candidate47冻结并正式解封后的内部留出",
+      "originalAttachments": [
+        {
+          "path": "inputs/H03/orders.csv",
+          "content": "order_id,date,channel,status,ordered_qty,delivered_qty,paid_meal_amount,refunded_meal_amount\nO01,2026-10-01,ONLINE,COMPLETED,3,3,66.00,0.00\nO02,2026-10-01,PHONE,COMPLETED,2,2,44.00,0.00\nO03,2026-10-02,ONLINE,CANCELLED,4,0,88.00,88.00\nO04,2026-10-02,PHONE,COMPLETED,5,4,110.00,22.00\nO05,2026-10-03,ONLINE,COMPLETED,4,4,80.00,0.00\nO06,2026-10-03,ONLINE,COMPLETED,1,1,22.00,0.00\nO07,2026-10-03,PHONE,CANCELLED,2,0,44.00,44.00\nO08,2026-10-04,PHONE,COMPLETED,3,3,66.00,0.00\n",
+          "sha256": "5b6b690ea92ba59c0036b8298504f2d238117a3a424828c157db0120969756cf"
+        },
+        {
+          "path": "inputs/H03/ledger-notes.md",
+          "content": "# 合成账本的字段口径\n\n这些订单全部虚构。数据覆盖 2026 年 10 月 1—4 日，每行是一张独立订单，没有重复行；账已结清，没有待退款。\n\n- `channel`：`ONLINE` 为线上，`PHONE` 为电话。\n- `status`：`COMPLETED` 为完成，`CANCELLED` 为整单取消。完成订单也可能少交付并部分退款。\n- `ordered_qty` 是下单份数；`delivered_qty` 是最终实际交付份数。取消订单的实际交付为 0。\n- `paid_meal_amount` 是客户实际支付的餐费，单位元，已减优惠，不含配送费；`refunded_meal_amount` 是之后实际退还的餐费，单位元。\n- 净餐费＝所有订单实付餐费之和－实际退款之和；每份平均净餐费＝净餐费÷实际交付份数。按渠道和合计分别按此计算。\n- 取消订单率＝整单取消订单数÷全部订单数，分母包含完成和取消订单。\n- O04 原订 5 份，最终交付 4 份，已退 22 元。O05 有一笔 8 元优惠，已包含在实付 80 元中，不再另减。\n- 没有提供食材、人力、配送成本或取消原因；这份账本也没有统计宣传曝光、回头客和其他日期的订单。\n",
+          "sha256": "fde5fc05bb5070f29f421f3a120d7544e8f8456a3231d9a51a5d27a64563f77a"
+        }
+      ],
+      "capture": "holdout-run/captures/H03/input.json",
+      "attachmentVisibility": "all sealed attachments available to enhancer and executor; none execution-only",
+      "inputSha256": "6e3d23b6fe31a1021a915d298edf78f85fe47bb45e1534feea3e69a9a9e9351a",
+      "workContract": {
+        "maximumOutputTokens": 2600,
+        "officialExecutionRepeatsPerArm": 1,
+        "externalTools": false,
+        "internet": false,
+        "answerCardsExcludedFromInputs": true,
+        "outputRestrictions": "原封存prompt中的格式/字数/文件要求，模型与三臂共同执行材料一致",
+        "originalPromptBytesPreserved": true,
+        "inputInformationIdenticalAcrossArms": true,
+        "artifactFormatComesFromOriginalPrompt": true
+      },
+      "blocked": [],
+      "workStatus": "原始及通过产品门的增强臂各一次，不重采挑结果",
+      "commonAttachmentPayloadSha256": "4769616a108e5d661dcb544eea897b2ba5a8db1f47f1848aeddea3706316a309"
+    },
+    {
+      "id": "H04",
+      "rawPrompt": "我有个不带界面的 Node.js 小工具，附件里是现有 package.json 和 src/mergeShoppingItems.js。请补完里面的命名导出函数 mergeShoppingItems(items)，用来合并购物清单，保持 ES module 和现有函数签名。\n\n要求已经定好了：\n\n- 参数必须是数组；每项必须是非 null、非数组的对象，name 必须是原始字符串且 trim 后不为空，quantity 必须是大于 0 的安全整数。任一项不符合就抛 TypeError，额外字段忽略。\n- 用 name.trim().toLowerCase() 作为合并键，不做其他名称替换。相同键的 quantity 相加；返回顺序按键首次出现的顺序，返回对象只有 name 和 quantity，name 用第一次出现时 trim 后的原始大小写。\n- 如果某一项合并后的 quantity 超出安全整数范围，抛 RangeError。\n- 空数组返回新的空数组；所有情况下都不修改传入数组或其中的对象，返回项也是新对象。\n- 不加依赖，不读写文件，不使用网络，不新增界面。\n\n例如 [{name:' Milk ',quantity:2},{name:'milk',quantity:3},{name:'Egg',quantity:1}] 应得到 [{name:'Milk',quantity:5},{name:'Egg',quantity:1}]。\n\n只输出 src/mergeShoppingItems.js 的完整替换内容，放在一个 javascript 代码块里，不需要额外说明或其他文件。",
+      "originalSealedPrompt": "我有个不带界面的 Node.js 小工具，附件里是现有 package.json 和 src/mergeShoppingItems.js。请补完里面的命名导出函数 mergeShoppingItems(items)，用来合并购物清单，保持 ES module 和现有函数签名。\n\n要求已经定好了：\n\n- 参数必须是数组；每项必须是非 null、非数组的对象，name 必须是原始字符串且 trim 后不为空，quantity 必须是大于 0 的安全整数。任一项不符合就抛 TypeError，额外字段忽略。\n- 用 name.trim().toLowerCase() 作为合并键，不做其他名称替换。相同键的 quantity 相加；返回顺序按键首次出现的顺序，返回对象只有 name 和 quantity，name 用第一次出现时 trim 后的原始大小写。\n- 如果某一项合并后的 quantity 超出安全整数范围，抛 RangeError。\n- 空数组返回新的空数组；所有情况下都不修改传入数组或其中的对象，返回项也是新对象。\n- 不加依赖，不读写文件，不使用网络，不新增界面。\n\n例如 [{name:' Milk ',quantity:2},{name:'milk',quantity:3},{name:'Egg',quantity:1}] 应得到 [{name:'Milk',quantity:5},{name:'Egg',quantity:1}]。\n\n只输出 src/mergeShoppingItems.js 的完整替换内容，放在一个 javascript 代码块里，不需要额外说明或其他文件。\n",
+      "kind": "代码",
+      "collection": "candidate47冻结并正式解封后的内部留出",
+      "originalAttachments": [
+        {
+          "path": "inputs/H04/package.json",
+          "content": "{\n  \"name\": \"synthetic-shopping-list-helper\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"engines\": {\n    \"node\": \">=20\"\n  }\n}\n",
+          "sha256": "c305b2c66fecc8921173d5ba45d1bdc37ba2ba91c02641003c56b9f38e0e6248"
+        },
+        {
+          "path": "inputs/H04/src/mergeShoppingItems.js",
+          "content": "export function mergeShoppingItems(items) {\n  throw new Error('TODO');\n}\n",
+          "sha256": "d255605a9a5eabfa2f40647859086d1c15222f0037485cc9dea5097e51cc1634"
+        }
+      ],
+      "capture": "holdout-run/captures-r2/H04/input.json",
+      "attachmentVisibility": "all sealed attachments available to enhancer and executor; none execution-only",
+      "inputSha256": "e05da5d926536c3e73edfccb7b4b4af0300160ea78d3f5ba6d9335a546d3d1e3",
+      "workContract": {
+        "maximumOutputTokens": 2600,
+        "officialExecutionRepeatsPerArm": 1,
+        "externalTools": false,
+        "internet": false,
+        "answerCardsExcludedFromInputs": true,
+        "outputRestrictions": "原封存prompt中的格式/字数/文件要求，模型与三臂共同执行材料一致",
+        "originalPromptBytesPreserved": true,
+        "inputInformationIdenticalAcrossArms": true,
+        "artifactFormatComesFromOriginalPrompt": true
+      },
+      "blocked": [],
+      "workStatus": "原始及通过产品门的增强臂各一次，不重采挑结果",
+      "commonAttachmentPayloadSha256": "c4d4abfbbfcdb7b4057c85448d30a28322c888ac45cd7ee06c942611b02bb0a9"
+    }
+  ]
+}

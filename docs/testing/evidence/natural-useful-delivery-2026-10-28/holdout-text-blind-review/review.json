@@ -1,0 +1,1246 @@
+{
+  "schemaVersion": 1,
+  "state": "FROZEN_BEFORE_UNBLINDING",
+  "reviewType": "INTERNAL_AI_ANONYMOUS_TEXT_REVIEW",
+  "disclosure": {
+    "reviewer": "内部AI审阅者，不是独立真人或外部专家；没有真实用户修改时间或业务运行效果实测。",
+    "readBoundary": "只读取H01/H02/H03匿名packet及先前已读的对应封存答案卡；未读coordinator、results、stage/arm映射、真实结果ID或产品代码。",
+    "externalModelsOrWeb": false,
+    "originalsPreserved": true,
+    "resampling": false
+  },
+  "assessedAtUtc": "2026-10-27 19:01:31 UTC",
+  "procedure": {
+    "independentFirst": true,
+    "pairs": "每题A/B、A/C、B/C全部两两比较，共9组；没有按结果选取样本。",
+    "judgmentBasis": "先逐份核对10项冻结检查、事实/计算/篇幅/建议状态/可用性与最小必要编辑，再比较；平局及未定允许。",
+    "scoreBoundary": "分项分数用于定位问题；核心计算严重错误不因其它格式或建议项通过而被均分抵消。略短仅记格式项，不另升严重。",
+    "variation": "H01仅边缘空白不同的等价指令，作品差异只计采样波动。",
+    "sourceAndInference": "作者可合理组织叙述和设计试验；不把示例方案变成固定答案，也不把拟议设计当已发生事实。"
+  },
+  "cases": [
+    {
+      "caseId": "H01",
+      "inputEquivalence": {
+        "workInputsByteIdentical": false,
+        "workInputsIdenticalExceptEdgeWhitespace": true,
+        "interpretation": "packet表明字节并非完全相同，但仅首尾空白不同。实际指令等价，三个样本的细微组织差异只计采样波动，不能归因增强收益。"
+      },
+      "expectedCalculations": [
+        "单次第一个月＝6×29＝174元；第二个月＝9×29＝261元；合计＝174＋261＝435元。",
+        "月卡第一个月＝168元（6次未超8次）；第二个月＝168＋(9－8)×26＝194元；合计＝168＋194＝362元。",
+        "两个月节省＝435－362＝73元。"
+      ],
+      "works": [
+        {
+          "label": "A",
+          "state": "ACTUAL_RESULT",
+          "finishReason": "stop",
+          "outcome": "DIRECTLY_USABLE",
+          "rubricScore": 10,
+          "seriousFlags": [],
+          "formatMeasurements": {
+            "tableColumns": 4,
+            "tablePlans": 2,
+            "explanationHan": 87,
+            "explanationNonWhitespaceVisibleCharacters": 107,
+            "limit180SatisfiedUnderBothCounts": true
+          },
+          "checks": [
+            {
+              "checkId": "H01-01",
+              "pass": 1,
+              "quote": "| 套餐 | 第一个月 | 第二个月 | 两个月合计 |",
+              "reason": "两方案四列比较成品已交付，表后解释在180字内，没有补问或空模板。"
+            },
+            {
+              "checkId": "H01-02",
+              "pass": 1,
+              "quote": "| 两个月都买单次 | 174 元 | 261 元 | 435 元 |",
+              "reason": "单次第一个月6×29＝174元。"
+            },
+            {
+              "checkId": "H01-03",
+              "pass": 1,
+              "quote": "| 两个月都买单次 | 174 元 | 261 元 | 435 元 |",
+              "reason": "单次第二个月9×29＝261元。"
+            },
+            {
+              "checkId": "H01-04",
+              "pass": 1,
+              "quote": "| 两个月都买单次 | 174 元 | 261 元 | 435 元 |",
+              "reason": "单次两个月174＋261＝435元。"
+            },
+            {
+              "checkId": "H01-05",
+              "pass": 1,
+              "quote": "| 两个月都买月卡 | 168 元 | 194 元 | 362 元 |",
+              "reason": "月卡第一个月168元，未超包含次数。"
+            },
+            {
+              "checkId": "H01-06",
+              "pass": 1,
+              "quote": "| 两个月都买月卡 | 168 元 | 194 元 | 362 元 |",
+              "reason": "月卡第二个月只增加一次26元，168＋26＝194元。"
+            },
+            {
+              "checkId": "H01-07",
+              "pass": 1,
+              "quote": "| 两个月都买月卡 | 168 元 | 194 元 | 362 元 |",
+              "reason": "月卡两个月168＋194＝362元。"
+            },
+            {
+              "checkId": "H01-08",
+              "pass": 1,
+              "quote": "推荐两个月都买月卡，合计 362 元，比都买单次省 73 元。",
+              "reason": "按已确定行程及省钱优先推荐月卡，并准确写明共省73元。"
+            },
+            {
+              "checkId": "H01-09",
+              "pass": 1,
+              "quote": "每月 8 次用不完不退不结转，第二个月超 1 次另付 26 元；且下月须重新买卡。",
+              "reason": "明确不退/不结转及次月重买，没有新增绑定期或违约金。"
+            },
+            {
+              "checkId": "H01-10",
+              "pass": 1,
+              "quote": "月卡只含次数和价格权益，不保证有座；同样要提前预约，办卡不等于锁定座位。",
+              "reason": "保留仍需预约、月卡不锁定/保证座位的边界；未新增保证。"
+            }
+          ],
+          "factualAndStatusAssessment": "所有金额与已给条件一致；未将未知商家权益或未来行程写成事实。",
+          "usability": "可直接用于这两个固定方案的选择；解释的详略和算式复述不产生实质质量差距。",
+          "minimumNecessaryEdits": [],
+          "optionalPreferences": [],
+          "unresolvedChecks": []
+        },
+        {
+          "label": "B",
+          "state": "ACTUAL_RESULT",
+          "finishReason": "stop",
+          "outcome": "DIRECTLY_USABLE",
+          "rubricScore": 10,
+          "seriousFlags": [],
+          "formatMeasurements": {
+            "tableColumns": 4,
+            "tablePlans": 2,
+            "explanationHan": 87,
+            "explanationNonWhitespaceVisibleCharacters": 119,
+            "limit180SatisfiedUnderBothCounts": true
+          },
+          "checks": [
+            {
+              "checkId": "H01-01",
+              "pass": 1,
+              "quote": "| 套餐 | 第一个月 | 第二个月 | 两个月合计 |",
+              "reason": "两方案四列比较成品已交付，表后解释在180字内，没有补问或空模板。"
+            },
+            {
+              "checkId": "H01-02",
+              "pass": 1,
+              "quote": "| 两个月都买单次 | 174 元 | 261 元 | 435 元 |",
+              "reason": "单次第一个月6×29＝174元。"
+            },
+            {
+              "checkId": "H01-03",
+              "pass": 1,
+              "quote": "| 两个月都买单次 | 174 元 | 261 元 | 435 元 |",
+              "reason": "单次第二个月9×29＝261元。"
+            },
+            {
+              "checkId": "H01-04",
+              "pass": 1,
+              "quote": "| 两个月都买单次 | 174 元 | 261 元 | 435 元 |",
+              "reason": "单次两个月174＋261＝435元。"
+            },
+            {
+              "checkId": "H01-05",
+              "pass": 1,
+              "quote": "| 两个月都买月卡 | 168 元 | 194 元 | 362 元 |",
+              "reason": "月卡第一个月168元，未超包含次数。"
+            },
+            {
+              "checkId": "H01-06",
+              "pass": 1,
+              "quote": "| 两个月都买月卡 | 168 元 | 194 元 | 362 元 |",
+              "reason": "月卡第二个月只增加一次26元，168＋26＝194元。"
+            },
+            {
+              "checkId": "H01-07",
+              "pass": 1,
+              "quote": "| 两个月都买月卡 | 168 元 | 194 元 | 362 元 |",
+              "reason": "月卡两个月168＋194＝362元。"
+            },
+            {
+              "checkId": "H01-08",
+              "pass": 1,
+              "quote": "推荐两个月都买月卡，合计 362 元，比都买单次省 73 元。",
+              "reason": "按已确定行程及省钱优先推荐月卡，并准确写明共省73元。"
+            },
+            {
+              "checkId": "H01-09",
+              "pass": 1,
+              "quote": "每月 8 次用不完不退不结转，下月须重买；超出按 26 元/次。",
+              "reason": "明确不退/不结转及次月重买，没有新增绑定期或违约金。"
+            },
+            {
+              "checkId": "H01-10",
+              "pass": 1,
+              "quote": "月卡只含次数和价格优惠，不保证座位；座位仍需提前预约，办卡不等于锁定座位。",
+              "reason": "保留仍需预约、月卡不锁定/保证座位的边界；未新增保证。"
+            }
+          ],
+          "factualAndStatusAssessment": "所有金额与已给条件一致；未将未知商家权益或未来行程写成事实。",
+          "usability": "可直接用于这两个固定方案的选择；解释的详略和算式复述不产生实质质量差距。",
+          "minimumNecessaryEdits": [],
+          "optionalPreferences": [],
+          "unresolvedChecks": []
+        },
+        {
+          "label": "C",
+          "state": "ACTUAL_RESULT",
+          "finishReason": "stop",
+          "outcome": "DIRECTLY_USABLE",
+          "rubricScore": 10,
+          "seriousFlags": [],
+          "formatMeasurements": {
+            "tableColumns": 4,
+            "tablePlans": 2,
+            "explanationHan": 75,
+            "explanationNonWhitespaceVisibleCharacters": 96,
+            "limit180SatisfiedUnderBothCounts": true
+          },
+          "checks": [
+            {
+              "checkId": "H01-01",
+              "pass": 1,
+              "quote": "| 套餐 | 第一个月 | 第二个月 | 两个月合计 |",
+              "reason": "两方案四列比较成品已交付，表后解释在180字内，没有补问或空模板。"
+            },
+            {
+              "checkId": "H01-02",
+              "pass": 1,
+              "quote": "| 两个月都买单次套餐 | 174 元 | 261 元 | 435 元 |",
+              "reason": "单次第一个月6×29＝174元。"
+            },
+            {
+              "checkId": "H01-03",
+              "pass": 1,
+              "quote": "| 两个月都买单次套餐 | 174 元 | 261 元 | 435 元 |",
+              "reason": "单次第二个月9×29＝261元。"
+            },
+            {
+              "checkId": "H01-04",
+              "pass": 1,
+              "quote": "| 两个月都买单次套餐 | 174 元 | 261 元 | 435 元 |",
+              "reason": "单次两个月174＋261＝435元。"
+            },
+            {
+              "checkId": "H01-05",
+              "pass": 1,
+              "quote": "| 两个月都买月卡 | 168 元 | 194 元 | 362 元 |",
+              "reason": "月卡第一个月168元，未超包含次数。"
+            },
+            {
+              "checkId": "H01-06",
+              "pass": 1,
+              "quote": "| 两个月都买月卡 | 168 元 | 194 元 | 362 元 |",
+              "reason": "月卡第二个月只增加一次26元，168＋26＝194元。"
+            },
+            {
+              "checkId": "H01-07",
+              "pass": 1,
+              "quote": "| 两个月都买月卡 | 168 元 | 194 元 | 362 元 |",
+              "reason": "月卡两个月168＋194＝362元。"
+            },
+            {
+              "checkId": "H01-08",
+              "pass": 1,
+              "quote": "推荐两个月都买月卡，合计 362 元，比都买单次省 73 元。",
+              "reason": "按已确定行程及省钱优先推荐月卡，并准确写明共省73元。"
+            },
+            {
+              "checkId": "H01-09",
+              "pass": 1,
+              "quote": "每月 8 次未用不退、不结转，下月需重买；超出才按 26 元/次。",
+              "reason": "明确不退/不结转及次月重买，没有新增绑定期或违约金。"
+            },
+            {
+              "checkId": "H01-10",
+              "pass": 1,
+              "quote": "月卡只解决计费，不保证座位；同样要提前预约，办卡也不保证有座。",
+              "reason": "保留仍需预约、月卡不锁定/保证座位的边界；未新增保证。"
+            }
+          ],
+          "factualAndStatusAssessment": "所有金额与已给条件一致；未将未知商家权益或未来行程写成事实。",
+          "usability": "可直接用于这两个固定方案的选择；解释的详略和算式复述不产生实质质量差距。",
+          "minimumNecessaryEdits": [],
+          "optionalPreferences": [],
+          "unresolvedChecks": []
+        }
+      ],
+      "pairs": [
+        {
+          "comparisonId": "H01-A-B",
+          "left": "A",
+          "right": "B",
+          "judgment": "TIE",
+          "leftQuote": "推荐两个月都买月卡，合计 362 元，比都买单次省 73 元。",
+          "rightQuote": "推荐两个月都买月卡，合计 362 元，比都买单次省 73 元。",
+          "reason": "金额、推荐、月卡代价与预约边界均正确。B多写一次第二月算式不构成原任务新增收益。",
+          "minimumEditDifference": "双方无必要修改；相同实际指令下只计采样波动。",
+          "comparisonScope": "SAMPLING_VARIATION_ONLY"
+        },
+        {
+          "comparisonId": "H01-A-C",
+          "left": "A",
+          "right": "C",
+          "judgment": "TIE",
+          "leftQuote": "月卡只含次数和价格权益，不保证有座；同样要提前预约，办卡不等于锁定座位。",
+          "rightQuote": "月卡只解决计费，不保证座位；同样要提前预约，办卡也不保证有座。",
+          "reason": "双方均明确月卡不保证座位且仍需预约；措辞和长度差异没有改变决策。",
+          "minimumEditDifference": "双方无必要修改；不能把短句差异归为增强收益。",
+          "comparisonScope": "SAMPLING_VARIATION_ONLY"
+        },
+        {
+          "comparisonId": "H01-B-C",
+          "left": "B",
+          "right": "C",
+          "judgment": "TIE",
+          "leftQuote": "每月 8 次用不完不退不结转，下月须重买；超出按 26 元/次。",
+          "rightQuote": "每月 8 次未用不退、不结转，下月需重买；超出才按 26 元/次。",
+          "reason": "双方都准确说明不退、不结转、重买与超次收费；B复述194算式不是实质提升。",
+          "minimumEditDifference": "双方无必要修改；只计采样波动。",
+          "comparisonScope": "SAMPLING_VARIATION_ONLY"
+        }
+      ]
+    },
+    {
+      "caseId": "H02",
+      "inputEquivalence": {
+        "workInputsByteIdentical": false,
+        "workInputsIdenticalExceptEdgeWhitespace": false,
+        "interpretation": "匿名packet未显示输入等价；仅评价作品，不推测匿名标签对应的生成来源。"
+      },
+      "expectedCalculations": [
+        "报名＝20＋24＋16＝60人次；到场＝16＋18＋14＝48人次；报名到场率＝48÷60＝80%。",
+        "问卷＝12＋15＋10＝37份；正向＝10＋12＋8＝30份；正向占比＝30÷37≈81.1%；中性＝2＋3＋1＝6份；负向＝0＋0＋1＝1份。"
+      ],
+      "countingMethod": {
+        "frozenBasis": "H02答案卡第10项：正文420—550汉字；忽略Markdown语法和标点，标题、图注不计入正文汉字；图注不超过35字。",
+        "implementation": "逐作品按空行分块，A/B排除首块标题，C无标题；排除最后一块图注后只剩三段正文。对这三段仅计实际汉字字符（本批使用的汉字均在U+4E00—U+9FFF内）；阿拉伯数字、空白、标点和Markdown符号不计为汉字。没有加入新字数算法或逐句阈值。",
+        "captionChecks": "同时保留图注汉字数与全部非空白可见字符数，两种计数均远低于35；图注不加到正文凑字数。",
+        "severity": "正文完整但略短只影响冻结格式项10，不抹去已交付的内容，不另记严重失败。"
+      },
+      "works": [
+        {
+          "label": "A",
+          "state": "ACTUAL_RESULT",
+          "finishReason": "stop",
+          "outcome": "DIRECTLY_USABLE",
+          "rubricScore": 10,
+          "seriousFlags": [],
+          "formatMeasurements": {
+            "excludedTitle": "2026 年 9 月社区阅读活动月报",
+            "bodyParagraphs": 3,
+            "bodyHan": 432,
+            "bodyRange": [
+              420,
+              550
+            ],
+            "bodyRangeSatisfied": true,
+            "excludedCaption": "志愿者和参与者围坐一起读书交流。",
+            "captionHan": 15,
+            "captionNonWhitespaceVisibleCharacters": 16,
+            "captionMax35Satisfied": true
+          },
+          "checks": [
+            {
+              "checkId": "H02-01",
+              "pass": 1,
+              "quote": "本月",
+              "reason": "交付三段连贯月报，依次为本月活动、反馈不足、下月拟试；不是写作计划或补材料清单。"
+            },
+            {
+              "checkId": "H02-02",
+              "pass": 1,
+              "quote": "第一次轮流朗读短篇故事并自由交流，第二次交换旧书并分享选书理由，第三次共读一篇散文并围绕其中一段讨论。",
+              "reason": "叙述与三次活动记录相容，没有新增活动、能力提升或已发生改进成效。"
+            },
+            {
+              "checkId": "H02-03",
+              "pass": 1,
+              "quote": "三次报名合计 60 人次，到场合计 48 人次",
+              "reason": "到场48为累计人次，且文中说明重复参加、未统计不同参与者人数。"
+            },
+            {
+              "checkId": "H02-04",
+              "pass": 1,
+              "quote": "按“三次到场人次之和÷三次报名人次之和”计算，报名到场率为 80%。",
+              "reason": "80%的分母为三次报名人次合计60，与材料一致。"
+            },
+            {
+              "checkId": "H02-05",
+              "pass": 1,
+              "quote": "三次共回收问卷 37 份，正向反馈 30 份，按“三次正向问卷之和÷三次回收问卷之和”计算，正向反馈占比约 81.1%。",
+              "reason": "正向30/37≈81.1%，81%为可接受舍入；分母明确为回收问卷37份。"
+            },
+            {
+              "checkId": "H02-06",
+              "pass": 1,
+              "quote": "问卷为自愿填写，每次每名到场者最多填一份，反馈只代表填写者。",
+              "reason": "明确自愿问卷只覆盖填写者，没有推广到所有居民或未填写者。"
+            },
+            {
+              "checkId": "H02-07",
+              "pass": 1,
+              "quote": "两次活动现场出现大家同时说话、不容易听清的情况；有参加者在问卷自由填写处提到，希望开场先知道当天要读什么。",
+              "reason": "记录两次同时说话和希望开场先知内容，未给未计数的定性意见捏造频次。"
+            },
+            {
+              "checkId": "H02-08",
+              "pass": 1,
+              "quote": "一是针对现场听不清，尝试在讨论环节约定依次发言或使用简单提示，减少同时说话；二是针对开场前告知，尝试在活动开始时先说明当天阅读篇目或主题，让参与者心里有数。",
+              "reason": "已设计两项具体小范围改进；开场说明与轮流发言具有可执行动作，不要求用户重新发明方案。"
+            },
+            {
+              "checkId": "H02-09",
+              "pass": 1,
+              "quote": "以上只是建议，待大家商量后再定，不作对外承诺。",
+              "reason": "改进标为建议/试行，未声称已批准日期、预算、人手或确定收益。"
+            },
+            {
+              "checkId": "H02-10",
+              "pass": 1,
+              "quote": "志愿者和参与者围坐一起读书交流。",
+              "reason": "正文432汉字在420—550范围内，图注15汉字且可见字符数也未超35；语气平实友好。"
+            }
+          ],
+          "factualAndStatusAssessment": "核心人数口径、两项百分比及下月建议状态准确。具体文案表达允许合理变体，不要求照抄答案卡的标题或术语。",
+          "usability": "可直接发群；不把更长、更多限定语或小标题作为新增质量收益。",
+          "minimumNecessaryEdits": [],
+          "optionalPrecisionEdits": [
+            {
+              "quote": "以上均为人次",
+              "note": "可精确为“报名与到场均按人次统计”，避免“以上”误包问卷份数。上下文已明确问卷单位为份，未把此处读成新增独立人数或错误百分比。"
+            },
+            {
+              "quote": "大家对轮流朗读、交换旧书和围绕文本讨论的形式比较接受，愿意坐下来读一读、说一说。",
+              "note": "这是结合参与活动和三场问卷正向多数的概括，前文已限定反馈填写者；不据此判已虚构能力提升或全居民满意。发布时可收窄为“回收问卷总体以正向反馈为主”，避免语气泛化。"
+            }
+          ],
+          "unresolvedChecks": []
+        },
+        {
+          "label": "B",
+          "state": "ACTUAL_RESULT",
+          "finishReason": "stop",
+          "outcome": "DIRECTLY_USABLE",
+          "rubricScore": 10,
+          "seriousFlags": [],
+          "formatMeasurements": {
+            "excludedTitle": "2026 年 9 月社区阅读活动月报",
+            "bodyParagraphs": 3,
+            "bodyHan": 453,
+            "bodyRange": [
+              420,
+              550
+            ],
+            "bodyRangeSatisfied": true,
+            "excludedCaption": "志愿者和参与者围坐在一起，轮流朗读、交流书中的内容。",
+            "captionHan": 23,
+            "captionNonWhitespaceVisibleCharacters": 26,
+            "captionMax35Satisfied": true
+          },
+          "checks": [
+            {
+              "checkId": "H02-01",
+              "pass": 1,
+              "quote": "本月",
+              "reason": "交付三段连贯月报，依次为本月活动、反馈不足、下月拟试；不是写作计划或补材料清单。"
+            },
+            {
+              "checkId": "H02-02",
+              "pass": 1,
+              "quote": "第一次是轮流朗读短篇故事，再自由交流；第二次是交换带来的旧书，并分享选书理由；第三次是共读一篇散文，围绕其中一段讨论。",
+              "reason": "叙述与三次活动记录相容，没有新增活动、能力提升或已发生改进成效。"
+            },
+            {
+              "checkId": "H02-03",
+              "pass": 1,
+              "quote": "三次活动报名合计 60 人次，到场合计 48 人次",
+              "reason": "到场48为累计人次，且文中说明重复参加、未统计不同参与者人数。"
+            },
+            {
+              "checkId": "H02-04",
+              "pass": 1,
+              "quote": "按三次到场人次之和除以三次报名人次之和计算，报名到场率为 80%。",
+              "reason": "80%的分母为三次报名人次合计60，与材料一致。"
+            },
+            {
+              "checkId": "H02-05",
+              "pass": 1,
+              "quote": "三次共回收问卷 37 份，其中正向反馈 30 份，正向反馈占比约 81%，分母是三次回收问卷总数。",
+              "reason": "正向30/37≈81.1%，81%为可接受舍入；分母明确为回收问卷37份。"
+            },
+            {
+              "checkId": "H02-06",
+              "pass": 1,
+              "quote": "问卷为自愿填写，反馈只代表填写者，不代表所有居民的看法。",
+              "reason": "明确自愿问卷只覆盖填写者，没有推广到所有居民或未填写者。"
+            },
+            {
+              "checkId": "H02-07",
+              "pass": 1,
+              "quote": "两次活动现场出现大家同时说话、不容易听清的情况；有参加者在问卷中希望开场先知道当天要读什么。",
+              "reason": "记录两次同时说话和希望开场先知内容，未给未计数的定性意见捏造频次。"
+            },
+            {
+              "checkId": "H02-08",
+              "pass": 1,
+              "quote": "一是在开场用一两分钟说明当天读什么、大致怎么进行，让参与者先有预期；二是讨论环节试着约定发言顺序或使用简单的轮流发言方式，减少同时说话、听不清的情况。",
+              "reason": "已设计两项具体小范围改进；开场说明与轮流发言具有可执行动作，不要求用户重新发明方案。"
+            },
+            {
+              "checkId": "H02-09",
+              "pass": 1,
+              "quote": "这两项是否采用、怎么采用，还需结合下月实际安排再商量，不作为已定方案，也不涉及新预算或新服务承诺。",
+              "reason": "改进标为建议/试行，未声称已批准日期、预算、人手或确定收益。"
+            },
+            {
+              "checkId": "H02-10",
+              "pass": 1,
+              "quote": "志愿者和参与者围坐在一起，轮流朗读、交流书中的内容。",
+              "reason": "正文453汉字在420—550范围内，图注23汉字且可见字符数也未超35；语气平实友好。"
+            }
+          ],
+          "factualAndStatusAssessment": "核心人数口径、两项百分比及下月建议状态准确。具体文案表达允许合理变体，不要求照抄答案卡的标题或术语。",
+          "usability": "可直接发群；不把更长、更多限定语或小标题作为新增质量收益。",
+          "minimumNecessaryEdits": [],
+          "optionalPrecisionEdits": [
+            {
+              "quote": "轮流朗读、交流书中的内容。",
+              "note": "活动记录包含朗读和交流，图注与围坐读书场景相容且未加身份/成果，按冻结判据通过。因具体照片仅给“围坐读书”，可删为更保守的“围坐一起读书”，不把此文案精确化偏好当成独立胜负。"
+            }
+          ],
+          "unresolvedChecks": []
+        },
+        {
+          "label": "C",
+          "state": "ACTUAL_RESULT",
+          "finishReason": "stop",
+          "outcome": "NEEDS_FORMAT_EDIT",
+          "rubricScore": 9,
+          "seriousFlags": [],
+          "formatMeasurements": {
+            "excludedTitle": null,
+            "bodyParagraphs": 3,
+            "bodyHan": 393,
+            "bodyRange": [
+              420,
+              550
+            ],
+            "bodyRangeSatisfied": false,
+            "excludedCaption": "志愿者和参与者围坐一起读书交流。",
+            "captionHan": 15,
+            "captionNonWhitespaceVisibleCharacters": 16,
+            "captionMax35Satisfied": true
+          },
+          "checks": [
+            {
+              "checkId": "H02-01",
+              "pass": 1,
+              "quote": "本月",
+              "reason": "交付三段连贯月报，依次为本月活动、反馈不足、下月拟试；不是写作计划或补材料清单。"
+            },
+            {
+              "checkId": "H02-02",
+              "pass": 1,
+              "quote": "第一次轮流朗读短篇故事并自由交流，第二次交换旧书并分享选书理由，第三次共读一篇散文并围绕其中一段讨论。",
+              "reason": "叙述与三次活动记录相容，没有新增活动、能力提升或已发生改进成效。"
+            },
+            {
+              "checkId": "H02-03",
+              "pass": 1,
+              "quote": "三次报名合计60人次，到场合计48人次",
+              "reason": "到场48为累计人次，且文中说明重复参加、未统计不同参与者人数。"
+            },
+            {
+              "checkId": "H02-04",
+              "pass": 1,
+              "quote": "按“到场人次之和÷报名人次之和”计算，报名到场率为80%。",
+              "reason": "80%的分母为三次报名人次合计60，与材料一致。"
+            },
+            {
+              "checkId": "H02-05",
+              "pass": 1,
+              "quote": "三次共回收问卷37份，其中正向反馈30份、中性6份、负向1份，正向反馈占比约81%，分母是37份回收问卷。",
+              "reason": "正向30/37≈81.1%，81%为可接受舍入；分母明确为回收问卷37份。"
+            },
+            {
+              "checkId": "H02-06",
+              "pass": 1,
+              "quote": "这个比例只反映填问卷者的情况，不代表没填问卷者，也不宜推广为所有居民的看法。",
+              "reason": "明确自愿问卷只覆盖填写者，没有推广到所有居民或未填写者。"
+            },
+            {
+              "checkId": "H02-07",
+              "pass": 1,
+              "quote": "有两次出现大家同时说话、不容易听清的情况；也有参加者在问卷自由填写处提到希望开场先知道当天要读什么，这类建议的条数没有统计。",
+              "reason": "记录两次同时说话和希望开场先知内容，未给未计数的定性意见捏造频次。"
+            },
+            {
+              "checkId": "H02-08",
+              "pass": 1,
+              "quote": "一是开场用一两分钟说明当天读什么、大致流程和发言顺序，帮助参与者心里有数；二是讨论环节试设一个简单的轮流发言或举手示意规则，减少同时说话、听不清的情况。",
+              "reason": "已设计两项具体小范围改进；开场说明与轮流发言具有可执行动作，不要求用户重新发明方案。"
+            },
+            {
+              "checkId": "H02-09",
+              "pass": 1,
+              "quote": "下月活动日期、内容和改进措施尚未确定，以下两项只是建议，供大家讨论",
+              "reason": "改进标为建议/试行，未声称已批准日期、预算、人手或确定收益。"
+            },
+            {
+              "checkId": "H02-10",
+              "pass": 0,
+              "quote": "志愿者和参与者围坐一起读书交流。",
+              "reason": "正文393汉字，低于420下限27字；三段与图注均完整、图注合规，故仅格式项不通过。"
+            }
+          ],
+          "factualAndStatusAssessment": "核心人数口径、两项百分比及下月建议状态准确。具体文案表达允许合理变体，不要求照抄答案卡的标题或术语。",
+          "usability": "正文内容完整可理解，尚需补足明确约定的汉字下限后才能按原格式交付；不是缺少实质分析或建议。",
+          "minimumNecessaryEdits": [
+            {
+              "id": "H02-C-E1",
+              "severity": "formatOnly",
+              "quote": "志愿者和参与者围坐一起读书交流。",
+              "reason": "冻结计数排除图注和标题后正文393汉字，差27汉字。图注不能移入正文凑数。",
+              "minimumEdit": "正文补至少27汉字且总数不超过550，只补材料已知内容或解释，不新增人数、经费、日期、成果。",
+              "oneSourceCompatibleOption": "可在首段补“本月场地和志愿者均由现有资源支持，参与情况按每次活动分别记录。”；这只是满足篇幅的示例，不是唯一方案。"
+            }
+          ],
+          "optionalPrecisionEdits": [
+            {
+              "quote": "每名到场者最多一份",
+              "note": "可补回材料的“每次每名到场者最多一份”，更清楚地区分重复参加与每场填写限制。文中已经说明有人重复参加及问卷只代表填写者，未声称37名独立居民；不扩大为统计结论失败。"
+            }
+          ],
+          "unresolvedChecks": []
+        }
+      ],
+      "pairs": [
+        {
+          "comparisonId": "H02-A-B",
+          "left": "A",
+          "right": "B",
+          "judgment": "TIE",
+          "leftQuote": "以上只是建议，待大家商量后再定，不作对外承诺。",
+          "rightQuote": "这两项是否采用、怎么采用，还需结合下月实际安排再商量，不作为已定方案，也不涉及新预算或新服务承诺。",
+          "reason": "两份均满足10项，数值、问卷范围与建议状态齐全。语气、段内顺序和图注详略未形成已证明的实质交付差距。",
+          "minimumEditDifference": "双方无冻结硬要求下的必要修改；可选精确化不用于选胜。",
+          "comparisonScope": "SEMANTIC_AND_REQUIREMENTS"
+        },
+        {
+          "comparisonId": "H02-A-C",
+          "left": "A",
+          "right": "C",
+          "judgment": "LEFT_BETTER",
+          "leftQuote": "三次报名合计 60 人次，到场合计 48 人次",
+          "rightQuote": "三次报名合计60人次，到场合计48人次",
+          "reason": "实质数据和建议均完成。A正文432汉字符合范围；C正文393汉字，差27字，仅有明确格式差异。不能把C较短说成内容失败。",
+          "minimumEditDifference": "A无必要修改；C须按H02-C-E1补足正文。优势只在本次格式遵守，不宣称更丰富或更有效。",
+          "comparisonScope": "FORMAT_ONLY"
+        },
+        {
+          "comparisonId": "H02-B-C",
+          "left": "B",
+          "right": "C",
+          "judgment": "LEFT_BETTER",
+          "leftQuote": "三次共回收问卷 37 份，其中正向反馈 30 份，正向反馈占比约 81%，分母是三次回收问卷总数。",
+          "rightQuote": "三次共回收问卷37份，其中正向反馈30份、中性6份、负向1份，正向反馈占比约81%，分母是37份回收问卷。",
+          "reason": "两者百分比及分母均正确。B正文453汉字符合范围；C393汉字低于下限。没有把81%与81.1%的合理舍入或较长解释当语义质量差距。",
+          "minimumEditDifference": "B无必要修改；C须补足27汉字。仅格式差异，不构成已证实的业务质量提升。",
+          "comparisonScope": "FORMAT_ONLY"
+        }
+      ]
+    },
+    {
+      "caseId": "H03",
+      "inputEquivalence": {
+        "workInputsByteIdentical": false,
+        "workInputsIdenticalExceptEdgeWhitespace": false,
+        "interpretation": "仅评价匿名实际作品；相同错误不证明唯一根因，也不推断哪个版本造成。"
+      },
+      "independentRecalculation": {
+        "source": "匿名H03.json内orders.csv及ledger-notes.md，未用外部行业资料。",
+        "orderRows": [
+          {
+            "orderId": "O01",
+            "channel": "ONLINE",
+            "status": "COMPLETED",
+            "netFormula": "66.00－0.00＝66.00",
+            "deliveredQty": 3,
+            "cancelledOrder": 0
+          },
+          {
+            "orderId": "O02",
+            "channel": "PHONE",
+            "status": "COMPLETED",
+            "netFormula": "44.00－0.00＝44.00",
+            "deliveredQty": 2,
+            "cancelledOrder": 0
+          },
+          {
+            "orderId": "O03",
+            "channel": "ONLINE",
+            "status": "CANCELLED",
+            "netFormula": "88.00－88.00＝0.00",
+            "deliveredQty": 0,
+            "cancelledOrder": 1
+          },
+          {
+            "orderId": "O04",
+            "channel": "PHONE",
+            "status": "COMPLETED",
+            "netFormula": "110.00－22.00＝88.00",
+            "deliveredQty": 4,
+            "cancelledOrder": 0,
+            "note": "完成订单的部分退款，实际交付4份，不当整单取消。"
+          },
+          {
+            "orderId": "O05",
+            "channel": "ONLINE",
+            "status": "COMPLETED",
+            "netFormula": "80.00－0.00＝80.00",
+            "deliveredQty": 4,
+            "cancelledOrder": 0,
+            "note": "80元实付已减8元优惠，不再扣一次。"
+          },
+          {
+            "orderId": "O06",
+            "channel": "ONLINE",
+            "status": "COMPLETED",
+            "netFormula": "22.00－0.00＝22.00",
+            "deliveredQty": 1,
+            "cancelledOrder": 0
+          },
+          {
+            "orderId": "O07",
+            "channel": "PHONE",
+            "status": "CANCELLED",
+            "netFormula": "44.00－44.00＝0.00",
+            "deliveredQty": 0,
+            "cancelledOrder": 1
+          },
+          {
+            "orderId": "O08",
+            "channel": "PHONE",
+            "status": "COMPLETED",
+            "netFormula": "66.00－0.00＝66.00",
+            "deliveredQty": 3,
+            "cancelledOrder": 0
+          }
+        ],
+        "channelRows": [
+          {
+            "channel": "线上",
+            "paidFormula": "66＋88＋80＋22＝256",
+            "refundFormula": "0＋88＋0＋0＝88",
+            "netFormula": "256－88＝168；等价66＋0＋80＋22＝168",
+            "deliveryFormula": "3＋0＋4＋1＝8",
+            "averageFormula": "168÷8＝21.00",
+            "cancellationFormula": "1张整单取消÷4张全部订单＝25.0%"
+          },
+          {
+            "channel": "电话",
+            "paidFormula": "44＋110＋44＋66＝264",
+            "refundFormula": "0＋22＋44＋0＝66",
+            "netFormula": "264－66＝198；等价44＋88＋0＋66＝198",
+            "deliveryFormula": "2＋4＋0＋3＝9",
+            "averageFormula": "198÷9＝22.00",
+            "cancellationFormula": "1张整单取消÷4张全部订单＝25.0%"
+          },
+          {
+            "channel": "合计",
+            "paidFormula": "256＋264＝520",
+            "refundFormula": "88＋66＝154",
+            "netFormula": "520－154＝366",
+            "deliveryFormula": "8＋9＝17",
+            "averageFormula": "366÷17＝21.529411…，四舍五入21.53",
+            "cancellationFormula": "2张整单取消÷8张全部订单＝25.0%"
+          }
+        ],
+        "expectedTable": [
+          {
+            "channel": "线上",
+            "netMealAmount": "168.00",
+            "deliveredQty": 8,
+            "averageNetMealAmount": "21.00",
+            "cancelledOrderRate": "25.0%"
+          },
+          {
+            "channel": "电话",
+            "netMealAmount": "198.00",
+            "deliveredQty": 9,
+            "averageNetMealAmount": "22.00",
+            "cancelledOrderRate": "25.0%"
+          },
+          {
+            "channel": "合计",
+            "netMealAmount": "366.00",
+            "deliveredQty": 17,
+            "averageNetMealAmount": "21.53",
+            "cancelledOrderRate": "25.0%"
+          }
+        ]
+      },
+      "sharedAndAdditionalErrors": {
+        "commonAllThree": [
+          "电话净餐费均写154.00，正确198.00；电话每份平均均写17.11，正确22.00。",
+          "合计净餐费均写322.00，正确366.00；合计每份平均均写18.94，正确21.53。",
+          "线上和合计取消率三份都错误，但数值不全相同。"
+        ],
+        "AAndCShared": [
+          "线上取消率33.3%应25.0%；合计28.6%应25.0%；电话25.0%正确。"
+        ],
+        "BAdditionalDifferences": [
+          "线上40.0%、电话33.3%、合计37.5%均应25.0%；相较A/C，电话取消率额外错误，线上/合计也给出不同错误数值。"
+        ],
+        "attributionBoundary": "这些是作品层面的共同基础错误和新增差异。未依据标签、相似数值或错误首次出现位置推断提示词版本、平台组装或模型的唯一根因。没有原始推导证据，亦不确定具体是哪一步导致154/322。"
+      },
+      "works": [
+        {
+          "label": "A",
+          "state": "ACTUAL_RESULT",
+          "finishReason": "stop",
+          "outcome": "SERIOUS_FAILURE",
+          "rubricScore": 6,
+          "seriousFlags": [
+            "CORE_CALCULATION_ERRORS"
+          ],
+          "formatMeasurements": {
+            "tables": 1,
+            "channelOrder": [
+              "线上",
+              "电话",
+              "合计"
+            ],
+            "outsideTableHan": 110,
+            "outsideTableNonWhitespaceVisibleCharacters": 145,
+            "max350SatisfiedUnderBothCounts": true,
+            "moneyDecimals": 2,
+            "percentageDecimals": 1,
+            "numberedConclusions": 3
+          },
+          "checks": [
+            {
+              "checkId": "H03-01",
+              "pass": 1,
+              "quote": "| 渠道 | 净餐费（元） | 实际交付份数 | 每份平均净餐费（元） | 取消订单率 |",
+              "reason": "交付一张表和三条实际结论，覆盖全部要求指标；不是只交公式或索要成本。"
+            },
+            {
+              "checkId": "H03-02",
+              "pass": 1,
+              "quote": "| 线上 | 168.00 | 8 | 21.00 | 33.3% |",
+              "reason": "线上净餐费168.00正确；总实付256减退款88，未把O05优惠重复扣除。"
+            },
+            {
+              "checkId": "H03-03",
+              "pass": 0,
+              "quote": "| 电话 | 154.00 | 9 | 17.11 | 25.0% |",
+              "reason": "电话净餐费应264－66＝198.00，实际写154.00；O04部分退款后的净餐费88元应保留。"
+            },
+            {
+              "checkId": "H03-04",
+              "pass": 0,
+              "quote": "| 合计 | 322.00 | 17 | 18.94 | 28.6% |",
+              "reason": "合计净餐费应168＋198＝366.00，实际写322.00。"
+            },
+            {
+              "checkId": "H03-05",
+              "pass": 1,
+              "quote": "| 合计 | 322.00 | 17 | 18.94 | 28.6% |",
+              "reason": "实际交付8、9、17均正确，没有用订单数或原下单份数代替。"
+            },
+            {
+              "checkId": "H03-06",
+              "pass": 0,
+              "quote": "| 电话 | 154.00 | 9 | 17.11 | 25.0% |",
+              "reason": "线上21.00正确；电话应198÷9＝22.00而非17.11，合计应366÷17＝21.53而非18.94。"
+            },
+            {
+              "checkId": "H03-07",
+              "pass": 0,
+              "quote": "| 线上 | 168.00 | 8 | 21.00 | 33.3% |",
+              "reason": "线上、电话各1取消/4订单，合计2/8，三行均应25.0%；此份线上33.3%及合计28.6%错误，电话25.0%正确。"
+            },
+            {
+              "checkId": "H03-08",
+              "pass": 1,
+              "quote": "下周可试：线上完成订单逐单核对下单份数与交付份数，减少少交付退款。",
+              "reason": "给出两项可辨识动作和可观察方向，完成已委托试验设计；不强制采用答案卡某一试验。具体设计的机制或资源疑义另列，不能据“有建议”冲抵错误计算。"
+            },
+            {
+              "checkId": "H03-09",
+              "pass": 1,
+              "quote": "目前数据不能支持“线上或电话哪个更赚钱”的结论：样本仅 8 单、4 天，且无成本、取消原因、曝光和回头客数据。",
+              "reason": "明确数据不足以判断利润/渠道因果等，试验用“可试/拟议”表达，未声称已批准。缺成本未阻断本期可算内容。"
+            },
+            {
+              "checkId": "H03-10",
+              "pass": 1,
+              "quote": "| 合计 | 322.00 | 17 | 18.94 | 28.6% |",
+              "reason": "一张表按线上、电话、合计顺序，金额两位、比例一位；表外三条短结论即使加标题全部可见字符也小于350。格式通过不改变计算失败。"
+            }
+          ],
+          "factualAndStatusAssessment": "核心金额和取消率错误足以误导店内对渠道数据的理解；不是只需润色。净餐费未被直接称为利润，试验未冒称已批准。",
+          "usability": "不可原样发工作群，应先整体复核并替换错误表格。三份原件均保留，不补采，不因另外两份也失败而放过此份。",
+          "minimumNecessaryEdits": [
+            {
+              "id": "H03-A-E1",
+              "severity": "serious",
+              "quote": "| 电话 | 154.00 | 9 | 17.11 | 25.0% |",
+              "minimumEdit": "电话行改为净餐费198.00、实际交付9、每份平均22.00、取消率25.0%；按逐行算式核对，不重复扣已退取消餐费。"
+            },
+            {
+              "id": "H03-A-E2",
+              "severity": "serious",
+              "quote": "| 合计 | 322.00 | 17 | 18.94 | 28.6% |",
+              "minimumEdit": "合计行改为366.00、17、21.53、25.0%，平均值用总净餐费/总实际交付份数。"
+            },
+            {
+              "id": "H03-A-E3",
+              "severity": "serious",
+              "quote": "| 线上 | 168.00 | 8 | 21.00 | 33.3% |",
+              "minimumEdit": "线上保留168.00、8、21.00，取消率改为1/4＝25.0%；取消率分母使用全部独立订单。"
+            }
+          ],
+          "practicalDesignNotes": [
+            {
+              "quote": "下周可试：线上完成订单逐单核对下单份数与交付份数，减少少交付退款。",
+              "note": "逐单核对份数是可实施的预防动作；材料中已记录的少交付发生在电话O04，不能据这条试验把线上少交付写成既有事实。当前文字是建议，没有明确捏造发生次数。"
+            },
+            {
+              "quote": "下周可试：电话下单时复述份数并确认，观察取消订单率是否下降。",
+              "note": "电话复述确认有可执行动作；是否降低取消仍属待观察假设，不把它写成已知取消原因。"
+            }
+          ],
+          "unresolvedChecks": []
+        },
+        {
+          "label": "B",
+          "state": "ACTUAL_RESULT",
+          "finishReason": "stop",
+          "outcome": "SERIOUS_FAILURE",
+          "rubricScore": 6,
+          "seriousFlags": [
+            "CORE_CALCULATION_ERRORS"
+          ],
+          "formatMeasurements": {
+            "tables": 1,
+            "channelOrder": [
+              "线上",
+              "电话",
+              "合计"
+            ],
+            "outsideTableHan": 129,
+            "outsideTableNonWhitespaceVisibleCharacters": 172,
+            "max350SatisfiedUnderBothCounts": true,
+            "moneyDecimals": 2,
+            "percentageDecimals": 1,
+            "numberedConclusions": 3
+          },
+          "checks": [
+            {
+              "checkId": "H03-01",
+              "pass": 1,
+              "quote": "| 渠道 | 净餐费（元） | 实际交付份数 | 每份平均净餐费（元） | 取消订单率 |",
+              "reason": "交付一张表和三条实际结论，覆盖全部要求指标；不是只交公式或索要成本。"
+            },
+            {
+              "checkId": "H03-02",
+              "pass": 1,
+              "quote": "| 线上 | 168.00 | 8 | 21.00 | 40.0% |",
+              "reason": "线上净餐费168.00正确；总实付256减退款88，未把O05优惠重复扣除。"
+            },
+            {
+              "checkId": "H03-03",
+              "pass": 0,
+              "quote": "| 电话 | 154.00 | 9 | 17.11 | 33.3% |",
+              "reason": "电话净餐费应264－66＝198.00，实际写154.00；O04部分退款后的净餐费88元应保留。"
+            },
+            {
+              "checkId": "H03-04",
+              "pass": 0,
+              "quote": "| 合计 | 322.00 | 17 | 18.94 | 37.5% |",
+              "reason": "合计净餐费应168＋198＝366.00，实际写322.00。"
+            },
+            {
+              "checkId": "H03-05",
+              "pass": 1,
+              "quote": "| 合计 | 322.00 | 17 | 18.94 | 37.5% |",
+              "reason": "实际交付8、9、17均正确，没有用订单数或原下单份数代替。"
+            },
+            {
+              "checkId": "H03-06",
+              "pass": 0,
+              "quote": "| 电话 | 154.00 | 9 | 17.11 | 33.3% |",
+              "reason": "线上21.00正确；电话应198÷9＝22.00而非17.11，合计应366÷17＝21.53而非18.94。"
+            },
+            {
+              "checkId": "H03-07",
+              "pass": 0,
+              "quote": "| 线上 | 168.00 | 8 | 21.00 | 40.0% |",
+              "reason": "线上、电话各1取消/4订单，合计2/8，三行均应25.0%；B实际三行40.0%、33.3%、37.5%均错。"
+            },
+            {
+              "checkId": "H03-08",
+              "pass": 1,
+              "quote": "下周拟做小试验：线上完成订单随餐附一句“少送即退”提示，观察是否减少少交付退款。",
+              "reason": "给出两项可辨识动作和可观察方向，完成已委托试验设计；不强制采用答案卡某一试验。具体设计的机制或资源疑义另列，不能据“有建议”冲抵错误计算。"
+            },
+            {
+              "checkId": "H03-09",
+              "pass": 1,
+              "quote": "现有数据不能支持“哪个渠道更好”或“取消原因是什么”的结论：缺少成本、取消原因、曝光、回头客及其他日期数据。",
+              "reason": "明确数据不足以判断利润/渠道因果等，试验用“可试/拟议”表达，未声称已批准。缺成本未阻断本期可算内容。"
+            },
+            {
+              "checkId": "H03-10",
+              "pass": 1,
+              "quote": "| 合计 | 322.00 | 17 | 18.94 | 37.5% |",
+              "reason": "一张表按线上、电话、合计顺序，金额两位、比例一位；表外三条短结论即使加标题全部可见字符也小于350。格式通过不改变计算失败。"
+            }
+          ],
+          "factualAndStatusAssessment": "核心金额和取消率错误足以误导店内对渠道数据的理解；不是只需润色。净餐费未被直接称为利润，试验未冒称已批准。",
+          "usability": "不可原样发工作群，应先整体复核并替换错误表格。三份原件均保留，不补采，不因另外两份也失败而放过此份。",
+          "minimumNecessaryEdits": [
+            {
+              "id": "H03-B-E1",
+              "severity": "serious",
+              "quote": "| 电话 | 154.00 | 9 | 17.11 | 33.3% |",
+              "minimumEdit": "电话行改为净餐费198.00、实际交付9、每份平均22.00、取消率25.0%；按逐行算式核对，不重复扣已退取消餐费。"
+            },
+            {
+              "id": "H03-B-E2",
+              "severity": "serious",
+              "quote": "| 合计 | 322.00 | 17 | 18.94 | 37.5% |",
+              "minimumEdit": "合计行改为366.00、17、21.53、25.0%，平均值用总净餐费/总实际交付份数。"
+            },
+            {
+              "id": "H03-B-E3",
+              "severity": "serious",
+              "quote": "| 线上 | 168.00 | 8 | 21.00 | 40.0% |",
+              "minimumEdit": "线上保留168.00、8、21.00，取消率改为1/4＝25.0%；取消率分母使用全部独立订单。"
+            }
+          ],
+          "practicalDesignNotes": [
+            {
+              "quote": "下周拟做小试验：线上完成订单随餐附一句“少送即退”提示，观察是否减少少交付退款。",
+              "note": "“随餐附提示”主要发生在交付时，未说明怎样预防已发生的少交付；它可能改变反馈/退款记录，而不是实际少交付率。动作与目标的机制较弱，不能据此认定比核对份数更有实用收益。可选改成打包/交付前核对并记录差异，但判据允许试验假设，不把未证明有效自动判严重错误。"
+            },
+            {
+              "quote": "下周拟做小试验：电话下单时复述份数并请客户确认，观察整单取消是否变化。",
+              "note": "复述份数可执行，取消是否变化需实际观察；没有把它当已知根因或已承诺结果。"
+            }
+          ],
+          "unresolvedChecks": []
+        },
+        {
+          "label": "C",
+          "state": "ACTUAL_RESULT",
+          "finishReason": "stop",
+          "outcome": "SERIOUS_FAILURE",
+          "rubricScore": 6,
+          "seriousFlags": [
+            "CORE_CALCULATION_ERRORS"
+          ],
+          "formatMeasurements": {
+            "tables": 1,
+            "channelOrder": [
+              "线上",
+              "电话",
+              "合计"
+            ],
+            "outsideTableHan": 124,
+            "outsideTableNonWhitespaceVisibleCharacters": 165,
+            "max350SatisfiedUnderBothCounts": true,
+            "moneyDecimals": 2,
+            "percentageDecimals": 1,
+            "numberedConclusions": 3
+          },
+          "checks": [
+            {
+              "checkId": "H03-01",
+              "pass": 1,
+              "quote": "| 渠道 | 净餐费（元） | 实际交付份数 | 每份平均净餐费（元） | 取消订单率 |",
+              "reason": "交付一张表和三条实际结论，覆盖全部要求指标；不是只交公式或索要成本。"
+            },
+            {
+              "checkId": "H03-02",
+              "pass": 1,
+              "quote": "| 线上 | 168.00 | 8 | 21.00 | 33.3% |",
+              "reason": "线上净餐费168.00正确；总实付256减退款88，未把O05优惠重复扣除。"
+            },
+            {
+              "checkId": "H03-03",
+              "pass": 0,
+              "quote": "| 电话 | 154.00 | 9 | 17.11 | 25.0% |",
+              "reason": "电话净餐费应264－66＝198.00，实际写154.00；O04部分退款后的净餐费88元应保留。"
+            },
+            {
+              "checkId": "H03-04",
+              "pass": 0,
+              "quote": "| 合计 | 322.00 | 17 | 18.94 | 28.6% |",
+              "reason": "合计净餐费应168＋198＝366.00，实际写322.00。"
+            },
+            {
+              "checkId": "H03-05",
+              "pass": 1,
+              "quote": "| 合计 | 322.00 | 17 | 18.94 | 28.6% |",
+              "reason": "实际交付8、9、17均正确，没有用订单数或原下单份数代替。"
+            },
+            {
+              "checkId": "H03-06",
+              "pass": 0,
+              "quote": "| 电话 | 154.00 | 9 | 17.11 | 25.0% |",
+              "reason": "线上21.00正确；电话应198÷9＝22.00而非17.11，合计应366÷17＝21.53而非18.94。"
+            },
+            {
+              "checkId": "H03-07",
+              "pass": 0,
+              "quote": "| 线上 | 168.00 | 8 | 21.00 | 33.3% |",
+              "reason": "线上、电话各1取消/4订单，合计2/8，三行均应25.0%；此份线上33.3%及合计28.6%错误，电话25.0%正确。"
+            },
+            {
+              "checkId": "H03-08",
+              "pass": 1,
+              "quote": "拟议小试验（尚未批准）：下周线上订单在确认页增加“份数核对”提示，观察少交付和部分退款是否减少。",
+              "reason": "给出两项可辨识动作和可观察方向，完成已委托试验设计；不强制采用答案卡某一试验。具体设计的机制或资源疑义另列，不能据“有建议”冲抵错误计算。"
+            },
+            {
+              "checkId": "H03-09",
+              "pass": 1,
+              "quote": "现有账本不能支持成本、利润、取消原因、曝光、回头客或其他日期的结论；这些信息均未记录。",
+              "reason": "明确数据不足以判断利润/渠道因果等，试验用“可试/拟议”表达，未声称已批准。缺成本未阻断本期可算内容。"
+            },
+            {
+              "checkId": "H03-10",
+              "pass": 1,
+              "quote": "| 合计 | 322.00 | 17 | 18.94 | 28.6% |",
+              "reason": "一张表按线上、电话、合计顺序，金额两位、比例一位；表外三条短结论即使加标题全部可见字符也小于350。格式通过不改变计算失败。"
+            }
+          ],
+          "factualAndStatusAssessment": "核心金额和取消率错误足以误导店内对渠道数据的理解；不是只需润色。净餐费未被直接称为利润，试验未冒称已批准。",
+          "usability": "不可原样发工作群，应先整体复核并替换错误表格。三份原件均保留，不补采，不因另外两份也失败而放过此份。",
+          "minimumNecessaryEdits": [
+            {
+              "id": "H03-C-E1",
+              "severity": "serious",
+              "quote": "| 电话 | 154.00 | 9 | 17.11 | 25.0% |",
+              "minimumEdit": "电话行改为净餐费198.00、实际交付9、每份平均22.00、取消率25.0%；按逐行算式核对，不重复扣已退取消餐费。"
+            },
+            {
+              "id": "H03-C-E2",
+              "severity": "serious",
+              "quote": "| 合计 | 322.00 | 17 | 18.94 | 28.6% |",
+              "minimumEdit": "合计行改为366.00、17、21.53、25.0%，平均值用总净餐费/总实际交付份数。"
+            },
+            {
+              "id": "H03-C-E3",
+              "severity": "serious",
+              "quote": "| 线上 | 168.00 | 8 | 21.00 | 33.3% |",
+              "minimumEdit": "线上保留168.00、8、21.00，取消率改为1/4＝25.0%；取消率分母使用全部独立订单。"
+            }
+          ],
+          "practicalDesignNotes": [
+            {
+              "quote": "拟议小试验（尚未批准）：下周线上订单在确认页增加“份数核对”提示，观察少交付和部分退款是否减少。",
+              "note": "确认页加提示是拟议设计而非已发生事实；但ONLINE字段不能证明店铺能修改确认页。执行前应确认可配置条件，或改用现有人工确认动作；未以额外实现假设宣称更好。"
+            },
+            {
+              "quote": "拟议小试验（尚未批准）：下周电话接单时复述份数与金额，观察整单取消率是否下降。",
+              "note": "电话复述份数金额可执行，是否减少取消待观察，不把材料未给的取消原因当事实。"
+            }
+          ],
+          "unresolvedChecks": [
+            {
+              "quote": "拟议小试验（尚未批准）：下周线上订单在确认页增加“份数核对”提示，观察少交付和部分退款是否减少。",
+              "check": "线上确认页是否由店铺可直接配置，附件没有给出。未额外推定已有软件开发能力或新增预算；该可行性未定不影响已确定的核心计算严重失败。"
+            }
+          ]
+        }
+      ],
+      "pairs": [
+        {
+          "comparisonId": "H03-A-B",
+          "left": "A",
+          "right": "B",
+          "judgment": "BOTH_FAIL",
+          "leftQuote": "| 电话 | 154.00 | 9 | 17.11 | 25.0% |",
+          "rightQuote": "| 电话 | 154.00 | 9 | 17.11 | 33.3% |",
+          "reason": "双方电话与合计金额、平均值错误，足以阻断原样交付。B电话取消率额外错误且试验机制更弱，但不能以另一份也坏来宣布A已达到有效交付。",
+          "minimumEditDifference": "双方都须按全部原始订单重算表格；B还须恢复电话取消率。共同错误与新增差异保留，不推断生成版本。",
+          "comparisonScope": "SEMANTIC_AND_REQUIREMENTS"
+        },
+        {
+          "comparisonId": "H03-A-C",
+          "left": "A",
+          "right": "C",
+          "judgment": "BOTH_FAIL",
+          "leftQuote": "| 合计 | 322.00 | 17 | 18.94 | 28.6% |",
+          "rightQuote": "| 合计 | 322.00 | 17 | 18.94 | 28.6% |",
+          "reason": "核心错误表格相同；C更显式写未批准，A“可试”也已保留建议状态。不同形式不能冲抵金额/取消率失败。",
+          "minimumEditDifference": "双方须修相同金额、平均值与线上/合计取消率；C的确认页可配置条件另保留未定。",
+          "comparisonScope": "SEMANTIC_AND_REQUIREMENTS"
+        },
+        {
+          "comparisonId": "H03-B-C",
+          "left": "B",
+          "right": "C",
+          "judgment": "BOTH_FAIL",
+          "leftQuote": "| 线上 | 168.00 | 8 | 21.00 | 40.0% |",
+          "rightQuote": "| 线上 | 168.00 | 8 | 21.00 | 33.3% |",
+          "reason": "共同金额失败存在；B三行取消率全错，C电话取消率正确但线上与合计仍错。保留这项新增差异，整体双方仍不能原样交付。",
+          "minimumEditDifference": "双方按逐行算式重算；B额外修电话取消率。没有把C相对少一处错误等同完整交付成功。",
+          "comparisonScope": "SEMANTIC_AND_REQUIREMENTS"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "works": 9,
+    "delivered": 9,
+    "missingOrTruncated": 0,
+    "directlyUsable": [
+      "H01-A",
+      "H01-B",
+      "H01-C",
+      "H02-A",
+      "H02-B"
+    ],
+    "formatEditOnly": [
+      "H02-C"
+    ],
+    "seriousFailures": [
+      "H03-A",
+      "H03-B",
+      "H03-C"
+    ],
+    "caseConclusions": [
+      "H01三份10/10，全部金额、推荐、灵活性和预约边界正确；两两持平。等价输入下不归因增强收益。",
+      "H02 A/B 10/10；C 9/10，仅正文393汉字少于420，差27字。核心数据、问卷范围、两项建议状态均完成；不把格式差异泛化为语义失败或质量提升。",
+      "H03三份6/10且均有核心计算严重失败；共同电话/合计金额与平均值错误，取消率也错。B有额外电话取消率错误。全部原件保留，均须重算，不以某一份相对少错宣告通过。"
+    ],
+    "pairCounts": {
+      "TIE": 4,
+      "LEFT_BETTER": 2,
+      "RIGHT_BETTER": 0,
+      "BOTH_FAIL": 3,
+      "UNRESOLVED": 0
+    },
+    "adoptionBoundary": "未解盲，不接触arm映射，不判断某版本获胜；这些内部作品判断不替代真人、实际执行效果或正式发布验收。"
+  }
+}

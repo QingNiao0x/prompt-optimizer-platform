@@ -15,6 +15,7 @@ import {
   listHistory,
   optimizePrompt,
   preparePlanningContext,
+  reoptimizeHistory,
 } from './promptOptimizerApi';
 
 beforeEach(() => {
@@ -50,6 +51,18 @@ describe('listHistory', () => {
 });
 
 describe('optimizePrompt', () => {
+  it('allows natural generation to finish without changing the other request timeouts', async () => {
+    vi.mocked(httpClient.post).mockResolvedValue({ data: { data: {} } });
+    const input = { rawPrompt: '整理需求', context: { customDescription: '', files: [] },
+      enhancement: { templateCode: 'AUTO' as const, includeConversationHistory: false,
+        includePermissionBoundaries: true, promptFormat: 'COMPACT' as const },
+      conversationHistory: [], permissionPolicy: { protectedPaths: [], requireConfirmationFor: [] } };
+    await optimizePrompt(input);
+    expect(vi.mocked(httpClient.post).mock.calls[0]?.[2]?.timeout).toBe(390_000);
+    await optimizePrompt({ ...input, enhancement: { ...input.enhancement, promptFormat: undefined } });
+    expect(vi.mocked(httpClient.post).mock.calls[1]?.[2]).not.toHaveProperty('timeout');
+  });
+
   it('should call the backend optimization endpoint without an accidental suffix', async () => {
     const responseData = {
       requestId: 'request-123',
@@ -96,6 +109,15 @@ describe('optimizePrompt', () => {
     vi.mocked(httpClient.get).mockResolvedValue({ data: { data: { items: [], totalItems: 0 } } });
     await listHistory(1, 10);
     expect(httpClient.get).toHaveBeenCalledWith('/api/v2/optimization-history', expect.any(Object));
+  });
+});
+
+describe('reoptimizeHistory', () => {
+  it('keeps the stored-version generation within the natural generation wait budget', async () => {
+    vi.mocked(httpClient.post).mockResolvedValue({ data: { data: { result: {} } } });
+    await reoptimizeHistory('owned-record');
+    expect(httpClient.post).toHaveBeenCalledWith('/api/v2/optimization-history/owned-record/re-optimize',
+      undefined, { timeout: 390_000 });
   });
 });
 

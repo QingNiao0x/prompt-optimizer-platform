@@ -1,0 +1,77 @@
+{
+  "preparedAt": "2026-10-27T17:45:49.618Z",
+  "closedSource": {
+    "path": "E:\\MyProject\\prompt-optimizer-platform\\docs\\testing\\evidence\\natural-useful-delivery-2026-10-28\\development-r2\\closure.json",
+    "sha256": "22737b984fd18711990e67c8e25a43b599dc811d4dae210382e4b69e1228e5f1",
+    "status": "CLOSED"
+  },
+  "originalInputSource": {
+    "path": "E:\\MyProject\\prompt-optimizer-platform\\docs\\testing\\evidence\\natural-useful-delivery-2026-10-28\\development-r2\\jobs.json",
+    "sha256": "ac0c89bbe88a8b271da9629d902dfc9909aee7be6c51dc23bb3703440254b82e"
+  },
+  "sourceResults": [
+    {
+      "id": "Q01_V31_GEN",
+      "path": "E:\\MyProject\\prompt-optimizer-platform\\docs\\testing\\evidence\\natural-useful-delivery-2026-10-28\\development-r2\\results\\Q01_V31_GEN.json",
+      "sha256": "3e3952567b7641bd755ae0361d427ed8ce2dd11f2bb4f974d4cd43b514689498",
+      "chainVersion": "31",
+      "promptSha256": "a5d01b1f40290246f97a78902ae3a25efc1d2d3d777674920f7386c2ef94fd86"
+    },
+    {
+      "id": "Q01_V46_GEN",
+      "path": "E:\\MyProject\\prompt-optimizer-platform\\docs\\testing\\evidence\\natural-useful-delivery-2026-10-28\\development-r2\\results\\Q01_V46_GEN.json",
+      "sha256": "4cffba43a678e0bdcda776dbba3df0830acd8463e112be9bfad369d1e431c1c0",
+      "chainVersion": "46",
+      "promptSha256": "24eba61b1b473f44c244f321dcc8c32b6bc03ddb7e6f0080dbe67bfb48f79010"
+    },
+    {
+      "id": "V03_V46_GEN",
+      "path": "E:\\MyProject\\prompt-optimizer-platform\\docs\\testing\\evidence\\natural-useful-delivery-2026-10-28\\development-r2\\results\\V03_V46_GEN.json",
+      "sha256": "15b75a16a61e837eaa1ae38bb784bc2d9e1bf5d20b9128ab7b51bc6de3b4b687",
+      "chainVersion": "46",
+      "promptSha256": "93ea419ed633d74b3e82536c7e38b019b05c9c3b38754bc7cbd7594bf545746a"
+    }
+  ],
+  "sourcePack": {
+    "path": "E:\\MyProject\\prompt-optimizer-platform\\docs\\testing\\evidence\\natural-useful-delivery-2026-10-28\\query-source-pack.json",
+    "sha256": "e3b99f82a7ee6214fa42f635da1b44d50efc3f4f5375bcd24856878022ff25fb",
+    "copiedByteIdentically": true,
+    "executionOnly": true,
+    "publicResearchSnapshotNotSyntheticFacts": true
+  },
+  "armPrompts": [
+    {
+      "caseId": "Q01",
+      "arm": "31",
+      "prompt": "请帮我查询全球使用AI最多的职业或行业，并给出查询结果。请说明所依据的数据来源、统计口径和时间范围，区分“使用AI最多的职业/行业”可能指的使用人数、使用频率、渗透率或采用率等不同衡量方式；若不同来源结论不一致，请并列呈现并注明差异原因。资料不足或缺乏权威全球统计时，请明确说明受影响的结论，不要编造数据、来源或排名。",
+      "sha256": "a5d01b1f40290246f97a78902ae3a25efc1d2d3d777674920f7386c2ef94fd86"
+    },
+    {
+      "caseId": "Q01",
+      "arm": "46",
+      "prompt": "请帮我查询全球使用AI最多的职业和行业，并给出查询结果。请说明统计口径（例如按使用人数、使用渗透率或使用频率衡量），列出排名靠前的职业和行业及相应依据或数据来源，并注明数据的时间范围和覆盖地区；如果不同来源的结论存在差异，请一并说明。",
+      "sha256": "24eba61b1b473f44c244f321dcc8c32b6bc03ddb7e6f0080dbe67bfb48f79010"
+    },
+    {
+      "caseId": "Q01",
+      "arm": "ORIGINAL",
+      "prompt": "请帮我查询全球使用AI最多的职业/行业",
+      "sha256": "5e6f6d731fe4e4de5affdd982a534adc6c1b3463e64dbf70929c06947888bc35"
+    },
+    {
+      "caseId": "V03",
+      "arm": "46",
+      "prompt": "请解释为什么同一张照片在不同屏幕上看起来颜色不一样，并给出普通用户能自己操作的排查建议。\n\n解释部分请面向没有专业背景的读者，把主要原因讲清楚，包括但不限于：屏幕本身的硬件差异（面板类型、色域覆盖、出厂色彩调校、亮度与对比度设置）、设备显示设置（色彩模式、色温、护眼或夜间模式、自动亮度）、照片内嵌的色彩配置信息与查看软件是否按该配置正确显示，以及观看环境光线和视角的影响。请说明这些因素之间如何叠加，导致同一张照片在不同设备上出现偏色、过饱和或发灰等现象。\n\n排查建议部分请按普通用户能执行的顺序组织，给出具体可操作的步骤，例如：先确认照片在哪些设备上偏色、检查并统一各设备的色彩模式与色温设置、关闭夜间/护眼模式、调整亮度、更换查看软件对比、检查照片是否带有色彩配置信息，以及在需要时如何做简单的对比判断。每一步请说明目的和预期效果，并指出哪些差异属于正常现象、哪些情况可能需要专业校色或送修。\n\n请用通俗易懂的语言，避免堆砌专业术语；如必须使用术语，请顺带用一句话解释。最终输出应是一份完整的说明，包含原因解释和可操作排查建议两部分。",
+      "sha256": "93ea419ed633d74b3e82536c7e38b019b05c9c3b38754bc7cbd7594bf545746a"
+    },
+    {
+      "caseId": "V03",
+      "arm": "ORIGINAL",
+      "prompt": "没有相关资料，请解释为什么同一张照片在不同屏幕上颜色不一样，并给普通用户可操作的排查建议。",
+      "sha256": "e9febb7edb77246c086daab101c7418038fc2c615f83b24e000e5b1657838a4d"
+    }
+  ],
+  "system": "请直接完成用户的任务，交付可阅读的答案。可使用自然段、标题或要点。",
+  "v03AbsenceContext": "生成46正文按闭批原样，不修改；相同的无资料执行上下文提供给ORIGINAL和46，保留原始任务状态。",
+  "modelCallsMadeByPreparation": 0
+}

@@ -1,0 +1,53 @@
+{
+  "syntheticOnly": true,
+  "nowSeenRegressionNotIndependentHoldout": true,
+  "sourceTraceSha256": "8ebc48b21ef0a09aca367dae5aeeabc6ac5d7749d67d453574d515166ddb6c77",
+  "sourceTrace": "effective47/traces/008.json",
+  "input": {
+    "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+    "context": {
+      "customDescription": "",
+      "technologyStack": [],
+      "dependencies": [],
+      "directoryTree": [],
+      "fileSnippets": [],
+      "analysisStatus": "EMPTY",
+      "fileCoverage": [],
+      "warnings": [],
+      "redactions": [],
+      "analysisVersion": "v3"
+    },
+    "actualAnswers": [],
+    "conversation": [],
+    "mandatoryRules": [],
+    "modelId": "deepseek:deepseek-flash",
+    "planningContext": null,
+    "strategyVersion": "47"
+  },
+  "scopeResponse": {
+    "actions": [
+      {
+        "text": "查询全球使用AI最多的职业/行业",
+        "timing": "CURRENT",
+        "condition": "",
+        "evidence": [
+          {
+            "sourceId": "rawPrompt",
+            "quote": "请帮我查询全球使用AI最多的职业/行业"
+          }
+        ]
+      }
+    ],
+    "response": {
+      "basis": "EXPLICIT",
+      "description": "提供全球使用AI最多的职业/行业的查询结果",
+      "evidence": [
+        {
+          "sourceId": "rawPrompt",
+          "quote": "请帮我查询全球使用AI最多的职业/行业"
+        }
+      ]
+    }
+  },
+  "responseContent": "{\"optimizedPrompt\":\"请帮我查询全球范围内使用AI最多的职业和行业，并给出查询结果。请说明数据来源、统计口径和时间范围，区分职业与行业两个维度分别列出排名靠前的对象及依据；如果不同来源结论不一致，请并列说明差异，不要编造数据。\",\"framework\":\"APE\",\"taskUnderstanding\":{\"goal\":\"查询全球使用AI最多的职业/行业\",\"deliverable\":\"全球使用AI最多的职业/行业的查询结果\",\"requirements\":[{\"text\":\"查询全球使用AI最多的职业/行业\",\"dimensions\":[\"GOAL\",\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请帮我查询全球使用AI最多的职业/行业\"}]}],\"additions\":[{\"text\":\"说明数据来源、统计口径和时间范围\",\"gap\":\"原文未限定数据来源与口径，不同统计方式会得出不同排名\",\"benefit\":\"让结果可核验、可比较\"},{\"text\":\"区分职业与行业两个维度分别列出排名靠前的对象及依据\",\"gap\":\"原文将职业与行业并列，未说明是否分开呈现\",\"benefit\":\"避免两个维度混为一谈，结果更清晰\"},{\"text\":\"不同来源结论不一致时并列说明差异，不编造数据\",\"gap\":\"原文未说明来源冲突时的处理方式\",\"benefit\":\"保证结果真实可靠\"}],\"openDecisions\":[],\"review\":{\"inputReadiness\":\"SUFFICIENT\",\"requirementCoverage\":[{\"index\":0,\"quotes\":[\"请帮我查询全球范围内使用AI最多的职业和行业\"]}],\"additionCoverage\":[{\"index\":0,\"quotes\":[\"请说明数据来源、统计口径和时间范围\"]},{\"index\":1,\"quotes\":[\"区分职业与行业两个维度分别列出排名靠前的对象及依据\"]},{\"index\":2,\"quotes\":[\"如果不同来源结论不一致，请并列说明差异，不要编造数据\"]}],\"planImpacts\":[]}}}"
+}

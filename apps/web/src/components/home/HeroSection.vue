@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { EditPen, Picture } from '@element-plus/icons-vue';
+import { ArrowRight, ChatDotRound, EditPen, Picture } from '@element-plus/icons-vue';
 
 import WandSparklesIcon from '@/components/brand/WandSparklesIcon.vue';
 </script>
@@ -35,6 +35,19 @@ import WandSparklesIcon from '@/components/brand/WandSparklesIcon.vue';
         文章祛AI味
       </RouterLink>
     </div>
+    <a
+      class="hero-section__community"
+      href="https://qm.qq.com/q/mc6zzSQlxe"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <ChatDotRound class="hero-section__community-icon" aria-hidden="true" />
+      <span class="hero-section__community-text">
+        <strong>加入QQ群</strong>
+        <span>提示词优化工具交流群 · 2163076660</span>
+      </span>
+      <ArrowRight class="hero-section__community-arrow" aria-hidden="true" />
+    </a>
     <a class="hero-section__more" href="#features">了解三项功能</a>
   </section>
 </template>
@@ -111,6 +124,54 @@ h1 span {
   gap: 16px;
   flex-wrap: wrap;
   animation: fade-in-up 0.6s ease-out 0.3s both;
+}
+
+.hero-section__community {
+  display: inline-flex;
+  max-width: 100%;
+  min-height: 60px;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 10px 16px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  background: var(--glass-bg);
+  text-align: left;
+  text-decoration: none;
+  backdrop-filter: blur(16px) saturate(1.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  transition: background-color var(--duration-ui) var(--ease-standard);
+}
+
+.hero-section__community:hover {
+  background: var(--glass-bg-strong);
+}
+
+.hero-section__community-icon,
+.hero-section__community-arrow {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  color: var(--accent);
+}
+
+.hero-section__community-text {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+  line-height: 1.4;
+}
+
+.hero-section__community-text strong {
+  font-size: 14px;
+}
+
+.hero-section__community-text span {
+  color: var(--text-secondary);
+  font-size: 13px;
+  overflow-wrap: anywhere;
 }
 
 .hero-section__more {
@@ -215,6 +276,10 @@ h1 span {
   .hero-button {
     width: 100%;
     min-height: 48px;
+  }
+
+  .hero-section__community {
+    width: 100%;
   }
 }
 </style>

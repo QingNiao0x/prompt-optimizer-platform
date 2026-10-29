@@ -1,0 +1,509 @@
+{
+  "works": [
+    {
+      "checks": 16,
+      "passed": 16,
+      "results": [
+        {
+          "case": "aggregate",
+          "passed": true,
+          "errors": [],
+          "exitCode": 0,
+          "stderr": ""
+        },
+        {
+          "case": "cancelled",
+          "passed": true,
+          "errors": [],
+          "exitCode": 0,
+          "stderr": ""
+        },
+        {
+          "case": "empty",
+          "passed": true,
+          "errors": [],
+          "exitCode": 0,
+          "stderr": ""
+        },
+        {
+          "case": "missing-header",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "error: refund_amount: missing required column\n"
+        },
+        {
+          "case": "unknown-status",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "error: row 1 field status: unknown status 'PENDING'\n"
+        },
+        {
+          "case": "impossible-date",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "error: row 1 field paid_at: invalid date\n"
+        },
+        {
+          "case": "noncanonical-date",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "error: row 1 field paid_at: invalid date\n"
+        },
+        {
+          "case": "blank-channel",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "error: row 1 field channel: empty channel\n"
+        },
+        {
+          "case": "negative",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "error: row 1 field amount: negative amount\n"
+        },
+        {
+          "case": "nan",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "error: row 1 field amount: not a finite number\n"
+        },
+        {
+          "case": "infinity",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "error: row 1 field amount: not a finite number\n"
+        },
+        {
+          "case": "precision",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "error: row 1 field amount: more than two decimal places\n"
+        },
+        {
+          "case": "refund-precision",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "error: row 1 field refund_amount: more than two decimal places\n"
+        },
+        {
+          "case": "refund-exceeds",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "error: row 1 field refund_amount: greater than amount\n"
+        },
+        {
+          "case": "late-error",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "error: row 2 field paid_at: invalid date\n"
+        },
+        {
+          "case": "same-file",
+          "passed": true,
+          "exitCode": 2,
+          "stderr": "error: input and output paths are the same\n"
+        }
+      ],
+      "realModelCalls": 0,
+      "measuredPython": "3.12.10",
+      "python311SyntaxChecked": true,
+      "actualPython311RuntimeClaimed": false,
+      "workId": "W02",
+      "sourceSha256": "73fb296e945e34ad7fdd1f7fd6d7ffc30d8b80c535744fb72559a521599e930c",
+      "jsonSingleFileContractPassed": true,
+      "sourceManuallyReviewedBeforeExecution": true
+    },
+    {
+      "checks": 16,
+      "passed": 16,
+      "results": [
+        {
+          "case": "aggregate",
+          "passed": true,
+          "errors": [],
+          "exitCode": 0,
+          "stderr": ""
+        },
+        {
+          "case": "cancelled",
+          "passed": true,
+          "errors": [],
+          "exitCode": 0,
+          "stderr": ""
+        },
+        {
+          "case": "empty",
+          "passed": true,
+          "errors": [],
+          "exitCode": 0,
+          "stderr": ""
+        },
+        {
+          "case": "missing-header",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "missing header field: refund_amount\n"
+        },
+        {
+          "case": "unknown-status",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "data error at line 1, field status\n"
+        },
+        {
+          "case": "impossible-date",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "data error at line 1, field paid_at\n"
+        },
+        {
+          "case": "noncanonical-date",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "data error at line 1, field paid_at\n"
+        },
+        {
+          "case": "blank-channel",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "data error at line 1, field channel\n"
+        },
+        {
+          "case": "negative",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "data error at line 1, field amount\n"
+        },
+        {
+          "case": "nan",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "data error at line 1, field amount\n"
+        },
+        {
+          "case": "infinity",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "data error at line 1, field amount\n"
+        },
+        {
+          "case": "precision",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "data error at line 1, field amount\n"
+        },
+        {
+          "case": "refund-precision",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "data error at line 1, field refund_amount\n"
+        },
+        {
+          "case": "refund-exceeds",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "data error at line 1, field refund_amount\n"
+        },
+        {
+          "case": "late-error",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "data error at line 2, field paid_at\n"
+        },
+        {
+          "case": "same-file",
+          "passed": true,
+          "exitCode": 2,
+          "stderr": "input and output paths are the same\n"
+        }
+      ],
+      "realModelCalls": 0,
+      "measuredPython": "3.12.10",
+      "python311SyntaxChecked": true,
+      "actualPython311RuntimeClaimed": false,
+      "workId": "W04",
+      "sourceSha256": "c16f9c4372b954dc5ca8a3557f7a0d19d76c05d79b6bb890b525c6f4bbf1a030",
+      "jsonSingleFileContractPassed": true,
+      "sourceManuallyReviewedBeforeExecution": true
+    },
+    {
+      "checks": 16,
+      "passed": 16,
+      "results": [
+        {
+          "case": "aggregate",
+          "passed": true,
+          "errors": [],
+          "exitCode": 0,
+          "stderr": ""
+        },
+        {
+          "case": "cancelled",
+          "passed": true,
+          "errors": [],
+          "exitCode": 0,
+          "stderr": ""
+        },
+        {
+          "case": "empty",
+          "passed": true,
+          "errors": [],
+          "exitCode": 0,
+          "stderr": ""
+        },
+        {
+          "case": "missing-header",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "missing field: refund_amount\n"
+        },
+        {
+          "case": "unknown-status",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: status: unknown status 'PENDING'\n"
+        },
+        {
+          "case": "impossible-date",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: paid_at: invalid date\n"
+        },
+        {
+          "case": "noncanonical-date",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: paid_at: invalid date\n"
+        },
+        {
+          "case": "blank-channel",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: channel: empty channel\n"
+        },
+        {
+          "case": "negative",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: amount: negative amount\n"
+        },
+        {
+          "case": "nan",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: amount: invalid amount\n"
+        },
+        {
+          "case": "infinity",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: amount: invalid amount\n"
+        },
+        {
+          "case": "precision",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: amount: more than two decimal places\n"
+        },
+        {
+          "case": "refund-precision",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: refund_amount: more than two decimal places\n"
+        },
+        {
+          "case": "refund-exceeds",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: refund_amount: refund exceeds amount\n"
+        },
+        {
+          "case": "late-error",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 2: paid_at: invalid date\n"
+        },
+        {
+          "case": "same-file",
+          "passed": true,
+          "exitCode": 2,
+          "stderr": "input and output paths are the same\n"
+        }
+      ],
+      "realModelCalls": 0,
+      "measuredPython": "3.12.10",
+      "python311SyntaxChecked": true,
+      "actualPython311RuntimeClaimed": false,
+      "workId": "W07",
+      "sourceSha256": "39a8a4505d415370ff276ad58d8500db76e0add53d03ee198a0febca9c8864f7",
+      "jsonSingleFileContractPassed": true,
+      "sourceManuallyReviewedBeforeExecution": true
+    },
+    {
+      "checks": 16,
+      "passed": 15,
+      "results": [
+        {
+          "case": "aggregate",
+          "passed": false,
+          "errors": [
+            "output differs from required totals/order/format"
+          ],
+          "exitCode": 0,
+          "stderr": ""
+        },
+        {
+          "case": "cancelled",
+          "passed": true,
+          "errors": [],
+          "exitCode": 0,
+          "stderr": ""
+        },
+        {
+          "case": "empty",
+          "passed": true,
+          "errors": [],
+          "exitCode": 0,
+          "stderr": ""
+        },
+        {
+          "case": "missing-header",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "missing required field: refund_amount\n"
+        },
+        {
+          "case": "unknown-status",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: status: unknown status 'PENDING'\n"
+        },
+        {
+          "case": "impossible-date",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: paid_at: invalid date\n"
+        },
+        {
+          "case": "noncanonical-date",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: paid_at: invalid date\n"
+        },
+        {
+          "case": "blank-channel",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: channel: empty\n"
+        },
+        {
+          "case": "negative",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: amount: negative\n"
+        },
+        {
+          "case": "nan",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: amount: NaN or infinite\n"
+        },
+        {
+          "case": "infinity",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: amount: NaN or infinite\n"
+        },
+        {
+          "case": "precision",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: amount: more than two decimal places\n"
+        },
+        {
+          "case": "refund-precision",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: refund_amount: more than two decimal places\n"
+        },
+        {
+          "case": "refund-exceeds",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 1: refund_amount: greater than amount\n"
+        },
+        {
+          "case": "late-error",
+          "passed": true,
+          "errors": [],
+          "exitCode": 2,
+          "stderr": "row 2: paid_at: invalid date\n"
+        },
+        {
+          "case": "same-file",
+          "passed": true,
+          "exitCode": 2,
+          "stderr": "input and output paths are the same\n"
+        }
+      ],
+      "realModelCalls": 0,
+      "measuredPython": "3.12.10",
+      "python311SyntaxChecked": true,
+      "actualPython311RuntimeClaimed": false,
+      "workId": "W08",
+      "sourceSha256": "c7d8f0e994dad5718a3774f75e59550babac6c4ebf8fd19a4fbc32abfe4e4d1a",
+      "jsonSingleFileContractPassed": true,
+      "sourceManuallyReviewedBeforeExecution": true
+    }
+  ],
+  "predeclaredChecksPerWork": 16,
+  "versionLabelsMasked": true,
+  "realModelCalls": 0
+}

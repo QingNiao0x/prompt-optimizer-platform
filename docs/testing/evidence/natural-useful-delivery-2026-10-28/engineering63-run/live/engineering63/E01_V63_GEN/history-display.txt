@@ -1,0 +1,11 @@
+请在下述社区器材借用台的完整 Vue 3 + TypeScript 工程（无后端，附件即工程根目录）中，修复“新建借用”和“修改借用”两个现有页面入口共用的余量计算与提交校验。保持现有页面结构、交互和错误码不变。
+
+业务口径：占用只统计同一地点、同一器材下状态为 CONFIRMED 或 COLLECTED 的借用单；DRAFT、RETURNED、CANCELLED 不计，其他地点或器材也不计入。新建可借数量＝该地点该器材总库存－上述占用，展示值不小于 0。修改时输入的是整单的新数量，不是增量；修改页余量或上限＝该地点器材总库存－排除当前借用单后的其他有效占用。页面显示的数字和直接调用业务服务必须使用同一口径。
+
+预览仅用于展示。预览后其他人可能又确认了借用，用户点击确认或保存时必须重新读取仓库快照并重新计算、校验，不能用先前预览缓存放行。数量必须是 number 类型的正安全整数；小数、非整数、非有限值、非正数等都用现有 INVALID_QUANTITY 错误。数量超过最新余量时用现有 INSUFFICIENT_STOCK；没有配置库存、借用单不存在、非 CONFIRMED 状态只读等现有边界继续保留。
+
+保存失败不应改变仓库、借用状态或版本，也不要清空页面里用户刚输入的 quantity 和 purpose；保存成功后保留既有的 purpose trim、版本递增和余量刷新。请检查 NewLoanPage、EditLoanPage 及对应 composables 这两个实际页面入口，不要只修一个脱离调用链的函数。
+
+只修改当前器材借用链路中确实必要的文件，可修改范围限定为：src/domain/availability.ts、src/domain/quantity.ts、src/application/loanDeskService.ts、src/composables/useNewLoan.ts、src/composables/useLoanEdit.ts、src/components/AvailabilityPanel.vue、src/components/LoanDraftForm.vue、src/views/NewLoanPage.vue、src/views/EditLoanPage.vue。旧台账 src/legacy、活动报名 src/events、押金预览、合成数据、类型与错误码、依赖和其他文件都保持不变；不增删文件，不安装依赖。
+
+交付一个 JSON 对象，格式为 {"files":[{"path":"src/实际路径","content":"该文件完整替换内容"}]}。files 只列本次真的修改的文件，path 相对附件工程根目录，content 为该文件的完整替换内容。不要输出 Markdown 围栏、说明、命令或额外脚本；我会把这些完整文件应用到同一份工程后验收。

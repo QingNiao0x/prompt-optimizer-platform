@@ -1,0 +1,605 @@
+{
+  "syntheticOnly": true,
+  "cases": [
+    {
+      "id": "C01",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：调查时间不能超过今天。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "contract": "本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。",
+      "allowedWritePaths": [
+        "src/views/records/dateRules.js",
+        "src/views/records/create.js",
+        "src/views/records/import.js",
+        "src/views/records/dateRules.spec.js"
+      ],
+      "todayBoundary": "允许今天，拒绝今天之后的日期",
+      "provenance": "旧失败的明确交付范围变体，开发/回归题，不是未见题",
+      "fixtureRevision": "R2_EXPLICIT_OPTIONAL_TODAY_SHARED_INFORMATION",
+      "executorMaterials": [
+        {
+          "path": "package.json",
+          "content": "{\n  \"name\": \"synthetic-survey-workspace\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": { \"test\": \"node --test src/views/records/dateRules.spec.js\" }\n}\n"
+        },
+        {
+          "path": "README.md",
+          "content": "# 合成调查记录项目\n\n本项目完全合成，不含真实业务代码或人员数据。重点记录模块位于 `src/views/records`，旧模块位于 `src/views/records-old`，二者互不替代。\n\n新增通过 `createSurvey` 提交；导入通过 `importSurveys` 按行处理，允许部分成功，失败行返回从 1 开始的行号及稳定错误代码。两个入口共用 `validateSurveyDate`。现有日期校验只检查日期格式及日历有效性。\n\n`surveyDate` 为不带时刻的 `YYYY-MM-DD` 日历日期，执行者可传入同格式 `today` 以便确定性检查。已有测试记录现有契约；本轮新要求的独立验收在项目副本之外运行。\n\n当前日期契约：today可选；传入时使用它作日历日期基准，未传入时仍应使用系统本地的当日日历日期限制未来日期。新增、导入与共用校验须遵守同一基准。\n"
+        },
+        {
+          "path": "src/views/records/dateRules.js",
+          "content": "/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n"
+        },
+        {
+          "path": "src/views/records/create.js",
+          "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n"
+        },
+        {
+          "path": "src/views/records/import.js",
+          "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n"
+        },
+        {
+          "path": "src/views/records/dateRules.spec.js",
+          "content": "import assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n"
+        },
+        {
+          "path": "src/views/records-old/create.js",
+          "content": "/** 旧模块拥有独立业务规则，不是本次指定的新增和导入入口。 */\nexport const createLegacySurvey = (record) => ({ legacy: true, record });\n"
+        }
+      ],
+      "historicalOutcomeUnchanged": true,
+      "repeatsPerArm": 2,
+      "materialVisibility": "ENHANCEMENT_AND_EXECUTION_IDENTICAL",
+      "onlyPromptDiffers": true,
+      "eligibleArms": [
+        "ORIGINAL",
+        "31",
+        "61"
+      ],
+      "candidate": "61"
+    },
+    {
+      "id": "C02",
+      "rawPrompt": "请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：调查时间不能超过今天。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js；不得新增文件，也不得修改测试文件或其他文件。",
+      "contract": "本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js；不得新增文件，也不得修改测试文件或其他文件。",
+      "allowedWritePaths": [
+        "src/views/records/dateRules.js",
+        "src/views/records/create.js",
+        "src/views/records/import.js"
+      ],
+      "todayBoundary": "允许今天，拒绝今天之后的日期",
+      "provenance": "旧失败的明确交付范围变体，开发/回归题，不是未见题",
+      "fixtureRevision": "R2_EXPLICIT_OPTIONAL_TODAY_SHARED_INFORMATION",
+      "executorMaterials": [
+        {
+          "path": "package.json",
+          "content": "{\n  \"name\": \"synthetic-survey-workspace\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": { \"test\": \"node --test src/views/records/dateRules.spec.js\" }\n}\n"
+        },
+        {
+          "path": "README.md",
+          "content": "# 合成调查记录项目\n\n本项目完全合成，不含真实业务代码或人员数据。重点记录模块位于 `src/views/records`，旧模块位于 `src/views/records-old`，二者互不替代。\n\n新增通过 `createSurvey` 提交；导入通过 `importSurveys` 按行处理，允许部分成功，失败行返回从 1 开始的行号及稳定错误代码。两个入口共用 `validateSurveyDate`。现有日期校验只检查日期格式及日历有效性。\n\n`surveyDate` 为不带时刻的 `YYYY-MM-DD` 日历日期，执行者可传入同格式 `today` 以便确定性检查。已有测试记录现有契约；本轮新要求的独立验收在项目副本之外运行。\n\n当前日期契约：today可选；传入时使用它作日历日期基准，未传入时仍应使用系统本地的当日日历日期限制未来日期。新增、导入与共用校验须遵守同一基准。\n"
+        },
+        {
+          "path": "src/views/records/dateRules.js",
+          "content": "/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n"
+        },
+        {
+          "path": "src/views/records/create.js",
+          "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n"
+        },
+        {
+          "path": "src/views/records/import.js",
+          "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n"
+        },
+        {
+          "path": "src/views/records/dateRules.spec.js",
+          "content": "import assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n"
+        },
+        {
+          "path": "src/views/records-old/create.js",
+          "content": "/** 旧模块拥有独立业务规则，不是本次指定的新增和导入入口。 */\nexport const createLegacySurvey = (record) => ({ legacy: true, record });\n"
+        }
+      ],
+      "historicalOutcomeUnchanged": true,
+      "repeatsPerArm": 2,
+      "materialVisibility": "ENHANCEMENT_AND_EXECUTION_IDENTICAL",
+      "onlyPromptDiffers": true,
+      "eligibleArms": [
+        "ORIGINAL",
+        "61"
+      ],
+      "candidate": "61"
+    },
+    {
+      "id": "Q01",
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "inputProvenance": "Actual workbench directory picker/Worker/IndexedDB or no-project flow; intercepted before model send",
+      "inputSha256": "2acad13fcc8df44d6287be68e348f65af352d0204fc32487660d6016a3c2e3dd",
+      "controlPurpose": "确认优先级修复不得改变无回答任务的原意；生成波动不当作新补全收益",
+      "executorMaterials": [
+        {
+          "path": "query-source-pack.json",
+          "content": "{\n  \"purpose\": \"下游同信息查询作品的公开来源快照；增强阶段不提供此资料。由本轮浏览工具核实页面后整理，不代表执行模型具备自主联网检索或覆盖了全球全部来源。\",\n  \"collectedOn\": \"2026-10-28\",\n  \"sources\": [\n    {\n      \"id\": \"S1\",\n      \"title\": \"The Anthropic Economic Index — initial report\",\n      \"url\": \"https://www.anthropic.com/research/the-anthropic-economic-index\",\n      \"publishedOn\": \"2025-02-10\",\n      \"summary\": \"约100万条Claude.ai免费及Pro对话按O*NET任务分类，计算机与数学类占对话37.2%，艺术设计媒体类10.3%，教育图书馆9.3%，行政办公7.9%，生命科学6.4%，商业金融5.9%。前者常见软件修改、调试及网络排查；艺术媒体常见写作编辑。增强协作约57%，自动化约43%。这些是平台对话/任务分布，不是相应职业从业者使用率；职业覆盖和平台样本有边界。\"\n    },\n    {\n      \"id\": \"S2\",\n      \"title\": \"2025 Stack Overflow Developer Survey — AI\",\n      \"url\": \"https://survey.stackoverflow.co/2025/ai\",\n      \"publishedOn\": \"2025\",\n      \"summary\": \"84%受访者正在使用或计划使用AI开发工具，不能全部算作当前使用者；51%的职业开发者每天使用AI工具。常见工作包括搜索学习、开发、文档和测试。AI工具使用问题共有33662份回答，属于开发者自选调查，并非全球各职业随机抽样。46%不信任AI输出准确性，33%信任。\"\n    },\n    {\n      \"id\": \"S3\",\n      \"title\": \"The state of AI in 2025: Agents, innovation, and transformation\",\n      \"url\": \"https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-2025\",\n      \"publishedOn\": \"2025-11-05\",\n      \"summary\": \"88%受访者称所在组织至少一项业务职能经常使用AI，上期为78%。科技、媒体电信和保险的组织采用报告领先。IT、营销销售以及知识管理是常见职能，应用包括信息处理、内容创意和客服自动化。AI代理的采用另有定义，不能与全部AI混为一谈；组织采用不等于全部员工使用，也不代表完整全球职业排名。\"\n    }\n  ]\n}\n"
+        }
+      ],
+      "repeatsPerArm": 2,
+      "materialVisibility": "EXECUTION_ONLY_ALL_ARMS_IDENTICAL",
+      "onlyPromptDiffers": true,
+      "eligibleArms": [
+        "ORIGINAL",
+        "31",
+        "61"
+      ],
+      "candidate": "61"
+    },
+    {
+      "id": "U02",
+      "rawPrompt": "我们这家社区书店想试办两周的周末亲子共读活动，请依据现有条件设计一份店员能照着执行的方案，活动形式由你安排。",
+      "originalSealedPrompt": "我们这家社区书店想试办两周的周末亲子共读活动，请依据现有条件设计一份店员能照着执行的方案，活动形式由你安排。",
+      "sealedCaseId": "C02",
+      "sourceCollectionId": "completion-20261028",
+      "kind": "简略委托补全",
+      "collection": "candidate47冻结并正式解封后的内部留出",
+      "originalAttachments": [
+        {
+          "path": "inputs/U02/U02-M01.md",
+          "content": "# 小树书店的现状和试办条件\n\n小树书店位于一个普通住宅社区，工作日主要售书，周末偶尔有人在阅读区坐一会儿，还没有举办过正式的亲子活动。附近居民问过能不能让孩子来一起读书，但店里并不知道实际会有多少家庭参加。店主想先用连续两个周六下午试办，看看家庭是否愿意参与、孩子能否投入，以及店员能不能长期承担，不准备据此估算整个社区的市场规模。\n\n试办对象是6至9岁儿童及其陪同成人，每个孩子限一位成人同行。阅读区可坐八组家庭，通道需要保持畅通，不能把书架前和收银台旁也改成活动区。书店周六14:00至17:00可以安排活动，其中任意一个连续的一小时可供亲子活动使用，其余时间留给正常营业和整理。两个周六都只有店主和一名店员值班，一人可主持活动，另一人需要继续接待顾客和收银，不能长时间同时带活动，也不打算额外聘请老师。\n\n店内已有八张小桌、十六把椅子、白纸、彩笔和一块可擦写的小白板，没有投影仪、音响或可腾出的游戏场地。可供共读的绘本和短篇故事集有十六册，题材包括日常生活、自然观察和朋友相处，每册可独立读完一则短故事，长短与难度不同。孩子和家长也可以带自己的书，但店员无法事先知道具体书名。书店不安排餐饮，现场只提供饮用水。\n\n两周合计可新增支出600元，用于必要耗材和简单宣传；桌椅及现有图书不用另付钱。试办免费，不设购书门槛，没有礼品赞助，也不以现场卖出多少书评价成败。店里已有一个发布营业消息的居民群，可在柜台口头介绍活动，也能用纸笔登记家庭。没有独立公众号、预约小程序或专门负责线上报名的人。\n\n店主曾观察到，有的孩子愿意安静看书，有的孩子需要别人先带着进入故事；成人有时会替孩子抢答，也有成人希望只在旁边陪着。店员读故事比较自然，但不熟悉课堂管理。阅读区与销售区相邻，平时其他顾客仍会走动、翻书。此前两次零散的读书聊天都在结束后没有留下记录，后来只能凭印象争论活动好不好。",
+          "sha256": "7b2b6af63ce0b6a4f0651e1ded5254a349a73be18ff78cdde2369e275c76f6ec"
+        }
+      ],
+      "capture": "completion-holdout-run/captures/U02/input.json",
+      "attachmentVisibility": "all sealed attachments available to enhancer and executor; none execution-only",
+      "inputSha256": "410f96fdff84b9d816a61e31b5cd6effda2246f103b8d53f14ab863e52f9febd",
+      "workContract": {
+        "maximumOutputTokens": 2600,
+        "officialExecutionRepeatsPerArm": 1,
+        "externalTools": false,
+        "internet": false,
+        "answerCardsExcludedFromInputs": true,
+        "outputRestrictions": "原封存prompt中的格式/字数/文件要求，模型与三臂共同执行材料一致"
+      },
+      "executorMaterials": [
+        {
+          "path": "U02-M01.md",
+          "content": "# 小树书店的现状和试办条件\n\n小树书店位于一个普通住宅社区，工作日主要售书，周末偶尔有人在阅读区坐一会儿，还没有举办过正式的亲子活动。附近居民问过能不能让孩子来一起读书，但店里并不知道实际会有多少家庭参加。店主想先用连续两个周六下午试办，看看家庭是否愿意参与、孩子能否投入，以及店员能不能长期承担，不准备据此估算整个社区的市场规模。\n\n试办对象是6至9岁儿童及其陪同成人，每个孩子限一位成人同行。阅读区可坐八组家庭，通道需要保持畅通，不能把书架前和收银台旁也改成活动区。书店周六14:00至17:00可以安排活动，其中任意一个连续的一小时可供亲子活动使用，其余时间留给正常营业和整理。两个周六都只有店主和一名店员值班，一人可主持活动，另一人需要继续接待顾客和收银，不能长时间同时带活动，也不打算额外聘请老师。\n\n店内已有八张小桌、十六把椅子、白纸、彩笔和一块可擦写的小白板，没有投影仪、音响或可腾出的游戏场地。可供共读的绘本和短篇故事集有十六册，题材包括日常生活、自然观察和朋友相处，每册可独立读完一则短故事，长短与难度不同。孩子和家长也可以带自己的书，但店员无法事先知道具体书名。书店不安排餐饮，现场只提供饮用水。\n\n两周合计可新增支出600元，用于必要耗材和简单宣传；桌椅及现有图书不用另付钱。试办免费，不设购书门槛，没有礼品赞助，也不以现场卖出多少书评价成败。店里已有一个发布营业消息的居民群，可在柜台口头介绍活动，也能用纸笔登记家庭。没有独立公众号、预约小程序或专门负责线上报名的人。\n\n店主曾观察到，有的孩子愿意安静看书，有的孩子需要别人先带着进入故事；成人有时会替孩子抢答，也有成人希望只在旁边陪着。店员读故事比较自然，但不熟悉课堂管理。阅读区与销售区相邻，平时其他顾客仍会走动、翻书。此前两次零散的读书聊天都在结束后没有留下记录，后来只能凭印象争论活动好不好。"
+        }
+      ],
+      "repeatsPerArm": 2,
+      "materialVisibility": "ENHANCEMENT_AND_EXECUTION_IDENTICAL",
+      "onlyPromptDiffers": true,
+      "eligibleArms": [
+        "ORIGINAL",
+        "31",
+        "61"
+      ],
+      "candidate": "61"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "C01_V61_EXEC_R2",
+      "caseId": "C01",
+      "version": "61",
+      "phase": "EXECUTION",
+      "repeat": 2,
+      "promptSha256": "b834f1b9a93a289d269c129a811211cc455cd6181b6d60cdaf0c5977e1809f66",
+      "approvedModelRequest": {
+        "model": "deepseek-flash",
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false,
+        "messages": [
+          {
+            "role": "system",
+            "content": "完成用户当前代码修改需求。只能使用所给项目材料，不能访问外部工具或声称已经运行。以JSON对象返回需要修改文件的完整内容，格式为{\"files\":[{\"path\":\"相对路径\",\"content\":\"完整文件正文\"}],\"summary\":\"可选简短说明\"}；files必填，summary可省略。不要在JSON外附Markdown或解释，不需修改的文件可省略。没有执行工具时，不得声称已运行测试。本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。"
+          },
+          {
+            "role": "user",
+            "content": "请在重点记录模块 src/views/records 的新增和导入功能中增加调查时间限制：调查时间不能超过今天。\n\n现有 createSurvey 和 importSurveys 共用 validateSurveyDate(value, today)。请在共用校验中落实该限制，并让两个入口遵循同一基准：today 可选，传入时以它作为 YYYY-MM-DD 日历日期基准；未传入时使用系统本地的当日日历日期。surveyDate 仍为不带时刻的 YYYY-MM-DD 日历日期；现有格式与日历有效性校验要继续保留，晚于基准日期的日期应被拒绝。\n\n保持现有返回契约：新增失败返回字段错误，成功时保留其他字段；导入仍按行部分成功，未来日期只影响所属行，错误包含从 1 开始的行号和稳定错误代码。按需在已有 src/views/records/dateRules.spec.js 补充回归测试，覆盖 today 当天和之前允许、晚于 today 拒绝，以及传入 today 与未传入时的基准行为，并确保原有格式/日历无效用例仍通过。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。"
+          },
+          {
+            "role": "user",
+            "content": "本次共同材料（所有作品臂完全相同）：\n--- package.json ---\n{\n  \"name\": \"synthetic-survey-workspace\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": { \"test\": \"node --test src/views/records/dateRules.spec.js\" }\n}\n\n\n--- README.md ---\n# 合成调查记录项目\n\n本项目完全合成，不含真实业务代码或人员数据。重点记录模块位于 `src/views/records`，旧模块位于 `src/views/records-old`，二者互不替代。\n\n新增通过 `createSurvey` 提交；导入通过 `importSurveys` 按行处理，允许部分成功，失败行返回从 1 开始的行号及稳定错误代码。两个入口共用 `validateSurveyDate`。现有日期校验只检查日期格式及日历有效性。\n\n`surveyDate` 为不带时刻的 `YYYY-MM-DD` 日历日期，执行者可传入同格式 `today` 以便确定性检查。已有测试记录现有契约；本轮新要求的独立验收在项目副本之外运行。\n\n当前日期契约：today可选；传入时使用它作日历日期基准，未传入时仍应使用系统本地的当日日历日期限制未来日期。新增、导入与共用校验须遵守同一基准。\n\n\n--- src/views/records/dateRules.js ---\n/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n\n\n--- src/views/records/create.js ---\nimport { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n\n\n--- src/views/records/import.js ---\nimport { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n\n\n--- src/views/records/dateRules.spec.js ---\nimport assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n\n\n--- src/views/records-old/create.js ---\n/** 旧模块拥有独立业务规则，不是本次指定的新增和导入入口。 */\nexport const createLegacySurvey = (record) => ({ legacy: true, record });\n"
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        }
+      }
+    },
+    {
+      "id": "C01_V61_EXEC_R1",
+      "caseId": "C01",
+      "version": "61",
+      "phase": "EXECUTION",
+      "repeat": 1,
+      "promptSha256": "b834f1b9a93a289d269c129a811211cc455cd6181b6d60cdaf0c5977e1809f66",
+      "approvedModelRequest": {
+        "model": "deepseek-flash",
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false,
+        "messages": [
+          {
+            "role": "system",
+            "content": "完成用户当前代码修改需求。只能使用所给项目材料，不能访问外部工具或声称已经运行。以JSON对象返回需要修改文件的完整内容，格式为{\"files\":[{\"path\":\"相对路径\",\"content\":\"完整文件正文\"}],\"summary\":\"可选简短说明\"}；files必填，summary可省略。不要在JSON外附Markdown或解释，不需修改的文件可省略。没有执行工具时，不得声称已运行测试。本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。"
+          },
+          {
+            "role": "user",
+            "content": "请在重点记录模块 src/views/records 的新增和导入功能中增加调查时间限制：调查时间不能超过今天。\n\n现有 createSurvey 和 importSurveys 共用 validateSurveyDate(value, today)。请在共用校验中落实该限制，并让两个入口遵循同一基准：today 可选，传入时以它作为 YYYY-MM-DD 日历日期基准；未传入时使用系统本地的当日日历日期。surveyDate 仍为不带时刻的 YYYY-MM-DD 日历日期；现有格式与日历有效性校验要继续保留，晚于基准日期的日期应被拒绝。\n\n保持现有返回契约：新增失败返回字段错误，成功时保留其他字段；导入仍按行部分成功，未来日期只影响所属行，错误包含从 1 开始的行号和稳定错误代码。按需在已有 src/views/records/dateRules.spec.js 补充回归测试，覆盖 today 当天和之前允许、晚于 today 拒绝，以及传入 today 与未传入时的基准行为，并确保原有格式/日历无效用例仍通过。\n\n本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。"
+          },
+          {
+            "role": "user",
+            "content": "本次共同材料（所有作品臂完全相同）：\n--- package.json ---\n{\n  \"name\": \"synthetic-survey-workspace\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": { \"test\": \"node --test src/views/records/dateRules.spec.js\" }\n}\n\n\n--- README.md ---\n# 合成调查记录项目\n\n本项目完全合成，不含真实业务代码或人员数据。重点记录模块位于 `src/views/records`，旧模块位于 `src/views/records-old`，二者互不替代。\n\n新增通过 `createSurvey` 提交；导入通过 `importSurveys` 按行处理，允许部分成功，失败行返回从 1 开始的行号及稳定错误代码。两个入口共用 `validateSurveyDate`。现有日期校验只检查日期格式及日历有效性。\n\n`surveyDate` 为不带时刻的 `YYYY-MM-DD` 日历日期，执行者可传入同格式 `today` 以便确定性检查。已有测试记录现有契约；本轮新要求的独立验收在项目副本之外运行。\n\n当前日期契约：today可选；传入时使用它作日历日期基准，未传入时仍应使用系统本地的当日日历日期限制未来日期。新增、导入与共用校验须遵守同一基准。\n\n\n--- src/views/records/dateRules.js ---\n/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n\n\n--- src/views/records/create.js ---\nimport { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n\n\n--- src/views/records/import.js ---\nimport { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n\n\n--- src/views/records/dateRules.spec.js ---\nimport assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n\n\n--- src/views/records-old/create.js ---\n/** 旧模块拥有独立业务规则，不是本次指定的新增和导入入口。 */\nexport const createLegacySurvey = (record) => ({ legacy: true, record });\n"
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        }
+      }
+    },
+    {
+      "id": "C02_V61_EXEC_R1",
+      "caseId": "C02",
+      "version": "61",
+      "phase": "EXECUTION",
+      "repeat": 1,
+      "promptSha256": "e06e5348d69f33bc53930ab6b04d01c154f90d6bfe8ddc216bbbbe8b8fb55d53",
+      "approvedModelRequest": {
+        "model": "deepseek-flash",
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false,
+        "messages": [
+          {
+            "role": "system",
+            "content": "完成用户当前代码修改需求。只能使用所给项目材料，不能访问外部工具或声称已经运行。以JSON对象返回需要修改文件的完整内容，格式为{\"files\":[{\"path\":\"相对路径\",\"content\":\"完整文件正文\"}],\"summary\":\"可选简短说明\"}；files必填，summary可省略。不要在JSON外附Markdown或解释，不需修改的文件可省略。没有执行工具时，不得声称已运行测试。本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js；不得新增文件，也不得修改测试文件或其他文件。"
+          },
+          {
+            "role": "user",
+            "content": "请在重点记录模块 src/views/records 的新增和导入功能中加入调查时间限制：surveyDate 不能晚于今天，按日历日期比较，不涉及时刻。新增（createSurvey）和导入（importSurveys）应遵守同一校验基准；传入 today 时以它为基准，未传入时使用系统本地的当日日期。保留现有日期格式、日历有效性以及与有效日期相关的接口返回契约；导入继续按行部分成功，失败时返回从 1 开始的行号及稳定错误代码，未来日期只影响对应行。\n\n只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js；不得新增文件，也不得修改测试文件、src/views/records-old 或其他文件。完成后应确保新增入口和导入入口都会拒绝超过今天的调查日期，同时不改变其他字段、有效行或现有返回结构。"
+          },
+          {
+            "role": "user",
+            "content": "本次共同材料（所有作品臂完全相同）：\n--- package.json ---\n{\n  \"name\": \"synthetic-survey-workspace\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": { \"test\": \"node --test src/views/records/dateRules.spec.js\" }\n}\n\n\n--- README.md ---\n# 合成调查记录项目\n\n本项目完全合成，不含真实业务代码或人员数据。重点记录模块位于 `src/views/records`，旧模块位于 `src/views/records-old`，二者互不替代。\n\n新增通过 `createSurvey` 提交；导入通过 `importSurveys` 按行处理，允许部分成功，失败行返回从 1 开始的行号及稳定错误代码。两个入口共用 `validateSurveyDate`。现有日期校验只检查日期格式及日历有效性。\n\n`surveyDate` 为不带时刻的 `YYYY-MM-DD` 日历日期，执行者可传入同格式 `today` 以便确定性检查。已有测试记录现有契约；本轮新要求的独立验收在项目副本之外运行。\n\n当前日期契约：today可选；传入时使用它作日历日期基准，未传入时仍应使用系统本地的当日日历日期限制未来日期。新增、导入与共用校验须遵守同一基准。\n\n\n--- src/views/records/dateRules.js ---\n/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n\n\n--- src/views/records/create.js ---\nimport { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n\n\n--- src/views/records/import.js ---\nimport { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n\n\n--- src/views/records/dateRules.spec.js ---\nimport assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n\n\n--- src/views/records-old/create.js ---\n/** 旧模块拥有独立业务规则，不是本次指定的新增和导入入口。 */\nexport const createLegacySurvey = (record) => ({ legacy: true, record });\n"
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        }
+      }
+    },
+    {
+      "id": "U02_V61_EXEC_R1",
+      "caseId": "U02",
+      "version": "61",
+      "phase": "EXECUTION",
+      "repeat": 1,
+      "promptSha256": "771588e079166ae7d0e2712b5d1ec31225c3ba22c7edc3a39db2f05a48920bd1",
+      "approvedModelRequest": {
+        "model": "deepseek-flash",
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false,
+        "messages": [
+          {
+            "role": "system",
+            "content": "请直接完成用户的任务，交付可阅读且能实际使用的结果。可使用自然段、标题、要点或表格。仅使用本次提供的共同材料和通用知识，没有外部工具；不得声称已联网或已运行。"
+          },
+          {
+            "role": "user",
+            "content": "请为小树书店设计一份连续两个周六下午试办的亲子共读活动方案，供店主和一名店员直接照着执行。活动对象为6至9岁儿童及每位儿童一位陪同成人，阅读区最多八组家庭；只能使用阅读区，书架前和收银台旁通道保持畅通，不得扩为活动区。两个周六的14:00—17:00内选一个连续一小时开展活动，其余时间正常营业和整理；现场只有店主和一名店员，一人主持、另一人接待顾客和收银，不能长时间同时带活动，也不额外聘请老师。店内没有投影仪、音响或可腾出的游戏场地，有八张小桌、十六把椅子、白纸、彩笔、小白板和十六册可独立读完短故事的绘本或短篇故事集，题材包括日常生活、自然观察、朋友相处，长短与难度不一；家庭可自带书，但店员无法事先知道书名。不安排餐饮，现场只提供饮用水。两周新增支出合计不超过600元，用于必要耗材和简单宣传；活动免费、不设购书门槛、无礼品赞助，不以现场售书量评价成败。宣传和报名只能依托现有居民群、柜台口头介绍和纸笔登记，没有公众号、预约小程序或专人线上报名。店员读故事比较自然，但不熟悉课堂管理；阅读区与销售区相邻，其他顾客仍会走动、翻书。此前活动没有留下记录，这次要留下可复查的过程记录。\n\n方案需包含：两周活动各自的简明流程和时间点、主持店员与收银店员的职责分工、适合现有图书和混合年龄及不同投入程度孩子的共读安排、现场秩序与通道/噪声/其他顾客的处理办法、成人陪同及避免成人替孩子抢答的引导方式、对自带书的处理、报名与到场确认方式、耗材和宣传的600元内预算，以及每场结束后的简单记录表，用于回看参与情况、孩子投入程度、店员负担和可改进点。活动形式由你安排，但必须符合上述条件，步骤具体到店员能照做；不要估算社区市场规模，也不要写成需要额外人力或设备的方案。"
+          },
+          {
+            "role": "user",
+            "content": "本次共同材料（所有作品臂完全相同）：\n--- U02-M01.md ---\n# 小树书店的现状和试办条件\n\n小树书店位于一个普通住宅社区，工作日主要售书，周末偶尔有人在阅读区坐一会儿，还没有举办过正式的亲子活动。附近居民问过能不能让孩子来一起读书，但店里并不知道实际会有多少家庭参加。店主想先用连续两个周六下午试办，看看家庭是否愿意参与、孩子能否投入，以及店员能不能长期承担，不准备据此估算整个社区的市场规模。\n\n试办对象是6至9岁儿童及其陪同成人，每个孩子限一位成人同行。阅读区可坐八组家庭，通道需要保持畅通，不能把书架前和收银台旁也改成活动区。书店周六14:00至17:00可以安排活动，其中任意一个连续的一小时可供亲子活动使用，其余时间留给正常营业和整理。两个周六都只有店主和一名店员值班，一人可主持活动，另一人需要继续接待顾客和收银，不能长时间同时带活动，也不打算额外聘请老师。\n\n店内已有八张小桌、十六把椅子、白纸、彩笔和一块可擦写的小白板，没有投影仪、音响或可腾出的游戏场地。可供共读的绘本和短篇故事集有十六册，题材包括日常生活、自然观察和朋友相处，每册可独立读完一则短故事，长短与难度不同。孩子和家长也可以带自己的书，但店员无法事先知道具体书名。书店不安排餐饮，现场只提供饮用水。\n\n两周合计可新增支出600元，用于必要耗材和简单宣传；桌椅及现有图书不用另付钱。试办免费，不设购书门槛，没有礼品赞助，也不以现场卖出多少书评价成败。店里已有一个发布营业消息的居民群，可在柜台口头介绍活动，也能用纸笔登记家庭。没有独立公众号、预约小程序或专门负责线上报名的人。\n\n店主曾观察到，有的孩子愿意安静看书，有的孩子需要别人先带着进入故事；成人有时会替孩子抢答，也有成人希望只在旁边陪着。店员读故事比较自然，但不熟悉课堂管理。阅读区与销售区相邻，平时其他顾客仍会走动、翻书。此前两次零散的读书聊天都在结束后没有留下记录，后来只能凭印象争论活动好不好。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "Q01_V61_EXEC_R1",
+      "caseId": "Q01",
+      "version": "61",
+      "phase": "EXECUTION",
+      "repeat": 1,
+      "promptSha256": "0639dd7c734956089f18480c1a837dff36cbafc4303a427f81406d1371515257",
+      "approvedModelRequest": {
+        "model": "deepseek-flash",
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false,
+        "messages": [
+          {
+            "role": "system",
+            "content": "请直接完成用户的任务，交付可阅读且能实际使用的结果。可使用自然段、标题、要点或表格。仅使用本次提供的共同材料和通用知识，没有外部工具；不得声称已联网或已运行。"
+          },
+          {
+            "role": "user",
+            "content": "请查询并整理一份关于“全球使用AI最多的职业/行业”的简报。请分别说明职业和行业两个层面，找出当前全球范围内AI使用程度较高或增长较快的对象，并给出可理解的排序、梯队或分类。由于“使用最多”可能指采用率、使用频率、渗透率、工具调用量或从业者比例等不同口径，请在回答中明确所用口径；若不同口径结论不一致，请并列说明。优先依据可核查的公开报告、调查或统计数据，注明来源、统计时间、覆盖范围，以及全球数据与区域差异带来的局限。交付为紧凑的中文说明，重点突出主要结论、代表职业/行业和关键依据，不要写成问卷或空泛模板。"
+          },
+          {
+            "role": "user",
+            "content": "本次共同材料（所有作品臂完全相同）：\n--- query-source-pack.json ---\n{\n  \"purpose\": \"下游同信息查询作品的公开来源快照；增强阶段不提供此资料。由本轮浏览工具核实页面后整理，不代表执行模型具备自主联网检索或覆盖了全球全部来源。\",\n  \"collectedOn\": \"2026-10-28\",\n  \"sources\": [\n    {\n      \"id\": \"S1\",\n      \"title\": \"The Anthropic Economic Index — initial report\",\n      \"url\": \"https://www.anthropic.com/research/the-anthropic-economic-index\",\n      \"publishedOn\": \"2025-02-10\",\n      \"summary\": \"约100万条Claude.ai免费及Pro对话按O*NET任务分类，计算机与数学类占对话37.2%，艺术设计媒体类10.3%，教育图书馆9.3%，行政办公7.9%，生命科学6.4%，商业金融5.9%。前者常见软件修改、调试及网络排查；艺术媒体常见写作编辑。增强协作约57%，自动化约43%。这些是平台对话/任务分布，不是相应职业从业者使用率；职业覆盖和平台样本有边界。\"\n    },\n    {\n      \"id\": \"S2\",\n      \"title\": \"2025 Stack Overflow Developer Survey — AI\",\n      \"url\": \"https://survey.stackoverflow.co/2025/ai\",\n      \"publishedOn\": \"2025\",\n      \"summary\": \"84%受访者正在使用或计划使用AI开发工具，不能全部算作当前使用者；51%的职业开发者每天使用AI工具。常见工作包括搜索学习、开发、文档和测试。AI工具使用问题共有33662份回答，属于开发者自选调查，并非全球各职业随机抽样。46%不信任AI输出准确性，33%信任。\"\n    },\n    {\n      \"id\": \"S3\",\n      \"title\": \"The state of AI in 2025: Agents, innovation, and transformation\",\n      \"url\": \"https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-2025\",\n      \"publishedOn\": \"2025-11-05\",\n      \"summary\": \"88%受访者称所在组织至少一项业务职能经常使用AI，上期为78%。科技、媒体电信和保险的组织采用报告领先。IT、营销销售以及知识管理是常见职能，应用包括信息处理、内容创意和客服自动化。AI代理的采用另有定义，不能与全部AI混为一谈；组织采用不等于全部员工使用，也不代表完整全球职业排名。\"\n    }\n  ]\n}\n"
+          }
+        ]
+      }
+    },
+    {
+      "id": "Q01_V61_EXEC_R2",
+      "caseId": "Q01",
+      "version": "61",
+      "phase": "EXECUTION",
+      "repeat": 2,
+      "promptSha256": "0639dd7c734956089f18480c1a837dff36cbafc4303a427f81406d1371515257",
+      "approvedModelRequest": {
+        "model": "deepseek-flash",
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false,
+        "messages": [
+          {
+            "role": "system",
+            "content": "请直接完成用户的任务，交付可阅读且能实际使用的结果。可使用自然段、标题、要点或表格。仅使用本次提供的共同材料和通用知识，没有外部工具；不得声称已联网或已运行。"
+          },
+          {
+            "role": "user",
+            "content": "请查询并整理一份关于“全球使用AI最多的职业/行业”的简报。请分别说明职业和行业两个层面，找出当前全球范围内AI使用程度较高或增长较快的对象，并给出可理解的排序、梯队或分类。由于“使用最多”可能指采用率、使用频率、渗透率、工具调用量或从业者比例等不同口径，请在回答中明确所用口径；若不同口径结论不一致，请并列说明。优先依据可核查的公开报告、调查或统计数据，注明来源、统计时间、覆盖范围，以及全球数据与区域差异带来的局限。交付为紧凑的中文说明，重点突出主要结论、代表职业/行业和关键依据，不要写成问卷或空泛模板。"
+          },
+          {
+            "role": "user",
+            "content": "本次共同材料（所有作品臂完全相同）：\n--- query-source-pack.json ---\n{\n  \"purpose\": \"下游同信息查询作品的公开来源快照；增强阶段不提供此资料。由本轮浏览工具核实页面后整理，不代表执行模型具备自主联网检索或覆盖了全球全部来源。\",\n  \"collectedOn\": \"2026-10-28\",\n  \"sources\": [\n    {\n      \"id\": \"S1\",\n      \"title\": \"The Anthropic Economic Index — initial report\",\n      \"url\": \"https://www.anthropic.com/research/the-anthropic-economic-index\",\n      \"publishedOn\": \"2025-02-10\",\n      \"summary\": \"约100万条Claude.ai免费及Pro对话按O*NET任务分类，计算机与数学类占对话37.2%，艺术设计媒体类10.3%，教育图书馆9.3%，行政办公7.9%，生命科学6.4%，商业金融5.9%。前者常见软件修改、调试及网络排查；艺术媒体常见写作编辑。增强协作约57%，自动化约43%。这些是平台对话/任务分布，不是相应职业从业者使用率；职业覆盖和平台样本有边界。\"\n    },\n    {\n      \"id\": \"S2\",\n      \"title\": \"2025 Stack Overflow Developer Survey — AI\",\n      \"url\": \"https://survey.stackoverflow.co/2025/ai\",\n      \"publishedOn\": \"2025\",\n      \"summary\": \"84%受访者正在使用或计划使用AI开发工具，不能全部算作当前使用者；51%的职业开发者每天使用AI工具。常见工作包括搜索学习、开发、文档和测试。AI工具使用问题共有33662份回答，属于开发者自选调查，并非全球各职业随机抽样。46%不信任AI输出准确性，33%信任。\"\n    },\n    {\n      \"id\": \"S3\",\n      \"title\": \"The state of AI in 2025: Agents, innovation, and transformation\",\n      \"url\": \"https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-2025\",\n      \"publishedOn\": \"2025-11-05\",\n      \"summary\": \"88%受访者称所在组织至少一项业务职能经常使用AI，上期为78%。科技、媒体电信和保险的组织采用报告领先。IT、营销销售以及知识管理是常见职能，应用包括信息处理、内容创意和客服自动化。AI代理的采用另有定义，不能与全部AI混为一谈；组织采用不等于全部员工使用，也不代表完整全球职业排名。\"\n    }\n  ]\n}\n"
+          }
+        ]
+      }
+    },
+    {
+      "id": "C02_V61_EXEC_R2",
+      "caseId": "C02",
+      "version": "61",
+      "phase": "EXECUTION",
+      "repeat": 2,
+      "promptSha256": "e06e5348d69f33bc53930ab6b04d01c154f90d6bfe8ddc216bbbbe8b8fb55d53",
+      "approvedModelRequest": {
+        "model": "deepseek-flash",
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false,
+        "messages": [
+          {
+            "role": "system",
+            "content": "完成用户当前代码修改需求。只能使用所给项目材料，不能访问外部工具或声称已经运行。以JSON对象返回需要修改文件的完整内容，格式为{\"files\":[{\"path\":\"相对路径\",\"content\":\"完整文件正文\"}],\"summary\":\"可选简短说明\"}；files必填，summary可省略。不要在JSON外附Markdown或解释，不需修改的文件可省略。没有执行工具时，不得声称已运行测试。本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js；不得新增文件，也不得修改测试文件或其他文件。"
+          },
+          {
+            "role": "user",
+            "content": "请在重点记录模块 src/views/records 的新增和导入功能中加入调查时间限制：surveyDate 不能晚于今天，按日历日期比较，不涉及时刻。新增（createSurvey）和导入（importSurveys）应遵守同一校验基准；传入 today 时以它为基准，未传入时使用系统本地的当日日期。保留现有日期格式、日历有效性以及与有效日期相关的接口返回契约；导入继续按行部分成功，失败时返回从 1 开始的行号及稳定错误代码，未来日期只影响对应行。\n\n只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js；不得新增文件，也不得修改测试文件、src/views/records-old 或其他文件。完成后应确保新增入口和导入入口都会拒绝超过今天的调查日期，同时不改变其他字段、有效行或现有返回结构。"
+          },
+          {
+            "role": "user",
+            "content": "本次共同材料（所有作品臂完全相同）：\n--- package.json ---\n{\n  \"name\": \"synthetic-survey-workspace\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": { \"test\": \"node --test src/views/records/dateRules.spec.js\" }\n}\n\n\n--- README.md ---\n# 合成调查记录项目\n\n本项目完全合成，不含真实业务代码或人员数据。重点记录模块位于 `src/views/records`，旧模块位于 `src/views/records-old`，二者互不替代。\n\n新增通过 `createSurvey` 提交；导入通过 `importSurveys` 按行处理，允许部分成功，失败行返回从 1 开始的行号及稳定错误代码。两个入口共用 `validateSurveyDate`。现有日期校验只检查日期格式及日历有效性。\n\n`surveyDate` 为不带时刻的 `YYYY-MM-DD` 日历日期，执行者可传入同格式 `today` 以便确定性检查。已有测试记录现有契约；本轮新要求的独立验收在项目副本之外运行。\n\n当前日期契约：today可选；传入时使用它作日历日期基准，未传入时仍应使用系统本地的当日日历日期限制未来日期。新增、导入与共用校验须遵守同一基准。\n\n\n--- src/views/records/dateRules.js ---\n/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n\n\n--- src/views/records/create.js ---\nimport { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n\n\n--- src/views/records/import.js ---\nimport { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n\n\n--- src/views/records/dateRules.spec.js ---\nimport assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n\n\n--- src/views/records-old/create.js ---\n/** 旧模块拥有独立业务规则，不是本次指定的新增和导入入口。 */\nexport const createLegacySurvey = (record) => ({ legacy: true, record });\n"
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        }
+      }
+    },
+    {
+      "id": "U02_V61_EXEC_R2",
+      "caseId": "U02",
+      "version": "61",
+      "phase": "EXECUTION",
+      "repeat": 2,
+      "promptSha256": "771588e079166ae7d0e2712b5d1ec31225c3ba22c7edc3a39db2f05a48920bd1",
+      "approvedModelRequest": {
+        "model": "deepseek-flash",
+        "temperature": 0.2,
+        "max_tokens": 8192,
+        "thinking": {
+          "type": "disabled"
+        },
+        "stream": false,
+        "messages": [
+          {
+            "role": "system",
+            "content": "请直接完成用户的任务，交付可阅读且能实际使用的结果。可使用自然段、标题、要点或表格。仅使用本次提供的共同材料和通用知识，没有外部工具；不得声称已联网或已运行。"
+          },
+          {
+            "role": "user",
+            "content": "请为小树书店设计一份连续两个周六下午试办的亲子共读活动方案，供店主和一名店员直接照着执行。活动对象为6至9岁儿童及每位儿童一位陪同成人，阅读区最多八组家庭；只能使用阅读区，书架前和收银台旁通道保持畅通，不得扩为活动区。两个周六的14:00—17:00内选一个连续一小时开展活动，其余时间正常营业和整理；现场只有店主和一名店员，一人主持、另一人接待顾客和收银，不能长时间同时带活动，也不额外聘请老师。店内没有投影仪、音响或可腾出的游戏场地，有八张小桌、十六把椅子、白纸、彩笔、小白板和十六册可独立读完短故事的绘本或短篇故事集，题材包括日常生活、自然观察、朋友相处，长短与难度不一；家庭可自带书，但店员无法事先知道书名。不安排餐饮，现场只提供饮用水。两周新增支出合计不超过600元，用于必要耗材和简单宣传；活动免费、不设购书门槛、无礼品赞助，不以现场售书量评价成败。宣传和报名只能依托现有居民群、柜台口头介绍和纸笔登记，没有公众号、预约小程序或专人线上报名。店员读故事比较自然，但不熟悉课堂管理；阅读区与销售区相邻，其他顾客仍会走动、翻书。此前活动没有留下记录，这次要留下可复查的过程记录。\n\n方案需包含：两周活动各自的简明流程和时间点、主持店员与收银店员的职责分工、适合现有图书和混合年龄及不同投入程度孩子的共读安排、现场秩序与通道/噪声/其他顾客的处理办法、成人陪同及避免成人替孩子抢答的引导方式、对自带书的处理、报名与到场确认方式、耗材和宣传的600元内预算，以及每场结束后的简单记录表，用于回看参与情况、孩子投入程度、店员负担和可改进点。活动形式由你安排，但必须符合上述条件，步骤具体到店员能照做；不要估算社区市场规模，也不要写成需要额外人力或设备的方案。"
+          },
+          {
+            "role": "user",
+            "content": "本次共同材料（所有作品臂完全相同）：\n--- U02-M01.md ---\n# 小树书店的现状和试办条件\n\n小树书店位于一个普通住宅社区，工作日主要售书，周末偶尔有人在阅读区坐一会儿，还没有举办过正式的亲子活动。附近居民问过能不能让孩子来一起读书，但店里并不知道实际会有多少家庭参加。店主想先用连续两个周六下午试办，看看家庭是否愿意参与、孩子能否投入，以及店员能不能长期承担，不准备据此估算整个社区的市场规模。\n\n试办对象是6至9岁儿童及其陪同成人，每个孩子限一位成人同行。阅读区可坐八组家庭，通道需要保持畅通，不能把书架前和收银台旁也改成活动区。书店周六14:00至17:00可以安排活动，其中任意一个连续的一小时可供亲子活动使用，其余时间留给正常营业和整理。两个周六都只有店主和一名店员值班，一人可主持活动，另一人需要继续接待顾客和收银，不能长时间同时带活动，也不打算额外聘请老师。\n\n店内已有八张小桌、十六把椅子、白纸、彩笔和一块可擦写的小白板，没有投影仪、音响或可腾出的游戏场地。可供共读的绘本和短篇故事集有十六册，题材包括日常生活、自然观察和朋友相处，每册可独立读完一则短故事，长短与难度不同。孩子和家长也可以带自己的书，但店员无法事先知道具体书名。书店不安排餐饮，现场只提供饮用水。\n\n两周合计可新增支出600元，用于必要耗材和简单宣传；桌椅及现有图书不用另付钱。试办免费，不设购书门槛，没有礼品赞助，也不以现场卖出多少书评价成败。店里已有一个发布营业消息的居民群，可在柜台口头介绍活动，也能用纸笔登记家庭。没有独立公众号、预约小程序或专门负责线上报名的人。\n\n店主曾观察到，有的孩子愿意安静看书，有的孩子需要别人先带着进入故事；成人有时会替孩子抢答，也有成人希望只在旁边陪着。店员读故事比较自然，但不熟悉课堂管理。阅读区与销售区相邻，平时其他顾客仍会走动、翻书。此前两次零散的读书聊天都在结束后没有留下记录，后来只能凭印象争论活动好不好。"
+          }
+        ]
+      }
+    }
+  ],
+  "phaseLimits": {
+    "EXECUTION": 8,
+    "GENERATION": 0,
+    "PLAN": 0,
+    "REVIEW": 0
+  },
+  "parameters": {
+    "executionMaxTokens": 8192
+  },
+  "qualityRetriesAllowed": false,
+  "purpose": "Same-information actual work comparison; fixed existing baseline reuse, new61 first works only; not a release.",
+  "baselineReuse": [
+    {
+      "jobId": "C01_V31_EXEC_R2",
+      "caseId": "C01",
+      "arm": "31",
+      "repeat": 2,
+      "source": {
+        "path": "registry58-works/results/C01_V31_EXEC_R2.json",
+        "sha256": "cb4a961a263946bac5779fd4461e7bbb2d6098fa398bdfb56f70a07f7b4574e6"
+      },
+      "reason": "Exact same information, system instruction, model, parameters and output scope. Reuse all fixed baseline repetitions, never select best."
+    },
+    {
+      "jobId": "C01_V31_EXEC_R1",
+      "caseId": "C01",
+      "arm": "31",
+      "repeat": 1,
+      "source": {
+        "path": "registry58-works/results/C01_V31_EXEC_R1.json",
+        "sha256": "625078236010a3eb334ccf1b2a3200a76ab9ba28cb5ad52e3c844ca5460d5565"
+      },
+      "reason": "Exact same information, system instruction, model, parameters and output scope. Reuse all fixed baseline repetitions, never select best."
+    },
+    {
+      "jobId": "C01_RAW_EXEC_R1",
+      "caseId": "C01",
+      "arm": "ORIGINAL",
+      "repeat": 1,
+      "source": {
+        "path": "registry58-works/results/C01_RAW_EXEC_R1.json",
+        "sha256": "9064ae128b4d715d5c9db958c3f838cfa8345f06f31fc6ca1e9b6e4e1f4b7641"
+      },
+      "reason": "Exact same information, system instruction, model, parameters and output scope. Reuse all fixed baseline repetitions, never select best."
+    },
+    {
+      "jobId": "C01_RAW_EXEC_R2",
+      "caseId": "C01",
+      "arm": "ORIGINAL",
+      "repeat": 2,
+      "source": {
+        "path": "registry58-works/results/C01_RAW_EXEC_R2.json",
+        "sha256": "3ccce06fdfb6b98b4dfcb37c992536f05ee6d83fb5e3529414e904dff340afce"
+      },
+      "reason": "Exact same information, system instruction, model, parameters and output scope. Reuse all fixed baseline repetitions, never select best."
+    },
+    {
+      "jobId": "C02_RAW_EXEC_R2",
+      "caseId": "C02",
+      "arm": "ORIGINAL",
+      "repeat": 2,
+      "source": {
+        "path": "registry58-works/results/C02_RAW_EXEC_R2.json",
+        "sha256": "17317b238305a0f87faa66f122038e561a2952e65531231db567f243ee6d672e"
+      },
+      "reason": "Exact same information, system instruction, model, parameters and output scope. Reuse all fixed baseline repetitions, never select best."
+    },
+    {
+      "jobId": "C02_RAW_EXEC_R1",
+      "caseId": "C02",
+      "arm": "ORIGINAL",
+      "repeat": 1,
+      "source": {
+        "path": "registry58-works/results/C02_RAW_EXEC_R1.json",
+        "sha256": "2024fa53caa1f334ae89c7ecb04c2b51030e17f65ed780a5abf4feb9e3fb5f67"
+      },
+      "reason": "Exact same information, system instruction, model, parameters and output scope. Reuse all fixed baseline repetitions, never select best."
+    },
+    {
+      "jobId": "Q01_V31_EXEC_R1",
+      "caseId": "Q01",
+      "arm": "31",
+      "repeat": 1,
+      "source": {
+        "path": "registry58-works/results/Q01_V31_EXEC_R1.json",
+        "sha256": "a5e4f88ed44cc0cf1c1b0beb2d556c47682e19214212dba6da7de0dc6f97a964"
+      },
+      "reason": "Exact same information, system instruction, model, parameters and output scope. Reuse all fixed baseline repetitions, never select best."
+    },
+    {
+      "jobId": "Q01_RAW_EXEC_R1",
+      "caseId": "Q01",
+      "arm": "ORIGINAL",
+      "repeat": 1,
+      "source": {
+        "path": "registry58-works/results/Q01_RAW_EXEC_R1.json",
+        "sha256": "152fa1dd40852d4d6fdbb20717ae9aca346fedd37450f8ee6d28a224a62a2b71"
+      },
+      "reason": "Exact same information, system instruction, model, parameters and output scope. Reuse all fixed baseline repetitions, never select best."
+    },
+    {
+      "jobId": "Q01_RAW_EXEC_R2",
+      "caseId": "Q01",
+      "arm": "ORIGINAL",
+      "repeat": 2,
+      "source": {
+        "path": "registry58-works/results/Q01_RAW_EXEC_R2.json",
+        "sha256": "6c0cb49fe94325eeac15f46f289fc39e76c087343200b651d81b8d6812a8e546"
+      },
+      "reason": "Exact same information, system instruction, model, parameters and output scope. Reuse all fixed baseline repetitions, never select best."
+    },
+    {
+      "jobId": "Q01_V31_EXEC_R2",
+      "caseId": "Q01",
+      "arm": "31",
+      "repeat": 2,
+      "source": {
+        "path": "registry58-works/results/Q01_V31_EXEC_R2.json",
+        "sha256": "9e75371edfef3882647b23ff09f9d97b097a4d69c1fed437be9603cad8298876"
+      },
+      "reason": "Exact same information, system instruction, model, parameters and output scope. Reuse all fixed baseline repetitions, never select best."
+    },
+    {
+      "jobId": "U02_V31_EXEC_R1",
+      "caseId": "U02",
+      "arm": "31",
+      "repeat": 1,
+      "source": {
+        "path": "registry58-works/results/U02_V31_EXEC_R1.json",
+        "sha256": "f464cbedaa0338eb02676fb9e703b56e64266270a0e9fa0ef8a6b45621544a4d"
+      },
+      "reason": "Exact same information, system instruction, model, parameters and output scope. Reuse all fixed baseline repetitions, never select best."
+    },
+    {
+      "jobId": "U02_V31_EXEC_R2",
+      "caseId": "U02",
+      "arm": "31",
+      "repeat": 2,
+      "source": {
+        "path": "registry58-works/results/U02_V31_EXEC_R2.json",
+        "sha256": "b6bf411ff3f30bd4ba3e73bf6845364f56344d85fc73998718a7aaa807425eea"
+      },
+      "reason": "Exact same information, system instruction, model, parameters and output scope. Reuse all fixed baseline repetitions, never select best."
+    },
+    {
+      "jobId": "U02_RAW_EXEC_R2",
+      "caseId": "U02",
+      "arm": "ORIGINAL",
+      "repeat": 2,
+      "source": {
+        "path": "registry58-works/results/U02_RAW_EXEC_R2.json",
+        "sha256": "dc2b142a0c01bfc7345464ce22405e1f8d6bf3192d451f2065a6c63d9a851d4b"
+      },
+      "reason": "Exact same information, system instruction, model, parameters and output scope. Reuse all fixed baseline repetitions, never select best."
+    },
+    {
+      "jobId": "U02_RAW_EXEC_R1",
+      "caseId": "U02",
+      "arm": "ORIGINAL",
+      "repeat": 1,
+      "source": {
+        "path": "registry58-works/results/U02_RAW_EXEC_R1.json",
+        "sha256": "13267d97c0c64c4bfe5cfeb40718dec85d6cdad8cd741bc5c14c55c11d73649d"
+      },
+      "reason": "Exact same information, system instruction, model, parameters and output scope. Reuse all fixed baseline repetitions, never select best."
+    }
+  ],
+  "criterionSha256": "06ef22939f7fa7d4fefcdcdb06bf0c07b17872d9c1f42846f4a12d6287010148"
+}

@@ -1,0 +1,55 @@
+{
+  "batch" : "natural-useful-delivery-works-2026-10-28",
+  "jobId" : "W70-N2_V70_EXEC_R1",
+  "phase" : "EXECUTION",
+  "caseId" : "W70-N2",
+  "request" : {
+    "model" : "deepseek-flash",
+    "temperature" : 0.2,
+    "max_tokens" : 8192,
+    "thinking" : {
+      "type" : "disabled"
+    },
+    "stream" : false,
+    "messages" : [ {
+      "role" : "system",
+      "content" : "请直接完成用户的任务，交付可阅读且能实际使用的结果。可使用自然段、标题、要点或表格。仅使用本次提供的共同材料和通用知识，没有外部工具；不得声称已联网或已运行。"
+    }, {
+      "role" : "user",
+      "content" : "请编写一个可在命令行直接运行的 Python 脚本，按附件 order-summary-rules.md 中的规则读取订单 CSV，汇总每天各渠道的净收入并输出结果。运行环境为 Python 3.11，只使用标准库；运行命令为 python daily_net.py input.csv output.csv。\n\n输入与校验要求：\n- 输入 CSV 为 UTF-8，允许 BOM 和合法 CSV 引号；表头至少包含 paid_at,channel,status,amount,refund_amount，缺任一字段则整批失败。\n- status 仅允许 PAID、REFUNDED、CANCELLED，遇到未知状态报错。识别为 CANCELLED 后直接忽略该数据行，不再校验其日期、渠道或金额。\n- 其余行的 paid_at 必须是合法 YYYY-MM-DD 日期，按该日期汇总，不换时区；channel 去掉两端空白、保留大小写且不能为空。\n- amount 和 refund_amount 使用十进制精确金额，不允许 NaN、无穷、负数或超过两位小数；refund_amount 不能大于 amount。\n- PAID 按 amount-refund_amount 计入；REFUNDED 同样按该差额计入，不重复扣款；不按订单行数计算收入。\n\n输出与失败处理要求：\n- 输出 UTF-8 CSV，表头为 date,channel,net_amount；按 date、channel 升序排列，净收入固定两位小数。\n- 只有表头的空数据输入应成功，输出也只有表头。\n- 输入路径和输出路径解析后相同则拒绝。\n- 任何坏行使整批失败，stderr 指出数据行序号（表头后第一条为 1）和字段名，退出码为 2；此时已有输出文件必须完全不变。\n- 全部检查成功后才写输出；成功时允许替换原有输出。\n\n交付格式：只返回一个 JSON 对象 {\"files\":[{\"path\":\"daily_net.py\",\"content\":\"完整源码\"}]}，其中仅包含 daily_net.py 一个文件，不附 Markdown、说明、命令或新增测试文件。"
+    }, {
+      "role" : "user",
+      "content" : "本次共同材料（所有作品臂完全相同）：\n--- order-summary-rules.md ---\n全部订单字段、渠道及文件均为合成评测数据，不对应真实经营记录。运行环境Python3.11，只用标准库。命令为 python daily_net.py input.csv output.csv。交付一个JSON对象 {\"files\":[{\"path\":\"daily_net.py\",\"content\":\"完整源码\"}]}，只给这一个文件，不附Markdown、说明、命令或新增测试文件。\n输入CSV为UTF-8，允许BOM和合法CSV引号。表头至少含 paid_at,channel,status,amount,refund_amount，缺任一字段整批失败。status只允许PAID、REFUNDED、CANCELLED；未知状态报错。识别为CANCELLED后直接忽略该数据行，不再校验其日期、渠道或金额。\n其余行paid_at须是合法YYYY-MM-DD日期，按该日汇总，不换时区；channel去掉两端空白，保留大小写，不能为空。amount和refund_amount用十进制精确金额，不允许NaN、无穷、负数或超过两位小数；refund_amount不能大于amount。PAID也按amount-refund_amount计入；REFUNDED同样按该差额计入，不重复扣款。\n输出UTF-8 CSV，表头date,channel,net_amount；按date、channel升序，净收入固定两位小数。不按订单行数计算收入。只有表头的空数据输入成功，输出也只有表头。输入路径和输出路径解析后相同则拒绝。任何坏行使整批失败，stderr指出数据行序号（表头后第一条为1）和字段名，退出码2，已有输出文件必须完全不变。全部检查成功后才写输出；成功时允许替换原有输出。"
+    } ]
+  },
+  "httpStatus" : 200,
+  "responseBytes" : 5358,
+  "responseSha256" : "b3fedcd17489a68c350ce8515f90f4cb8757140e6bbe84975d1ce1da7771db33",
+  "elapsedMs" : 4616,
+  "response" : {
+    "id" : "7297134b-098b-4181-a48e-a569aa9e7662",
+    "object" : "chat.completion",
+    "created" : 1793242574,
+    "model" : "deepseek-flash",
+    "choices" : [ {
+      "index" : 0,
+      "message" : {
+        "role" : "assistant",
+        "content" : "{\"files\":[{\"path\":\"daily_net.py\",\"content\":\"import csv\\nimport os\\nimport sys\\nfrom datetime import datetime\\nfrom decimal import Decimal, InvalidOperation\\n\\nREQUIRED = [\\\"paid_at\\\", \\\"channel\\\", \\\"status\\\", \\\"amount\\\", \\\"refund_amount\\\"]\\nALLOWED_STATUS = {\\\"PAID\\\", \\\"REFUNDED\\\", \\\"CANCELLED\\\"}\\n\\n\\nclass DataError(Exception):\\n    def __init__(self, line_no, field):\\n        self.line_no = line_no\\n        self.field = field\\n        super().__init__(f\\\"line {line_no} field {field}\\\")\\n\\n\\ndef parse_amount(value, line_no, field):\\n    s = value.strip()\\n    if s == \\\"\\\":\\n        raise DataError(line_no, field)\\n    low = s.lower()\\n    if low in (\\\"nan\\\", \\\"inf\\\", \\\"+inf\\\", \\\"-inf\\\", \\\"infinity\\\", \\\"+infinity\\\", \\\"-infinity\\\"):\\n        raise DataError(line_no, field)\\n    try:\\n        d = Decimal(s)\\n    except (InvalidOperation, ValueError):\\n        raise DataError(line_no, field)\\n    if not d.is_finite():\\n        raise DataError(line_no, field)\\n    if d < 0:\\n        raise DataError(line_no, field)\\n    if d != d.quantize(Decimal(\\\"0.01\\\")):\\n        raise DataError(line_no, field)\\n    return d\\n\\n\\ndef parse_date(value, line_no):\\n    s = value.strip()\\n    if len(s) != 10:\\n        raise DataError(line_no, \\\"paid_at\\\")\\n    try:\\n        datetime.strptime(s, \\\"%Y-%m-%d\\\")\\n    except ValueError:\\n        raise DataError(line_no, \\\"paid_at\\\")\\n    return s\\n\\n\\ndef main(argv):\\n    if len(argv) != 3:\\n        sys.stderr.write(\\\"usage: python daily_net.py input.csv output.csv\\\\n\\\")\\n        return 2\\n    in_path, out_path = argv[1], argv[2]\\n    if os.path.realpath(in_path) == os.path.realpath(out_path):\\n        sys.stderr.write(\\\"input and output paths are the same\\\\n\\\")\\n        return 2\\n\\n    try:\\n        with open(in_path, \\\"r\\\", encoding=\\\"utf-8-sig\\\", newline=\\\"\\\") as f:\\n            reader = csv.reader(f)\\n            try:\\n                header = next(reader)\\n            except StopIteration:\\n                sys.stderr.write(\\\"missing header\\\\n\\\")\\n                return 2\\n            header = [h.strip() for h in header]\\n            index = {}\\n            for name in REQUIRED:\\n                if name not in header:\\n                    sys.stderr.write(f\\\"missing header field: {name}\\\\n\\\")\\n                    return 2\\n                index[name] = header.index(name)\\n\\n            totals = {}\\n            line_no = 0\\n            for row in reader:\\n                line_no += 1\\n                if len(row) == 0:\\n                    continue\\n                if len(row) <= max(index.values()):\\n                    missing = None\\n                    for name in REQUIRED:\\n                        if index[name] >= len(row):\\n                            missing = name\\n                            break\\n                    raise DataError(line_no, missing or \\\"row\\\")\\n\\n                status = row[index[\\\"status\\\"]].strip()\\n                if status not in ALLOWED_STATUS:\\n                    raise DataError(line_no, \\\"status\\\")\\n                if status == \\\"CANCELLED\\\":\\n                    continue\\n\\n                date = parse_date(row[index[\\\"paid_at\\\"]], line_no)\\n\\n                channel = row[index[\\\"channel\\\"]].strip()\\n                if channel == \\\"\\\":\\n                    raise DataError(line_no, \\\"channel\\\")\\n\\n                amount = parse_amount(row[index[\\\"amount\\\"]], line_no, \\\"amount\\\")\\n                refund = parse_amount(row[index[\\\"refund_amount\\\"]], line_no, \\\"refund_amount\\\")\\n                if refund > amount:\\n                    raise DataError(line_no, \\\"refund_amount\\\")\\n\\n                net = amount - refund\\n                key = (date, channel)\\n                totals[key] = totals.get(key, Decimal(\\\"0\\\")) + net\\n    except DataError as e:\\n        sys.stderr.write(f\\\"data error at line {e.line_no}, field {e.field}\\\\n\\\")\\n        return 2\\n    except (OSError, UnicodeDecodeError, csv.Error) as e:\\n        sys.stderr.write(f\\\"input error: {e}\\\\n\\\")\\n        return 2\\n\\n    try:\\n        with open(out_path, \\\"w\\\", encoding=\\\"utf-8\\\", newline=\\\"\\\") as f:\\n            writer = csv.writer(f)\\n            writer.writerow([\\\"date\\\", \\\"channel\\\", \\\"net_amount\\\"])\\n            for (date, channel) in sorted(totals.keys()):\\n                writer.writerow([date, channel, f\\\"{totals[(date, channel)]:.2f}\\\"])\\n    except OSError as e:\\n        sys.stderr.write(f\\\"output error: {e}\\\\n\\\")\\n        return 2\\n    return 0\\n\\n\\nif __name__ == \\\"__main__\\\":\\n    sys.exit(main(sys.argv))\\n\"}]}"
+      },
+      "logprobs" : null,
+      "finish_reason" : "stop"
+    } ],
+    "usage" : {
+      "prompt_tokens" : 880,
+      "completion_tokens" : 1229,
+      "total_tokens" : 2109,
+      "prompt_tokens_details" : {
+        "cached_tokens" : 640
+      },
+      "prompt_cache_hit_tokens" : 640,
+      "prompt_cache_miss_tokens" : 240
+    },
+    "system_fingerprint" : "bc19ba97cbe016479903222bb1578db6"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "P02_CONFIRMED_V52_PRO_PREPARE",
+  "phase": "EXECUTION",
+  "version": "52",
+  "caseId": "P02_CONFIRMED",
+  "status": 200,
+  "body": {
+    "requestId": "P02_CONFIRMED_V52_PRO_PREPARE",
+    "data": {
+      "usage": {
+        "prompt_tokens": 4027,
+        "completion_tokens": 777,
+        "total_tokens": 4804,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 4027
+      },
+      "content": "{\n  \"actions\": [\n    {\n      \"text\": \"在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\",\n      \"timing\": \"CURRENT\",\n      \"condition\": \"\",\n      \"evidence\": [\n        {\n          \"sourceId\": \"rawPrompt\",\n          \"quote\": \"请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\"\n        }\n      ]\n    },\n    {\n      \"text\": \"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。\",\n      \"timing\": \"CURRENT\",\n      \"condition\": \"\",\n      \"evidence\": [\n        {\n          \"sourceId\": \"rawPrompt\",\n          \"quote\": \"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。\"\n        }\n      ]\n    }\n  ],\n  \"response\": {\n    \"basis\": \"UNSPECIFIED\",\n    \"description\": \"\",\n    \"evidence\": []\n  },\n  \"requirements\": [\n    {\n      \"text\": \"在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由用户确认，不要代选。\",\n      \"dimensions\": [\"GOAL\", \"OBJECT\", \"CONDITION\"],\n      \"evidence\": [\n        {\n          \"sourceId\": \"rawPrompt\",\n          \"quote\": \"请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\"\n        }\n      ]\n    },\n    {\n      \"text\": \"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。\",\n      \"dimensions\": [\"OBJECT\", \"CONDITION\"],\n      \"evidence\": [\n        {\n          \"sourceId\": \"rawPrompt\",\n          \"quote\": \"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。\"\n        }\n      ]\n    },\n    {\n      \"text\": \"调查日期允许填写今天：日期等于 today 时校验通过，晚于 today 时返回错误。\",\n      \"dimensions\": [\"USER_CONFIRMATION\", \"CONDITION\"],\n      \"evidence\": [\n        {\n          \"sourceId\": \"actualAnswers.0\",\n          \"quote\": \"允许填写今天：日期等于 today 时校验通过，晚于 today 时返回错误。\"\n        }\n      ]\n    }\n  ]\n}",
+      "finishReason": "stop"
+    }
+  }
+}

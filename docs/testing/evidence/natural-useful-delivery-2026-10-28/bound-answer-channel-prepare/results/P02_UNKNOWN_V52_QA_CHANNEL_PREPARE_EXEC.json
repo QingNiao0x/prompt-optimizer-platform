@@ -1,0 +1,24 @@
+{
+  "id": "P02_UNKNOWN_V52_QA_CHANNEL_PREPARE_EXEC",
+  "phase": "EXECUTION",
+  "version": "52",
+  "caseId": "P02_UNKNOWN",
+  "status": 200,
+  "body": {
+    "requestId": "P02_UNKNOWN_V52_QA_CHANNEL_PREPARE_EXEC",
+    "data": {
+      "finishReason": "stop",
+      "content": "{\"actions\":[{\"text\":\"在重点记录模块 src/views/records 的新增和导入功能中增加调查时间限制：只能填写当日之前的日期，同时不能超过今日；今日是否允许填写由用户确认，不代选\",\"timing\":\"CURRENT\",\"condition\":\"\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\"}]},{\"text\":\"仅修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，并按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件\",\"timing\":\"CURRENT\",\"condition\":\"\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。\"}]}],\"response\":{\"basis\":\"EXPLICIT\",\"description\":\"交付在 src/views/records 新增与导入功能中增加调查日期限制的代码修改，仅限指定文件及按需补充的已有回归测试；今日是否允许填写保持未决，由用户确认，不代选。\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请在重点记录模块@synthetic-survey-workspace/src/views/records 的新增和导入功能增加调查时间限制：只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\"},{\"sourceId\":\"rawPrompt\",\"quote\":\"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。\"}]},\"requirements\":[{\"text\":\"调查日期限制为只能填写当日之前的日期，且不能超过今日；今日是否允许填写尚未决定，由用户确认，不得代选\",\"dimensions\":[\"GOAL\",\"CONDITION\",\"USER_CONFIRMATION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"只能填写当日之前的日期，同时又不能超过今日。今天是否允许填写由我确认，不要代选。\"},{\"sourceId\":\"actualAnswers.0\",\"quote\":\"今天是否允许尚未决定\"}]},{\"text\":\"修改范围仅限 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件\",\"dimensions\":[\"OBJECT\",\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js 回归测试；不得新增文件或修改其他文件。\"}]},{\"text\":\"新增与导入两个入口共用日期校验，导入保持按行部分成功，无效日期只影响所属行\",\"dimensions\":[\"OBJECT\"],\"evidence\":[{\"sourceId\":\"context.fileSnippets.1\",\"quote\":\"两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。\"},{\"sourceId\":\"context.fileSnippets.0\",\"quote\":\"导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。\"}]}]}",
+      "usage": {
+        "prompt_tokens": 4058,
+        "completion_tokens": 807,
+        "total_tokens": 4865,
+        "prompt_tokens_details": {
+          "cached_tokens": 3840
+        },
+        "prompt_cache_hit_tokens": 3840,
+        "prompt_cache_miss_tokens": 218
+      }
+    }
+  }
+}

@@ -38,7 +38,9 @@ public class RegistrationController {
         this.authenticationService = authenticationService;
     }
 
-    /** 在限流规则内发送注册验证码，响应中不返回验证码正文。 */
+    /**
+     * 在限流规则内发送注册验证码，响应中不返回验证码正文。
+     */
     @PostMapping("/registration-code")
     public ApiResponse<EmailRegistrationCodeView> requestRegistrationCode(
             @Valid @RequestBody EmailRegistrationCodeRequest body,
@@ -50,7 +52,9 @@ public class RegistrationController {
         );
     }
 
-    /** 校验验证码并创建个人账户，成功后建立登录会话。 */
+    /**
+     * 校验验证码并创建个人账户，成功后建立登录会话。
+     */
     @PostMapping("/register")
     public ApiResponse<AuthenticatedUserView> register(
             @Valid @RequestBody EmailRegistrationRequest body,
@@ -64,6 +68,9 @@ public class RegistrationController {
         );
     }
 
+    /**
+     * 从请求中获取请求 ID。
+     */
     private String requestId(HttpServletRequest request) {
         return (String) request.getAttribute(RequestIdFilter.REQUEST_ID_ATTRIBUTE);
     }

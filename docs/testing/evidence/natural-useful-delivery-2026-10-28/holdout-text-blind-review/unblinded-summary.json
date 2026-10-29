@@ -1,0 +1,157 @@
+{
+  "reviewSha256": "8ad66ea503d84ef2039b909d1c5c5d2928f792e3d6efe82af33d2dd24ab03975",
+  "unblindedAfterReviewLock": true,
+  "scope": "内部匿名审阅，不是专家或真人编辑耗时；全部失败保留",
+  "cases": [
+    {
+      "caseId": "H01",
+      "works": [
+        {
+          "version": "47",
+          "outcome": "DIRECTLY_USABLE",
+          "rubricScore": 10,
+          "seriousFlags": [],
+          "minimumNecessaryEdits": []
+        },
+        {
+          "version": "31",
+          "outcome": "DIRECTLY_USABLE",
+          "rubricScore": 10,
+          "seriousFlags": [],
+          "minimumNecessaryEdits": []
+        },
+        {
+          "version": "ORIGINAL",
+          "outcome": "DIRECTLY_USABLE",
+          "rubricScore": 10,
+          "seriousFlags": [],
+          "minimumNecessaryEdits": []
+        }
+      ]
+    },
+    {
+      "caseId": "H02",
+      "works": [
+        {
+          "version": "31",
+          "outcome": "DIRECTLY_USABLE",
+          "rubricScore": 10,
+          "seriousFlags": [],
+          "minimumNecessaryEdits": []
+        },
+        {
+          "version": "47",
+          "outcome": "DIRECTLY_USABLE",
+          "rubricScore": 10,
+          "seriousFlags": [],
+          "minimumNecessaryEdits": []
+        },
+        {
+          "version": "ORIGINAL",
+          "outcome": "NEEDS_FORMAT_EDIT",
+          "rubricScore": 9,
+          "seriousFlags": [],
+          "minimumNecessaryEdits": [
+            {
+              "id": "H02-C-E1",
+              "severity": "formatOnly",
+              "quote": "志愿者和参与者围坐一起读书交流。",
+              "reason": "冻结计数排除图注和标题后正文393汉字，差27汉字。图注不能移入正文凑数。",
+              "minimumEdit": "正文补至少27汉字且总数不超过550，只补材料已知内容或解释，不新增人数、经费、日期、成果。",
+              "oneSourceCompatibleOption": "可在首段补“本月场地和志愿者均由现有资源支持，参与情况按每次活动分别记录。”；这只是满足篇幅的示例，不是唯一方案。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "H03",
+      "works": [
+        {
+          "version": "ORIGINAL",
+          "outcome": "SERIOUS_FAILURE",
+          "rubricScore": 6,
+          "seriousFlags": [
+            "CORE_CALCULATION_ERRORS"
+          ],
+          "minimumNecessaryEdits": [
+            {
+              "id": "H03-A-E1",
+              "severity": "serious",
+              "quote": "| 电话 | 154.00 | 9 | 17.11 | 25.0% |",
+              "minimumEdit": "电话行改为净餐费198.00、实际交付9、每份平均22.00、取消率25.0%；按逐行算式核对，不重复扣已退取消餐费。"
+            },
+            {
+              "id": "H03-A-E2",
+              "severity": "serious",
+              "quote": "| 合计 | 322.00 | 17 | 18.94 | 28.6% |",
+              "minimumEdit": "合计行改为366.00、17、21.53、25.0%，平均值用总净餐费/总实际交付份数。"
+            },
+            {
+              "id": "H03-A-E3",
+              "severity": "serious",
+              "quote": "| 线上 | 168.00 | 8 | 21.00 | 33.3% |",
+              "minimumEdit": "线上保留168.00、8、21.00，取消率改为1/4＝25.0%；取消率分母使用全部独立订单。"
+            }
+          ]
+        },
+        {
+          "version": "47",
+          "outcome": "SERIOUS_FAILURE",
+          "rubricScore": 6,
+          "seriousFlags": [
+            "CORE_CALCULATION_ERRORS"
+          ],
+          "minimumNecessaryEdits": [
+            {
+              "id": "H03-B-E1",
+              "severity": "serious",
+              "quote": "| 电话 | 154.00 | 9 | 17.11 | 33.3% |",
+              "minimumEdit": "电话行改为净餐费198.00、实际交付9、每份平均22.00、取消率25.0%；按逐行算式核对，不重复扣已退取消餐费。"
+            },
+            {
+              "id": "H03-B-E2",
+              "severity": "serious",
+              "quote": "| 合计 | 322.00 | 17 | 18.94 | 37.5% |",
+              "minimumEdit": "合计行改为366.00、17、21.53、25.0%，平均值用总净餐费/总实际交付份数。"
+            },
+            {
+              "id": "H03-B-E3",
+              "severity": "serious",
+              "quote": "| 线上 | 168.00 | 8 | 21.00 | 40.0% |",
+              "minimumEdit": "线上保留168.00、8、21.00，取消率改为1/4＝25.0%；取消率分母使用全部独立订单。"
+            }
+          ]
+        },
+        {
+          "version": "31",
+          "outcome": "SERIOUS_FAILURE",
+          "rubricScore": 6,
+          "seriousFlags": [
+            "CORE_CALCULATION_ERRORS"
+          ],
+          "minimumNecessaryEdits": [
+            {
+              "id": "H03-C-E1",
+              "severity": "serious",
+              "quote": "| 电话 | 154.00 | 9 | 17.11 | 25.0% |",
+              "minimumEdit": "电话行改为净餐费198.00、实际交付9、每份平均22.00、取消率25.0%；按逐行算式核对，不重复扣已退取消餐费。"
+            },
+            {
+              "id": "H03-C-E2",
+              "severity": "serious",
+              "quote": "| 合计 | 322.00 | 17 | 18.94 | 28.6% |",
+              "minimumEdit": "合计行改为366.00、17、21.53、25.0%，平均值用总净餐费/总实际交付份数。"
+            },
+            {
+              "id": "H03-C-E3",
+              "severity": "serious",
+              "quote": "| 线上 | 168.00 | 8 | 21.00 | 33.3% |",
+              "minimumEdit": "线上保留168.00、8、21.00，取消率改为1/4＝25.0%；取消率分母使用全部独立订单。"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

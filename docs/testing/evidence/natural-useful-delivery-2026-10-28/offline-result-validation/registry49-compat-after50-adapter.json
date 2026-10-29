@@ -1,0 +1,248 @@
+{
+  "modelCallsMadeByReplay" : 0,
+  "candidateEdited" : false,
+  "stage" : "docs\\testing\\evidence\\natural-useful-delivery-2026-10-28\\registry49-development",
+  "closureSha256" : "364e81f2c53213e6e5022098a4c343444cf14f6d7607ae48d1bb4858304fa21c",
+  "protocolSha256" : "fe747c3421715932d354e02272ad7c741225bf5e2b28128a1078ed1238d8f8cc",
+  "scope" : "Actual49/50 strict preparation.resolve, immutable registry linkage, writer.normalize, original sources/all QA and original application safety/raw/assembled guards. Source/quote legality is not semantic completeness or adoption.",
+  "loadedProductClassSha256" : {
+    "com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleNaturalPromptProvider" : "b7283e28e67c4e261be10af7be9b21a9c6aa97c9554cf4c81605ac924325092a",
+    "com.promptoptimizer.provider.domain.NaturalPromptRequirementRegistry" : "dcccc444a6a03dd511374c20b4b4420dbb3bb3cae762dd56b56ffd5be5002006",
+    "com.promptoptimizer.provider.domain.NaturalPromptReferencedEnhancement" : "83bd9bb4b80d7a77368c1c7fc683f339eadfea24eef33f5cae861f100e8a1196",
+    "com.promptoptimizer.provider.domain.NaturalTaskUnderstanding" : "4a9eac037e975edfb730a5531ba999579539abcd7d8fda56787ceb89828f2324",
+    "com.promptoptimizer.provider.domain.NaturalTaskReview" : "7cdf1e6c9e0e0242c2b55f8e64ed6f295e97a8152703109dd9ad007b19c57355",
+    "com.promptoptimizer.enhancement.service.impl.NaturalEnhancementService" : "cc3e8858edc8f8d549e6bb6536bca4b0d08c3b19f5f4ee1d3bc99e5ff152b1a3"
+  },
+  "results" : [ {
+    "jobId" : "Q01_V49_GEN",
+    "semanticReviewRequired" : true,
+    "semanticCorrectnessClaimed" : false,
+    "jobsSha256" : "bcce8e3bde094ceb889869045e45ddc56619fdfa7ff37befd19cb46ca1d718e7",
+    "platformResultSha256" : "40978b797d0ea661625a739714f6efa081fadf49aae316360c6b17a4465c602e",
+    "approvedPublicDtoSha256" : "fd455cfef597e687a19d621f0f099faa1cdbc531236a1934a8403cf8ebc11387",
+    "attempts" : [ {
+      "trace" : "001.json",
+      "traceSha256" : "70981aa46a8b72c5b1eea5f82af1a2f49f01c12b490ad12bed9448d1f6c26722",
+      "phase" : "REQUIREMENT_PREPARATION",
+      "upstreamHttpStatus" : 200,
+      "requestSha256" : "82a3887487b1bceed4fc247ef3a54ccd3edb191925765ba2c4069aa300a3304e",
+      "originalNaturalInputSha256" : "899731ba7b86990938340bf605c58875875af45a623022910e86b41b047ca562",
+      "steps" : [ {
+        "status" : "PASS",
+        "stage" : "product.unwrapAndReadResponse"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.strictPreparationReaderAndResolve"
+      } ],
+      "finishReason" : "stop",
+      "actualContentSha256" : "78bdc709427bc9ef2454e0792b6b4ab4b05034f7fa1376d0c62c04c41d420917",
+      "outcome" : "PREPARATION_SOURCE_PROTOCOL_VALID_ONLY",
+      "registrySha256" : "9ae3103ef1eb35913fd78349bf62505607d498afe75b89ab68ce05474b75c52c",
+      "reqIds" : [ "r0", "r1" ]
+    }, {
+      "trace" : "002.json",
+      "traceSha256" : "852ebb02c4a70de37947043d01517ff7d270145d2c5d04ef0225d648865badf8",
+      "phase" : "BODY_GENERATION",
+      "upstreamHttpStatus" : 200,
+      "requestSha256" : "81bf622088993478493dc7f766dd1d9b03e7c294a2926625ba095761412f09bb",
+      "originalNaturalInputSha256" : "899731ba7b86990938340bf605c58875875af45a623022910e86b41b047ca562",
+      "steps" : [ {
+        "status" : "PASS",
+        "stage" : "product.unwrapAndReadResponse"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.strictWriterReaderAndNormalize"
+      }, {
+        "status" : "PASS",
+        "stage" : "application.secondResolve"
+      }, {
+        "status" : "PASS",
+        "stage" : "application.validateBodySafetyAndAssemble"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.validateEnhancement.raw"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.validateEnhancement.assembled"
+      } ],
+      "finishReason" : "stop",
+      "actualContentSha256" : "2488be65517ccef75c3b15ac5c8bd436748571876748719e895120cb610072d5",
+      "preparedTraceSha256" : "70981aa46a8b72c5b1eea5f82af1a2f49f01c12b490ad12bed9448d1f6c26722",
+      "normalizedBindings" : [ {
+        "reqId" : "r0",
+        "requirementIndex" : 0,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r1",
+        "requirementIndex" : 1,
+        "changeIndex" : null
+      } ],
+      "canonicalUnderstandingSha256" : "1a28ef401b0bfbddc1bb41db75b367542aa7d35ec50d8af6522ca6799dd33688",
+      "providerOptimizedPromptSha256" : "4bb9049c8e1976519f1f33e0f56ef8e72837fef7bec2beae3f9dd2119e155756",
+      "assembledBodySha256" : "4bb9049c8e1976519f1f33e0f56ef8e72837fef7bec2beae3f9dd2119e155756",
+      "outcome" : "VALID_PRODUCT_DELIVERY_PROTOCOL_ONLY"
+    } ],
+    "platformHttpStatus" : 200,
+    "preparationAttempts" : 1,
+    "writerAttempts" : 1,
+    "outcome" : "VALID_PRODUCT_DELIVERY_PROTOCOL_ONLY"
+  }, {
+    "jobId" : "U02_V49_GEN",
+    "semanticReviewRequired" : true,
+    "semanticCorrectnessClaimed" : false,
+    "jobsSha256" : "bcce8e3bde094ceb889869045e45ddc56619fdfa7ff37befd19cb46ca1d718e7",
+    "platformResultSha256" : "3f11d281cba9e5b791e7a6416e6d36a70f9312afe545d7c6c9cf7ada0594be8f",
+    "approvedPublicDtoSha256" : "410f96fdff84b9d816a61e31b5cd6effda2246f103b8d53f14ab863e52f9febd",
+    "attempts" : [ {
+      "trace" : "003.json",
+      "traceSha256" : "5fd4fb3a0151710bd455b2b4306ded5a256c2ada97899bc11d9bfdc8edbbd218",
+      "phase" : "REQUIREMENT_PREPARATION",
+      "upstreamHttpStatus" : 200,
+      "requestSha256" : "6e038015411f944191eaefa1d853af8a84c263ed92306d5e28eb331839c3a1e1",
+      "originalNaturalInputSha256" : "845d9956576f704a11b0c41b969b44780246b737d65a14ef8ada46a8f685594f",
+      "steps" : [ {
+        "status" : "PASS",
+        "stage" : "product.unwrapAndReadResponse"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.strictPreparationReaderAndResolve"
+      } ],
+      "finishReason" : "stop",
+      "actualContentSha256" : "9b684f7a61823a8eae5dbcd0eac3cdf804c19415e5b29adba2db8725cba89ba6",
+      "outcome" : "PREPARATION_SOURCE_PROTOCOL_VALID_ONLY",
+      "registrySha256" : "61b137144d10fe329d7b8744e768a0eb53e14b7a6a8494c5451447ca3121592a",
+      "reqIds" : [ "r0", "r1", "r2", "r3" ]
+    }, {
+      "trace" : "004.json",
+      "traceSha256" : "b4208640e927a6afc9eede817c6b9fed85bb679bb1d96d2c2d1193b07598e3f7",
+      "phase" : "BODY_GENERATION",
+      "upstreamHttpStatus" : 200,
+      "requestSha256" : "788fa2b09829b868505fa41cedf3eceff28f754d9a0471449d9087b6451ca706",
+      "originalNaturalInputSha256" : "845d9956576f704a11b0c41b969b44780246b737d65a14ef8ada46a8f685594f",
+      "steps" : [ {
+        "status" : "PASS",
+        "stage" : "product.unwrapAndReadResponse"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.strictWriterReaderAndNormalize"
+      }, {
+        "status" : "PASS",
+        "stage" : "application.secondResolve"
+      }, {
+        "status" : "PASS",
+        "stage" : "application.validateBodySafetyAndAssemble"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.validateEnhancement.raw"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.validateEnhancement.assembled"
+      } ],
+      "finishReason" : "stop",
+      "actualContentSha256" : "e84f010657366b1e983468a04c62a1120a8d0cc608a6f1d3626df336269c62d3",
+      "preparedTraceSha256" : "5fd4fb3a0151710bd455b2b4306ded5a256c2ada97899bc11d9bfdc8edbbd218",
+      "normalizedBindings" : [ {
+        "reqId" : "r0",
+        "requirementIndex" : 0,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r1",
+        "requirementIndex" : 1,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r2",
+        "requirementIndex" : 2,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r3",
+        "requirementIndex" : 3,
+        "changeIndex" : null
+      } ],
+      "canonicalUnderstandingSha256" : "5879873706455f56a41e14d0da990a988b8f2de139d50afd4f700c764f82f305",
+      "providerOptimizedPromptSha256" : "698c6f1819538d27cf6e8cbf68bc62a8a34e22d208e2651605ee702e26fc1099",
+      "assembledBodySha256" : "698c6f1819538d27cf6e8cbf68bc62a8a34e22d208e2651605ee702e26fc1099",
+      "outcome" : "VALID_PRODUCT_DELIVERY_PROTOCOL_ONLY"
+    } ],
+    "platformHttpStatus" : 200,
+    "preparationAttempts" : 1,
+    "writerAttempts" : 1,
+    "outcome" : "VALID_PRODUCT_DELIVERY_PROTOCOL_ONLY"
+  }, {
+    "jobId" : "U03_V49_GEN",
+    "semanticReviewRequired" : true,
+    "semanticCorrectnessClaimed" : false,
+    "jobsSha256" : "bcce8e3bde094ceb889869045e45ddc56619fdfa7ff37befd19cb46ca1d718e7",
+    "platformResultSha256" : "020c6a25fc4929076d2cbea3e5d3f616723474ab7007e569a899af79517348cc",
+    "approvedPublicDtoSha256" : "dbedc91e3cf04fd9c55d9da86c7438ef5acc472e82ded77243f099809220cf3d",
+    "attempts" : [ {
+      "trace" : "005.json",
+      "traceSha256" : "4309d4dc4e6f28b8949aadeed04bf60b194000f9d0bf50616895938f26720bb4",
+      "phase" : "REQUIREMENT_PREPARATION",
+      "upstreamHttpStatus" : 200,
+      "requestSha256" : "54b979b8ecd4e40f7bebd688a1f0ca5ea8f175f26d3aa716cbf1ce32b77bb59f",
+      "originalNaturalInputSha256" : "4098f46622574436244ebf73ac89a76adb6480e6c63e87883c2eaa15d7e13675",
+      "steps" : [ {
+        "status" : "PASS",
+        "stage" : "product.unwrapAndReadResponse"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.strictPreparationReaderAndResolve"
+      } ],
+      "finishReason" : "stop",
+      "actualContentSha256" : "a606b23efd372c32fece6aace74d8286030d8ea43da0a6ab6f9ad5491b93de48",
+      "outcome" : "PREPARATION_SOURCE_PROTOCOL_VALID_ONLY",
+      "registrySha256" : "98a176a659d384d3228a564bc76c28d48524bfa451ea38d5af5e378c18edd529",
+      "reqIds" : [ "r0", "r1", "r2" ]
+    }, {
+      "trace" : "006.json",
+      "traceSha256" : "2584e58abce72423e53d8a9e9d5a3b3a1311b729a3c13292d384c2f1521dce72",
+      "phase" : "BODY_GENERATION",
+      "upstreamHttpStatus" : 200,
+      "requestSha256" : "6c303526a968092a9068d685892d809b1c7e5dc047a4684d8ac2a3743c12eef0",
+      "originalNaturalInputSha256" : "4098f46622574436244ebf73ac89a76adb6480e6c63e87883c2eaa15d7e13675",
+      "steps" : [ {
+        "status" : "PASS",
+        "stage" : "product.unwrapAndReadResponse"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.strictWriterReaderAndNormalize"
+      }, {
+        "status" : "PASS",
+        "stage" : "application.secondResolve"
+      }, {
+        "status" : "PASS",
+        "stage" : "application.validateBodySafetyAndAssemble"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.validateEnhancement.raw"
+      }, {
+        "status" : "PASS",
+        "stage" : "product.validateEnhancement.assembled"
+      } ],
+      "finishReason" : "stop",
+      "actualContentSha256" : "15d34911da59af972d39e9cbb0eac83c02fd69ef653a1ce07fb17af3e56083cd",
+      "preparedTraceSha256" : "4309d4dc4e6f28b8949aadeed04bf60b194000f9d0bf50616895938f26720bb4",
+      "normalizedBindings" : [ {
+        "reqId" : "r0",
+        "requirementIndex" : 0,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r1",
+        "requirementIndex" : 1,
+        "changeIndex" : null
+      }, {
+        "reqId" : "r2",
+        "requirementIndex" : 2,
+        "changeIndex" : null
+      } ],
+      "canonicalUnderstandingSha256" : "2675b531ca9b88b684e090c60067ee691e882f691a52833aefc5dfaa5fd4c66f",
+      "providerOptimizedPromptSha256" : "638135840aab847cc3296671fe3293bf4ea3532993edc486f0838a76fa26aa7b",
+      "assembledBodySha256" : "638135840aab847cc3296671fe3293bf4ea3532993edc486f0838a76fa26aa7b",
+      "outcome" : "VALID_PRODUCT_DELIVERY_PROTOCOL_ONLY"
+    } ],
+    "platformHttpStatus" : 200,
+    "preparationAttempts" : 1,
+    "writerAttempts" : 1,
+    "outcome" : "VALID_PRODUCT_DELIVERY_PROTOCOL_ONLY"
+  } ]
+}

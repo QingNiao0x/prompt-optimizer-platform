@@ -1,0 +1,124 @@
+{
+  "files": [
+    {
+      "path": "src/views/records/import.js#chunk-1",
+      "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\nexport function importSurveys(rows, today) {\n  const inserted = [];\n  const errors = [];\n  rows.forEach((record, index) => {\n    const code = validateSurveyDate(record.surveyDate, today);\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\n    else inserted.push({ ...record });\n  });\n  return { inserted, errors };\n}\n",
+      "language": "javascript"
+    },
+    {
+      "path": "src/views/records/create.js#chunk-1",
+      "content": "import { validateSurveyDate } from './dateRules.js';\n\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\nexport function createSurvey(input, today) {\n  const error = validateSurveyDate(input.surveyDate, today);\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\n    : { ok: true, record: { ...input } };\n}\n",
+      "language": "javascript"
+    },
+    {
+      "path": "src/views/records/dateRules.js#chunk-1",
+      "content": "/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\nexport function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return 'INVALID_DATE';\n  const parsed = new Date(`${value}T00:00:00.000Z`);\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\n  return null;\n}\n",
+      "language": "javascript"
+    },
+    {
+      "path": "src/views/records/dateRules.spec.js#chunk-1",
+      "content": "import assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createSurvey } from './create.js';\nimport { importSurveys } from './import.js';\n\ntest('新增保留有效日历日期和其他字段', () => {\n  const input = { id: 'synthetic-a', surveyDate: '2026-10-26', category: 'sample' };\n  assert.deepEqual(createSurvey(input, '2026-10-27'), { ok: true, record: input });\n});\n\ntest('导入按行返回无效日历日期，保留其他有效行', () => {\n  const first = { id: 'synthetic-a', surveyDate: '2026-10-26' };\n  assert.deepEqual(importSurveys([first, { surveyDate: '2026-02-30' }], '2026-10-27'), {\n    inserted: [first], errors: [{ row: 2, field: 'surveyDate', code: 'INVALID_DATE' }],\n  });\n});\n",
+      "language": "javascript"
+    }
+  ],
+  "selections": [
+    {
+      "path": "src/views/records/import.js",
+      "chunkIndex": 0,
+      "score": 21040,
+      "reasons": [
+        "用户明确引用路径",
+        "内容与任务匹配",
+        "被高相关代码直接依赖"
+      ]
+    },
+    {
+      "path": "src/views/records/create.js",
+      "chunkIndex": 0,
+      "score": 21000,
+      "reasons": [
+        "用户明确引用路径",
+        "内容与任务匹配",
+        "被高相关代码直接依赖"
+      ]
+    },
+    {
+      "path": "src/views/records/dateRules.js",
+      "chunkIndex": 0,
+      "score": 21000,
+      "reasons": [
+        "用户明确引用路径",
+        "内容与任务匹配",
+        "被高相关代码直接依赖"
+      ]
+    },
+    {
+      "path": "src/views/records/dateRules.spec.js",
+      "chunkIndex": 0,
+      "score": 20140,
+      "reasons": [
+        "用户明确引用路径",
+        "内容与任务匹配"
+      ]
+    }
+  ],
+  "totalCharacters": 1759,
+  "references": [
+    {
+      "reference": "synthetic-survey-workspace/src/views/records",
+      "matchedPaths": [
+        "src/views/records/create.js",
+        "src/views/records/dateRules.js",
+        "src/views/records/dateRules.spec.js",
+        "src/views/records/import.js"
+      ],
+      "selectedPaths": [
+        "src/views/records/create.js",
+        "src/views/records/dateRules.js",
+        "src/views/records/dateRules.spec.js",
+        "src/views/records/import.js"
+      ],
+      "status": "FOUND"
+    },
+    {
+      "reference": "src/views/records/dateRules.js",
+      "matchedPaths": [
+        "src/views/records/dateRules.js"
+      ],
+      "selectedPaths": [
+        "src/views/records/dateRules.js"
+      ],
+      "status": "FOUND"
+    },
+    {
+      "reference": "src/views/records/create.js",
+      "matchedPaths": [
+        "src/views/records/create.js"
+      ],
+      "selectedPaths": [
+        "src/views/records/create.js"
+      ],
+      "status": "FOUND"
+    },
+    {
+      "reference": "src/views/records/import.js",
+      "matchedPaths": [
+        "src/views/records/import.js"
+      ],
+      "selectedPaths": [
+        "src/views/records/import.js"
+      ],
+      "status": "FOUND"
+    },
+    {
+      "reference": "src/views/records/dateRules.spec.js",
+      "matchedPaths": [
+        "src/views/records/dateRules.spec.js"
+      ],
+      "selectedPaths": [
+        "src/views/records/dateRules.spec.js"
+      ],
+      "status": "FOUND"
+    }
+  ]
+}

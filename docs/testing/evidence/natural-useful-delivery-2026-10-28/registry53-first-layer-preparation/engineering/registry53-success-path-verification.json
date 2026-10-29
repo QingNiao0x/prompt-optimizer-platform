@@ -1,0 +1,348 @@
+{
+  "candidate": "53",
+  "engineeringOnly": true,
+  "adopted": false,
+  "defaultVersion": "31",
+  "externalModelCalls": 0,
+  "generatedAt": "2026-10-28T01:56:47.2814901Z",
+  "scope": "Only two success-path tests and this separate supplement; product guide, reader, helper, protocol and frozen fixtures remain unchanged.",
+  "originalReport": {
+    "path": "tmp/natural-useful-delivery-2026-10-28/registry53-engineering-verification.json",
+    "sha256": "87917b78bcd5f580f11f6a9836e351a7efd6a35b4dc37fefbf12e7e8c223dfe9",
+    "unchanged": true
+  },
+  "newTests": [
+    {
+      "method": "missingActualAnswerPreparationRepairsAndThenWritesWithTheSameCompleteInput",
+      "expectedRequests": 3,
+      "result": "PASS",
+      "proof": "Initial prepared requirements omit actualAnswers.0; actual Provider source-coverage rejection invokes its single bounded preparation retry; service-generated sourceId hint and unchanged original user message reach repair; repaired requirements reach writer, then actual normalize/source/QA/raw/assembled/safety validation succeeds."
+    },
+    {
+      "method": "ordinarySuccessPreservesNonemptyContextAnswersPermissionsAndSourcesAcrossBothPhases",
+      "expectedRequests": 2,
+      "result": "PASS",
+      "proof": "Nonempty context, actualAnswers, mandatoryRules and four server taskSources remain equal in preparation and writer; only inputBoundary/preparedRequirements are removed for full input object and ordered serialization comparison. taskScope, boundQuestionHints, protocolRepair are absent."
+    }
+  ],
+  "junit": {
+    "path": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalRequirementsOnlyProviderTest.xml",
+    "sha256": "c9c9156e3917adcdc815da7892ef9cb3a17a13925d88253d6c6f81e221ec8db3",
+    "class": "com.promptoptimizer.provider.infrastructure.openai.NaturalRequirementsOnlyProviderTest",
+    "tests": 40,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "timeSeconds": 1.527,
+    "newTests": [
+      {
+        "name": "ordinarySuccessPreservesNonemptyContextAnswersPermissionsAndSourcesAcrossBothPhases",
+        "timeSeconds": 0.492
+      },
+      {
+        "name": "missingActualAnswerPreparationRepairsAndThenWritesWithTheSameCompleteInput",
+        "timeSeconds": 0.008
+      }
+    ]
+  },
+  "previousJUnitArchive": {
+    "path": "tmp/natural-useful-delivery-2026-10-28/registry53-before-success-test.xml",
+    "sha256": "881579d5e7048aaf6242448a3dfd53cb15ab373fef56a5fd84d79c84fe03cafb",
+    "tests": 38
+  },
+  "validationScope": {
+    "executedThisSupplement": 40,
+    "previousUniqueJavaTests": 98,
+    "currentUniqueJavaTestUnion": 100,
+    "previousOtherJavaTestsNotRerun": 60,
+    "frontendNotRerun": "No frontend change in this supplement",
+    "mavenExitCode": 0,
+    "scopedDiffCheck": "PASS",
+    "javaHome": "E:/Delelop/Java/jdk-21",
+    "maven": "E:/Delelop/apache-maven-3.9.14/bin/mvn.cmd",
+    "offline": true,
+    "testClass": "NaturalRequirementsOnlyProviderTest"
+  },
+  "sourceHashComparison": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRequirementsOnlyInstructions.java",
+      "before": "bff611c31a8e44981918cfeacaa17178bf213c062902bcb8e9d2a23a58ac9681",
+      "after": "bff611c31a8e44981918cfeacaa17178bf213c062902bcb8e9d2a23a58ac9681",
+      "unchanged": true,
+      "testOnlyChange": false
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRequirementsOnlyPreparation.java",
+      "before": "1be0a758437e246d79bbcd795b29eb0ea7ae35952f5d6c50a2866842f4fe0670",
+      "after": "1be0a758437e246d79bbcd795b29eb0ea7ae35952f5d6c50a2866842f4fe0670",
+      "unchanged": true,
+      "testOnlyChange": false
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptReferencedEnhancement.java",
+      "before": "bb8d35c45e7ecd5a734587cd6105e2dc29be36b6e87c415b20646964de988064",
+      "after": "bb8d35c45e7ecd5a734587cd6105e2dc29be36b6e87c415b20646964de988064",
+      "unchanged": true,
+      "testOnlyChange": false
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskUnderstanding.java",
+      "before": "a678e2bc200fe5104d15d74ed498ac9861c60d9ceb5f2d28ab25b952914347ac",
+      "after": "a678e2bc200fe5104d15d74ed498ac9861c60d9ceb5f2d28ab25b952914347ac",
+      "unchanged": true,
+      "testOnlyChange": false
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java",
+      "before": "baa8629fbef7cc74be93fa6d890ebd1209caaf2dc57312d8c972c4a87bda25c9",
+      "after": "baa8629fbef7cc74be93fa6d890ebd1209caaf2dc57312d8c972c4a87bda25c9",
+      "unchanged": true,
+      "testOnlyChange": false
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "before": "3db163d0311b3fedf5e98c32d95486ccf1681794fa62c681a7075664f191102c",
+      "after": "3db163d0311b3fedf5e98c32d95486ccf1681794fa62c681a7075664f191102c",
+      "unchanged": true,
+      "testOnlyChange": false
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRoutingRepairInstructions.java",
+      "before": "60e56b195300436e0ae9d08957d1a8f249878b18ae1783d1eae13e50693b03aa",
+      "after": "60e56b195300436e0ae9d08957d1a8f249878b18ae1783d1eae13e50693b03aa",
+      "unchanged": true,
+      "testOnlyChange": false
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "before": "d9ce7880578c9062b33ce494b55299976f58bd379a4bf2e95de8694b7bc7558d",
+      "after": "d9ce7880578c9062b33ce494b55299976f58bd379a4bf2e95de8694b7bc7558d",
+      "unchanged": true,
+      "testOnlyChange": false
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/domain/NaturalProcessing.java",
+      "before": "2a048f322455b3cc0b38e56b63f085d73b2a0396f8514085e59f23ba641065f2",
+      "after": "2a048f322455b3cc0b38e56b63f085d73b2a0396f8514085e59f23ba641065f2",
+      "unchanged": true,
+      "testOnlyChange": false
+    },
+    {
+      "path": "apps/web/src/types/api.ts",
+      "before": "a5cc21eb46b704d54a706e3ffd2e03900d486f3d1435d0d85b37e3ba92352e2b",
+      "after": "a5cc21eb46b704d54a706e3ffd2e03900d486f3d1435d0d85b37e3ba92352e2b",
+      "unchanged": true,
+      "testOnlyChange": false
+    },
+    {
+      "path": "apps/web/src/features/optimization/processingStatus.test.ts",
+      "before": "09c1c21b194d09c28e87cc8f29af1477c67a7e64123d89e1742e03d3c1856ef7",
+      "after": "09c1c21b194d09c28e87cc8f29af1477c67a7e64123d89e1742e03d3c1856ef7",
+      "unchanged": true,
+      "testOnlyChange": false
+    },
+    {
+      "path": "services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/NaturalRequirementsOnlyProviderTest.java",
+      "before": "8f7b125c3c305010390192cf226eb7628118fc61330616db5c47ba5a3248f5b5",
+      "after": "d54f96d87158492950a343d5fddab1233f646fee946baebc931a6e7e7e42afd7",
+      "unchanged": false,
+      "testOnlyChange": true
+    },
+    {
+      "path": "services/api/src/test/resources/natural-requirements-only/legacy-request-hashes.json",
+      "before": "e5366ff278eaec1fd73e849f2aa198f9e5f5e3c859748c086b0ac9eae98c6d47",
+      "after": "e5366ff278eaec1fd73e849f2aa198f9e5f5e3c859748c086b0ac9eae98c6d47",
+      "unchanged": true,
+      "testOnlyChange": false
+    },
+    {
+      "path": "services/api/src/test/resources/natural-requirements-only/frozen51-q01.json",
+      "before": "70678b55a6ba79a03f4248e6bffd4eecafb145f8a8ee362f1c7c8988821b8a61",
+      "after": "70678b55a6ba79a03f4248e6bffd4eecafb145f8a8ee362f1c7c8988821b8a61",
+      "unchanged": true,
+      "testOnlyChange": false
+    }
+  ],
+  "frozenHashComparison": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptScopedInstructions.java",
+      "engineeringFrozenSha256": "aaa89ef1871340ca0f45370aad3dc2d70badf9d14e7d562bc658640d2c220358",
+      "currentSha256": "aaa89ef1871340ca0f45370aad3dc2d70badf9d14e7d562bc658640d2c220358",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRelationalInstructions.java",
+      "engineeringFrozenSha256": "5c1f2ea2f2b5e0a06f899915101caeb030e686c8ae45c53ce7aeca7686b38610",
+      "currentSha256": "5c1f2ea2f2b5e0a06f899915101caeb030e686c8ae45c53ce7aeca7686b38610",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptExecutionBoundaryInstructions.java",
+      "engineeringFrozenSha256": "733f54165a763ff6bbcc1aa261042321ad5fac5d82b6bc23887ce0fef3087e2f",
+      "currentSha256": "733f54165a763ff6bbcc1aa261042321ad5fac5d82b6bc23887ce0fef3087e2f",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptMaterialInstructions.java",
+      "engineeringFrozenSha256": "b62d469d1a8600d305ecd458f8943a1e3caa6b0973d8ecbf98aeedf422225178",
+      "currentSha256": "b62d469d1a8600d305ecd458f8943a1e3caa6b0973d8ecbf98aeedf422225178",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptPreparationRoutingInstructions.java",
+      "engineeringFrozenSha256": "07315a843d460be3918a2fcc5acf53e93bd0af9a169205cb99cd3161abc0826a",
+      "currentSha256": "07315a843d460be3918a2fcc5acf53e93bd0af9a169205cb99cd3161abc0826a",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptIntentCompletionInstructions.java",
+      "engineeringFrozenSha256": "342faa3d702b68de614c0489fbcc985152baae9d3d7b9abcbda302ccecadb33c",
+      "currentSha256": "342faa3d702b68de614c0489fbcc985152baae9d3d7b9abcbda302ccecadb33c",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptContentScopeInstructions.java",
+      "engineeringFrozenSha256": "ac0edd6753ef170ea046cc94446da3b163949b14515fbb7b8c64509dccad5a78",
+      "currentSha256": "ac0edd6753ef170ea046cc94446da3b163949b14515fbb7b8c64509dccad5a78",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptContentQualityInstructions.java",
+      "engineeringFrozenSha256": "9e69bc1469faa7ba0c061f1ed5c4c2055c55c02a14086c629dc2fdb753730824",
+      "currentSha256": "9e69bc1469faa7ba0c061f1ed5c4c2055c55c02a14086c629dc2fdb753730824",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptGroundedCompletionInstructions.java",
+      "engineeringFrozenSha256": "c11d2f75747f206925c97fec149117f11a814e187876111c07fb7eb711744bc5",
+      "currentSha256": "c11d2f75747f206925c97fec149117f11a814e187876111c07fb7eb711744bc5",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptMultidimensionalInstructions.java",
+      "engineeringFrozenSha256": "c0ad121af19389c9445cd10efd6372a69472d615c3c3e6feafac0bbdd931cb3a",
+      "currentSha256": "c0ad121af19389c9445cd10efd6372a69472d615c3c3e6feafac0bbdd931cb3a",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptContextualRewriteInstructions.java",
+      "engineeringFrozenSha256": "a1ab793728e33dce18c074a2425954e028037ac401f1030627ee0f9c62a47452",
+      "currentSha256": "a1ab793728e33dce18c074a2425954e028037ac401f1030627ee0f9c62a47452",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptUsefulDeliveryInstructions.java",
+      "engineeringFrozenSha256": "7c27f4db7f4da5339364e70374eaebd3ad343b9d2214d6d09aa7dd09a88755e7",
+      "currentSha256": "7c27f4db7f4da5339364e70374eaebd3ad343b9d2214d6d09aa7dd09a88755e7",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptEffectiveRequestInstructions.java",
+      "engineeringFrozenSha256": "8147b74cf05231e744b7c371e48b435953496ad4ec851b7b62e20903ee1583c9",
+      "currentSha256": "8147b74cf05231e744b7c371e48b435953496ad4ec851b7b62e20903ee1583c9",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptBoundedRepairInstructions.java",
+      "engineeringFrozenSha256": "cfd0839e7ba2f1e8e9e264e5ba5b16778c041b78895efec6dc2aba2e5c2f17a5",
+      "currentSha256": "cfd0839e7ba2f1e8e9e264e5ba5b16778c041b78895efec6dc2aba2e5c2f17a5",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRequirementRegistryInstructions.java",
+      "engineeringFrozenSha256": "1f8d038b6f479f2367f4131aa267873ded86382101fb968dc4465a195cdff303",
+      "currentSha256": "1f8d038b6f479f2367f4131aa267873ded86382101fb968dc4465a195cdff303",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptContextBoundaryRegistryInstructions.java",
+      "engineeringFrozenSha256": "c67fe8b6802733a0b04763028dbe319d86743246b8dfbfc0bfef1fc6c1419cfc",
+      "currentSha256": "c67fe8b6802733a0b04763028dbe319d86743246b8dfbfc0bfef1fc6c1419cfc",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRegistryDiagnosticInstructions.java",
+      "engineeringFrozenSha256": "26c4c28b05cce9a09d99cff127b8704c5ced22ba9def24bcf09cc19ac93abc03",
+      "currentSha256": "26c4c28b05cce9a09d99cff127b8704c5ced22ba9def24bcf09cc19ac93abc03",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptEffectiveRegistryInstructions.java",
+      "engineeringFrozenSha256": "f2486e1cd91dde07774f0a9e4b07d5db47df777f9dc0255e4650b539070b49b1",
+      "currentSha256": "f2486e1cd91dde07774f0a9e4b07d5db47df777f9dc0255e4650b539070b49b1",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRequirementRegistry.java",
+      "engineeringFrozenSha256": "b2fd03c7094cf82b17acfec09aef587b5b145ef0ba6cc1ed60c090eee4a6623d",
+      "currentSha256": "b2fd03c7094cf82b17acfec09aef587b5b145ef0ba6cc1ed60c090eee4a6623d",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskScope.java",
+      "engineeringFrozenSha256": "c14096cb829ce19cc7e3803e51795a1885a79f1dcecf126a5fbe459f5943d661",
+      "currentSha256": "c14096cb829ce19cc7e3803e51795a1885a79f1dcecf126a5fbe459f5943d661",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskUnderstanding.java",
+      "engineeringFrozenSha256": "a678e2bc200fe5104d15d74ed498ac9861c60d9ceb5f2d28ab25b952914347ac",
+      "currentSha256": "a678e2bc200fe5104d15d74ed498ac9861c60d9ceb5f2d28ab25b952914347ac",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskSource.java",
+      "engineeringFrozenSha256": "70f4e2c115b280e53552bd42e7a2506507817f3e43c9b01bb59e3f4d73e49c66",
+      "currentSha256": "70f4e2c115b280e53552bd42e7a2506507817f3e43c9b01bb59e3f4d73e49c66",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java",
+      "engineeringFrozenSha256": "baa8629fbef7cc74be93fa6d890ebd1209caaf2dc57312d8c972c4a87bda25c9",
+      "currentSha256": "baa8629fbef7cc74be93fa6d890ebd1209caaf2dc57312d8c972c4a87bda25c9",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/NaturalPromptDiagnosticFieldHandler.java",
+      "engineeringFrozenSha256": "15e0a090e5d95ccb862d8664877b9e0aca27c9100643824d5016424c60750078",
+      "currentSha256": "15e0a090e5d95ccb862d8664877b9e0aca27c9100643824d5016424c60750078",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/NaturalPromptRegistryDiagnosticFieldHandler.java",
+      "engineeringFrozenSha256": "8ef2a9f785160cfd13ccce98e5efc802abc5c7a11114a91d4843729d1a095067",
+      "currentSha256": "8ef2a9f785160cfd13ccce98e5efc802abc5c7a11114a91d4843729d1a095067",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/NaturalEffectiveRegistryProviderTest.java",
+      "engineeringFrozenSha256": "7f5adbcada88e830f6e156bba10b368d86fdc89ceb2dabf8484a8bd6c933756d",
+      "currentSha256": "7f5adbcada88e830f6e156bba10b368d86fdc89ceb2dabf8484a8bd6c933756d",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/NaturalContextBoundaryRegistryProviderTest.java",
+      "engineeringFrozenSha256": "1d0b5729f500d332fdebea70628b9a7cc38eedce3ffe3210d1a6432060b74a1d",
+      "currentSha256": "1d0b5729f500d332fdebea70628b9a7cc38eedce3ffe3210d1a6432060b74a1d",
+      "unchanged": true
+    },
+    {
+      "path": "services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/NaturalRequirementRegistryProviderTest.java",
+      "engineeringFrozenSha256": "66031577c37bfca58b5ee8785a58ca39fcc9aa34577709f09342bd2ed5d031e9",
+      "currentSha256": "66031577c37bfca58b5ee8785a58ca39fcc9aa34577709f09342bd2ed5d031e9",
+      "unchanged": true
+    }
+  ],
+  "logs": [
+    {
+      "path": "tmp/natural-useful-delivery-2026-10-28/registry53-success-path-tests.log",
+      "sha256": "6ece134d5a8f6165b46c98316b50b330bb8a399b222cc269ea5553f5b0c4c41b"
+    }
+  ],
+  "limitations": [
+    "MockRestServiceServer supplies explicit synthetic responses; this proves Provider routing, source-coverage repair and immutable input transmission, not real-model extraction or repair success.",
+    "Valid quote, coverage and inputReadiness are not semantic fidelity or downstream quality guarantees.",
+    "No model/API request, live stage, adoption or new evaluation framework is authorized or performed by this supplement.",
+    "The original engineering report and its before-test JUnit are retained; this report records the new test hash and40-test execution separately."
+  ]
+}

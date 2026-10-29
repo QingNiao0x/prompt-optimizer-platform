@@ -1,0 +1,24 @@
+{
+  "id": "C02_V51_EXEC_R1",
+  "phase": "EXECUTION",
+  "version": "51",
+  "caseId": "C02",
+  "status": 200,
+  "body": {
+    "requestId": "C02_V51_EXEC_R1",
+    "data": {
+      "content": "{\"files\":[{\"path\":\"src/views/records/dateRules.js\",\"content\":\"/** 两个录入入口共用日历日期校验，错误代码用于表单和导入行提示。 */\\nexport function validateSurveyDate(value, today) {\\n  if (typeof value !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(value)) return 'INVALID_DATE';\\n  const parsed = new Date(`${value}T00:00:00.000Z`);\\n  if (Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== value) return 'INVALID_DATE';\\n  if (value > today) return 'DATE_AFTER_TODAY';\\n  return null;\\n}\\n\"},{\"path\":\"src/views/records/create.js\",\"content\":\"import { validateSurveyDate } from './dateRules.js';\\n\\n/** 新增失败返回字段错误；成功时保留调用者给出的其他字段。 */\\nexport function createSurvey(input, today) {\\n  const error = validateSurveyDate(input.surveyDate, today);\\n  return error ? { ok: false, fieldErrors: { surveyDate: error } }\\n    : { ok: true, record: { ...input } };\\n}\\n\"},{\"path\":\"src/views/records/import.js\",\"content\":\"import { validateSurveyDate } from './dateRules.js';\\n\\n/** 导入保持按行部分成功；无效日期只影响所属行，不改变其他记录。 */\\nexport function importSurveys(rows, today) {\\n  const inserted = [];\\n  const errors = [];\\n  rows.forEach((record, index) => {\\n    const code = validateSurveyDate(record.surveyDate, today);\\n    if (code) errors.push({ row: index + 1, field: 'surveyDate', code });\\n    else inserted.push({ ...record });\\n  });\\n  return { inserted, errors };\\n}\\n\"}],\"summary\":\"在 validateSurveyDate 中保留原有格式与日历有效性校验，日期有效后与 today 比较，超过今天返回 DATE_AFTER_TODAY；createSurvey 仍以 fieldErrors.surveyDate 返回该代码，importSurveys 仍以按行 errors 的 code 返回，仅影响所属行。未运行测试。\"}",
+      "usage": {
+        "prompt_tokens": 1268,
+        "completion_tokens": 531,
+        "total_tokens": 1799,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 1268
+      },
+      "finishReason": "stop"
+    }
+  }
+}

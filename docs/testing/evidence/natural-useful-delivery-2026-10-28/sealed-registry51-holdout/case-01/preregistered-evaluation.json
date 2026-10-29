@@ -1,0 +1,106 @@
+{
+  "status": "preregistered_before_any_model_generation",
+  "model_visibility": "Do not pass this evaluation card or author review to any enhancement or work-execution model.",
+  "source_of_truth": "Raw prompt plus complete shared materials; evaluate the actual work, not a self-check label.",
+  "fairness": "The original prompt may already be sufficient and a raw baseline may succeed. Do not require expansion, a preferred design, exact wording or a particular format. Extra length alone is not benefit.",
+  "evidence": "For each material error preserve the work span and relevant source. Do not infer root cause solely from where an error first appears.",
+  "author_review": "Internal author consistency review only. No external expert review or actual user editing time is claimed.",
+  "user_repair_definition": "A substantive correction a user must make before real use: correcting a material fact or status, restoring a necessary part of the requested work, removing an unavailable or unsafe dependency, or designing the missing central content. Copy preferences and harmless variants do not automatically count.",
+  "comparison": "Report serious failures and usable delivery separately from style. No answer card is sent to the executor.",
+  "case_id": "registry51-holdout-01",
+  "deliverable": "A complete supporter-facing monthly progress letter that can be published in the existing supporter group.",
+  "requirement_gap_card": {
+    "already_specified": [
+      "读者为现有捐赠支持者，交付物为可直接发布的九月进展信。",
+      "完整材料给出范围、收支、发放、反馈、隐私和十月事项的事实状态。"
+    ],
+    "delegated_design": [
+      "信件的信息顺序、叙述衔接、表达方式，以及是否引用匿名原话或采用收支列表。"
+    ],
+    "necessary_synthesis": [
+      "区分九月专项与全年或机构总账，区分实际发放和未来复核。",
+      "将学生反馈作为主观结果表达，保留延迟及处理经过，不夸大成效。"
+    ],
+    "unknowns_not_blocking": [
+      "十月最终名单、第三校扩展和成果海报未定，按原状态表达或对非必要建议不展开。"
+    ],
+    "must_ask_before_delivery": [],
+    "note": "这些是执行时需要整合的要求，不预判原始提示词存在缺陷，也不保证增强必须扩写。"
+  },
+  "hard_condition_card": [
+    {
+      "id": "C1",
+      "condition": "交付完整支持者进展信，而不是写信建议、募捐倡议、后续调研方案或待填模板。"
+    },
+    {
+      "id": "C2",
+      "condition": "时间口径是二〇二六年九月；本月二十四名不同学生、每人三百元、实际已到账七千二百元，不能变成人次累计、四十八人或拟发放。可用自然概括，但不能改变关键人数和发放状态。"
+    },
+    {
+      "id": "C3",
+      "condition": "如呈现收支，九月专项收入一万元，补贴支出七千二百元，结余二千八百元，且结余不是团队全部余额；不能虚构专项管理费或说未来资金已充分保障。读者应能看清本月钱的去向。"
+    },
+    {
+      "id": "C4",
+      "condition": "对九月实际工作应如实交代发放比原定晚一周及收款信息复核这一处理经过，不把延迟转嫁为银行故障或学生过错。无需披露个人核对细节。"
+    },
+    {
+      "id": "C5",
+      "condition": "如谈效果，以二十二份反馈及其口径为依据，不能推成成绩、出勤的已验证改善，也不能把未回收的两份解释成满意或不满意。无需计算百分比或把全部细节逐字列出。"
+    },
+    {
+      "id": "C6",
+      "condition": "原有二十四名学生的十月复核已决定，但十月名单和发放未完成；第三所学校八名建议仍待评估，海报未定。不能升级为已批准、已覆盖或已发布。"
+    },
+    {
+      "id": "C7",
+      "condition": "不编造学生姓名、家庭故事、照片授权或个人信息。若使用给定原话，保持匿名及原意；不使用原话也可。"
+    },
+    {
+      "id": "C8",
+      "condition": "保持向已有支持者说明工作的范围，不把续捐、传播链接或公开孩子材料作为必要行动，不发明联系入口或机构数据。"
+    }
+  ],
+  "reasonable_design_variants": [
+    "可以是有称呼和落款的信，也可以是适合群发的连贯月度短文；不强求特定标题、段落数、表格或字数。",
+    "收支可用一句清楚的话或短列表表达，不强求整份财务报表，也不要求把志愿者自付费用量化。",
+    "可以采用匿名引语、概括学生主观反馈，或两者兼用；不必须编故事增加感染力。",
+    "可以不展开海报建议或第三校的全部细节；若讲到未来覆盖，必须保留相应状态。",
+    "真实温暖可以来自对学生、学校、支持者和志愿者的尊重，也可以采用克制的事实表达；不用指定抒情语句。"
+  ],
+  "substantive_user_modification_card": [
+    {
+      "type": "事实与核算修正",
+      "examples": [
+        "把七千二百元写成仍待发放",
+        "把二十四名学生算成四十八人",
+        "把专项结余说成团队所有现金",
+        "从本月专项支出里虚构人员费"
+      ]
+    },
+    {
+      "type": "证据与状态修正",
+      "examples": [
+        "声称学习成绩或出勤率显著提高",
+        "保证十月全部名单已确认并到账",
+        "宣布第三校新增八人已获批准",
+        "用银行故障解释发放延迟"
+      ]
+    },
+    {
+      "type": "交付恢复与权限修正",
+      "examples": [
+        "只输出信件提纲，正文让用户补齐",
+        "需要先取得未确认扩展结果才动笔",
+        "补造可识别学生的苦难故事",
+        "要求收信人通过新造链接续捐"
+      ]
+    }
+  ],
+  "quality_observations": [
+    "支持者能否一遍读懂本月实际工作与资金口径。",
+    "对延迟和有限反馈是否坦诚且有分寸，学生是否保持主体性。",
+    "内部记录能否转成自然信件，而非把材料逐条贴回。",
+    "不因更长、更多口号或更多标题而自动加分。"
+  ]
+}

@@ -16,10 +16,10 @@ export const LEGAL_LAST_UPDATED = '2026-10-27';
 export const LEGAL_CONTACT_EMAIL = '1767443348@qq.com';
 
 /**
- * ICP 备案编号。工信部 2026-10-21 通知的原文为「鲁ICP备2026063111号」，页面按该原文展示。
- * 审核日期只作配置说明，不单独显示。为空时页脚不渲染备案号；填写后链接至工信部备案管理系统。
+ * 网站 ICP 备案编号。腾讯云备案详情中的服务备案号为「鲁ICP备2026063111号-1」，页面按该编号展示。
+ * 审核通过日期为 2026-10-21，只作配置说明，不单独显示。为空时页脚不渲染备案号；填写后链接至工信部备案管理系统。
  */
-export const ICP_LICENSE_NUMBER = '鲁ICP备2026063111号';
+export const ICP_LICENSE_NUMBER = '鲁ICP备2026063111号-1';
 
 /** 工业和信息化部备案管理系统，备案编号必须链接到该地址供公众查询核对。 */
 export const MIIT_BEIAN_URL = 'https://beian.miit.gov.cn';

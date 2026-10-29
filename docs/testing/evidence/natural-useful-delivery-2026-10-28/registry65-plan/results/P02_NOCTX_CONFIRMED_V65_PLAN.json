@@ -1,0 +1,52 @@
+{
+  "id": "P02_NOCTX_CONFIRMED_V65_PLAN",
+  "phase": "PLAN",
+  "version": "65",
+  "caseId": "P02_NOCTX_CONFIRMED",
+  "status": 200,
+  "body": {
+    "requestId": "P02_NOCTX_CONFIRMED_V65_PLAN",
+    "data": {
+      "summary": "原定任务是在限定文件范围内为新增和导入功能增加调查时间限制（仅当日之前且不超过今日），并按需补充回归测试；唯一需用户确认的是今日是否允许填写，该选择直接决定校验边界与测试断言。",
+      "questions": [
+        {
+          "id": "q1",
+          "question": "调查时间是否允许填写今天（当日）？",
+          "hint": "该选择决定日期校验边界是“严格早于今日”还是“不晚于今日”，并影响 dateRules.js、create.js、import.js 的实现及 dateRules.spec.js 的测试断言。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "allow_today",
+              "label": "允许填写今天",
+              "description": "调查日期可为今日或更早日期，但不得晚于今日。",
+              "answer": "允许填写今天：校验条件为调查日期不晚于今日。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "before_today_only",
+              "label": "不允许填写今天",
+              "description": "调查日期必须严格早于今日，今日及未来日期均不可填写。",
+              "answer": "不允许填写今天：校验条件为调查日期严格早于今日。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "AUTO",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 6177,
+      "planId": "a25265fc-83c4-46b2-9302-496ca0fd5517",
+      "planningContext": null,
+      "expiresAt": "2026-10-28T20:58:47.931734800Z"
+    }
+  }
+}

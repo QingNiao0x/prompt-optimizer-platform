@@ -1,0 +1,113 @@
+{
+  "batch": "natural-useful-delivery-writer-thinking-ablation-2026-10-28",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 500,
+  "maximumNewActualCalls": 6,
+  "captureOnly": false,
+  "versions": [
+    "48"
+  ],
+  "candidateVersions": [
+    "48"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 32768,
+    "reviewMaxTokens": 0,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "45": [
+      "45"
+    ],
+    "46": [
+      "46"
+    ],
+    "47": [
+      "47"
+    ],
+    "48": [
+      "48"
+    ]
+  },
+  "phaseLimits": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 6,
+    "REVIEW": 0
+  },
+  "prerequisiteStages": [],
+  "allowedJobs": [
+    "Q01_V48_WRITER_OFF",
+    "Q01_V48_WRITER_ON",
+    "U02_V48_WRITER_OFF",
+    "U02_V48_WRITER_ON",
+    "U03_V48_WRITER_OFF",
+    "U03_V48_WRITER_ON"
+  ],
+  "experimentProfile": "WRITER_THINKING_ABLATION_V1",
+  "writerThinkingProfile": {
+    "name": "WRITER_THINKING_ABLATION_V1",
+    "purpose": "WRITER_THINKING_ABLATION",
+    "maximumActualCalls": 6,
+    "writerMaxTokens": 32768,
+    "readTimeoutSeconds": 300,
+    "runnerTimeoutMs": 360000,
+    "arms": {
+      "OFF": {
+        "thinking": "disabled",
+        "reasoningEffort": null
+      },
+      "ON": {
+        "thinking": "enabled",
+        "reasoningEffort": "high"
+      }
+    },
+    "permittedRequestDifferences": [
+      "max_tokens",
+      "thinking",
+      "reasoning_effort"
+    ],
+    "unchangedStages": [
+      "SCOPE_ANALYSIS",
+      "PLAN",
+      "DOWNSTREAM_EXECUTION"
+    ],
+    "protocolRepairsAllowed": false,
+    "qualityRetriesAllowed": false,
+    "actualWorkQualityEvidence": false,
+    "truncationPolicy": "Record length/timeout/empty content as incomplete delivery or capacity evidence; never treat it as a completed semantic comparison or retry it for quality.",
+    "writerSources": [
+      {
+        "caseId": "Q01",
+        "originalPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/writer-thinking-preparation/requests/Q01.json",
+        "sha256": "7a429b52871d2e1c75cec7f1d47d8952a0bbcc11574ecda7d3d96a7b5da816dd",
+        "snapshot": "writer-sources/Q01.json"
+      },
+      {
+        "caseId": "U02",
+        "originalPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/writer-thinking-preparation/requests/U02.json",
+        "sha256": "899873423065945d031186aaa56a5485a84bb4e1f4b68bf820f69011c5ee11aa",
+        "snapshot": "writer-sources/U02.json"
+      },
+      {
+        "caseId": "U03",
+        "originalPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/writer-thinking-preparation/requests/U03.json",
+        "sha256": "27e93947dee55aa239e2cafc242338442f911c612edc9dfc6ac6ac166b76a906",
+        "snapshot": "writer-sources/U03.json"
+      }
+    ]
+  },
+  "frozenBundleSha256": "8fcc1a3150b15675f6d80044474ff097b8f81c33be43bd2eb68b8b76d1e3d3f5",
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false
+}

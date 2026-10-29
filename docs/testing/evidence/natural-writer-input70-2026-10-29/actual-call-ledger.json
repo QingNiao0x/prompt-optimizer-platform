@@ -1,0 +1,590 @@
+{
+  "actualCalls": 44,
+  "authorizedMaximum": 48,
+  "remaining": 4,
+  "previousClosedTaskActual": 500,
+  "previousTaskReopened": false,
+  "phases": {
+    "GENERATION": 30,
+    "EXECUTION": 14
+  },
+  "stages": [
+    {
+      "stage": "final-regression",
+      "actualCalls": 4,
+      "closed": true,
+      "allJobsDelivered": false
+    },
+    {
+      "stage": "gallery-works",
+      "actualCalls": 2,
+      "closed": true,
+      "allJobsDelivered": true
+    },
+    {
+      "stage": "new-31",
+      "actualCalls": 4,
+      "closed": true,
+      "allJobsDelivered": false
+    },
+    {
+      "stage": "new-69",
+      "actualCalls": 5,
+      "closed": true,
+      "allJobsDelivered": false
+    },
+    {
+      "stage": "new-70",
+      "actualCalls": 0,
+      "closed": true,
+      "allJobsDelivered": false
+    },
+    {
+      "stage": "new-70-allocated",
+      "actualCalls": 7,
+      "closed": true,
+      "allJobsDelivered": true
+    },
+    {
+      "stage": "regression",
+      "actualCalls": 7,
+      "closed": true,
+      "allJobsDelivered": true
+    },
+    {
+      "stage": "workbench",
+      "actualCalls": 3,
+      "closed": true,
+      "allJobsDelivered": true
+    },
+    {
+      "stage": "works",
+      "actualCalls": 12,
+      "closed": true,
+      "allJobsDelivered": true
+    }
+  ],
+  "jobs": [
+    {
+      "stage": "final-regression",
+      "id": "R52-HO-A_V70_GEN",
+      "caseId": "R52-HO-A",
+      "version": "70",
+      "phase": "GENERATION",
+      "actualCalls": 4,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 193369,
+      "usage": {
+        "prompt_tokens": 14641,
+        "completion_tokens": 36736,
+        "total_tokens": 51377
+      },
+      "completedStages": [
+        "REQUIREMENT_PREPARATION",
+        "BODY_GENERATION",
+        "RECORD_LINKING"
+      ]
+    },
+    {
+      "stage": "final-regression",
+      "id": "P02_UI_V70_GEN",
+      "caseId": "P02_UI",
+      "version": "70",
+      "phase": "GENERATION",
+      "actualCalls": 0,
+      "status": null,
+      "error": null,
+      "interpretation": "NOT_SENT_TO_MODEL",
+      "upstreamElapsedMs": 0,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "gallery-works",
+      "id": "R52-HO-A_V70_EXEC_R1",
+      "caseId": "R52-HO-A",
+      "version": "70",
+      "phase": "EXECUTION",
+      "actualCalls": 1,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 17184,
+      "usage": {
+        "prompt_tokens": 1655,
+        "completion_tokens": 2256,
+        "total_tokens": 3911
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "gallery-works",
+      "id": "R52-HO-A_V70_EXEC_R2",
+      "caseId": "R52-HO-A",
+      "version": "70",
+      "phase": "EXECUTION",
+      "actualCalls": 1,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 29502,
+      "usage": {
+        "prompt_tokens": 1655,
+        "completion_tokens": 3730,
+        "total_tokens": 5385
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "new-31",
+      "id": "W70-N1_V31_GEN",
+      "caseId": "W70-N1",
+      "version": "31",
+      "phase": "GENERATION",
+      "actualCalls": 2,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 8334,
+      "usage": {
+        "prompt_tokens": 3514,
+        "completion_tokens": 1778,
+        "total_tokens": 5292
+      },
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ]
+    },
+    {
+      "stage": "new-31",
+      "id": "W70-N2_V31_GEN",
+      "caseId": "W70-N2",
+      "version": "31",
+      "phase": "GENERATION",
+      "actualCalls": 2,
+      "status": 502,
+      "error": "RESULT_INVALID",
+      "interpretation": "FAILED_DELIVERY",
+      "upstreamElapsedMs": 3888,
+      "usage": {
+        "prompt_tokens": 2627,
+        "completion_tokens": 615,
+        "total_tokens": 3242
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "new-69",
+      "id": "W70-N1_V69_GEN",
+      "caseId": "W70-N1",
+      "version": "69",
+      "phase": "GENERATION",
+      "actualCalls": 3,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 90983,
+      "usage": {
+        "prompt_tokens": 10329,
+        "completion_tokens": 16567,
+        "total_tokens": 26896
+      },
+      "completedStages": [
+        "REQUIREMENT_PREPARATION",
+        "BODY_GENERATION",
+        "RECORD_LINKING"
+      ]
+    },
+    {
+      "stage": "new-69",
+      "id": "W70-N2_V69_GEN",
+      "caseId": "W70-N2",
+      "version": "69",
+      "phase": "GENERATION",
+      "actualCalls": 2,
+      "status": 500,
+      "error": "INTERNAL_ERROR",
+      "interpretation": "FAILED_DELIVERY",
+      "upstreamElapsedMs": 78507,
+      "usage": {
+        "prompt_tokens": 4647,
+        "completion_tokens": 15868,
+        "total_tokens": 20515
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "new-70",
+      "id": "W70-N1_V70_GEN",
+      "caseId": "W70-N1",
+      "version": "70",
+      "phase": "GENERATION",
+      "actualCalls": 0,
+      "status": null,
+      "error": null,
+      "interpretation": "NOT_SENT_TO_MODEL",
+      "upstreamElapsedMs": 0,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "new-70",
+      "id": "W70-N2_V70_GEN",
+      "caseId": "W70-N2",
+      "version": "70",
+      "phase": "GENERATION",
+      "actualCalls": 0,
+      "status": null,
+      "error": null,
+      "interpretation": "NOT_SENT_TO_MODEL",
+      "upstreamElapsedMs": 0,
+      "usage": {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "new-70-allocated",
+      "id": "W70-N1_V70_GEN",
+      "caseId": "W70-N1",
+      "version": "70",
+      "phase": "GENERATION",
+      "actualCalls": 4,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 109122,
+      "usage": {
+        "prompt_tokens": 11945,
+        "completion_tokens": 19546,
+        "total_tokens": 31491
+      },
+      "completedStages": [
+        "REQUIREMENT_PREPARATION",
+        "BODY_GENERATION",
+        "RECORD_LINKING"
+      ]
+    },
+    {
+      "stage": "new-70-allocated",
+      "id": "W70-N2_V70_GEN",
+      "caseId": "W70-N2",
+      "version": "70",
+      "phase": "GENERATION",
+      "actualCalls": 3,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 59451,
+      "usage": {
+        "prompt_tokens": 8103,
+        "completion_tokens": 12440,
+        "total_tokens": 20543
+      },
+      "completedStages": [
+        "REQUIREMENT_PREPARATION",
+        "BODY_GENERATION",
+        "RECORD_LINKING"
+      ]
+    },
+    {
+      "stage": "regression",
+      "id": "P02_DIRECT_V70_GEN",
+      "caseId": "P02_DIRECT",
+      "version": "70",
+      "phase": "GENERATION",
+      "actualCalls": 4,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 139168,
+      "usage": {
+        "prompt_tokens": 12983,
+        "completion_tokens": 25384,
+        "total_tokens": 38367
+      },
+      "completedStages": [
+        "REQUIREMENT_PREPARATION",
+        "BODY_GENERATION",
+        "RECORD_LINKING"
+      ]
+    },
+    {
+      "stage": "regression",
+      "id": "Q01_V70_GEN",
+      "caseId": "Q01",
+      "version": "70",
+      "phase": "GENERATION",
+      "actualCalls": 3,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 29121,
+      "usage": {
+        "prompt_tokens": 4503,
+        "completion_tokens": 4123,
+        "total_tokens": 8626
+      },
+      "completedStages": [
+        "REQUIREMENT_PREPARATION",
+        "BODY_GENERATION",
+        "RECORD_LINKING"
+      ]
+    },
+    {
+      "stage": "workbench",
+      "id": "P02_UI_REAL_V70_GEN",
+      "caseId": "P02_UI",
+      "version": "70",
+      "phase": "GENERATION",
+      "actualCalls": 3,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 100164,
+      "usage": {
+        "prompt_tokens": 9674,
+        "completion_tokens": 17576,
+        "total_tokens": 27250
+      },
+      "completedStages": [
+        "REQUIREMENT_PREPARATION",
+        "BODY_GENERATION",
+        "RECORD_LINKING"
+      ]
+    },
+    {
+      "stage": "works",
+      "id": "W70-N1_V70_EXEC_R1",
+      "caseId": "W70-N1",
+      "version": "70",
+      "phase": "EXECUTION",
+      "actualCalls": 1,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 2260,
+      "usage": {
+        "prompt_tokens": 648,
+        "completion_tokens": 140,
+        "total_tokens": 788
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "works",
+      "id": "W70-N2_VORIGINAL_EXEC_R2",
+      "caseId": "W70-N2",
+      "version": "ORIGINAL",
+      "phase": "EXECUTION",
+      "actualCalls": 1,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 4466,
+      "usage": {
+        "prompt_tokens": 459,
+        "completion_tokens": 1116,
+        "total_tokens": 1575
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "works",
+      "id": "W70-N1_VORIGINAL_EXEC_R1",
+      "caseId": "W70-N1",
+      "version": "ORIGINAL",
+      "phase": "EXECUTION",
+      "actualCalls": 1,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 1783,
+      "usage": {
+        "prompt_tokens": 392,
+        "completion_tokens": 183,
+        "total_tokens": 575
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "works",
+      "id": "W70-N2_VORIGINAL_EXEC_R1",
+      "caseId": "W70-N2",
+      "version": "ORIGINAL",
+      "phase": "EXECUTION",
+      "actualCalls": 1,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 5522,
+      "usage": {
+        "prompt_tokens": 459,
+        "completion_tokens": 1150,
+        "total_tokens": 1609
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "works",
+      "id": "W70-N1_V69_EXEC_R1",
+      "caseId": "W70-N1",
+      "version": "69",
+      "phase": "EXECUTION",
+      "actualCalls": 1,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 1538,
+      "usage": {
+        "prompt_tokens": 692,
+        "completion_tokens": 122,
+        "total_tokens": 814
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "works",
+      "id": "W70-N2_V70_EXEC_R2",
+      "caseId": "W70-N2",
+      "version": "70",
+      "phase": "EXECUTION",
+      "actualCalls": 1,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 5840,
+      "usage": {
+        "prompt_tokens": 880,
+        "completion_tokens": 1571,
+        "total_tokens": 2451
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "works",
+      "id": "W70-N2_V70_EXEC_R1",
+      "caseId": "W70-N2",
+      "version": "70",
+      "phase": "EXECUTION",
+      "actualCalls": 1,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 4616,
+      "usage": {
+        "prompt_tokens": 880,
+        "completion_tokens": 1229,
+        "total_tokens": 2109
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "works",
+      "id": "W70-N1_V31_EXEC_R1",
+      "caseId": "W70-N1",
+      "version": "31",
+      "phase": "EXECUTION",
+      "actualCalls": 1,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 1371,
+      "usage": {
+        "prompt_tokens": 662,
+        "completion_tokens": 133,
+        "total_tokens": 795
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "works",
+      "id": "W70-N1_VORIGINAL_EXEC_R2",
+      "caseId": "W70-N1",
+      "version": "ORIGINAL",
+      "phase": "EXECUTION",
+      "actualCalls": 1,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 1471,
+      "usage": {
+        "prompt_tokens": 392,
+        "completion_tokens": 144,
+        "total_tokens": 536
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "works",
+      "id": "W70-N1_V70_EXEC_R2",
+      "caseId": "W70-N1",
+      "version": "70",
+      "phase": "EXECUTION",
+      "actualCalls": 1,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 1239,
+      "usage": {
+        "prompt_tokens": 648,
+        "completion_tokens": 145,
+        "total_tokens": 793
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "works",
+      "id": "W70-N1_V31_EXEC_R2",
+      "caseId": "W70-N1",
+      "version": "31",
+      "phase": "EXECUTION",
+      "actualCalls": 1,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 1587,
+      "usage": {
+        "prompt_tokens": 662,
+        "completion_tokens": 123,
+        "total_tokens": 785
+      },
+      "completedStages": null
+    },
+    {
+      "stage": "works",
+      "id": "W70-N1_V69_EXEC_R2",
+      "caseId": "W70-N1",
+      "version": "69",
+      "phase": "EXECUTION",
+      "actualCalls": 1,
+      "status": 200,
+      "error": null,
+      "interpretation": "DELIVERED",
+      "upstreamElapsedMs": 1428,
+      "usage": {
+        "prompt_tokens": 692,
+        "completion_tokens": 124,
+        "total_tokens": 816
+      },
+      "completedStages": null
+    }
+  ],
+  "allExecutedStagesClosed": true,
+  "all12FrozenSourceHashesStillEqual": true,
+  "actualTokenUsageNotMonetaryPrice": true,
+  "workQualityNotInferredFromTokensOrHttpStatus": true
+}

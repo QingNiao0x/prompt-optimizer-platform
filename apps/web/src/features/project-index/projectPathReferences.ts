@@ -1,11 +1,13 @@
-/** 明确的 @路径用于目标召回；引用文字不再拆成 src、扩展名等普通任务词。 */
+/** 路径引用用于精确目标召回；普通文件候选须索引命中，引用文字不拆成路径片段或函数名。 */
 export interface ProjectPathReference {
   path: string;
   start: number;
   end: number;
+  /** 未带@的完整相对文件路径只在当前索引实际命中时成为明确目标。 */
+  indexedFileCandidate?: true;
 }
 
-/** 只识别显式路径语法；邮箱中的 @ 不具备路径引用边界。 */
+/** @支持文件和目录；普通相对文件路径只识别完整文件名，不将职业/行业或URL识别为项目路径。 */
 export const extractProjectPathReferences = (query: string): ProjectPathReference[] => {
   const result: ProjectPathReference[] = [];
   const pattern = /(?<![A-Za-z0-9_@])@(?:`([^`]+)`|"([^"]+)"|'([^']+)'|([^\s,，。;；:：!?！？()（）\[\]【】<>"'`]+))/g;
@@ -14,7 +16,14 @@ export const extractProjectPathReferences = (query: string): ProjectPathReferenc
     if (!path || (!path.includes('/') && !/\.[A-Za-z0-9]+$/.test(path))) continue;
     result.push({ path, start: match.index, end: match.index + match[0].length });
   }
-  return result;
+  const files = /(?<![\p{L}\p{N}_$./\\:@-])(?:[\p{L}\p{N}_$.-]+[\\/])+[\p{L}\p{N}_$.-]+\.[A-Za-z][A-Za-z0-9]{0,15}(?![\p{L}\p{N}_$./\\-])/gu;
+  for (const match of query.matchAll(files)) {
+    const start = match.index, end = start + match[0].length;
+    if (result.some(reference => start < reference.end && end > reference.start)) continue;
+    const path = normalizeReferencedPath(match[0]);
+    if (path) result.push({ path, start, end, indexedFileCandidate: true });
+  }
+  return result.sort((left, right) => left.start - right.start);
 };
 
 /** 在已选项目内解析相对路径；只去除真实 rootName，不猜测任意项目名前缀。 */

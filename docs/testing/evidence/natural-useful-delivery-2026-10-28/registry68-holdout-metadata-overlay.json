@@ -1,0 +1,36 @@
+{
+  "candidate": "68",
+  "recordedBeforeTopicAccessAt": "2026-10-28T22:00:49.002Z",
+  "sourceManifestSha256": "7e5fe9852f754016f190d3247d7875341a9b3175c417d5fa17208984ec7eb726",
+  "sourceSealSha256": "50c30a0e2814b393d9f865e79573e89738804ccb221a6f3b9044ec34e0c764ea",
+  "candidateFreezeSha256": "2af265f38576b35ec7f14d4c506f3991d408ba8db184f32be843dcc7eb5d581f",
+  "originalPayloadUnchanged": true,
+  "authorStartUtc": "2026-10-27T23:31:59Z",
+  "authorEndUtc": "2026-10-27T23:36:52Z",
+  "caseCount": 2,
+  "caseTopicsRead": false,
+  "accessState": "SEALED_UNTIL_68_REGRESSION_AND_NORMAL_BOUNDARIES_PASS",
+  "originalCandidateFailuresRetained": true,
+  "candidateArm": "68",
+  "baselineArms": [
+    "ORIGINAL",
+    "31"
+  ],
+  "modelMetadataCorrection": "Official native deepseek-flash; previous invalid alias corrected only in runtime metadata",
+  "generationProfile": {
+    "temperature": 0.2,
+    "maxTokens": 32768,
+    "thinking": "enabled",
+    "reasoningEffort": "high"
+  },
+  "executionProfile": {
+    "temperature": 0.2,
+    "maxTokens": 8192,
+    "thinking": "disabled"
+  },
+  "executionBudgetRule": "Common8192 for all arms before topic access; explicit user length and format untouched.",
+  "internalHoldoutNotExternalExpert": true,
+  "holdoutAuthoredBefore67Freeze": true,
+  "gateExplanation": "Use original user workflow: failed-case replay, normal boundaries, freeze then unseen topics and same-info repeated works. No requirement to win an old development work before opening, but original cross-task quality adoption gate remains unchanged.",
+  "old66FailureRetained": true
+}

@@ -1,0 +1,73 @@
+{
+  "reviewedAt": "2026-10-27T18:52:14.556Z",
+  "scope": "允许U01/U03同信息作品；U02候选未交付、整题不做付费作品；47可靠性门失败不得采用",
+  "status": "PARTIAL_FAILURE",
+  "cases": [
+    {
+      "id": "U01",
+      "versions": {
+        "31": {
+          "allow": true,
+          "reason": "活动招募目标、时地、无需报名、范围、志愿者职责、无售卖及带回规则保留；可直接生成群通知，不附源码或补材料问卷。",
+          "status": 200,
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ]
+        },
+        "47": {
+          "allow": true,
+          "reason": "活动招募目标、时地、无需报名、范围、志愿者职责、无售卖及带回规则保留；可直接生成群通知，不附源码或补材料问卷。",
+          "status": 200,
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ]
+        }
+      }
+    },
+    {
+      "id": "U02",
+      "versions": {
+        "31": {
+          "allow": true,
+          "reason": "31完整生成含现有预算、人手、时段、组织和记录要求的可执行活动方案提示词；候选失败导致本题整体不进入对照作品。",
+          "status": 200,
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ]
+        },
+        "47": {
+          "allow": false,
+          "reason": "最终RESULT_INVALID，用户未获得合法增强结果；保留全部失败，不继续该候选付费作品。",
+          "status": 502,
+          "completedStages": []
+        }
+      }
+    },
+    {
+      "id": "U03",
+      "versions": {
+        "31": {
+          "allow": true,
+          "reason": "分析卡点与可落地调整为主体，保留两名志愿者、固定时段、300元、工具软件收费范围；要求反馈与实际记录对应、说明建议执行和取舍。未代表全部居民或补造数值。",
+          "status": 200,
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ]
+        },
+        "47": {
+          "allow": true,
+          "reason": "分析卡点与可落地调整为主体，保留两名志愿者、固定时段、300元、工具软件收费范围；要求反馈与实际记录对应、说明建议执行和取舍。未代表全部居民或补造数值。",
+          "status": 200,
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ]
+        }
+      }
+    }
+  ]
+}

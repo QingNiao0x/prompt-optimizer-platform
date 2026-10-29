@@ -1,0 +1,774 @@
+{
+  "schemaVersion": 1,
+  "state": "FROZEN_BEFORE_UNBLINDING",
+  "reviewType": "INTERNAL_AI_BLIND_CONTENT_REVIEW",
+  "scope": "仅本轮Q01/V03的10份匿名首次完整作品及8个预设配对。",
+  "disclosure": {
+    "reviewer": "内部AI审阅者；没有真人专家或真实用户编辑参与。",
+    "priorExposure": "本审阅者在读作品前仅读过冻结criteria.json与anonymous-review-plan.json；未读产品生成指导、版本映射、coordinator-key、jobs或其他case/results。冻结判据含候选标签，但本次未取得标签与W编号的对应关系。",
+    "toolsAndSources": "仅只读匿名要求、共同材料、状态与原样作品；没有调用外部模型，没有联网补充资料，没有修改作品正文。",
+    "humanReviewPending": true,
+    "timeEstimates": "未测量真人修改耗时；仅列必要修改内容，不把条数换算成实际分钟。"
+  },
+  "method": {
+    "order": "先按W01至W10逐份记录五维判断与原句，再填写P01至P08。未根据任何版本预期选胜者。",
+    "executionCompleteness": "匿名状态文件10份均DELIVERED、workAvailable=true、apiFinishReason=stop、upstreamFinishReason=stop。协调者通知已用--check核对10份首次结果完整且同题同材料同参数；本审阅者未读取被隐藏的生成参数/原始jobs。完整交付状态不等于语义通过。",
+    "criterionStatuses": [
+      "PASS",
+      "PASS_WITH_MINOR_NOTE",
+      "MATERIAL_EDIT_NEEDED",
+      "UNRESOLVED"
+    ],
+    "seriousFailureRule": "只在改变任务、缺少必要回答、关键结论误用/无依据确定化或实质误导达到冻结严重标准时判SERIOUS_FAILURE。",
+    "localizedCorrections": "涉及可复制结论的百分比分母必须与材料一致。正文中曾有准确说明会降低严重程度，但不能使另一处不同分母的表述自动准确。只要求局部事实修正，不将其升级为任务交付严重失败。",
+    "comparisons": "TIE可包含双方均有局部必要修改的情形；只有能指认实质交付或必要编辑差异时判优。长度、表格数量、标题组织及更多核查句不单独产生胜负。",
+    "boundaries": "只用共同快照检查Q01引用，不宣称执行模型已自主检索；V03没有设备事实或外部技术实测，领域细节有疑义则保留待核实。"
+  },
+  "works": [
+    {
+      "workId": "W01",
+      "caseId": "V03",
+      "outcome": "DIRECTLY_USABLE",
+      "criterionAssessments": [
+        {
+          "criterionId": "ANSWER",
+          "status": "PASS",
+          "quote": "照片里记录的是颜色数值，屏幕显示的是物理光，中间要经过色彩空间解释、屏幕校准、显示设置、软件处理和观看环境等多道环节",
+          "reason": "直接解释照片到显示再到感知的多个合理原因，随后给出可执行排查；没有转成索要资料或购买设备。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        },
+        {
+          "criterionId": "ACCURACY",
+          "status": "PASS_WITH_MINOR_NOTE",
+          "quote": "如果软件忽略标记，或屏幕没有正确配置文件，颜色就会偏。",
+          "reason": "色彩管理、出厂状态、显示模式及环境被作为可能原因，没有假定用户设备实况。未发现本任务必改的明确关键错误；个别设备模式名称适用范围留作技术核实。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        },
+        {
+          "criterionId": "FOCUS",
+          "status": "PASS",
+          "quote": "把两台设备亮度调到相近，关闭夜间/护眼/原彩/鲜艳模式，在同一房间、相近角度下看同一张原图。",
+          "reason": "原因解释和排查均围绕原问，原图、设置和环境先统一，未让缺资料阻断交付。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        },
+        {
+          "criterionId": "READABLE",
+          "status": "PASS_WITH_MINOR_NOTE",
+          "quote": "色域覆盖（sRGB、DCI-P3、Adobe RGB）",
+          "reason": "存在少量术语，但首段链路和首条排查可直接理解。是否再解释ICC、伽马属于普通读者适配的可选改进，不构成缺少可操作建议。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        },
+        {
+          "criterionId": "EDIT_BURDEN",
+          "status": "PASS",
+          "quote": "没有校准的普通屏幕之间出现一定色差是正常的；若用于修图、打印或电商对色，应以校准过的屏幕和标准光源为准。",
+          "reason": "不要求普通用户先专业校色即可开始排查；可直接交付。未发现必须删除、更正或补充的实质内容。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        }
+      ],
+      "findings": [],
+      "requiredEdits": [],
+      "optionalPreferences": [
+        "可为ICC/伽马补一小句解释，或把系统配置检查标为进阶项；不作为配对判优依据。"
+      ],
+      "unresolvedChecks": [
+        {
+          "quote": "手机上的“原彩显示”“自然色彩”也会随环境光调整白平衡。",
+          "check": "“自然色彩”具体名称在不同厂商可能指固定模式或环境自适应功能；未提供设备且未联网，不能把所有同名模式一概而论。若公开发表，宜核实或改成“支持环境自适应的显示功能”。",
+          "usedForWinner": false
+        }
+      ]
+    },
+    {
+      "workId": "W02",
+      "caseId": "V03",
+      "outcome": "NEEDS_MATERIAL_EDIT",
+      "criterionAssessments": [
+        {
+          "criterionId": "ANSWER",
+          "status": "PASS",
+          "quote": "照片本身只记录“颜色数值”，最终呈现成什么颜色，要经过屏幕硬件、设备设置、查看软件和观看环境等多道“翻译”",
+          "reason": "主要合理原因齐全，并提供统一模式、关闭护眼、统一亮度及换软件等普通用户操作；未将缺资料作为开始前提。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        },
+        {
+          "criterionId": "ACCURACY",
+          "status": "MATERIAL_EDIT_NEEDED",
+          "quote": "多台设备、多个软件下同一张照片都严重偏色，且照片在其他正常设备上也异常；",
+          "reason": "将这一现象列入“可能需要专业校色或送修”缺少因果区分：跨正常设备共同异常也可能来自文件/导出处理，不能据此把排查指向屏幕校色。后文虽称硬件异常才送修，仍需修正该分支。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        },
+        {
+          "criterionId": "FOCUS",
+          "status": "PASS_WITH_MINOR_NOTE",
+          "quote": "按下面顺序做，先判断差异范围，再逐步排除设置和软件因素。",
+          "reason": "七步均围绕原问；逐项目的和预期效果有重复，但未取代实际解释或操作建议，不按长度判失败。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        },
+        {
+          "criterionId": "READABLE",
+          "status": "PASS",
+          "quote": "色域可以理解为屏幕“能显示的颜色范围”。",
+          "reason": "术语有解释，步骤有具体操作与预期现象，普通用户能开始排查。较多小标题属于合理组织。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        },
+        {
+          "criterionId": "EDIT_BURDEN",
+          "status": "MATERIAL_EDIT_NEEDED",
+          "quote": "这类情况可考虑请专业人员做屏幕校色；若伴随硬件异常，则可能需要送修。",
+          "reason": "须把多设备同图异常与单屏硬件异常拆开；其他大部分内容可保留。未估算真人编辑耗时。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        }
+      ],
+      "findings": [
+        {
+          "id": "W02-F1",
+          "criterionId": "ACCURACY",
+          "severity": "materialEdit",
+          "quote": "多台设备、多个软件下同一张照片都严重偏色，且照片在其他正常设备上也异常；",
+          "reason": "这个条件本身不能支持屏幕校色或硬件检查，可能把照片/导出问题错误归入显示器处理。",
+          "sourceReference": "作品“哪些情况可能需要专业校色或送修”段；V03未提供设备或照片材料。",
+          "necessaryEdit": "从校色/送修条件中移除此项，改为：若原图在多台已知正常设备和不同软件均异常，先检查原图或导出/传输版本，再用其他已知正常照片交叉验证；单台屏幕持续异常或出现条纹、局部色块再考虑校色/检修。"
+        }
+      ],
+      "requiredEdits": [
+        "W02-F1"
+      ],
+      "optionalPreferences": [
+        "可合并若干重复的“目的/预期效果”，但非必要修正，不能单凭这一点判输。"
+      ],
+      "unresolvedChecks": [
+        {
+          "quote": "在暖黄灯光下看屏幕，白色会显得偏黄；",
+          "check": "环境光反射、视觉适应和设备自动白平衡的作用可能不同；材料没有给出实验条件，不据此断言偏色必定朝某一方向。W09出现相反方向，也不据此直接选择一方。",
+          "usedForWinner": false
+        }
+      ]
+    },
+    {
+      "workId": "W03",
+      "caseId": "Q01",
+      "outcome": "DIRECTLY_USABLE",
+      "criterionAssessments": [
+        {
+          "criterionId": "ANSWER",
+          "status": "PASS",
+          "quote": "从组织采用看：科技、媒体电信、保险报告领先",
+          "reason": "具体回答了职业相关高使用方向和行业采用领先者；没有只讲方法或索要材料。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "ACCURACY",
+          "status": "PASS",
+          "quote": "51%的职业开发者每天使用AI工具；",
+          "reason": "51%职业开发者每日、84%受访者使用或计划使用、88%受访者报告所在组织的分母均与快照一致；S1明确是平台任务分布，未编统一全球名次。",
+          "sourceReference": "anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "FOCUS",
+          "status": "PASS",
+          "quote": "下面按材料能支持的“领先者”分别说明。",
+          "reason": "限制之后立即交付来源支持的具体类别、数字和行业；没有让全球覆盖局限变成不回答。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "READABLE",
+          "status": "PASS",
+          "quote": "若看AI平台上的任务/对话分布",
+          "reason": "按任务、开发者、组织分开，结尾简洁重述，普通查询用户可理解不同衡量对象。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "EDIT_BURDEN",
+          "status": "PASS",
+          "quote": "88%受访者称所在组织至少一项业务职能经常使用AI",
+          "reason": "可直接使用。末句“但不存在一个可直接引用的……”在全文“根据提供材料”的范围下可理解；若摘录到别处，宜保留该范围。",
+          "sourceReference": "anonymous/materials/Q01.json#S3"
+        }
+      ],
+      "findings": [],
+      "requiredEdits": [],
+      "optionalPreferences": [
+        "若单独转述末句，可改为“本次材料未提供统一全球排名”；这是脱离上下文引用的精确化建议，不在全文语境下新增实质缺陷。"
+      ],
+      "unresolvedChecks": []
+    },
+    {
+      "workId": "W04",
+      "caseId": "Q01",
+      "outcome": "NEEDS_MATERIAL_EDIT",
+      "criterionAssessments": [
+        {
+          "criterionId": "ANSWER",
+          "status": "PASS",
+          "quote": "职业/任务层面：在Claude.ai对话中，计算机与数学类任务占比最高（37.2%）",
+          "reason": "开头给出职业/任务、开发者和行业三个有边界答案，主体有依据，未将原问降级为研究方案。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "ACCURACY",
+          "status": "MATERIAL_EDIT_NEEDED",
+          "quote": "按组织调查，88%受访组织至少一项职能经常使用AI",
+          "reason": "正文引用正确，但最后建议用户直接采用的表述把“受访者报告所在组织”的分母缩写成“受访组织”；快照未说明一组织一受访者或相同权重，需恢复来源口径。属于局部更正，非全球员工率误用或严重失败。",
+          "sourceReference": "anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "FOCUS",
+          "status": "PASS_WITH_MINOR_NOTE",
+          "quote": "因此，若问“使用人数最多”，材料没有全球职业人数统计；",
+          "reason": "虽然口径、时间、覆盖有重复，关键答案已在开头给出，相关说明没有阻断交付；重复可压缩但非必须。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "READABLE",
+          "status": "PASS",
+          "quote": "| 来源 | 衡量对象 | 领先者 | 不能直接比较的原因 |",
+          "reason": "分来源和对照表帮助区分职业、任务与组织，表格/章节的选择合理，不把格式多当优势。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "EDIT_BURDEN",
+          "status": "MATERIAL_EDIT_NEEDED",
+          "quote": "88%受访组织至少一项职能经常使用AI",
+          "reason": "只需在建议引用句中恢复“88%受访者称所在组织……”；不必重写已有答案或补采。",
+          "sourceReference": "anonymous/materials/Q01.json#S3"
+        }
+      ],
+      "findings": [
+        {
+          "id": "W04-F1",
+          "criterionId": "ACCURACY",
+          "severity": "materialEdit",
+          "quote": "按组织调查，88%受访组织至少一项职能经常使用AI",
+          "reason": "将受访者报告比例写成受访组织比例；正文正确可减轻但不消除末句的分母偏移。",
+          "sourceReference": "anonymous/materials/Q01.json#S3",
+          "necessaryEdit": "把该句改成“按组织调查，88%受访者称其所在组织至少一项职能经常使用AI”。"
+        }
+      ],
+      "requiredEdits": [
+        "W04-F1"
+      ],
+      "optionalPreferences": [
+        "可减少时间/覆盖/限制的重复说明，但内容仍直接回答问题，不计实质胜负。"
+      ],
+      "unresolvedChecks": []
+    },
+    {
+      "workId": "W05",
+      "caseId": "Q01",
+      "outcome": "NEEDS_MATERIAL_EDIT",
+      "criterionAssessments": [
+        {
+          "criterionId": "ANSWER",
+          "status": "PASS",
+          "quote": "若指“平台任务占比最高”，计算机与数学类居首；若指“组织采用率领先”，科技、媒体电信和保险领先",
+          "reason": "提供可用具体答案，同时拒绝虚构统一全球榜单；不因材料有限停止整个查询交付。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "ACCURACY",
+          "status": "MATERIAL_EDIT_NEEDED",
+          "quote": "职业开发者中51%每天使用AI工具，84%正在使用或计划使用；",
+          "reason": "开头把51%与84%并列挂在“职业开发者中”之下，后者应是全体受访者；同一开头另将S3写成受访组织比例。表格内正确口径不能消除前置摘要的歧义。",
+          "sourceReference": "anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "FOCUS",
+          "status": "PASS_WITH_MINOR_NOTE",
+          "quote": "本次材料是公开来源快照，不代表执行模型具备自主联网检索或覆盖全球全部来源",
+          "reason": "限制真实，但“执行模型具备自主联网”属于实现说明，对普通查询用户可删。正文仍有实质结论，不因这一段或篇幅本身判交付失败。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "READABLE",
+          "status": "PASS",
+          "quote": "| 衡量方式 | 材料中的相关结果 | 来源与时间 | 口径与局限 |",
+          "reason": "前置摘要、表格及口径解释可读；开头统计主体压缩需要事实层面修正。",
+          "sourceReference": "anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "EDIT_BURDEN",
+          "status": "MATERIAL_EDIT_NEEDED",
+          "quote": "88%受访组织称至少一项业务职能经常使用AI",
+          "reason": "必须纠正摘要中S2、S3的主体，其他内容可保留；这不是仅按表述长短或个人风格要求删改。",
+          "sourceReference": "anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        }
+      ],
+      "findings": [
+        {
+          "id": "W05-F1",
+          "criterionId": "ACCURACY",
+          "severity": "materialEdit",
+          "quote": "职业开发者中51%每天使用AI工具，84%正在使用或计划使用；",
+          "reason": "并列结构使84%也读成职业开发者比例，而快照仅把51%限定为职业开发者。",
+          "sourceReference": "anonymous/materials/Q01.json#S2",
+          "necessaryEdit": "拆为“51%的职业开发者每天使用AI工具；84%的受访者正在使用或计划使用AI开发工具”，保留计划使用不能算当前使用者的限制。"
+        },
+        {
+          "id": "W05-F2",
+          "criterionId": "ACCURACY",
+          "severity": "materialEdit",
+          "quote": "88%受访组织称至少一项业务职能经常使用AI",
+          "reason": "快照是受访者报告其所在组织，未证明按独立组织计数。",
+          "sourceReference": "anonymous/materials/Q01.json#S3",
+          "necessaryEdit": "改为“88%受访者称其所在组织至少一项业务职能经常使用AI”。"
+        }
+      ],
+      "requiredEdits": [
+        "W05-F1",
+        "W05-F2"
+      ],
+      "optionalPreferences": [
+        "可删实现层面的联网能力说明，并压缩重复局限；不作为必要修正或配对获胜的单独依据。"
+      ],
+      "unresolvedChecks": []
+    },
+    {
+      "workId": "W06",
+      "caseId": "Q01",
+      "outcome": "NEEDS_MATERIAL_EDIT",
+      "criterionAssessments": [
+        {
+          "criterionId": "ANSWER",
+          "status": "PASS",
+          "quote": "报告领先的行业：科技、媒体电信、保险",
+          "reason": "按三种口径给具体类别、频率及行业，有限资料仍完成有边界回答。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "ACCURACY",
+          "status": "MATERIAL_EDIT_NEEDED",
+          "quote": "在S3样本中，88%组织至少一项职能经常使用AI",
+          "reason": "S1任务比例、S2的51%/84%及S3正文准确；结尾把受访者报告比例压成组织比例，需同机制更正。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "FOCUS",
+          "status": "PASS_WITH_MINOR_NOTE",
+          "quote": "若按各自口径分别看，可得到以下并列结果。",
+          "reason": "内容主要回答并解释必要边界，结尾与前文有重复但没有交付受阻。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "READABLE",
+          "status": "PASS",
+          "quote": "衡量对象不同：S1量的是对话任务分布，S2量的是开发者个人使用频率，S3量的是组织职能采用率。",
+          "reason": "结构清楚，用户能理解为什么不能统一排行；无需固定使用表格才合格。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "EDIT_BURDEN",
+          "status": "MATERIAL_EDIT_NEEDED",
+          "quote": "在S3样本中，88%组织至少一项职能经常使用AI",
+          "reason": "恢复受访者报告口径即可；无须重写全篇或要求补全全球资料。",
+          "sourceReference": "anonymous/materials/Q01.json#S3"
+        }
+      ],
+      "findings": [
+        {
+          "id": "W06-F1",
+          "criterionId": "ACCURACY",
+          "severity": "materialEdit",
+          "quote": "在S3样本中，88%组织至少一项职能经常使用AI",
+          "reason": "将受访者报告的组织采用比例改写成组织计数比例；材料未支持分母等同。",
+          "sourceReference": "anonymous/materials/Q01.json#S3",
+          "necessaryEdit": "改为“在S3调查中，88%受访者称其所在组织至少一项职能经常使用AI”。"
+        }
+      ],
+      "requiredEdits": [
+        "W06-F1"
+      ],
+      "optionalPreferences": [
+        "可压缩重复的局限，但不是必须修改，也不凭简短程度选胜。"
+      ],
+      "unresolvedChecks": []
+    },
+    {
+      "workId": "W07",
+      "caseId": "Q01",
+      "outcome": "NEEDS_MATERIAL_EDIT",
+      "criterionAssessments": [
+        {
+          "criterionId": "ANSWER",
+          "status": "PASS",
+          "quote": "组织采用报告领先的行业：科技、媒体电信、保险",
+          "reason": "S1任务类别、S2开发者使用频率和S3行业均有实际答案。表格中的名次明确限定为平台对话任务分布，不是虚构全球职业榜单。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "ACCURACY",
+          "status": "MATERIAL_EDIT_NEEDED",
+          "quote": "科技、媒体电信、保险报告领先；88%组织至少一项职能经常使用AI",
+          "reason": "主体S3正确写受访者报告，但最终结论再次省成组织比例，需更正。其他关键百分比与快照相符。",
+          "sourceReference": "anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "FOCUS",
+          "status": "PASS_WITH_MINOR_NOTE",
+          "quote": "现有材料不支持给出可靠统一排名，需补充全球随机抽样、统一定义“使用”的跨国调查数据。",
+          "reason": "最后说明更强全球结论所需资料，没有将这些资料列为当前回答的前置条件；正文已完成现有资料能支持的答案。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "READABLE",
+          "status": "PASS",
+          "quote": "行业与职业不可混排",
+          "reason": "按对象和来源分开，结尾便于提取；重复结构和来源信息详略属于组织选择。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "EDIT_BURDEN",
+          "status": "MATERIAL_EDIT_NEEDED",
+          "quote": "88%组织至少一项职能经常使用AI",
+          "reason": "与其他作品同一分母压缩问题，需局部修正；不能因其它地方正确而忽略用户可能直接复用的末尾结论。",
+          "sourceReference": "anonymous/materials/Q01.json#S3"
+        }
+      ],
+      "findings": [
+        {
+          "id": "W07-F1",
+          "criterionId": "ACCURACY",
+          "severity": "materialEdit",
+          "quote": "科技、媒体电信、保险报告领先；88%组织至少一项职能经常使用AI",
+          "reason": "末尾把受访者报告比例压成组织比例；未有组织去重/抽样证明。",
+          "sourceReference": "anonymous/materials/Q01.json#S3",
+          "necessaryEdit": "将88%部分恢复为“88%受访者称其所在组织至少一项职能经常使用AI”。"
+        }
+      ],
+      "requiredEdits": [
+        "W07-F1"
+      ],
+      "optionalPreferences": [
+        "可精简部分重复来源信息，不改变答案也不单独形成胜负。"
+      ],
+      "unresolvedChecks": []
+    },
+    {
+      "workId": "W08",
+      "caseId": "Q01",
+      "outcome": "NEEDS_MATERIAL_EDIT",
+      "criterionAssessments": [
+        {
+          "criterionId": "ANSWER",
+          "status": "PASS",
+          "quote": "组织采用报告领先的行业是科技、媒体电信和保险",
+          "reason": "直接给出任务集中方向、开发者高频使用和行业领先者，同时限定没有全球唯一排名；交付类型保持查询回答。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "ACCURACY",
+          "status": "MATERIAL_EDIT_NEEDED",
+          "quote": "但组织采用不等于全部员工使用，也不能与全部AI混为一谈。",
+          "reason": "S1与S2主体、84%计划使用及88%受访者口径正确；末句把“组织采用”与“全部AI”作不可比比较，丢失材料中AI代理这一限定对象，需删改该分句。",
+          "sourceReference": "anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "FOCUS",
+          "status": "PASS",
+          "quote": "不过，可以按“使用强度或采用率”梳理出几个领先方向。",
+          "reason": "限制后即给出有依据结论，没有只谈统计口径。术语“使用强度”在后续被明确展开成任务分布/每日频率/组织报告，未据此混成统一名次。",
+          "sourceReference": "anonymous/materials/Q01.json#S1；anonymous/materials/Q01.json#S2；anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "READABLE",
+          "status": "PASS_WITH_MINOR_NOTE",
+          "quote": "也不能与全部AI混为一谈。",
+          "reason": "主体易懂，但这个指代让读者不清楚“组织采用”为什么与“全部AI”对比；需要概念修正，非标题或文风偏好。",
+          "sourceReference": "anonymous/materials/Q01.json#S3"
+        },
+        {
+          "criterionId": "EDIT_BURDEN",
+          "status": "MATERIAL_EDIT_NEEDED",
+          "quote": "但组织采用不等于全部员工使用，也不能与全部AI混为一谈。",
+          "reason": "删除后一分句，或独立恢复“AI代理采用另有定义，不能与全部AI采用混为一谈”；其他答案不需要重写。",
+          "sourceReference": "anonymous/materials/Q01.json#S3"
+        }
+      ],
+      "findings": [
+        {
+          "id": "W08-F1",
+          "criterionId": "ACCURACY",
+          "severity": "materialEdit",
+          "quote": "但组织采用不等于全部员工使用，也不能与全部AI混为一谈。",
+          "reason": "“全部AI”对应的材料限定对象原为AI代理采用，不是组织采用。当前句子混淆比较维度。",
+          "sourceReference": "anonymous/materials/Q01.json#S3",
+          "necessaryEdit": "保留“组织采用不等于全部员工使用”，删去后一分句；若要保留代理说明则独立写“AI代理采用另有定义，不能与全部AI采用混为一谈”。"
+        }
+      ],
+      "requiredEdits": [
+        "W08-F1"
+      ],
+      "optionalPreferences": [],
+      "unresolvedChecks": []
+    },
+    {
+      "workId": "W09",
+      "caseId": "V03",
+      "outcome": "DIRECTLY_USABLE",
+      "criterionAssessments": [
+        {
+          "criterionId": "ANSWER",
+          "status": "PASS",
+          "quote": "照片里的颜色信息 → 设备如何理解这些信息 → 屏幕如何发光显示 → 你的眼睛和环境如何感知",
+          "reason": "直接解释链路及屏幕、设置、软件、环境，随后给普通用户分步操作；未索取资料作为开始前提。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        },
+        {
+          "criterionId": "ACCURACY",
+          "status": "PASS_WITH_MINOR_NOTE",
+          "quote": "关闭后如果偏黄消失，说明只是模式设置问题，不是屏幕故障。",
+          "reason": "关键排查用前后变化作条件，不把尚未知晓的设备状态当事实。关于环境光方向及“配置与设备不匹配”的表述可技术核实，不将这些待核实细节计为已证实失败。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        },
+        {
+          "criterionId": "FOCUS",
+          "status": "PASS_WITH_MINOR_NOTE",
+          "quote": "按“先统一设置、再换软件、最后判断硬件”的顺序排查",
+          "reason": "原因与七步均围绕原问；每步“目的/预期效果”较多但有相关内容，不因篇幅或重复结构判输。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        },
+        {
+          "criterionId": "READABLE",
+          "status": "PASS",
+          "quote": "可以理解为一张“颜色说明书”",
+          "reason": "术语用比喻解释，并给具体设置动作；参考图用于大致判断方向，没有声称未经校准的参考能证明谁绝对准确。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        },
+        {
+          "criterionId": "EDIT_BURDEN",
+          "status": "PASS",
+          "quote": "如果只有一台设备明显异常，问题更可能出在那台设备上",
+          "reason": "持续异常的检查主要限定为单设备，先排普通设置与软件后再考虑校色/检修；没有发现需要实质更正才可开始使用的内容。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        }
+      ],
+      "findings": [],
+      "requiredEdits": [],
+      "optionalPreferences": [
+        "可压缩目的/预期效果的重复；可将“说明书和设备不匹配”精确化为配置错误或未正确完成到屏幕的转换，但当前上下文是普通用户比喻，不据此判实质输赢。"
+      ],
+      "unresolvedChecks": [
+        {
+          "quote": "在暖黄灯光下看屏幕，屏幕会显得偏冷；",
+          "check": "与W02所述方向不同；实际可受视觉适应、屏幕反光、设备自动调整等影响。无共同技术资料/实验条件，保留待核实，不用单一偏色方向判优。",
+          "usedForWinner": false
+        },
+        {
+          "quote": "尤其是非 OLED 或非广视角屏幕，侧看时颜色和亮度会变化。",
+          "check": "不同面板与具体产品的视角色偏不能仅凭OLED标签判断；本审阅没有设备测试，不据此声称所有此类设备有同样表现。",
+          "usedForWinner": false
+        }
+      ]
+    },
+    {
+      "workId": "W10",
+      "caseId": "V03",
+      "outcome": "NEEDS_MATERIAL_EDIT",
+      "criterionAssessments": [
+        {
+          "criterionId": "ANSWER",
+          "status": "PASS",
+          "quote": "常见因素包括：",
+          "reason": "明确解释硬件/色域、色彩管理、白点、设置及环境，并给原图配置、设置与软件排查，没有要求先提供设备资料。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        },
+        {
+          "criterionId": "ACCURACY",
+          "status": "MATERIAL_EDIT_NEEDED",
+          "quote": "用手机原彩显示关闭后对比，或打印小样，判断是屏幕偏色还是文件本身偏色。",
+          "reason": "手机关闭原彩或打印小样并不自动成为已知准确参考，二者也有自身显示/打印/光线偏差。可以用作交叉观察，不能单凭此判定文件还是屏幕错误。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        },
+        {
+          "criterionId": "FOCUS",
+          "status": "PASS",
+          "quote": "先排除软件和设置干扰，再确认照片是否带色彩配置文件",
+          "reason": "建议大体围绕可执行排查；线材/系统ICC属于较深入支线，有其他容易操作步骤可先做，不因列得多直接判优或判输。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        },
+        {
+          "criterionId": "READABLE",
+          "status": "PASS_WITH_MINOR_NOTE",
+          "quote": "gamma、对比度设置也会影响明暗和饱和度。",
+          "reason": "术语略多但核心动作可懂；是否用中文解释gamma及进一步写Windows菜单路径是可选改进。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        },
+        {
+          "criterionId": "EDIT_BURDEN",
+          "status": "MATERIAL_EDIT_NEEDED",
+          "quote": "打印或手机对比作参考",
+          "reason": "须降低未经校准参考的诊断确定性，避免普通用户按另一台设备/打印结果错误修改原文件；其余主要解释和建议可保留。",
+          "sourceReference": "anonymous/questions/V03.txt；anonymous/materials/V03.txt（无补充资料）"
+        }
+      ],
+      "findings": [
+        {
+          "id": "W10-F1",
+          "criterionId": "ACCURACY",
+          "severity": "materialEdit",
+          "quote": "用手机原彩显示关闭后对比，或打印小样，判断是屏幕偏色还是文件本身偏色。",
+          "reason": "额外设备或打印本身也可能偏色；关闭一种显示功能没有建立正确性基准，不能证明故障归因。",
+          "sourceReference": "V03未提供已校准设备、可靠打印链路或标准参考。",
+          "necessaryEdit": "改成“可用另一台设备或打印小样观察差异，但它们本身也有偏差，不能单凭这一项判定原图或屏幕谁准确；先用同一原图、可靠软件、统一设置和其他已知正常图片交叉验证，重要用途再借助已校准参考”。"
+        }
+      ],
+      "requiredEdits": [
+        "W10-F1"
+      ],
+      "optionalPreferences": [
+        "可将gamma改为伽马并略加解释，或把ICC/线材检查标为进阶；不作为配对判优依据。"
+      ],
+      "unresolvedChecks": [
+        {
+          "quote": "不带配置文件的照片常被默认按sRGB解释，遇到广色域屏就可能过饱和。",
+          "check": "是否过饱和取决于软件/系统是否正确进行从假定sRGB到显示器的转换，不只由缺配置与广色域决定。文中已单列色彩管理且用“可能”，未把此处算作确定事实失败；公开技术说明可再补条件。",
+          "usedForWinner": false
+        }
+      ]
+    }
+  ],
+  "pairs": [
+    {
+      "comparisonId": "P01",
+      "preFrozenComparisonId": "Q01-R1-1",
+      "caseId": "Q01",
+      "left": "W08",
+      "right": "W05",
+      "judgment": "LEFT_BETTER",
+      "concreteDifference": "两者均回答职业相关方向和行业并保留资料边界。W08须删除/恢复一个AI代理指代分句；W05的前置摘要另有S2的84%主体混挂和S3的88%分母改写。左方不需要修复关键百分比主体，局部交付修正负担较低；优势限于本次首次作品。",
+      "leftQuote": "51%的职业开发者每天使用AI工具；84%的受访者正在使用或计划使用AI开发工具，但后者不能全部算作当前使用者。",
+      "rightQuote": "职业开发者中51%每天使用AI工具，84%正在使用或计划使用；",
+      "userEditDifference": "左方W08-F1：删去一个错位概念分句；右方W05-F1/F2：两处摘要统计主体须按来源更正。未测量真人耗时，不因左方更短判胜。",
+      "personalStyleOnly": false,
+      "unresolvedChecksAffectJudgment": false
+    },
+    {
+      "comparisonId": "P02",
+      "preFrozenComparisonId": "Q01-R1-2",
+      "caseId": "Q01",
+      "left": "W08",
+      "right": "W04",
+      "judgment": "TIE",
+      "concreteDifference": "W08有一处AI代理限定丢失，W04建议引用句有一处S3分母压缩；双方主体答案和关键限制可用，均需局部必改。没有足够依据把概念分句修复与统计分母恢复排出稳定整体优劣。表格、长度和时间信息差异不判胜。",
+      "leftQuote": "但组织采用不等于全部员工使用，也不能与全部AI混为一谈。",
+      "rightQuote": "按组织调查，88%受访组织至少一项职能经常使用AI",
+      "userEditDifference": "分别修W08-F1与W04-F1；无需双方全文重构。没有以文风取舍决定赢家。",
+      "personalStyleOnly": false,
+      "unresolvedChecksAffectJudgment": false
+    },
+    {
+      "comparisonId": "P03",
+      "preFrozenComparisonId": "Q01-R1-3",
+      "caseId": "Q01",
+      "left": "W05",
+      "right": "W04",
+      "judgment": "RIGHT_BETTER",
+      "concreteDifference": "两者都有S3摘要分母需要恢复。W05额外把84%与职业开发者51%并列在同一主体下，W04明确区分两者且保留计划使用限制；右方少一项关键数据主体修复。",
+      "leftQuote": "职业开发者中51%每天使用AI工具，84%正在使用或计划使用；",
+      "rightQuote": "51%的职业开发者每天使用AI工具；84%表示正在使用或计划使用AI开发工具（后者不能全部算作当前使用者）。",
+      "userEditDifference": "左方须修W05-F1/F2；右方修W04-F1。双方可保留已有主体交付，右方优势不来自篇幅或章节数量。",
+      "personalStyleOnly": false,
+      "unresolvedChecksAffectJudgment": false
+    },
+    {
+      "comparisonId": "P04",
+      "preFrozenComparisonId": "V03-R1-4",
+      "caseId": "V03",
+      "left": "W01",
+      "right": "W02",
+      "judgment": "LEFT_BETTER",
+      "concreteDifference": "两者都解释原因并给可执行步骤。W02把同一原图跨正常设备/软件共同异常列入专业校色或送修分支，需先排文件/导出处理；W01没有该跨设备异常到屏幕服务的跳跃。额外“目的/预期效果”的组织可接受，不因长短判胜。",
+      "leftQuote": "换软件验证：同一张图分别在浏览器、系统看图工具、专业软件中打开，判断是屏幕问题还是软件问题。",
+      "rightQuote": "多台设备、多个软件下同一张照片都严重偏色，且照片在其他正常设备上也异常；",
+      "userEditDifference": "左方无已证实必要实改；右方须修W02-F1的诊断分支。双方设备模式名称/环境光方向等待核实项未用于胜负。",
+      "personalStyleOnly": false,
+      "unresolvedChecksAffectJudgment": false
+    },
+    {
+      "comparisonId": "P05",
+      "preFrozenComparisonId": "Q01-R2-1",
+      "caseId": "Q01",
+      "left": "W06",
+      "right": "W03",
+      "judgment": "RIGHT_BETTER",
+      "concreteDifference": "双方均充分给三种口径答案；W06最终结论把受访者报告比例缩成组织比例，W03保留准确主体，无须该事实修正。",
+      "leftQuote": "在S3样本中，88%组织至少一项职能经常使用AI",
+      "rightQuote": "88%受访者称所在组织至少一项业务职能经常使用AI",
+      "userEditDifference": "左方须修W06-F1；右方无已证实必要实改。更少标题或更短正文不是判优原因。",
+      "personalStyleOnly": false,
+      "unresolvedChecksAffectJudgment": false
+    },
+    {
+      "comparisonId": "P06",
+      "preFrozenComparisonId": "Q01-R2-2",
+      "caseId": "Q01",
+      "left": "W07",
+      "right": "W03",
+      "judgment": "RIGHT_BETTER",
+      "concreteDifference": "双方都没有虚构全球职业冠军。W07末尾88%组织的分母表达需要恢复，W03维持受访者报告其组织的来源口径；W07更详尽表格和信任度数据未形成对本问的必需新增收益。",
+      "leftQuote": "科技、媒体电信、保险报告领先；88%组织至少一项职能经常使用AI",
+      "rightQuote": "88%受访者称所在组织至少一项业务职能经常使用AI",
+      "userEditDifference": "左方须修W07-F1；右方无已证实必要实改。不是因为右方更简洁而判优。",
+      "personalStyleOnly": false,
+      "unresolvedChecksAffectJudgment": false
+    },
+    {
+      "comparisonId": "P07",
+      "preFrozenComparisonId": "Q01-R2-3",
+      "caseId": "Q01",
+      "left": "W07",
+      "right": "W06",
+      "judgment": "TIE",
+      "concreteDifference": "两者核心答案、限制和关键依据相当，最后都出现相同S3分母压缩。W07表格和附加数字与W06要点组织可合理并存，未看到足以改变交付的实质质量差距。",
+      "leftQuote": "88%组织至少一项职能经常使用AI",
+      "rightQuote": "在S3样本中，88%组织至少一项职能经常使用AI",
+      "userEditDifference": "各恢复一处受访者报告口径（W07-F1/W06-F1），没有证据支持不同真人修改耗时。",
+      "personalStyleOnly": false,
+      "unresolvedChecksAffectJudgment": false
+    },
+    {
+      "comparisonId": "P08",
+      "preFrozenComparisonId": "V03-R2-4",
+      "caseId": "V03",
+      "left": "W10",
+      "right": "W09",
+      "judgment": "RIGHT_BETTER",
+      "concreteDifference": "两者都能解释原因并指导排查。W10让未经校准的手机/打印小样用于判定原图还是屏幕偏色，缺少参考可靠性限定；W09只把熟悉参考图用于大致识别偏色方向，未做同样的正确性归因。",
+      "leftQuote": "用手机原彩显示关闭后对比，或打印小样，判断是屏幕偏色还是文件本身偏色。",
+      "rightQuote": "你能大致判断是偏暖、偏冷、过饱和还是对比度异常。",
+      "userEditDifference": "左方须修W10-F1，限定交叉参考的作用；右方无已证实必要实改。未用术语数量、正文长度或待核实环境光方向判胜。",
+      "personalStyleOnly": false,
+      "unresolvedChecksAffectJudgment": false
+    }
+  ],
+  "summary": {
+    "deliveredWorks": 10,
+    "missingWorks": 0,
+    "seriousFailures": 0,
+    "directlyUsable": [
+      "W01",
+      "W03",
+      "W09"
+    ],
+    "needsMaterialEdit": [
+      "W02",
+      "W04",
+      "W05",
+      "W06",
+      "W07",
+      "W08",
+      "W10"
+    ],
+    "judgments": {
+      "LEFT_BETTER": 2,
+      "RIGHT_BETTER": 4,
+      "TIE": 2,
+      "BOTH_FAIL": 0,
+      "UNRESOLVED": 0
+    },
+    "interpretation": "所有作品都保持了原交付类型，也都没有把补齐资料作为开始回答的条件。必要修改主要是百分比主体/分母压缩、AI代理指代缺失，以及未经可靠参考的排查归因。无严重失败不等于全部可原样交付。",
+    "repeatedDifferences": "保留全部8个配对和所有必要修改，未挑选重复。P01/P05、P02/P06、P03/P07、P04/P08是冻结计划中的两次配对，但本审阅不掌握匿名版本方向，不能在解盲前汇成某候选的稳定收益；TIE/方向差异不得被汇总时抹去。",
+    "noAdoptionClaim": "本轮两题内部AI审阅不能单独证明候选采用、全球泛化或正式发布；真人复核尚未完成。"
+  },
+  "reviewCompletedAtUtc": "2026-10-27 18:14:20 UTC"
+}

@@ -1,0 +1,734 @@
+{
+  "purpose": "Supplemental omitted-today actual execution diagnosis; not a retroactive frozen-gate reassessment",
+  "modelCalls": 0,
+  "apiCalls": 0,
+  "generatedCodeExecutedOnHost": false,
+  "runtime": {
+    "fixedLocalDate": "2026-10-28",
+    "fixedInstant": "2026-10-28T12:00:00+08:00",
+    "timezone": "Asia/Shanghai",
+    "clockInstalledBeforeGeneratedModules": true,
+    "sandbox": "Existing test-realm VM: three business modules only; codeGeneration strings/wasm false; no process/require/fetch/Buffer/console; per-evaluation 400ms, child 8s/96MB/output64KiB",
+    "originalRealmPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/test-realm.mjs",
+    "originalRealmSha256": "7125b73b579d737c72cd67007ff71d5243d304a4fdcd4cd20ea997a5ed6ef272",
+    "isolatedRealmPath": "tmp/natural-useful-delivery-2026-10-28/supplemental-omitted-today-1793148802362/fixed-clock-test-realm.mjs",
+    "isolatedRealmSha256": "685cbc0f43d871e414d91f5b0eeb16fc6e5beb4a1e9e71487d7d6ac5af1a4b91",
+    "exactTrustedPatches": [
+      {
+        "before": "'../fixtures/project.mjs'",
+        "after": "\"file:///E:/MyProject/prompt-optimizer-platform/docs/testing/evidence/natural-useful-delivery-2026-10-28/fixtures/project.mjs\"",
+        "reason": "Resolve the same trusted whitelist from the isolated temporary helper location"
+      },
+      {
+        "before": "'2026-10-27T12:00:00.000Z'",
+        "after": "'2026-10-28T12:00:00+08:00'",
+        "reason": "Freeze VM Date before any generated module evaluation"
+      },
+      {
+        "before": "  return new Promise((finish) => {",
+        "after": "  environment.TZ = 'Asia/Shanghai';\n  return new Promise((finish) => {",
+        "reason": "Set the child local calendar explicitly; no host timezone or current clock dependency"
+      }
+    ]
+  },
+  "contractBoundary": "Raw requests require no dates after today. Visible README allows injecting today for deterministic checks, but does not expressly say whether callers must always supply it or it defaults to the local calendar. Old predeclared checks always injected today. These new probes diagnose the omitted-argument usage risk; they do not overwrite old PASS or add business files/tests.",
+  "summary": {
+    "works": 8,
+    "suppliedTodayControlPasses": 8,
+    "omittedTodayAllPasses": 0,
+    "omittedFutureRejectPasses": 0
+  },
+  "records": [
+    {
+      "stage": "code-works46",
+      "id": "C01_ORIGINAL_EXEC_R1",
+      "caseId": "C01",
+      "version": "ORIGINAL",
+      "resultPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/code-works46/results/C01_ORIGINAL_EXEC_R1.json",
+      "resultSha256": "86a14dc582b141a71059ecc60050bc30c5286d69ef54da4ff1f78613fa74b175",
+      "contentSha256": "75a4a5f13bb1363af4c1769bd27f10eb3abd465c2d4b51b2151d9d1b259ecf2a",
+      "sourceSha256": {
+        "src/views/records/dateRules.js": "b3ce0be3359f80649ebe8bfc58a2fd3c6d64d2ee94a3bf0d1cd082fd327571a4",
+        "src/views/records/create.js": "00e14261ebd4f2181d2d7c693ce6ce55eab89cf1ca68e531e4d339fcfedc8098",
+        "src/views/records/import.js": "ec44d21ecc5e039e809a30a74c2901cce68b9de3259d6329e8659c398dd82495"
+      },
+      "originalReadmeWasVisible": true,
+      "originalPredeclaredReport": {
+        "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/results/code-works46/C01_ORIGINAL_EXEC_R1.json",
+        "sha256": "539430f6d6ed4e4d672a7d5a43398a042165c9bdf59ce83511a498d87a01e129",
+        "passed": true,
+        "businessPassed": true,
+        "additionalBusinessPassed": true,
+        "unchanged": true
+      },
+      "environment": [
+        {
+          "name": "environment-fixed-local-calendar",
+          "passed": true
+        },
+        {
+          "name": "environment-no-host-capabilities",
+          "passed": true
+        }
+      ],
+      "suppliedTodayControls": [
+        {
+          "name": "injected-create-independent-of-fixed-clock",
+          "passed": true
+        },
+        {
+          "name": "injected-import-independent-of-fixed-clock",
+          "passed": true
+        }
+      ],
+      "omittedTodayProbes": [
+        {
+          "name": "omitted-create-future",
+          "passed": false,
+          "message": "observed={\"ok\":true,\"record\":{\"id\":\"probe\",\"surveyDate\":\"2026-10-29\",\"note\":\"preserve\"}}"
+        },
+        {
+          "name": "omitted-import-future",
+          "passed": false,
+          "message": "observed={\"inserted\":[{\"id\":\"probe\",\"surveyDate\":\"2026-10-29\",\"note\":\"preserve\"}],\"errors\":[]}"
+        },
+        {
+          "name": "omitted-create-today",
+          "passed": true
+        },
+        {
+          "name": "omitted-import-today",
+          "passed": true
+        },
+        {
+          "name": "omitted-create-past",
+          "passed": true
+        },
+        {
+          "name": "omitted-import-past",
+          "passed": true
+        }
+      ],
+      "suppliedTodayControlsPassed": true,
+      "omittedTodayAllPassed": false
+    },
+    {
+      "stage": "code-works46",
+      "id": "C01_ORIGINAL_EXEC_R2",
+      "caseId": "C01",
+      "version": "ORIGINAL",
+      "resultPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/code-works46/results/C01_ORIGINAL_EXEC_R2.json",
+      "resultSha256": "95d377625f5c548f7568bafdae1dcf68b1469e2ca491d66db0b0a8fa1e124a23",
+      "contentSha256": "207b2be07fe8b90ecde4a2b6e80cd9f0f5c4394707f3c614121f7ce1096f8e09",
+      "sourceSha256": {
+        "src/views/records/dateRules.js": "f4966b66477e71fb0c4f4aac70949eeddb6974364e4ad8efca53d13b87e07e8a",
+        "src/views/records/create.js": "00e14261ebd4f2181d2d7c693ce6ce55eab89cf1ca68e531e4d339fcfedc8098",
+        "src/views/records/import.js": "ec44d21ecc5e039e809a30a74c2901cce68b9de3259d6329e8659c398dd82495"
+      },
+      "originalReadmeWasVisible": true,
+      "originalPredeclaredReport": {
+        "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/results/code-works46/C01_ORIGINAL_EXEC_R2.json",
+        "sha256": "fcec5c7b28e79c3bfe3d26509f388e4f496b6665e269a7f25e2f03fbfedff916",
+        "passed": true,
+        "businessPassed": true,
+        "additionalBusinessPassed": true,
+        "unchanged": true
+      },
+      "environment": [
+        {
+          "name": "environment-fixed-local-calendar",
+          "passed": true
+        },
+        {
+          "name": "environment-no-host-capabilities",
+          "passed": true
+        }
+      ],
+      "suppliedTodayControls": [
+        {
+          "name": "injected-create-independent-of-fixed-clock",
+          "passed": true
+        },
+        {
+          "name": "injected-import-independent-of-fixed-clock",
+          "passed": true
+        }
+      ],
+      "omittedTodayProbes": [
+        {
+          "name": "omitted-create-future",
+          "passed": false,
+          "message": "observed={\"ok\":true,\"record\":{\"id\":\"probe\",\"surveyDate\":\"2026-10-29\",\"note\":\"preserve\"}}"
+        },
+        {
+          "name": "omitted-import-future",
+          "passed": false,
+          "message": "observed={\"inserted\":[{\"id\":\"probe\",\"surveyDate\":\"2026-10-29\",\"note\":\"preserve\"}],\"errors\":[]}"
+        },
+        {
+          "name": "omitted-create-today",
+          "passed": true
+        },
+        {
+          "name": "omitted-import-today",
+          "passed": true
+        },
+        {
+          "name": "omitted-create-past",
+          "passed": true
+        },
+        {
+          "name": "omitted-import-past",
+          "passed": true
+        }
+      ],
+      "suppliedTodayControlsPassed": true,
+      "omittedTodayAllPassed": false
+    },
+    {
+      "stage": "code-works46",
+      "id": "C02_ORIGINAL_EXEC_R1",
+      "caseId": "C02",
+      "version": "ORIGINAL",
+      "resultPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/code-works46/results/C02_ORIGINAL_EXEC_R1.json",
+      "resultSha256": "a4d0c60e23c00503df26332ebe643e8a391cd0d9a77eb3e713844fa1d97b4957",
+      "contentSha256": "10541137e5ba891f44110302dd0f3f9b6f06b12f55754d2ad35ec63a4ec9b062",
+      "sourceSha256": {
+        "src/views/records/dateRules.js": "b3ce0be3359f80649ebe8bfc58a2fd3c6d64d2ee94a3bf0d1cd082fd327571a4",
+        "src/views/records/create.js": "00e14261ebd4f2181d2d7c693ce6ce55eab89cf1ca68e531e4d339fcfedc8098",
+        "src/views/records/import.js": "ec44d21ecc5e039e809a30a74c2901cce68b9de3259d6329e8659c398dd82495"
+      },
+      "originalReadmeWasVisible": true,
+      "originalPredeclaredReport": {
+        "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/results/code-works46/C02_ORIGINAL_EXEC_R1.json",
+        "sha256": "1c5ddff5aeaa52e0f67dc707e48a0d0391e238538389609b873bd4228dc7eeab",
+        "passed": true,
+        "businessPassed": true,
+        "additionalBusinessPassed": true,
+        "unchanged": true
+      },
+      "environment": [
+        {
+          "name": "environment-fixed-local-calendar",
+          "passed": true
+        },
+        {
+          "name": "environment-no-host-capabilities",
+          "passed": true
+        }
+      ],
+      "suppliedTodayControls": [
+        {
+          "name": "injected-create-independent-of-fixed-clock",
+          "passed": true
+        },
+        {
+          "name": "injected-import-independent-of-fixed-clock",
+          "passed": true
+        }
+      ],
+      "omittedTodayProbes": [
+        {
+          "name": "omitted-create-future",
+          "passed": false,
+          "message": "observed={\"ok\":true,\"record\":{\"id\":\"probe\",\"surveyDate\":\"2026-10-29\",\"note\":\"preserve\"}}"
+        },
+        {
+          "name": "omitted-import-future",
+          "passed": false,
+          "message": "observed={\"inserted\":[{\"id\":\"probe\",\"surveyDate\":\"2026-10-29\",\"note\":\"preserve\"}],\"errors\":[]}"
+        },
+        {
+          "name": "omitted-create-today",
+          "passed": true
+        },
+        {
+          "name": "omitted-import-today",
+          "passed": true
+        },
+        {
+          "name": "omitted-create-past",
+          "passed": true
+        },
+        {
+          "name": "omitted-import-past",
+          "passed": true
+        }
+      ],
+      "suppliedTodayControlsPassed": true,
+      "omittedTodayAllPassed": false
+    },
+    {
+      "stage": "code-works46",
+      "id": "C02_ORIGINAL_EXEC_R2",
+      "caseId": "C02",
+      "version": "ORIGINAL",
+      "resultPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/code-works46/results/C02_ORIGINAL_EXEC_R2.json",
+      "resultSha256": "edf721a2e2c413328ceae701339e26872de640971c9f18ed0b532b8717d4a422",
+      "contentSha256": "70b0fada1fd8d0d826a6b53f047a34618cefee9bed00c4e49adbe576e6ef9a7a",
+      "sourceSha256": {
+        "src/views/records/dateRules.js": "b3ce0be3359f80649ebe8bfc58a2fd3c6d64d2ee94a3bf0d1cd082fd327571a4",
+        "src/views/records/create.js": "00e14261ebd4f2181d2d7c693ce6ce55eab89cf1ca68e531e4d339fcfedc8098",
+        "src/views/records/import.js": "ec44d21ecc5e039e809a30a74c2901cce68b9de3259d6329e8659c398dd82495"
+      },
+      "originalReadmeWasVisible": true,
+      "originalPredeclaredReport": {
+        "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/results/code-works46/C02_ORIGINAL_EXEC_R2.json",
+        "sha256": "f0d0f10787f8654ae4d59d1614eda281c922389d61885e762d5ae6639fed8265",
+        "passed": true,
+        "businessPassed": true,
+        "additionalBusinessPassed": true,
+        "unchanged": true
+      },
+      "environment": [
+        {
+          "name": "environment-fixed-local-calendar",
+          "passed": true
+        },
+        {
+          "name": "environment-no-host-capabilities",
+          "passed": true
+        }
+      ],
+      "suppliedTodayControls": [
+        {
+          "name": "injected-create-independent-of-fixed-clock",
+          "passed": true
+        },
+        {
+          "name": "injected-import-independent-of-fixed-clock",
+          "passed": true
+        }
+      ],
+      "omittedTodayProbes": [
+        {
+          "name": "omitted-create-future",
+          "passed": false,
+          "message": "observed={\"ok\":true,\"record\":{\"id\":\"probe\",\"surveyDate\":\"2026-10-29\",\"note\":\"preserve\"}}"
+        },
+        {
+          "name": "omitted-import-future",
+          "passed": false,
+          "message": "observed={\"inserted\":[{\"id\":\"probe\",\"surveyDate\":\"2026-10-29\",\"note\":\"preserve\"}],\"errors\":[]}"
+        },
+        {
+          "name": "omitted-create-today",
+          "passed": true
+        },
+        {
+          "name": "omitted-import-today",
+          "passed": true
+        },
+        {
+          "name": "omitted-create-past",
+          "passed": true
+        },
+        {
+          "name": "omitted-import-past",
+          "passed": true
+        }
+      ],
+      "suppliedTodayControlsPassed": true,
+      "omittedTodayAllPassed": false
+    },
+    {
+      "stage": "registry51-code-works",
+      "id": "C01_V51_EXEC_R1",
+      "caseId": "C01",
+      "version": "51",
+      "resultPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry51-code-works/results/C01_V51_EXEC_R1.json",
+      "resultSha256": "4095f78d0e7c02a424f6fcea99192f2d8d58214e657ca7c72517eae923ae50d2",
+      "contentSha256": "9d376fb1e94e8b64df49f08bfea21d009b649f9add579f2d269c9cbbd5a71ea3",
+      "sourceSha256": {
+        "src/views/records/dateRules.js": "b3ce0be3359f80649ebe8bfc58a2fd3c6d64d2ee94a3bf0d1cd082fd327571a4",
+        "src/views/records/create.js": "00e14261ebd4f2181d2d7c693ce6ce55eab89cf1ca68e531e4d339fcfedc8098",
+        "src/views/records/import.js": "ec44d21ecc5e039e809a30a74c2901cce68b9de3259d6329e8659c398dd82495"
+      },
+      "originalReadmeWasVisible": true,
+      "originalPredeclaredReport": {
+        "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/results/registry51-code-works/C01_V51_EXEC_R1.json",
+        "sha256": "637121680400619b67ce431ac5e398dd6e3e31fb5f70f2d17af418e8cfa78d75",
+        "passed": true,
+        "businessPassed": true,
+        "additionalBusinessPassed": true,
+        "unchanged": true
+      },
+      "environment": [
+        {
+          "name": "environment-fixed-local-calendar",
+          "passed": true
+        },
+        {
+          "name": "environment-no-host-capabilities",
+          "passed": true
+        }
+      ],
+      "suppliedTodayControls": [
+        {
+          "name": "injected-create-independent-of-fixed-clock",
+          "passed": true
+        },
+        {
+          "name": "injected-import-independent-of-fixed-clock",
+          "passed": true
+        }
+      ],
+      "omittedTodayProbes": [
+        {
+          "name": "omitted-create-future",
+          "passed": false,
+          "message": "observed={\"ok\":true,\"record\":{\"id\":\"probe\",\"surveyDate\":\"2026-10-29\",\"note\":\"preserve\"}}"
+        },
+        {
+          "name": "omitted-import-future",
+          "passed": false,
+          "message": "observed={\"inserted\":[{\"id\":\"probe\",\"surveyDate\":\"2026-10-29\",\"note\":\"preserve\"}],\"errors\":[]}"
+        },
+        {
+          "name": "omitted-create-today",
+          "passed": true
+        },
+        {
+          "name": "omitted-import-today",
+          "passed": true
+        },
+        {
+          "name": "omitted-create-past",
+          "passed": true
+        },
+        {
+          "name": "omitted-import-past",
+          "passed": true
+        }
+      ],
+      "suppliedTodayControlsPassed": true,
+      "omittedTodayAllPassed": false
+    },
+    {
+      "stage": "registry51-code-works",
+      "id": "C01_V51_EXEC_R2",
+      "caseId": "C01",
+      "version": "51",
+      "resultPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry51-code-works/results/C01_V51_EXEC_R2.json",
+      "resultSha256": "85e6e9647c1e0dbd06f024e2c2c9f31de929a5beeec694954a47ac7876b75c30",
+      "contentSha256": "fc6661aab97a9957721d4ee1d17b947726e6026ad4fb09ac540e6b3a34d68515",
+      "sourceSha256": {
+        "src/views/records/dateRules.js": "f846c7a485f90ec491e6b6a745b2c21fc2f9f63198afc4df59c666f58124e8c2",
+        "src/views/records/create.js": "00e14261ebd4f2181d2d7c693ce6ce55eab89cf1ca68e531e4d339fcfedc8098",
+        "src/views/records/import.js": "ec44d21ecc5e039e809a30a74c2901cce68b9de3259d6329e8659c398dd82495"
+      },
+      "originalReadmeWasVisible": true,
+      "originalPredeclaredReport": {
+        "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/results/registry51-code-works/C01_V51_EXEC_R2.json",
+        "sha256": "a626a3019118b3fc26628841bbacda57fcc0cbb752d71abf110bf6534df1ee65",
+        "passed": true,
+        "businessPassed": true,
+        "additionalBusinessPassed": true,
+        "unchanged": true
+      },
+      "environment": [
+        {
+          "name": "environment-fixed-local-calendar",
+          "passed": true
+        },
+        {
+          "name": "environment-no-host-capabilities",
+          "passed": true
+        }
+      ],
+      "suppliedTodayControls": [
+        {
+          "name": "injected-create-independent-of-fixed-clock",
+          "passed": true
+        },
+        {
+          "name": "injected-import-independent-of-fixed-clock",
+          "passed": true
+        }
+      ],
+      "omittedTodayProbes": [
+        {
+          "name": "omitted-create-future",
+          "passed": false,
+          "message": "observed={\"ok\":true,\"record\":{\"id\":\"probe\",\"surveyDate\":\"2026-10-29\",\"note\":\"preserve\"}}"
+        },
+        {
+          "name": "omitted-import-future",
+          "passed": false,
+          "message": "observed={\"inserted\":[{\"id\":\"probe\",\"surveyDate\":\"2026-10-29\",\"note\":\"preserve\"}],\"errors\":[]}"
+        },
+        {
+          "name": "omitted-create-today",
+          "passed": true
+        },
+        {
+          "name": "omitted-import-today",
+          "passed": true
+        },
+        {
+          "name": "omitted-create-past",
+          "passed": true
+        },
+        {
+          "name": "omitted-import-past",
+          "passed": true
+        }
+      ],
+      "suppliedTodayControlsPassed": true,
+      "omittedTodayAllPassed": false
+    },
+    {
+      "stage": "registry51-code-works",
+      "id": "C02_V51_EXEC_R1",
+      "caseId": "C02",
+      "version": "51",
+      "resultPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry51-code-works/results/C02_V51_EXEC_R1.json",
+      "resultSha256": "6eb8a9b2c70d0a94820349723910a20cc566aaa3753dcecdd9348eed40ef85da",
+      "contentSha256": "81816cacf88b366346c5f76fecba30fb2d7f3861dd802649655e880ab2adfa12",
+      "sourceSha256": {
+        "src/views/records/dateRules.js": "8710822c28657b4d0d5c45091af4f12a79677574643e122c160b0190f099178c",
+        "src/views/records/create.js": "00e14261ebd4f2181d2d7c693ce6ce55eab89cf1ca68e531e4d339fcfedc8098",
+        "src/views/records/import.js": "ec44d21ecc5e039e809a30a74c2901cce68b9de3259d6329e8659c398dd82495"
+      },
+      "originalReadmeWasVisible": true,
+      "originalPredeclaredReport": {
+        "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/results/registry51-code-works/C02_V51_EXEC_R1.json",
+        "sha256": "933fc36d87d149b07bd0b585569bd8e40d54de65d1ead0d549d3223804c661e1",
+        "passed": true,
+        "businessPassed": true,
+        "additionalBusinessPassed": true,
+        "unchanged": true
+      },
+      "environment": [
+        {
+          "name": "environment-fixed-local-calendar",
+          "passed": true
+        },
+        {
+          "name": "environment-no-host-capabilities",
+          "passed": true
+        }
+      ],
+      "suppliedTodayControls": [
+        {
+          "name": "injected-create-independent-of-fixed-clock",
+          "passed": true
+        },
+        {
+          "name": "injected-import-independent-of-fixed-clock",
+          "passed": true
+        }
+      ],
+      "omittedTodayProbes": [
+        {
+          "name": "omitted-create-future",
+          "passed": false,
+          "message": "observed={\"ok\":true,\"record\":{\"id\":\"probe\",\"surveyDate\":\"2026-10-29\",\"note\":\"preserve\"}}"
+        },
+        {
+          "name": "omitted-import-future",
+          "passed": false,
+          "message": "observed={\"inserted\":[{\"id\":\"probe\",\"surveyDate\":\"2026-10-29\",\"note\":\"preserve\"}],\"errors\":[]}"
+        },
+        {
+          "name": "omitted-create-today",
+          "passed": true
+        },
+        {
+          "name": "omitted-import-today",
+          "passed": true
+        },
+        {
+          "name": "omitted-create-past",
+          "passed": true
+        },
+        {
+          "name": "omitted-import-past",
+          "passed": true
+        }
+      ],
+      "suppliedTodayControlsPassed": true,
+      "omittedTodayAllPassed": false
+    },
+    {
+      "stage": "registry51-code-works",
+      "id": "C02_V51_EXEC_R2",
+      "caseId": "C02",
+      "version": "51",
+      "resultPath": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry51-code-works/results/C02_V51_EXEC_R2.json",
+      "resultSha256": "7053a6cdcbeb8ac93bee1871da0bc314231bb03493d40a0ef93c36be0311f908",
+      "contentSha256": "2ec6ae63363c9015f39ea50911c860a61dc0bcf5bf4ebae7b857769c4d72eb02",
+      "sourceSha256": {
+        "src/views/records/dateRules.js": "f4966b66477e71fb0c4f4aac70949eeddb6974364e4ad8efca53d13b87e07e8a",
+        "src/views/records/create.js": "00e14261ebd4f2181d2d7c693ce6ce55eab89cf1ca68e531e4d339fcfedc8098",
+        "src/views/records/import.js": "ec44d21ecc5e039e809a30a74c2901cce68b9de3259d6329e8659c398dd82495"
+      },
+      "originalReadmeWasVisible": true,
+      "originalPredeclaredReport": {
+        "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/results/registry51-code-works/C02_V51_EXEC_R2.json",
+        "sha256": "a53553ca07ef26427ced5bbaf32caddc68720de9f71801b17cc04600d773115c",
+        "passed": true,
+        "businessPassed": true,
+        "additionalBusinessPassed": true,
+        "unchanged": true
+      },
+      "environment": [
+        {
+          "name": "environment-fixed-local-calendar",
+          "passed": true
+        },
+        {
+          "name": "environment-no-host-capabilities",
+          "passed": true
+        }
+      ],
+      "suppliedTodayControls": [
+        {
+          "name": "injected-create-independent-of-fixed-clock",
+          "passed": true
+        },
+        {
+          "name": "injected-import-independent-of-fixed-clock",
+          "passed": true
+        }
+      ],
+      "omittedTodayProbes": [
+        {
+          "name": "omitted-create-future",
+          "passed": false,
+          "message": "observed={\"ok\":true,\"record\":{\"id\":\"probe\",\"surveyDate\":\"2026-10-29\",\"note\":\"preserve\"}}"
+        },
+        {
+          "name": "omitted-import-future",
+          "passed": false,
+          "message": "observed={\"inserted\":[{\"id\":\"probe\",\"surveyDate\":\"2026-10-29\",\"note\":\"preserve\"}],\"errors\":[]}"
+        },
+        {
+          "name": "omitted-create-today",
+          "passed": true
+        },
+        {
+          "name": "omitted-import-today",
+          "passed": true
+        },
+        {
+          "name": "omitted-create-past",
+          "passed": true
+        },
+        {
+          "name": "omitted-import-past",
+          "passed": true
+        }
+      ],
+      "suppliedTodayControlsPassed": true,
+      "omittedTodayAllPassed": false
+    }
+  ],
+  "preservedInputs": [
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/test-realm.mjs",
+      "sha256": "7125b73b579d737c72cd67007ff71d5243d304a4fdcd4cd20ea997a5ed6ef272",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/code-works46/closure.json",
+      "sha256": "8eacd7b8dfff838211836a24cb1ae5b5fb3d4ebebdd827482bc5e23d0bb1c442",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/code-works46/cases.json",
+      "sha256": "21ba6d0cef570fe4c10aee54c1f0c3f47698ac6fde681e657822f53dfa4f7fa4",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/code-works46/results/C01_ORIGINAL_EXEC_R1.json",
+      "sha256": "86a14dc582b141a71059ecc60050bc30c5286d69ef54da4ff1f78613fa74b175",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/results/code-works46/C01_ORIGINAL_EXEC_R1.json",
+      "sha256": "539430f6d6ed4e4d672a7d5a43398a042165c9bdf59ce83511a498d87a01e129",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/code-works46/results/C01_ORIGINAL_EXEC_R2.json",
+      "sha256": "95d377625f5c548f7568bafdae1dcf68b1469e2ca491d66db0b0a8fa1e124a23",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/results/code-works46/C01_ORIGINAL_EXEC_R2.json",
+      "sha256": "fcec5c7b28e79c3bfe3d26509f388e4f496b6665e269a7f25e2f03fbfedff916",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/code-works46/results/C02_ORIGINAL_EXEC_R1.json",
+      "sha256": "a4d0c60e23c00503df26332ebe643e8a391cd0d9a77eb3e713844fa1d97b4957",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/results/code-works46/C02_ORIGINAL_EXEC_R1.json",
+      "sha256": "1c5ddff5aeaa52e0f67dc707e48a0d0391e238538389609b873bd4228dc7eeab",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/code-works46/results/C02_ORIGINAL_EXEC_R2.json",
+      "sha256": "edf721a2e2c413328ceae701339e26872de640971c9f18ed0b532b8717d4a422",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/results/code-works46/C02_ORIGINAL_EXEC_R2.json",
+      "sha256": "f0d0f10787f8654ae4d59d1614eda281c922389d61885e762d5ae6639fed8265",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry51-code-works/closure.json",
+      "sha256": "d5a1de44bc0055b36c024b538009057dc622669235036c5475ebea1bfde5c9ef",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry51-code-works/cases.json",
+      "sha256": "59938a97edccb525838946fe4cf4d908edf2848e89a8f3fdbf3651d3e55920f7",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry51-code-works/results/C01_V51_EXEC_R1.json",
+      "sha256": "4095f78d0e7c02a424f6fcea99192f2d8d58214e657ca7c72517eae923ae50d2",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/results/registry51-code-works/C01_V51_EXEC_R1.json",
+      "sha256": "637121680400619b67ce431ac5e398dd6e3e31fb5f70f2d17af418e8cfa78d75",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry51-code-works/results/C01_V51_EXEC_R2.json",
+      "sha256": "85e6e9647c1e0dbd06f024e2c2c9f31de929a5beeec694954a47ac7876b75c30",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/results/registry51-code-works/C01_V51_EXEC_R2.json",
+      "sha256": "a626a3019118b3fc26628841bbacda57fcc0cbb752d71abf110bf6534df1ee65",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry51-code-works/results/C02_V51_EXEC_R1.json",
+      "sha256": "6eb8a9b2c70d0a94820349723910a20cc566aaa3753dcecdd9348eed40ef85da",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/results/registry51-code-works/C02_V51_EXEC_R1.json",
+      "sha256": "933fc36d87d149b07bd0b585569bd8e40d54de65d1ead0d549d3223804c661e1",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/registry51-code-works/results/C02_V51_EXEC_R2.json",
+      "sha256": "7053a6cdcbeb8ac93bee1871da0bc314231bb03493d40a0ef93c36be0311f908",
+      "unchanged": true
+    },
+    {
+      "path": "docs/testing/evidence/natural-useful-delivery-2026-10-28/checkers/results/registry51-code-works/C02_V51_EXEC_R2.json",
+      "sha256": "a53553ca07ef26427ced5bbaf32caddc68720de9f71801b17cc04600d773115c",
+      "unchanged": true
+    }
+  ]
+}

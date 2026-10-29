@@ -1,0 +1,797 @@
+{
+  "caseId": "E01",
+  "validation": "Full vue-tsc TypeScript semantic --noEmit check with unchanged sealed tsconfig",
+  "isolatedRoot": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\e01-semantic-2026-10-28-r2",
+  "sourceManifestSha256": "a7f9c19244af011966e6558e2aeb7877e3d8d466b7a6f4f6a2fa3be2be4311af",
+  "sealedTsconfigSha256": "68a49d428a042fc3f3b102fabd34966994a2265e20de0fb5031aae22b886f40e",
+  "trustedCompiler": {
+    "executable": "E:\\Delelop\\nodejs\\node.exe",
+    "cli": "E:\\MyProject\\prompt-optimizer-platform\\apps\\web\\node_modules\\vue-tsc\\bin\\vue-tsc.js",
+    "cliSha256": "19aa06d047371f2593f78f4b5abb315d9d449300581b2db11e1cb40ea039e145",
+    "packages": {
+      "vue-tsc": {
+        "version": "2.2.12",
+        "packagePath": "E:\\MyProject\\prompt-optimizer-platform\\apps\\web\\node_modules\\vue-tsc\\package.json",
+        "packageSha256": "1651176df561df8cac64bd333e1bf500923af5e089f13627b370f0ca6c7f6479"
+      },
+      "typescript": {
+        "version": "5.7.3",
+        "packagePath": "E:\\MyProject\\prompt-optimizer-platform\\apps\\web\\node_modules\\typescript\\package.json",
+        "packageSha256": "1e03325943793f3bf11667b94fca412fe5ba617c85b84c16f0474933da156baa"
+      },
+      "vue": {
+        "version": "3.5.41",
+        "packagePath": "E:\\MyProject\\prompt-optimizer-platform\\apps\\web\\node_modules\\vue\\package.json",
+        "packageSha256": "f4b4f0bcc14f8d48db601ba33f408211438d86e914c08f7169836ad618ae1893"
+      },
+      "@vue/compiler-sfc": {
+        "version": "3.5.41",
+        "packagePath": "E:\\MyProject\\prompt-optimizer-platform\\apps\\web\\node_modules\\@vue\\compiler-sfc\\package.json",
+        "packageSha256": "495a092a14febb0773f007171db74b92645828bf23fcfe9a1a93bd2d55f13536"
+      }
+    }
+  },
+  "modelCalls": 0,
+  "packageScriptsExecuted": false,
+  "dependencyInstalls": 0,
+  "artifactApplicationStartupExecuted": false,
+  "credentialsOrParentEnvironmentPassedToModelSource": false,
+  "existingDirectoriesDeleted": false,
+  "sourceFileCountPerArm": 30,
+  "permittedReplacementPaths": [
+    "src/domain/availability.ts",
+    "src/domain/quantity.ts",
+    "src/application/loanDeskService.ts",
+    "src/composables/useNewLoan.ts",
+    "src/composables/useLoanEdit.ts",
+    "src/components/AvailabilityPanel.vue",
+    "src/components/LoanDraftForm.vue",
+    "src/views/NewLoanPage.vue",
+    "src/views/EditLoanPage.vue"
+  ],
+  "baseline": {
+    "arm": "BASELINE",
+    "directory": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\e01-semantic-2026-10-28-r2\\baseline",
+    "dependencyLink": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\e01-semantic-2026-10-28-r2\\baseline\\node_modules",
+    "dependencyTarget": "E:\\MyProject\\prompt-optimizer-platform\\apps\\web\\node_modules",
+    "sourceTreeSha256": "f644e6606a34021bf257395434fa4fd785355dc9e6aa7141ab52524183581f6f",
+    "sourceFileHashes": [
+      {
+        "path": "README.md",
+        "sha256": "0c4ae5c2b432ef8e4a5f93a4fcafa774c25792f0eb6f5c2534e1846a215a4877",
+        "bytes": 1189
+      },
+      {
+        "path": "index.html",
+        "sha256": "a3a983af5419235e1e7a2ee5dc2371c604a6b7e20fd2fb7a692b75eb9b306f88",
+        "bytes": 271
+      },
+      {
+        "path": "package.json",
+        "sha256": "fe69fc08cd463fafe80f901be449563f516fd58b1ed346b9477e0bbda3c485f7",
+        "bytes": 294
+      },
+      {
+        "path": "src/App.vue",
+        "sha256": "c09b565e6c9b8d29a514123b648b6427b7e166e319e6c085f3e0e43fafa688fc",
+        "bytes": 963
+      },
+      {
+        "path": "src/application/deskRuntime.ts",
+        "sha256": "5d335467bf80837e47ea878e5100839efc2b0d31f1b3d9374d04954b00b07836",
+        "bytes": 366
+      },
+      {
+        "path": "src/application/loanDeskService.ts",
+        "sha256": "7491c13da3615fe2c623b0568874e0963fc3bf655d18a876a6427d22b97a3f66",
+        "bytes": 2347
+      },
+      {
+        "path": "src/components/AvailabilityPanel.vue",
+        "sha256": "a6b1f1417c0936995d96dcd22d20feda24f2d2749b2a27571a282a10d2b1ae5a",
+        "bytes": 912
+      },
+      {
+        "path": "src/components/LoanDraftForm.vue",
+        "sha256": "392c41a7f65523996510242b99ae882d687a9a58a32759e7f77f6ab96b5d63a8",
+        "bytes": 1298
+      },
+      {
+        "path": "src/components/LoanLedger.vue",
+        "sha256": "e145bc2e94e4186f103564aafc56984b95db6afd13a3b280a72d814344814476",
+        "bytes": 786
+      },
+      {
+        "path": "src/composables/useDepositPreview.ts",
+        "sha256": "6dc0e4c0466949770cbcaef1a341092a5b957b845cb6c5a21b588c48a90ff4bc",
+        "bytes": 913
+      },
+      {
+        "path": "src/composables/useLoanEdit.ts",
+        "sha256": "e85e0a40bbbbb36c70b4d3283b91bec9676e3a1b225ea153e7453abea5f4f467",
+        "bytes": 1881
+      },
+      {
+        "path": "src/composables/useNewLoan.ts",
+        "sha256": "328e191059a26c6c066495f007f5172eae2e046d8d3012b8a12119ad4c01dd72",
+        "bytes": 1622
+      },
+      {
+        "path": "src/data/memoryLoanRepository.ts",
+        "sha256": "3aecdf3cdf11687360f3847e9fc039c23372fa41f2cbf8a8dbbafa4a650fb6b2",
+        "bytes": 1411
+      },
+      {
+        "path": "src/data/seed.ts",
+        "sha256": "61be686a06ccfbc9b9b5f246f69a0d8c1416fa54138d94722406713fc0f2dac6",
+        "bytes": 1931
+      },
+      {
+        "path": "src/domain/availability.ts",
+        "sha256": "9a90a029b8a79a9aa17e8b4da0129512ad543f4aa0b977e250bc92559b3b24cc",
+        "bytes": 839
+      },
+      {
+        "path": "src/domain/errors.ts",
+        "sha256": "a66439c27c72b28cff58d06510c3193c508ae470f0d9ce7c5c4ea56005c9ef4c",
+        "bytes": 800
+      },
+      {
+        "path": "src/domain/quantity.ts",
+        "sha256": "1a4b6a6ca2139ab9dca82678f5439cde1cd91dd0998938c518d0ba4340cd16f5",
+        "bytes": 593
+      },
+      {
+        "path": "src/domain/types.ts",
+        "sha256": "6728ad1c25792eacd81a3c9d6c3daf2992f1df521a6cd18b5a1588338874d3f7",
+        "bytes": 1543
+      },
+      {
+        "path": "src/env.d.ts",
+        "sha256": "2790ada666bc59e44e480b38659bc997cd366d4393c37f60e8047720341f160c",
+        "bytes": 196
+      },
+      {
+        "path": "src/events/availability.ts",
+        "sha256": "8ad41ea60323f780e12a5b1304422f3118e1e82eda321e8a0711c447d332eef6",
+        "bytes": 464
+      },
+      {
+        "path": "src/events/eventSignupService.ts",
+        "sha256": "79955f68c0cf784afaef577f84475a2d2d10371aaaa7baef4f3a52a73c9b9b48",
+        "bytes": 911
+      },
+      {
+        "path": "src/legacy/LoanDesk.vue",
+        "sha256": "38a683a7f46bcecc7cffd369fee67d1d230f30b482e4c67b8db0b387fcec3697",
+        "bytes": 556
+      },
+      {
+        "path": "src/legacy/availability.ts",
+        "sha256": "eb13d3633b8e072004e3bc21bfc357fdf23e8515e7d1cd772cb27e07c58ded73",
+        "bytes": 648
+      },
+      {
+        "path": "src/main.ts",
+        "sha256": "d84655965257e86e771cbf38fe4b6e3e53f7955b2c7937f9333e1081b2880c93",
+        "bytes": 116
+      },
+      {
+        "path": "src/styles.css",
+        "sha256": "678d45ec7d3221a5730ae8c46dc031a09a3a106ebcd447777862245d31561077",
+        "bytes": 2938
+      },
+      {
+        "path": "src/views/DepositPage.vue",
+        "sha256": "51572aaf0729cd723c4abafc0e10bc972f4b0fee0d20b1e0ed54b98f5f8190a8",
+        "bytes": 995
+      },
+      {
+        "path": "src/views/EditLoanPage.vue",
+        "sha256": "0dc646ad424722a16cda099e5652fc6556a44268de66b52ceacfab2bc9f65cf9",
+        "bytes": 1732
+      },
+      {
+        "path": "src/views/NewLoanPage.vue",
+        "sha256": "0710c3a6f9da95d17ae52f552d08417d1f2a2d50709e7a29cb2cdf37a17a584e",
+        "bytes": 1996
+      },
+      {
+        "path": "tsconfig.json",
+        "sha256": "68a49d428a042fc3f3b102fabd34966994a2265e20de0fb5031aae22b886f40e",
+        "bytes": 314
+      },
+      {
+        "path": "vite.config.ts",
+        "sha256": "7f713d14567a62585364a0acb5572766de73a3819d6a49228454e200d150659d",
+        "bytes": 158
+      }
+    ],
+    "command": {
+      "executable": "E:\\Delelop\\nodejs\\node.exe",
+      "args": [
+        "E:\\MyProject\\prompt-optimizer-platform\\apps\\web\\node_modules\\vue-tsc\\bin\\vue-tsc.js",
+        "--noEmit",
+        "--project",
+        "E:\\MyProject\\prompt-optimizer-platform\\tmp\\e01-semantic-2026-10-28-r2\\baseline\\tsconfig.json",
+        "--pretty",
+        "false"
+      ],
+      "shell": false,
+      "scriptsExecuted": false,
+      "parentEnvironmentInherited": false,
+      "environmentKeysOnly": [
+        "NO_COLOR",
+        "SystemRoot",
+        "SYSTEMROOT",
+        "WINDIR",
+        "TEMP",
+        "TMP"
+      ]
+    },
+    "startedAt": "2026-10-27T19:21:24.294Z",
+    "finishedAt": "2026-10-27T19:21:26.808Z",
+    "exitCode": 0,
+    "signal": null,
+    "passed": true,
+    "stdoutFile": "BASELINE-stdout.txt",
+    "stderrFile": "BASELINE-stderr.txt",
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "diagnostics": []
+  },
+  "arms": [
+    {
+      "arm": "ORIGINAL",
+      "directory": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\e01-semantic-2026-10-28-r2\\original",
+      "dependencyLink": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\e01-semantic-2026-10-28-r2\\original\\node_modules",
+      "dependencyTarget": "E:\\MyProject\\prompt-optimizer-platform\\apps\\web\\node_modules",
+      "sourceTreeSha256": "dc424db57547797803e06525d3ef61614b8d4cc3d5d51832aa92a989a0f491b9",
+      "sourceFileHashes": [
+        {
+          "path": "README.md",
+          "sha256": "0c4ae5c2b432ef8e4a5f93a4fcafa774c25792f0eb6f5c2534e1846a215a4877",
+          "bytes": 1189
+        },
+        {
+          "path": "index.html",
+          "sha256": "a3a983af5419235e1e7a2ee5dc2371c604a6b7e20fd2fb7a692b75eb9b306f88",
+          "bytes": 271
+        },
+        {
+          "path": "package.json",
+          "sha256": "fe69fc08cd463fafe80f901be449563f516fd58b1ed346b9477e0bbda3c485f7",
+          "bytes": 294
+        },
+        {
+          "path": "src/App.vue",
+          "sha256": "c09b565e6c9b8d29a514123b648b6427b7e166e319e6c085f3e0e43fafa688fc",
+          "bytes": 963
+        },
+        {
+          "path": "src/application/deskRuntime.ts",
+          "sha256": "5d335467bf80837e47ea878e5100839efc2b0d31f1b3d9374d04954b00b07836",
+          "bytes": 366
+        },
+        {
+          "path": "src/application/loanDeskService.ts",
+          "sha256": "5d4f012d49844bff7db222db1576574d27ad5520ce3ab34fe76d921cbbc3d809",
+          "bytes": 1937
+        },
+        {
+          "path": "src/components/AvailabilityPanel.vue",
+          "sha256": "a6b1f1417c0936995d96dcd22d20feda24f2d2749b2a27571a282a10d2b1ae5a",
+          "bytes": 912
+        },
+        {
+          "path": "src/components/LoanDraftForm.vue",
+          "sha256": "392c41a7f65523996510242b99ae882d687a9a58a32759e7f77f6ab96b5d63a8",
+          "bytes": 1298
+        },
+        {
+          "path": "src/components/LoanLedger.vue",
+          "sha256": "e145bc2e94e4186f103564aafc56984b95db6afd13a3b280a72d814344814476",
+          "bytes": 786
+        },
+        {
+          "path": "src/composables/useDepositPreview.ts",
+          "sha256": "6dc0e4c0466949770cbcaef1a341092a5b957b845cb6c5a21b588c48a90ff4bc",
+          "bytes": 913
+        },
+        {
+          "path": "src/composables/useLoanEdit.ts",
+          "sha256": "e85e0a40bbbbb36c70b4d3283b91bec9676e3a1b225ea153e7453abea5f4f467",
+          "bytes": 1881
+        },
+        {
+          "path": "src/composables/useNewLoan.ts",
+          "sha256": "328e191059a26c6c066495f007f5172eae2e046d8d3012b8a12119ad4c01dd72",
+          "bytes": 1622
+        },
+        {
+          "path": "src/data/memoryLoanRepository.ts",
+          "sha256": "3aecdf3cdf11687360f3847e9fc039c23372fa41f2cbf8a8dbbafa4a650fb6b2",
+          "bytes": 1411
+        },
+        {
+          "path": "src/data/seed.ts",
+          "sha256": "61be686a06ccfbc9b9b5f246f69a0d8c1416fa54138d94722406713fc0f2dac6",
+          "bytes": 1931
+        },
+        {
+          "path": "src/domain/availability.ts",
+          "sha256": "2347affea632177380a2c2c3c47e0b6d3622d409e849b97414a147035286f3b3",
+          "bytes": 1104
+        },
+        {
+          "path": "src/domain/errors.ts",
+          "sha256": "a66439c27c72b28cff58d06510c3193c508ae470f0d9ce7c5c4ea56005c9ef4c",
+          "bytes": 800
+        },
+        {
+          "path": "src/domain/quantity.ts",
+          "sha256": "2e7b298b8ce5e8cd21d552476f331bad22ce1e06450685dda1d04a7a748f5ce3",
+          "bytes": 630
+        },
+        {
+          "path": "src/domain/types.ts",
+          "sha256": "6728ad1c25792eacd81a3c9d6c3daf2992f1df521a6cd18b5a1588338874d3f7",
+          "bytes": 1543
+        },
+        {
+          "path": "src/env.d.ts",
+          "sha256": "2790ada666bc59e44e480b38659bc997cd366d4393c37f60e8047720341f160c",
+          "bytes": 196
+        },
+        {
+          "path": "src/events/availability.ts",
+          "sha256": "8ad41ea60323f780e12a5b1304422f3118e1e82eda321e8a0711c447d332eef6",
+          "bytes": 464
+        },
+        {
+          "path": "src/events/eventSignupService.ts",
+          "sha256": "79955f68c0cf784afaef577f84475a2d2d10371aaaa7baef4f3a52a73c9b9b48",
+          "bytes": 911
+        },
+        {
+          "path": "src/legacy/LoanDesk.vue",
+          "sha256": "38a683a7f46bcecc7cffd369fee67d1d230f30b482e4c67b8db0b387fcec3697",
+          "bytes": 556
+        },
+        {
+          "path": "src/legacy/availability.ts",
+          "sha256": "eb13d3633b8e072004e3bc21bfc357fdf23e8515e7d1cd772cb27e07c58ded73",
+          "bytes": 648
+        },
+        {
+          "path": "src/main.ts",
+          "sha256": "d84655965257e86e771cbf38fe4b6e3e53f7955b2c7937f9333e1081b2880c93",
+          "bytes": 116
+        },
+        {
+          "path": "src/styles.css",
+          "sha256": "678d45ec7d3221a5730ae8c46dc031a09a3a106ebcd447777862245d31561077",
+          "bytes": 2938
+        },
+        {
+          "path": "src/views/DepositPage.vue",
+          "sha256": "51572aaf0729cd723c4abafc0e10bc972f4b0fee0d20b1e0ed54b98f5f8190a8",
+          "bytes": 995
+        },
+        {
+          "path": "src/views/EditLoanPage.vue",
+          "sha256": "0dc646ad424722a16cda099e5652fc6556a44268de66b52ceacfab2bc9f65cf9",
+          "bytes": 1732
+        },
+        {
+          "path": "src/views/NewLoanPage.vue",
+          "sha256": "0710c3a6f9da95d17ae52f552d08417d1f2a2d50709e7a29cb2cdf37a17a584e",
+          "bytes": 1996
+        },
+        {
+          "path": "tsconfig.json",
+          "sha256": "68a49d428a042fc3f3b102fabd34966994a2265e20de0fb5031aae22b886f40e",
+          "bytes": 314
+        },
+        {
+          "path": "vite.config.ts",
+          "sha256": "7f713d14567a62585364a0acb5572766de73a3819d6a49228454e200d150659d",
+          "bytes": 158
+        }
+      ],
+      "command": {
+        "executable": "E:\\Delelop\\nodejs\\node.exe",
+        "args": [
+          "E:\\MyProject\\prompt-optimizer-platform\\apps\\web\\node_modules\\vue-tsc\\bin\\vue-tsc.js",
+          "--noEmit",
+          "--project",
+          "E:\\MyProject\\prompt-optimizer-platform\\tmp\\e01-semantic-2026-10-28-r2\\original\\tsconfig.json",
+          "--pretty",
+          "false"
+        ],
+        "shell": false,
+        "scriptsExecuted": false,
+        "parentEnvironmentInherited": false,
+        "environmentKeysOnly": [
+          "NO_COLOR",
+          "SystemRoot",
+          "SYSTEMROOT",
+          "WINDIR",
+          "TEMP",
+          "TMP"
+        ]
+      },
+      "startedAt": "2026-10-27T19:21:24.312Z",
+      "finishedAt": "2026-10-27T19:21:26.836Z",
+      "exitCode": 0,
+      "signal": null,
+      "passed": true,
+      "stdoutFile": "ORIGINAL-stdout.txt",
+      "stderrFile": "ORIGINAL-stderr.txt",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "diagnostics": []
+    },
+    {
+      "arm": "31",
+      "reusedFrom": "ORIGINAL",
+      "compilerInvocationReused": true,
+      "reason": "All30 overlaid source/config files are byte-identical, not merely behaviorally equivalent.",
+      "sourceTreeSha256": "dc424db57547797803e06525d3ef61614b8d4cc3d5d51832aa92a989a0f491b9",
+      "originalSourceTreeSha256": "dc424db57547797803e06525d3ef61614b8d4cc3d5d51832aa92a989a0f491b9",
+      "sourceFileHashes": [
+        {
+          "path": "README.md",
+          "sha256": "0c4ae5c2b432ef8e4a5f93a4fcafa774c25792f0eb6f5c2534e1846a215a4877",
+          "bytes": 1189
+        },
+        {
+          "path": "index.html",
+          "sha256": "a3a983af5419235e1e7a2ee5dc2371c604a6b7e20fd2fb7a692b75eb9b306f88",
+          "bytes": 271
+        },
+        {
+          "path": "package.json",
+          "sha256": "fe69fc08cd463fafe80f901be449563f516fd58b1ed346b9477e0bbda3c485f7",
+          "bytes": 294
+        },
+        {
+          "path": "src/App.vue",
+          "sha256": "c09b565e6c9b8d29a514123b648b6427b7e166e319e6c085f3e0e43fafa688fc",
+          "bytes": 963
+        },
+        {
+          "path": "src/application/deskRuntime.ts",
+          "sha256": "5d335467bf80837e47ea878e5100839efc2b0d31f1b3d9374d04954b00b07836",
+          "bytes": 366
+        },
+        {
+          "path": "src/application/loanDeskService.ts",
+          "sha256": "5d4f012d49844bff7db222db1576574d27ad5520ce3ab34fe76d921cbbc3d809",
+          "bytes": 1937
+        },
+        {
+          "path": "src/components/AvailabilityPanel.vue",
+          "sha256": "a6b1f1417c0936995d96dcd22d20feda24f2d2749b2a27571a282a10d2b1ae5a",
+          "bytes": 912
+        },
+        {
+          "path": "src/components/LoanDraftForm.vue",
+          "sha256": "392c41a7f65523996510242b99ae882d687a9a58a32759e7f77f6ab96b5d63a8",
+          "bytes": 1298
+        },
+        {
+          "path": "src/components/LoanLedger.vue",
+          "sha256": "e145bc2e94e4186f103564aafc56984b95db6afd13a3b280a72d814344814476",
+          "bytes": 786
+        },
+        {
+          "path": "src/composables/useDepositPreview.ts",
+          "sha256": "6dc0e4c0466949770cbcaef1a341092a5b957b845cb6c5a21b588c48a90ff4bc",
+          "bytes": 913
+        },
+        {
+          "path": "src/composables/useLoanEdit.ts",
+          "sha256": "e85e0a40bbbbb36c70b4d3283b91bec9676e3a1b225ea153e7453abea5f4f467",
+          "bytes": 1881
+        },
+        {
+          "path": "src/composables/useNewLoan.ts",
+          "sha256": "328e191059a26c6c066495f007f5172eae2e046d8d3012b8a12119ad4c01dd72",
+          "bytes": 1622
+        },
+        {
+          "path": "src/data/memoryLoanRepository.ts",
+          "sha256": "3aecdf3cdf11687360f3847e9fc039c23372fa41f2cbf8a8dbbafa4a650fb6b2",
+          "bytes": 1411
+        },
+        {
+          "path": "src/data/seed.ts",
+          "sha256": "61be686a06ccfbc9b9b5f246f69a0d8c1416fa54138d94722406713fc0f2dac6",
+          "bytes": 1931
+        },
+        {
+          "path": "src/domain/availability.ts",
+          "sha256": "2347affea632177380a2c2c3c47e0b6d3622d409e849b97414a147035286f3b3",
+          "bytes": 1104
+        },
+        {
+          "path": "src/domain/errors.ts",
+          "sha256": "a66439c27c72b28cff58d06510c3193c508ae470f0d9ce7c5c4ea56005c9ef4c",
+          "bytes": 800
+        },
+        {
+          "path": "src/domain/quantity.ts",
+          "sha256": "2e7b298b8ce5e8cd21d552476f331bad22ce1e06450685dda1d04a7a748f5ce3",
+          "bytes": 630
+        },
+        {
+          "path": "src/domain/types.ts",
+          "sha256": "6728ad1c25792eacd81a3c9d6c3daf2992f1df521a6cd18b5a1588338874d3f7",
+          "bytes": 1543
+        },
+        {
+          "path": "src/env.d.ts",
+          "sha256": "2790ada666bc59e44e480b38659bc997cd366d4393c37f60e8047720341f160c",
+          "bytes": 196
+        },
+        {
+          "path": "src/events/availability.ts",
+          "sha256": "8ad41ea60323f780e12a5b1304422f3118e1e82eda321e8a0711c447d332eef6",
+          "bytes": 464
+        },
+        {
+          "path": "src/events/eventSignupService.ts",
+          "sha256": "79955f68c0cf784afaef577f84475a2d2d10371aaaa7baef4f3a52a73c9b9b48",
+          "bytes": 911
+        },
+        {
+          "path": "src/legacy/LoanDesk.vue",
+          "sha256": "38a683a7f46bcecc7cffd369fee67d1d230f30b482e4c67b8db0b387fcec3697",
+          "bytes": 556
+        },
+        {
+          "path": "src/legacy/availability.ts",
+          "sha256": "eb13d3633b8e072004e3bc21bfc357fdf23e8515e7d1cd772cb27e07c58ded73",
+          "bytes": 648
+        },
+        {
+          "path": "src/main.ts",
+          "sha256": "d84655965257e86e771cbf38fe4b6e3e53f7955b2c7937f9333e1081b2880c93",
+          "bytes": 116
+        },
+        {
+          "path": "src/styles.css",
+          "sha256": "678d45ec7d3221a5730ae8c46dc031a09a3a106ebcd447777862245d31561077",
+          "bytes": 2938
+        },
+        {
+          "path": "src/views/DepositPage.vue",
+          "sha256": "51572aaf0729cd723c4abafc0e10bc972f4b0fee0d20b1e0ed54b98f5f8190a8",
+          "bytes": 995
+        },
+        {
+          "path": "src/views/EditLoanPage.vue",
+          "sha256": "0dc646ad424722a16cda099e5652fc6556a44268de66b52ceacfab2bc9f65cf9",
+          "bytes": 1732
+        },
+        {
+          "path": "src/views/NewLoanPage.vue",
+          "sha256": "0710c3a6f9da95d17ae52f552d08417d1f2a2d50709e7a29cb2cdf37a17a584e",
+          "bytes": 1996
+        },
+        {
+          "path": "tsconfig.json",
+          "sha256": "68a49d428a042fc3f3b102fabd34966994a2265e20de0fb5031aae22b886f40e",
+          "bytes": 314
+        },
+        {
+          "path": "vite.config.ts",
+          "sha256": "7f713d14567a62585364a0acb5572766de73a3819d6a49228454e200d150659d",
+          "bytes": 158
+        }
+      ],
+      "passed": true,
+      "exitCode": 0,
+      "diagnostics": [],
+      "stdoutFile": "ORIGINAL-stdout.txt",
+      "stderrFile": "ORIGINAL-stderr.txt"
+    },
+    {
+      "arm": "47",
+      "directory": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\e01-semantic-2026-10-28-r2\\47",
+      "dependencyLink": "E:\\MyProject\\prompt-optimizer-platform\\tmp\\e01-semantic-2026-10-28-r2\\47\\node_modules",
+      "dependencyTarget": "E:\\MyProject\\prompt-optimizer-platform\\apps\\web\\node_modules",
+      "sourceTreeSha256": "b0aaf1ee291ca04ec81d11251759e47b4fdff9e8c44112eb1b6f4b7740a67b3f",
+      "sourceFileHashes": [
+        {
+          "path": "README.md",
+          "sha256": "0c4ae5c2b432ef8e4a5f93a4fcafa774c25792f0eb6f5c2534e1846a215a4877",
+          "bytes": 1189
+        },
+        {
+          "path": "index.html",
+          "sha256": "a3a983af5419235e1e7a2ee5dc2371c604a6b7e20fd2fb7a692b75eb9b306f88",
+          "bytes": 271
+        },
+        {
+          "path": "package.json",
+          "sha256": "fe69fc08cd463fafe80f901be449563f516fd58b1ed346b9477e0bbda3c485f7",
+          "bytes": 294
+        },
+        {
+          "path": "src/App.vue",
+          "sha256": "c09b565e6c9b8d29a514123b648b6427b7e166e319e6c085f3e0e43fafa688fc",
+          "bytes": 963
+        },
+        {
+          "path": "src/application/deskRuntime.ts",
+          "sha256": "5d335467bf80837e47ea878e5100839efc2b0d31f1b3d9374d04954b00b07836",
+          "bytes": 366
+        },
+        {
+          "path": "src/application/loanDeskService.ts",
+          "sha256": "e71f12c12cf60165902acd9bdd9f2328435a440179ec56e194b74e9f630c0b27",
+          "bytes": 2247
+        },
+        {
+          "path": "src/components/AvailabilityPanel.vue",
+          "sha256": "a6b1f1417c0936995d96dcd22d20feda24f2d2749b2a27571a282a10d2b1ae5a",
+          "bytes": 912
+        },
+        {
+          "path": "src/components/LoanDraftForm.vue",
+          "sha256": "392c41a7f65523996510242b99ae882d687a9a58a32759e7f77f6ab96b5d63a8",
+          "bytes": 1298
+        },
+        {
+          "path": "src/components/LoanLedger.vue",
+          "sha256": "e145bc2e94e4186f103564aafc56984b95db6afd13a3b280a72d814344814476",
+          "bytes": 786
+        },
+        {
+          "path": "src/composables/useDepositPreview.ts",
+          "sha256": "6dc0e4c0466949770cbcaef1a341092a5b957b845cb6c5a21b588c48a90ff4bc",
+          "bytes": 913
+        },
+        {
+          "path": "src/composables/useLoanEdit.ts",
+          "sha256": "e85e0a40bbbbb36c70b4d3283b91bec9676e3a1b225ea153e7453abea5f4f467",
+          "bytes": 1881
+        },
+        {
+          "path": "src/composables/useNewLoan.ts",
+          "sha256": "328e191059a26c6c066495f007f5172eae2e046d8d3012b8a12119ad4c01dd72",
+          "bytes": 1622
+        },
+        {
+          "path": "src/data/memoryLoanRepository.ts",
+          "sha256": "3aecdf3cdf11687360f3847e9fc039c23372fa41f2cbf8a8dbbafa4a650fb6b2",
+          "bytes": 1411
+        },
+        {
+          "path": "src/data/seed.ts",
+          "sha256": "61be686a06ccfbc9b9b5f246f69a0d8c1416fa54138d94722406713fc0f2dac6",
+          "bytes": 1931
+        },
+        {
+          "path": "src/domain/availability.ts",
+          "sha256": "c8801685ec207b9d25e00f5084829fb0f5d67182fc625730f80caa9ea959a96a",
+          "bytes": 1104
+        },
+        {
+          "path": "src/domain/errors.ts",
+          "sha256": "a66439c27c72b28cff58d06510c3193c508ae470f0d9ce7c5c4ea56005c9ef4c",
+          "bytes": 800
+        },
+        {
+          "path": "src/domain/quantity.ts",
+          "sha256": "2e7b298b8ce5e8cd21d552476f331bad22ce1e06450685dda1d04a7a748f5ce3",
+          "bytes": 630
+        },
+        {
+          "path": "src/domain/types.ts",
+          "sha256": "6728ad1c25792eacd81a3c9d6c3daf2992f1df521a6cd18b5a1588338874d3f7",
+          "bytes": 1543
+        },
+        {
+          "path": "src/env.d.ts",
+          "sha256": "2790ada666bc59e44e480b38659bc997cd366d4393c37f60e8047720341f160c",
+          "bytes": 196
+        },
+        {
+          "path": "src/events/availability.ts",
+          "sha256": "8ad41ea60323f780e12a5b1304422f3118e1e82eda321e8a0711c447d332eef6",
+          "bytes": 464
+        },
+        {
+          "path": "src/events/eventSignupService.ts",
+          "sha256": "79955f68c0cf784afaef577f84475a2d2d10371aaaa7baef4f3a52a73c9b9b48",
+          "bytes": 911
+        },
+        {
+          "path": "src/legacy/LoanDesk.vue",
+          "sha256": "38a683a7f46bcecc7cffd369fee67d1d230f30b482e4c67b8db0b387fcec3697",
+          "bytes": 556
+        },
+        {
+          "path": "src/legacy/availability.ts",
+          "sha256": "eb13d3633b8e072004e3bc21bfc357fdf23e8515e7d1cd772cb27e07c58ded73",
+          "bytes": 648
+        },
+        {
+          "path": "src/main.ts",
+          "sha256": "d84655965257e86e771cbf38fe4b6e3e53f7955b2c7937f9333e1081b2880c93",
+          "bytes": 116
+        },
+        {
+          "path": "src/styles.css",
+          "sha256": "678d45ec7d3221a5730ae8c46dc031a09a3a106ebcd447777862245d31561077",
+          "bytes": 2938
+        },
+        {
+          "path": "src/views/DepositPage.vue",
+          "sha256": "51572aaf0729cd723c4abafc0e10bc972f4b0fee0d20b1e0ed54b98f5f8190a8",
+          "bytes": 995
+        },
+        {
+          "path": "src/views/EditLoanPage.vue",
+          "sha256": "0dc646ad424722a16cda099e5652fc6556a44268de66b52ceacfab2bc9f65cf9",
+          "bytes": 1732
+        },
+        {
+          "path": "src/views/NewLoanPage.vue",
+          "sha256": "0710c3a6f9da95d17ae52f552d08417d1f2a2d50709e7a29cb2cdf37a17a584e",
+          "bytes": 1996
+        },
+        {
+          "path": "tsconfig.json",
+          "sha256": "68a49d428a042fc3f3b102fabd34966994a2265e20de0fb5031aae22b886f40e",
+          "bytes": 314
+        },
+        {
+          "path": "vite.config.ts",
+          "sha256": "7f713d14567a62585364a0acb5572766de73a3819d6a49228454e200d150659d",
+          "bytes": 158
+        }
+      ],
+      "command": {
+        "executable": "E:\\Delelop\\nodejs\\node.exe",
+        "args": [
+          "E:\\MyProject\\prompt-optimizer-platform\\apps\\web\\node_modules\\vue-tsc\\bin\\vue-tsc.js",
+          "--noEmit",
+          "--project",
+          "E:\\MyProject\\prompt-optimizer-platform\\tmp\\e01-semantic-2026-10-28-r2\\47\\tsconfig.json",
+          "--pretty",
+          "false"
+        ],
+        "shell": false,
+        "scriptsExecuted": false,
+        "parentEnvironmentInherited": false,
+        "environmentKeysOnly": [
+          "NO_COLOR",
+          "SystemRoot",
+          "SYSTEMROOT",
+          "WINDIR",
+          "TEMP",
+          "TMP"
+        ]
+      },
+      "startedAt": "2026-10-27T19:21:24.326Z",
+      "finishedAt": "2026-10-27T19:21:26.753Z",
+      "exitCode": 0,
+      "signal": null,
+      "passed": true,
+      "stdoutFile": "47-stdout.txt",
+      "stderrFile": "47-stderr.txt",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "diagnostics": []
+    }
+  ],
+  "fixtureBaselinePassed": true,
+  "allWorkArmsPassed": true,
+  "failuresPreserved": true,
+  "sourceAndArtifactsUnchanged": true,
+  "interpretation": "Runtime28 and full semantic results are separate evidence. No failed artifact or fixture is repaired, and no writer guidance is changed."
+}

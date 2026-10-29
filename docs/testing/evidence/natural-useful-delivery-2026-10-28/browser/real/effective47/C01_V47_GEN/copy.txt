@@ -1,0 +1,7 @@
+请在 synthetic-survey-workspace 的重点记录模块 src/views/records 中，为新增和导入两个入口增加调查时间限制：调查时间不能超过今天。
+
+现有代码中，create.js 的 createSurvey 和 import.js 的 importSurveys 都调用 dateRules.js 的 validateSurveyDate(value, today) 做日历日期校验，错误代码用于表单和导入行提示。请在这个共用校验中补充“晚于今天”的判断，使新增和导入行为一致：新增遇到超过今天的日期时返回字段错误（沿用现有 { ok: false, fieldErrors: { surveyDate: ... } } 结构），导入保持按行部分成功，超过今天的行只影响所属行并进入 errors，其他有效行照常插入。请为这个新错误确定一个与现有 INVALID_DATE 区分、便于表单和导入行提示的错误代码，并保持原有非法日历日期的处理不变。
+
+请按需在已有的 src/views/records/dateRules.spec.js 中补充回归测试，覆盖新增和导入两个入口对“今天”“今天之前”“今天之后”日期的处理，以及导入中有效行与超限行混合时按行返回错误、保留其他有效行的行为。
+
+本次只允许修改 src/views/records/dateRules.js、src/views/records/create.js、src/views/records/import.js，以及按需补充已有的 src/views/records/dateRules.spec.js；不得新增文件或修改其他文件。完成后请说明改了哪些文件、新增的错误代码及其在新增和导入中的表现，并运行项目已有的测试命令确认结果。

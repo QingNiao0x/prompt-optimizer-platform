@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "package_id": "sealed-registry51-holdout-2026-10-28",
+  "frozen_at_utc": "2026-10-27T22:21:50.752Z",
+  "case_count": 2,
+  "purpose": "Independently authored, pre-result native content-delivery holdouts for frozen registry candidate51 versus strategy31, with raw baseline.",
+  "author_isolation": {
+    "product_code_read": false,
+    "development_cases_read": false,
+    "model_results_read": false,
+    "other_sealed_files_read": false,
+    "previous_pro50_package_modified": false,
+    "model_calls": 0,
+    "api_calls": 0,
+    "browser_runs": 0,
+    "review": "author_internal_only"
+  },
+  "opening_gate": "root_must_not_open_payload_until_normal_passes",
+  "candidate_freeze_reference": {
+    "candidate": "registry51",
+    "frozen_at_utc": "2026-10-27T22:05:58.275Z",
+    "protocol_sha256": "471b0ed26438374396e107db49ea092e530b3087d187c25017ddc088a7c9d598",
+    "source": "provided_by_parent; code_not_read"
+  },
+  "shared_materials_contract": {
+    "files_per_case": 1,
+    "same_complete_materials_for_enhancement_and_execution": true,
+    "same_execution_contract_for_original_31_51": true,
+    "evaluation_cards_sent_to_models": false,
+    "han_character_count_range": [
+      800,
+      1500
+    ]
+  },
+  "cases": [
+    {
+      "case_id": "registry51-holdout-01",
+      "directory": "case-01",
+      "original_prompt": "case-01/original-prompt.txt",
+      "shared_materials": [
+        "case-01/shared-materials.md"
+      ],
+      "execution_contract": "case-01/execution-contract.txt",
+      "evaluation_card": "case-01/preregistered-evaluation.json",
+      "shared_materials_han_character_count": 1202,
+      "enhancement_run_ids": [
+        "registry51-holdout-01-strategy31-enhancement-01",
+        "registry51-holdout-01-strategy51-enhancement-01"
+      ],
+      "work_run_ids": [
+        "registry51-holdout-01-original-r01",
+        "registry51-holdout-01-original-r02",
+        "registry51-holdout-01-strategy31-r01",
+        "registry51-holdout-01-strategy31-r02",
+        "registry51-holdout-01-strategy51-r01",
+        "registry51-holdout-01-strategy51-r02"
+      ]
+    },
+    {
+      "case_id": "registry51-holdout-02",
+      "directory": "case-02",
+      "original_prompt": "case-02/original-prompt.txt",
+      "shared_materials": [
+        "case-02/shared-materials.md"
+      ],
+      "execution_contract": "case-02/execution-contract.txt",
+      "evaluation_card": "case-02/preregistered-evaluation.json",
+      "shared_materials_han_character_count": 1243,
+      "enhancement_run_ids": [
+        "registry51-holdout-02-strategy31-enhancement-01",
+        "registry51-holdout-02-strategy51-enhancement-01"
+      ],
+      "work_run_ids": [
+        "registry51-holdout-02-original-r01",
+        "registry51-holdout-02-original-r02",
+        "registry51-holdout-02-strategy31-r01",
+        "registry51-holdout-02-strategy31-r02",
+        "registry51-holdout-02-strategy51-r01",
+        "registry51-holdout-02-strategy51-r02"
+      ]
+    }
+  ],
+  "generation_plan": {
+    "author_execution": "none",
+    "endpoint": "https://api.deepseek.com/chat/completions",
+    "enhancement": {
+      "arms": [
+        "strategy31",
+        "strategy51"
+      ],
+      "generations_per_arm_per_case": 1,
+      "public_model_id": "deepseek:deepseek-flash",
+      "upstream_model_id": "deepseek-flash",
+      "temperature": 0.2,
+      "max_tokens": 8192,
+      "response_format": {
+        "type": "json_object"
+      },
+      "thinking": {
+        "type": "disabled"
+      },
+      "stream": false,
+      "top_p": "omitted_default",
+      "effort": "omitted"
+    },
+    "execution": {
+      "arms": [
+        "original",
+        "strategy31",
+        "strategy51"
+      ],
+      "generations_per_arm_per_case": 2,
+      "repeats_prenumbered": true,
+      "public_model_id": "deepseek:deepseek-flash",
+      "upstream_model_id": "deepseek-flash",
+      "temperature": 0.2,
+      "max_tokens": 2600,
+      "response_format": "plain_text_default; no forced JSON",
+      "thinking": {
+        "type": "disabled"
+      },
+      "stream": false,
+      "top_p": "omitted_default",
+      "effort": "omitted"
+    },
+    "planned_calls": {
+      "enhancement": 4,
+      "execution": 12,
+      "total": 16
+    },
+    "budget_boundary": "Accounting plan only. Author ran zero calls. No extra repair/retry authorization is created by this file; all later actual calls remain within parent-approved limits."
+  },
+  "files": [
+    {
+      "path": "AUTHOR-BOUNDARY.md",
+      "sha256": "a40877d198bfbe884d97876879bdc8c35adae947576f7922a04b80d210106ddd",
+      "bytes": 911
+    },
+    {
+      "path": "case-01/execution-contract.txt",
+      "sha256": "5209e86387d690b6047b23b8d0dae6a263089f7eee93cdf6fb3242f327591d70",
+      "bytes": 441
+    },
+    {
+      "path": "case-01/original-prompt.txt",
+      "sha256": "10cee2a0d7082e5466c3cd50406a5635206835969862b5943ce9520b37afd8fa",
+      "bytes": 307
+    },
+    {
+      "path": "case-01/preregistered-evaluation.json",
+      "sha256": "e115f845602b5ac334966ffab9373f3a4fa46d48286c3511204ea6d9f912ceb0",
+      "bytes": 6265
+    },
+    {
+      "path": "case-01/shared-materials.md",
+      "sha256": "52b395431751cd4da0224b722313900085fe81b87ba769d4b1a3e8ed6d3afb75",
+      "bytes": 3922
+    },
+    {
+      "path": "case-02/execution-contract.txt",
+      "sha256": "27aed07f8c43c5e9c139d788137e8600474ba6b5008d00a9ad46966bd877af58",
+      "bytes": 444
+    },
+    {
+      "path": "case-02/original-prompt.txt",
+      "sha256": "6309b7eafd59d2ca04b524c6a0112ec555177d6303d90aa6f0eb925c85de3fb1",
+      "bytes": 250
+    },
+    {
+      "path": "case-02/preregistered-evaluation.json",
+      "sha256": "8018e8623f7f3a94c8db7f6658fca031b3983f6c4fa35b39cefa4574fff2efc2",
+      "bytes": 7105
+    },
+    {
+      "path": "case-02/shared-materials.md",
+      "sha256": "52bc7f96d243903d1bf1fff810536ae90bcda51e4b1ce21bc53e345fa2afeeab",
+      "bytes": 4095
+    }
+  ]
+}

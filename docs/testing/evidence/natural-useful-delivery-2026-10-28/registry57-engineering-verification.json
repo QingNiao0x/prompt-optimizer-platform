@@ -1,0 +1,104 @@
+{
+  "version": "57",
+  "frozenAt": "2026-10-28T14:37:11.385Z",
+  "actualModelCalls": 0,
+  "sources": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptSinglePassInstructions.java",
+      "sha256": "671d5b65d65f916e22dea0d3b111fe7d42fd776d49a27f49602483da96bc55b0"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "12dcbbd4f06674838ec0059cd77ba0bfe915971a20d36d3af7da8da6215f8c28"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptStageInstructions.java",
+      "sha256": "67a3bf1a861ef016960be1cd91dc9260aeacb5e19be2de2cbd7384a5ab3380fd"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "dc8ddef625f460c65211a398e35478d540fe3dd6080ad54de2c912e79d980da4"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/NaturalPromptMetadataRepair.java",
+      "sha256": "a4f4dd509d6281920667ecd595eee326ab482b334c85c15997bb063648b47ebd"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleProviderConfiguration.java",
+      "sha256": "99c2ee86288020f04c9c3c616a11e40890201ca8833a312aba3c02d4121a3edd"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRequirementsOnlyPreparation.java",
+      "sha256": "1be0a758437e246d79bbcd795b29eb0ea7ae35952f5d6c50a2866842f4fe0670"
+    },
+    {
+      "path": "services/api/src/test/resources/natural-metadata-repair/real-first-drafts-and-patches.json",
+      "sha256": "d725c335f82f56a2aa74799f362f6d24a8ef249b70796d93545ce163e9762f8f"
+    },
+    {
+      "path": "apps/web/src/services/promptOptimizerApi.ts",
+      "sha256": "376f8b1e57ba966f4dacb4596e3152fbc074cdf9ba45afeb80c31215d2129361"
+    },
+    {
+      "path": "apps/web/src/services/promptOptimizerApi.test.ts",
+      "sha256": "6505647b4897cb8e4d9a87ef4fda4add553e27e17a3d6e22e5d39edea5c2897f"
+    }
+  ],
+  "junit": [
+    {
+      "path": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalMetadataRepairProviderTest.xml",
+      "sha256": "ca30e4772bcf7e5ac2b782ca95fc528edd68d9f16bcfe509ce0aabd27ce99139",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalPromptMetadataRepairTest.xml",
+      "sha256": "22f7e9da4f021c9170be1cd0627088d67518e12e3bda86f8f9bc8d7fb031e6dc",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalReasoningProviderTest.xml",
+      "sha256": "252adbe06256c28da1a86f0d216db52b43fca6f385692f35799ebff2a26d955b",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "services/api/target/surefire-reports/TEST-com.promptoptimizer.provider.infrastructure.openai.NaturalSinglePassProviderTest.xml",
+      "sha256": "2c5400599dc0884acc5ab7aaa7df87f9b1e067e9d8f0f74031b7a7289f02e9a2",
+      "tests": 23,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "transportGuardChecksPassed": 10,
+  "transportGuardFixtureOnly": true,
+  "frontendAffectedChecksPassed": 11,
+  "frontendTypecheckPassed": true,
+  "firstWritingAndPlanUnchangedFrom56": true,
+  "hypothesis": "An identified metadata error must not reopen a valid first body for regeneration. Patch only server-listed evidence/dimensions; rerun all original protections.",
+  "maximumTotalAttempts": 2,
+  "extraReviewStageAdded": false,
+  "fieldsNotPatchable": [
+    "optimizedPrompt",
+    "goal",
+    "deliverable",
+    "requirement text",
+    "array membership"
+  ],
+  "supportedMetadataIssues": [
+    "UNKNOWN_SOURCE",
+    "SOURCE_QUOTE_MISMATCH",
+    "CONTEXT_GOAL_DIMENSION"
+  ],
+  "original56FailureRetained": true,
+  "defaultVersion": "31",
+  "qualityAdoptionClaimed": false
+}

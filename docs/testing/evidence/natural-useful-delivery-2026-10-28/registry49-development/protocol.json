@@ -1,0 +1,60 @@
+{
+  "batch": "natural-useful-delivery-registry49-development-2026-10-28",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 500,
+  "maximumNewActualCalls": 12,
+  "captureOnly": false,
+  "versions": [
+    "49"
+  ],
+  "candidateVersions": [
+    "49"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 0,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "45": [
+      "45"
+    ],
+    "46": [
+      "46"
+    ],
+    "47": [
+      "47"
+    ],
+    "48": [
+      "48"
+    ],
+    "49": [
+      "49"
+    ]
+  },
+  "phaseLimits": {
+    "GENERATION": 12,
+    "PLAN": 0,
+    "EXECUTION": 0,
+    "REVIEW": 0
+  },
+  "prerequisiteStages": [],
+  "allowedJobs": [
+    "Q01_V49_GEN",
+    "U02_V49_GEN",
+    "U03_V49_GEN"
+  ],
+  "frozenBundleSha256": "3f54da0bd137cfc7a9a3b3191fa27fe551ad6e7c96d123fe1b350161c440accd",
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false
+}

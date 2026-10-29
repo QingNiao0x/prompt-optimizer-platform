@@ -1,0 +1,108 @@
+{
+  "status": "ACTUAL50_PRODUCT_BRANCH_CONSTRUCTION_PASS_NOT_EXTRACTION_OR_QUALITY",
+  "checkedAt": "2026-10-27T21:13:37.365Z",
+  "actualModelCalls": 0,
+  "sourceClasses": "services/api/target/classes after owner engineering complete",
+  "temporaryRunner": "tmp/registry50-product-capture-runner",
+  "capturedProductHttpAttempts": 6,
+  "caseCount": 3,
+  "parameters": "8192/.2/disabled/JSON/streamfalse",
+  "productSourceRecompiled": false,
+  "sourceEngineeringReport": "registry50-engineering-verification.json",
+  "sourceEngineeringReportSha256": "8cf9a1aaf191975282ca65f8b37cce52d1a5d56594cd97c010daed8671fcf27c",
+  "comparisons": [
+    {
+      "caseId": "Q01",
+      "completeOriginal49InputPreservedExceptVersion": true,
+      "completePrepareAndWriterInputEqual": true,
+      "guardStages": [
+        "REQUIREMENT_PREPARATION",
+        "BODY_GENERATION"
+      ],
+      "preparationRequestSha256": "4e8f43ccffda7d78776db9d0e121ed6768bff6416e7fd2ebe37376b8695692d4",
+      "writerRequestSha256": "99d6e1324944b68b686ae78fce42d30c7ebb30daf4b4441ac5c86059e47ef632",
+      "sourceCatalog": [
+        {
+          "id": "rawPrompt",
+          "kind": "ORIGINAL_REQUEST"
+        }
+      ],
+      "sourceCatalogMeaning": "Server-owned id/kind metadata; full original text remains in the unchanged original input fields"
+    },
+    {
+      "caseId": "U02",
+      "completeOriginal49InputPreservedExceptVersion": true,
+      "completePrepareAndWriterInputEqual": true,
+      "guardStages": [
+        "REQUIREMENT_PREPARATION",
+        "BODY_GENERATION"
+      ],
+      "preparationRequestSha256": "8f3a72a9081b329ba6ff813c3bc3a9c5569eeff768e5b7da2b7de8f4a446296b",
+      "writerRequestSha256": "ad410459e19d112ce07d3bc60f952f26f64631bd4d7a366acaa8afe7959a5279",
+      "sourceCatalog": [
+        {
+          "id": "rawPrompt",
+          "kind": "ORIGINAL_REQUEST"
+        },
+        {
+          "id": "context.fileSnippets.0",
+          "kind": "PROJECT_CONTEXT"
+        },
+        {
+          "id": "context.fileSnippets.0.summary",
+          "kind": "PROJECT_CONTEXT"
+        },
+        {
+          "id": "context.directoryTree.0",
+          "kind": "PROJECT_CONTEXT"
+        }
+      ],
+      "sourceCatalogMeaning": "Server-owned id/kind metadata; full original text remains in the unchanged original input fields"
+    },
+    {
+      "caseId": "U03",
+      "completeOriginal49InputPreservedExceptVersion": true,
+      "completePrepareAndWriterInputEqual": true,
+      "guardStages": [
+        "REQUIREMENT_PREPARATION",
+        "BODY_GENERATION"
+      ],
+      "preparationRequestSha256": "7f565f1d7b1aa24d6b8b6da902b3aa87013071773dfe8ba56aaadc6c6822c40b",
+      "writerRequestSha256": "8ff0f771afcce225d4b807c1657b6bac9d9cc73b6bc271cf9fea20259094a070",
+      "sourceCatalog": [
+        {
+          "id": "rawPrompt",
+          "kind": "ORIGINAL_REQUEST"
+        },
+        {
+          "id": "context.fileSnippets.0",
+          "kind": "PROJECT_CONTEXT"
+        },
+        {
+          "id": "context.fileSnippets.0.summary",
+          "kind": "PROJECT_CONTEXT"
+        },
+        {
+          "id": "context.fileSnippets.1",
+          "kind": "PROJECT_CONTEXT"
+        },
+        {
+          "id": "context.fileSnippets.1.summary",
+          "kind": "PROJECT_CONTEXT"
+        },
+        {
+          "id": "context.directoryTree.0",
+          "kind": "PROJECT_CONTEXT"
+        },
+        {
+          "id": "context.directoryTree.1",
+          "kind": "PROJECT_CONTEXT"
+        }
+      ],
+      "sourceCatalogMeaning": "Server-owned id/kind metadata; full original text remains in the unchanged original input fields"
+    }
+  ],
+  "captureBoundary": "Actual50 Provider branch and actual strict reader+resolve, complete source directory unchanged. First response is deliberately synthetic/incomplete and proves construction only; writer request factory aborts deliberately before a response. No fixture is authorized as a live registry.",
+  "mockCallLogsNotActualNetworkCount": "completed/UPSTREAM_UNAVAILABLE lines come from controlled network-disabled HTTP factory, not a real upstream failure.",
+  "toolingCorrection": "Initial readonly report probe assumed taskSources carried text; actual catalog is id/kind metadata. Corrected report uses exact metadata and compares all complete original input fields. No stage, original or model call was changed."
+}

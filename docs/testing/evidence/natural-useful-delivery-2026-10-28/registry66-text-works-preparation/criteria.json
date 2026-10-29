@@ -1,0 +1,63 @@
+{
+  "state": "FROZEN_BEFORE_ANY_63_WORK",
+  "scope": "开发题同信息实际作品；不是未见题或外部用户/专家评测。旧45及51结果不改判。",
+  "cases": [
+    "C01",
+    "C02",
+    "Q01",
+    "U02"
+  ],
+  "commonCriteria": [
+    "实际交付原始任务和成果，而非问卷、空模板、仅方法或重复任务。",
+    "保留原始限制、已有事实、来源归属、条件和未知状态；不把建议变成事实或授权。",
+    "记录完成任务所需的必要修改；区分事实/范围/功能错误与个人文风偏好。",
+    "只有具体交付改善或必要修改减少才计收益；字数、维度、表格或引用更多均不自动获胜。"
+  ],
+  "C01_C02": {
+    "automated": "复用code-work.mjs的独立业务/文件范围/模型测试隔离检查，并用code-work-r2.mjs检查共同材料已声明的可选today契约。",
+    "required": [
+      "新增和导入均拒绝未来日期，今天与过去有效",
+      "原格式/日历错误和其他字段不变",
+      "导入逐行部分成功及正确行号",
+      "传入today时按它判断，未传仍限制系统本地当天",
+      "只修改各题事先允许的文件"
+    ],
+    "testScope": "C01允许修改已有dateRules.spec.js；C02禁止修改测试。未新增测试本身不算作品失败；不得声称已实际运行工具。",
+    "fairness": "R2的README契约同时进入增强与各作品臂；旧R1省略today问题保持原判，不追溯新增要求。"
+  },
+  "Q01": {
+    "materialBoundary": "相同公开来源快照，仅执行时提供；不据此声称执行模型自主联网或全面覆盖全球。",
+    "required": [
+      "实际回答哪些职业/行业使用AI多",
+      "正确使用平台任务占比、开发者自选调查和组织采用数据，不混成全球从业者渗透率",
+      "有边界的结论仍可直接阅读，口径和局限不得替代主要发现"
+    ],
+    "reasonableAlternatives": "可分来源比较，或综合有据结论。固定职业数量、全球唯一冠军、应用场景扩展、表格或篇幅均非硬性标准。"
+  },
+  "U02": {
+    "required": [
+      "真正交付店员可执行的两周亲子共读试办方案",
+      "活动在14—17点中连续一小时；两人仅一人长时主持，另一人照常接待收银",
+      "最多8组家庭、儿童6—9岁、每人一位成人、不占通道和营业区",
+      "使用已有材料、无新增师资/设备/餐饮或假定的书名",
+      "两周新增支出不超600元、免费无购书门槛、不按销售评价",
+      "处理真实参与差异并留下可供下次调整的简单记录"
+    ],
+    "designFreedom": "具体时间、读书形式、简短流程、角色选择和预算方案由AI设计，不要求唯一范文；未提供数据不编造，合理拟议安排不当成事实错误。"
+  },
+  "procedure": {
+    "repeatsPerEligibleArm": 2,
+    "arms": [
+      "ORIGINAL",
+      "31",
+      "63"
+    ],
+    "productGate": "跳过正文并堆贴材料、目标/事实/权限严重错误的提示词不进入付费作品评审；保留并单列失败，不算对手语义胜出。",
+    "preserveFirstResponses": true,
+    "qualityRetries": false,
+    "blinding": "先保存匿名作品审阅，再解盲；审阅只看原始要求、共同资料和作品，不给增强提示词、版本或预期胜负。",
+    "reviewDisclosure": "AI内部辅助审阅，根代理做来源核对；不冒称独立人工或专家验证。",
+    "decision": "严重新增错误阻断对应采用；充分需求持平允许。两次改善不一致标不稳定，不以缺失/截断作品当对手语义胜利。",
+    "baselineReuse": "All14 eligible closed RAW/31 works reused with exact-information and closed-byte checks. Prior58 quality decision remains unchanged. Baselines already seen by root; only the new AI review is blinded, root verification is not claimed blind."
+  }
+}

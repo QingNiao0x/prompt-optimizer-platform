@@ -1,0 +1,75 @@
+{
+  "id": "W70-N1_V70_GEN",
+  "phase": "GENERATION",
+  "version": "70",
+  "caseId": "W70-N1",
+  "status": 200,
+  "body": {
+    "requestId": "W70-N1_V70_GEN",
+    "data": {
+      "optimizedPrompt": "请撰写一条可直接发给客户的“云笺协作”工作区导出维护通知。通知正文不超过220个汉字，口气平实，只保留客户需要的信息，不附解释、分析或内部工单编号。\n\n通知应让客户读完能判断自己是否受影响、需要做什么，并写明：云笺协作计划于2026年11月12日02:00—03:00（北京时间）维护工作区导出，维护尚未发生；受影响的只有新提交的工作区导出任务，阅读项目、编辑任务不受影响。维护期间新导出请求排队，维护结束后继续处理，不是导出失败；维护前已生成且仍在有效期内的下载链接可继续使用。\n\n客户不用改设置，也不用重新提交排队中的请求；确实急需导出的，可在维护前从工作区右上角“导出”提交，普通成员可以使用，不需新申请管理员权限。客户可从帮助中心“联系支持”留言，不要求公开私人联系方式。只有维护时间延长时才补发通知。\n\n不得说整个系统停用，也不得承诺排队任务在03:00瞬间全部完成。不要写入尚未定论的原因、未批准的优惠券、未采用的逐一回访流程，也不要把上周另一次下载链接过期事件写成本次维护的影响。通知的组织方式与措辞由你决定，无需再就文案框架向用户确认。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [
+          "internal-notes.md",
+          "notification-brief.md"
+        ],
+        "fileSnippets": [
+          {
+            "path": "notification-brief.md",
+            "language": "markdown",
+            "content": "[片段 1/1]\n本题的服务、日期和记录均为合成评测材料，不对应真实客户或维护计划。\n云笺协作计划于2026年11月12日02:00—03:00（北京时间）维护工作区导出。维护尚未发生。受影响的只有新提交的工作区导出任务，阅读项目、编辑任务不受影响。维护期间新导出请求排队，维护结束后继续处理，不是导出失败。维护前已生成且仍在有效期内的下载链接可继续使用。\n客户不用改设置，也不用重新提交排队中的请求。确实急需导出的，可在维护前从工作区右上角“导出”提交；普通成员可以使用，不需新申请管理员权限。只有维护时间延长时才补发通知。客户可从帮助中心“联系支持”留言，不要求公开私人联系方式。\n外发正文不超过220个汉字，不附解释、分析或内部工单编号。口气平实，既不说整个系统停用，也不承诺排队任务在03:00瞬间全部完成。",
+            "summary": "Markdown 文档摘要：本题的服务、日期和记录均为合成评测材料，不对应真实客户或维护计划。；受影响的只有新提交的工作区导出任务，阅读项目、编辑任务不受影响。；客户不用改设置，也不用重新提交排队中的请求。；只有维护时间延长时才补发通知。；口气平实，既不说整个系统停用，也不承诺排队任务在03:00瞬间全部完成。",
+            "truncated": false
+          },
+          {
+            "path": "internal-notes.md",
+            "language": "markdown",
+            "content": "[片段 1/1]\n以下是内部讨论，不能整体当作对外已确认内容。技术同事排查的原因尚未定论；有人建议给受影响客户优惠券，未获批准。客服曾建议结束后逐一回访所有客户，这也没有被采用为确定流程。上周有人反馈过下载链接过期，属于另一次事件，不代表本次计划维护已经导致问题。通知的组织方式与措辞交给作者决定，不需再问用户选择文案框架。",
+            "summary": "Markdown 文档摘要：以下是内部讨论，不能整体当作对外已确认内容。；技术同事排查的原因尚未定论；有人建议给受影响客户优惠券，未获批准。；客服曾建议结束后逐一回访所有客户，这也没有被采用为确定流程。；上周有人反馈过下载链接过期，属于另一次事件，不代表本次计划维护已经导致问题。；通知的组织方式与措辞交给作者决定，不需再问用户选择文案框架。",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 111784,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "70",
+      "framework": "APE",
+      "recordId": "edbdf21f-8df1-47ba-aa9f-e0ced09c7f90",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "REQUIREMENT_PREPARATION",
+          "BODY_GENERATION",
+          "RECORD_LINKING"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

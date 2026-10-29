@@ -1,0 +1,33 @@
+{
+  "caseId": "E01",
+  "source": "../sealed-engineering-holdout/RUN_CONTRACT.md",
+  "sourceSha256": "eb3cba49a0f967147a055bd696b65dac6c90d1e32d76991fc4318138e99aca20",
+  "rawPromptSource": "../sealed-engineering-holdout/inputs/prompt.md",
+  "rawPromptSourceSha256": "4064b0f7f911b670b89f5bb6e3c77d6fe47b9e1df3334ad74163cdbc563c3567",
+  "sourceProject": "../sealed-engineering-holdout/inputs/project",
+  "projectFiles": 30,
+  "generationMaxTokens": 8192,
+  "executionMaxTokens": 10000,
+  "executionArms": [
+    "ORIGINAL",
+    "V31",
+    "V47"
+  ],
+  "identicalExecutionSourceFilesForAllArms": true,
+  "sourceBytesFromSealedProjectOnly": true,
+  "allowedReplacementPaths": [
+    "src/domain/availability.ts",
+    "src/domain/quantity.ts",
+    "src/application/loanDeskService.ts",
+    "src/composables/useNewLoan.ts",
+    "src/composables/useLoanEdit.ts",
+    "src/components/AvailabilityPanel.vue",
+    "src/components/LoanDraftForm.vue",
+    "src/views/NewLoanPage.vue",
+    "src/views/EditLoanPage.vue"
+  ],
+  "outputFormat": "JSON full-file replacement package",
+  "hostCapabilitiesForArtifacts": [],
+  "artifactValidation": "sealed checker, in-memory TS/SFC compilation and isolated real Vue VM renderer",
+  "realCallsPerformedByThisPreparation": 0
+}

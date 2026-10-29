@@ -1,0 +1,67 @@
+{
+  "id": "W70-N2_V70_GEN",
+  "phase": "GENERATION",
+  "version": "70",
+  "caseId": "W70-N2",
+  "status": 200,
+  "body": {
+    "requestId": "W70-N2_V70_GEN",
+    "data": {
+      "optimizedPrompt": "请编写一个可在命令行直接运行的 Python 脚本，按附件 order-summary-rules.md 中的规则读取订单 CSV，汇总每天各渠道的净收入并输出结果。运行环境为 Python 3.11，只使用标准库；运行命令为 python daily_net.py input.csv output.csv。\n\n输入与校验要求：\n- 输入 CSV 为 UTF-8，允许 BOM 和合法 CSV 引号；表头至少包含 paid_at,channel,status,amount,refund_amount，缺任一字段则整批失败。\n- status 仅允许 PAID、REFUNDED、CANCELLED，遇到未知状态报错。识别为 CANCELLED 后直接忽略该数据行，不再校验其日期、渠道或金额。\n- 其余行的 paid_at 必须是合法 YYYY-MM-DD 日期，按该日期汇总，不换时区；channel 去掉两端空白、保留大小写且不能为空。\n- amount 和 refund_amount 使用十进制精确金额，不允许 NaN、无穷、负数或超过两位小数；refund_amount 不能大于 amount。\n- PAID 按 amount-refund_amount 计入；REFUNDED 同样按该差额计入，不重复扣款；不按订单行数计算收入。\n\n输出与失败处理要求：\n- 输出 UTF-8 CSV，表头为 date,channel,net_amount；按 date、channel 升序排列，净收入固定两位小数。\n- 只有表头的空数据输入应成功，输出也只有表头。\n- 输入路径和输出路径解析后相同则拒绝。\n- 任何坏行使整批失败，stderr 指出数据行序号（表头后第一条为 1）和字段名，退出码为 2；此时已有输出文件必须完全不变。\n- 全部检查成功后才写输出；成功时允许替换原有输出。\n\n交付格式：只返回一个 JSON 对象 {\"files\":[{\"path\":\"daily_net.py\",\"content\":\"完整源码\"}]}，其中仅包含 daily_net.py 一个文件，不附 Markdown、说明、命令或新增测试文件。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [
+          "order-summary-rules.md"
+        ],
+        "fileSnippets": [
+          {
+            "path": "order-summary-rules.md",
+            "language": "markdown",
+            "content": "[片段 1/1]\n全部订单字段、渠道及文件均为合成评测数据，不对应真实经营记录。运行环境Python3.11，只用标准库。命令为 python daily_net.py input.csv output.csv。交付一个JSON对象 {\"files\":[{\"path\":\"daily_net.py\",\"content\":\"完整源码\"}]}，只给这一个文件，不附Markdown、说明、命令或新增测试文件。\n输入CSV为UTF-8，允许BOM和合法CSV引号。表头至少含 paid_at,channel,status,amount,refund_amount，缺任一字段整批失败。status只允许PAID、REFUNDED、CANCELLED；未知状态报错。识别为CANCELLED后直接忽略该数据行，不再校验其日期、渠道或金额。\n其余行paid_at须是合法YYYY-MM-DD日期，按该日汇总，不换时区；channel去掉两端空白，保留大小写，不能为空。amount和refund_amount用十进制精确金额，不允许NaN、无穷、负数或超过两位小数；refund_amount不能大于amount。PAID也按amount-refund_amount计入；REFUNDED同样按该差额计入，不重复扣款。\n输出UTF-8 CSV，表头date,channel,net_amount；按date、channel升序，净收入固定两位小数。不按订单行数计算收入。只有表头的空数据输入成功，输出也只有表头。输入路径和输出路径解析后相同则拒绝。任何坏行使整批失败，stderr指出数据行序号（表头后第一条为1）和字段名，退出码2，已有输出文件必须完全不变。全部检查成功后才写输出；成功时允许替换原有输出。",
+            "summary": "Markdown 文档摘要：全部订单字段、渠道及文件均为合成评测数据，不对应真实经营记录。；输入CSV为UTF-8，允许BOM和合法CSV引号。；其余行paid_at须是合法YYYY-MM-DD日期，按该日汇总，不换时区；channel去掉两端空白，保留大小写，不能为空。；不按订单行数计算收入。；全部检查成功后才写输出；成功时允许替换原有输出。",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 60450,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "70",
+      "framework": "APE",
+      "recordId": "5a3d0b56-5246-4bc6-9667-e88380e97eea",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "REQUIREMENT_PREPARATION",
+          "BODY_GENERATION",
+          "RECORD_LINKING"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

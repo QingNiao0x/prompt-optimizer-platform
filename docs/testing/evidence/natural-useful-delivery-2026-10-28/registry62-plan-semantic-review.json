@@ -1,0 +1,74 @@
+{
+  "actualCalls": {
+    "PLAN": 6,
+    "GENERATION": 8
+  },
+  "taskActual": 332,
+  "candidate": "62",
+  "realUiCaptures": 2,
+  "indexedFilesPerCapture": 79,
+  "realOperatorSelections": true,
+  "results": [
+    {
+      "caseId": "P00",
+      "status": 200,
+      "processing": {
+        "completedStages": [
+          "BODY_GENERATION",
+          "RECORD_LINKING"
+        ],
+        "originalPreserved": false
+      },
+      "history": {
+        "status": 200,
+        "bodyEqual": true,
+        "versionEqual": true,
+        "processingEqual": true
+      }
+    },
+    {
+      "caseId": "P02_CONFIRMED",
+      "status": 200,
+      "processing": {
+        "completedStages": [
+          "REQUIREMENT_PREPARATION",
+          "BODY_GENERATION",
+          "RECORD_LINKING"
+        ],
+        "originalPreserved": false
+      },
+      "history": {
+        "status": 200,
+        "bodyEqual": true,
+        "versionEqual": true,
+        "processingEqual": true
+      }
+    },
+    {
+      "caseId": "P02_UNKNOWN",
+      "status": 200,
+      "processing": {
+        "completedStages": [
+          "REQUIREMENT_PREPARATION",
+          "BODY_GENERATION",
+          "RECORD_LINKING"
+        ],
+        "originalPreserved": false
+      },
+      "history": {
+        "status": 200,
+        "bodyEqual": true,
+        "versionEqual": true,
+        "processingEqual": true
+      }
+    }
+  ],
+  "semanticReview": {
+    "P00": "No important question and actual zero-answer Plan confirmation still generates a concise three-line instruction; tie allowed.",
+    "P02_CONFIRMED": "Past and equal-today accepted, future rejected. Actual confirmation replaces the old strict-before current rule, other file and partial-import conditions retained.",
+    "P02_UNKNOWN": "Past allowed, future disallowed, equality remains unknown. Unlike61 no simultaneous strict-before command; completion of known work remains delegated and equality branch awaits user decision."
+  },
+  "decision": "PLAN_AND_KNOWN_NORMAL_REGRESSION_GATE_PASS_ONLY; fresh engineering UI, development works and sealed holdout remain. No product quality adoption claimed.",
+  "defaultVersion": "31",
+  "humanReview": false
+}

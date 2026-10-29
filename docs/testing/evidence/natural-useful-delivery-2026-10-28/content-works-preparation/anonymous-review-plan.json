@@ -1,0 +1,131 @@
+{
+  "status": "PREPARED_BEFORE_EXECUTION",
+  "blindSeed": "natural-content-works-2026-10-28-review-r1",
+  "contentInput": "每份匿名作品只提供原始要求、该题共同资料/无资料状态，以及原样作品。隐藏生成提示词、版本、模型品牌、jobId、执行顺序、耗时、token和重复编号。",
+  "ordering": [
+    {
+      "workId": "W01",
+      "caseId": "V03"
+    },
+    {
+      "workId": "W02",
+      "caseId": "V03"
+    },
+    {
+      "workId": "W03",
+      "caseId": "Q01"
+    },
+    {
+      "workId": "W04",
+      "caseId": "Q01"
+    },
+    {
+      "workId": "W05",
+      "caseId": "Q01"
+    },
+    {
+      "workId": "W06",
+      "caseId": "Q01"
+    },
+    {
+      "workId": "W07",
+      "caseId": "Q01"
+    },
+    {
+      "workId": "W08",
+      "caseId": "Q01"
+    },
+    {
+      "workId": "W09",
+      "caseId": "V03"
+    },
+    {
+      "workId": "W10",
+      "caseId": "V03"
+    }
+  ],
+  "comparisons": [
+    {
+      "comparisonId": "Q01-R1-1",
+      "caseId": "Q01",
+      "left": "W08",
+      "right": "W05"
+    },
+    {
+      "comparisonId": "Q01-R1-2",
+      "caseId": "Q01",
+      "left": "W08",
+      "right": "W04"
+    },
+    {
+      "comparisonId": "Q01-R1-3",
+      "caseId": "Q01",
+      "left": "W05",
+      "right": "W04"
+    },
+    {
+      "comparisonId": "V03-R1-4",
+      "caseId": "V03",
+      "left": "W01",
+      "right": "W02"
+    },
+    {
+      "comparisonId": "Q01-R2-1",
+      "caseId": "Q01",
+      "left": "W06",
+      "right": "W03"
+    },
+    {
+      "comparisonId": "Q01-R2-2",
+      "caseId": "Q01",
+      "left": "W07",
+      "right": "W03"
+    },
+    {
+      "comparisonId": "Q01-R2-3",
+      "caseId": "Q01",
+      "left": "W07",
+      "right": "W06"
+    },
+    {
+      "comparisonId": "V03-R2-4",
+      "caseId": "V03",
+      "left": "W10",
+      "right": "W09"
+    }
+  ],
+  "procedure": [
+    "全部10份首次作品完成或明确失败后，先核对原件、共同system/材料/参数和每臂重复次数；不按质量补采。",
+    "协调者根据coordinator-key.json生成匿名作品；原样正文，不修正文风、事实、标题或重复。",
+    "审阅者先逐份记录ANSWER、ACCURACY、FOCUS、READABLE、EDIT_BURDEN及原句证据，再完成预设比较。",
+    "先保存带时间和哈希的匿名审阅结果，再由协调者解盲。分歧和不确定事实保留，不选更有利评分。",
+    "报告分别说明首次交付/失败、作品语义差异、必要编辑负担与重复稳定性；仅给出本题集内部评估。"
+  ],
+  "individualTemplate": {
+    "workId": "",
+    "caseId": "",
+    "outcome": "DIRECTLY_USABLE|NEEDS_MATERIAL_EDIT|SERIOUS_FAILURE|MISSING|UNRESOLVED",
+    "findings": [
+      {
+        "criterionId": "",
+        "severity": "serious|materialEdit|minorPreference",
+        "quote": "",
+        "reason": "",
+        "sourceReference": "",
+        "necessaryEdit": ""
+      }
+    ],
+    "requiredEdits": [],
+    "unresolvedChecks": []
+  },
+  "pairTemplate": {
+    "comparisonId": "",
+    "judgment": "LEFT_BETTER|TIE|RIGHT_BETTER|BOTH_FAIL|UNRESOLVED",
+    "concreteDifference": "",
+    "leftQuote": "",
+    "rightQuote": "",
+    "userEditDifference": "",
+    "personalStyleOnly": false
+  },
+  "disclosure": "匿名不等于从未见过任务。参与过开发或读过提示词的AI审阅者须披露，不能称为独立人工审阅。"
+}

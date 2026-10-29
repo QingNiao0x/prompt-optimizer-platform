@@ -1,0 +1,89 @@
+{
+  "candidate": "69",
+  "frozenAt": "2026-10-28T22:35:30.939Z",
+  "defaultVersion": "31",
+  "actualCallsToDate": 485,
+  "files": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptBodyFirstInstructions.java",
+      "sha256": "e773b887cc1a1ec2d7a2dc7c229934304f85e599f0bdd8f881e660543c33d22f"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "80d155b4b22097b914053a355f136047090cc762a2c173a1dada6e35326ad4d3"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java",
+      "sha256": "baa8629fbef7cc74be93fa6d890ebd1209caaf2dc57312d8c972c4a87bda25c9"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "d6cc70ecd46fbc6d2915527414391ea38a51d43ca412c1f4dda7cae7ed4527b3"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/NaturalPromptMetadataRepair.java",
+      "sha256": "98429aabf998f467e5b69f5799a5d318c163ca522ccdd32e866bce1c9fd72091"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/NaturalPromptSourceReferences.java",
+      "sha256": "4d8a0eb744dc05f4863d3f1062929ba650157e4567e6558775c9227bb83b9339"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptCompletionPreparation.java",
+      "sha256": "7514441a3c363c238c1d559957be96237f758010df17a0b15dc39303e9299b1a"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptCompletionPreparationInstructions.java",
+      "sha256": "ae227d8f62746d8f19918d5d771d35b3f76698e7b2676fac84bcf5451081f7c4"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptDiagnosticRoles.java",
+      "sha256": "2977ec22ac21607f3727cd886b9bda69be61167514807c0ebcaba7bddb2161e0"
+    }
+  ],
+  "suites": [
+    {
+      "name": "NaturalBodyFirstProviderTest",
+      "tests": 64,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "NaturalReasoningProviderTest",
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "NaturalEffectiveRegistryProviderTest",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "NaturalPromptMetadataRepairTest",
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "NaturalSinglePassProviderTest",
+      "tests": 23,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "passedTests": 144,
+  "offlineGuardChecks": 22,
+  "bodyAndPreparationByteEqualTo68": true,
+  "change": "Only bounded server-side source-role diagnostic normalization; source/QA/coverage/permissions unchanged",
+  "holdoutTopicsAlreadyOpened": true,
+  "noWriterTuningAfterOpening": true,
+  "real69HttpDeliveryVerified": false,
+  "qualityAdopted": false
+}

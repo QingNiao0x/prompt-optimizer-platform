@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "dataset_id": "registry50-independent-holdout-2026-10-28",
+  "provenance": "独立作者仅阅读AGENTS.md、acceptance-plan.md、quality-measurement-review.md及父代理提供的无内容参数。未阅读候选实现、协议正文、旧题、旧输出或其他封存目录。全部公司、人物与业务记录为合成材料。",
+  "cases": [
+    {
+      "id": "R50-P01",
+      "task_type": "反馈与材料分析改进",
+      "original_prompt_file": "p01/original-prompt.txt",
+      "material_files": [
+        "p01/material-a.md",
+        "p01/material-b.md"
+      ],
+      "answer_card_file": "p01/answer-card.json",
+      "input_han_character_count": 1134
+    },
+    {
+      "id": "R50-P02",
+      "task_type": "委托设计与写作",
+      "original_prompt_file": "p02/original-prompt.txt",
+      "material_files": [
+        "p02/material-a.md",
+        "p02/material-b.md"
+      ],
+      "answer_card_file": "p02/answer-card.json",
+      "input_han_character_count": 1166
+    }
+  ],
+  "input_policy": "每题的原始提示词与两份完整材料在增强端和三个作品臂间共用，不删减、不分臂隐藏、不增加一臂专属事实。答案卡、执行合同和本索引中的评测说明不进入模型。"
+}

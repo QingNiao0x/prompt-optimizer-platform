@@ -1,0 +1,77 @@
+{
+  "batch": "natural-useful-delivery-natural24-singlecall-2026-10-28",
+  "status": "FROZEN",
+  "taskMaximumActualCalls": 500,
+  "maximumNewActualCalls": 2,
+  "captureOnly": false,
+  "versions": [
+    "24"
+  ],
+  "candidateVersions": [
+    "24"
+  ],
+  "modelId": "deepseek:deepseek-flash",
+  "upstreamModel": "deepseek-flash",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "parameters": {
+    "temperature": 0.2,
+    "generationMaxTokens": 8192,
+    "executionMaxTokens": 8192,
+    "reviewMaxTokens": 0,
+    "thinking": "disabled",
+    "stream": false
+  },
+  "generationPayloadVersions": {
+    "31": [
+      "31",
+      "4"
+    ],
+    "45": [
+      "45"
+    ],
+    "46": [
+      "46"
+    ],
+    "47": [
+      "47"
+    ],
+    "48": [
+      "48"
+    ],
+    "49": [
+      "49"
+    ],
+    "50": [
+      "50"
+    ],
+    "51": [
+      "51"
+    ],
+    "52": [
+      "52"
+    ]
+  },
+  "phaseLimits": {
+    "GENERATION": 0,
+    "PLAN": 0,
+    "EXECUTION": 2,
+    "REVIEW": 0
+  },
+  "prerequisiteStages": [],
+  "allowedJobs": [
+    "P02_CONFIRMED_V24_SINGLE_EXEC",
+    "P02_UNKNOWN_V24_SINGLE_EXEC"
+  ],
+  "reviewProtocol": {
+    "inspectionOrder": [
+      "OPTIMIZED_PROMPT",
+      "TASK_RECORD"
+    ],
+    "historicalEvidenceIsNotCurrentInstruction": true,
+    "responsibilitiesReportedSeparately": true,
+    "stopOnSevereViolationOrOriginalProtectionFailure": true
+  },
+  "frozenBundleSha256": "7adff76400458dbb21f2fa37b659c229455eb9ea3319bd0de8b75f556a57d65e",
+  "qualityRetriesAllowed": false,
+  "accountCreationAllowed": false
+}
