@@ -17,6 +17,17 @@ public class MockImagePromptProvider implements ImagePromptProvider {
     /** 返回带演示标识的阶段样例；不以文件名或占位说明伪装视觉识别结果。 */
     @Override
     public ProviderResult invoke(Call call) {
+        if (call.input().sourceTask() != null && call.stage() != Stage.ANALYZE) {
+            var questions = call.stage() == Stage.PLAN && call.input().creationIntent().length() < 30
+                    ? List.of(new Question("goal", QuestionType.TEXT, "还有哪些必须保留或调整的要求？", List.of(), false)) : List.<Question>of();
+            String body = call.stage() == Stage.PLAN ? "" : call.stage() == Stage.REWRITE
+                    ? call.previousPrompt() + "\n修改要求：" + call.revisionInstruction()
+                    : "根据所选资料完成以下任务：" + call.input().creationIntent() + "。保留用户明确的事实、约束及已确认修改范围。此为演示结果，未进行真实资料语义分析。";
+            ModelCallLogger.completed(call.stage() == Stage.PLAN ? "image.plan" : "image.generate", "mock", call.input().modelId(),
+                    "PLATFORM_CATALOG", true, 1, 0, 0, null);
+            return new ProviderResult(new ProviderDraft("资料转提示词演示", body, List.of(), questions,
+                    List.of("演示模型仅验证资料、问答及历史流程，不代表真实理解质量。")), call.input().modelId(), "演示模型", true);
+        }
         var warnings = List.of("演示模型不具备真实视觉理解能力；本结果仅用于验证交互流程。");
         String output = switch (call.input().outputType()) { case IMAGE -> "图片"; case VIDEO -> "视频"; case PPT -> "PPT"; };
         List<Question> questions = call.stage() == Stage.PLAN && call.input().creationIntent().length() < 80

@@ -52,6 +52,8 @@ async function setup(page: Page, authenticated = false) {
     return route.fulfill({ status: 501, json: { error: { code: 'UNEXPECTED_TEST_REQUEST', message: '未登记的试用测试请求' } } });
   });
   await mockAuthentication(page, authenticated);
+  // 账号偏好另有专项验证；此夹具只覆盖试用，明确拦截新增的公共设置加载。
+  await page.route('**/api/v1/me/settings', route => route.fulfill({ status: 503, json: { error: { message: '受控偏好加载不可用' } } }));
   await page.addInitScript(() => {
     localStorage.setItem('prompt-optimizer.plan-mode.v1', JSON.stringify({ enabled: false, introSeen: true }));
     localStorage.setItem('prompt-optimizer.project-context-settings.v1', JSON.stringify({
@@ -113,7 +115,7 @@ test('首页三项工具有可点击入口，游客进入各工作台看到独�
   const state = await setup(page);
   for (const [path, name, quota] of [
     ['/workbench', '开始优化提示词', '剩余 3 / 3 次'],
-    ['/image-to-prompt', '图像转提示词', '剩余 1 / 1 次'],
+    ['/image-to-prompt', '素材转提示词', '剩余 1 / 1 次'],
     ['/text-polish', '文章祛AI味', '剩余 3 / 3 次'],
   ]) {
     await page.goto('/');
@@ -208,7 +210,7 @@ test('访客直接访问三类历史及工具历史入口均引导注册，不�
     await expect(page).toHaveURL(/\/login\?.*reason=history/);
     await expect(page.getByText(historyMessage, { exact: true })).toBeVisible();
   }
-  for (const [path, button] of [['/image-to-prompt', '图像历史'], ['/text-polish', '文章历史']]) {
+  for (const [path, button] of [['/image-to-prompt', '素材历史'], ['/text-polish', '文章历史']]) {
     await page.goto(path);
     await page.getByRole('button', { name: button, exact: true }).click();
     await expect(page).toHaveURL(/\/login\?.*reason=history/);

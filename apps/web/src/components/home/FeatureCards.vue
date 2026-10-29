@@ -17,8 +17,8 @@ const features: readonly FeatureDefinition[] = [
     tone: 'accent',
   },
   {
-    title: '图像转提示词',
-    description: '从参考图提取主体、构图与风格；也可从文字构想开启 Plan，结合可选参考图生成新图提示词。',
+    title: '素材转提示词',
+    description: '审阅图片、代码、文档与文件夹中的可读资料，明确保留与修改要求；直接生成或用 Plan 确认，结果可编辑、复制并保存历史。',
     icon: Picture,
     tone: 'success',
   },
@@ -35,7 +35,7 @@ const features: readonly FeatureDefinition[] = [
   <section id="features" class="feature-cards" aria-labelledby="features-title">
     <header class="feature-cards__header">
       <h2 id="features-title">三项工具，按任务选择</h2>
-      <p>从文本与图片整理提示词，也为已有文章提供独立润色工作台。</p>
+      <p>从需求与参考资料整理提示词，也为已有文章提供独立润色工作台。</p>
     </header>
 
     <div class="feature-cards__grid">

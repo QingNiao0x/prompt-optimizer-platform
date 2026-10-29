@@ -59,6 +59,29 @@ class OpenAiImagePromptProviderTest {
             assertThat(call.toString()).doesNotContain("AQID", "完整画面还原提示词");
         });
     }
+    @Test void sourceTaskUsesGeneralGuidanceAndReviewedTextWithoutInventedImageParts() throws Exception {
+        UUID unit = UUID.randomUUID(), sourceId = UUID.randomUUID();
+        var source = new com.promptoptimizer.imageprompt.domain.ImagePromptSourceModels.Source(sourceId, "module.ts",
+                com.promptoptimizer.imageprompt.domain.ImagePromptSourceModels.Kind.CODE, Track.REFERENCE,
+                com.promptoptimizer.imageprompt.domain.ImagePromptSourceModels.Role.BASELINE,
+                List.of(new com.promptoptimizer.imageprompt.domain.ImagePromptSourceModels.Unit(unit, "src/module.ts", "正文", "export const value = 1;")), List.of());
+        var task = new com.promptoptimizer.imageprompt.domain.ImagePromptSourceModels.Task(
+                com.promptoptimizer.imageprompt.domain.ImagePromptSourceModels.TaskType.CODE, List.of(), UUID.randomUUID());
+        var input = new Input(Mode.REFERENCE_RECONSTRUCTION, "fixture", List.of(), "迁移所选模块", "", "", Language.ZH, "通用", OutputType.IMAGE, List.of(), List.of(), task);
+        var call = new Call(Stage.GENERATE, input, List.of(), List.of(), List.of(), List.of(), "", "").withSourceSources(List.of(source));
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            assertThat(body.path("messages").get(0).path("content").asText()).contains("sourceTask.taskType", "技术栈替换");
+            var parts = body.path("messages").get(1).path("content");
+            assertThat(parts.size()).isEqualTo(1);
+            var payload = json.readTree(parts.get(0).path("text").asText());
+            assertThat(payload.path("sourceSources").get(0).path("units").get(0).path("text").asText()).isEqualTo("export const value = 1;");
+        }).andRespond(withSuccess(response("迁移所选模块并保留对外契约。"), MediaType.APPLICATION_JSON));
+        provider.invoke(call); server.verify();
+        assertThatCode(() -> provider.validate(new ProviderDraft("来源", "完成迁移", List.of(new Observation(unit, "代码", "显式常量value", Visibility.OBSERVED)), List.of(), List.of()), call))
+                .doesNotThrowAnyException();
+    }
+
     @Test void invalidProtocolStopsAfterOneRepair() {
         server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(envelope("{}"), MediaType.APPLICATION_JSON));
         server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(envelope("{}"), MediaType.APPLICATION_JSON));

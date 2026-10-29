@@ -2,6 +2,23 @@ export type ImagePromptMode = 'REFERENCE_RECONSTRUCTION' | 'CUSTOM_CREATION';
 export type ImageReferenceRole = 'GENERAL' | 'SUBJECT' | 'STYLE' | 'LAYOUT';
 export type ImagePromptOutputType = 'IMAGE' | 'VIDEO' | 'PPT';
 export type ImagePromptMaterialTrack = 'REFERENCE' | 'REPLACEMENT';
+export type SourcePromptTaskType = 'CODE' | 'DOCUMENT' | 'OTHER';
+export type SourcePromptRole = 'BASELINE' | 'REFERENCE' | 'FACTS' | 'CONSTRAINTS' | 'REPLACEMENT';
+export interface SourcePromptUnit { id: string; path: string; label: string; text: string }
+/** 纯文字证据保留文件/章节定位，不伪装为图片或声称已运行源码。 */
+export interface SourcePromptAsset {
+  id: string; name: string; kind: 'TEXT' | 'CODE' | 'DOCUMENT' | 'COLLECTION'; status: 'READY' | 'PARTIAL';
+  units: SourcePromptUnit[]; warnings: string[]; expiresAt: string; totalUnits: number;
+}
+export interface SourcePromptRef { assetId: string; unitIds: string[]; track: ImagePromptMaterialTrack; role: SourcePromptRole }
+export interface SourcePromptTask { taskType: SourcePromptTaskType; sources: SourcePromptRef[]; consentId?: string }
+export interface SourcePromptSource extends Omit<SourcePromptAsset, 'id' | 'status' | 'expiresAt' | 'totalUnits'> {
+  assetId: string; track: ImagePromptMaterialTrack; role: SourcePromptRole;
+}
+export interface SourcePromptCapabilities {
+  maxAssets: number; maxFileBytes: number; maxSelectedUnits: number; maxSelectedCharacters: number; maxEntries: number;
+  extensions?: string[];
+}
 export interface ImagePromptMask { x: number; y: number; width: number; height: number }
 /** 素材与成品类型独立；只把用户选中的页/帧及实际遮挡提交给模型。 */
 export interface ImagePromptMaterialRef {
@@ -47,6 +64,7 @@ export interface ImagePromptInput {
   mode: ImagePromptMode; modelId: string; images: { assetId: string; role: ImageReferenceRole }[];
   creationIntent: string; exactText: string; context: string; language: 'ZH' | 'EN'; targetTool: string;
   outputType?: ImagePromptOutputType; materials?: ImagePromptMaterialRef[]; relations?: ImagePromptReplacementRelation[];
+  sourceTask?: SourcePromptTask;
 }
 export interface ImageObservation {
   imageId: string; category: string; description: string; status: 'OBSERVED' | 'INTERPRETATION' | 'UNCERTAIN';
@@ -60,6 +78,7 @@ export interface ImagePromptPlan {
   id: string; fingerprint: string; summary: string; questions: ImagePromptQuestion[];
   analysis: ImageObservation[]; warnings: string[]; expiresAt: string; mock: boolean;
   materialSources?: ImagePromptMaterialSource[];
+  sourceSources?: SourcePromptSource[];
 }
 export interface ImagePromptDocument {
   operationId: string; recordId: string | null; mode: ImagePromptMode; optimizedPrompt: string;
@@ -69,6 +88,7 @@ export interface ImagePromptDocument {
   materialSources?: ImagePromptMaterialSource[];
   /** 独立持久化的来源风险；旧版服务/历史可以缺省，界面仍使用 warnings 展示本次合并提示。 */
   evidenceWarnings?: string[];
+  sourceSources?: SourcePromptSource[];
 }
 export interface ImagePromptHistoryPage {
   records: ImagePromptDocument[]; total: number; size: number; current: number; pages: number;

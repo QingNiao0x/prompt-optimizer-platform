@@ -40,6 +40,7 @@ public class ImagePromptService {
     private final ObjectMapper json;
     private final AnalyticsEventService analytics;
     private final ImagePromptMediaService media;
+    private final ImagePromptSourceService sourceMaterials;
     /** 最多12个受控单位，最差单图模型也能留出Plan、生成与协议修复空间；所有阶段按实际尝试累计。 */
     private static final int MAX_WORKFLOW_ATTEMPTS = 28;
     private static final int MAX_SELECTED_UNITS = 12;
@@ -54,10 +55,18 @@ public class ImagePromptService {
     }
 
     /** 多模态解析只提供已授权单位与来源，不能把客户端分析替代服务端证据。 */
-    @Autowired
     public ImagePromptService(CurrentActor current, ImagePromptAssetService assets, ImagePromptModelService models,
                               ImagePromptProvider provider, ImagePromptStateStore states, ImagePromptHistoryService history,
                               ObjectMapper json, AnalyticsEventService analytics, ImagePromptMediaService media) {
+        this(current, assets, models, provider, states, history, json, analytics, media, null);
+    }
+
+    /** 通用资料与视觉资料分别解析；共享服务端Plan、操作幂等和历史边界。 */
+    @Autowired
+    public ImagePromptService(CurrentActor current, ImagePromptAssetService assets, ImagePromptModelService models,
+                              ImagePromptProvider provider, ImagePromptStateStore states, ImagePromptHistoryService history,
+                              ObjectMapper json, AnalyticsEventService analytics, ImagePromptMediaService media, ImagePromptSourceService sourceMaterials) {
+        this.sourceMaterials = sourceMaterials;
         this.current = current; this.assets = assets; this.models = models; this.provider = provider;
         this.states = states; this.history = history; this.json = json; this.analytics = analytics;
         this.media = media;
@@ -100,9 +109,11 @@ public class ImagePromptService {
         var actor = current.require(); Input input = normalized(request.input().input());
         if (input.mode() != Mode.REFERENCE_RECONSTRUCTION) throw ImagePromptException.invalid("内容创作请使用 Plan 入口。");
         return operate(actor, request.requestId(), fingerprint(input), () -> {
+            if (input.sourceTask() != null) return sourceWorkflow(actor, request.requestId(), input, false);
             if (!input.materials().isEmpty()) return extractMaterials(actor, request.requestId(), input);
             List<ImageData> images = images(actor, input);
             analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, request.requestId());
+            analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_DIRECT_SUBMITTED, request.requestId());
             var response = provider.invoke(new Call(Stage.EXTRACT, input, images, List.of(), List.of(), List.of(), "", ""));
             images.forEach(i -> assets.require(actor, i.source().id()));
             return new Operation(fingerprint(input), "COMPLETED", null, persist(actor, document(request.requestId(), input,
@@ -114,6 +125,7 @@ public class ImagePromptService {
     private Operation extractMaterials(ActorIdentity actor, UUID requestId, Input input) {
         var prepared = prepared(actor, input);
         analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, requestId);
+        analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_DIRECT_SUBMITTED, requestId);
         Instant deadline = Instant.now().plusSeconds(180);
         var recognized = analyzeMaterials(actor, input, prepared, deadline, 2);
         requireInputs(actor, input);
@@ -134,6 +146,7 @@ public class ImagePromptService {
         var actor = current.require(); Input input = normalized(request.input().input());
         if (input.mode() != Mode.CUSTOM_CREATION) throw ImagePromptException.invalid("参考素材还原不发起创作问答。");
         return operate(actor, request.requestId(), fingerprint(input), () -> {
+            if (input.sourceTask() != null) return sourceWorkflow(actor, request.requestId(), input, true);
             var prepared = prepared(actor, input);
             var images = prepared.images();
             analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, request.requestId());
@@ -177,7 +190,7 @@ public class ImagePromptService {
             models.require(bound.input().modelId(), 0);
             analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, request.requestId());
             var response = provider.invoke(new Call(Stage.GENERATE, bound.input(), List.of(), bound.view().analysis(),
-                    bound.view().questions(), answers, "", "", bound.view().materialSources(), Math.min(2, MAX_WORKFLOW_ATTEMPTS - bound.attemptsUsed()), bound.evidenceWarnings()));
+                    bound.view().questions(), answers, "", "", bound.view().materialSources(), Math.min(2, MAX_WORKFLOW_ATTEMPTS - bound.attemptsUsed()), bound.evidenceWarnings()).withSourceSources(bound.view().sourceSources()));
             requireInputs(actor, bound.input());
             if (bound.input().materials().isEmpty() && !bound.input().images().isEmpty()) {
                 // legacy一次Plan同时识别/提问：继续展示完整旧警告，但不把无法归因的混合提示持久化为独立来源风险。
@@ -185,8 +198,11 @@ public class ImagePromptService {
                 response = new ProviderResult(new ProviderDraft(response.draft().summary(), response.draft().optimizedPrompt(), response.draft().analysis(),
                         response.draft().questions(), distinctWarnings(legacyWarnings)), response.modelId(), response.modelName(), response.mock(), response.attempts());
             }
-            return new Operation(fingerprint, "COMPLETED", null, persist(actor, document(request.requestId(), bound.input(), bound.sources(),
-                    bound.view().questions(), answers, response, bound.view().analysis(), bound.view().materialSources(), bound.evidenceWarnings())), "", Instant.now());
+            var completed = sourceDocument(document(request.requestId(), bound.input(), bound.sources(),
+                    bound.view().questions(), answers, response, bound.view().analysis(), bound.view().materialSources(), bound.evidenceWarnings()), bound.view().sourceSources());
+            var saved = persist(actor, completed);
+            analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_PLAN_COMPLETED, id);
+            return new Operation(fingerprint, "COMPLETED", null, saved, "", Instant.now());
         }).document();
     }
 
@@ -199,15 +215,16 @@ public class ImagePromptService {
             models.require(source.modelId(), 0);
             analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, request.requestId());
             var response = provider.invoke(new Call(Stage.REWRITE, source.input(), List.of(), source.analysis(), source.questions(), source.answers(),
-                    creationBody(source), request.instruction(), source.materialSources(), 2, source.evidenceWarnings()));
+                    source.input().sourceTask() == null ? creationBody(source) : sourceBody(source), request.instruction(), source.materialSources(), 2, source.evidenceWarnings()).withSourceSources(source.sourceSources()));
             // 再次核对逻辑删除与修订，旧模型响应不能越过中途删除或其他标签页的编辑。
             if (history.find(actor, id).editRevision() != source.editRevision()) throw ImagePromptException.conflict("原记录在生成期间已修改，请核对后重新操作。");
             var warnings = new ArrayList<>(response.draft().warnings()); warnings.add("本次基于已保存正文和分析摘要优化，未重新分析图片。");
             var adjusted = new ProviderResult(new ProviderDraft(response.draft().summary(), response.draft().optimizedPrompt(), response.draft().analysis(),
                     List.of(), List.copyOf(warnings)), response.modelId(), response.modelName(), response.mock());
-            return new Operation(fingerprint(List.of(id, source.editRevision(), request.instruction())), "COMPLETED", null,
-                    persist(actor, document(request.requestId(), source.input(), source.sources(), source.questions(), source.answers(), adjusted, source.analysis(), source.materialSources(),
-                            source.evidenceWarnings())), "", Instant.now());
+            var saved = persist(actor, sourceDocument(document(request.requestId(), source.input(), source.sources(), source.questions(), source.answers(), adjusted,
+                    source.analysis(), source.materialSources(), source.evidenceWarnings()), source.sourceSources()));
+            analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_REOPTIMIZED, request.requestId());
+            return new Operation(fingerprint(List.of(id, source.editRevision(), request.instruction())), "COMPLETED", null, saved, "", Instant.now());
         }).document();
     }
 
@@ -269,7 +286,10 @@ public class ImagePromptService {
         // 旧图片与多模态素材共享任务名额，不能通过混用两种协议绕过前端的合计六份限制。
         if (input.images().size() + input.materials().size() > 6 || input.materials().stream().map(MaterialRef::assetId).distinct().count() != input.materials().size()
                 || input.relations().size() > 12) throw ImagePromptException.invalid("最多使用6份不同素材和12条替换关系。");
-        if (input.mode() == Mode.REFERENCE_RECONSTRUCTION) {
+        if (input.sourceTask() != null) {
+            if (blank(input.creationIntent())) throw ImagePromptException.invalid("请说明希望下游完成的任务。");
+            var actor = current.require(); requiredSources().resolve(actor, input.sourceTask()); requiredSources().requireConsent(actor, input);
+        } else if (input.mode() == Mode.REFERENCE_RECONSTRUCTION) {
             if (input.images().isEmpty() && input.materials().isEmpty()
                     || input.materials().isEmpty() && input.images().size() != 1) throw ImagePromptException.invalid("直接增强需要参考图片或已选择范围的参考素材。");
             if (input.outputType() != OutputType.IMAGE || !input.relations().isEmpty()
@@ -289,7 +309,7 @@ public class ImagePromptService {
 
     /** 正式媒体引用不属于访客命名空间；在扣额度及读资产之前维持既有单图试用范围。 */
     private void requireTrialScope(Input input) {
-        if (input.mode() != Mode.REFERENCE_RECONSTRUCTION || !input.materials().isEmpty() || input.images().size() != 1) {
+        if (input.sourceTask() != null || input.mode() != Mode.REFERENCE_RECONSTRUCTION || !input.materials().isEmpty() || input.images().size() != 1) {
             throw ImagePromptException.invalid("请注册登录后使用多媒体素材或图像Plan；访客仅可试用单张图片还原。");
         }
     }
@@ -319,6 +339,14 @@ public class ImagePromptService {
     /** 非空单位必须在同一素材的已选范围内，不能用独立UUID绕过页面/帧选择。 */
     private void relationSource(Input input, UUID assetId, UUID unitId, boolean replacement) {
         if (assetId == null) { if (unitId != null) throw ImagePromptException.invalid("关系单位缺少所属素材。"); return; }
+        if (input.sourceTask() != null) {
+            var textual = input.sourceTask().sources().stream().filter(ref -> assetId.equals(ref.assetId())).findFirst();
+            if (textual.isPresent()) {
+                if (replacement && textual.get().track() != Track.REPLACEMENT) throw ImagePromptException.invalid("新内容来源请选择新内容轨道中的资料。");
+                if (unitId != null && !textual.get().unitIds().contains(unitId)) throw ImagePromptException.invalid("关系引用了未选择的资料片段。");
+                return;
+            }
+        }
         MaterialRef source = input.materials().stream().filter(m -> assetId.equals(m.assetId())).findFirst()
                 .orElseThrow(() -> ImagePromptException.invalid("替换关系引用了未加入本次任务的素材。"));
         if (replacement && source.track() != Track.REPLACEMENT) throw ImagePromptException.invalid("新内容来源请选择替换素材轨道中的素材。");
@@ -381,6 +409,10 @@ public class ImagePromptService {
 
     /** 只检查当前归属、撤销与有效期；确认及生成结束时不得重新调用视觉模型。 */
     private void requireInputs(ActorIdentity actor, Input input) {
+        if (input.sourceTask() != null) {
+            requiredSources().requireConsent(actor, input);
+            input.sourceTask().sources().forEach(reference -> requiredSources().require(actor, reference.assetId()));
+        }
         input.images().forEach(reference -> assets.require(actor, reference.assetId()));
         input.materials().forEach(reference -> requiredMedia().require(actor, reference.assetId()));
     }
@@ -388,6 +420,87 @@ public class ImagePromptService {
     private ImagePromptMediaService requiredMedia() {
         if (media == null) throw ImagePromptException.invalid("多模态素材服务尚未配置。");
         return media;
+    }
+
+    /** 新资料入口缺少配置时明确拒绝，不能把资料伪造成空图片或已理解全文。 */
+    private ImagePromptSourceService requiredSources() {
+        if (sourceMaterials == null) throw ImagePromptException.invalid("通用资料服务尚未配置。");
+        return sourceMaterials;
+    }
+
+    /**
+     * 通用任务的直接与Plan共享范围/隐私快照。视觉分析只接触已选像素；文字片段只进入后续任务阶段。
+     * 用户目标与Plan开关独立：关闭Plan也允许明确的迁移、替换或文档任务。
+     */
+    private Operation sourceWorkflow(ActorIdentity actor, UUID requestId, Input input, boolean planning) {
+        var textual = requiredSources().resolve(actor, input.sourceTask());
+        var prepared = prepared(actor, input);
+        analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, requestId);
+        if (!planning) analytics.recordToolOperation(AnalyticsEventType.IMAGE_PROMPT_DIRECT_SUBMITTED, requestId);
+        Instant deadline = Instant.now().plusSeconds(180);
+        var analysis = new ArrayList<Observation>(); var warnings = new ArrayList<String>();
+        warnings.addAll(prepared.warnings()); textual.forEach(source -> warnings.addAll(source.warnings()));
+        int used = 0;
+        // 即使只有旧单图，通用任务也先独立观察再生成，不能让新目标混入图像事实。
+        if (!prepared.images().isEmpty()) {
+            int batchSize = models.require(input.modelId(), 1).maxImages();
+            for (int offset = 0; offset < prepared.images().size(); offset += batchSize) {
+                requireInputs(actor, input); requireWithinDeadline(deadline);
+                var batch = prepared.images().subList(offset, Math.min(prepared.images().size(), offset + batchSize));
+                var observed = provider.invoke(new Call(Stage.ANALYZE, input, batch, List.of(), List.of(), List.of(), "", "",
+                        batchSources(prepared.sources(), batch), Math.min(2, MAX_WORKFLOW_ATTEMPTS - used - (planning ? 4 : 2))));
+                used += attempts(observed); analysis.addAll(observed.draft().analysis()); warnings.addAll(observed.draft().warnings());
+            }
+        }
+        requireInputs(actor, input); requireWithinDeadline(deadline);
+        var response = provider.invoke(new Call(planning ? Stage.PLAN : Stage.GENERATE, input, List.of(), analysis, List.of(), List.of(), "", "",
+                prepared.sources(), Math.min(2, MAX_WORKFLOW_ATTEMPTS - used - (planning ? 2 : 0)), distinctWarnings(warnings)).withSourceSources(textual));
+        used += attempts(response); requireInputs(actor, input);
+        if (!planning) {
+            var doc = sourceDocument(document(requestId, input, prepared.images().stream().map(ImageData::source).toList(), List.of(), List.of(),
+                    response, analysis, prepared.sources(), distinctWarnings(warnings)), textual);
+            return new Operation(fingerprint(input), "COMPLETED", null, persist(actor, doc), "", Instant.now());
+        }
+        Instant expiry = prepared.images().stream().map(image -> image.source().expiresAt()).min(Comparator.naturalOrder()).orElse(Instant.now().plus(PLAN_TTL));
+        for (var source : input.sourceTask().sources()) {
+            Instant sourceExpiry = requiredSources().require(actor, source.assetId()).expiresAt();
+            if (sourceExpiry.isBefore(expiry)) expiry = sourceExpiry;
+        }
+        var allWarnings = new ArrayList<>(warnings); allWarnings.addAll(response.draft().warnings());
+        String binding = fingerprint(List.of(input, prepared.sources(), textual));
+        var view = new Plan(requestId, binding, response.draft().summary(), response.draft().questions(), List.copyOf(analysis),
+                distinctWarnings(allWarnings), expiry, response.mock(), prepared.sources(), textual);
+        states.put(actor, "plan:" + view.id(), new BoundPlan(input, prepared.images().stream().map(ImageData::source).toList(), view, used,
+                distinctWarnings(warnings)), Duration.between(Instant.now(), expiry));
+        return new Operation(fingerprint(input), "COMPLETED", view, null, "", Instant.now());
+    }
+
+    /** 仅将实际使用的脱敏证据写入历史，并附下游可理解的文件定位；不把私有ID写进正文。 */
+    private Document sourceDocument(Document document, List<com.promptoptimizer.imageprompt.domain.ImagePromptSourceModels.Source> sources) {
+        if (document.input().sourceTask() == null) return document;
+        String body = document.optimizedPrompt() + sourceManifest(sources);
+        if (body.length() > 30000) throw ImagePromptException.invalid("提示词与资料清单超过30000字符，请缩小使用范围。");
+        return document.withSourceSources(sources).edited(body, document.editRevision());
+    }
+
+    /** 来源清单仅列已选路径与片段标签，范围外文件不被描述为已分析或下游已取得。 */
+    private String sourceManifest(List<com.promptoptimizer.imageprompt.domain.ImagePromptSourceModels.Source> sources) {
+        if (sources.isEmpty()) return "";
+        var text = new StringBuilder("\n\n资料交接清单：\n请向下游提供实际使用的所选资料；文件名与标签用于对应，不是公开链接。未选片段未纳入本次分析。\n");
+        for (var source : sources) {
+            text.append("- ").append(source.name()).append(" · ").append(source.track()).append(" · ").append(source.role()).append('\n');
+            for (var unit : source.units()) text.append("  ").append(unit.path()).append(" [").append(unit.label()).append("]\n");
+        }
+        return text.toString();
+    }
+
+    /** 仅去掉完整可重建尾注，防止再次优化将相同资料清单重复追加；人工编辑内容保留。 */
+    private String sourceBody(Document document) {
+        String suffix = sourceManifest(document.sourceSources());
+        if (!suffix.isEmpty() && document.optimizedPrompt().endsWith(suffix)) {
+            return creationBody(document.edited(document.optimizedPrompt().substring(0, document.optimizedPrompt().length() - suffix.length()), document.editRevision()));
+        }
+        return document.optimizedPrompt();
     }
 
     /** 应用服务按适配器实际尝试数结算，缺失计数不能伪装为未调用。 */
@@ -462,7 +575,9 @@ public class ImagePromptService {
         String prompt = result.draft().optimizedPrompt();
         if (prompt == null || prompt.isBlank() || prompt.length() > 24000) throw ImagePromptException.invalid("模型未返回有效提示词。");
         if (!input.exactText().isBlank() && !prompt.contains(input.exactText())) {
-            prompt += input.language() == Language.EN ? "\nRequired on-image text (verbatim):\n" : "\n画面文字（逐字保留）：\n";
+            prompt += input.sourceTask() != null
+                    ? input.language() == Language.EN ? "\nRequired content (verbatim):\n" : "\n必须原样保留的内容：\n"
+                    : input.language() == Language.EN ? "\nRequired on-image text (verbatim):\n" : "\n画面文字（逐字保留）：\n";
             prompt += input.exactText();
         }
         if (!materialSources.isEmpty()) prompt += materialManifest(input, materialSources);
@@ -493,7 +608,7 @@ public class ImagePromptService {
         boolean english = input.language() == Language.EN;
         var text = new StringBuilder(english ? "\n\nMaterial reference:\n" : "\n\n素材对照：\n");
         // 还原范围是用户本次已选单位；Plan素材则可按实际确认取舍，不能用同一句尾注混淆两者。
-        if (input.mode() == Mode.REFERENCE_RECONSTRUCTION) {
+        if (input.mode() == Mode.REFERENCE_RECONSTRUCTION && input.sourceTask() == null) {
             text.append(english ? "These entries define the selected reconstruction scope. Check each selected unit against its source; unselected content is outside this scope. Labels identify sources and are not public URLs.\n"
                     : "以下是本次还原范围，请逐项核对所选单位及来源；未选内容不属于本次还原范围。编号仅用于对应，不是公开链接。\n");
         } else {

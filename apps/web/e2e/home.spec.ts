@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { mockAuthentication } from './authFixture';
 
 test('首页提供与工作台一致的玻璃主题入口', async ({ page }) => {
+  await page.route('**/api/**', route => route.fulfill({ status: 503, json: { error: { message: '首页受控响应，不连接真实业务服务' } } }));
   await mockAuthentication(page, false);
   await page.goto('/');
 
@@ -17,10 +18,10 @@ test('首页提供与工作台一致的玻璃主题入口', async ({ page }) => 
   ).toBeVisible();
   await expect(page.getByRole('link', { name: 'PromptOptimizer 首页' }).locator('svg')).toBeVisible();
   await expect(page.getByRole('heading', { name: '提示词优化', exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: '图像转提示词', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '素材转提示词', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: '文章祛AI味', exact: true })).toBeVisible();
   await expect(page.getByRole('link', { name: '开始优化提示词' })).toHaveAttribute('href', '/workbench');
-  await expect(page.locator('.hero-section').getByRole('link', { name: '图像转提示词', exact: true }))
+  await expect(page.locator('.hero-section').getByRole('link', { name: '素材转提示词', exact: true }))
     .toHaveAttribute('href', '/image-to-prompt');
   await expect(page.locator('.hero-section').getByRole('link', { name: '文章祛AI味', exact: true }))
     .toHaveAttribute('href', '/text-polish');
@@ -78,10 +79,10 @@ test('首页提供与工作台一致的玻璃主题入口', async ({ page }) => 
   await expect(page.locator('html')).toHaveClass(/dark/);
   await expect(page.locator('body')).toHaveClass(/dark/);
 
-  for (const entry of ['开始优化提示词', '图像转提示词', '文章祛AI味']) {
+  for (const [entry, path] of [['开始优化提示词', '/workbench'], ['素材转提示词', '/image-to-prompt'], ['文章祛AI味', '/text-polish']]) {
     await page.locator('.hero-section').getByRole('link', { name: entry, exact: true }).click();
-    await expect(page).toHaveURL(/\/login$/);
-    await expect(page.getByRole('heading', { name: '手机号或邮箱登录' })).toBeVisible();
+    // 三个工具已开放访客入口，历史仍由独立试用用例验证登录拦截。
+    await expect(page).toHaveURL(new RegExp(`${path}$`));
     await page.goto('/');
   }
 });

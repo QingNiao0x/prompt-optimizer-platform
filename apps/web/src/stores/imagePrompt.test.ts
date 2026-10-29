@@ -12,6 +12,7 @@ import type { TrialStatus } from '@/types/trial';
 vi.mock('@/services/imagePromptApi', () => ({ imagePromptApi: {
   capabilities: vi.fn(), upload: vi.fn(), removeAsset: vi.fn(), extract: vi.fn(), plan: vi.fn(), confirm: vi.fn(),
   operation: vi.fn(), edit: vi.fn(), retrySave: vi.fn(), rewrite: vi.fn(),
+  uploadSource: vi.fn(), prepareSourceText: vi.fn(), removeSource: vi.fn(), sourceCapabilities: vi.fn(), sourceConsent: vi.fn(),
   uploadMedia: vi.fn(), media: vi.fn(), mediaPreview: vi.fn(), removeMedia: vi.fn(), mediaCapabilities: vi.fn(),
 } }));
 vi.mock('@/services/trialApi', () => ({ getTrialStatus: vi.fn(), initializeTrialSession: vi.fn() }));
@@ -474,4 +475,73 @@ describe('image prompt task state', () => {
     expect(store.mode).toBe('REFERENCE_RECONSTRUCTION'); expect(store.plan).toBeUndefined();
     expect(store.result).toBeUndefined(); expect(store.creationIntent).toBe('');
   });
+  it('general direct tasks accept a text model and bind selected evidence plus replacement requirements to consent before generation', async () => {
+    const store = await ready(); store.taskType = 'CODE'; store.modelId = 'text'; store.creationIntent = 'Vue改React，保留接口';
+    store.addSourceText('代码.txt', [{ path: 'src/Orders.vue', content: 'export const submit = () => api.save()' }]);
+    const asset = { id: 'source', name: '代码.txt', kind: 'CODE' as const, status: 'READY' as const, expiresAt,
+      units: [{ id: 'unit', path: 'src/Orders.vue', label: '第1段', text: 'export const submit = () => api.save()' }], warnings: [], totalUnits: 1 };
+    vi.mocked(imagePromptApi.prepareSourceText).mockResolvedValue(asset);
+    await store.parseSource(store.sourceFiles[0]!.key);
+    expect(store.startDisabledReason).toContain('尚未选择内容'); expect(imagePromptApi.extract).not.toHaveBeenCalled();
+    store.updateSource(store.sourceFiles[0]!.key, { unitIds: ['unit'] });
+    store.relations = [{ id: 'change', operation: 'REPLACE', referenceAssetId: 'source', referenceUnitId: 'unit', referenceObject: 'Vue', replacementObject: 'React', instruction: '保留接口', attributes: ['技术栈'], scope: '前端' }];
+    store.consent = true; expect(store.canStart).toBe(true);
+    vi.mocked(imagePromptApi.sourceConsent).mockResolvedValue({ id: 'consent', expiresAt }); vi.mocked(imagePromptApi.extract).mockResolvedValue(document());
+    await store.start();
+    const input = vi.mocked(imagePromptApi.extract).mock.calls[0]![1];
+    expect(input.sourceTask).toEqual({ taskType: 'CODE', sources: [{ assetId: 'source', unitIds: ['unit'], track: 'REFERENCE', role: 'BASELINE' }], consentId: 'consent' });
+    expect(input.creationIntent).toBe('Vue改React，保留接口'); expect(input.relations?.[0]?.replacementObject).toBe('React');
+    expect(imagePromptApi.plan).not.toHaveBeenCalled(); expect(imagePromptApi.upload).not.toHaveBeenCalled();
+    expect(vi.mocked(imagePromptApi.sourceConsent).mock.invocationCallOrder[0]).toBeLessThan(vi.mocked(imagePromptApi.extract).mock.invocationCallOrder[0]!);
+  });
+
+  it('retains general evidence across Plan toggles but requires renewed external-send consent and invalidates old questions', async () => {
+    const store = await ready(); store.taskType = 'DOCUMENT'; store.creationIntent = '根据资料写报告';
+    store.addSourceText('报告.txt', [{ path: '报告.txt', content: '合成事实' }]);
+    store.sourceFiles[0]!.asset = { id: 'source', name: '报告.txt', kind: 'TEXT', status: 'READY', units: [{ id: 'unit', path: '报告.txt', label: '段落1', text: '合成事实' }], warnings: [], expiresAt, totalUnits: 1 };
+    store.updateSource(store.sourceFiles[0]!.key, { unitIds: ['unit'], track: 'REPLACEMENT', role: 'REPLACEMENT' });
+    store.consent = true; store.mode = 'CUSTOM_CREATION'; expect(store.consent).toBe(false); expect(store.sourceFiles[0]!.unitIds).toEqual(['unit']);
+    vi.mocked(imagePromptApi.sourceConsent).mockResolvedValue({ id: 'consent', expiresAt }); vi.mocked(imagePromptApi.plan).mockResolvedValue(plan);
+    store.consent = true; await store.start(); expect(store.plan?.id).toBe('plan');
+    store.creationIntent = '根据资料写报告，800字'; expect(store.plan).toBeUndefined(); expect(store.consent).toBe(false);
+    expect(store.sourceFiles[0]!.asset?.id).toBe('source');
+  });
+
+  it('never dispatches a model when source consent fails and does not pretend the generation is uncertain', async () => {
+    const store = await ready(); store.taskType = 'OTHER'; store.creationIntent = '整理任务'; store.consent = true;
+    vi.mocked(imagePromptApi.sourceConsent).mockRejectedValue(new Error('授权范围已改变'));
+    await store.start(); expect(store.error).toContain('授权范围'); expect(store.recoveryPending).toBe(false);
+    expect(imagePromptApi.extract).not.toHaveBeenCalled(); expect(imagePromptApi.plan).not.toHaveBeenCalled();
+  });
+
+  it('revokes a late parsed source after identity changes without exposing its text to the new account', async () => {
+    const store = await ready(); store.taskType = 'CODE'; store.addSourceText('资料.txt', [{ path: 'src/a.ts', content: 'const a = 1' }]);
+    const pending = deferred<import('@/types/imagePrompt').SourcePromptAsset>(); vi.mocked(imagePromptApi.prepareSourceText).mockReturnValue(pending.promise);
+    const waiting = store.parseSource(store.sourceFiles[0]!.key); useAuthStore().user = undefined;
+    pending.resolve({ id: 'late', name: '资料', kind: 'TEXT', status: 'READY', units: [], warnings: [], expiresAt, totalUnits: 0 }); await waiting;
+    expect(store.sourceFiles).toEqual([]); expect(imagePromptApi.removeSource).toHaveBeenCalledWith('late');
+  });
+
+  it('checks protected paths before adding source files or pasted collection entries', async () => {
+    const store = await ready(); store.taskType = 'CODE';
+    expect(() => store.addSourceFiles([new File(['SECRET=synthetic'], '.env')])).toThrow('受保护');
+    expect(() => store.addSourceText('目录', [{ path: '../secret.txt', content: 'synthetic' }])).toThrow('不安全');
+    expect(store.sourceFiles).toEqual([]); expect(imagePromptApi.uploadSource).not.toHaveBeenCalled();
+  });
+
+  it('revokes consent on a return to visual tasks and legacy image role or scope changes', async () => {
+    const store = await ready(); store.taskType = 'CODE';
+    store.addFiles([new File(['pixels'], 'fixture.png', { type: 'image/png' })]);
+    store.consent = true; store.changeRole(store.files[0]!.key, 'STYLE'); expect(store.consent).toBe(false);
+    store.consent = true; store.taskType = 'VISUAL'; expect(store.consent).toBe(false);
+    store.consent = true; store.removeFile(store.files[0]!.key); expect(store.consent).toBe(false);
+  });
+
+  it('restores general history as text without reviving expired sources or charging a model', async () => {
+    const store = await ready();
+    const saved = { ...document(), input: { ...document().input, sourceTask: { taskType: 'CODE' as const, sources: [{ assetId: 'expired', unitIds: ['unit'], track: 'REFERENCE' as const, role: 'BASELINE' as const }] } } };
+    store.restore(saved); expect(store.taskType).toBe('CODE'); expect(store.sourceFiles).toEqual([]); expect(store.consent).toBe(false);
+    expect(store.result?.optimizedPrompt).toBe(saved.optimizedPrompt); expect(imagePromptApi.uploadSource).not.toHaveBeenCalled();
+  });
+
 });

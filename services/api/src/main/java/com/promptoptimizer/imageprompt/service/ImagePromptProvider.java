@@ -15,12 +15,25 @@ public interface ImagePromptProvider {
     record ImageData(ImageSource source, String mimeType, byte[] bytes) { }
     record Call(Stage stage, Input input, List<ImageData> images, List<Observation> analysis,
                 List<Question> questions, List<Answer> answers, String previousPrompt, String revisionInstruction,
-                List<MaterialSource> materialSources, int maxAttempts, List<String> evidenceWarnings) {
+                List<MaterialSource> materialSources, int maxAttempts, List<String> evidenceWarnings,
+                List<com.promptoptimizer.imageprompt.domain.ImagePromptSourceModels.Source> sourceSources) {
         /** 所有识别、Plan、生成与协议修复共享应用服务分配的有限预算。 */
         public Call {
+            sourceSources = sourceSources == null ? List.of() : List.copyOf(sourceSources);
             materialSources = materialSources == null ? List.of() : List.copyOf(materialSources);
             evidenceWarnings = evidenceWarnings == null ? List.of() : List.copyOf(evidenceWarnings);
             if (maxAttempts < 1 || maxAttempts > 2) throw new IllegalArgumentException("单阶段模型调用上限无效");
+        }
+        /** 通用资料只在生成/Plan阶段提供已选片段，视觉识别阶段保持来源独立。 */
+        public Call withSourceSources(List<com.promptoptimizer.imageprompt.domain.ImagePromptSourceModels.Source> sources) {
+            return new Call(stage, input, images, analysis, questions, answers, previousPrompt, revisionInstruction,
+                    materialSources, maxAttempts, evidenceWarnings, sources);
+        }
+        public Call(Stage stage, Input input, List<ImageData> images, List<Observation> analysis,
+                    List<Question> questions, List<Answer> answers, String previousPrompt, String revisionInstruction,
+                    List<MaterialSource> materialSources, int maxAttempts, List<String> evidenceWarnings) {
+            this(stage, input, images, analysis, questions, answers, previousPrompt, revisionInstruction,
+                    materialSources, maxAttempts, evidenceWarnings, List.of());
         }
         /** 兼容未单独提供来源风险的旧阶段调用。 */
         public Call(Stage stage, Input input, List<ImageData> images, List<Observation> analysis,

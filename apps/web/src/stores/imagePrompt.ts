@@ -4,11 +4,13 @@ import { imagePromptApi } from '@/services/imagePromptApi';
 import { getApiErrorMessage } from '@/services/http';
 import { useAuthStore } from './auth';
 import { useTrialStore } from './trial';
+import { isSafeRelativeFilePath, isSensitiveFile, getProjectFilePath } from '@/workers/fileReaderCore';
 import type {
   ImagePromptAnswer, ImagePromptAsset, ImagePromptCapabilities, ImagePromptDocument,
   ImagePromptInput, ImagePromptMode, ImagePromptPlan, ImageReferenceRole,
   ImagePromptMediaAsset, ImagePromptMaterialRef, ImagePromptMaterialTrack, ImagePromptOutputType,
   ImagePromptReplacementRelation, ImagePromptMediaCapabilities,
+  SourcePromptAsset, SourcePromptCapabilities, SourcePromptRole, SourcePromptTaskType,
 } from '@/types/imagePrompt';
 
 export interface SelectedImage {
@@ -20,8 +22,18 @@ export interface SelectedMedia {
   startMs?: number; endMs?: number;
 }
 
+export interface SelectedSource {
+  key: string; name: string; file: File | null; entries?: { path: string; content: string }[]; folderFiles?: File[];
+  asset?: SourcePromptAsset; unitIds: string[]; track: ImagePromptMaterialTrack; role: SourcePromptRole;
+  parsing: boolean; error: string;
+}
+
 /** 图像任务独立状态。文件仅在内存中；身份/输入版本变化后，旧成功、失败及 finally 都不能写回新任务。 */
 export const useImagePromptStore = defineStore('imagePrompt', () => {
+  const taskType = ref<'VISUAL' | SourcePromptTaskType>('VISUAL');
+  const generalTask = computed(() => taskType.value !== 'VISUAL');
+  const sourceFiles = ref<SelectedSource[]>([]);
+  const sourceCapabilities = ref<SourcePromptCapabilities>();
   const mode = ref<ImagePromptMode>('REFERENCE_RECONSTRUCTION');
   const modelId = ref('');
   const creationIntent = ref('');
@@ -54,10 +66,10 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
   let modelLoad = 0;
   let controller: AbortController | undefined;
   const mediaControllers = new Map<string, AbortController>();
-  const mediaReading = computed(() => mediaFiles.value.some(file => file.parsing));
+  const mediaReading = computed(() => mediaFiles.value.some(file => file.parsing) || sourceFiles.value.some(file => file.parsing));
   const busy = computed(() => phase.value !== 'IDLE' || mediaReading.value);
   // 模式只改变本次使用范围，不清空临时素材；关闭Plan时保留替换素材草稿但不把它作为还原来源。
-  const activeMediaFiles = computed(() => mode.value === 'CUSTOM_CREATION' ? mediaFiles.value : mediaFiles.value.filter(file => file.track === 'REFERENCE'));
+  const activeMediaFiles = computed(() => generalTask.value || mode.value === 'CUSTOM_CREATION' ? mediaFiles.value : mediaFiles.value.filter(file => file.track === 'REFERENCE'));
   const selectedUnitCount = computed(() => activeMediaFiles.value.reduce((count, file) => count + file.units.length, 0));
   const hasDraftChanges = computed(() => isEditing.value && editDraft.value !== result.value?.optimizedPrompt);
   const selectedModel = computed(() => capabilities.value?.models.find(m => m.id === modelId.value));
@@ -66,7 +78,7 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
   const modelInputError = computed(() => {
     if (!selectedModel.value) return '';
     const selectedImages = files.value.length + selectedUnitCount.value;
-    const images = mode.value === 'REFERENCE_RECONSTRUCTION' ? Math.max(1, selectedImages) : selectedImages;
+    const images = !generalTask.value && mode.value === 'REFERENCE_RECONSTRUCTION' ? Math.max(1, selectedImages) : selectedImages;
     if (images && !selectedModel.value.vision) return '当前模型未开放图片输入，请选择视觉模型；无图创作可开启 Plan 并移除参考图。';
     // 多媒体按能力上限分批识别；旧图片接口仍保持单次模型图片数限制。
     if (!activeMediaFiles.value.length && images > selectedModel.value.maxImages) return `当前模型最多支持 ${selectedModel.value.maxImages} 张图片，请减少参考图或更换模型。`;
@@ -91,6 +103,7 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
   const startDisabledReason = computed(() => {
     if (busy.value) return '当前操作正在处理中，请稍候。';
     if (!auth.isAuthenticated) {
+      if (generalTask.value) return '注册登录后可使用代码、文档与文件夹资料。';
       if (mode.value === 'CUSTOM_CREATION') return '注册登录后可开启 Plan 创作模式。';
       if (!trial.initialized) return trial.error || '正在确认免费体验额度，请稍候。';
       if (!trial.canUse('IMAGE_TO_PROMPT')) return trial.error || '图像转提示词的免费体验已用完，请注册登录后继续。';
@@ -99,13 +112,24 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
     if (recoveryPending.value) return '上次请求的结果尚未确认，请先查询处理结果。';
     if (!selectedModel.value) return isLoadingModels.value ? '正在加载可用模型，请稍候。' : '请先选择一个可用模型。';
     if (modelInputError.value) return modelInputError.value;
-    if (mode.value === 'REFERENCE_RECONSTRUCTION' && !activeMediaFiles.value.length && files.value.length !== 1) return '请先选择一张参考图片，或添加并审阅参考素材。';
-    if (mode.value === 'CUSTOM_CREATION' && !creationIntent.value.trim()) return '请先填写新图创作构想。';
+    if (!generalTask.value && mode.value === 'REFERENCE_RECONSTRUCTION' && !activeMediaFiles.value.length && files.value.length !== 1) return '请先选择一张参考图片，或添加并审阅参考素材。';
+    if ((generalTask.value || mode.value === 'CUSTOM_CREATION') && !creationIntent.value.trim()) return generalTask.value ? '请先填写本次任务目标，说明希望下游完成什么。' : '请先填写新图创作构想。';
+    if (generalTask.value) {
+      for (const file of sourceFiles.value) {
+        if (!file.asset) return `资料“${file.name}”尚未解析，请先点击“解析并预览”。`;
+        if (new Date(file.asset.expiresAt).getTime() <= Date.now()) return `资料“${file.name}”已过期，请移除后重新添加。`;
+        if (!file.unitIds.length) return `资料“${file.name}”尚未选择内容，请点击“审阅与选择范围”并保存。`;
+        if (file.unitIds.some(id => !file.asset!.units.some(unit => unit.id === id))) return `资料“${file.name}”所选内容已失效，请重新审阅。`;
+      }
+      const selected = sourceFiles.value.flatMap(file => file.asset?.units.filter(unit => file.unitIds.includes(unit.id)) ?? []);
+      if (selected.length > (sourceCapabilities.value?.maxSelectedUnits ?? 40)) return '所选资料片段超过上限，请减少范围。';
+      if (selected.reduce((count, unit) => count + unit.text.length, 0) > (sourceCapabilities.value?.maxSelectedCharacters ?? 120000)) return '所选资料文字超过上限，请减少范围。';
+    }
     if (mediaInputError.value) return mediaInputError.value;
     if (activeMediaFiles.value.length && files.value.length + selectedUnitCount.value > (mediaCapabilities.value?.maxSelectedUnits ?? 12)) return '所选素材页/帧超过本次上限，请减少识别范围。';
-    if (mode.value === 'CUSTOM_CREATION' && relations.value.some(relation => [relation.referenceAssetId, relation.replacementAssetId].some(id => id && !mediaFiles.value.some(file => file.asset?.id === id)))) return '替换关系中的素材已失效，请重新选择来源或删除对应关系；历史正文仍可使用。';
-    if (mode.value === 'CUSTOM_CREATION' && relations.value.some(relation => [[relation.referenceAssetId, relation.referenceUnitId], [relation.replacementAssetId, relation.replacementUnitId]].some(([assetId, unitId]) => unitId && !mediaFiles.value.find(file => file.asset?.id === assetId)?.units.some(unit => unit.unitId === unitId)))) return '替换关系指向未选择的页／帧，请重新选择识别范围或调整关系。';
-    if ((files.value.length || activeMediaFiles.value.length) && !consent.value) return '请先勾选“我已检查图片隐私”确认框，再生成提示词。';
+    if ((generalTask.value || mode.value === 'CUSTOM_CREATION') && relations.value.some(relation => [relation.referenceAssetId, relation.replacementAssetId].some(id => id && ![...mediaFiles.value, ...(generalTask.value ? sourceFiles.value : [])].some(file => file.asset?.id === id)))) return '替换关系中的素材已失效，请重新选择来源或删除对应关系；历史正文仍可使用。';
+    if ((generalTask.value || mode.value === 'CUSTOM_CREATION') && relations.value.some(relation => [[relation.referenceAssetId, relation.referenceUnitId], [relation.replacementAssetId, relation.replacementUnitId]].some(([assetId, unitId]) => unitId && !mediaFiles.value.find(file => file.asset?.id === assetId)?.units.some(unit => unit.unitId === unitId) && !(generalTask.value && sourceFiles.value.find(file => file.asset?.id === assetId)?.unitIds.includes(unitId))))) return '替换关系指向未选择的页／帧，请重新选择识别范围或调整关系。';
+    if ((files.value.length || activeMediaFiles.value.length || generalTask.value) && !consent.value) return generalTask.value ? '请先勾选“我已检查资料隐私”确认框，再生成提示词。' : '请先勾选“我已检查图片隐私”确认框，再生成提示词。';
     return '';
   });
   const canStart = computed(() => !startDisabledReason.value);
@@ -116,7 +140,7 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
     revision += 1; controller?.abort(); controller = undefined; phase.value = 'IDLE';
     dropPlan(); error.value = ''; recoveryId.value = ''; recoveryPending.value = false;
   };
-  watch([mode, modelId, creationIntent, exactText, context, language, targetTool, outputType], invalidate, { flush: 'sync' });
+  watch([taskType, mode, modelId, creationIntent, exactText, context, language, targetTool, outputType], invalidate, { flush: 'sync' });
   watch([mode, outputType], () => {
     const defaults: Record<ImagePromptOutputType, string> = { IMAGE: '通用文生图', VIDEO: '通用视频创作工具', PPT: '通用PPT工具' };
     // 仅同步平台通用值（含本次开发早期别名）；自填工具保持原意，关闭Plan始终恢复图片通用值。
@@ -124,8 +148,14 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
     if (genericTools.includes(targetTool.value)) targetTool.value = defaults[mode.value === 'CUSTOM_CREATION' ? outputType.value : 'IMAGE'];
   }, { flush: 'sync' });
   // 模式或模型改变会改变外发范围/用途；保留素材与遮挡，授权须由用户重新核对。
-  watch([mode, modelId], () => { if (mediaFiles.value.length) consent.value = false; }, { flush: 'sync' });
-  watch(relations, invalidate, { deep: true, flush: 'sync' });
+  // 切回视觉任务也必须撤销通用任务的旧同意；不能用变更后的任务类型决定旧授权是否失效。
+  watch([taskType, mode, modelId, creationIntent, exactText, context, language, targetTool], () => { consent.value = false; }, { flush: 'sync' });
+  watch(relations, () => { invalidate(); if (generalTask.value) consent.value = false; }, { deep: true, flush: 'sync' });
+  watch(taskType, () => {
+    if (['通用文生图', '通用视频创作工具', '通用PPT工具', '通用开发工具', '通用文档工具', '通用 AI 工具'].includes(targetTool.value)) {
+      targetTool.value = ({ VISUAL: '通用文生图', CODE: '通用开发工具', DOCUMENT: '通用文档工具', OTHER: '通用 AI 工具' })[taskType.value];
+    }
+  }, { flush: 'sync' });
 
   const releaseMedia = (file: SelectedMedia): void => {
     const current = revision, owner = identityKey();
@@ -199,6 +229,76 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
     catch { /* 旧部署仍可使用原有图片与纯文字能力，新素材解析会返回实际错误。 */ }
   };
 
+  const releaseSource = (file: SelectedSource): void => {
+    mediaControllers.get(file.key)?.abort(); mediaControllers.delete(file.key);
+    const owner = identityKey();
+    if (file.asset) void imagePromptApi.removeSource(file.asset.id).catch(() => { if (owner === identityKey()) cleanupWarning.value = '资料撤销未确认，将按临时有效期清理。'; });
+  };
+  /** 只加入浏览器草稿；文件原件在用户点击解析后才发送本平台。 */
+  const addSourceFiles = (selected: File[], track: ImagePromptMaterialTrack = 'REFERENCE'): void => {
+    if (!auth.isAuthenticated) throw new Error('请先登录后添加资料。');
+    if (sourceFiles.value.length + selected.length > (sourceCapabilities.value?.maxAssets ?? 20)) throw new Error('每任务最多添加20份文字资料。');
+    for (const file of selected) {
+      if (!isSafeRelativeFilePath(file.name) || isSensitiveFile(file.name)) throw new Error('不能添加私钥、真实环境变量或受保护配置文件。');
+      if (!file.size || file.size > (sourceCapabilities.value?.maxFileBytes ?? 50 * 1024 * 1024)) throw new Error('请选择非空且不超过50 MiB的资料。');
+    }
+    invalidate(); consent.value = false;
+    sourceFiles.value.push(...selected.map(file => ({ key: crypto.randomUUID(), name: file.name, file: markRaw(file), track,
+      role: (track === 'REPLACEMENT' ? 'REPLACEMENT' : 'BASELINE') as SourcePromptRole, unitIds: [], parsing: false, error: '' })));
+  };
+  const addSourceText = (name: string, entries: { path: string; content: string }[], folderFiles?: File[]): void => {
+    if (!auth.isAuthenticated) throw new Error('请先登录后添加资料。');
+    if (sourceFiles.value.length >= (sourceCapabilities.value?.maxAssets ?? 20)) throw new Error('每任务最多添加20份文字资料。');
+    if (!entries.length && !folderFiles?.length) throw new Error('请先填写内容或勾选文件。');
+    if (entries.some(entry => !isSafeRelativeFilePath(entry.path) || isSensitiveFile(entry.path))) throw new Error('资料中包含受保护或不安全的路径。');
+    invalidate(); consent.value = false;
+    sourceFiles.value.push({ key: crypto.randomUUID(), name, file: null, entries, folderFiles: folderFiles?.map(file => markRaw(file)),
+      track: 'REFERENCE', role: 'BASELINE', unitIds: [], parsing: false, error: '' });
+  };
+  const updateSource = (key: string, patch: Partial<Pick<SelectedSource, 'unitIds' | 'role' | 'track'>>): void => {
+    const source = sourceFiles.value.find(file => file.key === key); if (!source) return;
+    invalidate(); Object.assign(source, patch); consent.value = false;
+  };
+  const removeSourceFile = (key: string): void => {
+    const file = sourceFiles.value.find(item => item.key === key); if (!file) return;
+    invalidate(); releaseSource(file); sourceFiles.value = sourceFiles.value.filter(item => item.key !== key); consent.value = false;
+  };
+  /** 文件夹仅发送用户明确勾选的文件；任何超限均拒绝整批，不以截断冒充完整解析。 */
+  const parseSource = async (key: string): Promise<void> => {
+    const file = sourceFiles.value.find(item => item.key === key); if (!file || file.parsing || phase.value !== 'IDLE') return;
+    invalidate(); consent.value = false; file.error = ''; file.parsing = true;
+    const request = new AbortController(), owner = identityKey(); mediaControllers.set(key, request);
+    try {
+      let entries = file.entries ?? [];
+      if (file.folderFiles?.length) {
+        entries = [];
+        let characters = 0;
+        for (const item of file.folderFiles) {
+          if (request.signal.aborted) return;
+          const path = getProjectFilePath(item);
+          if (!isSafeRelativeFilePath(path) || isSensitiveFile(path)) throw new Error('目录中存在受保护路径，请重新选择范围。');
+          const content = await item.text(); characters += content.length;
+          if (content.includes('\0')) throw new Error(`文件“${path}”不是可读纯文本，请单独上传受支持的文档。`);
+          if (content.length > 500000 || characters > 600000) throw new Error('所选文件超过单文件500000或集合600000字符限制，请减少范围；本次未上传任何内容。');
+          entries.push({ path, content });
+        }
+      }
+      const asset = file.file ? await imagePromptApi.uploadSource(file.file, request.signal)
+        : await imagePromptApi.prepareSourceText(file.name, entries, request.signal);
+      if (request.signal.aborted || owner !== identityKey() || !sourceFiles.value.includes(file)) {
+        void imagePromptApi.removeSource(asset.id).catch(() => undefined); return;
+      }
+      file.asset = asset; file.unitIds = [];
+    } catch (failure: unknown) { if (!request.signal.aborted && owner === identityKey() && sourceFiles.value.includes(file)) file.error = getApiErrorMessage(failure); }
+    finally { if (mediaControllers.get(key) === request) { file.parsing = false; mediaControllers.delete(key); } }
+  };
+  const refreshSourceCapabilities = async (): Promise<void> => {
+    if (!auth.isAuthenticated) return;
+    const owner = identityKey();
+    try { const value = await imagePromptApi.sourceCapabilities(); if (owner === identityKey()) sourceCapabilities.value = value; }
+    catch { /* 旧部署保留视觉路径；新入口发起操作时展示实际错误。 */ }
+  };
+
   const release = (file: SelectedImage): void => {
     const current = revision;
     if (file.previewUrl.startsWith('blob:')) URL.revokeObjectURL(file.previewUrl);
@@ -218,9 +318,11 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
   const removeFile = (key: string): void => {
     invalidate(); const file = files.value.find(f => f.key === key);
     files.value = files.value.filter(f => f.key !== key); if (file) release(file);
+    consent.value = false;
   };
   const changeRole = (key: string, role: ImageReferenceRole): void => {
     invalidate(); const file = files.value.find(f => f.key === key); if (file) file.role = role;
+    consent.value = false;
   };
 
   const refreshModels = async (): Promise<void> => {
@@ -246,16 +348,25 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
     }
     const materials = activeMediaFiles.value.map(file => ({ assetId: file.asset!.id, track: file.track, role: file.role,
       units: file.units.map(unit => ({ unitId: unit.unitId, masks: unit.masks.map(mask => ({ ...mask })) })) }));
-    return {
+    const input: ImagePromptInput = {
       mode: mode.value, modelId: modelId.value,
       images: files.value.map(f => ({ assetId: f.asset!.id, role: f.role })),
-      creationIntent: mode.value === 'CUSTOM_CREATION' ? creationIntent.value : '',
-      exactText: mode.value === 'CUSTOM_CREATION' ? exactText.value : '',
-      context: mode.value === 'CUSTOM_CREATION' ? context.value : '', language: language.value, targetTool: targetTool.value,
-      ...(mode.value === 'CUSTOM_CREATION' ? { outputType: outputType.value, materials,
+      creationIntent: generalTask.value || mode.value === 'CUSTOM_CREATION' ? creationIntent.value : '',
+      exactText: generalTask.value || mode.value === 'CUSTOM_CREATION' ? exactText.value : '',
+      context: generalTask.value || mode.value === 'CUSTOM_CREATION' ? context.value : '', language: language.value, targetTool: targetTool.value,
+      ...(generalTask.value || mode.value === 'CUSTOM_CREATION' ? { outputType: outputType.value, materials,
         relations: relations.value.map(relation => ({ ...relation, attributes: [...relation.attributes] })) }
         : materials.length ? { outputType: 'IMAGE' as const, materials } : {}),
     };
+    if (generalTask.value) {
+      input.sourceTask = { taskType: taskType.value as SourcePromptTaskType, sources: sourceFiles.value.map(file => ({
+        assetId: file.asset!.id, unitIds: [...file.unitIds], track: file.track, role: file.role,
+      })) };
+      const receipt = await imagePromptApi.sourceConsent(input, signal);
+      if (current !== revision || signal.aborted) throw new Error('本次输入已改变，请重新核对外发范围。');
+      input.sourceTask.consentId = receipt.id;
+    }
+    return input;
   };
 
   const accept = (document: ImagePromptDocument): void => {
@@ -387,7 +498,8 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
   };
   const restore = (document: ImagePromptDocument): void => {
     if (!auth.isAuthenticated) { error.value = '历史记录仅限注册登录后查看。'; return; }
-    invalidate(); files.value.forEach(release); files.value = []; mediaFiles.value.forEach(releaseMedia); mediaFiles.value = [];
+    invalidate(); files.value.forEach(release); files.value = []; mediaFiles.value.forEach(releaseMedia); mediaFiles.value = []; sourceFiles.value.forEach(releaseSource); sourceFiles.value = [];
+    taskType.value = document.input.sourceTask?.taskType ?? 'VISUAL';
     mode.value = document.mode; modelId.value = document.modelId;
     creationIntent.value = document.input.creationIntent; exactText.value = document.input.exactText;
     context.value = document.input.context; language.value = document.input.language; targetTool.value = document.input.targetTool;
@@ -397,18 +509,18 @@ export const useImagePromptStore = defineStore('imagePrompt', () => {
     consent.value = false;
   };
   const reset = (): void => {
-    invalidate(); files.value.forEach(release); files.value = []; mediaFiles.value.forEach(releaseMedia); mediaFiles.value = []; relations.value = []; outputType.value = 'IMAGE'; result.value = undefined; undoDocument.value = undefined;
+    invalidate(); files.value.forEach(release); files.value = []; mediaFiles.value.forEach(releaseMedia); mediaFiles.value = []; sourceFiles.value.forEach(releaseSource); sourceFiles.value = []; taskType.value = 'VISUAL'; relations.value = []; outputType.value = 'IMAGE'; result.value = undefined; undoDocument.value = undefined;
     isEditing.value = false; editDraft.value = ''; creationIntent.value = ''; exactText.value = ''; context.value = ''; consent.value = false;
   };
   const identityKey = (): string => [auth.user?.userId, auth.user?.tenantId, auth.user?.workspaceId].join('|');
   watch(identityKey, () => {
     modelLoad += 1; isLoadingModels.value = false;
-    reset(); capabilities.value = undefined; mediaCapabilities.value = undefined; modelId.value = ''; cleanupWarning.value = '';
+    reset(); capabilities.value = undefined; mediaCapabilities.value = undefined; sourceCapabilities.value = undefined; modelId.value = ''; cleanupWarning.value = '';
     if (!auth.isAuthenticated) mode.value = 'REFERENCE_RECONSTRUCTION';
   }, { flush: 'sync' });
   /** 离开页面仅停止旧请求写回，保留当前构想、实际回答和编辑稿供返回时继续。 */
-  const cancelPending = (): void => { revision += 1; controller?.abort(); controller = undefined; phase.value = 'IDLE'; mediaControllers.forEach(value => value.abort()); mediaControllers.clear(); mediaFiles.value.forEach(file => { file.parsing = false; }); };
-  return { mode, modelId, creationIntent, exactText, context, language, targetTool, files, capabilities, selectedModel, availableModels, modelInputError,
+  const cancelPending = (): void => { revision += 1; controller?.abort(); controller = undefined; phase.value = 'IDLE'; mediaControllers.forEach(value => value.abort()); mediaControllers.clear(); [...mediaFiles.value, ...sourceFiles.value].forEach(file => { file.parsing = false; }); };
+  return { taskType, generalTask, sourceFiles, sourceCapabilities, addSourceFiles, addSourceText, updateSource, removeSourceFile, parseSource, refreshSourceCapabilities, mode, modelId, creationIntent, exactText, context, language, targetTool, files, capabilities, selectedModel, availableModels, modelInputError,
     plan, answers, result, undoDocument, editDraft, isEditing, phase, error, cleanupWarning, recoveryId, recoveryPending, consent,
     isLoadingModels, busy, hasDraftChanges, canStart, startDisabledReason, addFiles, removeFile, changeRole, refreshModels, start, confirm,
     recover, saveEdit, retrySave, rewrite, undo, restore, reset, invalidate, cancelPending,

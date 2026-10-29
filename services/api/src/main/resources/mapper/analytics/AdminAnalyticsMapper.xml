@@ -15,6 +15,10 @@
             <arg column="image_generated" javaType="_long"/>
             <arg column="text_submitted" javaType="_long"/>
             <arg column="text_generated" javaType="_long"/>
+            <arg column="image_plan_created" javaType="_long"/>
+            <arg column="image_plan_completed" javaType="_long"/>
+            <arg column="image_reoptimized" javaType="_long"/>
+            <arg column="result_exported" javaType="_long"/>
         </constructor>
     </resultMap>
     <resultMap id="usageCounts" type="com.promptoptimizer.analytics.mapper.AdminAnalyticsMapper$UsageCounts">
@@ -156,11 +160,16 @@
         SELECT COUNT(*) FILTER (WHERE e.event_type = 'IMAGE_PROMPT_SUBMITTED') AS image_submitted,
                COUNT(*) FILTER (WHERE e.event_type = 'IMAGE_PROMPT_GENERATED') AS image_generated,
                COUNT(*) FILTER (WHERE e.event_type = 'TEXT_POLISH_SUBMITTED') AS text_submitted,
-               COUNT(*) FILTER (WHERE e.event_type = 'TEXT_POLISH_GENERATED') AS text_generated
+               COUNT(*) FILTER (WHERE e.event_type = 'TEXT_POLISH_GENERATED') AS text_generated,
+               COUNT(*) FILTER (WHERE e.event_type = 'IMAGE_PROMPT_PLAN_CREATED') AS image_plan_created,
+               COUNT(*) FILTER (WHERE e.event_type = 'IMAGE_PROMPT_PLAN_COMPLETED') AS image_plan_completed,
+               COUNT(*) FILTER (WHERE e.event_type = 'IMAGE_PROMPT_REOPTIMIZED') AS image_reoptimized,
+               COUNT(*) FILTER (WHERE e.event_type = 'RESULT_EXPORTED') AS result_exported
           FROM audit_event e
          WHERE e.actor_user_id IS NOT NULL
            AND e.event_type IN ('IMAGE_PROMPT_SUBMITTED', 'IMAGE_PROMPT_GENERATED',
-                                'TEXT_POLISH_SUBMITTED', 'TEXT_POLISH_GENERATED')
+                                'TEXT_POLISH_SUBMITTED', 'TEXT_POLISH_GENERATED', 'IMAGE_PROMPT_PLAN_CREATED',
+                                'IMAGE_PROMPT_PLAN_COMPLETED', 'IMAGE_PROMPT_REOPTIMIZED', 'RESULT_EXPORTED')
            AND e.occurred_at &gt;= #{period.fromInclusive}
            AND e.occurred_at &lt; #{period.toExclusive}
            AND (CAST(#{account.userId} AS uuid) IS NULL OR e.actor_user_id = #{account.userId})
@@ -197,6 +206,7 @@
             主仪表盘四个事件维度共用一次原始表扫描；只物化必要的账号/本地桶/布尔标记，
             不物化完整 details。日期边界在转换前按 timestamptz 过滤，避免时区和 DST 错位。
             MATERIALIZED 明确复用输入，不能让优化器将多个消费者重新展开成独立原始表扫描。
+            素材直接提交/Plan完成与文本对应事实合并展示；它们不进入 usageEventPredicate，避免与工具提交双计关键操作。
         -->
         WITH local_events AS MATERIALIZED (
             SELECT e.actor_user_id,
@@ -204,8 +214,8 @@
                    EXTRACT(HOUR FROM (e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text)))::integer AS activity_hour,
                    (<include refid="usageEventPredicate"/>) AS used,
                    e.event_type = 'LOGIN' AS logged_in,
-                   e.event_type = 'DIRECT_OPTIMIZATION_SUBMITTED' AS direct_submitted,
-                   e.event_type = 'PLAN_COMPLETED' AS plan_completed,
+                   e.event_type IN ('DIRECT_OPTIMIZATION_SUBMITTED', 'IMAGE_PROMPT_DIRECT_SUBMITTED') AS direct_submitted,
+                   e.event_type IN ('PLAN_COMPLETED', 'IMAGE_PROMPT_PLAN_COMPLETED') AS plan_completed,
                    CASE WHEN e.event_type = 'LOGIN'
                         THEN COALESCE(e.details-&gt;&gt;'deviceType', 'UNKNOWN') END AS device_type
               FROM audit_event e
@@ -303,11 +313,12 @@
                        interval '1 day'
                    ) AS generated(day)
         ), account_days AS (
-            <!-- 时区转换只出现一次。同一表达式在 SELECT 和 GROUP BY 各写一遍会变成两个绑定参数，PostgreSQL 视为不同列并报 42803。 -->
+            <!-- 时区转换只出现一次。同一表达式在 SELECT 和 GROUP BY 各写一遍会变成两个绑定参数，PostgreSQL 视为不同列并报 42803。
+                 文本与素材的阶段细分合并统计；通用工具提交仍独立作为唯一关键使用事实。 -->
             SELECT activity_day, actor_user_id,
                    BOOL_OR(<include refid="usageEventPredicate"/>) AS used,
-                   COUNT(*) FILTER (WHERE event_type = 'DIRECT_OPTIMIZATION_SUBMITTED') AS direct_enhancement_count,
-                   COUNT(*) FILTER (WHERE event_type = 'PLAN_COMPLETED') AS plan_completed_count
+                   COUNT(*) FILTER (WHERE event_type IN ('DIRECT_OPTIMIZATION_SUBMITTED', 'IMAGE_PROMPT_DIRECT_SUBMITTED')) AS direct_enhancement_count,
+                   COUNT(*) FILTER (WHERE event_type IN ('PLAN_COMPLETED', 'IMAGE_PROMPT_PLAN_COMPLETED')) AS plan_completed_count
               FROM (
                     SELECT (e.occurred_at AT TIME ZONE CAST(#{period.zoneIdText} AS text))::date AS activity_day,
                            e.event_type,

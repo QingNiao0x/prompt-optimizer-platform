@@ -32,7 +32,7 @@ public interface AnalyticsEventService {
     void recordPlanCompleted(String planId, HttpServletRequest request);
 
     /**
-     * 采集已登录账号的独立工具操作；仅允许图像/文章工具的固定事件，操作编号只用于幂等主键。
+     * 采集已登录账号的素材（兼容旧图像）/文章工具固定事件，操作编号只用于幂等主键。
      * 调用方在幂等预留及输入/资源校验通过后记录提交，在有效结果可恢复后记录生成；不采集页面访问。
      * 当前 HTTP 的安全元数据由实现读取，非 HTTP 调用保留空元数据，身份始终取自服务端。
      */

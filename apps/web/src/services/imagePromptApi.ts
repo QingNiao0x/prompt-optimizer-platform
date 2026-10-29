@@ -6,6 +6,7 @@ import type {
   ImagePromptAnswer, ImagePromptAsset, ImagePromptCapabilities, ImagePromptDocument, ImagePromptHistoryPage,
   ImagePromptInput, ImagePromptMode, ImagePromptModel, ImagePromptOperation, ImagePromptPlan,
   ImagePromptMediaAsset, ImagePromptMediaCapabilities, ImagePromptMask,
+  SourcePromptAsset, SourcePromptCapabilities,
 } from '@/types/imagePrompt';
 
 /**
@@ -34,6 +35,22 @@ async function readMediaBlob(request: Promise<{ data: Blob }>): Promise<Blob> {
 
 /** 专用视觉创作接口；浏览器只提交用户主动选择的素材，不接收供应商密钥或上游地址。 */
 export const imagePromptApi = {
+  async sourceCapabilities(): Promise<SourcePromptCapabilities> {
+    return (await httpClient.get<ApiResponse<SourcePromptCapabilities>>('/api/v1/image-prompt-sources/capabilities')).data.data;
+  },
+  /** 本平台解析步骤不授权模型外发；范围审阅与同意在生成前单独完成。 */
+  async uploadSource(file: File, signal: AbortSignal): Promise<SourcePromptAsset> {
+    const form = new FormData(); form.append('file', file);
+    return (await httpClient.post<ApiResponse<SourcePromptAsset>>('/api/v1/image-prompt-sources', form,
+      { headers: { 'Content-Type': undefined }, signal, timeout: 120_000 })).data.data;
+  },
+  async prepareSourceText(name: string, entries: { path: string; content: string }[], signal: AbortSignal): Promise<SourcePromptAsset> {
+    return (await httpClient.post<ApiResponse<SourcePromptAsset>>('/api/v1/image-prompt-sources/text', { name, entries }, { signal })).data.data;
+  },
+  async removeSource(id: string): Promise<void> { await httpClient.delete(`/api/v1/image-prompt-sources/${encodeURIComponent(id)}`); },
+  async sourceConsent(input: ImagePromptInput, signal: AbortSignal): Promise<{ id: string; expiresAt: string }> {
+    return (await httpClient.post<ApiResponse<{ id: string; expiresAt: string }>>('/api/v1/image-prompt-sources/consents', input, { signal })).data.data;
+  },
   async capabilities(): Promise<ImagePromptCapabilities> {
     return (await httpClient.get<ApiResponse<ImagePromptCapabilities>>(trialEndpoint('/api/v1/image-prompts/capabilities', '/image-prompts/capabilities'))).data.data;
   },

@@ -346,7 +346,7 @@ onMounted(() => { if (historyType.value === 'enhancement') void loadPage(); });
       <div>
         <span class="eyebrow">History</span>
         <h1>优化历史</h1>
-        <p>查看提示词优化、图像转提示词与文章祛AI味的使用记录，载入后继续处理。图像历史不长期保存原图。</p>
+        <p>查看提示词优化、素材转提示词与文章祛AI味的使用记录，载入后继续处理。素材历史保留文字与来源说明，原件按临时策略清理。</p>
       </div>
     </header>
 
@@ -485,7 +485,7 @@ onMounted(() => { if (historyType.value === 'enhancement') void loadPage(); });
     </div>
 
     </ElTabPane>
-    <ElTabPane label="图像转提示词" name="image-prompt" lazy>
+    <ElTabPane label="素材转提示词" name="image-prompt" lazy>
       <ImagePromptHistoryPanel v-if="historyType === 'image-prompt'" />
     </ElTabPane>
     <ElTabPane label="文章祛AI味" name="text-polish" lazy>

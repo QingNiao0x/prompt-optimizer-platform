@@ -125,6 +125,8 @@ const longLocation = '用于验证地区字段溢出展示的测试行政区'.re
 
 /** 只模拟展示契约；统计口径与身份隔离不由这些浏览器布局用例验证。 */
 const mockAnalytics = async (page: Page, empty = false) => {
+  // 管理页共享布局可能读取模型等辅助能力；未登记接口必须留在夹具内，不能命中日常服务并以401清除模拟身份。
+  await page.route('**/api/**', route => route.fulfill({ status: 501, json: { error: { message: '未登记的统计测试请求' } } }));
   await mockAuthentication(page, true, true);
   await page.route('**/api/v1/analytics/events', (route) => route.fulfill({ status: 204 }));
   await page.route('**/api/v1/analytics/context', (route) => route.fulfill({ json: { data: {
@@ -136,7 +138,9 @@ const mockAnalytics = async (page: Page, empty = false) => {
     uniqueVisitorCount: empty ? 0 : 8600, activeUserCount: empty ? 0 : 9172,
     averageDailyActiveUsers: empty ? 0 : 2587.33, directEnhancementCount: empty ? 0 : 54, planCompletedCount: empty ? 0 : 27,
     toolUsage: { imagePromptSubmittedCount: empty ? 0 : 12, imagePromptGeneratedCount: empty ? 0 : 5,
-      textPolishSubmittedCount: empty ? 0 : 18, textPolishGeneratedCount: empty ? 0 : 15 },
+      textPolishSubmittedCount: empty ? 0 : 18, textPolishGeneratedCount: empty ? 0 : 15,
+      imagePromptPlanCreatedCount: empty ? 0 : 4, imagePromptPlanCompletedCount: empty ? 0 : 3,
+      imagePromptReoptimizedCount: empty ? 0 : 2, resultExportedCount: empty ? 0 : 21 },
     dailyMetrics: Array.from({ length: 27 }, (_, index) => ({
       date: `2026-09-${String(index + 1).padStart(2, '0')}`,
       accessCount: empty ? 0 : 3000 + index * 52, uniqueVisitors: empty ? 0 : 1000 + index * 24,
@@ -171,7 +175,9 @@ const mockAnalytics = async (page: Page, empty = false) => {
     eventType: index === 0 ? 'DIRECT_OPTIMIZATION_SUBMITTED' : index === 1 ? 'PLAN_COMPLETED'
       : index === 2 ? 'IMAGE_PROMPT_SUBMITTED' : index === 3 ? 'IMAGE_PROMPT_PLAN_CREATED'
         : index === 4 ? 'IMAGE_PROMPT_GENERATED' : index === 5 ? 'TEXT_POLISH_SUBMITTED'
-          : index === 6 ? 'TEXT_POLISH_GENERATED' : index % 2 === 0 ? 'LOGIN' : 'OPTIMIZATION_SUBMITTED',
+          : index === 6 ? 'TEXT_POLISH_GENERATED' : index === 7 ? 'IMAGE_PROMPT_DIRECT_SUBMITTED'
+            : index === 8 ? 'IMAGE_PROMPT_PLAN_COMPLETED' : index === 9 ? 'IMAGE_PROMPT_REOPTIMIZED'
+              : index % 2 === 0 ? 'LOGIN' : 'OPTIMIZATION_SUBMITTED',
     occurredAt: '2026-09-27T09:32:10Z',
     clientIp: '2001:db8:1234:5678:abcd:ef01:2345:6789',
     country: '测试国家', province: '测试省份', city: index === 0 ? longLocation : '测试城市',
@@ -293,7 +299,7 @@ test('新增细分操作以中文显示，筛选保持后端事件代码', async
   await expect(page.locator('.operations-panel .el-table__body .el-table__row')).toContainText('Plan 完成');
 });
 
-test('图像和文章账号提交与结果分别展示，中文日志筛选沿用账号查询且不采集访问', async ({ page }) => {
+test('素材和文章提交结果及直接Plan再次优化均可筛选，沿用账号范围且不采集访问', async ({ page }) => {
   const { requests } = await mockAnalytics(page);
   const browserEvents: string[] = [];
   page.on('request', request => {
@@ -301,12 +307,15 @@ test('图像和文章账号提交与结果分别展示，中文日志筛选沿�
   });
   await page.goto('/admin/analytics');
   for (const [name, count] of [['image-prompt-submitted-count', '12'], ['image-prompt-generated-count', '5'],
-    ['text-polish-submitted-count', '18'], ['text-polish-generated-count', '15']] as const) {
+    ['text-polish-submitted-count', '18'], ['text-polish-generated-count', '15'],
+    ['material-plan-created-count', '4'], ['material-plan-completed-count', '3'],
+    ['material-reoptimized-count', '2'], ['result-exported-count', '21']] as const) {
     await expect(page.getByTestId(name).locator('strong')).toHaveText(count);
   }
   await page.getByRole('textbox', { name: '按登录邮箱筛选', exact: true }).fill('fixture@example.test');
-  for (const [eventType, label] of [['IMAGE_PROMPT_SUBMITTED', '图像转提示词：提交'], ['IMAGE_PROMPT_PLAN_CREATED', '图像转提示词：计划生成'],
-    ['IMAGE_PROMPT_GENERATED', '图像转提示词：结果生成'], ['TEXT_POLISH_SUBMITTED', '文章祛 AI 味：提交'],
+  for (const [eventType, label] of [['IMAGE_PROMPT_SUBMITTED', '素材转提示词：提交'], ['IMAGE_PROMPT_PLAN_CREATED', '素材转提示词：计划生成'],
+    ['IMAGE_PROMPT_GENERATED', '素材转提示词：结果生成'], ['IMAGE_PROMPT_DIRECT_SUBMITTED', '素材转提示词：直接增强提交'],
+    ['IMAGE_PROMPT_PLAN_COMPLETED', '素材转提示词：Plan 完成'], ['IMAGE_PROMPT_REOPTIMIZED', '素材转提示词：再次优化成功'], ['TEXT_POLISH_SUBMITTED', '文章祛 AI 味：提交'],
     ['TEXT_POLISH_GENERATED', '文章祛 AI 味：结果生成']] as const) {
     await page.locator('.event-select .el-select__wrapper').click();
     await page.getByRole('option', { name: label, exact: true }).click();

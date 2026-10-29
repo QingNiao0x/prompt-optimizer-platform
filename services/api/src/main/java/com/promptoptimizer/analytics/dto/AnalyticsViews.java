@@ -56,14 +56,25 @@ public final class AnalyticsViews {
 
     /**
      * 登录账号的独立工具统计，沿用仪表盘时间/账号筛选；提交含失败，生成按可恢复的有效结果计。
-     * 图像提交包含计划准备、确认生成及再次优化，计划问题不算最终结果；不反推历史缺失事件。
+     * 素材提交包含计划准备、确认生成及再次优化，计划问题不算最终结果；不反推历史缺失事件。
+     * resultExportedCount为全部工作台的已登录复制事件，不从旧事件猜测来源工具。
      */
     public record ToolUsage(long imagePromptSubmittedCount, long imagePromptGeneratedCount,
-                            long textPolishSubmittedCount, long textPolishGeneratedCount) {
+                            long textPolishSubmittedCount, long textPolishGeneratedCount,
+                            long imagePromptPlanCreatedCount, long imagePromptPlanCompletedCount,
+                            long imagePromptReoptimizedCount, long resultExportedCount) {
+        /** 保留旧内部调用方的构造契约；新增字段只由实际事件聚合，不从提交推断。 */
+        public ToolUsage(long imagePromptSubmittedCount, long imagePromptGeneratedCount,
+                         long textPolishSubmittedCount, long textPolishGeneratedCount) {
+            this(imagePromptSubmittedCount, imagePromptGeneratedCount, textPolishSubmittedCount,
+                    textPolishGeneratedCount, 0, 0, 0, 0);
+        }
         /** 数据库应返回非负次数，映射异常不能伪装为零。 */
         public ToolUsage {
             if (imagePromptSubmittedCount < 0 || imagePromptGeneratedCount < 0
-                    || textPolishSubmittedCount < 0 || textPolishGeneratedCount < 0) {
+                    || textPolishSubmittedCount < 0 || textPolishGeneratedCount < 0
+                    || imagePromptPlanCreatedCount < 0 || imagePromptPlanCompletedCount < 0
+                    || imagePromptReoptimizedCount < 0 || resultExportedCount < 0) {
                 throw new IllegalArgumentException("工具统计次数不能为负数");
             }
         }

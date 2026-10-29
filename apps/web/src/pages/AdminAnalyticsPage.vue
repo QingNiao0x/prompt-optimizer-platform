@@ -129,9 +129,12 @@ const eventTypes: Array<{ value: AnalyticsEventType; label: string }> = [
   { value: 'OPTIMIZATION_SUBMITTED', label: '提交优化' },
   { value: 'DIRECT_OPTIMIZATION_SUBMITTED', label: '直接增强提交' },
   { value: 'PLAN_COMPLETED', label: 'Plan 完成' },
-  { value: 'IMAGE_PROMPT_SUBMITTED', label: '图像转提示词：提交' },
-  { value: 'IMAGE_PROMPT_PLAN_CREATED', label: '图像转提示词：计划生成' },
-  { value: 'IMAGE_PROMPT_GENERATED', label: '图像转提示词：结果生成' },
+  { value: 'IMAGE_PROMPT_SUBMITTED', label: '素材转提示词：提交' },
+  { value: 'IMAGE_PROMPT_DIRECT_SUBMITTED', label: '素材转提示词：直接增强提交' },
+  { value: 'IMAGE_PROMPT_PLAN_CREATED', label: '素材转提示词：计划生成' },
+  { value: 'IMAGE_PROMPT_PLAN_COMPLETED', label: '素材转提示词：Plan 完成' },
+  { value: 'IMAGE_PROMPT_GENERATED', label: '素材转提示词：结果生成' },
+  { value: 'IMAGE_PROMPT_REOPTIMIZED', label: '素材转提示词：再次优化成功' },
   { value: 'TEXT_POLISH_SUBMITTED', label: '文章祛 AI 味：提交' },
   { value: 'TEXT_POLISH_GENERATED', label: '文章祛 AI 味：结果生成' },
   { value: 'PLAN_CREATED', label: '生成方案' },
@@ -650,7 +653,7 @@ onBeforeUnmount(() => {
         <article class="metric">
           <div class="metric-label"><span>实际使用账号</span><ElIcon aria-hidden="true"><MagicStick /></ElIcon></div>
           <strong>{{ dashboard.actualUserCount.toLocaleString() }}</strong>
-          <small>增强、图像、文章、上下文等关键操作</small>
+          <small>增强、素材、文章、上下文等关键操作</small>
         </article>
         <article class="metric">
           <div class="metric-label"><span>平均日活</span><ElIcon aria-hidden="true"><DataLine /></ElIcon></div>
@@ -663,22 +666,42 @@ onBeforeUnmount(() => {
         <article class="metric" data-testid="direct-enhancement-count">
           <div class="metric-label"><span>直接增强提交次数</span><ElIcon aria-hidden="true"><MagicStick /></ElIcon></div>
           <strong>{{ dashboard.directEnhancementCount.toLocaleString() }}</strong>
-          <small>包含生成失败及再次增强的提交尝试</small>
+          <small>提示词优化与素材直接生成的提交尝试，含生成失败</small>
         </article>
         <article class="metric" data-testid="plan-completed-count">
           <div class="metric-label"><span>Plan 完成次数</span><ElIcon aria-hidden="true"><List /></ElIcon></div>
           <strong>{{ dashboard.planCompletedCount.toLocaleString() }}</strong>
-          <small>成功生成并保存历史，每个计划计一次</small>
+          <small>最终提示词已生成，每个计划计一次</small>
         </article>
         <article class="metric" data-testid="image-prompt-submitted-count">
-          <div class="metric-label"><span>图像转提示词提交次数</span><ElIcon aria-hidden="true"><MagicStick /></ElIcon></div>
+          <div class="metric-label"><span>素材转提示词提交次数</span><ElIcon aria-hidden="true"><MagicStick /></ElIcon></div>
           <strong>{{ dashboard.toolUsage.imagePromptSubmittedCount.toLocaleString() }}</strong>
-          <small>包含图像还原、计划准备、确认生成及再次优化</small>
+          <small>图片、代码、文档等素材的直接生成、Plan 及再次优化</small>
         </article>
         <article class="metric" data-testid="image-prompt-generated-count">
-          <div class="metric-label"><span>图像提示词生成次数</span><ElIcon aria-hidden="true"><List /></ElIcon></div>
+          <div class="metric-label"><span>素材提示词生成次数</span><ElIcon aria-hidden="true"><List /></ElIcon></div>
           <strong>{{ dashboard.toolUsage.imagePromptGeneratedCount.toLocaleString() }}</strong>
           <small>有效提示词生成，不含计划问题；补存历史不重计</small>
+        </article>
+        <article v-if="dashboard.toolUsage.imagePromptPlanCreatedCount !== undefined" class="metric" data-testid="material-plan-created-count">
+          <div class="metric-label"><span>素材 Plan 就绪次数</span><ElIcon aria-hidden="true"><List /></ElIcon></div>
+          <strong>{{ dashboard.toolUsage.imagePromptPlanCreatedCount.toLocaleString() }}</strong>
+          <small>Plan 已就绪，包含无需补充问题的计划</small>
+        </article>
+        <article v-if="dashboard.toolUsage.imagePromptPlanCompletedCount !== undefined" class="metric" data-testid="material-plan-completed-count">
+          <div class="metric-label"><span>素材 Plan 完成次数</span><ElIcon aria-hidden="true"><List /></ElIcon></div>
+          <strong>{{ dashboard.toolUsage.imagePromptPlanCompletedCount.toLocaleString() }}</strong>
+          <small>已生成最终提示词，按计划去重</small>
+        </article>
+        <article v-if="dashboard.toolUsage.imagePromptReoptimizedCount !== undefined" class="metric" data-testid="material-reoptimized-count">
+          <div class="metric-label"><span>素材再次优化次数</span><ElIcon aria-hidden="true"><MagicStick /></ElIcon></div>
+          <strong>{{ dashboard.toolUsage.imagePromptReoptimizedCount.toLocaleString() }}</strong>
+          <small>基于历史正文再次优化成功，属于生成次数细分</small>
+        </article>
+        <article v-if="dashboard.toolUsage.resultExportedCount !== undefined" class="metric" data-testid="result-exported-count">
+          <div class="metric-label"><span>复制结果次数</span><ElIcon aria-hidden="true"><List /></ElIcon></div>
+          <strong>{{ dashboard.toolUsage.resultExportedCount.toLocaleString() }}</strong>
+          <small>全部工作台登录账号的成功复制，含历史复制</small>
         </article>
         <article class="metric" data-testid="text-polish-submitted-count">
           <div class="metric-label"><span>文章祛 AI 味提交次数</span><ElIcon aria-hidden="true"><MagicStick /></ElIcon></div>

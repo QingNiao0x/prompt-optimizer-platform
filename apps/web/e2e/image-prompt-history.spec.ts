@@ -62,12 +62,61 @@ async function setup(page: Page) {
 }
 const visibleRows = (page: Page) => page.locator('.image-history-table:visible .el-table__row, .image-history-cards:visible .image-history-card');
 
+test('资料任务历史保留代码来源与目标，成功复制才计统计且不重复调用模型', async ({ page }, testInfo) => {
+  const state = await setup(page);
+  const record = state.records[0]!;
+  record.input.sourceTask = { taskType: 'CODE', sources: [{ assetId: 'code-source', unitIds: ['code-unit'], track: 'REFERENCE', role: 'BASELINE' }] };
+  record.input.creationIntent = '将订单页面迁移为 React，保留接口与权限';
+  record.input.exactText = '提交订单';
+  record.sources = [];
+  record.sourceSources = [{ assetId: 'code-source', name: '订单模块', kind: 'COLLECTION', track: 'REFERENCE', role: 'BASELINE',
+    units: [{ id: 'code-unit', path: 'src/pages/Order.vue', label: '第 1–8 行', text: 'const submitOrder = () => api.post("/orders");' }], warnings: ['未运行源码'] }];
+  const exports: Record<string, unknown>[] = [];
+  await page.route('**/api/v1/analytics/events', route => {
+    exports.push(route.request().postDataJSON() as Record<string, unknown>);
+    return route.fulfill({ json: { data: null } });
+  });
+  await page.goto('/history?type=image-prompt');
+  await expect(visibleRows(page).first()).toContainText('资料直接增强');
+  await expect(visibleRows(page).first()).toContainText('代码／页面');
+  await expect(visibleRows(page).first()).toContainText('1 份');
+  await visibleRows(page).first().getByRole('button', { name: '查看', exact: true }).click();
+  const detail = page.getByRole('dialog', { name: '素材提示词记录详情' });
+  await expect(detail).toContainText('原始任务目标');
+  await expect(detail).toContainText(record.input.creationIntent);
+  await expect(detail).toContainText('必须原样保留的内容');
+  await expect(detail).toContainText('订单模块 · 现状依据');
+  await expect(detail).toContainText('src/pages/Order.vue');
+  await expect(detail).toContainText('未运行源码');
+  await page.screenshot({ path: testInfo.outputPath('source-history-detail.png'), fullPage: true, animations: 'disabled' });
+  expect(exports).toHaveLength(0);
+  await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: () => Promise.resolve() } }));
+  await detail.getByRole('button', { name: '复制提示词', exact: true }).click();
+  await expect.poll(() => exports.length).toBe(1);
+  expect(exports[0]!.eventType).toBe('RESULT_EXPORTED');
+  expect(JSON.stringify(exports[0])).not.toContain('Order.vue');
+  expect(JSON.stringify(exports[0])).not.toContain('历史当前正文');
+  await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true,
+    value: { writeText: () => Promise.reject(new Error('controlled clipboard denial')) } }));
+  await detail.getByRole('button', { name: '复制提示词', exact: true }).click();
+  const manual = page.getByRole('textbox', { name: '手动复制历史素材提示词' });
+  await expect(manual).toHaveValue(record.optimizedPrompt);
+  expect(exports).toHaveLength(1);
+  await manual.evaluate((element: HTMLTextAreaElement) => {
+    element.setSelectionRange(0, element.value.length);
+    element.dispatchEvent(new ClipboardEvent('copy', { bubbles: true, cancelable: true }));
+  });
+  await expect.poll(() => exports.length).toBe(2);
+  expect(exports[0]!.eventId).not.toBe(exports[1]!.eventId);
+  expect(state.paidCalls).toBe(0);
+});
+
 test('历史页分类直接展示图像记录，支持模式筛选、分页与刷新定位', async ({ page }, testInfo) => {
   const state = await setup(page);
   await page.goto('/history');
   await expect(page.getByText('原有文本增强记录', { exact: true }).filter({ visible: true })).toBeVisible();
   expect(state.requests).toHaveLength(0);
-  await page.getByRole('tab', { name: '图像转提示词', exact: true }).click();
+  await page.getByRole('tab', { name: '素材转提示词', exact: true }).click();
   await expect(visibleRows(page)).toHaveCount(10);
   await expect(page.locator('.mode-filter')).toContainText('全部模式');
   await expect(visibleRows(page).first()).toContainText('参考图还原');
@@ -78,18 +127,18 @@ test('历史页分类直接展示图像记录，支持模式筛选、分页与�
   await expect(visibleRows(page)).toHaveCount(2);
   expect(state.requests.at(-1)?.searchParams.get('current')).toBe('2');
   await pagination.locator('.el-select').click();
-  await page.getByRole('option', { name: '20/page', exact: true }).click();
+  await page.getByRole('option', { name: '20条/页', exact: true }).click();
   await expect(visibleRows(page)).toHaveCount(12);
   expect(state.requests.at(-1)?.searchParams.get('current')).toBe('1');
   expect(state.requests.at(-1)?.searchParams.get('size')).toBe('20');
   await page.locator('.mode-filter').click();
-  await page.getByRole('option', { name: 'Plan 新图创作', exact: true }).click();
+  await page.getByRole('option', { name: 'Plan（创作／资料确认）', exact: true }).click();
   await expect(visibleRows(page)).toHaveCount(6);
   expect(state.requests.at(-1)?.searchParams.get('mode')).toBe('CUSTOM_CREATION');
   await page.screenshot({ path: testInfo.outputPath('image-history-list.png'), fullPage: true, animations: 'disabled' });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
   await page.reload();
-  await expect(page.getByRole('tab', { name: '图像转提示词', exact: true })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('tab', { name: '素材转提示词', exact: true })).toHaveAttribute('aria-selected', 'true');
   await expect(visibleRows(page)).toHaveCount(10);
   await page.getByRole('tab', { name: '提示词优化', exact: true }).click();
   await expect(page.getByText('原有文本增强记录', { exact: true }).filter({ visible: true })).toBeVisible();
@@ -100,7 +149,7 @@ test('图像记录详情保留题答和当前正文，复制降级与载入不�
   const state = await setup(page);
   await page.goto('/history?type=image-prompt');
   await visibleRows(page).first().getByRole('button', { name: '查看', exact: true }).click();
-  const detail = page.getByRole('dialog', { name: '图像提示词记录详情' });
+  const detail = page.getByRole('dialog', { name: '素材提示词记录详情' });
   await expect(detail).toContainText('受控参考图.png');
   await expect(detail).toContainText('蓝色圆形在黄色方形左侧');
   await expect(detail.locator('img')).toHaveCount(0);
@@ -114,7 +163,7 @@ test('图像记录详情保留题答和当前正文，复制降级与载入不�
   await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true,
     value: { writeText: () => Promise.reject(new Error('controlled clipboard denial')) } }));
   await detail.getByRole('button', { name: '复制提示词', exact: true }).click();
-  await expect(page.getByRole('textbox', { name: '手动复制历史图像提示词' })).toHaveValue(state.records[1]!.optimizedPrompt);
+  await expect(page.getByRole('textbox', { name: '手动复制历史素材提示词' })).toHaveValue(state.records[1]!.optimizedPrompt);
   await page.getByRole('dialog', { name: '手动复制提示词' }).getByRole('button', { name: 'Close this dialog' }).click();
   await detail.getByRole('button', { name: 'Close this dialog' }).click();
   await visibleRows(page).nth(1).getByRole('button', { name: '载入', exact: true }).click();
@@ -168,7 +217,7 @@ test('历史分类切换身份后拒绝旧列表的迟到响应', async ({ page 
     auth.user = { userId: 'controlled-other', tenantId: 'controlled-other', workspaceId: 'controlled-other',
       displayName: '其他夹具', email: 'other@example.test', platformAdmin: false };
   });
-  await expect(page.getByText('还没有图像转提示词记录', { exact: true })).toBeVisible();
+  await expect(page.getByText('还没有素材转提示词记录', { exact: true })).toBeVisible();
   const oldResponse = page.waitForResponse(response => response.url().includes('/image-prompts/history?'));
   release(); await oldResponse;
   await expect(page.getByText('旧身份私有图像记录')).toHaveCount(0);
@@ -184,7 +233,7 @@ test('多模态历史保留成品类型、选页遮挡和替换关系，查看�
     referenceObject: '中央旧产品', replacementObject: '白色耳机', instruction: '保留配色与留白', attributes: ['配色', '构图'], scope: '第一个镜头' }];
   await page.goto('/history?type=image-prompt');
   await visibleRows(page).nth(1).getByRole('button', { name: '查看', exact: true }).click();
-  const detail = page.getByRole('dialog', { name: '图像提示词记录详情' });
+  const detail = page.getByRole('dialog', { name: '素材提示词记录详情' });
   await expect(detail.getByRole('heading', { name: '视频创作构想' })).toBeVisible();
   await expect(detail.getByRole('region', { name: '历史素材对照表' })).toContainText('第 2 页');
   await expect(detail.getByRole('region', { name: '历史素材对照表' })).toContainText('已遮挡 1 处区域');
@@ -212,7 +261,7 @@ test('非Plan多媒体历史显示素材描述并保留选页时间戳，不出�
   await page.goto('/history?type=image-prompt');
   await expect(visibleRows(page).first()).toContainText('素材描述');
   await visibleRows(page).first().getByRole('button', { name: '查看', exact: true }).click();
-  const detail = page.getByRole('dialog', { name: '图像提示词记录详情' });
+  const detail = page.getByRole('dialog', { name: '素材提示词记录详情' });
   const sources = detail.getByRole('region', { name: '历史素材对照表' });
   await expect(sources).toContainText('第 2 页'); await expect(sources).toContainText('1.00 秒画面');
   await expect(sources).toContainText('已遮挡 1 处区域');

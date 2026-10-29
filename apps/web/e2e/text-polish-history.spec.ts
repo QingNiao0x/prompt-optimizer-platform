@@ -80,8 +80,8 @@ test('文章润色成功后进入总历史页，直接展示使用记录且刷�
   await expect(rows(page)).toHaveCount(1);
   await page.getByRole('tab', { name: '提示词优化', exact: true }).click();
   await expect(page.getByText('原有提示词增强记录', { exact: true }).filter({ visible: true })).toBeVisible();
-  await page.getByRole('tab', { name: '图像转提示词', exact: true }).click();
-  await expect(page.getByText('还没有图像转提示词记录', { exact: true })).toBeVisible();
+  await page.getByRole('tab', { name: '素材转提示词', exact: true }).click();
+  await expect(page.getByText('还没有素材转提示词记录', { exact: true })).toBeVisible();
   expect(state.paidCalls).toBe(1);
 });
 
@@ -89,9 +89,9 @@ test('文章历史分页和页大小传给服务端，删空末页回退，取�
   const state = await setup(page);
   await page.goto('/history?type=text-polish'); await expect(rows(page)).toHaveCount(10);
   const pagination = page.locator('.polish-history-pagination');
-  await pagination.locator('.el-select').click(); await page.getByRole('option', { name: '20/page', exact: true }).click();
+  await pagination.locator('.el-select').click(); await page.getByRole('option', { name: '20条/页', exact: true }).click();
   await expect(rows(page)).toHaveCount(12); expect(state.requests.at(-1)?.searchParams.get('size')).toBe('20');
-  await pagination.locator('.el-select').click(); await page.getByRole('option', { name: '10/page', exact: true }).click();
+  await pagination.locator('.el-select').click(); await page.getByRole('option', { name: '10条/页', exact: true }).click();
   await expect(rows(page)).toHaveCount(10);
   await pagination.locator('.el-pager li', { hasText: /^2$/ }).click(); await expect(rows(page)).toHaveCount(2);
   expect(state.requests.at(-1)?.searchParams.get('current')).toBe('2');

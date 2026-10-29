@@ -6,7 +6,7 @@ import type { ImagePromptAnswer, ImagePromptPlan, ImagePromptQuestion } from '@/
 import { imagePromptPlanProgress, imagePromptQuestionAnswer, isImagePromptAnswered } from '@/features/imageprompt/planPresentation';
 
 const props = defineProps<{ plan: ImagePromptPlan; answers: Record<string, ImagePromptAnswer>; busy: boolean;
-  recoveryPending: boolean; hasDraftChanges: boolean; outputLabel: string; highlight?: boolean }>();
+  recoveryPending: boolean; hasDraftChanges: boolean; outputLabel: string; highlight?: boolean; general?: boolean }>();
 const emit = defineEmits<{ answer: [id: string, value: ImagePromptAnswer]; confirm: []; editRequirements: []; position: [element: HTMLElement] }>();
 const heading = ref<HTMLElement>();
 const questionElements = new Map<string, HTMLElement>();
@@ -14,7 +14,7 @@ const bindQuestion = (id: string, element: unknown): void => { if (element insta
 const progress = computed(() => imagePromptPlanProgress(props.plan, props.answers));
 const showMissingValidation = ref(false);
 watch(() => props.plan.id, () => { showMissingValidation.value = false; });
-const message = computed(() => !props.plan.questions.length ? `创作要求已充分，无需补充问题；确认后即可生成${props.outputLabel}提示词。`
+const message = computed(() => !props.plan.questions.length ? `${props.general ? '任务要求' : '创作要求'}已充分，无需补充问题；确认后即可生成${props.outputLabel}提示词。`
   : progress.value.missing.length ? `还有 ${progress.value.missing.length} 项必答，请在下方回答。`
     : !progress.value.required ? '可补充偏好，也可直接确认生成。' : '必答项已完成，可补充其他偏好，或确认生成。');
 const answer = (question: ImagePromptQuestion) => imagePromptQuestionAnswer(question, props.answers[question.id]);
@@ -35,8 +35,8 @@ defineExpose({ focus, firstMissing });
 
 <template>
   <section data-testid="image-plan-panel" data-position-anchor class="plan-section" :class="{ 'plan-highlight': highlight }" aria-labelledby="image-plan-title">
-    <div class="plan-heading"><ChatLineRound aria-hidden="true" /><div><span class="plan-eyebrow">下一步 · Plan 创作确认</span>
-      <h3 id="image-plan-title" ref="heading" tabindex="-1">请确认创作细节</h3></div>
+    <div class="plan-heading"><ChatLineRound aria-hidden="true" /><div><span class="plan-eyebrow">下一步 · {{ general ? 'Plan 要求确认' : 'Plan 创作确认' }}</span>
+      <h3 id="image-plan-title" ref="heading" tabindex="-1">{{ general ? '请确认任务细节' : '请确认创作细节' }}</h3></div>
       <ElTag :type="progress.missing.length ? 'warning' : 'success'" effect="plain">{{ progress.missing.length ? '待回答' : '待确认' }}</ElTag>
     </div>
     <p class="plan-guidance" role="status" aria-live="polite">{{ message }}</p>
@@ -61,7 +61,7 @@ defineExpose({ focus, firstMissing });
     <p v-if="showMissingValidation && progress.missing.length" class="missing-feedback" role="alert">请完成剩余 {{ progress.missing.length }} 项必答，也可以自填要求或明确委托 AI 设计。</p>
     <p v-if="hasDraftChanges || recoveryPending" class="plan-blocked" role="status">{{ hasDraftChanges ? '请先保存或取消当前结果编辑，再确认生成。' : '上次请求的结果尚未确认，请先查询处理结果。' }}</p>
     <ElButton type="primary" class="confirm-action" :loading="busy" :disabled="busy || recoveryPending || hasDraftChanges" @click="confirm">确认并生成{{ outputLabel }}提示词</ElButton>
-    <ElButton link type="primary" :disabled="busy" @click="emit('editRequirements')">返回修改创作要求</ElButton>
+    <ElButton link type="primary" :disabled="busy" @click="emit('editRequirements')">{{ general ? '返回修改任务要求' : '返回修改创作要求' }}</ElButton>
   </section>
 </template>
 

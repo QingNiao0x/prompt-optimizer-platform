@@ -193,6 +193,23 @@ class AnalyticsClientEventServiceTest {
         assertThat(events.get(0).details().toString()).doesNotContain("private article", operation.toString());
     }
 
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.EnumSource(value = AnalyticsEventType.class, names = {
+            "IMAGE_PROMPT_DIRECT_SUBMITTED", "IMAGE_PROMPT_PLAN_COMPLETED", "IMAGE_PROMPT_REOPTIMIZED"
+    })
+    void materialStageFactsAreAccountScopedIdempotentAndDoNotCaptureSourceContent(AnalyticsEventType type) {
+        UUID operation = UUID.randomUUID();
+        service.recordToolOperation(type, operation);
+        service.recordToolOperation(type, operation);
+        var facts = ArgumentCaptor.forClass(PendingAuditEvent.class);
+        verify(delivery, times(2)).accept(facts.capture(), eq(false));
+        assertThat(facts.getAllValues()).extracting(PendingAuditEvent::id).containsOnly(facts.getValue().id());
+        assertThat(facts.getValue().eventType()).isEqualTo(type);
+        assertThat(facts.getValue().actorUserId()).isEqualTo(actor.userId());
+        assertThat(facts.getValue().details()).isEmpty();
+        assertThat(facts.getValue().id()).isNotEqualTo(operation);
+    }
+
     @Test
     void nonHttpToolCallsKeepIdentityButDoNotInventLocationAndCaptureFailureDoesNotFailBusiness() {
         service.recordToolOperation(AnalyticsEventType.TEXT_POLISH_GENERATED, UUID.randomUUID());

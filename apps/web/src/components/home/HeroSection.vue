@@ -17,7 +17,7 @@ import WandSparklesIcon from '@/components/brand/WandSparklesIcon.vue';
     </h1>
 
     <p class="hero-section__description">
-      结合项目上下文增强提示词，从参考图片还原画面描述，或用 Plan 辅助新图创作。
+      结合项目上下文增强提示词，将图片、代码与文档整理为下游可用的提示词，按需用 Plan 确认关键要求。
       已有文章也能在独立工作台中切换文体、对比差异，润色表达。
     </p>
 
@@ -28,7 +28,7 @@ import WandSparklesIcon from '@/components/brand/WandSparklesIcon.vue';
       </RouterLink>
       <RouterLink class="hero-button hero-button--glass" to="/image-to-prompt">
         <Picture aria-hidden="true" />
-        图像转提示词
+        素材转提示词
       </RouterLink>
       <RouterLink class="hero-button hero-button--glass" to="/text-polish">
         <EditPen aria-hidden="true" />

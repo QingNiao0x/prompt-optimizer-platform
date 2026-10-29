@@ -51,7 +51,7 @@ async function setup(page: Page, zeroQuestions = false) {
     if (path.includes('/image-prompt-assets/') && method === 'DELETE') return route.fulfill({ json: { data: null } });
     return route.fulfill({ status: 501, json: { error: { message: '未登记的图像测试请求' } } });
   });
-  await page.goto('/image-to-prompt', { waitUntil: 'domcontentloaded' }); await expect(page.getByRole('heading', { name: '图像转提示词', exact: true })).toBeVisible();
+  await page.goto('/image-to-prompt', { waitUntil: 'domcontentloaded' }); await expect(page.getByRole('heading', { name: '素材转提示词', exact: true })).toBeVisible();
   return state;
 }
 async function pane(page: Page, name: string) {
@@ -99,7 +99,7 @@ test('直接模式：选择不上传，确认隐私后单图提取，编辑复�
   await page.evaluate(() => Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: () => Promise.reject(new Error('denied')) } }));
   await page.getByRole('button', { name: '复制提示词', exact: true }).click();
   await expect(page.getByRole('textbox', { name: '手动复制图像提示词' })).toHaveValue(state.current.optimizedPrompt);
-  await page.getByRole('dialog', { name: '手动复制提示词' }).getByRole('button', { name: 'Close this dialog' }).click();
+  await page.getByRole('dialog', { name: '手动复制提示词' }).getByRole('button', { name: '关闭此对话框' }).click();
   // 生成及编辑后的同一记录也应直接出现在公共历史页；载入只恢复正文，不再次调用模型。
   await page.goto('/history?type=image-prompt');
   const historyList = page.locator('.image-history-table:visible, .image-history-cards:visible');
@@ -107,11 +107,11 @@ test('直接模式：选择不上传，确认隐私后单图提取，编辑复�
   await historyList.getByRole('button', { name: '载入', exact: true }).click();
   await expect(page.locator('.prompt-text')).toHaveText('用户核对后的参考图还原正文。');
   expect(state.extracts).toBe(1); expect(state.plans).toBe(0); expect(state.uploads).toBe(1);
-  await page.getByRole('button', { name: '图像历史', exact: true }).click();
-  await expect(page.getByRole('dialog', { name: '图像提示词历史' })).toContainText('用户核对后的');
-  await page.getByRole('dialog', { name: '图像提示词历史' }).getByRole('button', { name: '删除', exact: true }).click();
+  await page.getByRole('button', { name: '素材历史', exact: true }).click();
+  await expect(page.getByRole('dialog', { name: '素材提示词历史' })).toContainText('用户核对后的');
+  await page.getByRole('dialog', { name: '素材提示词历史' }).getByRole('button', { name: '删除', exact: true }).click();
   await page.getByRole('button', { name: '删除记录', exact: true }).click();
-  await expect(page.getByText('还没有图像提示词记录。', { exact: true })).toBeVisible(); expect(state.deletes).toBe(1);
+  await expect(page.getByText('还没有素材提示词记录。', { exact: true })).toBeVisible(); expect(state.deletes).toBe(1);
   await page.screenshot({ path: testInfo.outputPath('image-history.png'), fullPage: true });
 });
 
@@ -160,7 +160,7 @@ test('身份切换清空局部历史并拒绝旧身份的迟到历史响应', as
     requested = true; await waiting;
     await route.fulfill({ json: { data: { records: [{ ...fixture(), optimizedPrompt: '旧身份的私有结果标记' }], total: 1, size: 10, current: 1, pages: 1 } } });
   });
-  await page.getByRole('button', { name: '图像历史', exact: true }).click();
+  await page.getByRole('button', { name: '素材历史', exact: true }).click();
   await expect.poll(() => requested).toBe(true);
   // 只在受控浏览器夹具中切换内存身份，复现组件不卸载的场景；不创建后台账户。
   await page.evaluate(() => {
@@ -171,6 +171,6 @@ test('身份切换清空局部历史并拒绝旧身份的迟到历史响应', as
   });
   const response = page.waitForResponse(r => r.url().includes('/image-prompts/history?'));
   release(); await response;
-  await expect(page.getByRole('dialog', { name: '图像提示词历史' })).not.toBeVisible();
+  await expect(page.getByRole('dialog', { name: '素材提示词历史' })).not.toBeVisible();
   await expect(page.getByText('旧身份的私有结果标记')).not.toBeVisible();
 });

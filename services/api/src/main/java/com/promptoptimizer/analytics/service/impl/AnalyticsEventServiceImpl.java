@@ -130,7 +130,8 @@ public class AnalyticsEventServiceImpl implements AnalyticsEventService {
     @Override
     public void recordToolOperation(AnalyticsEventType eventType, UUID operationId) {
         if (operationId == null || eventType == null || !switch (eventType) {
-            case IMAGE_PROMPT_SUBMITTED, IMAGE_PROMPT_PLAN_CREATED, IMAGE_PROMPT_GENERATED,
+            case IMAGE_PROMPT_SUBMITTED, IMAGE_PROMPT_DIRECT_SUBMITTED, IMAGE_PROMPT_PLAN_CREATED,
+                    IMAGE_PROMPT_PLAN_COMPLETED, IMAGE_PROMPT_GENERATED, IMAGE_PROMPT_REOPTIMIZED,
                     TEXT_POLISH_SUBMITTED, TEXT_POLISH_GENERATED -> true;
             default -> false;
         }) throw new InvalidOptimizationRequestException("工具统计事件或操作编号无效");

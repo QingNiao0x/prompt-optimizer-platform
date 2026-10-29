@@ -22,7 +22,13 @@ public final class ImagePromptRequests {
                        @NotNull @Size(max = 6000) String context,
                        @NotNull Language language, @NotNull @Size(max = 100) String targetTool,
                        OutputType outputType, @Size(max = 6) List<@NotNull @Valid MaterialRef> materials,
-                       @Size(max = 12) List<@NotNull ReplacementRelation> relations) {
+                       @Size(max = 12) List<@NotNull ReplacementRelation> relations, @Valid com.promptoptimizer.imageprompt.domain.ImagePromptSourceModels.Task sourceTask) {
+        /** 视觉多素材调用继续使用原构造，通用任务由新增字段显式启用。 */
+        public Task(Mode mode, String modelId, List<Reference> images, String creationIntent,
+                    String exactText, String context, Language language, String targetTool,
+                    OutputType outputType, List<MaterialRef> materials, List<ReplacementRelation> relations) {
+            this(mode, modelId, images, creationIntent, exactText, context, language, targetTool, outputType, materials, relations, null);
+        }
         /** 保留原有单图调用与测试夹具；新增字段由Input统一提供历史兼容默认值。 */
         public Task(Mode mode, String modelId, List<Reference> images, String creationIntent,
                     String exactText, String context, Language language, String targetTool) {
@@ -31,7 +37,7 @@ public final class ImagePromptRequests {
         /** 普通描述只去除外围空白，确切画面文案保留原字符；事实与权限仍由应用服务核对。 */
         public Input input() {
             return new Input(mode, modelId.trim(), images.stream().map(i -> new ImageRef(i.assetId(), i.role())).toList(),
-                    creationIntent.strip(), exactText, context.strip(), language, targetTool.strip(), outputType, materials, relations);
+                    creationIntent.strip(), exactText, context.strip(), language, targetTool.strip(), outputType, materials, relations, sourceTask);
         }
     }
     public record Generate(@NotNull UUID requestId, @NotNull @Valid Task input) { }

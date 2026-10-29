@@ -175,8 +175,16 @@ class AdminAnalyticsAggregationRegressionTest {
         assertThat(events.insert(submitted, scenario.alpha().tenantId(), scenario.alpha().id(),
                 AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, Map.of(), at(FIRST_DAY, 11))).isZero();
         event(scenario.alpha(), AnalyticsEventType.IMAGE_PROMPT_PLAN_CREATED, at(FIRST_DAY, 11), Map.of());
+        // 同一请求的阶段事实用于直接/Plan细分，不额外增加工具提交、小时使用或账号排名。
+        UUID direct = UUID.randomUUID();
+        assertThat(events.insert(direct, scenario.alpha().tenantId(), scenario.alpha().id(),
+                AnalyticsEventType.IMAGE_PROMPT_DIRECT_SUBMITTED, Map.of(), at(FIRST_DAY, 11))).isEqualTo(1);
+        assertThat(events.insert(direct, scenario.alpha().tenantId(), scenario.alpha().id(),
+                AnalyticsEventType.IMAGE_PROMPT_DIRECT_SUBMITTED, Map.of(), at(FIRST_DAY, 11))).isZero();
         event(scenario.alpha(), AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, at(FIRST_DAY.plusDays(1), 0), Map.of());
         event(scenario.alpha(), AnalyticsEventType.IMAGE_PROMPT_GENERATED, at(FIRST_DAY.plusDays(1), 0), Map.of());
+        event(scenario.alpha(), AnalyticsEventType.IMAGE_PROMPT_PLAN_COMPLETED, at(FIRST_DAY.plusDays(1), 0), Map.of());
+        event(scenario.alpha(), AnalyticsEventType.IMAGE_PROMPT_REOPTIMIZED, at(FIRST_DAY.plusDays(1), 0), Map.of());
         event(scenario.beta(), AnalyticsEventType.TEXT_POLISH_SUBMITTED, at(FIRST_DAY, 23), Map.of());
         event(scenario.beta(), AnalyticsEventType.TEXT_POLISH_GENERATED, at(FIRST_DAY.plusDays(1), 0), Map.of());
         event(scenario.alpha(), AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, period.toExclusive(), Map.of());
@@ -184,16 +192,16 @@ class AdminAnalyticsAggregationRegressionTest {
         for (var type : List.of(AnalyticsEventType.IMAGE_PROMPT_SUBMITTED, AnalyticsEventType.TEXT_POLISH_GENERATED)) {
             events.insert(UUID.randomUUID(), scenario.alpha().tenantId(), null, type, Map.of(), at(FIRST_DAY, 11));
         }
-        assertThat(analytics.toolUsageCounts(period, filter)).isEqualTo(new ToolUsage(2, 1, 1, 1));
+        assertThat(analytics.toolUsageCounts(period, filter)).isEqualTo(new ToolUsage(2, 1, 1, 1, 1, 1, 1, 1));
         assertThat(analytics.toolUsageCounts(period(FIRST_DAY, FIRST_DAY.plusDays(1), SHANGHAI), filter))
-                .isEqualTo(new ToolUsage(1, 0, 1, 0));
+                .isEqualTo(new ToolUsage(1, 0, 1, 0, 1, 0, 0, 0));
         assertThat(analytics.toolUsageCounts(period(FIRST_DAY.plusDays(1), FIRST_DAY.plusDays(2), SHANGHAI), filter))
-                .isEqualTo(new ToolUsage(1, 1, 0, 1));
+                .isEqualTo(new ToolUsage(1, 1, 0, 1, 0, 1, 1, 0));
         assertThat(analytics.toolUsageCounts(period, AnalyticsAccountFilter.forUser(UUID.randomUUID())))
                 .isEqualTo(new ToolUsage(0, 0, 0, 0));
         for (var narrowed : List.of(AnalyticsAccountFilter.forUser(scenario.alpha().id()),
                 new AnalyticsAccountFilter(null, seed + "-alpha-alias", scenario.alpha().displayName()))) {
-            assertThat(analytics.toolUsageCounts(period, narrowed)).isEqualTo(new ToolUsage(2, 1, 0, 0));
+            assertThat(analytics.toolUsageCounts(period, narrowed)).isEqualTo(new ToolUsage(2, 1, 0, 0, 1, 1, 1, 1));
         }
         assertThat(analytics.toolUsageCounts(period, new AnalyticsAccountFilter(scenario.beta().id(), seed + "-alpha-alias", null)))
                 .isEqualTo(new ToolUsage(0, 0, 0, 0));
@@ -204,8 +212,10 @@ class AdminAnalyticsAggregationRegressionTest {
         assertThat(analytics.monthlyUsage(period, period.toDateExclusive().minusDays(1), filter))
                 .containsExactly(new MonthlyMetric("2020-01", 8), new MonthlyMetric("2020-02", 1));
         var dashboard = service.dashboard(new DashboardQuery("CUSTOM", FIRST_DAY.toString(), FIRST_DAY.plusDays(3).toString(), null, seed, null));
-        assertThat(dashboard.toolUsage()).isEqualTo(new ToolUsage(2, 1, 1, 1));
-        assertThat(dashboard.directEnhancementCount()).isZero(); assertThat(dashboard.planCompletedCount()).isZero();
+        assertThat(dashboard.toolUsage()).isEqualTo(new ToolUsage(2, 1, 1, 1, 1, 1, 1, 1));
+        assertThat(dashboard.directEnhancementCount()).isEqualTo(1); assertThat(dashboard.planCompletedCount()).isEqualTo(1);
+        assertThat(dashboard.dailyMetrics()).extracting(DailyMetric::directEnhancementCount).containsExactly(1L, 0L, 0L, 0L);
+        assertThat(dashboard.dailyMetrics()).extracting(DailyMetric::planCompletedCount).containsExactly(0L, 1L, 0L, 0L);
         assertThat(dashboard.accessCount()).isZero(); assertThat(dashboard.actualUserCount()).isEqualTo(2);
         assertThat(analytics.countOperationLogs(period.fromInclusive(), period.toExclusive(), filter, "IMAGE_PROMPT_PLAN_CREATED")).isEqualTo(1);
         assertThat(analytics.countOperationLogs(period.fromInclusive(), period.toExclusive(), filter, "TEXT_POLISH_GENERATED")).isEqualTo(1);

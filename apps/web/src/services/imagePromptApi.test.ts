@@ -85,4 +85,14 @@ describe('image prompt request boundaries', () => {
     await expect(imagePromptApi.mediaPreview('asset', 'unit', new AbortController().signal)).rejects.toBe(cancellation);
     expect(httpClient.get).toHaveBeenCalledTimes(1);
   });
+  it('keeps text preparation and explicit external-send consent on distinct platform endpoints', async () => {
+    const signal = new AbortController().signal, entries = [{ path: 'src/a.ts', content: 'export const a = 1' }];
+    vi.mocked(httpClient.post).mockResolvedValue({ data: { data: { id: 'asset' } } });
+    await imagePromptApi.prepareSourceText('项目片段', entries, signal);
+    expect(httpClient.post).toHaveBeenLastCalledWith('/api/v1/image-prompt-sources/text', { name: '项目片段', entries }, { signal });
+    const payload = { ...input(), sourceTask: { taskType: 'CODE' as const, sources: [] } };
+    await imagePromptApi.sourceConsent(payload, signal);
+    expect(httpClient.post).toHaveBeenLastCalledWith('/api/v1/image-prompt-sources/consents', payload, { signal });
+  });
+
 });

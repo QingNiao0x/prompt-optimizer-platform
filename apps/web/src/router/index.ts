@@ -40,7 +40,7 @@ const router = createRouter({
       path: '/image-to-prompt',
       name: 'image-to-prompt',
       component: () => import('@/pages/ImageToPromptPage.vue'),
-      meta: { title: '图像转提示词' },
+      meta: { title: '素材转提示词' },
     },
     {
       path: '/text-polish',

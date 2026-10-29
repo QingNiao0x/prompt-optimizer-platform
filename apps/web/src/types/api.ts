@@ -110,8 +110,11 @@ export type AnalyticsEventType =
   | 'DIRECT_OPTIMIZATION_SUBMITTED'
   | 'PLAN_COMPLETED'
   | 'IMAGE_PROMPT_SUBMITTED'
+  | 'IMAGE_PROMPT_DIRECT_SUBMITTED'
   | 'IMAGE_PROMPT_PLAN_CREATED'
+  | 'IMAGE_PROMPT_PLAN_COMPLETED'
   | 'IMAGE_PROMPT_GENERATED'
+  | 'IMAGE_PROMPT_REOPTIMIZED'
   | 'TEXT_POLISH_SUBMITTED'
   | 'TEXT_POLISH_GENERATED'
   | 'PLAN_CREATED'
@@ -219,6 +222,12 @@ export interface AnalyticsToolUsage {
   imagePromptGeneratedCount: number;
   textPolishSubmittedCount: number;
   textPolishGeneratedCount: number;
+  /** 旧服务未返回时不展示新指标，不能把缺失误报为零。 */
+  imagePromptPlanCreatedCount?: number;
+  imagePromptPlanCompletedCount?: number;
+  imagePromptReoptimizedCount?: number;
+  /** 全部工作台的成功复制次数，旧事件不包含可可靠还原的工具维度。 */
+  resultExportedCount?: number;
 }
 
 export interface AnalyticsDashboard {

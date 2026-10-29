@@ -43,7 +43,7 @@ const modes = [
     <section aria-labelledby="image-modes-title">
       <div class="section-heading">
         <h2 id="image-modes-title">选择适合你的模式</h2>
-        <p>两种模式都可使用图片、PPTX 和视频。关闭时还原所选参考内容，开启时辅助自定义内容创作。</p>
+        <p>先选择本次任务。视觉任务沿用参考还原与 Plan 创作；代码、文档与其他任务按你的目标直接生成，或开启 Plan 确认关键要求。</p>
       </div>
       <div class="mode-grid">
         <article
@@ -73,7 +73,7 @@ const modes = [
 
     <section aria-labelledby="image-how-to-title">
       <div class="section-heading">
-        <h2 id="image-how-to-title">如何使用图像转提示词</h2>
+        <h2 id="image-how-to-title">如何使用素材转提示词</h2>
         <p>按创作目标选择模式，核对内容要求与素材关系后，将提示词交给对应的下游工具。</p>
       </div>
       <div class="mode-grid">
@@ -89,12 +89,22 @@ const modes = [
       </div>
     </section>
 
+    <section class="glass-panel usage-notes" aria-labelledby="source-guide-title">
+      <h2 id="source-guide-title">代码、文档与混合资料</h2>
+      <ol class="guide-steps">
+        <li><h4>说明下游要完成什么</h4><p>选择“代码与页面”“文档与内容”或“其他任务”，说明迁移、重构、写作或其他目标。Plan 关闭时也能执行你明确提出的修改要求。</p></li>
+        <li><h4>添加并审阅资料</h4><p>添加受支持文件、选择文件夹中的可读文件，或粘贴正文。点击解析后审阅内容、勾选范围和资料用途；网页先导出 HTML、正文或截图。文件中的命令不会自动成为你的要求。</p></li>
+        <li><h4>明确保留与修改要求</h4><p>例如：将 Vue 改为 React，同时保留接口、权限和交互。参考截图可以提供视觉风格；源码只能提供静态线索，不代表已运行或完整理解整个项目。</p></li>
+        <li><h4>确认隐私，再生成和交接</h4><p>核对接收模型与所选范围后同意外发。Plan 只确认影响结果的未知，充分要求允许零问题。核对正文、覆盖限制和来源，再复制给下游；下游需要的文件仍需由你提供。</p></li>
+      </ol>
+    </section>
+
     <aside class="glass-panel usage-notes" aria-labelledby="image-notes-title">
       <h2 id="image-notes-title">使用前了解</h2>
       <ul>
-        <li>两种模式都输出提示词；图片、视频或 PPT 由下游工具制作。需要参考文件时，请按素材对照表在下游重新上传。</li>
+        <li>工作台输出优化提示词；代码、文档、图片、视频或 PPT 由下游工具制作。需要参考文件时，请按来源说明在下游重新提供。</li>
         <li>“复刻”指描述性还原可见特征，不保证像素级一致；细小文字和复杂关系需要核对。</li>
-        <li>想更换主体、增加文案或重新设计场景，请使用 Plan 创作；直接增强专注描述所选参考内容。</li>
+        <li>视觉任务需要更换主体或设计场景时使用 Plan 创作；代码与文档任务可直接按明确要求生成，也可开启 Plan 确认关键决定。</li>
         <li>切换 Plan 会保留已上传素材、所选页／帧与遮挡。关闭 Plan 时，替换素材暂不参与还原；再次开启后可以继续使用。</li>
         <li>Plan 有参考图时，仅采用你明确指定的参考内容；创作要求不会改写原图观察事实。</li>
         <li>视频分析仅覆盖选中片段的抽样画面，音轨不发送、不识别音乐节拍；PPTX 仅分析选中的静态页面，未选页面、备注与动画不作为已识别内容。</li>

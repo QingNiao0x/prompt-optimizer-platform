@@ -119,6 +119,7 @@ public class OpenAiImagePromptProvider implements ImagePromptProvider {
         if (call.stage() != Stage.ANALYZE) {
             // 创作目标、指定文案、上下文、关系和题答只进入创作阶段，源识别不能看到这些新内容。
             payload.put("input", call.input());
+            payload.put("sourceSources", call.sourceSources());
             payload.put("evidenceWarnings", call.evidenceWarnings());
             payload.put("analysis", call.analysis()); payload.put("questions", call.questions()); payload.put("answers", call.answers());
             payload.put("previousPrompt", call.previousPrompt()); payload.put("revisionInstruction", call.revisionInstruction());
@@ -133,7 +134,8 @@ public class OpenAiImagePromptProvider implements ImagePromptProvider {
         }
         var body = new LinkedHashMap<String, Object>();
         body.put("model", upstream); body.put("stream", false);
-        String instructions = call.stage() == Stage.ANALYZE ? ImagePromptInstructions.ANALYZE_SYSTEM : ImagePromptInstructions.SYSTEM;
+        String instructions = call.stage() == Stage.ANALYZE ? ImagePromptInstructions.ANALYZE_SYSTEM
+                : call.input().sourceTask() != null ? SourcePromptInstructions.SYSTEM : ImagePromptInstructions.SYSTEM;
         body.put("messages", List.of(Map.of("role", "system", "content", instructions
                 + (repair ? "\n上次响应协议无效。请仅修复JSON结构并完整遵守阶段协议，不改变用户任务，不输出额外说明。" : "")),
                 Map.of("role", "user", "content", parts)));
@@ -182,6 +184,7 @@ public class OpenAiImagePromptProvider implements ImagePromptProvider {
         if (call.stage() == Stage.ANALYZE && (!draft.optimizedPrompt().isEmpty() || !draft.questions().isEmpty())) throw invalid("素材识别阶段不能生成提示词或创作问题。");
         Set<UUID> sources = new HashSet<>();
         call.images().forEach(i -> sources.add(i.source().id())); call.analysis().forEach(i -> sources.add(i.imageId()));
+        if (call.stage() != Stage.ANALYZE) call.sourceSources().forEach(source -> source.units().forEach(unit -> sources.add(unit.id())));
         if (call.stage() != Stage.ANALYZE) call.materialSources().forEach(source -> source.units().forEach(unit -> sources.add(unit.id())));
         for (Observation observation : draft.analysis()) {
             if (observation == null || !sources.contains(observation.imageId()) || observation.status() == null

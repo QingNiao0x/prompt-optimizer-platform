@@ -46,12 +46,18 @@ public final class ImagePromptModels {
     /** 服务端规范化的本次输入。context 仅为用户主动选入的文字摘要，不自动读取项目源码。 */
     public record Input(Mode mode, String modelId, List<ImageRef> images, String creationIntent,
                         String exactText, String context, Language language, String targetTool,
-                        OutputType outputType, List<MaterialRef> materials, List<ReplacementRelation> relations) {
+                        OutputType outputType, List<MaterialRef> materials, List<ReplacementRelation> relations, ImagePromptSourceModels.Task sourceTask) {
         /** 旧请求与已保存历史缺少新字段时，按原来的图片任务读取。 */
         public Input {
             outputType = outputType == null ? OutputType.IMAGE : outputType;
             materials = materials == null ? List.of() : List.copyOf(materials);
             relations = relations == null ? List.of() : List.copyOf(relations);
+        }
+        /** 旧视觉输入不携带通用资料任务，维持原构造及JSON语义。 */
+        public Input(Mode mode, String modelId, List<ImageRef> images, String creationIntent,
+                     String exactText, String context, Language language, String targetTool,
+                     OutputType outputType, List<MaterialRef> materials, List<ReplacementRelation> relations) {
+            this(mode, modelId, images, creationIntent, exactText, context, language, targetTool, outputType, materials, relations, null);
         }
         public Input(Mode mode, String modelId, List<ImageRef> images, String creationIntent,
                      String exactText, String context, Language language, String targetTool) {
@@ -69,8 +75,15 @@ public final class ImagePromptModels {
     }
     public record Plan(UUID id, String fingerprint, String summary, List<Question> questions,
                        List<Observation> analysis, List<String> warnings, Instant expiresAt, boolean mock,
-                       List<MaterialSource> materialSources) {
-        public Plan { materialSources = materialSources == null ? List.of() : List.copyOf(materialSources); }
+                       List<MaterialSource> materialSources, List<ImagePromptSourceModels.Source> sourceSources) {
+        public Plan {
+            materialSources = materialSources == null ? List.of() : List.copyOf(materialSources);
+            sourceSources = sourceSources == null ? List.of() : List.copyOf(sourceSources);
+        }
+        public Plan(UUID id, String fingerprint, String summary, List<Question> questions,
+                    List<Observation> analysis, List<String> warnings, Instant expiresAt, boolean mock, List<MaterialSource> materialSources) {
+            this(id, fingerprint, summary, questions, analysis, warnings, expiresAt, mock, materialSources, List.of());
+        }
         public Plan(UUID id, String fingerprint, String summary, List<Question> questions,
                     List<Observation> analysis, List<String> warnings, Instant expiresAt, boolean mock) {
             this(id, fingerprint, summary, questions, analysis, warnings, expiresAt, mock, List.of());
@@ -91,11 +104,27 @@ public final class ImagePromptModels {
                            List<ImageSource> sources, List<Question> questions, List<Answer> answers,
                            String modelId, String modelName, boolean mock, long editRevision,
                            boolean historySaved, boolean persistentHistory, Instant createdAt, List<MaterialSource> materialSources,
-                           List<String> evidenceWarnings) {
+                           List<String> evidenceWarnings, List<ImagePromptSourceModels.Source> sourceSources) {
         /** 缺字段/null表示旧协议，只恢复可确定来源风险；显式空数组表示来源阶段未报告风险，不从混合warnings猜测。 */
         public Document {
+            sourceSources = sourceSources == null ? List.of() : List.copyOf(sourceSources);
             materialSources = materialSources == null ? List.of() : List.copyOf(materialSources);
             evidenceWarnings = evidenceWarnings == null ? knownEvidenceWarnings(materialSources, analysis) : List.copyOf(evidenceWarnings);
+        }
+        /** 兼容原视觉结果，来源快照缺省为空。 */
+        public Document(UUID operationId, UUID recordId, Mode mode, String optimizedPrompt,
+                        List<Observation> analysis, List<String> warnings, Input input,
+                        List<ImageSource> sources, List<Question> questions, List<Answer> answers,
+                        String modelId, String modelName, boolean mock, long editRevision,
+                        boolean historySaved, boolean persistentHistory, Instant createdAt, List<MaterialSource> materialSources,
+                        List<String> evidenceWarnings) {
+            this(operationId, recordId, mode, optimizedPrompt, analysis, warnings, input, sources, questions, answers,
+                    modelId, modelName, mock, editRevision, historySaved, persistentHistory, createdAt, materialSources, evidenceWarnings, List.of());
+        }
+        /** 只加入实际选中的脱敏资料快照，不把临时全文放入历史。 */
+        public Document withSourceSources(List<ImagePromptSourceModels.Source> references) {
+            return new Document(operationId, recordId, mode, optimizedPrompt, analysis, warnings, input, sources, questions,
+                    answers, modelId, modelName, mock, editRevision, historySaved, persistentHistory, createdAt, materialSources, evidenceWarnings, references);
         }
         /** 老版本调用方与历史JSON仍保留原构造语义。 */
         public Document(UUID operationId, UUID recordId, Mode mode, String optimizedPrompt,
@@ -118,12 +147,12 @@ public final class ImagePromptModels {
         /** 只替换正文和修订号；用户编辑不改变原始输入、观察来源或创作模式。 */
         public Document edited(String text, long revision) {
             return new Document(operationId, recordId, mode, text, analysis, warnings, input, sources, questions,
-                    answers, modelId, modelName, mock, revision, historySaved, persistentHistory, createdAt, materialSources, evidenceWarnings);
+                    answers, modelId, modelName, mock, revision, historySaved, persistentHistory, createdAt, materialSources, evidenceWarnings, sourceSources);
         }
         /** 历史保存失败后重试复用同一生成结果与记录标识。 */
         public Document saved(UUID id, boolean persistent) {
             return new Document(operationId, id, mode, optimizedPrompt, analysis, warnings, input, sources,
-                    questions, answers, modelId, modelName, mock, editRevision, true, persistent, createdAt, materialSources, evidenceWarnings);
+                    questions, answers, modelId, modelName, mock, editRevision, true, persistent, createdAt, materialSources, evidenceWarnings, sourceSources);
         }
     }
     public record Model(String id, String displayName, boolean vision, int maxImages, String evidence, boolean mock) { }

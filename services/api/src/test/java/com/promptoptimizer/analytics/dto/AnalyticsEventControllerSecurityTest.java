@@ -78,8 +78,11 @@ class AnalyticsEventControllerSecurityTest {
     void missingTypeUnknownTypeAndMalformedFieldsReturnBadRequest() throws Exception {
         for (String body : new String[]{"{}", "{\"eventType\":\"LOGIN\"}",
                 "{\"eventType\":\"IMAGE_PROMPT_SUBMITTED\"}",
+                "{\"eventType\":\"IMAGE_PROMPT_DIRECT_SUBMITTED\"}",
                 "{\"eventType\":\"IMAGE_PROMPT_PLAN_CREATED\"}",
+                "{\"eventType\":\"IMAGE_PROMPT_PLAN_COMPLETED\"}",
                 "{\"eventType\":\"IMAGE_PROMPT_GENERATED\"}",
+                "{\"eventType\":\"IMAGE_PROMPT_REOPTIMIZED\"}",
                 "{\"eventType\":\"TEXT_POLISH_SUBMITTED\"}",
                 "{\"eventType\":\"TEXT_POLISH_GENERATED\"}",
                 "{\"eventType\":\"APP_VISIT\",\"eventId\":\"invalid\"}",

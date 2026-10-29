@@ -68,7 +68,7 @@ async function setup(page: Page, questions: ImagePromptQuestion[], planEnabled =
       })) };
   }
   await page.goto('/image-to-prompt');
-  await expect(page.getByRole('heading', { name: '图像转提示词', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '素材转提示词', exact: true })).toBeVisible();
   await pane(page, '设置');
   if (planEnabled) await page.locator('.column-heading .el-switch').click();
   return state;
@@ -76,7 +76,7 @@ async function setup(page: Page, questions: ImagePromptQuestion[], planEnabled =
 
 async function pane(page: Page, name: '图片' | '设置' | '结果') {
   const nav = page.getByRole('navigation', { name: '图像工作台分区' });
-  if (await nav.isVisible()) await nav.getByRole('button', { name: new RegExp(`^${name}`) }).click();
+  if (await nav.isVisible()) await nav.getByRole('button', { name: new RegExp(`^${name === '图片' ? '素材' : name}`) }).click();
 }
 async function select(page: Page, label: string, option: string) {
   await page.locator('.el-select').filter({ has: page.getByRole('combobox', { name: label, exact: true }) }).click();
