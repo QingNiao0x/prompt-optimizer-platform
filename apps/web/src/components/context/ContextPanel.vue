@@ -49,6 +49,7 @@ interface Props {
   supportsDirectoryPicker: boolean;
   isSelectingDirectory: boolean;
   isIndexing: boolean;
+  canRetryIndex?: boolean;
   isClearingIndex?: boolean;
   isPausing: boolean;
   respectProjectIgnore?: boolean;
@@ -464,9 +465,10 @@ const addManualFile = (): void => {
         </ElButton>
       </div>
 
-      <div v-else-if="projectIndex" class="index-actions">
+      <div v-else-if="projectIndex || canRetryIndex" class="index-actions">
         <ElButton
-          v-if="projectIndex.status === 'PAUSED'"
+          v-if="projectIndex?.status === 'PAUSED' || projectIndex?.status === 'FAILED' || canRetryIndex"
+          data-testid="resume-index"
           plain
           size="small"
           type="primary"
@@ -475,7 +477,7 @@ const addManualFile = (): void => {
           继续索引
         </ElButton>
         <ElButton
-          v-if="projectIndex.status === 'READY'"
+          v-if="projectIndex?.status === 'READY' && !canRetryIndex"
           plain
           size="small"
           @click="emit('refresh-index')"
@@ -511,6 +513,9 @@ const addManualFile = (): void => {
         <strong>{{ projectIndex.rootName }}</strong>
         <span v-if="projectIndex.status === 'PAUSED'">
           已暂停，检查点位于 {{ projectIndex.lastCheckpointPath || '目录起点' }}
+        </span>
+        <span v-else-if="projectIndex.status === 'FAILED'">
+          索引已中断，以下为最后成功提交的文件检查点；继续时会校验并补建。
         </span>
         <span v-else>{{ projectIndex.indexedFiles }} 个文本文件已完整建立本地索引</span>
         <small>

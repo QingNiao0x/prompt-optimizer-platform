@@ -94,6 +94,8 @@ const {
   isPausing,
   progress: indexProgress,
   errorMessage: indexErrorMessage,
+  canRetry: canRetryIndex,
+  summary: indexCheckpoint,
   indexDirectory,
   resumeIndexing,
   refreshIndex,
@@ -251,6 +253,11 @@ const runProjectIndexOperation = async (
     if (currentLifecycle !== pageLifecycleVersion) {
       return;
     }
+    if (indexCheckpoint.value?.status === 'FAILED') store.setProjectIndex({
+      ...indexCheckpoint.value,
+      changedPaths: [...indexCheckpoint.value.changedPaths],
+      excludedDirectorySamples: indexCheckpoint.value.excludedDirectorySamples?.slice(),
+    });
     ElMessage.error(error instanceof Error ? error.message : '本地项目索引失败，请重试。');
   }
 };
@@ -817,6 +824,7 @@ onBeforeUnmount(() => {
         :supports-directory-picker="supportsDirectoryPicker"
         :is-selecting-directory="isSelectingDirectory"
         :is-indexing="isIndexing"
+        :can-retry-index="canRetryIndex"
         :is-clearing-index="isClearingIndex"
         :is-pausing="isPausing"
         :index-progress="indexProgress"

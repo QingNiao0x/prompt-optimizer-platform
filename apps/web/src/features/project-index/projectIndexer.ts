@@ -2,6 +2,7 @@ import type { ContextFileInput } from '@/types/api';
 import { isSafeRelativeFilePath, isSensitiveFile as isProtectedContextFile } from '@/workers/fileReaderCore';
 
 import { extractProjectPathReferences } from './projectPathReferences';
+import { ProjectIndexInterruptedError } from './projectIndexFailure';
 
 export const INDEX_CHUNK_CHARACTERS = 6_000;
 export const MAX_INDEXABLE_FILE_BYTES = 50 * 1024 * 1024;
@@ -207,6 +208,7 @@ export interface ProjectIndexRepository {
     files: IndexedProjectFile[],
     chunks: IndexedProjectChunk[],
     replacedPaths?: string[],
+    checkpoint?: ProjectIndexSummary,
   ): Promise<void>;
   pauseProject(summary: ProjectIndexSummary): Promise<void>;
   completeProject(summary: ProjectIndexSummary): Promise<void>;
@@ -340,6 +342,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
     lastCheckpointPath: '',
     startedAt: new Date().toISOString(),
   };
+  let committedSummary = structuredClone(summary);
   const pendingFiles: IndexedProjectFile[] = [];
   const pendingChunks: IndexedProjectChunk[] = [];
   const replacedPaths = new Set<string>();
@@ -352,16 +355,21 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
   const indexingStartedAt = performance.now();
   let writeMs = 0;
 
-  const flush = async (): Promise<void> => {
-    if (pendingFiles.length === 0 && pendingChunks.length === 0 && replacedPaths.size === 0) {
+  const flush = async (checkpoint?: ProjectIndexSummary): Promise<void> => {
+    if (!checkpoint && pendingFiles.length === 0 && pendingChunks.length === 0 && replacedPaths.size === 0) {
       return;
     }
     const writeStartedAt = performance.now();
-    await options.repository.writeBatch(
-      pendingFiles.splice(0),
-      pendingChunks.splice(0),
-      Array.from(replacedPaths),
-    );
+    // 完整文件批次的检查点与数据原子提交；大文件中途批次只保存不可复用的部分记录。
+    const snapshot = checkpoint ? structuredClone(checkpoint) : undefined;
+    try {
+      await options.repository.writeBatch(
+        pendingFiles.splice(0), pendingChunks.splice(0), Array.from(replacedPaths), snapshot,
+      );
+      if (snapshot) committedSummary = snapshot;
+    } catch (error) {
+      throw new ProjectIndexInterruptedError(error, committedSummary, 'WRITING');
+    }
     writeMs += performance.now() - writeStartedAt;
     replacedPaths.clear();
     pendingBatchBytes = 0;
@@ -373,7 +381,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
       || pendingChunks.length >= CHUNK_BATCH_SIZE
       || pendingBatchBytes >= MAX_PENDING_BATCH_BYTES
     ) {
-      await flush();
+      await flush(summary);
     }
   };
 
@@ -660,7 +668,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
       report('INDEXING', entry.path);
     }
 
-    await flush();
+    await flush(summary);
     report('INDEXING', summary.lastCheckpointPath);
     return pauseIfRequested();
   };
@@ -706,11 +714,14 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
     report('COMPLETED', '');
     return summary;
   } catch (error) {
-    const message = error instanceof Error ? error.message : '项目索引失败';
-    summary.status = 'FAILED';
-    summary.errorMessage = message;
-    await options.repository.failProject(options.projectId, message);
-    throw error;
+    const failure = error instanceof ProjectIndexInterruptedError
+      ? error : new ProjectIndexInterruptedError(error, committedSummary);
+    try {
+      await options.repository.failProject(options.projectId, failure.message);
+    } catch {
+      // 配额耗尽时连状态写入也可能失败；保留原始原因及内存检查点，不能被二次异常覆盖。
+    }
+    throw failure;
   }
 };
 

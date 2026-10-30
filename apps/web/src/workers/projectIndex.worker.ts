@@ -5,6 +5,7 @@ import {
   type DirectoryHandleLike,
 } from '@/features/project-index/fileSystemDirectorySource';
 import { projectIndexRepository } from '@/features/project-index/indexedDbProjectIndexRepository';
+import { indexFailureMessage, ProjectIndexInterruptedError } from '@/features/project-index/projectIndexFailure';
 import {
   indexProject,
   type ProjectSourceEntry,
@@ -43,7 +44,7 @@ type ProjectIndexWorkerResponse =
   | { type: 'progress'; progress: ProjectIndexProgress }
   | { type: 'paused'; summary: ProjectIndexSummary; documents: DiscoveredDocument[]; omittedDocuments: number }
   | { type: 'done'; summary: ProjectIndexSummary; documents: DiscoveredDocument[]; omittedDocuments: number }
-  | { type: 'error'; message: string };
+  | { type: 'error'; message: string; summary?: ProjectIndexSummary };
 
 const scope = self as unknown as {
   onmessage: ((event: MessageEvent<ProjectIndexWorkerRequest>) => void) | null;
@@ -125,7 +126,8 @@ scope.onmessage = async (event: MessageEvent<ProjectIndexWorkerRequest>): Promis
   } catch (error) {
     scope.postMessage({
       type: 'error',
-      message: error instanceof Error ? error.message : '本地项目索引失败',
+      message: indexFailureMessage(error),
+      summary: error instanceof ProjectIndexInterruptedError ? error.summary : undefined,
     });
   } finally {
     isRunning = false;

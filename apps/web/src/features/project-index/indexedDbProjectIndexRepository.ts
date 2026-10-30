@@ -52,12 +52,13 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     files: IndexedProjectFile[],
     chunks: IndexedProjectChunk[],
     replacedPaths: string[] = [],
+    checkpoint?: ProjectIndexSummary,
   ): Promise<void> {
-    if (files.length === 0 && chunks.length === 0 && replacedPaths.length === 0) {
+    if (!checkpoint && files.length === 0 && chunks.length === 0 && replacedPaths.length === 0) {
       return;
     }
     const transaction = await this.createTransaction(
-      [FILE_STORE, CHUNK_STORE, SEARCH_STORE, SEARCH_KEY_STORE], 'readwrite',
+      [FILE_STORE, CHUNK_STORE, SEARCH_STORE, SEARCH_KEY_STORE, PROJECT_STORE], 'readwrite',
     );
     const completion = transactionComplete(transaction);
     // 下方等待索引请求时事务可能先失败；仍由最后的 await 传播原始事务异常。
@@ -75,6 +76,7 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
       for (const file of files) fileStore.put(file);
       for (const chunk of chunks) chunkStore.put(chunkBodyRecord(chunk));
       await upsertSearchIndex(transaction, chunks);
+      if (checkpoint) transaction.objectStore(PROJECT_STORE).put(checkpoint);
       await completion;
     } catch (error) {
       // 同步 put 错误也必须回滚，不能只保存正文而漏掉倒排关联。
@@ -286,14 +288,14 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
   }
 
   /**
-   * 清理已过期或失败的索引。不能仅凭会话编号删除其他标签页的索引，避免误删仍在使用的数据。
+   * 只清理到期索引；失败任务的已提交批次仍可恢复，不能在重试前自动删除。
    */
   async cleanupProjects(now = new Date()): Promise<number> {
     const projects = await this.listProjects();
     const expired = projects.filter((project) => {
       const expiresAt = Date.parse(project.expiresAt);
       const reachedExpiry = Number.isFinite(expiresAt) && expiresAt <= now.getTime();
-      return reachedExpiry || project.status === 'FAILED';
+      return reachedExpiry;
     });
     for (const project of expired) {
       await this.deleteProject(project.id);

@@ -20,7 +20,7 @@ class MemoryProjectIndexRepository implements ProjectIndexRepository {
   summary?: ProjectIndexSummary;
 
   async beginProject(summary: ProjectIndexSummary): Promise<void> {
-    this.summary = summary;
+    this.summary = structuredClone(summary);
   }
 
   async findFiles(projectId: string, paths: string[]): Promise<IndexedProjectFile[]> {
@@ -33,7 +33,9 @@ class MemoryProjectIndexRepository implements ProjectIndexRepository {
     files: IndexedProjectFile[],
     chunks: IndexedProjectChunk[],
     replacedPaths: string[] = [],
+    checkpoint?: ProjectIndexSummary,
   ): Promise<void> {
+    if (checkpoint) this.summary = structuredClone(checkpoint);
     const replaced = new Set(replacedPaths);
     if (replaced.size > 0) {
       removeMatching(this.chunks, (chunk) =>
@@ -59,11 +61,11 @@ class MemoryProjectIndexRepository implements ProjectIndexRepository {
   }
 
   async pauseProject(summary: ProjectIndexSummary): Promise<void> {
-    this.summary = summary;
+    this.summary = structuredClone(summary);
   }
 
   async completeProject(summary: ProjectIndexSummary): Promise<void> {
-    this.summary = summary;
+    this.summary = structuredClone(summary);
   }
 
   async removeUnseenFiles(projectId: string, scanId: string): Promise<number> {
@@ -257,6 +259,27 @@ describe('indexProject', () => {
     expect(result.scanLimitReached).toBe(true);
     expect(result.removedFiles).toBe(0);
     expect(repository.files.map((file) => file.path)).toEqual(['a.txt', 'b.md']);
+  });
+
+  it('retains committed batches and the original quota error when failure-state persistence also fails', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    const write = repository.writeBatch.bind(repository);
+    let attempts = 0;
+    repository.writeBatch = async (files, chunks, replaced, checkpoint) => {
+      if (++attempts === 2) throw new DOMException('', 'QuotaExceededError');
+      await write(files, chunks, replaced, checkpoint);
+    };
+    repository.failProject = async () => { throw new DOMException('', 'QuotaExceededError'); };
+    const entries = Array.from({ length: 450 }, (_, i) => sourceFile(`src/${i}.ts`, `export const value = ${i};`));
+    const options = { projectId: 'quota-resume', rootName: 'fixture', repository };
+    const failure = await indexProject({ ...options, entries: sourceOf(entries) }).catch(error => error);
+    expect(failure.message).toContain('存储空间');
+    expect(failure.summary).toMatchObject({ status: 'FAILED', indexedFiles: 200 });
+    expect(repository.files).toHaveLength(200);
+    repository.writeBatch = write;
+    const resumed = await indexProject({ ...options, mode: 'RESUME', entries: sourceOf(entries) });
+    expect(resumed).toMatchObject({ status: 'READY', indexedFiles: 450, unchangedFiles: 200, failedFiles: 0 });
+    expect(new Set(repository.chunks.map(chunk => chunk.id)).size).toBe(450);
   });
 
   it('should write a large file in bounded batches and reuse its completed fingerprint', async () => {
