@@ -435,9 +435,10 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 || NaturalPromptContentScopeInstructions.VERSION.equals(version);
     }
 
-    /** 独立识别范围并逐次计量；36—38共用冻结准备指导，当前实验只改变后续正文指导。 */
+    /** 按显式版本识别范围并逐次计量；v2只替换动作与反馈指导，旧版保留原准备协议，不新增阶段。 */
     private ScopePreparation prepareScope(NaturalPromptInput input, String operation) {
-        String instruction = usesAdvisoryScope(input.strategyVersion())
+        String instruction = NaturalPromptCoreRepairInstructions.ACTION_BOUNDARY_VERSION.equals(input.strategyVersion())
+                ? NaturalPromptCoreRepairInstructions.PREPARE : usesAdvisoryScope(input.strategyVersion())
                 ? NaturalPromptPreparationRoutingInstructions.PREPARE
                 : NaturalPromptExecutionBoundaryInstructions.VERSION.equals(input.strategyVersion())
                         ? NaturalPromptExecutionBoundaryInstructions.PREPARE : NaturalPromptScopedInstructions.PREPARE;
@@ -446,7 +447,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 NaturalTaskScope scope = scopeReader.readValue(body);
                 return new ScopePreparation((NaturalPromptRoutingRepairInstructions.ADVISORY_TIMING_VERSION.equals(input.strategyVersion())
                         || NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION.equals(input.strategyVersion())
-                        || NaturalPromptCoreRepairInstructions.VERSION.equals(input.strategyVersion())
+                        || NaturalPromptCoreRepairInstructions.supports(input.strategyVersion())
                         || NaturalPromptContentQualityInstructions.VERSION.equals(input.strategyVersion())
                         || NaturalPromptGroundedCompletionInstructions.VERSION.equals(input.strategyVersion())
                         || NaturalPromptMultidimensionalInstructions.VERSION.equals(input.strategyVersion())
@@ -719,7 +720,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                     || usesAdvisoryScope(input.strategyVersion())
                     || NaturalPromptContextualRewriteInstructions.VERSION.equals(input.strategyVersion())
                     || NaturalPromptUsefulDeliveryInstructions.VERSION.equals(input.strategyVersion())
-                    || NaturalPromptCoreRepairInstructions.VERSION.equals(input.strategyVersion())
+                    || NaturalPromptCoreRepairInstructions.supports(input.strategyVersion())
                     || NaturalPromptEffectiveRequestInstructions.VERSION.equals(input.strategyVersion())
                     || NaturalPromptBoundedRepairInstructions.VERSION.equals(input.strategyVersion())
                     || NaturalPromptSinglePassInstructions.supports(input.strategyVersion())
@@ -880,7 +881,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                         // 无效候选留在独立user数据中；诊断只定位确定性错误，不把错误出处或助手建议升级为来源。
                         attemptUser = NaturalPromptRepairContext.userMessage(json, payload, invalidCandidate, parsedCandidate, input, false);
                         repairHint = NaturalPromptBoundedRepairInstructions.REPAIR;
-                    } else if (retry && NaturalPromptCoreRepairInstructions.VERSION.equals(input.strategyVersion())
+                    } else if (retry && NaturalPromptCoreRepairInstructions.supports(input.strategyVersion())
                             && failure instanceof NaturalTaskScope.MissingUserAuthority missing) {
                         // 工程修复只补充确定的来源关联反馈，不放宽校验，也不改变31等冻结版本的修复system。
                         repairHint = missing.repairInstruction();

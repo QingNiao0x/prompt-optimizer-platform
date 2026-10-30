@@ -52,15 +52,16 @@ class NaturalEnhancementServiceTest {
         service = new NaturalEnhancementService(analyzer, filter, sessions, actor, catalog, provider, clock, settings);
     }
 
-    @Test
-    void coreRepairAppliesToNewDirectTrialAndPlanRequestsButExplicitHistoryKeepsItsVersion() {
-        settings.setProfile(NaturalEnhancementSettings.Profile.CORE_REPAIR);
+    @ParameterizedTest
+    @org.junit.jupiter.params.provider.CsvSource({"CORE_REPAIR,core-repair-v1", "ACTION_BOUNDARY_REPAIR,core-repair-v2"})
+    void coreRepairAppliesToNewDirectTrialAndPlanRequestsButExplicitHistoryKeepsItsVersion(String profile, String version) {
+        settings.setProfile(NaturalEnhancementSettings.Profile.valueOf(profile));
         var direct = service.optimize(request("写一封邮件", null, List.of(), "fixture:model"));
-        assertThat(direct.chainVersion()).isEqualTo(NaturalPromptCoreRepairInstructions.VERSION);
+        assertThat(direct.chainVersion()).isEqualTo(version);
         service.plan(planRequest());
-        assertThat(provider.last.strategyVersion()).isEqualTo(NaturalPromptCoreRepairInstructions.VERSION);
+        assertThat(provider.last.strategyVersion()).isEqualTo(version);
         service.optimizeTrial(request("写一封邮件", null, List.of(), "fixture:model"));
-        assertThat(provider.last.strategyVersion()).isEqualTo(NaturalPromptCoreRepairInstructions.VERSION);
+        assertThat(provider.last.strategyVersion()).isEqualTo(version);
         service.optimize(request("写一封邮件", null, List.of(), "fixture:model"), "31");
         assertThat(provider.last.strategyVersion()).isEqualTo("31");
         settings.setProfile(NaturalEnhancementSettings.Profile.STABLE);
@@ -145,7 +146,7 @@ class NaturalEnhancementServiceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"STABLE", "CORE_REPAIR"})
+    @ValueSource(strings = {"STABLE", "CORE_REPAIR", "ACTION_BOUNDARY_REPAIR"})
     void naturalModeKeepsOnlyExplicitAdditionalPermissionsWithoutDependingOnOptionalEnhancementFlags(String profile) {
         settings.setProfile(NaturalEnhancementSettings.Profile.valueOf(profile));
         var request = new OptimizationRequest("写一封邮件", new ContextAnalysisRequest("", List.of()),

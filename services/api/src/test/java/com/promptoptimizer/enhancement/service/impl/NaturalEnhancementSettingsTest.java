@@ -24,6 +24,12 @@ class NaturalEnhancementSettingsTest {
     }
 
     @Test
+    void actionBoundaryRepairRequiresItsOwnExplicitConfiguration() {
+        runner.withPropertyValues("app.enhancement.natural.profile=ACTION_BOUNDARY_REPAIR").run(context ->
+                assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v2"));
+    }
+
+    @Test
     void arbitraryVersionCannotBeSelectedThroughTheAdoptionSetting() {
         runner.withPropertyValues("app.enhancement.natural.profile=70").run(context -> assertThat(context).hasFailed());
     }

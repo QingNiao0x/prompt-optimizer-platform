@@ -18,8 +18,8 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties(prefix = "app.enhancement.natural")
 public class NaturalEnhancementSettings {
-    /** STABLE保留已采用的默认；CORE_REPAIR只启用已说明范围的公共流程修复。 */
-    public enum Profile { STABLE, CORE_REPAIR }
+    /** STABLE保留31；CORE_REPAIR冻结v1；ACTION_BOUNDARY_REPAIR显式试用v2，不自动升级任何旧配置。 */
+    public enum Profile { STABLE, CORE_REPAIR, ACTION_BOUNDARY_REPAIR }
 
     @NotNull
     private Profile profile = Profile.STABLE;
@@ -35,6 +35,7 @@ public class NaturalEnhancementSettings {
         return switch (profile) {
             case STABLE -> NaturalPromptInstructions.CURRENT_VERSION;
             case CORE_REPAIR -> NaturalPromptCoreRepairInstructions.VERSION;
+            case ACTION_BOUNDARY_REPAIR -> NaturalPromptCoreRepairInstructions.ACTION_BOUNDARY_VERSION;
         };
     }
 }

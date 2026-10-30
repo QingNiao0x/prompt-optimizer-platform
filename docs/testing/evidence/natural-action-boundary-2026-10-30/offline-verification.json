@@ -1,0 +1,103 @@
+{
+  "date": "2026-10-30",
+  "status": "ENGINEERING_VERIFIED_REAL_MODEL_NOT_VERIFIED",
+  "tests": 148,
+  "suites": [
+    {
+      "name": "com.promptoptimizer.enhancement.service.impl.NaturalEnhancementServiceTest",
+      "tests": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.promptoptimizer.enhancement.service.impl.NaturalEnhancementSettingsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.promptoptimizer.history.service.impl.MybatisOptimizationHistoryServiceTest",
+      "tests": 32,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.promptoptimizer.provider.domain.NaturalTaskScopeTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.openai.NaturalActionBoundaryProviderTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.openai.NaturalCoreRepairProviderTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.promptoptimizer.provider.infrastructure.openai.NaturalRoutingRepairProviderTest",
+      "tests": 51,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "initialRun": {
+    "tests": 148,
+    "failures": 4,
+    "errors": 9,
+    "cause": "Test parser omitted existing user-message prefix",
+    "productProtocolChangedForTestFailure": false
+  },
+  "followup": {
+    "suite": "NaturalActionBoundaryProviderTest",
+    "tests": 13,
+    "failures": 0,
+    "errors": 0
+  },
+  "realModelCalls": 0,
+  "defaultVersion": "31",
+  "existingCoreProfileVersion": "core-repair-v1",
+  "optInProfile": "ACTION_BOUNDARY_REPAIR",
+  "optInVersion": "core-repair-v2",
+  "adopted": false,
+  "serviceRestarted": false,
+  "semanticFidelityProven": false,
+  "files": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptCoreRepairInstructions.java",
+      "sha256": "c9e52a93fb3f55f2564ef240e65cc3986ba223e600b0ec87ad21dc165fd71116"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "b3df695ac59370aa3f7a8d107477fbd16afbb714690946089ac9d8737402cdfc"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRoutingRepairInstructions.java",
+      "sha256": "0545f9a05ef700f31a37bdb9061b35c1107e6d31007061925fdf5c221fa808d8"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "69d8c0df80d74a3e9dd5921c6319f588aa15f7ed418c8f6b4e946f8e5caa4e04"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementSettings.java",
+      "sha256": "cabfb7504e2e26a5c64008f5591b2a64e4bcf6e0c6d0dc3a44aea7e856538549"
+    },
+    {
+      "path": "services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/NaturalActionBoundaryProviderTest.java",
+      "sha256": "40f472ed06c986f2d3270a1c0251312659b401df5bd855e91f5233633f671ef4"
+    }
+  ]
+}
