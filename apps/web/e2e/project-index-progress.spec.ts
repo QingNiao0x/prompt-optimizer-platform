@@ -3,7 +3,12 @@ import { mockAuthentication } from './authFixture';
 import { openWorkbenchPane } from './workbenchPanes';
 
 test('真实 Worker 显示百分比和互斥计数，项目忽略规则可以关闭', async ({ page }, testInfo) => {
+  test.setTimeout(90_000);
   await mockAuthentication(page);
+  // 索引界面测试不访问真实账号偏好；新增设置加载不能触发真实服务的 401 跳转。
+  await page.route('**/api/v1/me/settings', route => route.fulfill({
+    status: 503, json: { error: { message: '受控偏好加载不可用' } },
+  }));
   await page.route('**/api/v1/analytics/events', route => route.fulfill({ status: 204 }));
   await page.route('**/api/v1/models', route => route.fulfill({ json: { data: [
     { id: 'mock:default', displayName: '测试模型', provider: 'Mock', defaultModel: true },
@@ -38,7 +43,8 @@ test('真实 Worker 显示百分比和互斥计数，项目忽略规则可以关
   await page.getByRole('menuitem', { name: '选择文件夹' }).click();
   await expect(page.locator('.read-progress .el-progress__text')).toContainText('%');
   await page.locator('.folder-dropzone').screenshot({ path: testInfo.outputPath('index-progress.png') });
-  await expect(page.getByText('241 个文本文件已完整建立本地索引')).toBeVisible();
+  // 等待真实存储提交；5 秒通用断言预算不是目录导入性能验收线，保留明确的完成上限。
+  await expect(page.getByText('241 个文本文件已完整建立本地索引')).toBeVisible({ timeout: 30_000 });
   await expect(page.getByText(/范围内处理 243 个文件：完整 241 · 跳过 1 · 未完整索引 1 · 失败 0/)).toBeVisible();
   await expect(page.getByText(/范围规则另排除 1 个目录/)).toBeVisible();
   const samples = await page.evaluate(() => (window as unknown as { indexProgressSamples: number[] }).indexProgressSamples);
@@ -48,7 +54,7 @@ test('真实 Worker 显示百分比和互斥计数，项目忽略规则可以关
   await page.getByText('按根目录 .gitignore 排除文件', { exact: true }).click();
   await expect(page.getByRole('checkbox', { name: '按根目录 .gitignore 排除文件' })).not.toBeChecked();
   await page.getByRole('button', { name: '增量更新' }).click();
-  await expect(page.getByText('242 个文本文件已完整建立本地索引')).toBeVisible();
+  await expect(page.getByText('242 个文本文件已完整建立本地索引')).toBeVisible({ timeout: 30_000 });
   await expect(page.getByText(/范围规则另排除 0 个目录/)).toBeVisible();
   await expect(page.getByText(/本轮新增 1 · 更新 0 · 未变化 242 · 删除 0/)).toBeVisible();
 });

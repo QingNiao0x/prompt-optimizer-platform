@@ -37,7 +37,9 @@ describe('IndexedDbProjectIndexRepository connection recovery', () => {
 
     await repository.deleteProject('project-1');
 
-    expect(Array.from(deleted.keys()).sort()).toEqual(['chunks', 'files', 'projects', 'sources']);
+    expect(Array.from(deleted.keys()).sort()).toEqual([
+      'chunks', 'files', 'projects', 'sources',
+    ]);
     expect(deleted.get('files')).toEqual([
       { lower: 'project-1\u0000', upper: 'project-1\u0000\uffff' },
     ]);
@@ -96,6 +98,11 @@ const createDeleteDatabase = (deleted: Map<string, unknown[]>): IDBDatabase => {
     onabort: null,
     error: null,
     objectStore: (name: string) => ({
+      index: () => ({ getAllKeys: () => {
+        const request = { result: [], onsuccess: null } as unknown as IDBRequest<IDBValidKey[]>;
+        queueMicrotask(() => request.onsuccess?.(new Event('success')));
+        return request;
+      } }),
       delete: (query: unknown) => {
         const queries = deleted.get(name) ?? [];
         queries.push(query);

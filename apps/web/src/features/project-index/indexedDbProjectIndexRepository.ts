@@ -6,9 +6,13 @@ import type {
 } from './projectIndexer';
 import type { DirectoryHandleLike } from './fileSystemDirectorySource';
 import { referencedPathVariants } from './projectPathReferences';
+import {
+  SEARCH_STORE, SEARCH_KEY_STORE, createSearchStores, migrateChunkSearch, chunkBodyRecord,
+  lookupSearchChunkIds, removeSearchFiles, removeProjectSearch, upsertSearchIndex,
+} from './projectIndexSearchIndex';
 
 const DATABASE_NAME = 'prompt-optimizer-project-index';
-const DATABASE_VERSION = 3;
+const DATABASE_VERSION = 4;
 const PROJECT_STORE = 'projects';
 const FILE_STORE = 'files';
 const CHUNK_STORE = 'chunks';
@@ -52,23 +56,31 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     if (files.length === 0 && chunks.length === 0 && replacedPaths.length === 0) {
       return;
     }
-    const transaction = await this.createTransaction([FILE_STORE, CHUNK_STORE], 'readwrite');
+    const transaction = await this.createTransaction(
+      [FILE_STORE, CHUNK_STORE, SEARCH_STORE, SEARCH_KEY_STORE], 'readwrite',
+    );
     const completion = transactionComplete(transaction);
+    // 下方等待索引请求时事务可能先失败；仍由最后的 await 传播原始事务异常。
+    void completion.catch(() => undefined);
     const fileStore = transaction.objectStore(FILE_STORE);
     const chunkStore = transaction.objectStore(CHUNK_STORE);
     const projectId = files[0]?.projectId ?? chunks[0]?.projectId;
-    if (projectId) {
-      for (const path of replacedPaths) {
-        chunkStore.delete(chunkIdRange(projectId, path));
+    try {
+      if (projectId) {
+        await removeSearchFiles(transaction, projectId, replacedPaths);
+        for (const path of replacedPaths) {
+          chunkStore.delete(chunkIdRange(projectId, path));
+        }
       }
+      for (const file of files) fileStore.put(file);
+      for (const chunk of chunks) chunkStore.put(chunkBodyRecord(chunk));
+      await upsertSearchIndex(transaction, chunks);
+      await completion;
+    } catch (error) {
+      // 同步 put 错误也必须回滚，不能只保存正文而漏掉倒排关联。
+      try { transaction.abort(); } catch { /* 事务可能已经失败并回滚。 */ }
+      throw transaction.error ?? error;
     }
-    for (const file of files) {
-      fileStore.put(file);
-    }
-    for (const chunk of chunks) {
-      chunkStore.put(chunk);
-    }
-    await completion;
   }
 
   async pauseProject(summary: ProjectIndexSummary): Promise<void> {
@@ -80,42 +92,55 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
   }
 
   async removeUnseenFiles(projectId: string, scanId: string): Promise<number> {
-    const transaction = await this.createTransaction([FILE_STORE, CHUNK_STORE], 'readwrite');
+    const transaction = await this.createTransaction(
+      [FILE_STORE, CHUNK_STORE, SEARCH_STORE, SEARCH_KEY_STORE], 'readwrite',
+    );
     const completion = transactionComplete(transaction);
     const fileStore = transaction.objectStore(FILE_STORE);
     const chunkStore = transaction.objectStore(CHUNK_STORE);
     const index = fileStore.index('projectScan');
     let removedFiles = 0;
 
-    const removeFromCursor = (request: IDBRequest<IDBCursorWithValue | null>): void => {
+    const removeFromCursor = (request: IDBRequest<IDBCursorWithValue | null>): Promise<void> => new Promise((resolve, reject) => {
       request.onsuccess = () => {
         const cursor = request.result;
         if (!cursor) {
+          resolve();
           return;
         }
         const file = cursor.value as IndexedProjectFile;
-        cursor.delete();
-        chunkStore.delete(chunkIdRange(projectId, file.path));
-        removedFiles += 1;
-        cursor.continue();
+        // 每次只清理一个文件涉及的词块，避免删除大目录时把全部源码读回内存。
+        void removeSearchFiles(transaction, projectId, [file.path]).then(() => {
+          cursor.delete();
+          chunkStore.delete(chunkIdRange(projectId, file.path));
+          removedFiles += 1;
+          cursor.continue();
+        }).catch(reject);
       };
-      request.onerror = () => transaction.abort();
-    };
+      request.onerror = () => reject(request.error);
+    });
 
-    removeFromCursor(index.openCursor(IDBKeyRange.bound(
-      [projectId, ''],
-      [projectId, scanId],
-      false,
-      true,
-    )));
-    removeFromCursor(index.openCursor(IDBKeyRange.bound(
-      [projectId, scanId],
-      [projectId, '\uffff'],
-      true,
-      false,
-    )));
-    await completion;
-    return removedFiles;
+    void completion.catch(() => undefined);
+    try {
+      // 两个扫描范围串行清理；并行更新同一个词块会把另一文件已删除的关联写回。
+      await removeFromCursor(index.openCursor(IDBKeyRange.bound(
+        [projectId, ''],
+        [projectId, scanId],
+        false,
+        true,
+      )));
+      await removeFromCursor(index.openCursor(IDBKeyRange.bound(
+        [projectId, scanId],
+        [projectId, '\uffff'],
+        true,
+        false,
+      )));
+      await completion;
+      return removedFiles;
+    } catch (error) {
+      try { transaction.abort(); } catch { /* 事务可能已经回滚。 */ }
+      throw transaction.error ?? error;
+    }
   }
 
   async failProject(projectId: string, message: string): Promise<void> {
@@ -192,7 +217,7 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     await fileCompletion;
     const resolvedPaths = Array.from(new Set(fileGroups.flat().map((file) => file.path))).slice(0, limit);
     if (resolvedPaths.length === 0) return [];
-    const transaction = await this.createTransaction(CHUNK_STORE, 'readonly');
+    const transaction = await this.createTransaction([CHUNK_STORE, SEARCH_STORE], 'readonly');
     const completion = transactionComplete(transaction);
     const index = transaction.objectStore(CHUNK_STORE).index('projectPath');
     const perPathLimit = Math.max(1, Math.ceil(limit / resolvedPaths.length));
@@ -200,7 +225,7 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
       requestResult<IndexedProjectChunk[]>(
         index.getAll(IDBKeyRange.only([projectId, path]), perPathLimit),
       ));
-    const groups = await Promise.all(requests);
+    const groups = await Promise.all((await Promise.all(requests)).map((chunks) => hydrateChunkTerms(transaction, chunks)));
     await completion;
     // 同一目录先覆盖不同文件，再补后续片段，避免目录首个大文件占满召回预算。
     const result: IndexedProjectChunk[] = [];
@@ -215,15 +240,22 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
 
   async deleteProject(projectId: string): Promise<void> {
     const transaction = await this.createTransaction(
-      [PROJECT_STORE, FILE_STORE, CHUNK_STORE, SOURCE_STORE],
+      [PROJECT_STORE, FILE_STORE, CHUNK_STORE, SOURCE_STORE, SEARCH_STORE, SEARCH_KEY_STORE],
       'readwrite',
     );
     const completion = transactionComplete(transaction);
-    transaction.objectStore(FILE_STORE).delete(projectRecordRange(projectId));
-    transaction.objectStore(CHUNK_STORE).delete(projectRecordRange(projectId));
-    transaction.objectStore(PROJECT_STORE).delete(projectId);
-    transaction.objectStore(SOURCE_STORE).delete(projectId);
-    await completion;
+    void completion.catch(() => undefined);
+    try {
+      await removeProjectSearch(transaction, projectId);
+      transaction.objectStore(FILE_STORE).delete(projectRecordRange(projectId));
+      transaction.objectStore(CHUNK_STORE).delete(projectRecordRange(projectId));
+      transaction.objectStore(PROJECT_STORE).delete(projectId);
+      transaction.objectStore(SOURCE_STORE).delete(projectId);
+      await completion;
+    } catch (error) {
+      try { transaction.abort(); } catch { /* 事务可能已经回滚。 */ }
+      throw transaction.error ?? error;
+    }
   }
 
   async saveProjectSource(projectId: string, rootHandle: DirectoryHandleLike): Promise<void> {
@@ -271,7 +303,7 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
 
   async deleteAllProjects(): Promise<void> {
     const transaction = await this.createTransaction(
-      [PROJECT_STORE, FILE_STORE, CHUNK_STORE, SOURCE_STORE],
+      [PROJECT_STORE, FILE_STORE, CHUNK_STORE, SOURCE_STORE, SEARCH_STORE, SEARCH_KEY_STORE],
       'readwrite',
     );
     const completion = transactionComplete(transaction);
@@ -279,6 +311,8 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     transaction.objectStore(FILE_STORE).clear();
     transaction.objectStore(CHUNK_STORE).clear();
     transaction.objectStore(SOURCE_STORE).clear();
+    transaction.objectStore(SEARCH_STORE).clear();
+    transaction.objectStore(SEARCH_KEY_STORE).clear();
     await completion;
   }
 
@@ -311,7 +345,17 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     searchTerm: string,
     limit: number,
   ): Promise<IndexedProjectChunk[]> {
-    return this.getChunksFromIndex('searchTerms', searchTerm, limit);
+    const transaction = await this.createTransaction([CHUNK_STORE, SEARCH_STORE, SEARCH_KEY_STORE], 'readonly');
+    const completion = transactionComplete(transaction);
+    void completion.catch(() => undefined);
+    const ids = await lookupSearchChunkIds(transaction, searchTerm, limit);
+    const chunks = await Promise.all(ids.map((id) => requestResult<IndexedProjectChunk | undefined>(
+      transaction.objectStore(CHUNK_STORE).get(id),
+    )));
+    const result = await hydrateChunkTerms(transaction,
+      chunks.filter((chunk): chunk is IndexedProjectChunk => chunk !== undefined));
+    await completion;
+    return result;
   }
 
   private async getChunksByProject(
@@ -326,13 +370,14 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     query: IDBValidKey | IDBKeyRange,
     limit: number,
   ): Promise<IndexedProjectChunk[]> {
-    const transaction = await this.createTransaction(CHUNK_STORE, 'readonly');
+    const transaction = await this.createTransaction([CHUNK_STORE, SEARCH_STORE], 'readonly');
     const completion = transactionComplete(transaction);
     const result = await requestResult<IndexedProjectChunk[]>(
       transaction.objectStore(CHUNK_STORE).index(indexName).getAll(query, limit),
     );
+    const chunks = await hydrateChunkTerms(transaction, result);
     await completion;
-    return result.map(normalizeChunk);
+    return chunks;
   }
 
   /**
@@ -380,12 +425,19 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
           if ((event as IDBVersionChangeEvent).oldVersion < 3) {
             migrateLegacyFileScanIds(fileStore);
           }
+          let chunkStore: IDBObjectStore;
           if (!database.objectStoreNames.contains(CHUNK_STORE)) {
-            const chunkStore = database.createObjectStore(CHUNK_STORE, { keyPath: 'id' });
+            chunkStore = database.createObjectStore(CHUNK_STORE, { keyPath: 'id' });
             chunkStore.createIndex('projectId', 'projectId');
             chunkStore.createIndex('projectPath', ['projectId', 'path']);
             chunkStore.createIndex('projectPriority', ['projectId', 'priority']);
-            chunkStore.createIndex('searchTerms', 'searchTerms', { multiEntry: true });
+          } else {
+            chunkStore = request.transaction!.objectStore(CHUNK_STORE);
+          }
+          if ((event as IDBVersionChangeEvent).oldVersion < 4) {
+            createSearchStores(database);
+            if (chunkStore.indexNames.contains('searchTerms')) chunkStore.deleteIndex('searchTerms');
+            migrateChunkSearch(request.transaction!, chunkStore);
           }
           if (!database.objectStoreNames.contains(SOURCE_STORE)) {
             database.createObjectStore(SOURCE_STORE, { keyPath: 'projectId' });
@@ -484,6 +536,16 @@ const normalizeChunk = (chunk: IndexedProjectChunk): IndexedProjectChunk => ({
   symbols: chunk.symbols ?? [],
   imports: chunk.imports ?? [],
 });
+
+/** 正文与完整词表从同一个只读事务恢复，调用方仍得到原有完整片段。 */
+const hydrateChunkTerms = async (transaction: IDBTransaction, chunks: IndexedProjectChunk[]): Promise<IndexedProjectChunk[]> => {
+  const index = transaction.objectStore(SEARCH_STORE).index('chunkId');
+  return Promise.all(chunks.map(async (chunk) => {
+    const search = await requestResult<{ searchTerms: string[] } | undefined>(index.get(chunk.id));
+    if (!search) throw new Error('本地全文词表不完整，请重新建立项目索引');
+    return normalizeChunk({ ...chunk, searchTerms: search.searchTerms });
+  }));
+};
 
 const requestResult = <T>(request: IDBRequest<T>): Promise<T> =>
   new Promise((resolve, reject) => {
