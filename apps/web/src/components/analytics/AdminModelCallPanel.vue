@@ -7,6 +7,7 @@ import { init, use, type EChartsType } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useUiTheme } from '@/composables/useUiTheme';
 import { formatAnalyticsTime } from '@/features/analytics/analyticsPresentation';
+import { modelCallModule, modelCallOperationLabel } from '@/features/analytics/modelCallPresentation';
 import { getModelCalls, getModelTokenRanking } from '@/services/adminAnalyticsApi';
 import { getApiErrorMessage } from '@/services/http';
 import type { AnalyticsRankingPeriod, ModelCallPage, ModelCallRecord, ModelCallScope, TokenRank, TokenRanking, TokenRankingQuery } from '@/types/api';
@@ -31,8 +32,7 @@ let chart: EChartsType | undefined;
 let resize: ResizeObserver | undefined;
 let callsGeneration = 0;
 let disposed = false;
-const operationNames: Record<string, string> = { 'prompt.optimize': '提示词优化', 'plan.generate': 'Plan 问题生成', 'document.summary.map': '文档分段摘要', 'document.summary.reduce': '文档合并摘要', 'context.embedding': '上下文向量化', 'context.vision': '上下文视觉识别', 'image.analyze': '创作素材识别', 'image.plan': '图像创作计划', 'image.generate': '图像提示词生成', 'text.polish': '文章祛AI味', unknown: '未知操作' };
-const sourceName = (value: string): string => ranking.value?.groupBy === 'OPERATION' ? (operationNames[value] ?? value) : value;
+const sourceName = (value: string): string => ranking.value?.groupBy === 'OPERATION' ? modelCallOperationLabel(value) : value;
 const usageNames = { COMPLETE: '完整', PARTIAL: '部分', UNKNOWN: '未知', INVALID: '无效' };
 const cacheNames = { HIT: '命中', MISS: '未命中', MIXED: '部分命中', NONE: '零输入', UNKNOWN: '未知' };
 const transportNames = { MOCK: '模拟调用', NOT_SENT: '未发送', STARTED: '已开始传输', RESPONSE_RECEIVED: '已收到响应', UNKNOWN: '传输未知' };
@@ -131,7 +131,7 @@ onBeforeUnmount(() => { disposed = true; callsGeneration++; resize?.disconnect()
 
 <template>
   <article class="model-call-panel" aria-labelledby="model-call-title">
-    <header><div><h2 id="model-call-title">模型调用对账与 Token 排行</h2><p>独立租户级计量 · 每次尝试记录 · 包含失败与修复重试的已报告用量</p></div></header>
+    <header><div><h2 id="model-call-title">模型调用对账与 Token 排行</h2><p>提示词优化 · 素材转提示词 · 文章祛AI味及上下文处理，每次尝试独立计量，包含失败与修复重试的已报告用量</p></div></header>
     <ElAlert type="info" :closable="false" title="自功能启用后采集。Token 排行不关联账号；页面上方的账号筛选不作用于此处。缺失用量保持未知，不能据此反推完整供应商账单。" />
     <div class="model-call-filters">
       <label>统计周期<ElSelect v-model="period" aria-label="模型统计周期"><ElOption label="按日" value="DAY" /><ElOption label="按周" value="WEEK" /><ElOption label="按月" value="MONTH" /></ElSelect></label>
@@ -148,8 +148,9 @@ onBeforeUnmount(() => { disposed = true; callsGeneration++; resize?.disconnect()
       <p v-if="hasLargeTokens">大整数在表格中精确显示，图表仅用于比较相对规模。</p>
       <div v-if="ranking.ranking.length" ref="chartElement" class="token-chart" role="img" aria-label="已报告 Token 消耗前十名柱状图"></div>
       <!-- @vue-generic {TokenRank} -->
-      <ElTable :data="ranking.ranking" row-key="source" stripe empty-text="所选范围内没有可排行的模型调用。">
-        <ElTableColumn label="来源／操作" min-width="190"><template #default="s">{{ sourceName(s.row.source) }}</template></ElTableColumn>
+      <ElTable data-testid="token-ranking-table" :data="ranking.ranking" row-key="source" stripe empty-text="所选范围内没有可排行的模型调用。">
+        <ElTableColumn v-if="ranking.groupBy === 'OPERATION'" label="业务模块" min-width="140"><template #default="s">{{ modelCallModule(s.row.source) }}</template></ElTableColumn>
+        <ElTableColumn :label="ranking.groupBy === 'OPERATION' ? '操作类型（operation）' : '模型来源'" min-width="230"><template #default="s"><div class="operation-cell"><span>{{ sourceName(s.row.source) }}</span><code v-if="ranking.groupBy === 'OPERATION'">{{ s.row.source }}</code></div></template></ElTableColumn>
         <ElTableColumn prop="callCount" label="调用尝试" width="105" align="right" />
         <ElTableColumn prop="failureCount" label="失败尝试" width="105" align="right" />
         <ElTableColumn label="输入 Token" min-width="145" align="right"><template #default="s">{{ tokens(s.row.inputTokens) }}</template></ElTableColumn>
@@ -162,20 +163,21 @@ onBeforeUnmount(() => { disposed = true; callsGeneration++; resize?.disconnect()
       <p class="period-caption">排行排除 Mock 与明确未发出的请求；以下明细保留全部尝试。失败响应的有效 Token 不回滚。缓存未报告时保留未知状态。</p>
       <h3>模型调用尝试明细</h3>
       <template v-if="calls?.outcomes && !callsError">
-        <p>增强／Plan 已结束请求 {{ calls.outcomes.completedRequestCount }} 次 ·
+        <p>提示词优化／Plan 已结束请求 {{ calls.outcomes.completedRequestCount }} 次 ·
           首次成功 {{ calls.outcomes.firstSuccessCount }} 次（{{ rate(calls.outcomes.firstSuccessCount, calls.outcomes.completedRequestCount) }}） ·
           修复后成功 {{ calls.outcomes.repairedSuccessCount }} 次（修复成功率 {{ rate(calls.outcomes.repairedSuccessCount, calls.outcomes.repairedRequestCount) }}） ·
           最终失败 {{ calls.outcomes.finalFailureCount }} 次（{{ rate(calls.outcomes.finalFailureCount, calls.outcomes.completedRequestCount) }}）</p>
         <p>首次成功率和最终失败率以已结束请求为分母；修复成功率以实际重试且已结束的 {{ calls.outcomes.repairedRequestCount }} 次请求为分母。
           另有 {{ calls.outcomes.incompleteRequestCount }} 次进行中或记录不完整的请求、{{ calls.outcomes.uncorrelatedAttemptCount }} 条缺关联号尝试，均不计入成功率。
-          按租户、请求关联号和操作归并；Plan 提问与最终增强分别计数，不表示作品质量已通过。</p>
+          此成功率仅覆盖提示词优化及其 Plan 提问，按租户、请求关联号和操作归并；素材和文章工具仍在排行及调用明细展示。Plan 提问与最终增强分别计数，不表示作品质量已通过。</p>
       </template>
       <ElAlert v-if="callsError" type="error" :closable="false" :title="callsError" />
       <ElButton v-if="callsError" :loading="callsLoading" @click="loadCalls(calls?.current ?? 1)">重试明细查询</ElButton>
       <!-- @vue-generic {ModelCallRecord} -->
-      <ElTable v-else v-loading="callsLoading" :data="calls?.records ?? []" row-key="eventId" stripe empty-text="所选范围内没有模型对账记录。">
+      <ElTable v-else v-loading="callsLoading" data-testid="model-call-table" :data="calls?.records ?? []" row-key="eventId" stripe empty-text="所选范围内没有模型对账记录。">
         <ElTableColumn label="调用开始时间" min-width="180"><template #default="s">{{ formatAnalyticsTime(s.row.occurredAt, ranking.period.zoneId) }}</template></ElTableColumn>
-        <ElTableColumn label="操作" min-width="150"><template #default="s">{{ operationNames[s.row.operation] ?? s.row.operation }}</template></ElTableColumn>
+        <ElTableColumn label="业务模块" min-width="140"><template #default="s">{{ modelCallModule(s.row.operation) }}</template></ElTableColumn>
+        <ElTableColumn label="操作类型（operation）" min-width="230"><template #default="s"><div class="operation-cell"><span>{{ modelCallOperationLabel(s.row.operation) }}</span><code>{{ s.row.operation }}</code></div></template></ElTableColumn>
         <ElTableColumn prop="model" label="公开模型" min-width="150" show-overflow-tooltip />
         <ElTableColumn prop="providerRoute" label="模型路由" min-width="150" show-overflow-tooltip />
         <ElTableColumn prop="attempt" label="尝试" width="70" />
@@ -213,6 +215,8 @@ label:has(.el-date-editor) { width: 190px; }
 .model-call-filters :deep(.el-input-number) { width: 100%; }
 .model-call-actions { display: flex; gap: 10px; } .model-call-actions :deep(.el-button + .el-button) { margin: 0; }
 .token-chart { height: 320px; width: 100%; min-width: 0; }
+.operation-cell { display: flex; flex-direction: column; gap: 2px; line-height: 1.5; }
+.operation-cell code { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); overflow-wrap: anywhere; }
 .el-pagination { margin-top: 18px; overflow-x: auto; }
 @media (max-width: 640px) { .model-call-panel { padding: 16px 12px; } label, label:has(.el-date-editor) { width: calc(50% - 7px); } .tenant-filter { width: 100%; } .model-call-actions { width: 100%; } .model-call-actions .el-button { flex: 1; } h2 { font-size: 16px; } }
 </style>

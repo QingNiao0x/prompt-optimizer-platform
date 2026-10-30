@@ -67,7 +67,7 @@ class AdminAnalyticsServiceTest {
         when(repository.toolUsageCounts(period, AnalyticsAccountFilter.forUser(USER_ID)))
                 .thenReturn(new com.promptoptimizer.analytics.dto.AnalyticsViews.ToolUsage(3, 2, 5, 4));
         when(repository.usageRanking(period, AnalyticsAccountFilter.forUser(USER_ID), 10)).thenReturn(List.of(
-                new UserRank(USER_ID, "Admin", 4, 1, 2)
+                new UserRank(USER_ID, "Admin", null, "admin@example.test", 4, 1, 2)
         ));
         AdminAnalyticsService service = new AdminAnalyticsServiceImpl(resolver, provider(repository), provider(recharge), false);
 
@@ -151,7 +151,7 @@ class AdminAnalyticsServiceTest {
         Page<OperationLog> mapperPage = new Page<>(2, 10);
         mapperPage.setTotal(15);
         mapperPage.setRecords(List.of(new OperationLog(
-                UUID.randomUUID(), USER_ID, "Admin", "LOGIN",
+                UUID.randomUUID(), USER_ID, "Admin", null, "admin@example.test", "LOGIN",
                 java.time.OffsetDateTime.parse("2026-09-25T10:00:00+08:00"),
                 null, null, null, null, null, null, null, "DESKTOP")));
         when(repository.selectOperationLogs(any(), any(), any(), eq(AnalyticsAccountFilter.forUser(USER_ID)), eq("LOGIN")))

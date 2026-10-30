@@ -202,6 +202,9 @@ export interface AnalyticsDeviceMetric {
 export interface AnalyticsUserRank {
   userId: string;
   displayName: string;
+  /** 当前有效绑定的联系方式；未绑定为 null，仅管理员查询返回。 */
+  phone: string | null;
+  email: string | null;
   operationCount: number;
   loginCount: number;
   activeDays: number;
@@ -260,6 +263,9 @@ export interface AnalyticsOperationLog {
   eventId: string;
   userId: string;
   displayName: string;
+  /** 当前有效绑定信息，不从历史审计详情或认证凭据中读取。 */
+  phone: string | null;
+  email: string | null;
   eventType: AnalyticsEventType;
   occurredAt: string;
   clientIp: string | null;

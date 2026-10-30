@@ -121,6 +121,60 @@ test('模型对账空状态与失败恢复不会误显示零消耗或保留旧�
   await expect(panel.locator('.token-chart canvas')).toHaveCount(0);
   await expect(panel).not.toContainText('模型对账暂时不可用。');
 });
+
+test('模型排行与调用明细区分素材、文章及未知操作，模型来源维度不猜测业务模块', async ({ page }) => {
+  await mockAnalytics(page);
+  const operations = ['prompt.optimize', 'image.analyze', 'text.polish', 'unknown'];
+  const baseRank = { callCount: 1, successCount: 1, failureCount: 0, completeUsageCount: 1,
+    partialUsageCount: 0, unknownUsageCount: 0, invalidUsageCount: 0,
+    cacheKnownUsageCount: 0, cacheUnknownUsageCount: 1, inputTokens: '20', outputTokens: '10',
+    totalTokens: '30', cacheHitTokens: '0', cacheMissTokens: '0' };
+  const calls: ModelCallRecord[] = operations.map((operation, index) => ({
+    eventId: `module-call-${index}`, tenantId: '00000000-0000-0000-0000-000000000101',
+    occurredAt: '2026-09-27T09:32:10Z', requestId: null, workflowId: null, operation,
+    providerRoute: 'fixture-provider', model: 'fixture-model', attempt: 1, mock: false,
+    successful: true, failureType: null, upstreamStatus: 200, willRetry: false,
+    transportState: 'RESPONSE_RECEIVED', usageState: 'COMPLETE', cacheState: 'UNKNOWN',
+    inputTokens: '20', outputTokens: '10', totalTokens: '30', cacheHitTokens: null,
+    cacheMissTokens: null, durationMs: 8,
+  }));
+  await page.route('**/api/v1/admin/analytics/token-ranking?*', route => {
+    const groupBy = new URL(route.request().url()).searchParams.get('groupBy') === 'SOURCE' ? 'SOURCE' : 'OPERATION';
+    const result: TokenRanking = { period, scope: 'GLOBAL', tenantId: null, groupBy,
+      ranking: (groupBy === 'OPERATION' ? operations : ['fixture-provider/fixture-model'])
+        .map(source => ({ source, ...baseRank })) };
+    return route.fulfill({ json: { data: result } });
+  });
+  await page.route('**/api/v1/admin/analytics/model-calls?*', route => route.fulfill({ json: { data: {
+    period, scope: 'GLOBAL', tenantId: null, records: calls, total: calls.length, size: 10, current: 1, pages: 1,
+  } } }));
+  await page.goto('/admin/analytics');
+  const panel = page.locator('.model-call-panel');
+  await panel.getByRole('button', { name: '查询对账', exact: true }).click();
+  for (const table of [page.getByTestId('token-ranking-table'), page.getByTestId('model-call-table')]) {
+    const rows = table.locator('.el-table__body .el-table__row');
+    await expect(rows).toHaveCount(4);
+    const headers = await table.locator('.el-table__header-wrapper th .cell').allTextContents();
+    expect(headers).toContain('业务模块');
+    expect(headers).toContain('操作类型（operation）');
+    for (const [index, module, operation] of [[0, '提示词优化', 'prompt.optimize'],
+      [1, '素材转提示词', 'image.analyze'], [2, '文章祛AI味', 'text.polish'], [3, '未分类', 'unknown']] as const) {
+      await expect(rows.nth(index)).toContainText(module);
+      await expect(rows.nth(index).locator('code')).toHaveText(operation);
+    }
+    await expect(rows.nth(3)).toContainText('未知操作');
+  }
+  await panel.locator('label').filter({ hasText: '排行维度' }).locator('.el-select__wrapper').click();
+  await page.getByRole('option', { name: '模型来源', exact: true }).click();
+  await panel.getByRole('button', { name: '查询对账', exact: true }).click();
+  const sourceTable = page.getByTestId('token-ranking-table');
+  await expect(sourceTable.locator('.el-table__body .el-table__row')).toHaveCount(1);
+  const headers = await sourceTable.locator('.el-table__header-wrapper th .cell').allTextContents();
+  expect(headers).toContain('模型来源');
+  expect(headers).not.toContain('业务模块');
+  await expect(sourceTable).toContainText('fixture-provider/fixture-model');
+  await expect(sourceTable.locator('.operation-cell code')).toHaveCount(0);
+});
 const longLocation = '用于验证地区字段溢出展示的测试行政区'.repeat(6);
 
 /** 只模拟展示契约；统计口径与身份隔离不由这些浏览器布局用例验证。 */
@@ -166,12 +220,16 @@ const mockAnalytics = async (page: Page, empty = false) => {
     items: empty ? [] : Array.from({ length: 20 }, (_, index) => ({
       userId: `00000000-0000-0000-0000-${String(index + 1).padStart(12, '0')}`,
       displayName: index === 0 ? longName : `测试账号 ${index + 1}`,
+      phone: index === 0 ? '13800000000' : index === 2 ? '   ' : null,
+      email: index === 0 ? 'fixture-contact@example.test' : index === 2 ? '   ' : null,
       operationCount: 1000000 - index, loginCount: 200 - index, activeDays: 27,
     })),
   };
   const records: AnalyticsOperationLog[] = empty ? [] : Array.from({ length: 73 }, (_, index) => ({
     eventId: `event-${index + 1}`, userId: `00000000-0000-0000-0000-${String(index + 1).padStart(12, '0')}`,
     displayName: `测试账号 ${index + 1}`,
+    phone: index === 0 ? '13800000000' : index === 2 ? '   ' : null,
+    email: index === 0 ? 'fixture-contact@example.test' : index === 2 ? '   ' : null,
     eventType: index === 0 ? 'DIRECT_OPTIMIZATION_SUBMITTED' : index === 1 ? 'PLAN_COMPLETED'
       : index === 2 ? 'IMAGE_PROMPT_SUBMITTED' : index === 3 ? 'IMAGE_PROMPT_PLAN_CREATED'
         : index === 4 ? 'IMAGE_PROMPT_GENERATED' : index === 5 ? 'TEXT_POLISH_SUBMITTED'
@@ -225,6 +283,28 @@ const expectContainedLayout = async (page: Page): Promise<void> => {
     expect(viewportWidth - bounds!.x - bounds!.width).toBeLessThanOrEqual(29);
   }
 };
+
+test('排行和操作日志在显示名称之后展示当前联系方式，未绑定与空白值统一提示', async ({ page }) => {
+  await mockAnalytics(page);
+  await page.goto('/admin/analytics');
+  for (const selector of ['.ranking-panel', '.operations-panel']) {
+    const panel = page.locator(selector);
+    const rows = panel.locator('.el-table__body .el-table__row');
+    await expect(rows.first()).toContainText('fixture-contact@example.test');
+    const headers = await panel.locator('.el-table__header-wrapper th .cell').allTextContents();
+    const nameIndex = headers.indexOf('显示名称');
+    expect(nameIndex).toBeGreaterThanOrEqual(0);
+    expect(headers.slice(nameIndex, nameIndex + 3)).toEqual(['显示名称', '手机号', '邮箱']);
+    await expect(rows.first().locator('td').nth(nameIndex + 1)).toHaveText('13800000000');
+    await expect(rows.first().locator('td').nth(nameIndex + 2)).toHaveText('fixture-contact@example.test');
+    // null 和历史/异常投影中的空白都展示相同含义，不以空单元格掩盖绑定状态。
+    for (const rowIndex of [1, 2]) {
+      await expect(rows.nth(rowIndex).locator('td').nth(nameIndex + 1)).toHaveText('未绑定');
+      await expect(rows.nth(rowIndex).locator('td').nth(nameIndex + 2)).toHaveText('未绑定');
+    }
+  }
+  await expectContainedLayout(page);
+});
 
 test('邮箱和名称提交后用于所有查询，草稿编辑不影响翻页与排行，清空后移除条件', async ({ page }) => {
   const { requests } = await mockAnalytics(page);
@@ -341,6 +421,34 @@ test('宽屏充分利用宽度，平板与手机不溢出；主题切换保留�
     const menu = page.getByRole('button', { name: '功能菜单', exact: true });
     if (await menu.isVisible() && await menu.getAttribute('aria-expanded') === 'false') await menu.click();
     await expectContainedLayout(page);
+    // 验证实际占用行数与内容可见性，避免仅更改CSS后留下摘要孤卡或说明被裁切。
+    const density = await page.evaluate(() => {
+      const summary = [...document.querySelectorAll<HTMLElement>('.metric-strip .metric')];
+      const features = [...document.querySelectorAll<HTMLElement>('.feature-usage-strip .metric')];
+      const columns = (cards: HTMLElement[]): number => {
+        const firstTop = cards[0]?.getBoundingClientRect().top;
+        return cards.filter(card => Math.abs(card.getBoundingClientRect().top - (firstTop ?? 0)) <= 1).length;
+      };
+      return {
+        summaryColumns: columns(summary), featureColumns: columns(features),
+        cardHeights: [...summary, ...features].map(card => card.getBoundingClientRect().height),
+        clipped: [...summary, ...features].flatMap(card => [card, ...card.querySelectorAll<HTMLElement>('.metric-label, strong, small')])
+          .filter(content => {
+            const bounds = content.getBoundingClientRect();
+            const cardBounds = content.closest('.metric')!.getBoundingClientRect();
+            // 数字字体的字形可超出行盒少量像素；overflow:visible 时这并非内容裁切。
+            return bounds.left < cardBounds.left - 1 || bounds.right > cardBounds.right + 1
+              || bounds.bottom > cardBounds.bottom + 1 || content.scrollWidth > content.clientWidth + 1
+              || (getComputedStyle(content).overflowY !== 'visible' && content.scrollHeight > content.clientHeight + 1);
+          })
+          .map(content => ({ tag: content.tagName, text: content.textContent?.trim(),
+            width: content.clientWidth, scrollWidth: content.scrollWidth, height: content.clientHeight, scrollHeight: content.scrollHeight })),
+      };
+    });
+    expect(density.summaryColumns).toBe(width >= 1200 ? 5 : width >= 681 ? 3 : 1);
+    expect(density.featureColumns).toBe(width >= 1600 ? 5 : width >= 1200 ? 4 : width >= 900 ? 3 : width >= 481 ? 2 : 1);
+    expect(density.clipped, `宽度 ${width} 的卡片内容不能裁切`).toEqual([]);
+    expect(Math.max(...density.cardHeights)).toBeLessThanOrEqual(width >= 681 ? 156 : 180);
     const ranking = await page.locator('.ranking-panel').boundingBox();
     const operations = await page.locator('.operations-panel').boundingBox();
     expect(operations!.y).toBeGreaterThanOrEqual(ranking!.y + ranking!.height);
@@ -367,6 +475,7 @@ test('宽屏充分利用宽度，平板与手机不溢出；主题切换保留�
     })).toBeLessThanOrEqual(1);
     if (width === 1920 || width === 390) {
       await page.screenshot({ path: testInfo.outputPath(`analytics-light-${width}.png`), fullPage: true });
+      await page.screenshot({ path: testInfo.outputPath(`analytics-light-viewport-${width}.png`) });
       if (width === 390) {
         await page.screenshot({ path: testInfo.outputPath('analytics-mobile-viewport.png') });
       }
@@ -423,7 +532,7 @@ test('空数据保留筛选和明确空状态，后续查询可恢复图表', as
   await expect(page.getByText('所选周期内没有关键使用操作。')).toBeVisible();
   await expect(page.getByText('所选范围内没有关键操作日志。')).toBeVisible();
   await expect(page.getByText('充值图表尚无数据源')).toBeVisible();
-  await expect(page.locator('.metric strong')).toHaveText(Array.from({ length: 11 }, () => '0'));
+  await expect(page.locator('.metric strong')).toHaveText(Array.from({ length: 15 }, () => '0'));
   await expect(page.getByText('所选范围内暂无增强功能细分记录。')).toBeVisible();
   await expect(page.locator('.chart canvas')).toHaveCount(0);
   await expect(page.getByText(/^峰值 /)).toHaveCount(0);

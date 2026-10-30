@@ -58,8 +58,8 @@ public class AdminModelCallAnalyticsServiceImpl implements AdminModelCallAnalyti
         int current = bounded(query.current(), 1, 100000, "current");
         int size = bounded(query.size(), 20, 100, "size");
         String operation = query.operation();
-        if (operation != null && !Set.of("prompt.optimize", "plan.generate", "document.summary.map",
-                "document.summary.reduce", "context.embedding", "context.vision", "image.analyze", "image.plan", "image.generate", "text.polish", "unknown").contains(operation)) {
+        // 已保存的未知历史记录仍允许筛选；业务代码与采集端共享，避免新增工具在查询端被误拒。
+        if (operation != null && !"unknown".equals(operation) && !ModelCallObservation.operations().contains(operation)) {
             throw new InvalidOptimizationRequestException("operation 不是可查询的模型操作代码");
         }
         String requestId = query.requestId();

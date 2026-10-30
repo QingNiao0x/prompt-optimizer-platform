@@ -18,4 +18,8 @@ public interface AnalyticsAggregationFixtureMapper {
     /** 设置本次新建账号的创建时刻，以验证新增账号日桶与事件日桶分别计算。 */
     int setCreatedAt(@Param("userId") UUID userId, @Param("tenantId") UUID tenantId,
                      @Param("displayName") String displayName, @Param("createdAt") OffsetDateTime createdAt);
+
+    /** 只逻辑删除本事务创建的标记账号，用于确认历史审计不回显已删除账号的联系方式。 */
+    int markDeleted(@Param("userId") UUID userId, @Param("tenantId") UUID tenantId,
+                    @Param("displayName") String displayName);
 }

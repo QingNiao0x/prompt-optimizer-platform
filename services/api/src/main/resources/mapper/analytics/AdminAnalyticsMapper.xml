@@ -81,6 +81,8 @@
         <constructor>
             <arg column="user_id" javaType="java.util.UUID"/>
             <arg column="display_name" javaType="java.lang.String"/>
+            <arg column="phone" javaType="java.lang.String"/>
+            <arg column="email" javaType="java.lang.String"/>
             <arg column="operation_count" javaType="_long"/>
             <arg column="login_count" javaType="_long"/>
             <arg column="active_days" javaType="_long"/>
@@ -91,6 +93,8 @@
             <arg column="event_id" javaType="java.util.UUID"/>
             <arg column="user_id" javaType="java.util.UUID"/>
             <arg column="display_name" javaType="java.lang.String"/>
+            <arg column="phone" javaType="java.lang.String"/>
+            <arg column="email" javaType="java.lang.String"/>
             <arg column="event_type" javaType="java.lang.String"/>
             <arg column="occurred_at" javaType="java.time.OffsetDateTime"/>
             <arg column="client_ip" javaType="java.lang.String"/>
@@ -103,6 +107,26 @@
             <arg column="device_type" javaType="java.lang.String"/>
         </constructor>
     </resultMap>
+
+    <!-- 只由管理员查询引用。actor_user_id 明确关联外层已筛选的事件/排行账号；不接收客户端身份。
+         标量子查询至多返回一行，避免多个 EMAIL 身份展开排行或分页；与账号设置相同按创建时间/主键选首个有效绑定。
+         不读 user_account.email 旧副本，不显示已撤销身份、第三方资料邮箱或已逻辑删除账号的联系方式。 -->
+    <sql id="accountContactColumns">
+        (SELECT NULLIF(btrim(contact_identity.normalized_identifier), '')
+           FROM user_identity contact_identity
+           JOIN user_account contact_account ON contact_account.id = contact_identity.user_id
+                AND contact_account.deleted_at IS NULL
+          WHERE contact_identity.user_id = actor_user_id AND contact_identity.identity_type = 'PHONE'
+            AND contact_identity.issuer = 'local' AND contact_identity.status = 'ACTIVE'
+          ORDER BY contact_identity.created_at, contact_identity.id LIMIT 1) AS phone,
+        (SELECT NULLIF(btrim(contact_identity.normalized_identifier), '')
+           FROM user_identity contact_identity
+           JOIN user_account contact_account ON contact_account.id = contact_identity.user_id
+                AND contact_account.deleted_at IS NULL
+          WHERE contact_identity.user_id = actor_user_id AND contact_identity.identity_type = 'EMAIL'
+            AND contact_identity.issuer = 'local' AND contact_identity.status = 'ACTIVE'
+          ORDER BY contact_identity.created_at, contact_identity.id LIMIT 1) AS email,
+    </sql>
 
     <sql id="usageEventPredicate">
         <!-- 独立工具只以提交计关键使用；结果/图像计划创建和旧增强细分另行展示，避免同一操作被双计。 -->
@@ -467,6 +491,7 @@
             HAVING SUM(operation_count) &gt; 0
         )
         SELECT a.actor_user_id AS user_id, COALESCE(u.display_name, '') AS display_name,
+               <include refid="accountContactColumns"/>
                a.operation_count, a.login_count, a.active_days
           FROM account_usage a LEFT JOIN user_account u ON u.id = a.actor_user_id
          ORDER BY a.operation_count DESC, a.login_count DESC, a.actor_user_id
@@ -496,12 +521,13 @@
     <select id="selectOperationLogs" resultMap="operationLog">
         <!-- 只投影审计需要的安全字段，避免将完整 details 或认证凭据带入管理员响应。 -->
         <!--
-            显示名称只在 SELECT 投影中按主键读取，不参与排序/分组。
+            显示名称与当前联系方式只在 SELECT 投影中按账号读取，不参与排序/分组。
             PostgreSQL 会在 ORDER BY 和分页 LIMIT 后计算这种输出表达式，避免对全部候选日志关联账号。
             账号筛选仍在共用 WHERE 中完成；缺失账号/名称继续返回空字符串，分页总数和排序不变。
         -->
         SELECT e.id AS event_id, e.actor_user_id AS user_id,
                COALESCE((SELECT u.display_name FROM user_account u WHERE u.id = e.actor_user_id), '') AS display_name,
+               <include refid="accountContactColumns"/>
                e.event_type, e.occurred_at,
                e.details-&gt;&gt;'clientIp' AS client_ip,
                e.details-&gt;&gt;'country' AS country,

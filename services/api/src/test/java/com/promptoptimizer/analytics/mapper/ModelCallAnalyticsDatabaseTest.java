@@ -35,6 +35,55 @@ class ModelCallAnalyticsDatabaseTest {
     private static final ZoneId ZONE = ZoneId.of("Asia/Shanghai");
 
     @Test
+    void everyWhitelistedToolOperationKeepsItsCategoryAndTokensAcrossPeriodsAndScopes() throws Exception {
+        try (SqlSession session = openLocalSession()) {
+            try {
+                UUID first = UUID.randomUUID();
+                UUID second = UUID.randomUUID();
+                var fixtures = session.getMapper(ModelCallFixtureMapper.class);
+                fixtures.insertTenant(first, "tool-operations-fixture-a");
+                fixtures.insertTenant(second, "tool-operations-fixture-b");
+                var writer = new FixtureWriter(session.getMapper(AuditEventMapper.class));
+                var mapper = session.getMapper(ModelCallAnalyticsMapper.class);
+                LocalDate day = LocalDate.of(2046, 10, 10);
+                var daily = period(day, ZONE);
+                var operations = com.promptoptimizer.common.logging.ModelCallObservation.operations();
+                for (String operation : operations) {
+                    writer.insert(fact(first, daily.fromInclusive(), operation, true, "RESPONSE_RECEIVED", false, new TokenUsage(10L, 5L, 15L)));
+                }
+                writer.insert(fact(first, daily.fromInclusive().plusSeconds(1), "text.polish", false, "RESPONSE_RECEIVED", false, new TokenUsage(2L, 1L, 3L)));
+                writer.insert(fact(second, daily.fromInclusive(), "image.analyze", true, "RESPONSE_RECEIVED", false, new TokenUsage(20L, 10L, 30L)));
+                // 未批准的历史文本仍归 unknown，绝不能把任意 details.operation 直接回显为操作类别。
+                writer.insert(fact(first, daily.fromInclusive(), "private-user-supplied-text", true, "RESPONSE_RECEIVED", false, null));
+                for (var range : List.of(daily,
+                        new AnalyticsPeriod(day.with(java.time.DayOfWeek.MONDAY), day.with(java.time.DayOfWeek.MONDAY).plusWeeks(1), ZONE,
+                                day.with(java.time.DayOfWeek.MONDAY).atStartOfDay(ZONE).toOffsetDateTime(), day.with(java.time.DayOfWeek.MONDAY).plusWeeks(1).atStartOfDay(ZONE).toOffsetDateTime()),
+                        new AnalyticsPeriod(day.withDayOfMonth(1), day.withDayOfMonth(1).plusMonths(1), ZONE,
+                                day.withDayOfMonth(1).atStartOfDay(ZONE).toOffsetDateTime(), day.withDayOfMonth(1).plusMonths(1).atStartOfDay(ZONE).toOffsetDateTime()))) {
+                    var ranks = mapper.tokenRanking(range, first, "OPERATION", 100);
+                    assertThat(ranks).extracting(com.promptoptimizer.analytics.dto.AnalyticsViews.TokenRank::source)
+                            .containsAll(operations).contains("unknown").doesNotContain("private-user-supplied-text");
+                    assertThat(ranks).filteredOn(row -> row.source().equals("text.polish")).singleElement().satisfies(row -> {
+                        assertThat(row.callCount()).isEqualTo(2);
+                        assertThat(row.failureCount()).isEqualTo(1);
+                        assertThat(row.totalTokens()).isEqualTo("18");
+                    });
+                    assertThat(mapper.tokenRanking(range, null, "OPERATION", 100))
+                            .filteredOn(row -> row.source().equals("image.analyze")).singleElement()
+                            .satisfies(row -> assertThat(row.totalTokens()).isEqualTo("45"));
+                    for (String operation : operations) {
+                        Page<ModelCallView> page = new Page<>(1, 20);
+                        page.setCountId("countModelCalls");
+                        var rows = mapper.selectModelCalls(page, range, first, operation, null);
+                        assertThat(rows.getRecords()).isNotEmpty().allSatisfy(row -> assertThat(row.operation()).isEqualTo(operation));
+                        assertThat(rows.getTotal()).isEqualTo(operation.equals("text.polish") ? 2 : 1);
+                    }
+                }
+            } finally { session.rollback(); }
+        }
+    }
+
+    @Test
     void requestOutcomesSeparateRepairsFromFailuresAndExcludeIncompleteOrCrossTenantChains() throws Exception {
         try (SqlSession session = openLocalSession()) {
             try {

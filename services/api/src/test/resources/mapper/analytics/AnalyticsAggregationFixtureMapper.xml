@@ -7,4 +7,8 @@
         UPDATE user_account SET created_at = #{createdAt}
         WHERE id = #{userId} AND tenant_id = #{tenantId} AND display_name = #{displayName}
     </update>
+    <update id="markDeleted">
+        UPDATE user_account SET deleted_at = CURRENT_TIMESTAMP, status = 'DISABLED'
+        WHERE id = #{userId} AND tenant_id = #{tenantId} AND display_name = #{displayName}
+    </update>
 </mapper>

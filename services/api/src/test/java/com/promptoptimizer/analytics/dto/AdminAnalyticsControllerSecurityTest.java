@@ -26,6 +26,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 /**
  * 验证统计和审计接口在未登录、普通账号和平台管理员三种身份下的服务端访问控制。
@@ -77,6 +78,23 @@ class AdminAnalyticsControllerSecurityTest {
                         .with(user("platform-admin").roles("PLATFORM_ADMIN")))
                 .andExpect(status().isOk());
 
+        verify(platformAdminAccess).require();
+    }
+
+    @Test
+    void administratorOperationProjectionSerializesContactsAndNullBindings() throws Exception {
+        var id = java.util.UUID.randomUUID();
+        var query = new OperationLogQuery("2026-10-10", "2026-10-10", null, null, null, null, null, null);
+        var row = new AnalyticsViews.OperationLog(java.util.UUID.randomUUID(), id, "合成测试账号", "+8613900000000",
+                null, "LOGIN", java.time.OffsetDateTime.parse("2026-10-10T09:00:00+08:00"),
+                null, null, null, null, null, null, null, "DESKTOP");
+        when(analyticsService.operationLogs(query)).thenReturn(new AnalyticsViews.OperationLogPage(java.util.List.of(row), 1, 10, 1, 1));
+        mockMvc.perform(get("/api/v1/admin/analytics/operations").param("fromDate", "2026-10-10").param("toDate", "2026-10-10")
+                        .with(user("platform-admin").roles("PLATFORM_ADMIN")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.records[0].phone").value("+8613900000000"))
+                .andExpect(jsonPath("$.data.records[0].email").value(org.hamcrest.Matchers.nullValue()))
+                .andExpect(jsonPath("$.data.records[0].passwordHash").doesNotExist());
         verify(platformAdminAccess).require();
     }
 

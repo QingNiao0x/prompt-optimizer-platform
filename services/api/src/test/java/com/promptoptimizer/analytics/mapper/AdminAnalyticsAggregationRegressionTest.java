@@ -71,6 +71,7 @@ class AdminAnalyticsAggregationRegressionTest {
     @Autowired private AnalyticsAcceptanceMapper acceptance;
     @Autowired private PasswordEncoder encoder;
     @Autowired private AdminAnalyticsService service;
+    @Autowired private com.promptoptimizer.identity.settings.AccountSettingsMapper accountSettings;
     // 启动初始化早于测试事务，替换初始化器防止测试之外写入已有账号。
     @MockBean private BootstrapAdminAccountInitializer adminInitializer;
     @MockBean private BootstrapUserPasswordInitializer userInitializer;
@@ -99,9 +100,9 @@ class AdminAnalyticsAggregationRegressionTest {
                 .containsExactly(new MonthlyMetric("2020-01", 5), new MonthlyMetric("2020-02", 1));
         assertThat(analytics.deviceDistribution(period, filter)).containsExactlyInAnyOrder(
                 new DeviceMetric("DESKTOP", 3, 2), new DeviceMetric("MOBILE", 3, 2), new DeviceMetric("UNKNOWN", 1, 1));
-        assertThat(analytics.usageRanking(period, filter, 20)).containsExactly(
-                new UserRank(scenario.beta().id(), scenario.beta().displayName(), 3, 3, 2),
-                new UserRank(scenario.alpha().id(), scenario.alpha().displayName(), 3, 2, 3));
+        assertThat(analytics.usageRanking(period, filter, 20)).usingRecursiveFieldByFieldElementComparatorIgnoringFields("phone", "email").containsExactly(
+                new UserRank(scenario.beta().id(), scenario.beta().displayName(), null, null, 3, 3, 2),
+                new UserRank(scenario.alpha().id(), scenario.alpha().displayName(), null, null, 3, 2, 3));
         assertThat(analytics.countOperationLogs(period.fromInclusive(), period.toExclusive(), filter, null)).isEqualTo(14);
         assertFusedMatchesIndependent(period, filter);
 
@@ -205,9 +206,9 @@ class AdminAnalyticsAggregationRegressionTest {
         }
         assertThat(analytics.toolUsageCounts(period, new AnalyticsAccountFilter(scenario.beta().id(), seed + "-alpha-alias", null)))
                 .isEqualTo(new ToolUsage(0, 0, 0, 0));
-        assertThat(analytics.usageRanking(period, filter, 20)).containsExactly(
-                new UserRank(scenario.alpha().id(), scenario.alpha().displayName(), 5, 2, 3),
-                new UserRank(scenario.beta().id(), scenario.beta().displayName(), 4, 3, 2));
+        assertThat(analytics.usageRanking(period, filter, 20)).usingRecursiveFieldByFieldElementComparatorIgnoringFields("phone", "email").containsExactly(
+                new UserRank(scenario.alpha().id(), scenario.alpha().displayName(), null, null, 5, 2, 3),
+                new UserRank(scenario.beta().id(), scenario.beta().displayName(), null, null, 4, 3, 2));
         assertHours(period, filter, Map.of(0, 1L, 11, 5L, 14, 2L, 23, 1L));
         assertThat(analytics.monthlyUsage(period, period.toDateExclusive().minusDays(1), filter))
                 .containsExactly(new MonthlyMetric("2020-01", 8), new MonthlyMetric("2020-02", 1));
@@ -273,8 +274,8 @@ class AdminAnalyticsAggregationRegressionTest {
         assertThat(analytics.monthlyUsage(period, period.toDateExclusive().minusDays(1), alias))
                 .containsExactly(new MonthlyMetric("2020-01", 2), new MonthlyMetric("2020-02", 1));
         assertThat(analytics.deviceDistribution(period, alias)).containsExactly(new DeviceMetric("DESKTOP", 2, 1));
-        assertThat(analytics.usageRanking(period, alias, 20))
-                .containsExactly(new UserRank(scenario.alpha().id(), scenario.alpha().displayName(), 3, 2, 3));
+        assertThat(analytics.usageRanking(period, alias, 20)).usingRecursiveFieldByFieldElementComparatorIgnoringFields("phone", "email")
+                .containsExactly(new UserRank(scenario.alpha().id(), scenario.alpha().displayName(), null, null, 3, 2, 3));
         assertFusedMatchesIndependent(period, alias);
         for (AnalyticsAccountFilter empty : List.of(
                 new AnalyticsAccountFilter(null, seed + "-alpha-revoked", null),
@@ -310,8 +311,8 @@ class AdminAnalyticsAggregationRegressionTest {
         assertThat(analytics.dailyMetrics(period, filter)).containsExactly(new DailyMetric(day, 0, 0, 1, 1, 0, 2, 1));
         assertHours(period, filter, Map.of(1, 2L));
         assertThat(analytics.monthlyUsage(period, day, filter)).containsExactly(new MonthlyMetric("2020-11", 2));
-        assertThat(analytics.usageRanking(period, filter, 20))
-                .containsExactly(new UserRank(user.id(), user.displayName(), 2, 0, 1));
+        assertThat(analytics.usageRanking(period, filter, 20)).usingRecursiveFieldByFieldElementComparatorIgnoringFields("phone", "email")
+                .containsExactly(new UserRank(user.id(), user.displayName(), null, null, 2, 0, 1));
         assertFusedMatchesIndependent(period, filter);
     }
 
@@ -372,6 +373,46 @@ class AdminAnalyticsAggregationRegressionTest {
         var devices = rows.stream().filter(row -> row.kind() == MetricKind.DEVICE)
                 .map(row -> new DeviceMetric(row.bucket(), row.loginCount(), row.uniqueUsers())).toList();
         assertThat(devices).isEqualTo(analytics.deviceDistribution(period, filter));
+    }
+
+    @Test
+    void contactsProjectOnlyActiveLocalBindingsWithoutMultiplyingRanksOrPages() {
+        Scenario scenario = seedScenario();
+        Account alpha = scenario.alpha();
+        Account beta = scenario.beta();
+        AnalyticsPeriod range = period(FIRST_DAY, FIRST_DAY.plusDays(4), SHANGHAI);
+        String phone = "+86139" + String.format("%08d", Math.floorMod(UUID.randomUUID().getLeastSignificantBits(), 100000000));
+        provisioning.insertUserIdentity(UUID.randomUUID(), alpha.id(), "PHONE", "local", phone, phone, "ACTIVE", at(FIRST_DAY, 1));
+        // user_account.email 是历史展示副本；撤销全部有效邮箱后不能回退显示它或第三方身份邮箱。
+        assertThat(accountSettings.revokeType(beta.id(), "EMAIL")).isEqualTo(1);
+        String foreignEmail = seed + "-foreign@example.test";
+        provisioning.insertUserIdentity(UUID.randomUUID(), beta.id(), "EMAIL", "foreign", foreignEmail, foreignEmail, "ACTIVE", at(FIRST_DAY, 1));
+        var alphaFilter = AnalyticsAccountFilter.forUser(alpha.id());
+        assertThat(analytics.usageRanking(range, alphaFilter, 20)).singleElement().satisfies(row -> {
+            assertThat(row.phone()).isEqualTo(phone);
+            assertThat(row.email()).isIn(seed + "-alpha-primary@example.test", seed + "-alpha-alias@example.test");
+            assertThat(row.operationCount()).isEqualTo(3);
+        });
+        assertThat(analytics.usageRanking(range, AnalyticsAccountFilter.forUser(beta.id()), 20)).singleElement().satisfies(row -> {
+            assertThat(row.phone()).isNull();
+            assertThat(row.email()).isNull();
+        });
+        var query = new com.promptoptimizer.analytics.dto.OperationLogQuery(FIRST_DAY.toString(),
+                FIRST_DAY.plusDays(3).toString(), alpha.id(), null, 1, 2, null, null);
+        var page = service.operationLogs(query);
+        assertThat(page.total()).isEqualTo(6);
+        assertThat(page.records()).hasSize(2).allSatisfy(row -> {
+            assertThat(row.phone()).isEqualTo(phone);
+            assertThat(row.email()).isIn(seed + "-alpha-primary@example.test", seed + "-alpha-alias@example.test");
+        });
+        // 事件永久保留，联系方式是当前绑定投影，注销后立即停止暴露且不会改变历史事件数。
+        assertThat(fixtures.markDeleted(alpha.id(), alpha.tenantId(), alpha.displayName())).isEqualTo(1);
+        var deletedPage = service.operationLogs(query);
+        assertThat(deletedPage.total()).isEqualTo(6);
+        assertThat(deletedPage.records()).allSatisfy(row -> {
+            assertThat(row.phone()).isNull();
+            assertThat(row.email()).isNull();
+        });
     }
 
     /** 两个租户、重复邮箱身份和不同活跃方式共同覆盖预聚合最易误改的去重粒度。 */

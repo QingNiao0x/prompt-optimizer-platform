@@ -532,6 +532,9 @@ const loginLocationFor = (item: AnalyticsOperationLog): string => (
   placeLabel(item.loginCountry, item.loginProvince, item.loginCity)
 );
 
+/** 兼容旧响应缺字段与空白值；联系方式只在管理员账号表格展示。 */
+const contactLabel = (value: string | null | undefined): string => value?.trim() || '未绑定';
+
 onMounted(() => {
   window.addEventListener('resize', resizeCharts, { passive: true });
   // 只轮询轻量实例状态；后台补写不会触发全量统计查询。
@@ -813,7 +816,7 @@ onBeforeUnmount(() => {
             </div>
           </div>
           <p class="panel-caption">按账号 ID 汇总关键操作；管理员账号计入。<span class="table-scroll-hint">左右滑动表格可查看完整字段。</span></p>
-          <p v-if="ranking" class="panel-caption">实际排行周期：{{ ranking.period.fromDate }} — {{ ranking.period.toDateInclusive }} · {{ ranking.period.zoneId }} · 活跃天数包含仅访问的日期</p>
+          <p v-if="ranking" class="panel-caption">实际排行周期：{{ ranking.period.fromDate }} — {{ ranking.period.toDateInclusive }} · {{ ranking.period.zoneId }} · 活跃天数按登录或操作日期统计，联系方式为当前有效绑定</p>
           <ElAlert v-if="rankingError" type="error" :closable="false" :title="rankingError" />
           <ElTable v-else v-loading="rankingLoading" :data="ranking?.items ?? []" stripe :max-height="440" empty-text="所选周期内没有关键使用操作。">
             <ElTableColumn label="排名" type="index" width="72" align="center">
@@ -823,6 +826,12 @@ onBeforeUnmount(() => {
               <template #default="scope"><code>{{ scope.row.userId }}</code></template>
             </ElTableColumn>
             <ElTableColumn prop="displayName" label="显示名称" min-width="180" show-overflow-tooltip />
+            <ElTableColumn label="手机号" min-width="150" show-overflow-tooltip>
+              <template #default="scope">{{ contactLabel(scope.row.phone) }}</template>
+            </ElTableColumn>
+            <ElTableColumn label="邮箱" min-width="240" show-overflow-tooltip>
+              <template #default="scope">{{ contactLabel(scope.row.email) }}</template>
+            </ElTableColumn>
             <ElTableColumn prop="operationCount" label="关键操作" min-width="120" align="right">
               <template #default="scope"><strong class="operation-count">{{ scope.row.operationCount.toLocaleString() }}</strong></template>
             </ElTableColumn>
@@ -833,7 +842,7 @@ onBeforeUnmount(() => {
 
         <article id="analytics-operations" class="table-panel operations-panel">
           <div class="panel-heading operation-heading">
-            <div class="panel-title"><span class="panel-icon"><ElIcon aria-hidden="true"><List /></ElIcon></span><div><h2>关键操作日志 <span v-if="operationPage" class="record-count">{{ operationPage.total.toLocaleString() }}</span></h2><span class="panel-kicker">登录、访问与关键业务操作</span></div></div>
+            <div class="panel-title"><span class="panel-icon"><ElIcon aria-hidden="true"><List /></ElIcon></span><div><h2>关键操作日志 <span v-if="operationPage" class="record-count">{{ operationPage.total.toLocaleString() }}</span></h2><span class="panel-kicker">登录、退出与关键业务操作 · 联系方式为当前有效绑定</span></div></div>
             <div class="operation-controls">
               <ElSelect v-model="eventFilter" clearable aria-label="按操作类型筛选" placeholder="全部操作" class="event-select">
                 <ElOption v-for="item in eventTypes" :key="item.value" :label="item.label" :value="item.value" />
@@ -855,6 +864,12 @@ onBeforeUnmount(() => {
               <template #default="scope"><span class="event-badge" :class="`event-badge--${eventTone(scope.row.eventType)}`"><i aria-hidden="true"></i>{{ eventLabel(scope.row.eventType) }}</span></template>
             </ElTableColumn>
             <ElTableColumn prop="displayName" label="显示名称" min-width="180" show-overflow-tooltip />
+            <ElTableColumn label="手机号" min-width="150" show-overflow-tooltip>
+              <template #default="scope">{{ contactLabel(scope.row.phone) }}</template>
+            </ElTableColumn>
+            <ElTableColumn label="邮箱" min-width="240" show-overflow-tooltip>
+              <template #default="scope">{{ contactLabel(scope.row.email) }}</template>
+            </ElTableColumn>
             <ElTableColumn prop="clientIp" label="IP" min-width="160" show-overflow-tooltip />
             <ElTableColumn label="操作所在地" min-width="200" show-overflow-tooltip>
               <template #default="scope">{{ locationFor(scope.row as AnalyticsOperationLog) }}</template>
@@ -1023,22 +1038,21 @@ onBeforeUnmount(() => {
 .metric-strip {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: 30px;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
-.feature-usage-strip { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.feature-usage-strip .metric { min-height: 132px; }
+.feature-usage-strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
 .feature-usage-note { margin: 12px 0 24px; }
 .feature-usage-panel { grid-column: 1 / -1; }
 
 .metric {
   display: flex;
   min-width: 0;
-  min-height: 158px;
+  min-height: 118px;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 18px;
+  gap: 8px;
+  padding: 14px 16px;
   border: 1px solid var(--analytics-line);
   border-radius: var(--radius-md);
   background: var(--analytics-surface);
@@ -1050,14 +1064,14 @@ onBeforeUnmount(() => {
   font-size: 12px;
   line-height: 1.6;
 }
-.metric-label { display: flex; justify-content: space-between; align-items: center; gap: 5px; font-weight: 500; }
+.metric-label { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 500; overflow-wrap: anywhere; }
 .metric-label .el-icon { flex-shrink: 0; color: var(--text-muted); font-size: 16px; }
-.metric small { font-size: 11px; min-height: 35px; color: var(--text-muted); }
+.metric small { margin-top: auto; font-size: 11px; color: var(--text-muted); overflow-wrap: anywhere; }
 
 .metric strong {
-  margin: 8px 0;
+  margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(25px, 1.85vw, 34px);
+  font-size: clamp(25px, 1.85vw, 30px);
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: -0.7px;
@@ -1066,14 +1080,13 @@ onBeforeUnmount(() => {
 }
 
 .metric-primary {
-  grid-column: span 2;
   border-color: var(--accent-border);
   background: linear-gradient(115deg, var(--accent-soft), var(--analytics-surface));
 }
 .metric-primary .metric-label { color: var(--accent); }
-.metric-primary .metric-label .el-icon { display: grid; width: 26px; height: 26px; place-items: center; border-radius: 8px; color: var(--accent); background: var(--accent-soft); }
+.metric-primary .metric-label .el-icon { display: grid; width: 20px; height: 20px; place-items: center; border-radius: 6px; color: var(--accent); background: var(--accent-soft); }
 .metric-value { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; min-width: 0; }
-.metric-value strong { font-size: clamp(34px, 2.6vw, 48px); letter-spacing: -1.3px; }
+.metric-value strong { font-size: clamp(25px, 1.85vw, 30px); }
 .metric-value > span { color: var(--text-muted); font-size: 11px; }
 .metric-primary small { min-height: auto; }
 .section-heading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; margin: 28px 0 14px; scroll-margin-top: 140px; }
@@ -1160,7 +1173,7 @@ onBeforeUnmount(() => {
 .table-panel :deep(.el-table__cell) { padding: 12px 0; }
 .table-panel :deep(.el-table .cell) { padding: 0 14px; }
 .table-panel :deep(.el-table__empty-text) { width: 100%; padding: 16px; line-height: 1.7; }
-.table-scroll-hint { display: none; margin-left: 12px; }
+.table-scroll-hint { display: inline; margin-left: 12px; }
 .pagination-row { flex-wrap: wrap; margin-top: 16px; color: var(--text-secondary); font-size: 13px; }
 .pagination-row > span { flex-shrink: 0; }
 .pagination-row :deep(.el-pagination) { max-width: 100%; flex-wrap: wrap; gap: 8px; }
@@ -1178,7 +1191,15 @@ code { color: var(--text-secondary); font-family: var(--font-mono); font-size: 1
 .event-badge--admin { color: var(--orange); background: var(--orange-soft); }
 
 @media (max-width: 1599px) {
-  .metric-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .feature-usage-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (max-width: 1199px) {
+  .metric-strip, .feature-usage-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 899px) {
+  .feature-usage-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 1100px) {
@@ -1203,10 +1224,8 @@ code { color: var(--text-secondary); font-family: var(--font-mono); font-size: 1
   .filter-actions { display: grid; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .filter-actions > .el-button { width: 100%; min-width: 0; }
   .metric-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .feature-usage-strip { grid-template-columns: minmax(0, 1fr); }
-  .metric { min-height: 126px; padding: 14px; }
-  .metric-primary { min-height: 140px; }
-  .metric strong { margin: 5px 0; }
+  .metric { min-height: 112px; padding: 12px; }
+  .metric-primary { grid-column: span 2; }
   .query-summary { gap: 4px; flex-direction: column; }
   .section-heading { margin-top: 24px; }
   .charts-grid { grid-template-columns: minmax(0, 1fr); }
@@ -1233,6 +1252,10 @@ code { color: var(--text-secondary); font-family: var(--font-mono); font-size: 1
   /* 日期弹层通过专属类适配手机，不改变其他页面的日期控件。 */
   :global(.analytics-date-range-popper .el-date-range-picker) { width: min(640px, calc(100vw - 24px)); max-height: calc(100dvh - 100px); overflow-y: auto; }
   :global(.analytics-date-range-popper .el-date-range-picker__content) { width: 100%; float: none; }
+}
+
+@media (max-width: 480px) {
+  .feature-usage-strip { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (prefers-reduced-motion: reduce) {

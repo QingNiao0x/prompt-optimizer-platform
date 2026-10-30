@@ -27,6 +27,9 @@ public record ModelCallObservation(
             "REQUEST_REJECTED", "UPSTREAM_UNAVAILABLE", "INVALID_RESPONSE", "CONFIGURATION",
             "INTERNAL", "RESOURCE_ACCESS", "UNEXPECTED", "MODEL_CONCURRENCY_LIMIT");
 
+    /** 采集、管理员筛选和 SQL 安全投影共用同一有界代码表；SQL 仅把代码作为绑定值使用。 */
+    public static Set<String> operations() { return OPERATIONS; }
+
     /** 兼容未提供响应校验诊断的采集方和旧夹具；缺失原因保持未知。 */
     public ModelCallObservation(UUID eventId, OffsetDateTime startedAt, String requestId, String workflowId,
                                 String operation, String providerRoute, String model, int attempt, boolean mock,

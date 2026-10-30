@@ -69,6 +69,9 @@
     </sql>
 
     <sql id="callRows">
+        <!-- 使用采集端同一代码表并逐项参数绑定；旧白名单漏项曾把素材、文章等调用折叠为 unknown。
+             原始 details 未被改写，因此升级后历史已存的合法操作也能恢复分类；任意正文仍回退 unknown。 -->
+        <bind name="knownOperations" value="@com.promptoptimizer.common.logging.ModelCallObservation@operations()"/>
         WITH scoped AS (
             SELECT id, tenant_id, occurred_at, details FROM audit_event
              WHERE <include refid="scopePredicate"/>
@@ -77,8 +80,9 @@
                    CASE WHEN details->>'requestId' ~ '^([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}|hash-[a-f0-9]{20})$'
                         THEN details->>'requestId' END AS request_id,
                    CASE WHEN details->>'workflowId' ~ '^[a-f0-9]{20}$' THEN details->>'workflowId' END AS workflow_id,
-                   CASE WHEN details->>'operation' IN ('prompt.optimize', 'plan.generate', 'document.summary.map',
-                            'document.summary.reduce', 'context.embedding') THEN details->>'operation' ELSE 'unknown' END AS operation,
+                   CASE WHEN details->>'operation' IN
+                        <foreach collection="knownOperations" item="knownOperation" open="(" separator="," close=")">#{knownOperation}</foreach>
+                        THEN details->>'operation' ELSE 'unknown' END AS operation,
                    CASE WHEN details->>'providerRoute' ~ '^[A-Za-z0-9._:/-]{1,128}$'
                             AND strpos(details->>'providerRoute', '://') = 0
                         THEN details->>'providerRoute' ELSE 'unknown' END AS provider_route,

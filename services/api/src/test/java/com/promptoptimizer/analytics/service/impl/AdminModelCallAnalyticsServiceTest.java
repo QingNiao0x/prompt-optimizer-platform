@@ -43,7 +43,7 @@ class AdminModelCallAnalyticsServiceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"image.analyze", "image.plan", "image.generate"})
+    @ValueSource(strings = {"image.analyze", "image.plan", "image.generate", "text.polish", "context.vision"})
     void multimodalOperationsRemainQueryableWithTheSameScopedFilters(String operation) {
         var page = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<com.promptoptimizer.analytics.dto.AnalyticsViews.ModelCallView>(1, 10);
         when(mapper.selectModelCalls(any(), any(), isNull(), eq(operation), isNull())).thenReturn(page);

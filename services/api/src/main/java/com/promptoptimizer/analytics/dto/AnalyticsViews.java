@@ -121,11 +121,14 @@ public final class AnalyticsViews {
     }
 
     /**
-     * 按账号 ID 汇总的使用频率排行。
+     * 按账号 ID 汇总的使用频率排行。phone/email 为当前有效绑定，未绑定或账号已逻辑删除时为 null；
+     * 联系方式仅供管理员查询，不是历史事件发生时的快照，也不进入模型计量或日志标签。
      */
     public record UserRank(
             UUID userId,
             String displayName,
+            String phone,
+            String email,
             long operationCount,
             long loginCount,
             long activeDays
@@ -146,12 +149,15 @@ public final class AnalyticsViews {
     }
 
     /**
-     * 单条关键操作日志的安全展示字段。
+     * 单条关键操作日志的管理员展示字段；联系方式读取当前有效绑定，未绑定/账号已删除时为 null。
+     * 不保存联系方式副本到审计事件，不返回密码、认证凭据或任意 JSON。
      */
     public record OperationLog(
             UUID eventId,
             UUID userId,
             String displayName,
+            String phone,
+            String email,
             String eventType,
             OffsetDateTime occurredAt,
             String clientIp,
