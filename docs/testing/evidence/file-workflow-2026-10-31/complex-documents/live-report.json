@@ -1,0 +1,274 @@
+{
+  "startedAt": "2026-10-30T18:34:33.501Z",
+  "mockedApis": false,
+  "files": [
+    {
+      "name": "revisions.docx",
+      "bytes": 729,
+      "sha256": "c6f895006ac6a8c2d323a4a2631ad18ed0edccb42fa8dda12e41b9ac08b6baaf",
+      "phase": "READY",
+      "expectedPhase": "READY",
+      "uploadedBytes": 729,
+      "extractedCharacters": 50,
+      "warnings": [],
+      "analysisStatus": 200,
+      "markers": [
+        {
+          "marker": "当前金额123.45字段显示值",
+          "present": true
+        },
+        {
+          "marker": "甲院",
+          "present": true
+        },
+        {
+          "marker": "27件",
+          "present": true
+        },
+        {
+          "marker": "脚注依据",
+          "present": true
+        },
+        {
+          "marker": "行1 列2",
+          "present": true
+        }
+      ],
+      "forbidden": [
+        {
+          "marker": "旧值999",
+          "present": false
+        },
+        {
+          "marker": "SECRET_EXTERNAL",
+          "present": false
+        },
+        {
+          "marker": "迁移前旧址",
+          "present": false
+        }
+      ]
+    },
+    {
+      "name": "sparse.xlsx",
+      "bytes": 3907,
+      "sha256": "51664c18e39894187f92b4d6dcf7e6c534d809f0a0f2976de3d3e49a6eb0dd80",
+      "phase": "READY",
+      "expectedPhase": "READY",
+      "uploadedBytes": 3907,
+      "extractedCharacters": 125,
+      "warnings": [],
+      "analysisStatus": 200,
+      "markers": [
+        {
+          "marker": "C1=金额",
+          "present": true
+        },
+        {
+          "marker": "C3=123.45",
+          "present": true
+        },
+        {
+          "marker": "C3*2",
+          "present": true
+        },
+        {
+          "marker": "246.9",
+          "present": true
+        },
+        {
+          "marker": "隐藏资料仍保留",
+          "present": true
+        }
+      ],
+      "forbidden": [
+        {
+          "marker": "B3=123.45",
+          "present": false
+        }
+      ]
+    },
+    {
+      "name": "sparse.xls",
+      "bytes": 4608,
+      "sha256": "59c6fc32b15330f4f0669624d0f6097472b5174886987f3d952d57f729187b89",
+      "phase": "READY",
+      "expectedPhase": "READY",
+      "uploadedBytes": 4608,
+      "extractedCharacters": 131,
+      "warnings": [],
+      "analysisStatus": 200,
+      "markers": [
+        {
+          "marker": "C1=金额",
+          "present": true
+        },
+        {
+          "marker": "C3=123.45",
+          "present": true
+        },
+        {
+          "marker": "C3*2",
+          "present": true
+        },
+        {
+          "marker": "246.9",
+          "present": true
+        },
+        {
+          "marker": "隐藏资料仍保留",
+          "present": true
+        }
+      ],
+      "forbidden": [
+        {
+          "marker": "B3=123.45",
+          "present": false
+        }
+      ]
+    },
+    {
+      "name": "reordered.pptx",
+      "bytes": 31678,
+      "sha256": "3bc399aa67c3dde9400c9c843c6bcd9a670f1af08cc0b55e647000c407488ce7",
+      "phase": "READY",
+      "expectedPhase": "READY",
+      "uploadedBytes": 31678,
+      "extractedCharacters": 170,
+      "warnings": [],
+      "analysisStatus": 200,
+      "markers": [
+        {
+          "marker": "实际第一页分组正文",
+          "present": true
+        },
+        {
+          "marker": "原第一页现在排第二",
+          "present": true
+        },
+        {
+          "marker": "演讲备注需保留",
+          "present": true
+        },
+        {
+          "marker": "123.45",
+          "present": true
+        }
+      ],
+      "forbidden": [],
+      "orderCorrect": true
+    },
+    {
+      "name": "legacy.ppt",
+      "bytes": 11776,
+      "sha256": "45a226d00bf522d3feddf30fd3fda58d4ecef7be2aae0607fe6ae950269da085",
+      "phase": "READY",
+      "expectedPhase": "READY",
+      "uploadedBytes": 11776,
+      "extractedCharacters": 67,
+      "warnings": [],
+      "analysisStatus": 200,
+      "markers": [
+        {
+          "marker": "旧版分组正文",
+          "present": true
+        },
+        {
+          "marker": "行2 列2",
+          "present": true
+        },
+        {
+          "marker": "123.45",
+          "present": true
+        }
+      ],
+      "forbidden": []
+    },
+    {
+      "name": "mixed.pdf",
+      "bytes": 1116,
+      "sha256": "47bb12d2c37991a1407755d506f92a29295bc5f38a9163cff5926595d03c4e79",
+      "phase": "PARTIAL",
+      "expectedPhase": "PARTIAL",
+      "uploadedBytes": 1116,
+      "extractedCharacters": 20,
+      "warnings": [
+        "部分页面未完整识别：[1, 2, 3]；已保留其他成功内容，不代表全文已读。"
+      ],
+      "analysisStatus": 200,
+      "markers": [
+        {
+          "marker": "HEAD_PDF",
+          "present": true
+        },
+        {
+          "marker": "TAIL_PDF",
+          "present": true
+        }
+      ],
+      "forbidden": []
+    },
+    {
+      "name": "sample.odt",
+      "bytes": 311,
+      "sha256": "0565a3c14ca113122d056f88e962972f0d0ab6956d343b5714e312cc6dec696f",
+      "phase": "PARTIAL",
+      "expectedPhase": "PARTIAL",
+      "uploadedBytes": 311,
+      "extractedCharacters": 12,
+      "warnings": [
+        "文档 · content.xml 含图片、图表或嵌入对象，仅提取其可读取文字，画面内容未识别。"
+      ],
+      "analysisStatus": 200,
+      "markers": [
+        {
+          "marker": "中文保持连续和 tail",
+          "present": true
+        }
+      ],
+      "forbidden": []
+    }
+  ],
+  "negative": [
+    {
+      "name": "encrypted.pdf",
+      "phase": "FAILED",
+      "errorMessage": "文件已加密，请先在本机解密后重新选择上传"
+    },
+    {
+      "name": "missing.pptx",
+      "phase": "FAILED",
+      "errorMessage": "演示文稿引用的页面或备注缺失"
+    },
+    {
+      "name": "external.pptx",
+      "phase": "FAILED",
+      "errorMessage": "演示文稿包含外部幻灯片或备注，不能作为本地正文读取"
+    }
+  ],
+  "errors": [],
+  "modelRequests": 0,
+  "noUploadBeforeConsent": true,
+  "badges": [
+    "已建文档索引",
+    "已建文档索引",
+    "已建文档索引",
+    "已建文档索引",
+    "已建文档索引",
+    "已建文档索引",
+    "已建文档索引"
+  ],
+  "partialWarningsVisible": true,
+  "mobileWarningVisible": true,
+  "passed": true,
+  "completedAt": "2026-10-30T18:35:31.499Z",
+  "candidateBase": "35d2849f",
+  "sourceSha256": {
+    "services/api/src/main/java/com/promptoptimizer/context/service/impl/PresentationTextLayout.java": "b35ce65637a1b8d4cbdc78fc3bdc2f3865eb4817fed46f370da9a4b6980da8d7",
+    "services/api/src/main/java/com/promptoptimizer/context/service/impl/SpreadsheetTextLayout.java": "23d0a2ad0705630170a74ce3f470cf8750a81bea7c9441624791f1f01f937d71",
+    "services/api/src/main/java/com/promptoptimizer/context/service/impl/StreamingDocumentExtractor.java": "3a33d41d41e400813d69864685aafb409c734c14bf6271d1814045ecad1ac207",
+    "services/api/src/main/java/com/promptoptimizer/context/service/impl/BinaryContentExtractor.java": "54dd353b3350c7e682771e543d437269122c9f8acdf98ae143d3d2de3a40aae1",
+    "services/api/src/main/java/com/promptoptimizer/context/service/impl/PresentationPackageOrder.java": "29d934b5d1daaebb0a7f0b29f748feff538898c9a0da48900c5c5e854b99c65b",
+    "apps/web/src/components/context/ContextPanel.vue": "6bba035a64ad29c194d29fe01fdb4056ac01b316fb50207c76df5a41d38082cc"
+  }
+}

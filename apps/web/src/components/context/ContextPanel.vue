@@ -565,7 +565,7 @@ const addManualFile = (): void => {
             <li v-for="file in files" :key="file.path">
               <span class="file-language">{{ file.language }}</span>
               <span class="file-path" :title="file.path">{{ file.path }}</span>
-              <span v-if="file.documentId" class="indexed-document-badge">全文已索引</span>
+              <span v-if="file.documentId" class="indexed-document-badge">已建文档索引</span>
               <button
                 type="button"
                 :aria-label="`移除 ${file.path}`"

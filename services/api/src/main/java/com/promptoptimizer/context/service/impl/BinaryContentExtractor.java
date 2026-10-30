@@ -2,19 +2,15 @@ package com.promptoptimizer.context.service.impl;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
-import org.apache.poi.hslf.usermodel.HSLFShape;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.HSLFTextShape;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
-import org.apache.poi.xslf.usermodel.XSLFTextShape;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -130,10 +126,10 @@ public class BinaryContentExtractor {
             int slideNumber = 1;
             for (XSLFSlide slide : presentation.getSlides()) {
                 result.append("## 幻灯片 ").append(slideNumber++).append('\n');
-                for (XSLFShape shape : slide.getShapes()) {
-                    if (shape instanceof XSLFTextShape textShape) {
-                        appendBlock(result, textShape.getText());
-                    }
+                PresentationTextLayout.append(result, slide.getShapes());
+                if (slide.getNotes() != null) {
+                    result.append("### 备注\n");
+                    PresentationTextLayout.append(result, slide.getNotes().getShapes());
                 }
             }
             return result.toString();
@@ -151,11 +147,7 @@ public class BinaryContentExtractor {
             int slideNumber = 1;
             for (HSLFSlide slide : presentation.getSlides()) {
                 result.append("## 幻灯片 ").append(slideNumber++).append('\n');
-                for (HSLFShape shape : slide.getShapes()) {
-                    if (shape instanceof HSLFTextShape textShape) {
-                        appendBlock(result, textShape.getText());
-                    }
-                }
+                PresentationTextLayout.appendLegacy(result, slide.getShapes());
             }
             return result.toString();
         } catch (IOException | RuntimeException exception) {
@@ -184,18 +176,10 @@ public class BinaryContentExtractor {
             DataFormatter formatter = new DataFormatter();
             StringBuilder result = new StringBuilder();
             for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
-                result.append("## 工作表：").append(workbook.getSheetName(sheetIndex)).append('\n');
+                result.append("## ").append(SpreadsheetTextLayout.heading(workbook, sheetIndex));
                 var sheet = workbook.getSheetAt(sheetIndex);
                 for (var row : sheet) {
-                    boolean firstCell = true;
-                    for (var cell : row) {
-                        if (!firstCell) {
-                            result.append('\t');
-                        }
-                        result.append(formatter.formatCellValue(cell));
-                        firstCell = false;
-                    }
-                    result.append('\n');
+                    result.append(SpreadsheetTextLayout.row(row, formatter));
                     if (result.length() >= MAX_EXTRACTED_CHARS) {
                         return result.toString();
                     }
