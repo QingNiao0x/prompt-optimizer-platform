@@ -69,6 +69,9 @@ export const uploadAndIndexDocument = async (
         });
       });
       uploadedBytes += chunk.size;
+      // 浏览器可能合并/省略很快的上传事件；每片成功响应后补报已确认字节，避免进度一直为 0。
+      onProgress?.({ phase: 'UPLOADING', percent: source.size ? Math.round(uploadedBytes / source.size * 40) : 100,
+        uploadedBytes, totalBytes: source.size, extractedCharacters: 0, indexedChunks: 0 });
     }
 
     let status = (await completeDocumentUpload(documentId, signal)).data;

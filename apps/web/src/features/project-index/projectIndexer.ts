@@ -18,6 +18,8 @@ const FILE_BATCH_SIZE = 200;
 const CHUNK_BATCH_SIZE = 300;
 const MAX_PENDING_BATCH_BYTES = 4 * 1024 * 1024;
 const TEXT_SAMPLE_BYTES = 8_192;
+const SMALL_FILE_BYTES = 64 * 1024;
+const FILE_READ_CONCURRENCY = 6;
 const MAX_RECORDED_CHANGED_PATHS = 500;
 const PROGRESS_FILE_INTERVAL = 32;
 const PROGRESS_TIME_INTERVAL_MS = 150;
@@ -116,6 +118,9 @@ export interface ProjectIndexSummary {
   indexedFiles: number;
   ignoredFiles: number;
   ignoredDirectories: number;
+  scopeExcludedFiles?: number;
+  excludedDirectorySamples?: string[];
+  timings?: { scanMs: number; processingMs: number; writeMs: number; totalMs: number };
   metadataOnlyFiles: number;
   failedFiles: number;
   addedFiles: number;
@@ -154,6 +159,8 @@ export interface ProjectIndexProgress {
   eligibleFiles: number;
   indexedFiles: number;
   ignoredFiles: number;
+  ignoredDirectories?: number;
+  metadataOnlyFiles?: number;
   failedFiles: number;
   addedFiles: number;
   updatedFiles: number;
@@ -235,6 +242,9 @@ export interface IndexProjectOptions {
   sessionId?: string;
   expiresAt?: string;
   totalFiles?: number;
+  scanDurationMs?: number;
+  scopeExcludedFiles?: number;
+  excludedDirectorySamples?: string[];
   shouldPause?: () => boolean;
   onProgress?: (progress: ProjectIndexProgress) => void;
 }
@@ -309,6 +319,8 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
     indexedFiles: 0,
     ignoredFiles: 0,
     ignoredDirectories: 0,
+    scopeExcludedFiles: options.scopeExcludedFiles ?? 0,
+    excludedDirectorySamples: options.excludedDirectorySamples ?? [],
     metadataOnlyFiles: 0,
     failedFiles: 0,
     addedFiles: 0,
@@ -338,16 +350,19 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
   let lastReportedFileBytes = 0;
   let lastReportedPath = '';
   const indexingStartedAt = performance.now();
+  let writeMs = 0;
 
   const flush = async (): Promise<void> => {
     if (pendingFiles.length === 0 && pendingChunks.length === 0 && replacedPaths.size === 0) {
       return;
     }
+    const writeStartedAt = performance.now();
     await options.repository.writeBatch(
       pendingFiles.splice(0),
       pendingChunks.splice(0),
       Array.from(replacedPaths),
     );
+    writeMs += performance.now() - writeStartedAt;
     replacedPaths.clear();
     pendingBatchBytes = 0;
   };
@@ -370,13 +385,14 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
   ): void => {
     const now = performance.now();
     const progressUnits = summary.discoveredFiles + summary.ignoredDirectories;
-    const processedFiles = summary.discoveredFiles;
+    // 已发现当前文件不等于已处理；只累计互斥的最终处理结果。
+    const processedFiles = summary.indexedFiles + summary.metadataOnlyFiles + summary.ignoredFiles + summary.failedFiles;
     const samePath = currentPath === lastReportedPath;
     const advancedBytes = samePath && currentFileBytesRead !== undefined
       ? currentFileBytesRead - lastReportedFileBytes
       : 0;
     if (
-      phase !== 'COMPLETED'
+      phase !== 'COMPLETED' && phase !== 'PAUSED'
       && lastReportedFiles >= 0
       && progressUnits - lastReportedFiles < PROGRESS_FILE_INTERVAL
       && now - lastReportedAt < PROGRESS_TIME_INTERVAL_MS
@@ -388,15 +404,19 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
     lastReportedAt = now;
     lastReportedPath = currentPath;
     lastReportedFileBytes = currentFileBytesRead ?? 0;
-    const elapsedMs = Math.max(0, now - indexingStartedAt);
-    const filesPerSecond = elapsedMs > 0 ? processedFiles * 1_000 / elapsedMs : 0;
-    const totalFiles = options.totalFiles ?? (phase === 'COMPLETED' ? summary.discoveredFiles : undefined);
-    const percent = totalFiles !== undefined && totalFiles > 0
-      ? Math.min(100, Math.round((summary.discoveredFiles / totalFiles) * 100))
-      : undefined;
+    const processingMs = Math.max(0, now - indexingStartedAt);
+    const elapsedMs = processingMs + (options.scanDurationMs ?? 0);
+    const filesPerSecond = processingMs > 0 ? processedFiles * 1_000 / processingMs : 0;
+    // 目录可能在两次遍历之间发生变化，结束时使用实际数量；截断扫描不能伪装完整完成。
+    const totalFiles = phase === 'COMPLETED' && !summary.scanLimitReached
+      ? summary.discoveredFiles : options.totalFiles === undefined ? undefined
+        : Math.max(options.totalFiles, summary.discoveredFiles);
+    const percent = phase === 'COMPLETED' && !summary.scanLimitReached ? 100
+      : totalFiles !== undefined && totalFiles > 0
+        ? Math.min(99.9, Math.floor((processedFiles / totalFiles) * 1000) / 10) : 0;
     const remainingFiles = totalFiles === undefined
       ? undefined
-      : Math.max(0, totalFiles - summary.discoveredFiles);
+      : Math.max(0, totalFiles - processedFiles);
     const etaMs = remainingFiles !== undefined && filesPerSecond > 0
       ? remainingFiles / filesPerSecond * 1_000
       : undefined;
@@ -415,6 +435,8 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
       eligibleFiles: summary.eligibleFiles,
       indexedFiles: summary.indexedFiles,
       ignoredFiles: summary.ignoredFiles,
+      ignoredDirectories: summary.ignoredDirectories,
+      metadataOnlyFiles: summary.metadataOnlyFiles,
       failedFiles: summary.failedFiles,
       addedFiles: summary.addedFiles,
       updatedFiles: summary.updatedFiles,
@@ -450,7 +472,8 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
         );
     const existingByPath = new Map(existingFiles.map((file) => [file.path, file]));
 
-    for (const entry of batch) {
+    for await (const prepared of prepareSourceFiles(batch, existingByPath)) {
+      const { entry, source } = prepared;
       summary.discoveredFiles += 1;
       summary.lastCheckpointPath = entry.path;
       // 必须在内容读取和增量复用之前过滤，旧索引记录也不能绕过当前安全边界。
@@ -461,7 +484,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
       }
       const fingerprint = fingerprintOf(entry.file);
       const existing = existingByPath.get(entry.path);
-      if (existing?.fingerprint === fingerprint) {
+      if (canReuseIndexedFile(existing, fingerprint)) {
         const restoredCharacters = existing.indexedCharacters ?? 0;
         const restoredBytes = existing.estimatedIndexBytes ?? estimateFileMetadataBytes(entry.path);
         pendingFiles.push({
@@ -476,7 +499,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
         summary.chunkCount += existing.chunkCount;
         summary.indexedCharacters += restoredCharacters;
         summary.estimatedIndexBytes += restoredBytes;
-        if (existing.metadataOnly) {
+        if (existing.metadataOnly || existing.chunkCount === 0) {
           summary.metadataOnlyFiles += 1;
         } else {
           summary.indexedFiles += 1;
@@ -486,11 +509,21 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
         continue;
       }
 
-      const classification = await classifyFile(
-        entry.path,
-        entry.file,
-        limits.maxIndexableFileBytes,
-      );
+      let classification: FileClassification;
+      try {
+        if (prepared.error) throw prepared.error;
+        classification = await classifyFile(entry.path, source, limits.maxIndexableFileBytes);
+      } catch {
+        // 采样或小文件读取失败不能中止整批，也不能在增量刷新中继续复用过期正文。
+        summary.failedFiles += 1;
+        replacedPaths.add(entry.path);
+        pendingFiles.push(createFileRecord(options.projectId, entry,
+          { action: 'METADATA_ONLY', language: 'text', priority: 100 }, 0, true,
+          `incomplete:${fingerprint}`, scanId, 0, estimateFileMetadataBytes(entry.path), [], []));
+        await flushIfNeeded();
+        report('INDEXING', entry.path);
+        continue;
+      }
       if (classification.action === 'IGNORE') {
         summary.ignoredFiles += 1;
         report('INDEXING', entry.path);
@@ -517,7 +550,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
           classification,
           0,
           true,
-          fingerprint,
+          summary.storageLimitReached ? `incomplete:${fingerprint}` : fingerprint,
           scanId,
           0,
           metadataBytes,
@@ -540,7 +573,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
         const fileSymbols = new Set<string>();
         const fileImports = new Set<string>();
         for await (const content of streamTextChunks(
-          entry.file,
+          source,
           classification.language,
           (bytesRead) => report('INDEXING', entry.path, bytesRead, entry.file.size),
         )) {
@@ -594,8 +627,8 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
           entry,
           classification,
           chunkCount,
-          limitedByStorage,
-          fingerprint,
+          limitedByStorage || chunkCount === 0,
+          limitedByStorage ? `incomplete:${fingerprint}` : fingerprint,
           scanId,
           fileCharacters,
           fileEstimatedBytes,
@@ -606,7 +639,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
         summary.chunkCount += chunkCount;
         summary.indexedCharacters += fileCharacters;
         summary.estimatedIndexBytes += fileEstimatedBytes;
-        if (chunkCount > 0) {
+        if (chunkCount > 0 && !limitedByStorage) {
           summary.indexedFiles += 1;
         } else {
           summary.metadataOnlyFiles += 1;
@@ -633,13 +666,13 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
   };
 
   await options.repository.beginProject(summary);
-  report('SCANNING', '');
+  report(options.totalFiles === undefined ? 'SCANNING' : 'INDEXING', '');
 
   try {
     for await (const entry of options.entries) {
       if (entry.kind === 'ignored-directory') {
         summary.ignoredDirectories += 1;
-        report('SCANNING', entry.path);
+        report(options.totalFiles === undefined ? 'SCANNING' : 'INDEXING', entry.path);
         if (summary.ignoredDirectories % FILE_BATCH_SIZE === 0 && await pauseIfRequested()) {
           return summary;
         }
@@ -665,6 +698,10 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
     }
     summary.status = 'READY';
     summary.completedAt = new Date().toISOString();
+    const processingMs = performance.now() - indexingStartedAt;
+    summary.timings = { scanMs: options.scanDurationMs ?? 0,
+      processingMs: Math.max(0, processingMs - writeMs), writeMs,
+      totalMs: processingMs + (options.scanDurationMs ?? 0) };
     await options.repository.completeProject(summary);
     report('COMPLETED', '');
     return summary;
@@ -828,9 +865,39 @@ export const getChunkSelectionLimit = (reasons: readonly string[]): number => {
   return DYNAMIC_CHUNK_LIMITS.default;
 };
 
+/**
+ * 最多预读六个小文件（合计不超过 384 KiB）；采样与分块复用同一内存 Blob。
+ * 大文件仍流式读取，增量未变化及受保护的路径在预读前跳过；写入保持原有单队列顺序。
+ */
+const prepareSourceFiles = async function* (
+  entries: Extract<ProjectSourceEntry, { kind: 'file' }>[],
+  existing: Map<string, IndexedProjectFile>,
+): AsyncGenerator<{ entry: Extract<ProjectSourceEntry, { kind: 'file' }>; source: Blob; error?: unknown }> {
+  for (let offset = 0; offset < entries.length; offset += FILE_READ_CONCURRENCY) {
+    const prepared = await Promise.all(entries.slice(offset, offset + FILE_READ_CONCURRENCY).map(async (entry) => {
+      const path = entry.path.replace(/\\/g, '/');
+      if (entry.file.size > SMALL_FILE_BYTES || !isSafeRelativeFilePath(path)
+        || isProtectedContextFile(path) || isIgnoredFile(path.toLowerCase())
+        || canReuseIndexedFile(existing.get(entry.path), fingerprintOf(entry.file))) {
+        return { entry, source: entry.file };
+      }
+      try {
+        return { entry, source: new Blob([await entry.file.arrayBuffer()]) };
+      } catch (error) {
+        return { entry, source: entry.file, error };
+      }
+    }));
+    yield* prepared;
+  }
+};
+
+/** 旧版部分记录也可能带完整指纹；非空的元数据记录须重试，不能继续把缺失正文当完整复用。 */
+const canReuseIndexedFile = (existing: IndexedProjectFile | undefined, fingerprint: string): existing is IndexedProjectFile =>
+  existing?.fingerprint === fingerprint && (!existing.metadataOnly || (existing.size === 0 && existing.chunkCount === 0));
+
 const classifyFile = async (
   path: string,
-  file: File,
+  file: Blob,
   maxIndexableFileBytes: number,
 ): Promise<FileClassification> => {
   const normalizedPath = path.replace(/\\/g, '/').toLowerCase();
@@ -951,7 +1018,7 @@ const priorityOf = (fileName: string): number => {
   return languageOf(fileName) ? 10 : 20;
 };
 
-const looksLikeText = async (file: File): Promise<boolean> => {
+const looksLikeText = async (file: Blob): Promise<boolean> => {
   if (file.size === 0) {
     return true;
   }
@@ -968,7 +1035,7 @@ const looksLikeText = async (file: File): Promise<boolean> => {
   return suspiciousBytes / sample.length < 0.08;
 };
 
-const containsSensitiveConfiguration = async (file: File): Promise<boolean> => {
+const containsSensitiveConfiguration = async (file: Blob): Promise<boolean> => {
   const sample = await file.slice(0, 64 * 1024).text();
   return SENSITIVE_NPMRC_PATTERN.test(sample);
 };
@@ -986,7 +1053,7 @@ const STRUCTURED_BOUNDARY_PATTERN = /^(?:\s*)(?:class|interface|enum|record|stru
  * 这是一种无 AST 依赖的启发式策略，保证浏览器本地索引不因某种语言解析失败而丢失正文。
  */
 const streamTextChunks = async function* (
-  file: File,
+  file: Blob,
   language: string,
   onBytesRead?: (bytesRead: number) => void,
 ): AsyncGenerator<string> {

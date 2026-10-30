@@ -27,6 +27,7 @@ test('文档文件夹保留嵌套路径并完整上传中等大小 TXT 与办公
   await writeFile(join(folder, '附录.pdf'), Buffer.from('%PDF synthetic pdf'));
   const sessions = new Map<string, DocumentUploadStatus>();
   const uploaded = new Map<string, Buffer[]>();
+  let inputProgressGate = true;
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.route('**/api/v1/context/documents**', async (route) => {
@@ -52,6 +53,13 @@ test('文档文件夹保留嵌套路径并完整上传中等大小 TXT 与办公
       const bytes = request.postDataBuffer()!;
       uploaded.get(documentId)!.push(bytes);
       status.uploadedBytes += bytes.length;
+      if (inputProgressGate && status.path.endsWith('方案.txt') && uploaded.get(documentId)!.length === 2) {
+        // 第二片返回前验证界面使用已传字节，而非把整份解析流程的 40% 当上传完成率。
+        const previousBytes = status.uploadedBytes - bytes.length;
+        const expected = Math.floor(previousBytes / status.fileSizeBytes * 1000) / 10;
+        await expect(page.locator('.read-progress')).toHaveAttribute('aria-valuenow', String(expected));
+        inputProgressGate = false;
+      }
     }
     if (path.endsWith('/complete')) {
       status.phase = 'READY';
@@ -97,6 +105,7 @@ test('文档文件夹保留嵌套路径并完整上传中等大小 TXT 与办公
   const textSession = [...sessions.values()].find((session) => session.path.endsWith('方案.txt'))!;
   expect(uploaded.get(textSession.documentId)!.length).toBeGreaterThan(1);
   expect(Buffer.concat(uploaded.get(textSession.documentId)!).toString('utf8')).toBe(body);
+  expect(inputProgressGate).toBe(false);
   await page.getByRole('button', { name: '分析上下文资料', exact: true }).click();
   const confirmation = page.getByRole('dialog', { name: '确认发送上下文' });
   if (await confirmation.isVisible()) await confirmation.getByRole('button', { name: '确认发送', exact: true }).click();
@@ -160,7 +169,7 @@ test('一次选择混合文件夹会索引源码，并在确认后才上传办�
   await openWorkbenchPane(page, 'context');
   await page.getByRole('button', { name: '添加上下文' }).click();
   await page.getByRole('menuitem', { name: '选择文件夹' }).click();
-  await expect(page.getByText('1 个源码文件已建立本地索引')).toBeVisible();
+  await expect(page.getByText('1 个文本文件已完整建立本地索引')).toBeVisible();
   const dialog = page.getByRole('dialog', { name: '确认上传需要解析的文档' });
   await expect(dialog.getByText('docs/方案.docx')).toBeVisible();
   await expect(dialog.getByText('Example.java')).toHaveCount(0);
@@ -175,6 +184,8 @@ test('一次选择混合文件夹会索引源码，并在确认后才上传办�
   await expect(page.getByText('docs/方案.docx', { exact: true })).toBeVisible();
   expect(uploads).toBe(1);
 
+  // 独立上下文分析使用项目说明检索；不要求无关源码绕过相关性选择自动发送。
+  await page.getByLabel('自定义项目描述').fill('结合 Example.java 与方案说明审批规则');
   await page.getByRole('button', { name: '分析上下文资料', exact: true }).click();
   const transmission = page.getByRole('dialog', { name: '确认发送上下文' });
   await transmission.getByRole('button', { name: '确认发送', exact: true }).click();

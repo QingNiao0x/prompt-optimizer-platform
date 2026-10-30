@@ -1,0 +1,125 @@
+{
+  "checks": 16,
+  "passed": 16,
+  "results": [
+    {
+      "case": "aggregate",
+      "passed": true,
+      "errors": [],
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "case": "cancelled",
+      "passed": true,
+      "errors": [],
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "case": "empty",
+      "passed": true,
+      "errors": [],
+      "exitCode": 0,
+      "stderr": ""
+    },
+    {
+      "case": "missing-header",
+      "passed": true,
+      "errors": [],
+      "exitCode": 2,
+      "stderr": "error: missing required header field: refund_amount\n"
+    },
+    {
+      "case": "unknown-status",
+      "passed": true,
+      "errors": [],
+      "exitCode": 2,
+      "stderr": "error: row 1 field status: unknown status\n"
+    },
+    {
+      "case": "impossible-date",
+      "passed": true,
+      "errors": [],
+      "exitCode": 2,
+      "stderr": "error: row 1 field paid_at: invalid date\n"
+    },
+    {
+      "case": "noncanonical-date",
+      "passed": true,
+      "errors": [],
+      "exitCode": 2,
+      "stderr": "error: row 1 field paid_at: invalid date\n"
+    },
+    {
+      "case": "blank-channel",
+      "passed": true,
+      "errors": [],
+      "exitCode": 2,
+      "stderr": "error: row 1 field channel: empty channel\n"
+    },
+    {
+      "case": "negative",
+      "passed": true,
+      "errors": [],
+      "exitCode": 2,
+      "stderr": "error: row 1 field amount: negative value\n"
+    },
+    {
+      "case": "nan",
+      "passed": true,
+      "errors": [],
+      "exitCode": 2,
+      "stderr": "error: row 1 field amount: non-finite value\n"
+    },
+    {
+      "case": "infinity",
+      "passed": true,
+      "errors": [],
+      "exitCode": 2,
+      "stderr": "error: row 1 field amount: non-finite value\n"
+    },
+    {
+      "case": "precision",
+      "passed": true,
+      "errors": [],
+      "exitCode": 2,
+      "stderr": "error: row 1 field amount: more than two decimal places\n"
+    },
+    {
+      "case": "refund-precision",
+      "passed": true,
+      "errors": [],
+      "exitCode": 2,
+      "stderr": "error: row 1 field refund_amount: more than two decimal places\n"
+    },
+    {
+      "case": "refund-exceeds",
+      "passed": true,
+      "errors": [],
+      "exitCode": 2,
+      "stderr": "error: row 1 field refund_amount: refund exceeds amount\n"
+    },
+    {
+      "case": "late-error",
+      "passed": true,
+      "errors": [],
+      "exitCode": 2,
+      "stderr": "error: row 2 field paid_at: invalid date\n"
+    },
+    {
+      "case": "same-file",
+      "passed": true,
+      "exitCode": 2,
+      "stderr": "error: input and output paths are the same\n"
+    }
+  ],
+  "realModelCalls": 0,
+  "measuredPython": "3.12.10",
+  "python311SyntaxChecked": true,
+  "actualPython311RuntimeClaimed": false,
+  "sourceSha256": "f82a32b105f9c1d1705327bd3f7d786849e227bf6313ea5b2f5c95c9f88e0401",
+  "checkerSha256": "f45a58e5c553e804019819613c679f7c536558407aaea3da533b498f6205bd03",
+  "inspectedByRootAgent": true,
+  "humanReviewerParticipated": false
+}

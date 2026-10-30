@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
   indexProject,
@@ -9,6 +9,7 @@ import {
   type IndexedProjectFile,
   type ProjectIndexRepository,
   type ProjectIndexSummary,
+  type ProjectIndexProgress,
   type ProjectSourceEntry,
 } from './projectIndexer';
 import { matchesReferencedPath, referencedPathVariants } from './projectPathReferences';
@@ -155,6 +156,86 @@ const versionedSourceFile = (
 });
 
 describe('indexProject', () => {
+  it('preloads small files with bounded concurrency and retains complete content and metadata', async () => {
+    let active = 0;
+    let peak = 0;
+    const entries = Array.from({ length: 17 }, (_, index) => {
+      const file = new File([`import { tail } from './tail';\nexport const marker${index} = '中文😀';`], `${index}.ts`);
+      const original = file.arrayBuffer.bind(file);
+      vi.spyOn(file, 'arrayBuffer').mockImplementation(async () => {
+        active++; peak = Math.max(peak, active);
+        await new Promise(resolve => setTimeout(resolve, 1));
+        const bytes = await original(); active--; return bytes;
+      });
+      return { kind: 'file' as const, path: file.name, file };
+    });
+    const repository = new MemoryProjectIndexRepository();
+    const summary = await indexProject({ projectId: 'parallel', rootName: 'demo', repository, entries: sourceOf(entries) });
+    expect(summary.indexedFiles).toBe(17);
+    expect(peak).toBeGreaterThan(1);
+    expect(peak).toBeLessThanOrEqual(6);
+    for (const entry of entries) {
+      expect(entry.file.arrayBuffer).toHaveBeenCalledOnce();
+      expect(repository.chunks.filter(c => c.path === entry.path).map(c => c.content).join('')).toBe(await entry.file.text());
+    }
+    expect(repository.files.every(f => f.imports.includes('tail'))).toBe(true);
+  });
+
+  it('counts failures and empty files separately and never finishes progress before saving', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    const file = new File(['unreadable'], 'broken.ts');
+    vi.spyOn(file, 'arrayBuffer').mockRejectedValue(new Error('unreadable'));
+    const secret = new File(['private'], '.env');
+    const secretRead = vi.spyOn(secret, 'arrayBuffer');
+    const progress: ProjectIndexProgress[] = [];
+    const complete = repository.completeProject.bind(repository);
+    repository.completeProject = async summary => {
+      expect(progress.every(value => (value.percent ?? 0) < 100)).toBe(true);
+      await complete(summary);
+    };
+    const summary = await indexProject({ projectId: 'counts', rootName: 'demo', repository, totalFiles: 4,
+      entries: sourceOf([sourceFile('good.ts', 'export const ok = true;'), sourceFile('empty.txt', ''),
+        { kind: 'file', path: 'broken.ts', file }, { kind: 'file', path: '.env', file: secret }]),
+      onProgress: value => progress.push(value) });
+    expect(summary).toMatchObject({ discoveredFiles: 4, indexedFiles: 1, metadataOnlyFiles: 1, failedFiles: 1, ignoredFiles: 1 });
+    expect(progress.at(-1)).toMatchObject({ percent: 100, processedFiles: 4 });
+    expect(secretRead).not.toHaveBeenCalled();
+  });
+
+  it('does not count a partially stored file as complete and retries it with a larger budget', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    const entries = [sourceFile('rules.txt', '规则正文\n'.repeat(5000) + '重要尾部规则')];
+    const first = await indexProject({ projectId: 'partial', rootName: 'demo', repository, entries: sourceOf(entries),
+      limits: { maxScanFiles: 10, maxIndexBytes: 20_000, maxIndexableFileBytes: 1_000_000 } });
+    expect(first.storageLimitReached).toBe(true);
+    expect(first.indexedFiles).toBe(0);
+    expect(first.metadataOnlyFiles).toBe(1);
+    expect(repository.files[0]?.fingerprint).toMatch(/^incomplete:/);
+    const second = await indexProject({ projectId: 'partial', rootName: 'demo', repository, entries: sourceOf(entries), mode: 'INCREMENTAL' });
+    expect(second.indexedFiles).toBe(1);
+    expect(second.unchangedFiles).toBe(0);
+    expect(repository.chunks.map(c => c.content).join('')).toContain('重要尾部规则');
+  });
+
+  it('keeps empty files in the same count category on incremental refresh', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    const options = { projectId: 'empty', rootName: 'demo', repository };
+    const entries = [sourceFile('empty.txt', '')];
+    await indexProject({ ...options, entries: sourceOf(entries) });
+    const summary = await indexProject({ ...options, entries: sourceOf(entries), mode: 'INCREMENTAL' });
+    expect(summary).toMatchObject({ indexedFiles: 0, metadataOnlyFiles: 1, unchangedFiles: 1 });
+  });
+
+  it('keeps a scan limited result below 100 percent', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    const progress: ProjectIndexProgress[] = [];
+    const summary = await indexProject({ projectId: 'limited', rootName: 'demo', repository, totalFiles: 2,
+      entries: sourceOf([sourceFile('a.ts', 'a'), sourceFile('b.ts', 'b')]),
+      limits: { maxScanFiles: 1, maxIndexBytes: 100_000, maxIndexableFileBytes: 100_000 },
+      onProgress: value => progress.push(value) });
+    expect(summary.scanLimitReached).toBe(true);
+    expect(progress.at(-1)?.percent).toBe(50);
+  });
   it('should bound single-line chunks without losing Chinese content or supplementary characters', async () => {
     const repository = new MemoryProjectIndexRepository();
     const content = '方案📖'.repeat(18_000) + '尾部审批要求';

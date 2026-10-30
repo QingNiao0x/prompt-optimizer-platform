@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   countDirectoryEntries,
   streamDirectoryEntries,
+  loadProjectFileScope,
   type DirectoryHandleLike,
   type FileSystemHandleLike,
 } from './fileSystemDirectorySource';
@@ -27,6 +28,35 @@ const directoryHandle = (
 });
 
 describe('streamDirectoryEntries', () => {
+  it('counts scoped files consistently and permits opting out while retaining business temp packages', async () => {
+    let ignoredOpened = 0;
+    const root = directoryHandle('demo', [
+      { kind: 'directory', name: 'tmp', async *values() { ignoredOpened++; yield fileHandle('draft.txt', 'draft'); } },
+      directoryHandle('src', [directoryHandle('temp', [fileHandle('untracked.ts', 'export const fresh = 1;')])]),
+      directoryHandle('docs', [fileHandle('keep.md', 'keep'), fileHandle('drop.md', 'drop')]),
+    ]);
+    root.getFileHandle = async () => ({ kind: 'file', name: '.gitignore',
+      getFile: async () => new File(['/tmp/\ndocs/*.md\n!docs/keep.md'], '.gitignore') });
+    const scope = await loadProjectFileScope(root);
+    const counted = await countDirectoryEntries(root, undefined, scope);
+    const entries = [];
+    for await (const entry of streamDirectoryEntries(root, scope)) entries.push(entry);
+    expect(entries.filter(e => e.kind === 'file').map(e => e.path)).toEqual(['src/temp/untracked.ts', 'docs/keep.md']);
+    expect(counted).toEqual({ totalFiles: 2, ignoredDirectories: 1, scopeExcludedFiles: 1, excludedDirectorySamples: ['tmp'] });
+    expect(ignoredOpened).toBe(0);
+    expect(await countDirectoryEntries(root, undefined, await loadProjectFileScope(root, false)))
+      .toMatchObject({ totalFiles: 4, ignoredDirectories: 0 });
+    expect(ignoredOpened).toBe(1);
+  });
+
+  it('stops pre-counting at the limit or cancellation without reading file metadata', async () => {
+    let reads = 0;
+    const root = directoryHandle('demo', Array.from({ length: 10 }, (_, i) => ({ kind: 'file', name: `${i}.txt`,
+      getFile: async () => { reads++; return new File(['data'], `${i}.txt`); } })));
+    expect((await countDirectoryEntries(root, undefined, undefined, () => false, 3)).totalFiles).toBe(3);
+    expect((await countDirectoryEntries(root, undefined, undefined, () => true)).totalFiles).toBe(0);
+    expect(reads).toBe(0);
+  });
   it.each(['.m2', '.npm', '.npm-cache', '_cacache', '.pnpm-store', '.NPM-CACHE'])
     ('should prune dependency cache %s without opening its entries', async (name) => {
       let cacheTraversals = 0;
@@ -49,7 +79,7 @@ describe('streamDirectoryEntries', () => {
       expect(cacheTraversals).toBe(0);
       expect(entries.filter((entry) => entry.kind === 'file').map((entry) => entry.path))
         .toEqual(['pom.xml', 'docs/cache-design.md', 'business-cache/rules.txt']);
-      expect(await countDirectoryEntries(root)).toEqual({ totalFiles: 3, ignoredDirectories: 1 });
+      expect(await countDirectoryEntries(root)).toMatchObject({ totalFiles: 3, ignoredDirectories: 1, scopeExcludedFiles: 0 });
       expect(cacheTraversals).toBe(0);
     });
 
@@ -114,7 +144,7 @@ describe('streamDirectoryEntries', () => {
       progress.push(value.discoveredFiles);
     });
 
-    expect(summary).toEqual({ totalFiles: 2, ignoredDirectories: 1 });
+    expect(summary).toEqual({ totalFiles: 2, ignoredDirectories: 1, scopeExcludedFiles: 0, excludedDirectorySamples: ['node_modules'] });
     expect(progress.at(-1)).toBe(2);
     expect(dependencyDirectoryVisited).toBe(false);
   });

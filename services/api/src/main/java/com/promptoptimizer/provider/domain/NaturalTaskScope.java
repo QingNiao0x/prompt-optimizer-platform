@@ -55,11 +55,12 @@ public record NaturalTaskScope(List<Action> actions, Response response) {
         Map<String, NaturalTaskSource> sources = input.taskSources().stream()
                 .collect(Collectors.toMap(NaturalTaskSource::id, Function.identity()));
         boolean current = false;
-        for (Action action : actions) {
+        for (int i = 0; i < actions.size(); i++) {
+            Action action = actions.get(i);
             text(action.text(), false);
             text(action.condition(), true);
             if (action.timing() == null || (action.timing() == Timing.CONDITIONAL && action.condition().isBlank())) throw invalid();
-            evidence(action.evidence(), sources, action.timing() != Timing.DESCRIPTIVE);
+            evidence(action.evidence(), sources, action.timing() != Timing.DESCRIPTIVE, "actions[" + i + "].evidence");
             current |= action.timing() == Timing.CURRENT;
         }
         if (requireCurrent && !current) throw invalid();
@@ -67,7 +68,7 @@ public record NaturalTaskScope(List<Action> actions, Response response) {
         if (response.basis() == ResponseBasis.UNSPECIFIED) {
             if (!response.description().isEmpty() || response.evidence() == null || !response.evidence().isEmpty()) throw invalid();
         } else {
-            evidence(response.evidence(), sources, true);
+            evidence(response.evidence(), sources, true, "response.evidence");
         }
         return this;
     }
@@ -82,7 +83,7 @@ public record NaturalTaskScope(List<Action> actions, Response response) {
     public String deliverable() { return response.description(); }
 
     /** 出处必须真实存在；当前任务至少有一处用户来源，资料仍可佐证对象细节。 */
-    private static void evidence(List<Evidence> evidence, Map<String, NaturalTaskSource> sources, boolean userRequired) {
+    private static void evidence(List<Evidence> evidence, Map<String, NaturalTaskSource> sources, boolean userRequired, String field) {
         if (evidence == null || evidence.isEmpty() || evidence.size() > 64) throw invalid();
         boolean user = false;
         for (Evidence value : evidence) {
@@ -94,7 +95,26 @@ public record NaturalTaskScope(List<Action> actions, Response response) {
                 case PROJECT_CONTEXT, ASSISTANT_CONVERSATION -> false;
             };
         }
-        if (userRequired && !user) throw invalid();
+        if (userRequired && !user) throw new MissingUserAuthority(field);
+    }
+
+    /**
+     * 引文存在但未证明用户委托时，只报告服务端生成的字段位置；不回传源码、引文或任意异常文本。
+     * 该诊断不自动补证据、不把材料改成用户来源；重试仍须通过相同的来源及最终正文覆盖校验。
+     */
+    public static final class MissingUserAuthority extends ProviderException {
+        private final String field;
+
+        private MissingUserAuthority(String field) {
+            super(ProviderFailureType.INVALID_RESPONSE, "任务动作与回应边界无效", false);
+            this.field = field;
+        }
+
+        /** 只由core-repair的协议补正使用；旧版本不会追加此提示。 */
+        public String repairInstruction() {
+            return "\n" + field + "缺少用户来源。当前动作及非空回应依据须至少引用一处原始提示词、用户对话或实际Plan回答中的真实连续原句；"
+                    + "项目材料只能佐证细节，不能单独建立委托。重新核对完整输入，不伪造引文，不将材料改标为用户来源。";
+        }
     }
 
     /** 只约束内部记录容量，不截断实际输入，也不放宽缺失列表为合法空列表。 */

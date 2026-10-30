@@ -1,15 +1,5 @@
 import type { ProjectSourceEntry } from './projectIndexer';
-import { DEPENDENCY_CACHE_DIRECTORY_NAMES } from './dependencyCacheDirectories';
-
-const IGNORED_DIRECTORY_NAMES = new Set([
-  ...DEPENDENCY_CACHE_DIRECTORY_NAMES,
-  '.git', '.hg', '.svn', '.idea', '.vscode',
-  'node_modules', 'vendor', 'target', 'build', 'dist', 'out', 'coverage',
-  '.next', '.nuxt', '.output', '.cache', '.gradle', '.mvn',
-  '__pycache__', '.pytest_cache', '.mypy_cache', '.ruff_cache', '.tox',
-  '.venv', 'venv', 'env', 'logs', 'log',
-  '.codegraph', 'playwright-report', 'test-results',
-]);
+import { createProjectFileScope, readProjectIgnore, type ProjectFileScope } from './projectFileScope';
 const FILE_HANDLE_BATCH_SIZE = 64;
 const FILE_METADATA_CONCURRENCY = 6;
 
@@ -23,6 +13,7 @@ export interface DirectoryHandleLike {
   kind: 'directory';
   name: string;
   values(): AsyncIterableIterator<FileSystemHandleLike>;
+  getFileHandle?(name: string): Promise<FileHandleLike>;
   queryPermission?(options?: { mode?: 'read' }): Promise<PermissionState>;
   requestPermission?(options?: { mode?: 'read' }): Promise<PermissionState>;
 }
@@ -43,7 +34,24 @@ export interface DirectoryCountProgress {
 export interface DirectoryCountSummary {
   totalFiles: number;
   ignoredDirectories: number;
+  scopeExcludedFiles: number;
+  excludedDirectorySamples: string[];
 }
+
+/** 所选根目录之外的规则不读取；关闭时仍保留生成目录和后续敏感文件的强制过滤。 */
+export const loadProjectFileScope = async (
+  root: DirectoryHandleLike,
+  respectGitignore = true,
+): Promise<ProjectFileScope> => {
+  if (!respectGitignore || !root.getFileHandle) return createProjectFileScope();
+  try {
+    const handle = await root.getFileHandle('.gitignore');
+    return createProjectFileScope(await readProjectIgnore(await handle.getFile()));
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'NotFoundError') return createProjectFileScope();
+    throw error;
+  }
+};
 
 interface DirectoryPickerWindow extends Window {
   showDirectoryPicker?: (options?: { mode?: 'read' | 'readwrite' }) => Promise<DirectoryHandleLike>;
@@ -72,8 +80,9 @@ export const pickProjectDirectory = async (): Promise<DirectoryHandleLike> => {
  */
 export const streamDirectoryEntries = async function* (
   root: DirectoryHandleLike,
+  scope: ProjectFileScope = createProjectFileScope(),
 ): AsyncGenerator<ProjectSourceEntry> {
-  yield* walkDirectory(root, '');
+  yield* walkDirectory(root, '', scope);
 };
 
 /**
@@ -82,8 +91,12 @@ export const streamDirectoryEntries = async function* (
 export const countDirectoryEntries = async (
   root: DirectoryHandleLike,
   onProgress?: (progress: DirectoryCountProgress) => void,
+  scope: ProjectFileScope = createProjectFileScope(),
+  shouldStop: () => boolean = () => false,
+  maxFiles = Number.MAX_SAFE_INTEGER,
 ): Promise<DirectoryCountSummary> => {
-  const summary: DirectoryCountSummary = { totalFiles: 0, ignoredDirectories: 0 };
+  const summary: DirectoryCountSummary = { totalFiles: 0, ignoredDirectories: 0,
+    scopeExcludedFiles: 0, excludedDirectorySamples: [] };
   let lastReportedFiles = -1;
   let lastReportedAt = 0;
 
@@ -104,17 +117,20 @@ export const countDirectoryEntries = async (
 
   const countDirectory = async (directory: DirectoryHandleLike, parentPath: string): Promise<void> => {
     for await (const handle of directory.values()) {
+      if (shouldStop() || summary.totalFiles >= maxFiles) return;
       const path = parentPath ? `${parentPath}/${handle.name}` : handle.name;
       if (handle.kind === 'directory') {
-        if (IGNORED_DIRECTORY_NAMES.has(handle.name.toLowerCase())) {
+        if (scope.excludes(path, true)) {
           summary.ignoredDirectories += 1;
+          if (summary.excludedDirectorySamples.length < 20) summary.excludedDirectorySamples.push(path);
           report(path);
           continue;
         }
         await countDirectory(handle, path);
         continue;
       }
-      summary.totalFiles += 1;
+      if (!scope.excludes(path)) summary.totalFiles += 1;
+      else summary.scopeExcludedFiles += 1;
       report(path);
     }
   };
@@ -128,6 +144,7 @@ export const countDirectoryEntries = async (
 const walkDirectory = async function* (
   directory: DirectoryHandleLike,
   parentPath: string,
+  scope: ProjectFileScope,
 ): AsyncGenerator<ProjectSourceEntry> {
   let pendingFiles: PendingFileHandle[] = [];
 
@@ -147,15 +164,16 @@ const walkDirectory = async function* (
       for (const entry of await flushPendingFiles()) {
         yield entry;
       }
-      if (IGNORED_DIRECTORY_NAMES.has(handle.name.toLowerCase())) {
+      if (scope.excludes(path, true)) {
         yield { kind: 'ignored-directory', path };
         continue;
       }
-      yield* walkDirectory(handle, path);
+      yield* walkDirectory(handle, path, scope);
       continue;
     }
 
-    pendingFiles.push({ path, handle });
+    // 在 getFile 前剪枝，避免对缓存、私有运行数据或用户声明排除的文件发起磁盘读取。
+    if (!scope.excludes(path)) pendingFiles.push({ path, handle });
     if (pendingFiles.length >= FILE_HANDLE_BATCH_SIZE) {
       for (const entry of await flushPendingFiles()) {
         yield entry;

@@ -42,6 +42,21 @@ class NaturalTaskScopeTest {
         assertThatThrownBy(() -> read(payload)).isInstanceOf(ProviderException.class);
     }
 
+    /** 回放上轮两次真实准备失败，不发送模型，也不靠自动补上rawPrompt绕过原来源要求。 */
+    @ParameterizedTest
+    @ValueSource(strings = {"003", "004"})
+    void actualCsvPreparationFailuresIdentifyTheMissingUserAuthority(String traceId) throws Exception {
+        var path = java.nio.file.Path.of("../../docs/testing/evidence/natural-writer-input70-2026-10-29/new-31/traces/" + traceId + ".json");
+        var trace = json.readTree(java.nio.file.Files.readString(path));
+        String user = trace.path("request").path("messages").get(1).path("content").asText();
+        var original = (ObjectNode) json.readTree(user.substring(user.indexOf('{')));
+        original.remove("taskSources"); // 只由服务端从原输入重新建立来源目录，不信任快照里的派生目录。
+        var actual = json.treeToValue(original, NaturalPromptInput.class);
+        var scope = json.readValue(trace.path("response").path("choices").get(0).path("message").path("content").asText(), NaturalTaskScope.class);
+        assertThatThrownBy(() -> scope.resolveAdvisory(actual)).isInstanceOfSatisfying(NaturalTaskScope.MissingUserAuthority.class,
+                failure -> assertThat(failure.repairInstruction()).contains("用户来源").doesNotContain(actual.rawPrompt()));
+    }
+
     private NaturalTaskScope read(ObjectNode payload) throws Exception {
         return json.treeToValue(payload, NaturalTaskScope.class).resolve(input);
     }

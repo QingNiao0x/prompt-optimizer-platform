@@ -1,0 +1,28 @@
+{
+  "id": "SIMPLE_N2_EXEC",
+  "caseId": "W70-N2",
+  "phase": "EXECUTION",
+  "request": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "messages": [
+      {
+        "role": "system",
+        "content": "请直接完成用户的任务，交付可阅读且能实际使用的结果。可使用自然段、标题、要点或表格。仅使用本次提供的共同材料和通用知识，没有外部工具；不得声称已联网或已运行。"
+      },
+      {
+        "role": "user",
+        "content": "编写可命令行运行的 Python 3.11 脚本 daily_net.py，仅用标准库，运行命令为 python daily_net.py input.csv output.csv。读取 UTF-8 CSV（接受 BOM 和合法 CSV 引号，用 csv 模块正确处理跨行引号）；表头至少含 paid_at,channel,status,amount,refund_amount，缺任一字段整批失败，额外列允许并忽略。status 只允许 PAID、REFUNDED、CANCELLED，未知状态报错。读取 status 后若为 CANCELLED，直接忽略该数据行，不再校验其 paid_at、channel、amount、refund_amount。其余行：paid_at 必须是合法 YYYY-MM-DD 日期，按该日汇总且不换时区；channel 去掉两端空白后保留大小写，不能为空；amount、refund_amount 用 decimal.Decimal 精确解析，拒绝 NaN、无穷、负数、空值和超过两位小数的值；refund_amount 不得大于 amount。PAID 与 REFUNDED 均按 amount-refund_amount 计入净收入，不重复扣款，不按订单行数计算收入。按 date、channel 字符串升序汇总，输出 UTF-8 CSV，表头为 date,channel,net_amount，净收入固定两位小数。只有表头的空数据输入成功，输出也只有表头。输入路径与输出路径解析后相同则拒绝，不写输出。任何坏行使整批失败：stderr 指出数据行序号（表头后第一条为 1）和字段名，退出码 2；表头缺失字段同样失败并保持输出不变；已有输出文件在任何失败情形下必须完全不变。必须先在内存完成全部读取、校验和汇总，全部成功后才写输出；成功时允许替换原有输出，建议同目录临时文件加 os.replace 原子替换。最终只返回 JSON 对象 {\"files\":[{\"path\":\"daily_net.py\",\"content\":\"完整源码\"}]}，content 放完整源码；不要 Markdown、说明、命令或新增测试文件。"
+      },
+      {
+        "role": "user",
+        "content": "本次共同材料（所有作品臂完全相同）：\n--- order-summary-rules.md ---\n全部订单字段、渠道及文件均为合成评测数据，不对应真实经营记录。运行环境Python3.11，只用标准库。命令为 python daily_net.py input.csv output.csv。交付一个JSON对象 {\"files\":[{\"path\":\"daily_net.py\",\"content\":\"完整源码\"}]}，只给这一个文件，不附Markdown、说明、命令或新增测试文件。\n输入CSV为UTF-8，允许BOM和合法CSV引号。表头至少含 paid_at,channel,status,amount,refund_amount，缺任一字段整批失败。status只允许PAID、REFUNDED、CANCELLED；未知状态报错。识别为CANCELLED后直接忽略该数据行，不再校验其日期、渠道或金额。\n其余行paid_at须是合法YYYY-MM-DD日期，按该日汇总，不换时区；channel去掉两端空白，保留大小写，不能为空。amount和refund_amount用十进制精确金额，不允许NaN、无穷、负数或超过两位小数；refund_amount不能大于amount。PAID也按amount-refund_amount计入；REFUNDED同样按该差额计入，不重复扣款。\n输出UTF-8 CSV，表头date,channel,net_amount；按date、channel升序，净收入固定两位小数。不按订单行数计算收入。只有表头的空数据输入成功，输出也只有表头。输入路径和输出路径解析后相同则拒绝。任何坏行使整批失败，stderr指出数据行序号（表头后第一条为1）和字段名，退出码2，已有输出文件必须完全不变。全部检查成功后才写输出；成功时允许替换原有输出。"
+      }
+    ]
+  }
+}

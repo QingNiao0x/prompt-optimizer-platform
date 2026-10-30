@@ -22,6 +22,7 @@ import { withRelativePath, type DroppedFileCollection } from '@/composables/file
 import { usePlanModePreference } from '@/composables/usePlanModePreference';
 import { useProjectIndex } from '@/composables/useProjectIndex';
 import { useProjectFiles } from '@/composables/useProjectFiles';
+import { loadSelectedFileScopes } from '@/features/project-index/projectFileScope';
 import { buildRefinedContextQuery } from '@/features/optimization/optimizationRequest';
 import { useOptimizationStore } from '@/stores/optimization';
 import { recordPlanningEvent } from '@/services/planningMetrics';
@@ -34,6 +35,7 @@ import {
   MAX_READ_CHARS_PER_FILE,
   MAX_TOTAL_CHARACTERS,
   shouldUseTemporaryDocumentIndex,
+  type FileProcessingProgress,
 } from '@/workers/fileReaderCore';
 
 const store = useOptimizationStore();
@@ -75,13 +77,16 @@ const {
 } = storeToRefs(store);
 
 const contextVision = useContextVisionStore();
+const respectProjectIgnore = ref(true);
+const fileSelectionProgress = ref<FileProcessingProgress | null>(null);
 const {
   isReading,
   warnings,
   progress,
   selectFileArray,
   reset: resetProjectFiles,
-} = useProjectFiles({ reviewVision: (status, signal) => contextVision.review(status, signal, store.selectedModelId) });
+} = useProjectFiles({ respectGitignore: () => respectProjectIgnore.value,
+  reviewVision: (status, signal) => contextVision.review(status, signal, store.selectedModelId) });
 const {
   isSupported: supportsDirectoryPicker,
   isSelecting: isSelectingDirectory,
@@ -196,6 +201,7 @@ const runProjectIndexOperation = async (
   selectionWarnings.value = [];
   try {
     const options = {
+      respectGitignore: respectProjectIgnore.value,
       limits: effectiveIndexLimits.value,
       retention: projectContextSettings.value.retention,
       autoCleanupDays: projectContextSettings.value.autoCleanupDays,
@@ -230,9 +236,10 @@ const runProjectIndexOperation = async (
     }
     ElMessage.success(
       mode === 'FULL'
-        ? `已为 ${summary.indexedFiles} 个源码文件建立本地索引。`
+        ? `已为 ${summary.indexedFiles} 个文本文件完整建立本地索引。`
         : `增量索引完成：新增 ${summary.addedFiles}，更新 ${summary.updatedFiles}，删除 ${summary.removedFiles}。`,
     );
+    if (summary.failedFiles > 0) ElMessage.warning(`${summary.failedFiles} 个文件读取失败，请检查目录权限后增量更新。`);
     if (summary.scanLimitReached || summary.storageLimitReached) {
       ElMessage.warning(
         summary.scanLimitReached
@@ -299,15 +306,28 @@ const handleSelectedContextFiles = async (selected: readonly File[]): Promise<vo
   const selectionVersion = ++contextSelectionVersion;
   const isCurrentSelection = (): boolean =>
     currentLifecycle === pageLifecycleVersion && selectionVersion === contextSelectionVersion;
+  fileSelectionProgress.value = { phase: 'scan', current: 0, total: selected.length,
+    fileName: '', percent: 0, accepted: 0, skipped: 0 };
   try {
-    const { files: candidates, stats } = await collectCandidateFiles(selected, MAX_FILES);
+    // 在办公文档确认列表与源码分流之前统一应用目录规则，不让分流丢失根目录 .gitignore。
+    const excludedByProject = await loadSelectedFileScopes(selected, respectProjectIgnore.value);
+    if (!isCurrentSelection()) return;
+    const { files: candidates, stats } = await collectCandidateFiles(selected, MAX_FILES,
+      async (current, total, accepted) => {
+        if (!isCurrentSelection()) return;
+        fileSelectionProgress.value = { phase: 'scan', current, total, accepted, skipped: 0,
+          fileName: '', percent: total ? Math.floor(current / total * 100) : 0 };
+        await new Promise(resolve => setTimeout(resolve, 0));
+      }, excludedByProject);
     if (!isCurrentSelection()) {
       return;
     }
     const skipped = stats.pathIgnored + stats.sensitive + stats.unsupported + stats.oversized;
     selectionWarnings.value = skipped > 0
-      ? [`已跳过 ${skipped} 个不支持、超限或敏感文件；这些文件不会上传。`]
+      ? [`已跳过 ${skipped} 个按项目规则排除、不支持、超限或敏感的文件；这些文件不会上传。`]
       : [];
+    if (stats.unscanned > 0) selectionWarnings.value.push(`另有 ${stats.unscanned} 个文件因批次上限未扫描，请分批选择或使用本地项目索引。`);
+    fileSelectionProgress.value = null;
     const inlineBudget = Math.min(MAX_READ_CHARS_PER_FILE,
       Math.max(1_024, Math.floor(MAX_TOTAL_CHARACTERS / Math.max(1, candidates.length))));
     const immediate = candidates.filter((file) => !shouldUseTemporaryDocumentIndex(file, inlineBudget));
@@ -326,6 +346,8 @@ const handleSelectedContextFiles = async (selected: readonly File[]): Promise<vo
       return;
     }
     ElMessage.error(error instanceof Error ? error.message : '文件读取失败，请重新选择。');
+  } finally {
+    if (isCurrentSelection()) fileSelectionProgress.value = null;
   }
 };
 
@@ -666,6 +688,7 @@ const formatBytes = (bytes: number): string => {
 /** 取消选择与上传回调；已添加的独立资料仍由 Store 管理。 */
 const cancelFileSelection = (): void => {
   contextSelectionVersion += 1;
+  fileSelectionProgress.value = null;
   resetProjectFiles();
   uploadCandidates.value = [];
   omittedUploadCandidates.value = 0;
@@ -788,15 +811,16 @@ onBeforeUnmount(() => {
         :context-retrieval="contextRetrieval"
         :snapshot="contextSnapshot"
         :transmission="contextTransmission"
-        :is-reading="isReading"
+        :is-reading="isReading || fileSelectionProgress !== null"
         :is-analyzing="isAnalyzing"
-        :progress="progress"
+        :progress="fileSelectionProgress ?? progress"
         :supports-directory-picker="supportsDirectoryPicker"
         :is-selecting-directory="isSelectingDirectory"
         :is-indexing="isIndexing"
         :is-clearing-index="isClearingIndex"
         :is-pausing="isPausing"
         :index-progress="indexProgress"
+        v-model:respect-project-ignore="respectProjectIgnore"
         @update:custom-description="customDescription = $event"
         @files-selected="handleFilesSelected"
         @documents-selected="handleDocumentsSelected"
@@ -832,7 +856,7 @@ onBeforeUnmount(() => {
         :is-analyzing="isAnalyzing"
         :is-planning="isPlanning"
         :is-optimizing="isOptimizing || isPreparingContext"
-        :can-optimize="canOptimize && !isReading && trial.canUse('PROMPT_ENHANCEMENT')"
+        :can-optimize="canOptimize && !isReading && fileSelectionProgress === null && trial.canUse('PROMPT_ENHANCEMENT')"
         :allow-plan="auth.isAuthenticated"
         @update:raw-prompt="rawPrompt = $event"
         @update:structured-prompt="store.setPromptFormat($event ? 'STRUCTURED' : 'COMPACT')"

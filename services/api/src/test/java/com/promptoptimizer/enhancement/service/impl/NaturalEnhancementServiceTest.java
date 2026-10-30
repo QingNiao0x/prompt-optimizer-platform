@@ -36,6 +36,7 @@ class NaturalEnhancementServiceTest {
     private final StubProvider provider = new StubProvider();
     private NaturalEnhancementService service;
     private PlanningSessionServiceImpl sessions;
+    private NaturalEnhancementSettings settings;
 
     @BeforeEach
     void setUp() {
@@ -47,7 +48,24 @@ class NaturalEnhancementServiceTest {
         var catalog = mock(PlatformModelCatalog.class);
         when(catalog.resolve(any())).thenReturn(new PlatformModelCatalog.ModelEntry(new UUID(0, 4),
                 "fixture:model", "fixture", "model", "Fixture model", true, true, 0));
-        service = new NaturalEnhancementService(analyzer, filter, sessions, actor, catalog, provider, clock);
+        settings = new NaturalEnhancementSettings();
+        service = new NaturalEnhancementService(analyzer, filter, sessions, actor, catalog, provider, clock, settings);
+    }
+
+    @Test
+    void coreRepairAppliesToNewDirectTrialAndPlanRequestsButExplicitHistoryKeepsItsVersion() {
+        settings.setProfile(NaturalEnhancementSettings.Profile.CORE_REPAIR);
+        var direct = service.optimize(request("写一封邮件", null, List.of(), "fixture:model"));
+        assertThat(direct.chainVersion()).isEqualTo(NaturalPromptCoreRepairInstructions.VERSION);
+        service.plan(planRequest());
+        assertThat(provider.last.strategyVersion()).isEqualTo(NaturalPromptCoreRepairInstructions.VERSION);
+        service.optimizeTrial(request("写一封邮件", null, List.of(), "fixture:model"));
+        assertThat(provider.last.strategyVersion()).isEqualTo(NaturalPromptCoreRepairInstructions.VERSION);
+        service.optimize(request("写一封邮件", null, List.of(), "fixture:model"), "31");
+        assertThat(provider.last.strategyVersion()).isEqualTo("31");
+        settings.setProfile(NaturalEnhancementSettings.Profile.STABLE);
+        service.optimize(request("写一封邮件", null, List.of(), "fixture:model"));
+        assertThat(provider.last.strategyVersion()).isEqualTo("31");
     }
 
     @ParameterizedTest
@@ -126,8 +144,10 @@ class NaturalEnhancementServiceTest {
         assertThat(result.optimizedPrompt()).isEqualTo(provider.body);
     }
 
-    @Test
-    void naturalModeKeepsOnlyExplicitAdditionalPermissionsWithoutDependingOnOptionalEnhancementFlags() {
+    @ParameterizedTest
+    @ValueSource(strings = {"STABLE", "CORE_REPAIR"})
+    void naturalModeKeepsOnlyExplicitAdditionalPermissionsWithoutDependingOnOptionalEnhancementFlags(String profile) {
+        settings.setProfile(NaturalEnhancementSettings.Profile.valueOf(profile));
         var request = new OptimizationRequest("写一封邮件", new ContextAnalysisRequest("", List.of()),
                 new EnhancementOptions(TemplateCode.AUTO, false, false, PromptFormat.COMPACT), List.of(),
                 new PermissionPolicyInput(List.of("private/**"), List.of("发送邮件")), null, "fixture:model");

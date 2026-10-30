@@ -71,7 +71,7 @@ class NaturalRoutingRepairProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"41", "42", "45", "46", "47", "48"})
+    @ValueSource(strings = {"41", "42", "45", "46", "47", "48", "core-repair-v1"})
     void zeroQuestionPlanStillGeneratesUsefulAdditions(String version) throws Exception {
         var input = input("请比较两种通勤方式。", List.of()).withStrategyVersion(version);
         expect(scope(input.rawPrompt(), "INHERENT"), NaturalPromptRoutingRepairInstructions.PREPARE, payload -> {});
@@ -97,7 +97,7 @@ class NaturalRoutingRepairProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"41", "42", "45", "46", "47", "48"})
+    @ValueSource(strings = {"41", "42", "45", "46", "47", "48", "core-repair-v1"})
     void allActualAnswersAndTheirBodyCoverageRemainMandatory(String version) throws Exception {
         var answers = List.of(new PlanAnswer("place", "地点？", "青禾中心二层会议室"),
                 new PlanAnswer("date", "日期？", "日期保持原定，不能承诺提前"));
@@ -111,7 +111,7 @@ class NaturalRoutingRepairProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"41", "42", "45", "46", "47", "48"})
+    @ValueSource(strings = {"41", "42", "45", "46", "47", "48", "core-repair-v1"})
     void forgedEvidenceStillFailsInsteadOfFallingBackToRawText(String version) throws Exception {
         var input = input("请解释事务。", List.of()).withStrategyVersion(version);
         expect(scope(input.rawPrompt(), "INHERENT"), NaturalPromptRoutingRepairInstructions.PREPARE, payload -> {});

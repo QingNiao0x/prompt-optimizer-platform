@@ -17,6 +17,7 @@ public final class NaturalPromptRoutingRepairInstructions {
     /** 39起的路由修复版本均生成正文；正文与Plan按版本选择，旧31保留既有行为。 */
     public static boolean supports(String version) {
         return VERSION.equals(version) || ADVISORY_TIMING_VERSION.equals(version) || OWNED_DECISIONS_VERSION.equals(version)
+                || NaturalPromptCoreRepairInstructions.VERSION.equals(version)
                 || NaturalPromptContentQualityInstructions.VERSION.equals(version)
                 || NaturalPromptGroundedCompletionInstructions.VERSION.equals(version)
                 || NaturalPromptMultidimensionalInstructions.VERSION.equals(version)

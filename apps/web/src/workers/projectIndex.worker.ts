@@ -1,5 +1,7 @@
 import {
   streamDirectoryEntries,
+  countDirectoryEntries,
+  loadProjectFileScope,
   type DirectoryHandleLike,
 } from '@/features/project-index/fileSystemDirectorySource';
 import { projectIndexRepository } from '@/features/project-index/indexedDbProjectIndexRepository';
@@ -32,6 +34,7 @@ interface StartProjectIndexRequest {
   sessionId: string;
   expiresAt: string;
   mode: ProjectIndexMode;
+  respectGitignore?: boolean;
 }
 
 type ProjectIndexWorkerRequest = StartProjectIndexRequest | { type: 'pause' };
@@ -63,15 +66,28 @@ scope.onmessage = async (event: MessageEvent<ProjectIndexWorkerRequest>): Promis
     return;
   }
 
-  const { projectId, rootHandle, limits, retention, sessionId, expiresAt, mode } = event.data;
+  const { projectId, rootHandle, limits, retention, sessionId, expiresAt, mode, respectGitignore } = event.data;
   pauseRequested = false;
   isRunning = true;
   try {
+    const startedAt = performance.now();
+    const fileScope = await loadProjectFileScope(rootHandle, respectGitignore);
+    // 为真实百分比仅预枚举句柄，不读取正文、不保存全项目 File 数组。统计与索引共用冻结的规则。
+    const counted = await countDirectoryEntries(rootHandle, (count) => scope.postMessage({
+      type: 'progress', progress: {
+        phase: 'SCANNING', currentPath: count.currentPath, processedFiles: 0,
+        discoveredFiles: count.discoveredFiles, indexedFiles: 0, eligibleFiles: 0,
+        ignoredFiles: 0, ignoredDirectories: count.ignoredDirectories, failedFiles: 0,
+        addedFiles: 0, updatedFiles: 0, unchangedFiles: 0, chunkCount: 0, indexedCharacters: 0,
+        filesPerSecond: 0, elapsedMs: performance.now() - startedAt,
+      },
+    }), fileScope, () => pauseRequested, limits.maxScanFiles + 1);
     const documents: DiscoveredDocument[] = [];
     let omittedDocuments = 0;
-    // 与源码索引共用一次目录遍历，只收集安全文件的元数据和 File 引用，不读取附件正文。
+    // 附件与正文共用处理遍历；预统计不调用 getFile，办公文档仍需随后单独确认上传。
     const entries = async function* (): AsyncGenerator<ProjectSourceEntry> {
-      for await (const entry of streamDirectoryEntries(rootHandle)) {
+      if (pauseRequested) return;
+      for await (const entry of streamDirectoryEntries(rootHandle, fileScope)) {
         if (entry.kind === 'file' && isBinaryDocumentFile(entry.file)) {
           if (!isSafeRelativeFilePath(entry.path) || isSensitiveFile(entry.path)
               || entry.file.size > MAX_DOCUMENT_FILE_BYTES || documents.length >= 100) {
@@ -83,7 +99,6 @@ scope.onmessage = async (event: MessageEvent<ProjectIndexWorkerRequest>): Promis
         yield entry;
       }
     };
-    // 边遍历边索引；总数未知时展示已处理数量，不为百分比重复扫描整个目录。
     const summary = await indexProject({
       projectId,
       rootName: rootHandle.name,
@@ -94,6 +109,10 @@ scope.onmessage = async (event: MessageEvent<ProjectIndexWorkerRequest>): Promis
       sessionId,
       expiresAt,
       mode,
+      totalFiles: counted.totalFiles,
+      scanDurationMs: performance.now() - startedAt,
+      scopeExcludedFiles: counted.scopeExcludedFiles,
+      excludedDirectorySamples: counted.excludedDirectorySamples,
       shouldPause: () => pauseRequested,
       onProgress: (progress) => scope.postMessage({ type: 'progress', progress }),
     });

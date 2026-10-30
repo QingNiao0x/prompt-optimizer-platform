@@ -1,0 +1,64 @@
+{
+  "reviewerKind": "INTERNAL_AI_ROOT_AGENT",
+  "humanReviewerParticipated": false,
+  "modelQualityRetries": false,
+  "cases": [
+    {
+      "caseId": "W70-N1",
+      "directlyUsableWithinInspectedScope": true,
+      "hanCharacters": 186,
+      "observed": [
+        "保留维护日期时间、仅导出受影响、排队继续、有效下载链接、无需改设置或重复提交、紧急导出和支持入口",
+        "无原因猜测、优惠券或逐一回访承诺",
+        "只交付可外发通知"
+      ],
+      "humanPreference": "PENDING"
+    },
+    {
+      "caseId": "W70-N2",
+      "directlyUsableWithinInspectedScope": true,
+      "checks": 16,
+      "passed": 16,
+      "sourceReviewedByAgent": true,
+      "humanReviewerParticipated": false,
+      "limits": [
+        "实际Python3.12与3.11语法检查",
+        "只证明原16项预定行为",
+        "改写中选择在内存汇总，不证明任意数据规模适用"
+      ]
+    }
+  ],
+  "metrics": [
+    {
+      "caseId": "W70-N1",
+      "complex70": {
+        "calls": 4,
+        "elapsedMs": 109122,
+        "totalTokens": 31491
+      },
+      "simple": {
+        "calls": 1,
+        "elapsedMs": 18690,
+        "totalTokens": 4332
+      },
+      "generationInferenceParametersMatched": true,
+      "productProtectionResponsibilitiesEqual": false
+    },
+    {
+      "caseId": "W70-N2",
+      "complex70": {
+        "calls": 3,
+        "elapsedMs": 59451,
+        "totalTokens": 20543
+      },
+      "simple": {
+        "calls": 1,
+        "elapsedMs": 41651,
+        "totalTokens": 7947
+      },
+      "generationInferenceParametersMatched": true,
+      "productProtectionResponsibilitiesEqual": false
+    }
+  ],
+  "conclusion": "两道已见合成题中简洁基线可行，不能证明普遍稳定收益或直接替换带来源/题答保护的产品。"
+}

@@ -1,0 +1,75 @@
+{
+  "status": "FROZEN",
+  "frozenAt": "2026-10-29T19:32:41.351Z",
+  "task": "finite-simple-baseline-comparison",
+  "destination": "https://api.deepseek.com/chat/completions",
+  "authorization": "2026-10-30 user approved implementing the simplification plan; uses only remaining four calls of the existing48, approved synthetic cases and derivatives, no new budget",
+  "sharedMaximum": 48,
+  "previousActualCalls": 44,
+  "maximumNewCalls": 4,
+  "phaseLimits": {
+    "GENERATION": 2,
+    "EXECUTION": 2
+  },
+  "jobIds": [
+    "SIMPLE_N1_GEN",
+    "SIMPLE_N1_EXEC",
+    "SIMPLE_N2_GEN",
+    "SIMPLE_N2_EXEC"
+  ],
+  "qualityRetries": false,
+  "protocolRetries": false,
+  "newAccounts": false,
+  "newPaidReview": false,
+  "scope": "Offline product regression plus two known-case feasibility comparisons; not an independent holdout, human review or product adoption",
+  "casesSha256": "9eb26799ac076acfec6b711ddadd6b70616a2aeef4cdf20e77f37e511b8fb139",
+  "instructionSha256": "739163168c74b6fd748b78fcedf2b21f28cce4565bcb1700166849637b36fb36",
+  "bodyParameterSource": {
+    "path": "new-70-allocated/traces/002.json",
+    "sha256": "07dc2d738e74144b8548bfbbe2cc921b6299cdfebe4ee6300e659878bc4c3029"
+  },
+  "sources": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskScope.java",
+      "sha256": "b3a819a5a644630900dc51f0501b07276dfb4db46e3bff75ce8aef23fa47550e"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptCoreRepairInstructions.java",
+      "sha256": "79c6ce03e8032aae7c30f0fb7b2e08041062e4ead3edf73aad5366156d830cc4"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "e0044312c56d3daaeb5b66167cdb5eb909cd87eac9604011de58e8ff8d085d10"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementService.java",
+      "sha256": "b773d8ca186b0fb42fa4193c1fa565b925247c3daa41c8773bfaf1ad6545d99d"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementSettings.java",
+      "sha256": "00dbd1589a4859f840374fe607a8ffccaef445f1f25041bd8b807c3f44aac234"
+    }
+  ],
+  "historicalCasesSha256": "8eaedaaac71e4c78469a4bef74cb98d4d769c9b17b4fe545328f7cab838e1dbc",
+  "historicalReportSha256": "44de29eacb82ad79fe17cde91bdbc49da766582716ec88e5521f74769bfd718f",
+  "criteria": {
+    "engineering": [
+      "body stage reached for all response classes",
+      "no source concatenation",
+      "accurate bounded repair without invented evidence",
+      "real answers/permissions retained",
+      "explicit history unchanged",
+      "configuration rollback"
+    ],
+    "quality": [
+      "original deliverable and hard requirements preserved",
+      "useful completion",
+      "no invented facts/authorization",
+      "actual work edit burden",
+      "generation time and token usage"
+    ],
+    "adoption": "No automatic adoption from this two-case pilot; any confirmed new severe regression blocks the corresponding capability",
+    "primaryComparison": "Prespecified R1 of ORIGINAL and70, plus first and only SIMPLE work. Historical R2 retained as sensitivity, never choose the better sample.",
+    "humanDecision": "Prepare anonymous works and a blank review form; no human outcome may be invented"
+  }
+}

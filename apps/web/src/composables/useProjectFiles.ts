@@ -2,6 +2,7 @@ import { nextTick, readonly, ref } from 'vue';
 
 import { uploadAndIndexDocument } from '@/features/document-upload/documentUploader';
 import { deleteDocumentUpload } from '@/services/documentUploadApi';
+import { loadSelectedFileScopes } from '@/features/project-index/projectFileScope';
 import type { ContextFileInput, DocumentProcessingPhase } from '@/types/api';
 import {
   collectCandidateFiles,
@@ -97,6 +98,7 @@ const deleteDocumentReferences = async (files: readonly ContextFileInput[]): Pro
 };
 
 export const useProjectFiles = (options?: {
+  respectGitignore?: () => boolean;
   reviewVision?: (status: import('@/types/api').DocumentUploadStatus, signal?: AbortSignal) => Promise<import('@/types/api').ContextVisionConfirmation>;
 }) => {
   const isReading = ref(false);
@@ -145,6 +147,8 @@ export const useProjectFiles = (options?: {
       // 扫描分片执行，每 500 条让出一次主线程；FileList 由 ContextPanel 延迟清空，保证扫描期间有效。
       const scanWarnings: string[] = [];
       const scanStartedAt = performance.now();
+      const excludedByProject = await loadSelectedFileScopes(fileArray, options?.respectGitignore?.() ?? true);
+      if (!isCurrentOperation()) return [];
       const { files: candidates, stats } = await collectCandidateFiles(
         fileArray,
         MAX_FILES,
@@ -163,6 +167,7 @@ export const useProjectFiles = (options?: {
           };
           await yieldToBrowser();
         },
+        excludedByProject,
       );
       if (!isCurrentOperation()) {
         return [];
@@ -194,8 +199,9 @@ export const useProjectFiles = (options?: {
       await yieldToBrowser();
 
       if (stats.pathIgnored > 0) {
-        scanWarnings.push(`已跳过 ${stats.pathIgnored} 个依赖目录、构建产物或扫描范围外的文件。`);
+        scanWarnings.push(`已按项目规则跳过 ${stats.pathIgnored} 个依赖目录、构建产物或排除范围内的文件。`);
       }
+      if (stats.unscanned > 0) scanWarnings.push(`另有 ${stats.unscanned} 个文件未扫描：已达到本批扫描或选择上限，请分批选择，或使用项目本地索引。`);
       if (stats.sensitive > 0) {
         scanWarnings.push(`已跳过 ${stats.sensitive} 个敏感文件（密钥、私钥、.env 或凭据文件），不会上传。`);
       }
@@ -283,6 +289,7 @@ export const useProjectFiles = (options?: {
       }
 
       const documentWarnings: string[] = [];
+      let failedDocuments = 0;
       for (let index = 0; index < documentCandidates.length; index += 1) {
         const candidate = documentCandidates[index];
         if (!isCurrentOperation()) {
@@ -302,10 +309,10 @@ export const useProjectFiles = (options?: {
               progress.value = {
                 current: inlineCandidates.length + index + 1,
                 total: inlineCandidates.length + documentCandidates.length,
-                fileName: candidate.name,
+                fileName: getProjectFilePath(candidate),
                 percent: documentProgress.percent,
                 accepted: acceptedBeforeDocument,
-                skipped: skippedDocumentBudget + documentWarnings.length,
+                skipped: skippedDocumentBudget + failedDocuments + inlineCandidates.length - selection.files.length,
                 phase: mapDocumentPhase(documentProgress.phase),
                 uploadedBytes: documentProgress.uploadedBytes,
                 totalBytes: documentProgress.totalBytes,
@@ -326,6 +333,7 @@ export const useProjectFiles = (options?: {
             return [];
           }
           const message = error instanceof Error ? error.message : '解析失败';
+          failedDocuments += 1;
           documentWarnings.push(`${getProjectFilePath(candidate)}：${message}`);
         }
       }

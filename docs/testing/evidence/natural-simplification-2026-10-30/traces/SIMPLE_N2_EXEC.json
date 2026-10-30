@@ -1,0 +1,56 @@
+{
+  "jobId": "SIMPLE_N2_EXEC",
+  "caseId": "W70-N2",
+  "phase": "EXECUTION",
+  "arm": "SIMPLE_BASELINE",
+  "state": "RETURNED",
+  "reservedAt": "2026-10-29T19:34:04.542Z",
+  "request": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "messages": [
+      {
+        "role": "system",
+        "content": "请直接完成用户的任务，交付可阅读且能实际使用的结果。可使用自然段、标题、要点或表格。仅使用本次提供的共同材料和通用知识，没有外部工具；不得声称已联网或已运行。"
+      },
+      {
+        "role": "user",
+        "content": "编写可命令行运行的 Python 3.11 脚本 daily_net.py，仅用标准库，运行命令为 python daily_net.py input.csv output.csv。读取 UTF-8 CSV（接受 BOM 和合法 CSV 引号，用 csv 模块正确处理跨行引号）；表头至少含 paid_at,channel,status,amount,refund_amount，缺任一字段整批失败，额外列允许并忽略。status 只允许 PAID、REFUNDED、CANCELLED，未知状态报错。读取 status 后若为 CANCELLED，直接忽略该数据行，不再校验其 paid_at、channel、amount、refund_amount。其余行：paid_at 必须是合法 YYYY-MM-DD 日期，按该日汇总且不换时区；channel 去掉两端空白后保留大小写，不能为空；amount、refund_amount 用 decimal.Decimal 精确解析，拒绝 NaN、无穷、负数、空值和超过两位小数的值；refund_amount 不得大于 amount。PAID 与 REFUNDED 均按 amount-refund_amount 计入净收入，不重复扣款，不按订单行数计算收入。按 date、channel 字符串升序汇总，输出 UTF-8 CSV，表头为 date,channel,net_amount，净收入固定两位小数。只有表头的空数据输入成功，输出也只有表头。输入路径与输出路径解析后相同则拒绝，不写输出。任何坏行使整批失败：stderr 指出数据行序号（表头后第一条为 1）和字段名，退出码 2；表头缺失字段同样失败并保持输出不变；已有输出文件在任何失败情形下必须完全不变。必须先在内存完成全部读取、校验和汇总，全部成功后才写输出；成功时允许替换原有输出，建议同目录临时文件加 os.replace 原子替换。最终只返回 JSON 对象 {\"files\":[{\"path\":\"daily_net.py\",\"content\":\"完整源码\"}]}，content 放完整源码；不要 Markdown、说明、命令或新增测试文件。"
+      },
+      {
+        "role": "user",
+        "content": "本次共同材料（所有作品臂完全相同）：\n--- order-summary-rules.md ---\n全部订单字段、渠道及文件均为合成评测数据，不对应真实经营记录。运行环境Python3.11，只用标准库。命令为 python daily_net.py input.csv output.csv。交付一个JSON对象 {\"files\":[{\"path\":\"daily_net.py\",\"content\":\"完整源码\"}]}，只给这一个文件，不附Markdown、说明、命令或新增测试文件。\n输入CSV为UTF-8，允许BOM和合法CSV引号。表头至少含 paid_at,channel,status,amount,refund_amount，缺任一字段整批失败。status只允许PAID、REFUNDED、CANCELLED；未知状态报错。识别为CANCELLED后直接忽略该数据行，不再校验其日期、渠道或金额。\n其余行paid_at须是合法YYYY-MM-DD日期，按该日汇总，不换时区；channel去掉两端空白，保留大小写，不能为空。amount和refund_amount用十进制精确金额，不允许NaN、无穷、负数或超过两位小数；refund_amount不能大于amount。PAID也按amount-refund_amount计入；REFUNDED同样按该差额计入，不重复扣款。\n输出UTF-8 CSV，表头date,channel,net_amount；按date、channel升序，净收入固定两位小数。不按订单行数计算收入。只有表头的空数据输入成功，输出也只有表头。输入路径和输出路径解析后相同则拒绝。任何坏行使整批失败，stderr指出数据行序号（表头后第一条为1）和字段名，退出码2，已有输出文件必须完全不变。全部检查成功后才写输出；成功时允许替换原有输出。"
+      }
+    ]
+  },
+  "requestSha256": "7acdfde0456198292ebed935b431d620550292d69253e70d2890e677e45815ad",
+  "httpStatus": 200,
+  "elapsedMs": 5346,
+  "response": {
+    "id": "e4a3dd00-d1cf-46f6-affe-b22f1088cb5a",
+    "model": "deepseek-flash",
+    "usage": {
+      "prompt_tokens": 878,
+      "completion_tokens": 1614,
+      "total_tokens": 2492,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 878
+    },
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "content": "{\"files\":[{\"path\":\"daily_net.py\",\"content\":\"#!/usr/bin/env python3\\n\\\"\\\"\\\"Aggregate daily net revenue by date and channel from a CSV file.\\n\\nUsage: python daily_net.py input.csv output.csv\\n\\\"\\\"\\\"\\n\\nimport csv\\nimport os\\nimport sys\\nimport tempfile\\nfrom datetime import datetime\\nfrom decimal import Decimal, InvalidOperation\\n\\nREQUIRED_FIELDS = [\\\"paid_at\\\", \\\"channel\\\", \\\"status\\\", \\\"amount\\\", \\\"refund_amount\\\"]\\nALLOWED_STATUS = {\\\"PAID\\\", \\\"REFUNDED\\\", \\\"CANCELLED\\\"}\\nOUTPUT_HEADER = [\\\"date\\\", \\\"channel\\\", \\\"net_amount\\\"]\\n\\n\\nclass DataError(Exception):\\n    def __init__(self, row_no, field, message):\\n        self.row_no = row_no\\n        self.field = field\\n        self.message = message\\n        super().__init__(message)\\n\\n\\nclass HeaderError(Exception):\\n    def __init__(self, field):\\n        self.field = field\\n        super().__init__(field)\\n\\n\\ndef parse_amount(raw, row_no, field):\\n    if raw is None:\\n        raise DataError(row_no, field, \\\"missing value\\\")\\n    text = raw.strip()\\n    if text == \\\"\\\":\\n        raise DataError(row_no, field, \\\"empty value\\\")\\n    try:\\n        value = Decimal(text)\\n    except (InvalidOperation, ValueError):\\n        raise DataError(row_no, field, \\\"invalid decimal\\\")\\n    if not value.is_finite():\\n        raise DataError(row_no, field, \\\"non-finite value\\\")\\n    if value < 0:\\n        raise DataError(row_no, field, \\\"negative value\\\")\\n    exponent = value.as_tuple().exponent\\n    if exponent < -2:\\n        raise DataError(row_no, field, \\\"more than two decimal places\\\")\\n    return value\\n\\n\\ndef parse_date(raw, row_no):\\n    field = \\\"paid_at\\\"\\n    if raw is None:\\n        raise DataError(row_no, field, \\\"missing value\\\")\\n    text = raw.strip()\\n    if text == \\\"\\\":\\n        raise DataError(row_no, field, \\\"empty value\\\")\\n    try:\\n        parsed = datetime.strptime(text, \\\"%Y-%m-%d\\\")\\n    except ValueError:\\n        raise DataError(row_no, field, \\\"invalid date\\\")\\n    if parsed.strftime(\\\"%Y-%m-%d\\\") != text:\\n        raise DataError(row_no, field, \\\"invalid date\\\")\\n    return text\\n\\n\\ndef read_and_aggregate(input_path):\\n    totals = {}\\n    with open(input_path, \\\"r\\\", encoding=\\\"utf-8-sig\\\", newline=\\\"\\\") as fh:\\n        reader = csv.reader(fh)\\n        try:\\n            header = next(reader)\\n        except StopIteration:\\n            raise HeaderError(REQUIRED_FIELDS[0])\\n        header = [h.strip() for h in header]\\n        index = {}\\n        for name in REQUIRED_FIELDS:\\n            if name not in header:\\n                raise HeaderError(name)\\n            index[name] = header.index(name)\\n\\n        row_no = 0\\n        for row in reader:\\n            row_no += 1\\n            if not row or (len(row) == 1 and row[0].strip() == \\\"\\\"):\\n                continue\\n\\n            def get(name):\\n                pos = index[name]\\n                if pos < len(row):\\n                    return row[pos]\\n                return None\\n\\n            status_raw = get(\\\"status\\\")\\n            status = status_raw.strip() if status_raw is not None else \\\"\\\"\\n            if status not in ALLOWED_STATUS:\\n                raise DataError(row_no, \\\"status\\\", \\\"unknown status\\\")\\n            if status == \\\"CANCELLED\\\":\\n                continue\\n\\n            date = parse_date(get(\\\"paid_at\\\"), row_no)\\n\\n            channel_raw = get(\\\"channel\\\")\\n            channel = channel_raw.strip() if channel_raw is not None else \\\"\\\"\\n            if channel == \\\"\\\":\\n                raise DataError(row_no, \\\"channel\\\", \\\"empty channel\\\")\\n\\n            amount = parse_amount(get(\\\"amount\\\"), row_no, \\\"amount\\\")\\n            refund = parse_amount(get(\\\"refund_amount\\\"), row_no, \\\"refund_amount\\\")\\n            if refund > amount:\\n                raise DataError(row_no, \\\"refund_amount\\\", \\\"refund exceeds amount\\\")\\n\\n            net = amount - refund\\n            key = (date, channel)\\n            totals[key] = totals.get(key, Decimal(\\\"0\\\")) + net\\n\\n    return totals\\n\\n\\ndef write_output(output_path, totals):\\n    directory = os.path.dirname(os.path.abspath(output_path)) or \\\".\\\"\\n    fd, tmp_path = tempfile.mkstemp(prefix=\\\".daily_net_\\\", suffix=\\\".tmp\\\", dir=directory)\\n    try:\\n        with os.fdopen(fd, \\\"w\\\", encoding=\\\"utf-8\\\", newline=\\\"\\\") as fh:\\n            writer = csv.writer(fh)\\n            writer.writerow(OUTPUT_HEADER)\\n            for (date, channel) in sorted(totals.keys()):\\n                net = totals[(date, channel)]\\n                writer.writerow([date, channel, format(net, \\\".2f\\\")])\\n        os.replace(tmp_path, output_path)\\n    except BaseException:\\n        try:\\n            os.unlink(tmp_path)\\n        except OSError:\\n            pass\\n        raise\\n\\n\\ndef main(argv):\\n    if len(argv) != 3:\\n        sys.stderr.write(\\\"usage: python daily_net.py input.csv output.csv\\\\n\\\")\\n        return 2\\n\\n    input_path = argv[1]\\n    output_path = argv[2]\\n\\n    if os.path.abspath(input_path) == os.path.abspath(output_path):\\n        sys.stderr.write(\\\"error: input and output paths are the same\\\\n\\\")\\n        return 2\\n\\n    try:\\n        totals = read_and_aggregate(input_path)\\n    except HeaderError as exc:\\n        sys.stderr.write(\\\"error: missing required header field: %s\\\\n\\\" % exc.field)\\n        return 2\\n    except DataError as exc:\\n        sys.stderr.write(\\n            \\\"error: row %d field %s: %s\\\\n\\\" % (exc.row_no, exc.field, exc.message)\\n        )\\n        return 2\\n    except OSError as exc:\\n        sys.stderr.write(\\\"error: %s\\\\n\\\" % exc)\\n        return 2\\n\\n    try:\\n        write_output(output_path, totals)\\n    except OSError as exc:\\n        sys.stderr.write(\\\"error: %s\\\\n\\\" % exc)\\n        return 2\\n\\n    return 0\\n\\n\\nif __name__ == \\\"__main__\\\":\\n    sys.exit(main(sys.argv))\\n\"}]}"
+        }
+      }
+    ]
+  }
+}

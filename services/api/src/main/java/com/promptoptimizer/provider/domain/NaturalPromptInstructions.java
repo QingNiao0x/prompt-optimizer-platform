@@ -51,7 +51,8 @@ public final class NaturalPromptInstructions {
             case "3" -> NaturalPromptInstructionsV3.ENHANCE;
             case VERSION -> ENHANCE;
             case NaturalPromptRoutingRepairInstructions.VERSION, NaturalPromptRoutingRepairInstructions.ADVISORY_TIMING_VERSION,
-                    NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION -> NaturalPromptRoutingRepairInstructions.ENHANCE;
+                    NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION,
+                    NaturalPromptCoreRepairInstructions.VERSION -> NaturalPromptRoutingRepairInstructions.ENHANCE;
             case NaturalPromptContentQualityInstructions.VERSION -> NaturalPromptContentQualityInstructions.ENHANCE;
             case NaturalPromptGroundedCompletionInstructions.VERSION -> NaturalPromptGroundedCompletionInstructions.ENHANCE;
             case NaturalPromptMultidimensionalInstructions.VERSION -> NaturalPromptMultidimensionalInstructions.ENHANCE;
@@ -114,7 +115,8 @@ public final class NaturalPromptInstructions {
             case "3" -> NaturalPromptInstructionsV3.PLAN;
             case VERSION -> PLAN;
             case NaturalPromptRoutingRepairInstructions.VERSION, NaturalPromptRoutingRepairInstructions.ADVISORY_TIMING_VERSION -> NaturalPromptRoutingRepairInstructions.PLAN;
-            case NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION, NaturalPromptContentQualityInstructions.VERSION,
+            case NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION, NaturalPromptCoreRepairInstructions.VERSION,
+                    NaturalPromptContentQualityInstructions.VERSION,
                     NaturalPromptGroundedCompletionInstructions.VERSION, NaturalPromptMultidimensionalInstructions.VERSION
                     -> NaturalPromptRoutingRepairInstructions.OWNED_PLAN;
             case NaturalPromptContextualRewriteInstructions.VERSION -> NaturalPromptContextualRewriteInstructions.PLAN;

@@ -38,9 +38,11 @@ interface WorkerStartRequest {
   sessionId: string;
   expiresAt: string;
   mode: ProjectIndexMode;
+  respectGitignore?: boolean;
 }
 
 export interface ProjectIndexStartOptions {
+  respectGitignore?: boolean;
   limits: EffectiveProjectIndexLimits;
   retention: ProjectIndexRetention;
   autoCleanupDays: number;
@@ -152,6 +154,7 @@ export const useProjectIndex = () => {
         sessionId,
         expiresAt: createExpiryDate(options.autoCleanupDays),
         mode,
+        respectGitignore: options.respectGitignore,
       });
       assertOperationActive(operationId, operationVersion);
       summary.value = result.summary;

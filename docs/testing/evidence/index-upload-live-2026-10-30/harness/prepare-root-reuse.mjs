@@ -1,0 +1,12 @@
+import fs from 'node:fs/promises';
+const source=await fs.readFile('tmp/index-upload-20261030/full-acceptance.mjs','utf8');
+const body=source.slice(source.indexOf(" phase='native_directory';"),source.indexOf(" phase='waiting_documents';"));
+const prefix=`import fs from 'node:fs/promises';import path from 'node:path';import {createRequire} from 'node:module';
+const root=process.cwd(),out=path.join(root,'tmp/index-upload-20261030/full-diagnostic-index');await fs.mkdir(out,{recursive:true});
+const require=createRequire(path.join(root,'apps/web/package.json'));const {chromium,expect}=require('@playwright/test');
+const browser=await chromium.connectOverCDP('http://127.0.0.1:9337');const context=browser.contexts()[0],page=context.pages()[0];
+const report={startedAt:new Date().toISOString(),modelCalls:0,errors:[],sameAccount:true};const save=()=>fs.writeFile(path.join(out,'report.json'),JSON.stringify(report,null,2));let phase='setup';
+try {await page.goto('http://127.0.0.1:5198/workbench');await expect(page.getByRole('button',{name:'添加上下文'})).toBeVisible({timeout:60000});
+`;
+const suffix=`}catch(e){report.failure={phase,message:e.message};console.log('ACCEPTANCE_FAILURE',phase,e.message);await page.screenshot({path:path.join(out,'failure.png'),fullPage:true}).catch(()=>{});}finally{await save();process.exitCode=report.failure?1:0;await browser._connection?.close?.();}`;
+await fs.writeFile('tmp/index-upload-20261030/full-root-reuse.mjs',prefix+body+suffix);

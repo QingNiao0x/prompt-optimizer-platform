@@ -1,5 +1,5 @@
 import type { ContextFileInput } from '@/types/api';
-import { DEPENDENCY_CACHE_DIRECTORY_NAMES } from '@/features/project-index/dependencyCacheDirectories';
+import { PROJECT_GENERATED_DIRECTORIES } from '@/features/project-index/projectFileScope';
 
 export const MAX_FILES = 1_000;
 export const MAX_FILE_BYTES = 1_000_000;
@@ -68,12 +68,7 @@ const PRIORITY_FILE_NAMES = new Set([
 const SOURCE_EXTENSION_PATTERN = /\.(ts|tsx|mts|cts|js|jsx|mjs|cjs|vue|svelte|astro|java|kt|kts|jsp|tag|ftl|vm|py|pyi|pyx|go|rs|c|cc|cpp|cxx|h|hh|hpp|hxx|cs|razor|cshtml|rb|erb|php|phtml|swift|scala|dart|sh|ps1|ex|exs|clj|hs|ml|fs)$/i;
 
 // 大型前端项目里这些目录往往包含海量第三方或构建产物，默认跳过可显著提升可用文件的命中率。
-export const IGNORED_PATH_SEGMENTS = new Set([
-  ...DEPENDENCY_CACHE_DIRECTORY_NAMES,
-  '.git', 'node_modules', 'target', 'build', 'dist', 'out', '.idea', '.vscode',
-  '.next', '.nuxt', 'coverage', '__pycache__', '.venv', 'venv', 'vendor',
-  'logs', 'log', '.cache', '.parcel-cache', '.turbo', 'tmp', 'temp',
-]);
+export const IGNORED_PATH_SEGMENTS = PROJECT_GENERATED_DIRECTORIES;
 
 // 明确暂不支持的后缀，供界面和用户文档展示，帮助用户提前了解限制。
 export const UNSUPPORTED_EXTENSIONS = [
@@ -253,6 +248,7 @@ export type FileProgressCallback = (progress: FileProcessingProgress) => void;
 
 export interface FileScanStats {
   total: number;
+  unscanned: number;
   pathIgnored: number;
   sensitive: number;
   unsupported: number;
@@ -315,11 +311,13 @@ export const collectCandidateFiles = async (
   fileList: FileList | readonly File[],
   limit: number,
   onProgress?: (scanned: number, total: number, selected: number) => void | Promise<void>,
+  excludedByProject: (file: File) => boolean = () => false,
 ): Promise<{ files: File[]; stats: FileScanStats }> => {
   const files = Array.isArray(fileList) ? fileList : Array.from(fileList);
   const scanEnd = Math.min(files.length, MAX_SCAN_FILES);
   const stats: FileScanStats = {
-    total: scanEnd,
+    total: 0,
+    unscanned: 0,
     pathIgnored: 0,
     sensitive: 0,
     unsupported: 0,
@@ -332,14 +330,17 @@ export const collectCandidateFiles = async (
   const progressEvery = 500;
 
   for (let index = 0; index < scanEnd; index += 1) {
+    // 跳过的文件同样计入扫描进度并让出主线程，避免连续遍历缓存文件时页面假死。
+    if (index % progressEvery === 0) await onProgress?.(index, scanEnd, stats.selected);
     if (stats.selected >= limit) {
       await onProgress?.(index, scanEnd, stats.selected);
       break;
     }
     const file = files[index];
+    stats.total += 1;
     const relativePath = getProjectFilePath(file);
     // 手动扫描路径分隔符，避免每个文件都创建 split 数组，降低十六万文件扫描的开销。
-    if (!isSafeRelativeFilePath(relativePath) || hasIgnoredSegment(relativePath)) {
+    if (!isSafeRelativeFilePath(relativePath) || hasIgnoredSegment(relativePath) || excludedByProject(file)) {
       stats.pathIgnored += 1;
       continue;
     }
@@ -368,14 +369,10 @@ export const collectCandidateFiles = async (
       otherFiles.push(file);
     }
     stats.selected += 1;
-    if (index % progressEvery === 0 || index === scanEnd - 1) {
-      await onProgress?.(index + 1, scanEnd, stats.selected);
-    }
   }
 
-  if (files.length > scanEnd) {
-    stats.pathIgnored += files.length - scanEnd;
-  }
+  stats.unscanned = files.length - stats.total;
+  await onProgress?.(stats.total, scanEnd, stats.selected);
 
   return { files: [...priorityFiles, ...sourceFiles, ...otherFiles].slice(0, limit), stats };
 };

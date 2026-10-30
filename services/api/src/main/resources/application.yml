@@ -94,6 +94,10 @@ logging:
   config: classpath:logback-spring.xml
 
 app:
+  enhancement:
+    natural:
+      # 新请求可独立试用CORE_REPAIR；STABLE回退到31，历史仍沿用记录版本。尚未采用时保持STABLE。
+      profile: ${NATURAL_ENHANCEMENT_PROFILE:STABLE}
   context:
     vision:
       # 资料先在本机解析；只有用户确认模型、页码与隐私后才外发，每页一次尝试，不自动重试。

@@ -38,6 +38,17 @@ const status = (overrides: Partial<DocumentUploadStatus> = {}): DocumentUploadSt
 });
 
 describe('uploadAndIndexDocument', () => {
+  it('reports every acknowledged chunk even when the browser emits no upload events', async () => {
+    vi.clearAllMocks();
+    vi.mocked(createDocumentUpload).mockResolvedValue({ requestId: 'create', data: status({ chunkSizeBytes: 4 }) });
+    vi.mocked(uploadDocumentChunk).mockResolvedValue({ requestId: 'chunk', data: status() });
+    vi.mocked(completeDocumentUpload).mockResolvedValue({ requestId: 'complete', data: status({ phase: 'READY', uploadedBytes: 10 }) });
+    const progress = vi.fn();
+    await uploadAndIndexDocument(new File(['0123456789'], 'small.txt'), 'small.txt', 'text', progress);
+    expect(progress.mock.calls.map(([value]) => value).filter(value => value.phase === 'UPLOADING')
+      .map(value => [value.uploadedBytes, value.totalBytes])).toEqual([[4, 10], [8, 10], [10, 10]]);
+    vi.clearAllMocks();
+  });
   it('waits for explicit vision confirmation and queries an uncertain confirmation without replaying it', async () => {
     vi.clearAllMocks();
     const ready = status({ phase: 'PARTIAL', warnings: ['第 2 页未识别'], chunkCount: 1 });

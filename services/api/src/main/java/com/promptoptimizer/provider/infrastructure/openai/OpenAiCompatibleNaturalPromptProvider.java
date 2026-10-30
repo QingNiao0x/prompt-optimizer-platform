@@ -446,6 +446,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 NaturalTaskScope scope = scopeReader.readValue(body);
                 return new ScopePreparation((NaturalPromptRoutingRepairInstructions.ADVISORY_TIMING_VERSION.equals(input.strategyVersion())
                         || NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION.equals(input.strategyVersion())
+                        || NaturalPromptCoreRepairInstructions.VERSION.equals(input.strategyVersion())
                         || NaturalPromptContentQualityInstructions.VERSION.equals(input.strategyVersion())
                         || NaturalPromptGroundedCompletionInstructions.VERSION.equals(input.strategyVersion())
                         || NaturalPromptMultidimensionalInstructions.VERSION.equals(input.strategyVersion())
@@ -718,6 +719,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                     || usesAdvisoryScope(input.strategyVersion())
                     || NaturalPromptContextualRewriteInstructions.VERSION.equals(input.strategyVersion())
                     || NaturalPromptUsefulDeliveryInstructions.VERSION.equals(input.strategyVersion())
+                    || NaturalPromptCoreRepairInstructions.VERSION.equals(input.strategyVersion())
                     || NaturalPromptEffectiveRequestInstructions.VERSION.equals(input.strategyVersion())
                     || NaturalPromptBoundedRepairInstructions.VERSION.equals(input.strategyVersion())
                     || NaturalPromptSinglePassInstructions.supports(input.strategyVersion())
@@ -878,6 +880,10 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                         // 无效候选留在独立user数据中；诊断只定位确定性错误，不把错误出处或助手建议升级为来源。
                         attemptUser = NaturalPromptRepairContext.userMessage(json, payload, invalidCandidate, parsedCandidate, input, false);
                         repairHint = NaturalPromptBoundedRepairInstructions.REPAIR;
+                    } else if (retry && NaturalPromptCoreRepairInstructions.VERSION.equals(input.strategyVersion())
+                            && failure instanceof NaturalTaskScope.MissingUserAuthority missing) {
+                        // 工程修复只补充确定的来源关联反馈，不放宽校验，也不改变31等冻结版本的修复system。
+                        repairHint = missing.repairInstruction();
                     } else if (retry && failure instanceof NaturalTaskReview.MissingSources missing) {
                         // 49/50只适配同一服务端编号提示的字段位置；Plan和旧版仍调用冻结提示，不带候选原稿。
                         if (registryEnhancement) repairHint = NaturalPromptRequirementRegistryInstructions.missingSourcesRepair(missing, preparation);

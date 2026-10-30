@@ -866,8 +866,8 @@ test('用户可以通过 File System Access API 建立本地项目索引', async
   await page.getByRole('button', { name: '添加上下文' }).click();
   await page.getByRole('menuitem', { name: '选择文件夹' }).click();
 
-  await expect(page.getByText('2 个源码文件已建立本地索引')).toBeVisible();
-  await expect(page.getByText(/2 个代码块/)).toBeVisible();
+  await expect(page.getByText('2 个文本文件已完整建立本地索引')).toBeVisible();
+  await expect(page.getByText(/2 个文本片段/)).toBeVisible();
 
   await openWorkbenchPane(page, 'intent');
   await page.getByLabel('原始提示词').fill('修改 projectName 常量');
@@ -903,7 +903,7 @@ test('用户可以通过 File System Access API 建立本地项目索引', async
   await expect(page.getByText(/本轮新增 1 · 更新 1 · 未变化 0 · 删除 1/)).toBeVisible();
 
   await page.getByRole('button', { name: '清空', exact: true }).click();
-  await expect(page.getByText(/个源码文件已建立本地索引/)).not.toBeVisible({ timeout: 1_000 });
+  await expect(page.getByText(/个文本文件已完整建立本地索引/)).not.toBeVisible({ timeout: 1_000 });
 });
 
 test('用户可以暂停并继续本地项目索引', async ({ page }) => {
@@ -943,7 +943,7 @@ test('用户可以暂停并继续本地项目索引', async ({ page }) => {
 
   await expect(page.getByText(/已暂停，检查点位于/)).toBeVisible();
   await page.getByRole('button', { name: '继续索引' }).click();
-  await expect(page.getByText('1 个源码文件已建立本地索引')).toBeVisible();
+  await expect(page.getByText('1 个文本文件已完整建立本地索引')).toBeVisible();
 });
 
 test('重新打开页面后不恢复之前选择的项目文件夹', async ({ page }) => {
@@ -1018,7 +1018,7 @@ test('重新打开页面后不恢复之前选择的项目文件夹', async ({ pa
   await expect(
     page.getByRole('button', { name: '添加上下文' }),
   ).toBeVisible({ timeout: 15_000 });
-  await expect(page.getByText('1 个源码文件已建立本地索引')).not.toBeVisible();
+  await expect(page.getByText('1 个文本文件已完整建立本地索引')).not.toBeVisible();
   await expect.poll(() => page.evaluate(() =>
     localStorage.getItem('prompt-optimizer.current-project-index.v1'))).toBeNull();
 });

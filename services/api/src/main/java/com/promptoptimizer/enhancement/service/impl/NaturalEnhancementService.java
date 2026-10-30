@@ -39,18 +39,33 @@ public class NaturalEnhancementService {
     private final NaturalPromptProvider provider;
     private final SensitiveValueDetector sensitive = new SensitiveValueDetector();
     private final Clock clock;
+    private final NaturalEnhancementSettings settings;
 
     /** 复用基础安全与会话服务，独立Provider负责新生成和新提问协议。 */
     @Autowired
     public NaturalEnhancementService(ContextAnalyzer analyzer, ProtectedContextFilter filter,
+            PlanningSessionService sessions, CurrentActor actor, PlatformModelCatalog catalog, NaturalPromptProvider provider,
+            NaturalEnhancementSettings settings) {
+        this(analyzer, filter, sessions, actor, catalog, provider, Clock.systemUTC(), settings);
+    }
+
+    /** 保留显式构造的兼容入口；未注入采用配置时不擅自启用候选。 */
+    public NaturalEnhancementService(ContextAnalyzer analyzer, ProtectedContextFilter filter,
             PlanningSessionService sessions, CurrentActor actor, PlatformModelCatalog catalog, NaturalPromptProvider provider) {
-        this(analyzer, filter, sessions, actor, catalog, provider, Clock.systemUTC());
+        this(analyzer, filter, sessions, actor, catalog, provider, Clock.systemUTC(), new NaturalEnhancementSettings());
     }
 
     /** 受控测试可注入时钟，生产使用服务端UTC时间，不信任客户端时间与所有者。 */
     public NaturalEnhancementService(ContextAnalyzer analyzer, ProtectedContextFilter filter,
             PlanningSessionService sessions, CurrentActor actor, PlatformModelCatalog catalog,
             NaturalPromptProvider provider, Clock clock) {
+        this(analyzer, filter, sessions, actor, catalog, provider, clock, new NaturalEnhancementSettings());
+    }
+
+    /** 受控验收可同时注入配置与时钟；不改变服务端身份、Plan绑定和来源保护。 */
+    public NaturalEnhancementService(ContextAnalyzer analyzer, ProtectedContextFilter filter,
+            PlanningSessionService sessions, CurrentActor actor, PlatformModelCatalog catalog,
+            NaturalPromptProvider provider, Clock clock, NaturalEnhancementSettings settings) {
         this.analyzer = analyzer;
         this.filter = filter;
         this.sessions = sessions;
@@ -58,11 +73,12 @@ public class NaturalEnhancementService {
         this.catalog = catalog;
         this.provider = provider;
         this.clock = clock;
+        this.settings = settings;
     }
 
     /** 生成完整自然正文；零问题 Plan 与有回答 Plan 均通过同一服务端绑定入口。 */
     public PromptDocument optimize(OptimizationRequest request) {
-        return optimize(request, NaturalPromptInstructions.CURRENT_VERSION);
+        return optimize(request, settings.strategyVersion());
     }
 
     /** 旧历史显式选择已知版本；新请求使用当前版本，未知版本在模型调用前拒绝。 */
@@ -75,7 +91,7 @@ public class NaturalEnhancementService {
     /** 专用访客入口只复用生成算法；正式optimize和plan仍强制认证，不接受任何访客Plan确认。 */
     public PromptDocument optimizeTrial(OptimizationRequest request) {
         if (request.planConfirmation() != null) throw new InvalidOptimizationRequestException("请注册登录后使用Plan。");
-        return generate(request, NaturalPromptInstructions.CURRENT_VERSION,
+        return generate(request, settings.strategyVersion(),
                 new PlanningSessionService.ConfirmedPlan(List.of(), null, false));
     }
 
@@ -143,7 +159,7 @@ public class NaturalEnhancementService {
 
     /** 第四版指导最多八题，协议容量仍为64且不截断；注册后最终回答受服务端所有权和TTL约束。 */
     public OptimizationPlan plan(OptimizationPlanRequest request) {
-        return plan(request, NaturalPromptInstructions.CURRENT_VERSION);
+        return plan(request, settings.strategyVersion());
     }
 
     /** 服务端兼容分发与受控对照可显式选择已知策略，浏览器请求不能自报版本。 */

@@ -9,6 +9,7 @@ import {
 } from '@element-plus/icons-vue';
 import {
   ElButton,
+  ElCheckbox,
   ElDropdown,
   ElDropdownItem,
   ElDropdownMenu,
@@ -50,6 +51,7 @@ interface Props {
   isIndexing: boolean;
   isClearingIndex?: boolean;
   isPausing: boolean;
+  respectProjectIgnore?: boolean;
   indexProgress?: ProjectIndexProgress;
   projectIndex?: ProjectIndexSummary;
   contextRetrieval?: ProjectContextRetrievalResult;
@@ -57,6 +59,7 @@ interface Props {
 }
 
 interface Emits {
+  (event: 'update:respect-project-ignore', value: boolean): void;
   (event: 'update:custom-description', value: string): void;
   (event: 'files-selected', value: FileList | null): void;
   (event: 'documents-selected', value: FileList | null): void;
@@ -129,7 +132,7 @@ const indexingLabel = computed(() => {
     ? `${Math.round(progress.filesPerSecond).toLocaleString()} 文件/秒`
     : '正在计算速度';
   if (progress.phase === 'SCANNING') {
-    return `正在扫描目录 · 已发现 ${progress.discoveredFiles.toLocaleString()} · ${speed}`;
+    return `正在统计文件范围 · 已发现 ${progress.discoveredFiles.toLocaleString()} 个文件 · 排除 ${progress.ignoredDirectories ?? 0} 个目录`;
   }
   const total = progress.totalFiles === undefined
     ? progress.processedFiles.toLocaleString()
@@ -137,7 +140,7 @@ const indexingLabel = computed(() => {
   const eta = progress.etaMs === undefined
     ? `已用 ${formatDuration(progress.elapsedMs)}`
     : `预计剩余 ${formatDuration(progress.etaMs)}`;
-  return `${total} · 已索引 ${progress.indexedFiles.toLocaleString()} · ${speed} · ${eta}`;
+  return `已处理 ${total} · 全文索引 ${progress.indexedFiles.toLocaleString()} · 跳过 ${progress.ignoredFiles} · 不完整 ${progress.metadataOnlyFiles ?? 0} · 失败 ${progress.failedFiles} · ${speed} · ${eta}`;
 });
 
 const isProjectBusy = computed(() =>
@@ -149,11 +152,15 @@ const isProjectBusy = computed(() =>
 
 const displayedProgressPercentage = computed(() => {
   if (props.isIndexing) {
-    return props.indexProgress?.percent;
+    return props.indexProgress?.phase === 'SCANNING' ? undefined : props.indexProgress?.percent;
   }
-  return props.isReading && props.progress && props.progress.phase !== 'scan'
-    ? props.progress.percent
-    : undefined;
+  const progress = props.progress;
+  if (!props.isReading || !progress) return undefined;
+  // 上传按服务器已接收的字节计算，不能把整份文档处理流程的 40% 当成上传进度。
+  if (progress.phase === 'upload') return progress.totalBytes
+    ? Math.min(100, Math.floor((progress.uploadedBytes ?? 0) / progress.totalBytes * 1000) / 10) : 0;
+  if (['queue', 'extract', 'index', 'summarize'].includes(progress.phase)) return undefined;
+  return progress.percent;
 });
 
 const isProgressIndeterminate = computed(() => displayedProgressPercentage.value === undefined);
@@ -401,7 +408,7 @@ const addManualFile = (): void => {
           <template v-else>
             <ElProgress
               class="read-progress"
-              :percentage="displayedProgressPercentage"
+              :percentage="displayedProgressPercentage ?? 50"
               :indeterminate="isProgressIndeterminate"
               :duration="3"
               :stroke-width="8"
@@ -417,10 +424,22 @@ const addManualFile = (): void => {
                     ? '上下文已清空，正在删除浏览器中的本地数据…'
                     : '请选择需要授权的项目目录…' }}
             </small>
+            <small v-if="isIndexing && indexProgress?.currentPath" class="reading-meta" :title="indexProgress.currentPath">
+              当前文件：{{ indexProgress.currentPath }}
+            </small>
+            <small v-if="isReading && progress && !['scan', 'read'].includes(progress.phase)" class="reading-meta">
+              本批第 {{ progress.current }} / {{ progress.total }} 个文件 · 已完成 {{ progress.accepted }} · 未完成 {{ progress.skipped }}
+            </small>
           </template>
         </span>
         </div>
         <div class="context-notes">
+          <ElCheckbox
+            :model-value="respectProjectIgnore !== false"
+            :disabled="isProjectBusy"
+            @update:model-value="emit('update:respect-project-ignore', $event === true)"
+          >按根目录 .gitignore 排除文件</ElCheckbox>
+          <p class="field-help">目录内的文件按项目规则筛选；如需包含被忽略的资料，可取消勾选。依赖、构建产物和敏感文件仍会跳过。</p>
           <p class="field-help">可建立项目索引，也可单独上传报告、论文、表格、演示文稿和图片。</p>
           <p class="field-help">可添加代码、Word、Excel、PPT、PDF 等文件或整个文件夹；支持的浏览器会在本地索引文件夹中的代码，办公文档上传解析前会先请你确认。</p>
           <p class="document-upload-help">
@@ -493,11 +512,19 @@ const addManualFile = (): void => {
         <span v-if="projectIndex.status === 'PAUSED'">
           已暂停，检查点位于 {{ projectIndex.lastCheckpointPath || '目录起点' }}
         </span>
-        <span v-else>{{ projectIndex.indexedFiles }} 个源码文件已建立本地索引</span>
+        <span v-else>{{ projectIndex.indexedFiles }} 个文本文件已完整建立本地索引</span>
         <small>
-          {{ projectIndex.chunkCount }} 个代码块 ·
-          {{ projectIndex.ignoredFiles }} 个文件已忽略 ·
-          {{ projectIndex.metadataOnlyFiles }} 个超大文件仅保留元数据
+          范围内处理 {{ projectIndex.discoveredFiles }} 个文件：完整 {{ projectIndex.indexedFiles }} ·
+          跳过 {{ projectIndex.ignoredFiles }} · 未完整索引 {{ projectIndex.metadataOnlyFiles }} · 失败 {{ projectIndex.failedFiles }}
+        </small>
+        <small>{{ projectIndex.chunkCount }} 个文本片段 · 未完整索引可能为空文件、大小或存储额度限制，不代表全文可检索。</small>
+        <small>范围规则另排除 {{ projectIndex.ignoredDirectories }} 个目录、{{ projectIndex.scopeExcludedFiles ?? 0 }} 个文件；未遍历排除目录内的文件，不计入处理总数。</small>
+        <details v-if="projectIndex.excludedDirectorySamples?.length" class="retrieval-report">
+          <summary>查看排除的目录（最多显示 20 个）</summary>
+          <ul><li v-for="path in projectIndex.excludedDirectorySamples" :key="path">{{ path }}</li></ul>
+        </details>
+        <small v-if="projectIndex.scanLimitReached || projectIndex.storageLimitReached || projectIndex.failedFiles">
+          本次索引不完整，请核对失败文件及索引额度后增量更新。
         </small>
         <small v-if="projectIndex.status === 'READY'">
           本轮新增 {{ projectIndex.addedFiles }} · 更新 {{ projectIndex.updatedFiles }} ·
