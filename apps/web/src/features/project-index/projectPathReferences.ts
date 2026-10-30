@@ -16,10 +16,14 @@ export const extractProjectPathReferences = (query: string): ProjectPathReferenc
     if (!path || (!path.includes('/') && !/\.[A-Za-z0-9]+$/.test(path))) continue;
     result.push({ path, start: match.index, end: match.index + match[0].length });
   }
-  const files = /(?<![\p{L}\p{N}_$./\\:@-])(?:[\p{L}\p{N}_$.-]+[\\/])+[\p{L}\p{N}_$.-]+\.[A-Za-z][A-Za-z0-9]{0,15}(?![\p{L}\p{N}_$./\\-])/gu;
+  // 根文件名同样进入精确候选，仍由当前项目索引核实；不凭名称声明文件存在。
+  // URL 的查询参数和带点邮箱也不能成为根文件目标。
+  const urls = Array.from(query.matchAll(/\b[a-z][a-z0-9+.-]*:\/\/[^\s<>"'`]+/gi));
+  const files = /(?<![\p{L}\p{N}_$./\\:@-])(?:[\p{L}\p{N}_$.-]+[\\/])*[\p{L}\p{N}_$.-]+\.[A-Za-z][A-Za-z0-9]{0,15}(?![\p{L}\p{N}_$./\\@-])/gu;
   for (const match of query.matchAll(files)) {
     const start = match.index, end = start + match[0].length;
     if (result.some(reference => start < reference.end && end > reference.start)) continue;
+    if (urls.some(url => start < url.index + url[0].length && end > url.index)) continue;
     const path = normalizeReferencedPath(match[0]);
     if (path) result.push({ path, start, end, indexedFileCandidate: true });
   }

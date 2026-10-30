@@ -1,5 +1,40 @@
 import { expect, test } from '@playwright/test';
 
+test('根目录文件名在大量同名正文中仍精确召回，未知文件不收紧普通检索', async ({ page }) => {
+  await page.route('**/__root_reference', route => route.fulfill({ contentType: 'text/html', body: '<!doctype html>' }));
+  await page.goto('/__root_reference');
+  const result = await page.evaluate(async () => {
+    const repositoryPath = '/src/features/project-index/indexedDbProjectIndexRepository.ts';
+    const indexerPath = '/src/features/project-index/projectIndexer.ts';
+    const { IndexedDbProjectIndexRepository } = await import(repositoryPath) as typeof import('../src/features/project-index/indexedDbProjectIndexRepository');
+    const { indexProject, retrieveProjectContextWithReport } = await import(indexerPath) as typeof import('../src/features/project-index/projectIndexer');
+    const repository = new IndexedDbProjectIndexRepository(), projectId = 'root-file-reference';
+    async function* files() {
+      for (let i = 0; i < 450; i++) {
+        const path = `apps/examples/${i}.ts`;
+        yield { kind: 'file' as const, path, file: new File(['const readme = "README.md 普通业务依据";'], path) };
+      }
+      yield { kind: 'file' as const, path: 'README.md', file: new File(['本项目说明正文：退款按原规则执行。'], 'README.md') };
+    }
+    try {
+      const summary = await indexProject({ projectId, rootName: 'sample', repository, entries: files() });
+      const started = performance.now();
+      const root = await retrieveProjectContextWithReport(repository, { projectId, query: 'README.md', maxChunks: 1 });
+      const elapsedMs = performance.now() - started;
+      const unknown = await retrieveProjectContextWithReport(repository, { projectId, query: '不存在.md 普通业务依据', maxChunks: 2 });
+      const other = await retrieveProjectContextWithReport(repository, { projectId: 'other', query: 'README.md', maxChunks: 1 });
+      return { count: summary.indexedFiles, root, unknown, other, elapsedMs };
+    } finally { await repository.deleteProject(projectId); }
+  });
+  expect(result.count).toBe(451);
+  expect(result.root.selections.map(item => item.path)).toEqual(['README.md']);
+  expect(result.root.files[0]?.content).toContain('退款按原规则执行');
+  expect(result.unknown.files).not.toHaveLength(0);
+  expect(result.unknown.references ?? []).toEqual([]);
+  expect(result.other.files).toEqual([]);
+  console.log('ROOT_FILE_RETRIEVAL', JSON.stringify({ count: result.count, elapsedMs: result.elapsedMs }));
+});
+
 test('明确目录在真实IndexedDB中优先召回，未命中不会冒充相似旧目录', async ({ page }) => {
   await page.route('**/__explicit_path_fixture', (route) => route.fulfill({
     contentType: 'text/html', body: '<!doctype html><html lang="zh-CN"><title>目录召回</title></html>',

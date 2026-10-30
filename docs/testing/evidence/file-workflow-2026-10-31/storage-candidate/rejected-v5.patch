@@ -1,0 +1,145 @@
+diff --git a/apps/web/e2e/project-index-storage.spec.ts b/apps/web/e2e/project-index-storage.spec.ts
+index 0c55ea1b..eae2766c 100644
+--- a/apps/web/e2e/project-index-storage.spec.ts
++++ b/apps/web/e2e/project-index-storage.spec.ts
+@@ -1,7 +1,7 @@
+ import { expect, test } from '@playwright/test';
+ 
+ /** 使用真实浏览器存储量约束长路径 × 全文词表的放大，不通过减少词或正文通过检查。 */
+-for (const scenario of [{ unique: false, count: 500, maxMiB: 160 }, { unique: true, count: 200, maxMiB: 70 }]) {
++for (const scenario of [{ unique: false, count: 500, maxMiB: 70 }, { unique: true, count: 200, maxMiB: 30 }]) {
+ test(`长路径${scenario.unique ? '不同词' : '共享词'}全文词表完整且存储不重复放大路径`, async ({ page }) => {
+   test.setTimeout(120_000);
+   await page.route('**/__storage_fixture', (route) => route.fulfill({
+diff --git a/apps/web/src/features/project-index/indexedDbProjectIndexRepository.ts b/apps/web/src/features/project-index/indexedDbProjectIndexRepository.ts
+index d5f7671d..fc47949a 100644
+--- a/apps/web/src/features/project-index/indexedDbProjectIndexRepository.ts
++++ b/apps/web/src/features/project-index/indexedDbProjectIndexRepository.ts
+@@ -8,11 +8,11 @@ import type { DirectoryHandleLike } from './fileSystemDirectorySource';
+ import { referencedPathVariants } from './projectPathReferences';
+ import {
+   SEARCH_STORE, SEARCH_KEY_STORE, createSearchStores, migrateChunkSearch, chunkBodyRecord,
+-  lookupSearchChunkIds, removeSearchFiles, removeProjectSearch, upsertSearchIndex,
++  lookupSearchChunkIds, removeSearchFiles, removeProjectSearch, upsertSearchIndex, migrateSearchTermKeys,
+ } from './projectIndexSearchIndex';
+ 
+ const DATABASE_NAME = 'prompt-optimizer-project-index';
+-const DATABASE_VERSION = 4;
++const DATABASE_VERSION = 5;
+ const PROJECT_STORE = 'projects';
+ const FILE_STORE = 'files';
+ const CHUNK_STORE = 'chunks';
+@@ -440,6 +440,8 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
+             createSearchStores(database);
+             if (chunkStore.indexNames.contains('searchTerms')) chunkStore.deleteIndex('searchTerms');
+             migrateChunkSearch(request.transaction!, chunkStore);
++          } else if ((event as IDBVersionChangeEvent).oldVersion < 5) {
++            migrateSearchTermKeys(request.transaction!);
+           }
+           if (!database.objectStoreNames.contains(SOURCE_STORE)) {
+             database.createObjectStore(SOURCE_STORE, { keyPath: 'projectId' });
+diff --git a/apps/web/src/features/project-index/projectIndexSearchIndex.ts b/apps/web/src/features/project-index/projectIndexSearchIndex.ts
+index 9588337d..9ace34a0 100644
+--- a/apps/web/src/features/project-index/projectIndexSearchIndex.ts
++++ b/apps/web/src/features/project-index/projectIndexSearchIndex.ts
+@@ -17,7 +17,7 @@ interface SearchKeyBlock {
+ export const createSearchStores = (database: IDBDatabase): void => {
+   const search = database.createObjectStore(SEARCH_STORE, { keyPath: 'key', autoIncrement: true });
+   search.createIndex('chunkId', 'id', { unique: true });
+-  search.createIndex('searchTerms', 'searchTerms', { multiEntry: true });
++  search.createIndex('termKeys', 'termKeys', { multiEntry: true });
+   database.createObjectStore(SEARCH_KEY_STORE, { keyPath: 'block' });
+ };
+ 
+@@ -33,7 +33,7 @@ export const upsertSearchIndex = async (transaction: IDBTransaction, chunks: Ind
+   const unique = new Map(chunks.map((chunk) => [chunk.id, chunk]));
+   const pairs = await Promise.all(Array.from(unique.values(), async (chunk): Promise<[number, string]> => {
+     const existing = await readRequest(store.index('chunkId').getKey(chunk.id));
+-    const value = { id: chunk.id, searchTerms: chunk.searchTerms };
++    const value = { id: chunk.id, searchTerms: chunk.searchTerms, termKeys: chunk.searchTerms.map(searchTermIndexKey) };
+     const key = await readRequest(store.put(existing === undefined ? value : { ...value, key: existing }));
+     return [key as number, chunk.id];
+   }));
+@@ -62,22 +62,69 @@ export const removeProjectSearch = async (transaction: IDBTransaction, projectId
+ export const lookupSearchChunkIds = async (
+   transaction: IDBTransaction, term: string, limit: number,
+ ): Promise<string[]> => {
+-  const keys = await readRequest(transaction.objectStore(SEARCH_STORE).index('searchTerms').getAllKeys(term)) as number[];
++  if (limit <= 0) return [];
++  const search = transaction.objectStore(SEARCH_STORE);
++  const keys = await readRequest(search.index('termKeys').getAllKeys(searchTermIndexKey(term))) as number[];
+   const blocks = transaction.objectStore(SEARCH_KEY_STORE);
+-  let selected: string[] = [];
+-  for (let offset = 0; offset < keys.length; offset += KEY_BLOCK_SIZE) {
+-    const batch = keys.slice(offset, offset + KEY_BLOCK_SIZE);
+-    const blockNumbers = new Set(batch.map(blockOf));
+-    const rows = await Promise.all(Array.from(blockNumbers, (block) => readRequest<SearchKeyBlock | undefined>(blocks.get(block))));
+-    const byBlock = new Map(rows.filter((row): row is SearchKeyBlock => row !== undefined).map((row) => [row.block, row.ids]));
+-    const ids = batch.map((key) => {
+-      const id = byBlock.get(blockOf(key))?.[key % KEY_BLOCK_SIZE];
+-      if (id === undefined) throw new Error('本地索引映射不完整，请重新建立项目索引');
+-      return id;
++  const result: string[] = [];
++  let after: string | undefined;
++  while (result.length < limit) {
++    let selected: { id: string; key: number }[] = [];
++    for (let offset = 0; offset < keys.length; offset += KEY_BLOCK_SIZE) {
++      const batch = keys.slice(offset, offset + KEY_BLOCK_SIZE);
++      const blockNumbers = new Set(batch.map(blockOf));
++      const rows = await Promise.all(Array.from(blockNumbers, (block) => readRequest<SearchKeyBlock | undefined>(blocks.get(block))));
++      const byBlock = new Map(rows.filter((row): row is SearchKeyBlock => row !== undefined).map((row) => [row.block, row.ids]));
++      for (const key of batch) {
++        const id = byBlock.get(blockOf(key))?.[key % KEY_BLOCK_SIZE];
++        if (id === undefined) throw new Error('本地索引映射不完整，请重新建立项目索引');
++        if (after === undefined || id > after) selected.push({ id, key });
++      }
++      selected.sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
++      selected = selected.slice(0, limit - result.length);
++    }
++    if (selected.length === 0) break;
++    const rows = await Promise.all(selected.map(row => readRequest<{ searchTerms: string[] } | undefined>(search.get(row.key))));
++    rows.forEach((row, index) => {
++      if (!row) throw new Error('本地全文词表不完整，请重新建立项目索引');
++      // 数字键只用于定位，必须核对完整原词（包含项目 ID）。冲突不能占据有效候选名额。
++      if (row.searchTerms.includes(term)) result.push(selected[index]!.id);
+     });
+-    selected = Array.from(new Set([...selected, ...ids])).sort().slice(0, limit);
++    after = selected.at(-1)!.id;
++  }
++  return result;
++};
++
++/**
++ * 将任意长度原词映射到精确可表示的 53 位整数，缩短原生多值索引键。
++ * 这是定位散列而非安全摘要；完整词表仍保存并在返回前逐词核对，碰撞不改变检索语义。
++ */
++export const searchTermIndexKey = (term: string): number => {
++  let first = 0x811c9dc5;
++  let second = 0x9e3779b9;
++  for (let index = 0; index < term.length; index += 1) {
++    const code = term.charCodeAt(index);
++    first = Math.imul(first ^ code, 16777619);
++    second = Math.imul(second ^ code, 0x85ebca6b);
++    second ^= second >>> 13;
+   }
+-  return selected;
++  return (first >>> 0) * 2_097_152 + ((second >>> 0) & 2_097_151);
++};
++
++/** 第四版保留原词表和数字片段键，只重建词索引；升级事务失败时旧库整体保留。 */
++export const migrateSearchTermKeys = (transaction: IDBTransaction): void => {
++  const store = transaction.objectStore(SEARCH_STORE);
++  store.deleteIndex('searchTerms');
++  store.createIndex('termKeys', 'termKeys', { multiEntry: true });
++  const cursor = store.openCursor();
++  cursor.onsuccess = () => {
++    const row = cursor.result;
++    if (!row) return;
++    const value = row.value as { searchTerms: string[] };
++    row.update({ ...value, termKeys: value.searchTerms.map(searchTermIndexKey) });
++    row.continue();
++  };
++  cursor.onerror = () => transaction.abort();
+ };
+ 
+ /** 逐批迁移旧完整词表；升级事务失败整体回滚，不先清空已保存的源码。 */

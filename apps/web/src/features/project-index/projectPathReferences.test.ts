@@ -2,6 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { extractProjectPathReferences, matchesReferencedPath, referencedPathVariants } from './projectPathReferences';
 
 describe('explicit project path references', () => {
+  it('should resolve a root file only as an indexed candidate, preserving exact spans', () => {
+    const query = '核对 README.md 和 package.json，随后检查 docs/说明.md';
+    const result = extractProjectPathReferences(query);
+    expect(result.map(item => item.path)).toEqual(['README.md', 'package.json', 'docs/说明.md']);
+    expect(result.every(item => item.indexedFileCandidate)).toBe(true);
+    expect(result.map(item => query.slice(item.start, item.end))).toEqual(['README.md', 'package.json', 'docs/说明.md']);
+  });
+
   it('should recognize a complete relative file alongside an at-directory without duplicating spans', () => {
     const query = '修改 @sample/src/forms，并检查 src/shared/dateRule.ts';
     const references = extractProjectPathReferences(query);
@@ -31,7 +39,8 @@ describe('explicit project path references', () => {
     expect(query.slice(reference.start, reference.end)).toContain('@');
   });
 
-  it.each(['联系 owner@example.com', '读取 @../outside/file.ts', '读取 @/absolute/file.ts'])
+  it.each(['联系 owner@example.com', '联系 first.last@example.com',
+    '参考 https://example.com?file=README.md#package.json', '读取 @../outside/file.ts', '读取 @/absolute/file.ts'])
     ('should not turn emails or external paths into project targets: %s', (query) => {
       expect(extractProjectPathReferences(query)).toEqual([]);
     });

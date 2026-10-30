@@ -1,0 +1,72 @@
+import { expect, test } from '@playwright/test';
+
+test('第四版词表升级后仍完整，散列冲突不误召回、不占据正确候选名额', async ({ page }) => {
+  await page.route('**/__term_keys', route => route.fulfill({ contentType: 'text/html', body: '<!doctype html>' }));
+  await page.goto('/__term_keys');
+  const result = await page.evaluate(async () => {
+    type Chunk = import('../src/features/project-index/projectIndexer').IndexedProjectChunk;
+    const request = <T>(r: IDBRequest<T>) => new Promise<T>((resolve, reject) => {
+      r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error);
+    });
+    const complete = (tx: IDBTransaction) => new Promise<void>((resolve, reject) => {
+      tx.oncomplete = () => resolve(); tx.onabort = tx.onerror = () => reject(tx.error);
+    });
+    const originals: Chunk[] = [
+      ['p', 'src/a.ts', 'unrelated'], ['p', 'src/b.ts', 'needle'],
+      ['p', 'src/c.ts', 'needle'], ['a-other-project', 'src/a.ts', 'needle'],
+    ].map(([projectId, path, term]) => ({ id: `${projectId}\0${path}\0${0}`, projectId, path,
+      language: 'typescript', chunkIndex: 0, priority: 10, content: `完整正文-${term}`, searchTerms: [`${projectId}:${term}`], symbols: ['保持符号'], imports: ['./dep'] }));
+    const old = indexedDB.open('prompt-optimizer-project-index', 4);
+    old.onupgradeneeded = () => {
+      const db = old.result;
+      db.createObjectStore('projects', { keyPath: 'id' });
+      db.createObjectStore('sources', { keyPath: 'projectId' });
+      const files = db.createObjectStore('files', { keyPath: 'id' });
+      files.createIndex('projectId', 'projectId'); files.createIndex('projectPath', ['projectId', 'path'], { unique: true });
+      files.createIndex('projectScan', ['projectId', 'lastSeenScanId']);
+      const chunks = db.createObjectStore('chunks', { keyPath: 'id' });
+      chunks.createIndex('projectId', 'projectId'); chunks.createIndex('projectPath', ['projectId', 'path']);
+      chunks.createIndex('projectPriority', ['projectId', 'priority']);
+      const search = db.createObjectStore('chunkSearch', { keyPath: 'key', autoIncrement: true });
+      search.createIndex('chunkId', 'id', { unique: true }); search.createIndex('searchTerms', 'searchTerms', { multiEntry: true });
+      db.createObjectStore('chunkSearchKeys', { keyPath: 'block' });
+    };
+    const legacy = await request(old);
+    const tx = legacy.transaction(['files', 'chunks', 'chunkSearch', 'chunkSearchKeys'], 'readwrite');
+    const saved = complete(tx);
+    const ids: Record<number, string> = {};
+    originals.forEach((chunk, i) => {
+      const { searchTerms, ...body } = chunk; const key = i + 1;
+      tx.objectStore('chunks').put(body);
+      tx.objectStore('files').put({ id: `${chunk.projectId}\0${chunk.path}`, projectId: chunk.projectId,
+        path: chunk.path, chunkCount: 1, metadataOnly: false, lastSeenScanId: 'fixture' });
+      tx.objectStore('chunkSearch').put({ key, id: chunk.id, searchTerms }); ids[key] = chunk.id;
+    });
+    tx.objectStore('chunkSearchKeys').put({ block: 0, ids }); await saved; legacy.close();
+    const repositoryPath = '/src/features/project-index/indexedDbProjectIndexRepository.ts';
+    const helperPath = '/src/features/project-index/projectIndexSearchIndex.ts';
+    const { IndexedDbProjectIndexRepository } = await import(repositoryPath) as typeof import('../src/features/project-index/indexedDbProjectIndexRepository');
+    const { searchTermIndexKey } = await import(helperPath) as typeof import('../src/features/project-index/projectIndexSearchIndex');
+    const repository = new IndexedDbProjectIndexRepository();
+    const migrated = await repository.findChunksByPaths('p', ['src/a.ts', 'src/b.ts', 'src/c.ts'], 10);
+    const db = await request(indexedDB.open('prompt-optimizer-project-index'));
+    const mutate = db.transaction('chunkSearch', 'readwrite'); const mutation = complete(mutate);
+    const rows = await request(mutate.objectStore('chunkSearch').getAll());
+    // 构造最坏冲突：错误词和其他项目排在正确记录前。必须核对原词并继续取足有效结果。
+    for (const row of rows) mutate.objectStore('chunkSearch').put({ ...row, termKeys: [searchTermIndexKey('p:needle')] });
+    await mutation; db.close();
+    const single = await repository.findCandidateChunks('p', ['needle'], 1);
+    const pair = await repository.findCandidateChunks('p', ['needle'], 2);
+    await repository.deleteAllProjects();
+    return { preserved: migrated.every(chunk => {
+      const original = originals.find(old => old.id === chunk.id)!;
+      return chunk.content === original.content && JSON.stringify(chunk.searchTerms) === JSON.stringify(original.searchTerms)
+        && JSON.stringify(chunk.symbols) === JSON.stringify(original.symbols) && JSON.stringify(chunk.imports) === JSON.stringify(original.imports);
+    }),
+      count: migrated.length, single: single.map(chunk => chunk.path), pair: pair.map(chunk => chunk.path) };
+  });
+  expect(result.count).toBe(3);
+  expect(result.preserved).toBe(true);
+  expect(result.single).toEqual(['src/b.ts']);
+  expect(result.pair).toEqual(['src/b.ts', 'src/c.ts']);
+});
