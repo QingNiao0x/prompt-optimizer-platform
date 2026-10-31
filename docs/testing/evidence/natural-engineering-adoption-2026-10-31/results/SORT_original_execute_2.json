@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "98883ebb-984a-4148-8606-7c075c127b17",
+    "object": "chat.completion",
+    "created": 1793447674,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"src/sortNumbers.mjs\":\"/** 返回数值升序的新数组；支持负数和小数、空数组与重复值，保持原数组不变。\\n * 非数组或包含非有限数字时抛出 TypeError；无需额外依赖。 */\\nexport function sortNumbers(values) {\\n  if (!Array.isArray(values)) {\\n    throw new TypeError('values must be an array');\\n  }\\n  for (const value of values) {\\n    if (typeof value !== 'number' || !Number.isFinite(value)) {\\n      throw new TypeError('array must contain only finite numbers');\\n    }\\n  }\\n  return [...values].sort((a, b) => a - b);\\n}\\n\"}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 235,
+      "completion_tokens": 159,
+      "total_tokens": 394,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 235
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

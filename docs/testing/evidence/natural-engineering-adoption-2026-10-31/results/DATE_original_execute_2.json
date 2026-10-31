@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "1731964a-57de-4835-b65c-ef1ffa4edf38",
+    "object": "chat.completion",
+    "created": 1793447665,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```json\n{\"src/people/date.mjs\":\"export function validSurveyDate(value, today, allowToday) {\\n  if (typeof value !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(value)) return false;\\n  const parsed = new Date(value + 'T00:00:00Z');\\n  if (!Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value) return false;\\n  if (typeof today !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(today)) return false;\\n  const todayParsed = new Date(today + 'T00:00:00Z');\\n  if (!Number.isFinite(todayParsed.getTime()) || todayParsed.toISOString().slice(0, 10) !== today) return false;\\n  if (allowToday === true) return value <= today;\\n  return value < today;\\n}\\n\",\"src/people/create.mjs\":\"import { validSurveyDate } from './date.mjs';\\nexport function createPerson(record, today, allowToday) {\\n  if (!validSurveyDate(record.surveyDate, today, allowToday)) throw new Error('调查日期无效');\\n  return { ...record };\\n}\\n\",\"src/people/import.mjs\":\"import { validSurveyDate } from './date.mjs';\\nexport function importPeople(rows, today, allowToday) {\\n  const accepted = [], rejected = [];\\n  rows.forEach((row, i) => {\\n    if (validSurveyDate(row.surveyDate, today, allowToday)) accepted.push({ ...row });\\n    else rejected.push({ row: i + 1, reason: '调查日期无效' });\\n  });\\n  return { accepted, rejected };\\n}\\n\"}\n```"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 707,
+      "completion_tokens": 432,
+      "total_tokens": 1139,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 195
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

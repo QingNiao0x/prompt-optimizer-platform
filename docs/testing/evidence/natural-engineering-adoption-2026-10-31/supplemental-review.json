@@ -1,0 +1,301 @@
+{
+  "reviewedAt": "2026-10-31T12:03:44.030Z",
+  "reviewer": "Internal AI + deterministic source comparison, no human editing-time claim",
+  "checkerGap": "冻结检查器核对允许路径却漏核对只返回确有修改文件；按事前已有交付契约补录此问题，不改写原检查结果。",
+  "works": [
+    {
+      "file": "DATE_core-repair-single-pass_execute_1.json",
+      "rawJsonAccepted": true,
+      "unchangedFilesReturned": [
+        "src/people/create.mjs",
+        "src/people/import.mjs"
+      ],
+      "originalFrozenCheck": {
+        "passed": 13,
+        "total": 13
+      },
+      "fullyCompliesWithDelivery": false,
+      "neededEdits": [
+        "移除未修改文件条目"
+      ],
+      "sourceHashes": {
+        "src/people/date.mjs": "065b993eedf0e6081a575e9e5ae7f03a7ba36442abea87bb2368c2eb25b12153",
+        "src/people/create.mjs": "ecca27c9825b3da6c308596c43ca801005550f6a3e8d721806ce46ad3ddef983",
+        "src/people/import.mjs": "4578dad6a620b191db00bad629fb9c311814eee0f069dc10b1e6930807196903"
+      },
+      "sameSourceAs": [
+        "DATE_core-repair-v3_execute_1.json",
+        "DATE_original_execute_1.json",
+        "DATE_original_execute_2.json"
+      ],
+      "behaviorInterpretation": "所有冻结行为检查通过"
+    },
+    {
+      "file": "DATE_core-repair-single-pass_execute_2.json",
+      "rawJsonAccepted": true,
+      "unchangedFilesReturned": [
+        "src/people/create.mjs",
+        "src/people/import.mjs"
+      ],
+      "originalFrozenCheck": {
+        "passed": 13,
+        "total": 13
+      },
+      "fullyCompliesWithDelivery": false,
+      "neededEdits": [
+        "移除未修改文件条目"
+      ],
+      "sourceHashes": {
+        "src/people/date.mjs": "eb3fc2b52d748a0e508b20e9601237fdd722ff6b66838af99adff17cf1855756",
+        "src/people/create.mjs": "ecca27c9825b3da6c308596c43ca801005550f6a3e8d721806ce46ad3ddef983",
+        "src/people/import.mjs": "4578dad6a620b191db00bad629fb9c311814eee0f069dc10b1e6930807196903"
+      },
+      "sameSourceAs": [],
+      "behaviorInterpretation": "所有冻结行为检查通过"
+    },
+    {
+      "file": "DATE_core-repair-v3_execute_1.json",
+      "rawJsonAccepted": true,
+      "unchangedFilesReturned": [
+        "src/people/create.mjs",
+        "src/people/import.mjs"
+      ],
+      "originalFrozenCheck": {
+        "passed": 13,
+        "total": 13
+      },
+      "fullyCompliesWithDelivery": false,
+      "neededEdits": [
+        "移除未修改文件条目"
+      ],
+      "sourceHashes": {
+        "src/people/date.mjs": "065b993eedf0e6081a575e9e5ae7f03a7ba36442abea87bb2368c2eb25b12153",
+        "src/people/create.mjs": "ecca27c9825b3da6c308596c43ca801005550f6a3e8d721806ce46ad3ddef983",
+        "src/people/import.mjs": "4578dad6a620b191db00bad629fb9c311814eee0f069dc10b1e6930807196903"
+      },
+      "sameSourceAs": [
+        "DATE_core-repair-single-pass_execute_1.json",
+        "DATE_original_execute_1.json",
+        "DATE_original_execute_2.json"
+      ],
+      "behaviorInterpretation": "所有冻结行为检查通过"
+    },
+    {
+      "file": "DATE_core-repair-v3_execute_2.json",
+      "rawJsonAccepted": true,
+      "unchangedFilesReturned": [
+        "src/people/create.mjs",
+        "src/people/import.mjs"
+      ],
+      "originalFrozenCheck": {
+        "passed": 13,
+        "total": 13
+      },
+      "fullyCompliesWithDelivery": false,
+      "neededEdits": [
+        "移除未修改文件条目"
+      ],
+      "sourceHashes": {
+        "src/people/date.mjs": "8178f9ce3c9613cb94e3210d92089eba00b558ca4d27a1b2cfe950f87dacb2d8",
+        "src/people/create.mjs": "ecca27c9825b3da6c308596c43ca801005550f6a3e8d721806ce46ad3ddef983",
+        "src/people/import.mjs": "4578dad6a620b191db00bad629fb9c311814eee0f069dc10b1e6930807196903"
+      },
+      "sameSourceAs": [],
+      "behaviorInterpretation": "所有冻结行为检查通过"
+    },
+    {
+      "file": "DATE_original_execute_1.json",
+      "rawJsonAccepted": false,
+      "unchangedFilesReturned": [
+        "src/people/create.mjs",
+        "src/people/import.mjs"
+      ],
+      "originalFrozenCheck": {
+        "passed": 0,
+        "total": 1
+      },
+      "fullyCompliesWithDelivery": false,
+      "neededEdits": [
+        "去掉JSON外的Markdown围栏",
+        "移除未修改文件条目"
+      ],
+      "sourceHashes": {
+        "src/people/date.mjs": "065b993eedf0e6081a575e9e5ae7f03a7ba36442abea87bb2368c2eb25b12153",
+        "src/people/create.mjs": "ecca27c9825b3da6c308596c43ca801005550f6a3e8d721806ce46ad3ddef983",
+        "src/people/import.mjs": "4578dad6a620b191db00bad629fb9c311814eee0f069dc10b1e6930807196903"
+      },
+      "sameSourceAs": [
+        "DATE_core-repair-single-pass_execute_1.json",
+        "DATE_core-repair-v3_execute_1.json",
+        "DATE_original_execute_2.json"
+      ],
+      "behaviorInterpretation": "去围栏后源码与已通过行为检查作品逐字相同；原始交付格式仍失败"
+    },
+    {
+      "file": "DATE_original_execute_2.json",
+      "rawJsonAccepted": false,
+      "unchangedFilesReturned": [
+        "src/people/create.mjs",
+        "src/people/import.mjs"
+      ],
+      "originalFrozenCheck": {
+        "passed": 0,
+        "total": 1
+      },
+      "fullyCompliesWithDelivery": false,
+      "neededEdits": [
+        "去掉JSON外的Markdown围栏",
+        "移除未修改文件条目"
+      ],
+      "sourceHashes": {
+        "src/people/date.mjs": "065b993eedf0e6081a575e9e5ae7f03a7ba36442abea87bb2368c2eb25b12153",
+        "src/people/create.mjs": "ecca27c9825b3da6c308596c43ca801005550f6a3e8d721806ce46ad3ddef983",
+        "src/people/import.mjs": "4578dad6a620b191db00bad629fb9c311814eee0f069dc10b1e6930807196903"
+      },
+      "sameSourceAs": [
+        "DATE_core-repair-single-pass_execute_1.json",
+        "DATE_core-repair-v3_execute_1.json",
+        "DATE_original_execute_1.json"
+      ],
+      "behaviorInterpretation": "去围栏后源码与已通过行为检查作品逐字相同；原始交付格式仍失败"
+    },
+    {
+      "file": "SORT_core-repair-single-pass_execute_1.json",
+      "rawJsonAccepted": true,
+      "unchangedFilesReturned": [],
+      "originalFrozenCheck": {
+        "passed": 7,
+        "total": 7
+      },
+      "fullyCompliesWithDelivery": true,
+      "neededEdits": [],
+      "sourceHashes": {
+        "src/sortNumbers.mjs": "76cbdea2546fe4709a09ac76e4a186c3113ee27dd79dbc94e40706333b35412a"
+      },
+      "sameSourceAs": [
+        "SORT_core-repair-v3_execute_1.json",
+        "SORT_original_execute_1.json",
+        "SORT_original_execute_2.json"
+      ],
+      "behaviorInterpretation": "所有冻结行为检查通过"
+    },
+    {
+      "file": "SORT_core-repair-single-pass_execute_2.json",
+      "rawJsonAccepted": true,
+      "unchangedFilesReturned": [],
+      "originalFrozenCheck": {
+        "passed": 7,
+        "total": 7
+      },
+      "fullyCompliesWithDelivery": true,
+      "neededEdits": [],
+      "sourceHashes": {
+        "src/sortNumbers.mjs": "e1ba939cfbb17aa9c9fd3267c1c2b6eb569bfaeaffd38c77f81b334261a9ad84"
+      },
+      "sameSourceAs": [
+        "SORT_core-repair-v3_execute_2.json"
+      ],
+      "behaviorInterpretation": "所有冻结行为检查通过"
+    },
+    {
+      "file": "SORT_core-repair-v3_execute_1.json",
+      "rawJsonAccepted": true,
+      "unchangedFilesReturned": [],
+      "originalFrozenCheck": {
+        "passed": 7,
+        "total": 7
+      },
+      "fullyCompliesWithDelivery": true,
+      "neededEdits": [],
+      "sourceHashes": {
+        "src/sortNumbers.mjs": "76cbdea2546fe4709a09ac76e4a186c3113ee27dd79dbc94e40706333b35412a"
+      },
+      "sameSourceAs": [
+        "SORT_core-repair-single-pass_execute_1.json",
+        "SORT_original_execute_1.json",
+        "SORT_original_execute_2.json"
+      ],
+      "behaviorInterpretation": "所有冻结行为检查通过"
+    },
+    {
+      "file": "SORT_core-repair-v3_execute_2.json",
+      "rawJsonAccepted": true,
+      "unchangedFilesReturned": [],
+      "originalFrozenCheck": {
+        "passed": 7,
+        "total": 7
+      },
+      "fullyCompliesWithDelivery": true,
+      "neededEdits": [],
+      "sourceHashes": {
+        "src/sortNumbers.mjs": "e1ba939cfbb17aa9c9fd3267c1c2b6eb569bfaeaffd38c77f81b334261a9ad84"
+      },
+      "sameSourceAs": [
+        "SORT_core-repair-single-pass_execute_2.json"
+      ],
+      "behaviorInterpretation": "所有冻结行为检查通过"
+    },
+    {
+      "file": "SORT_original_execute_1.json",
+      "rawJsonAccepted": false,
+      "unchangedFilesReturned": [],
+      "originalFrozenCheck": {
+        "passed": 0,
+        "total": 1
+      },
+      "fullyCompliesWithDelivery": false,
+      "neededEdits": [
+        "去掉JSON外的Markdown围栏"
+      ],
+      "sourceHashes": {
+        "src/sortNumbers.mjs": "76cbdea2546fe4709a09ac76e4a186c3113ee27dd79dbc94e40706333b35412a"
+      },
+      "sameSourceAs": [
+        "SORT_core-repair-single-pass_execute_1.json",
+        "SORT_core-repair-v3_execute_1.json",
+        "SORT_original_execute_2.json"
+      ],
+      "behaviorInterpretation": "去围栏后源码与已通过行为检查作品逐字相同；原始交付格式仍失败"
+    },
+    {
+      "file": "SORT_original_execute_2.json",
+      "rawJsonAccepted": true,
+      "unchangedFilesReturned": [],
+      "originalFrozenCheck": {
+        "passed": 7,
+        "total": 7
+      },
+      "fullyCompliesWithDelivery": true,
+      "neededEdits": [],
+      "sourceHashes": {
+        "src/sortNumbers.mjs": "76cbdea2546fe4709a09ac76e4a186c3113ee27dd79dbc94e40706333b35412a"
+      },
+      "sameSourceAs": [
+        "SORT_core-repair-single-pass_execute_1.json",
+        "SORT_core-repair-v3_execute_1.json",
+        "SORT_original_execute_1.json"
+      ],
+      "behaviorInterpretation": "所有冻结行为检查通过"
+    }
+  ],
+  "costs": {
+    "core-repair-v3": {
+      "calls": 4,
+      "tokens": 11316,
+      "outboundElapsedMs": 11652
+    },
+    "core-repair-single-pass": {
+      "calls": 3,
+      "tokens": 11279,
+      "outboundElapsedMs": 15000
+    }
+  },
+  "repair": {
+    "trace": "008.json",
+    "kind": "additionCoverage引用不在正文中",
+    "subsequentTrace": "009.json",
+    "delivered": true,
+    "qualityRetry": false
+  },
+  "adoption": "不采用单阶段。两题作品无业务行为提升，仍有共同交付违约；两题总tokens接近，耗时较高，日期题一次协议修复抵消省去scope的调用收益。停止本假设采样并撤回生产实验分支。"
+}

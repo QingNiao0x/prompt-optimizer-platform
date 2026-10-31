@@ -1,0 +1,126 @@
+package com.promptoptimizer.provider.infrastructure.openai;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.promptoptimizer.context.domain.ContextSnapshot;
+import com.promptoptimizer.context.domain.FileSnippet;
+import com.promptoptimizer.enhancement.domain.NaturalProcessing;
+import com.promptoptimizer.enhancement.dto.PlanAnswer;
+import com.promptoptimizer.provider.domain.*;
+import com.promptoptimizer.provider.service.PlatformModelCatalog;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.http.MediaType;
+import org.springframework.mock.http.client.MockClientHttpRequest;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestClient;
+import static org.assertj.core.api.Assertions.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
+/** 单阶段对照只移除scope调用，验证实际传输、题答/来源保护及真实阶段记录，不代替语义验收。 */
+class NaturalCoreSinglePassProviderTest {
+    private static final String VERSION = "core-repair-single-pass";
+    private static final String ENDPOINT = "https://fixture.invalid/chat/completions";
+    private final ObjectMapper json = new ObjectMapper();
+    private MockRestServiceServer server;
+    private OpenAiCompatibleNaturalPromptProvider provider;
+
+    @BeforeEach
+    void setup() {
+        var builder = RestClient.builder();
+        server = MockRestServiceServer.bindTo(builder).build();
+        var properties = new OpenAiCompatibleProperties();
+        properties.setEndpoint(URI.create(ENDPOINT));
+        properties.setApiKey("fixture");
+        properties.setModel("fixture");
+        provider = new OpenAiCompatibleNaturalPromptProvider(builder.build(), json, properties, (PlatformModelCatalog) null);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"修正合计，保留筛选条件。", "阅读后等待，不写报告。", "用三条要点复述，再等待。", "只交付排查报告，不改代码。"})
+    void writesOnceWithFullSourcesAndTheSameGuidance(String raw) throws Exception {
+        var input = input(raw);
+        String body = raw + input.actualAnswers().getFirst().answer();
+        expect(response(input, body), input);
+        var draft = provider.enhance(input, value -> checked(value, input));
+        assertThat(draft.completedStages()).containsExactly(NaturalProcessing.Stage.BODY_GENERATION);
+        assertThat(draft.optimizedPrompt()).isEqualTo(body).doesNotContain("SOURCE_ONLY", "提供的材料");
+        assertThat(NaturalPromptInstructions.enhancementInstruction(VERSION))
+                .isEqualTo(NaturalPromptInstructions.enhancementInstruction("core-repair-v3"));
+        assertThat(NaturalPromptInstructions.planningInstruction(VERSION))
+                .isEqualTo(NaturalPromptInstructions.planningInstruction("core-repair-v3"));
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"FORGED_SOURCE", "MISSING_ANSWER", "BODY_QUOTE"})
+    void rejectsTheSameProtectionFailuresAfterOneProtocolRepair(String defect) throws Exception {
+        var input = input("修正合计，保留筛选条件。");
+        var response = response(input, input.rawPrompt() + input.actualAnswers().getFirst().answer());
+        var task = (ObjectNode) response.get("taskUnderstanding");
+        switch (defect) {
+            case "FORGED_SOURCE" -> ((ObjectNode) task.path("requirements").get(0).path("evidence").get(0)).put("quote", "不存在的授权");
+            case "MISSING_ANSWER" -> ((ArrayNode) task.get("requirements")).remove(1);
+            case "BODY_QUOTE" -> ((ObjectNode) task.path("review").path("requirementCoverage").get(1)).putArray("quotes").add("不存在的正文");
+            default -> throw new IllegalArgumentException(defect);
+        }
+        expect(response, input);
+        expect(response, input);
+        assertThatThrownBy(() -> provider.enhance(input, value -> checked(value, input))).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
+    /** 材料和真实题答完整输入，内部来源保存不等于复制正文附带全部源码。 */
+    private NaturalPromptInput input(String raw) {
+        var context = new ContextSnapshot("合成工程", List.of(), List.of(), List.of(),
+                List.of(new FileSnippet("src/count.mjs", "javascript", "SOURCE_ONLY export const count = 1;", "", false)),
+                List.of(), List.of(), "fixture");
+        return new NaturalPromptInput(raw, context, List.of(new PlanAnswer("scope", "修改范围？", "仅处理本地模块。")),
+                List.of(), List.of(), null, context).withStrategyVersion(VERSION);
+    }
+
+    /** 使用与复杂链相同的来源和覆盖记录，不为单阶段候选豁免协议。 */
+    private ObjectNode response(NaturalPromptInput input, String body) {
+        var requirements = List.of(
+                new NaturalTaskUnderstanding.Requirement(input.rawPrompt(), List.of(new NaturalTaskUnderstanding.Evidence("rawPrompt", input.rawPrompt())), List.of(NaturalTaskUnderstanding.Dimension.GOAL)),
+                new NaturalTaskUnderstanding.Requirement(input.actualAnswers().getFirst().answer(), List.of(new NaturalTaskUnderstanding.Evidence("actualAnswers.0", input.actualAnswers().getFirst().answer())), List.of(NaturalTaskUnderstanding.Dimension.USER_CONFIRMATION)));
+        var coverage = new ArrayList<NaturalTaskReview.Coverage>();
+        for (int i = 0; i < requirements.size(); i++) coverage.add(new NaturalTaskReview.Coverage(i, List.of(body)));
+        var task = new NaturalTaskUnderstanding(input.rawPrompt(), "", requirements, List.of(), List.of(),
+                new NaturalTaskReview(NaturalTaskReview.InputReadiness.SUFFICIENT, coverage, List.of(), List.of()));
+        var result = json.createObjectNode().put("optimizedPrompt", body).put("framework", "APE");
+        result.set("taskUnderstanding", json.valueToTree(task));
+        return result;
+    }
+
+    private NaturalPromptDraft checked(NaturalPromptDraft draft, NaturalPromptInput input) {
+        var task = draft.taskUnderstanding().resolve(input);
+        task.review().validateEnhancement(task, draft.optimizedPrompt());
+        return draft;
+    }
+
+    /** 只有正文请求能匹配；任何准备调用、多发请求或输入删减都会使测试失败。 */
+    private void expect(ObjectNode response, NaturalPromptInput input) throws Exception {
+        String envelope = json.writeValueAsString(Map.of("choices", List.of(Map.of("finish_reason", "stop", "message",
+                Map.of("content", json.writeValueAsString(response))))));
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var payload = json.readTree(((MockClientHttpRequest) request).getBodyAsString());
+            // 协议失败时沿用原有修复后缀，正文指导前缀仍必须逐字相同。
+            assertThat(payload.path("messages").get(0).path("content").asText()).startsWith(NaturalPromptCoreRepairInstructions.COMPLETION_ENHANCE);
+            String user = payload.path("messages").get(1).path("content").asText();
+            var original = json.readTree(user.substring(user.indexOf('{')));
+            assertThat(original.path("rawPrompt").asText()).isEqualTo(input.rawPrompt());
+            assertThat(original.path("context")).isEqualTo(json.valueToTree(input.context()));
+            assertThat(original.path("actualAnswers")).isEqualTo(json.valueToTree(input.actualAnswers()));
+            assertThat(original.path("taskSources")).isEqualTo(json.valueToTree(input.taskSources()));
+            assertThat(original.path("taskScope").isMissingNode() || original.path("taskScope").isNull()).isTrue();
+        }).andRespond(withSuccess(envelope, MediaType.APPLICATION_JSON));
+    }
+}

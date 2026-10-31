@@ -1,0 +1,89 @@
+{
+  "status": 200,
+  "requestId": "e4556a6e-23db-40dc-a42f-faf907946693",
+  "body": {
+    "requestId": "e4556a6e-23db-40dc-a42f-faf907946693",
+    "data": {
+      "optimizedPrompt": "请修改重点人群模块 @src/people 的新增和导入功能，为调查时间增加录入限制：调查时间只能填写当前当日之前的日期，不可以超过今日。本轮使用合成模块，保留现有接口、错误类型和逐行导入行为；仅允许修改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件，也无需增加测试文件。调查日期按 YYYY-MM-DD 日历日期处理，新增与导入共用校验；today 由调用方按业务时区传入，不得用执行机器当前时间替换；空值和无效日历日期均拒绝。新增失败抛出 Error，导入保留逐行接受/拒绝结果，不改变部分成功规则。\n\n返回一个 JSON 对象，键为修改的文件路径，值为完整源码字符串；仅返回确有修改的允许文件，不附其他文字。",
+      "resultKind": "TEXT",
+      "contextReport": {
+        "customDescription": "",
+        "technologyStack": [],
+        "dependencies": [],
+        "directoryTree": [
+          "src/",
+          "src/people/",
+          "src/people/create.mjs",
+          "src/people/date.mjs",
+          "src/people/import.mjs",
+          "src/people/rules.md"
+        ],
+        "fileSnippets": [
+          {
+            "path": "src/people/date.mjs",
+            "language": "javascript",
+            "content": "[片段 1/1]\nexport function validSurveyDate(value, today, allowToday) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return false;\n  const parsed = new Date(value + 'T00:00:00Z');\n  if (!Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value) return false;\n  return true;\n}\n",
+            "summary": "JavaScript代码文件，主要定义：validSurveyDate、parsed。关键内容：export function validSurveyDate(value, today, allowToday) {；if (typeof value !",
+            "truncated": false
+          },
+          {
+            "path": "src/people/rules.md",
+            "language": "markdown",
+            "content": "[片段 1/1]\n# 合成项目规则\n调查日期为 YYYY-MM-DD 日历日期，新增与导入共用校验。today 由调用方按业务时区传入；不得用执行机器当前时间替换。空值和无效日历日期均拒绝。用户还需确认是否允许 today 当天。新增失败抛出 Error，导入保留逐行接受/拒绝结果，不改变部分成功规则。",
+            "summary": "Markdown 文档摘要：合成项目规则；调查日期为 YYYY-MM-DD 日历日期，新增与导入共用校验。；空值和无效日历日期均拒绝。；用户还需确认是否允许 today 当天。；新增失败抛出 Error，导入保留逐行接受/拒绝结果，不改变部分成功规则。",
+            "truncated": false
+          },
+          {
+            "path": "src/people/create.mjs",
+            "language": "javascript",
+            "content": "[片段 1/1]\nimport { validSurveyDate } from './date.mjs';\nexport function createPerson(record, today, allowToday) {\n  if (!validSurveyDate(record.surveyDate, today, allowToday)) throw new Error('调查日期无效');\n  return { ...record };\n}\n",
+            "summary": "JavaScript代码文件，主要定义：createPerson。关键内容：import { validSurveyDate } from './date.mjs';；export function createPerson(record, today, allowToday) {",
+            "truncated": false
+          },
+          {
+            "path": "src/people/import.mjs",
+            "language": "javascript",
+            "content": "[片段 1/1]\nimport { validSurveyDate } from './date.mjs';\nexport function importPeople(rows, today, allowToday) {\n  const accepted = [], rejected = [];\n  rows.forEach((row, i) => {\n    if (validSurveyDate(row.surveyDate, today, allowToday)) accepted.push({ ...row });\n    else rejected.push({ row: i + 1, reason: '调查日期无效' });\n  });\n  return { accepted, rejected };\n}\n",
+            "summary": "JavaScript代码文件，主要定义：importPeople、accepted。关键内容：import { validSurveyDate } from './date.mjs';；export function importPeople(rows, today, allowToday) {",
+            "truncated": false
+          }
+        ],
+        "analysisStatus": "COMPLETE",
+        "fileCoverage": [],
+        "warnings": [],
+        "redactions": [],
+        "analysisVersion": "v3"
+      },
+      "ambiguities": [],
+      "appliedConstraints": [],
+      "templateCode": "GENERAL",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 10660,
+      "warnings": [],
+      "evidenceCards": [],
+      "promptFormat": "COMPACT",
+      "constraintGroups": {
+        "platformMandatory": [],
+        "taskSpecific": [],
+        "additionalPermissions": []
+      },
+      "generationPipeline": "NATURAL",
+      "chainVersion": "core-repair-v3",
+      "framework": "APE",
+      "recordId": "06251a29-d563-43ee-8114-69c94cc5c11e",
+      "editRevision": 0,
+      "processing": {
+        "completedStages": [
+          "SCOPE_ANALYSIS",
+          "BODY_GENERATION"
+        ],
+        "originalPreserved": false
+      }
+    }
+  }
+}

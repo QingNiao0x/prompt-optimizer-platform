@@ -1,0 +1,11 @@
+{
+  "requestId": "e4556a6e-23db-40dc-a42f-faf907946693",
+  "actualCalls": 2,
+  "logLines": [
+    "2026-10-31 20:05:53.361 [http-nio-9000-exec-9] INFO  [e4556a6e-23db-40dc-a42f-faf907946693] c.promptoptimizer.common.logging.ModelCallLogger - event=model.call.completed requestId=e4556a6e-23db-40dc-a42f-faf907946693 workflowId=- operation=prompt.optimize providerRoute=deepseek model=deepseek:deepseek-flash selectionSource=PLATFORM_CATALOG mock=false attempt=1 inputItems=1 inputTokens=1896 outputTokens=391 totalTokens=2287 durationMs=3827",
+    "2026-10-31 20:05:59.721 [http-nio-9000-exec-9] INFO  [e4556a6e-23db-40dc-a42f-faf907946693] c.promptoptimizer.common.logging.ModelCallLogger - event=model.call.completed requestId=e4556a6e-23db-40dc-a42f-faf907946693 workflowId=- operation=prompt.optimize providerRoute=deepseek model=deepseek:deepseek-flash selectionSource=PLATFORM_CATALOG mock=false attempt=1 inputItems=1 inputTokens=3380 outputTokens=1470 totalTokens=4850 durationMs=6308"
+  ],
+  "transport": "正常9000接口；按专属requestId核对实际模型完成/失败事件",
+  "provider": "deepseek",
+  "endpointVerifiedInConfiguration": "https://api.deepseek.com/chat/completions"
+}

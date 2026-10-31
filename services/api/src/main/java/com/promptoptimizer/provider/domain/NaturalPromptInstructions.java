@@ -9,7 +9,7 @@ package com.promptoptimizer.provider.domain;
 public final class NaturalPromptInstructions {
     /** 冻结第四版，供旧历史和明确成果的原始生成路径使用，不能随默认切换回改。 */
     public static final String VERSION = "4";
-    /** 默认保留31，候选须先满足已确认的作品质量条件；旧历史始终按保存版本重放。 */
+    /** 保留31作为STABLE回退与旧输入兼容版本；新请求采用由NaturalEnhancementSettings独立配置。 */
     public static final String CURRENT_VERSION = NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION;
 
     /** 已保存的自然版本继续使用各自冻结指导，不静默改换再次增强策略。 */

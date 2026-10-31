@@ -1,0 +1,64 @@
+{
+  "note": "源自本会话真实使用反馈和排序示例；路径、代码及记录全部为本轮合成夹具，不是真实业务源码。属于已见需求的定向验证，不称独立未见题。",
+  "cases": [
+    {
+      "id": "DATE",
+      "rawPrompt": "请在重点人群模块 @src/people 的新增和导入功能增加调查时间录入限制：调查时间只能填写当前当日之前的日期，不可以超过今日。请修改实现。",
+      "context": {
+        "customDescription": "本轮使用合成模块，保留现有接口、错误类型和逐行导入行为。仅允许改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件。",
+        "files": [
+          {
+            "path": "src/people/rules.md",
+            "language": "markdown",
+            "content": "# 合成项目规则\n调查日期为 YYYY-MM-DD 日历日期，新增与导入共用校验。today 由调用方按业务时区传入；不得用执行机器当前时间替换。空值和无效日历日期均拒绝。用户还需确认是否允许 today 当天。新增失败抛出 Error，导入保留逐行接受/拒绝结果，不改变部分成功规则。"
+          },
+          {
+            "path": "src/people/date.mjs",
+            "language": "javascript",
+            "content": "export function validSurveyDate(value, today, allowToday) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return false;\n  const parsed = new Date(value + 'T00:00:00Z');\n  if (!Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value) return false;\n  return true;\n}\n"
+          },
+          {
+            "path": "src/people/create.mjs",
+            "language": "javascript",
+            "content": "import { validSurveyDate } from './date.mjs';\nexport function createPerson(record, today, allowToday) {\n  if (!validSurveyDate(record.surveyDate, today, allowToday)) throw new Error('调查日期无效');\n  return { ...record };\n}\n"
+          },
+          {
+            "path": "src/people/import.mjs",
+            "language": "javascript",
+            "content": "import { validSurveyDate } from './date.mjs';\nexport function importPeople(rows, today, allowToday) {\n  const accepted = [], rejected = [];\n  rows.forEach((row, i) => {\n    if (validSurveyDate(row.surveyDate, today, allowToday)) accepted.push({ ...row });\n    else rejected.push({ row: i + 1, reason: '调查日期无效' });\n  });\n  return { accepted, rejected };\n}\n"
+          },
+          {
+            "path": "src/archive/date.mjs",
+            "language": "javascript",
+            "content": "// 已退役的相似模块，不属于本次修改范围。\nexport function validSurveyDate() { return true; }\n"
+          }
+        ]
+      },
+      "actualAnswers": [],
+      "executionContract": "返回一个JSON对象，键为修改的文件路径，值为完整源码字符串。仅返回确有修改的允许文件，不附其他文字；无需增加测试文件。",
+      "planAnswerFixture": "允许今天，即调查日期不得晚于today；allowToday参数仍保留兼容，不删既有严格早于today的调用能力。",
+      "planAnswerProvenance": "评测夹具预先指定的回答，待实际Plan问题生成后绑定；不是用户真实业务决定。"
+    },
+    {
+      "id": "SORT",
+      "rawPrompt": "弄个排序。",
+      "context": {
+        "customDescription": "请完善当前项目的 src/sortNumbers.mjs，规则与接口见该文件注释。仅修改这一个文件，不增加依赖或文件。",
+        "files": [
+          {
+            "path": "package.json",
+            "language": "json",
+            "content": "{\"name\":\"synthetic-ranking\",\"type\":\"module\",\"engines\":{\"node\":\">=22\"}}"
+          },
+          {
+            "path": "src/sortNumbers.mjs",
+            "language": "javascript",
+            "content": "/** 返回数值升序的新数组；支持负数和小数、空数组与重复值，保持原数组不变。\n * 非数组或包含非有限数字时抛出 TypeError；无需额外依赖。 */\nexport function sortNumbers(values) {\n  return values.sort();\n}\n"
+          }
+        ]
+      },
+      "actualAnswers": [],
+      "executionContract": "返回一个JSON对象，键为修改的文件路径，值为完整源码字符串。仅返回确有修改的允许文件，不附其他文字；无需增加测试文件。"
+    }
+  ]
+}

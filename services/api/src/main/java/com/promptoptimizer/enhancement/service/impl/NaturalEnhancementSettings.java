@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 
 /**
  * 自然增强新请求的服务端采用开关；历史显式版本、结构化链及其他工具不使用此开关。
- * 默认继续稳定配置，工程修复可独立试用及回退；不能从浏览器请求选择任意实验版本。
+ * 新请求采用已独立验证的门控、材料与动作边界修复；STABLE保留31回退，浏览器不能选择实验版本。
  *
  * @author QingNiao
  * @since 0.1.0
@@ -18,11 +18,11 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties(prefix = "app.enhancement.natural")
 public class NaturalEnhancementSettings {
-    /** STABLE保留31；其余依次显式试用v1/v2/v3，不自动升级旧配置；v3仅修正正文补全依据。 */
+    /** 默认v3修复普通入口；STABLE及已显式选择的旧配置不被改写，历史仍按保存版本。 */
     public enum Profile { STABLE, CORE_REPAIR, ACTION_BOUNDARY_REPAIR, COMPLETION_BASIS_REPAIR }
 
     @NotNull
-    private Profile profile = Profile.STABLE;
+    private Profile profile = Profile.COMPLETION_BASIS_REPAIR;
 
     /** 读取服务端配置，不从模型输出或用户任务文本推断采用策略。 */
     public Profile getProfile() { return profile; }

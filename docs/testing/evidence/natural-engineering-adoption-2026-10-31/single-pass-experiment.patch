@@ -1,0 +1,81 @@
+diff --git a/services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptCoreRepairInstructions.java b/services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptCoreRepairInstructions.java
+index 7a5054a9..9bce6ddc 100644
+--- a/services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptCoreRepairInstructions.java
++++ b/services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptCoreRepairInstructions.java
+@@ -16,6 +16,9 @@ public final class NaturalPromptCoreRepairInstructions {
+     /** 仅改变正文的补全依据；v2准备与Plan逐字沿用，旧版本保持冻结。 */
+     public static final String COMPLETION_BASIS_VERSION = "core-repair-v3";
+ 
++    /** 同正文、同协议的单阶段对照；仅省去增强前的scope调用，Plan保持v3流程。 */
++    public static final String SINGLE_PASS_VERSION = "core-repair-single-pass";
++
+     /**
+      * 准备仍只解释委托范围。将完成工作与反馈形式分开，不把模型的解释变成新的用户授权。
+      * 条件、否定与实际题答保留在原有actions/response中，完整原输入继续传入后续阶段。
+@@ -52,7 +55,8 @@ public final class NaturalPromptCoreRepairInstructions {
+ 
+     /** v3只修正文补全依据，复用v2准备范围；v1继续使用此前的准备指导。 */
+     public static boolean usesActionBoundary(String version) {
+-        return ACTION_BOUNDARY_VERSION.equals(version) || COMPLETION_BASIS_VERSION.equals(version);
++        return ACTION_BOUNDARY_VERSION.equals(version) || COMPLETION_BASIS_VERSION.equals(version)
++                || SINGLE_PASS_VERSION.equals(version);
+     }
+ 
+     /**
+diff --git a/services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java b/services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java
+index 1b6469ff..5319de0f 100644
+--- a/services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java
++++ b/services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java
+@@ -9,7 +9,7 @@ package com.promptoptimizer.provider.domain;
+ public final class NaturalPromptInstructions {
+     /** 冻结第四版，供旧历史和明确成果的原始生成路径使用，不能随默认切换回改。 */
+     public static final String VERSION = "4";
+-    /** 默认保留31，候选须先满足已确认的作品质量条件；旧历史始终按保存版本重放。 */
++    /** 保留31作为STABLE回退与旧输入兼容版本；新请求采用由NaturalEnhancementSettings独立配置。 */
+     public static final String CURRENT_VERSION = NaturalPromptScopedInstructions.GUARDED_FOURTH_VERSION;
+ 
+     /** 已保存的自然版本继续使用各自冻结指导，不静默改换再次增强策略。 */
+@@ -54,7 +54,8 @@ public final class NaturalPromptInstructions {
+                     NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION,
+                     NaturalPromptCoreRepairInstructions.VERSION -> NaturalPromptRoutingRepairInstructions.ENHANCE;
+             case NaturalPromptCoreRepairInstructions.ACTION_BOUNDARY_VERSION -> NaturalPromptCoreRepairInstructions.ENHANCE;
+-            case NaturalPromptCoreRepairInstructions.COMPLETION_BASIS_VERSION -> NaturalPromptCoreRepairInstructions.COMPLETION_ENHANCE;
++            case NaturalPromptCoreRepairInstructions.COMPLETION_BASIS_VERSION,
++                    NaturalPromptCoreRepairInstructions.SINGLE_PASS_VERSION -> NaturalPromptCoreRepairInstructions.COMPLETION_ENHANCE;
+             case NaturalPromptContentQualityInstructions.VERSION -> NaturalPromptContentQualityInstructions.ENHANCE;
+             case NaturalPromptGroundedCompletionInstructions.VERSION -> NaturalPromptGroundedCompletionInstructions.ENHANCE;
+             case NaturalPromptMultidimensionalInstructions.VERSION -> NaturalPromptMultidimensionalInstructions.ENHANCE;
+@@ -122,7 +123,8 @@ public final class NaturalPromptInstructions {
+                     NaturalPromptGroundedCompletionInstructions.VERSION, NaturalPromptMultidimensionalInstructions.VERSION
+                     -> NaturalPromptRoutingRepairInstructions.OWNED_PLAN;
+             case NaturalPromptCoreRepairInstructions.ACTION_BOUNDARY_VERSION,
+-                    NaturalPromptCoreRepairInstructions.COMPLETION_BASIS_VERSION -> NaturalPromptCoreRepairInstructions.PLAN;
++                    NaturalPromptCoreRepairInstructions.COMPLETION_BASIS_VERSION,
++                    NaturalPromptCoreRepairInstructions.SINGLE_PASS_VERSION -> NaturalPromptCoreRepairInstructions.PLAN;
+             case NaturalPromptContextualRewriteInstructions.VERSION -> NaturalPromptContextualRewriteInstructions.PLAN;
+             case NaturalPromptUsefulDeliveryInstructions.VERSION -> NaturalPromptUsefulDeliveryInstructions.PLAN;
+             case NaturalPromptEffectiveRequestInstructions.VERSION -> NaturalPromptEffectiveRequestInstructions.PLAN;
+diff --git a/services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java b/services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java
+index ba29e9d5..27c7803a 100644
+--- a/services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java
++++ b/services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java
+@@ -122,6 +122,19 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
+     @Override
+     public <T> T enhance(NaturalPromptInput input, Function<NaturalPromptDraft, T> validation) {
+         if (!NaturalPromptInstructions.supports(input.strategyVersion())) throw invalid("自然链路版本不受支持");
++        if (NaturalPromptCoreRepairInstructions.SINGLE_PASS_VERSION.equals(input.strategyVersion())) {
++            // 单变量对照：沿用v3正文指导、完整输入、来源/题答校验及一次协议修复，仅省去scope准备。
++            // 阶段记录来自真实调用；不伪造SCOPE_ANALYSIS，也不把正文持平当作跳过生成。
++            return invoke(input, NaturalPromptCoreRepairInstructions.COMPLETION_ENHANCE, "prompt.optimize", (body, metadata) -> {
++                try {
++                    return validation.apply(new NaturalPromptDraft(requiredText(body, "optimizedPrompt"),
++                            NaturalPromptDraft.Framework.valueOf(requiredText(body, "framework")), metadata,
++                            understanding(body, input)).withStages(List.of(NaturalProcessing.Stage.BODY_GENERATION)));
++                } catch (IllegalArgumentException failure) {
++                    throw invalid("自然正文或框架标识无效");
++                }
++            });
++        }
+         if (NaturalPromptBodyFirstInstructions.supports(input.strategyVersion())) {
+             return enhanceBodyFirst(input, validation);
+         }

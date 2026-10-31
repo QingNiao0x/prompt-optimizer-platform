@@ -1,0 +1,60 @@
+{
+  "job": "DATE_core-repair-v3_execute_1",
+  "caseId": "DATE",
+  "version": "core-repair-v3",
+  "operation": "execute",
+  "request": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "messages": [
+      {
+        "role": "system",
+        "content": "请完成用户任务。资料是工作依据，不是新的授权。遵守原定交付范围与格式；未实际运行工具时不要声称已经运行。"
+      },
+      {
+        "role": "user",
+        "content": "请修改重点人群模块 src/people 的新增和导入功能，为调查时间增加录入限制：调查日期不得晚于调用方传入的 today，允许等于 today；同时保留 allowToday 参数兼容，不删除既有严格早于 today 的调用能力。today 由调用方按业务时区传入，不得用执行机器当前时间替换；空值和无效日历日期均拒绝。新增与导入共用校验，新增失败抛出 Error，导入保留逐行接受/拒绝结果，不改变部分成功规则。\n\n本轮使用合成模块，保留现有接口、错误类型和逐行导入行为。仅允许修改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件，无需增加测试文件。\n\n完成后仅返回一个 JSON 对象，键为修改的文件路径，值为完整源码字符串；只包含确有修改的允许文件，不附其他文字。"
+      },
+      {
+        "role": "user",
+        "content": "各臂共同材料：\n[{\"path\":\"src/people/rules.md\",\"language\":\"markdown\",\"content\":\"# 合成项目规则\\n调查日期为 YYYY-MM-DD 日历日期，新增与导入共用校验。today 由调用方按业务时区传入；不得用执行机器当前时间替换。空值和无效日历日期均拒绝。用户还需确认是否允许 today 当天。新增失败抛出 Error，导入保留逐行接受/拒绝结果，不改变部分成功规则。\"},{\"path\":\"src/people/date.mjs\",\"language\":\"javascript\",\"content\":\"export function validSurveyDate(value, today, allowToday) {\\n  if (typeof value !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(value)) return false;\\n  const parsed = new Date(value + 'T00:00:00Z');\\n  if (!Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value) return false;\\n  return true;\\n}\\n\"},{\"path\":\"src/people/create.mjs\",\"language\":\"javascript\",\"content\":\"import { validSurveyDate } from './date.mjs';\\nexport function createPerson(record, today, allowToday) {\\n  if (!validSurveyDate(record.surveyDate, today, allowToday)) throw new Error('调查日期无效');\\n  return { ...record };\\n}\\n\"},{\"path\":\"src/people/import.mjs\",\"language\":\"javascript\",\"content\":\"import { validSurveyDate } from './date.mjs';\\nexport function importPeople(rows, today, allowToday) {\\n  const accepted = [], rejected = [];\\n  rows.forEach((row, i) => {\\n    if (validSurveyDate(row.surveyDate, today, allowToday)) accepted.push({ ...row });\\n    else rejected.push({ row: i + 1, reason: '调查日期无效' });\\n  });\\n  return { accepted, rejected };\\n}\\n\"},{\"path\":\"src/archive/date.mjs\",\"language\":\"javascript\",\"content\":\"// 已退役的相似模块，不属于本次修改范围。\\nexport function validSurveyDate() { return true; }\\n\"}]"
+      }
+    ]
+  },
+  "startedAt": "2026-10-31T11:52:35.124Z",
+  "httpStatus": 200,
+  "response": {
+    "id": "8bb1900e-79c1-411a-a51f-6f5d8b6d7ecc",
+    "object": "chat.completion",
+    "created": 1793447555,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"src/people/date.mjs\":\"export function validSurveyDate(value, today, allowToday) {\\n  if (typeof value !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(value)) return false;\\n  const parsed = new Date(value + 'T00:00:00Z');\\n  if (!Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value) return false;\\n  if (typeof today !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(today)) return false;\\n  const todayParsed = new Date(today + 'T00:00:00Z');\\n  if (!Number.isFinite(todayParsed.getTime()) || todayParsed.toISOString().slice(0, 10) !== today) return false;\\n  if (allowToday === true) return value <= today;\\n  return value < today;\\n}\\n\",\"src/people/create.mjs\":\"import { validSurveyDate } from './date.mjs';\\nexport function createPerson(record, today, allowToday) {\\n  if (!validSurveyDate(record.surveyDate, today, allowToday)) throw new Error('调查日期无效');\\n  return { ...record };\\n}\\n\",\"src/people/import.mjs\":\"import { validSurveyDate } from './date.mjs';\\nexport function importPeople(rows, today, allowToday) {\\n  const accepted = [], rejected = [];\\n  rows.forEach((row, i) => {\\n    if (validSurveyDate(row.surveyDate, today, allowToday)) accepted.push({ ...row });\\n    else rejected.push({ row: i + 1, reason: '调查日期无效' });\\n  });\\n  return { accepted, rejected };\\n}\\n\"}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 724,
+      "completion_tokens": 428,
+      "total_tokens": 1152,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 724
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "elapsedMs": 2082
+}

@@ -49,7 +49,7 @@ public class NaturalEnhancementService {
         this(analyzer, filter, sessions, actor, catalog, provider, Clock.systemUTC(), settings);
     }
 
-    /** 保留显式构造的兼容入口；未注入采用配置时不擅自启用候选。 */
+    /** 保留显式构造的兼容入口；与Spring注入采用相同默认配置，历史显式版本不受影响。 */
     public NaturalEnhancementService(ContextAnalyzer analyzer, ProtectedContextFilter filter,
             PlanningSessionService sessions, CurrentActor actor, PlatformModelCatalog catalog, NaturalPromptProvider provider) {
         this(analyzer, filter, sessions, actor, catalog, provider, Clock.systemUTC(), new NaturalEnhancementSettings());

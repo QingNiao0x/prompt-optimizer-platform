@@ -1,0 +1,552 @@
+{
+  "baseline": [
+    {
+      "caseId": "DATE",
+      "checks": [
+        {
+          "name": "交付仅含允许修改的源码文件",
+          "pass": true
+        },
+        {
+          "name": "昨天接受",
+          "pass": true
+        },
+        {
+          "name": "允许今天",
+          "pass": true
+        },
+        {
+          "name": "兼容严格早于今天的调用",
+          "pass": false,
+          "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+        },
+        {
+          "name": "未来日期拒绝",
+          "pass": false,
+          "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+        },
+        {
+          "name": "跨年仍按调用方today比较",
+          "pass": false,
+          "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+        },
+        {
+          "name": "空值及非字符串拒绝",
+          "pass": true
+        },
+        {
+          "name": "无效日历日期拒绝",
+          "pass": true
+        },
+        {
+          "name": "闰日正确",
+          "pass": true
+        },
+        {
+          "name": "新增未来日期抛Error",
+          "pass": false,
+          "error": "Missing expected exception."
+        },
+        {
+          "name": "新增今天成功且保留数据",
+          "pass": true
+        },
+        {
+          "name": "导入逐行接受拒绝与行号",
+          "pass": false,
+          "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ '{\"accepted\":[{\"surveyDate\":\"2026-10-30\"},{\"surveyDate\":\"2026-11-01\"},{\"surveyDate\":\"2026-10-31\"}],\"rejected\":[{\"row\":4,\"reason\":\"调查日期无效\"}]}'\n- '{\"accepted\":[{\"surveyDate\":\"2026-10-30\"},{\"surveyDate\":\"2026-10-31\"}],\"rejected\":[{\"row\":2,\"reason\":\"调查日期无效\"},{\"row\":4,\"reason\":\"调查日期无效\"}]}'\n"
+        },
+        {
+          "name": "导入兼容严格日期边界",
+          "pass": false,
+          "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ '{\"accepted\":[{\"surveyDate\":\"2026-10-31\"}],\"rejected\":[]}'\n- '{\"accepted\":[],\"rejected\":[{\"row\":1,\"reason\":\"调查日期无效\"}]}'\n"
+        }
+      ]
+    },
+    {
+      "caseId": "SORT",
+      "checks": [
+        {
+          "name": "交付仅含允许修改的源码文件",
+          "pass": true
+        },
+        {
+          "name": "数字升序含负数小数",
+          "pass": false,
+          "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ '[-1,0,1.5,10,2]'\n- '[-1,0,1.5,2,10]'\n             ^\n"
+        },
+        {
+          "name": "保留重复值",
+          "pass": true
+        },
+        {
+          "name": "支持空数组",
+          "pass": true
+        },
+        {
+          "name": "新数组且不改变输入",
+          "pass": false,
+          "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ '[1,2,3]'\n- '[3,1,2]'\n"
+        },
+        {
+          "name": "非数组抛TypeError",
+          "pass": true
+        },
+        {
+          "name": "非有限数字抛TypeError",
+          "pass": false,
+          "error": "Missing expected exception."
+        }
+      ]
+    }
+  ],
+  "works": [
+    {
+      "file": "DATE_core-repair-single-pass_execute_1.json",
+      "passed": 13,
+      "total": 13,
+      "checks": [
+        {
+          "name": "交付仅含允许修改的源码文件",
+          "pass": true
+        },
+        {
+          "name": "昨天接受",
+          "pass": true
+        },
+        {
+          "name": "允许今天",
+          "pass": true
+        },
+        {
+          "name": "兼容严格早于今天的调用",
+          "pass": true
+        },
+        {
+          "name": "未来日期拒绝",
+          "pass": true
+        },
+        {
+          "name": "跨年仍按调用方today比较",
+          "pass": true
+        },
+        {
+          "name": "空值及非字符串拒绝",
+          "pass": true
+        },
+        {
+          "name": "无效日历日期拒绝",
+          "pass": true
+        },
+        {
+          "name": "闰日正确",
+          "pass": true
+        },
+        {
+          "name": "新增未来日期抛Error",
+          "pass": true
+        },
+        {
+          "name": "新增今天成功且保留数据",
+          "pass": true
+        },
+        {
+          "name": "导入逐行接受拒绝与行号",
+          "pass": true
+        },
+        {
+          "name": "导入兼容严格日期边界",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "file": "DATE_core-repair-single-pass_execute_2.json",
+      "passed": 13,
+      "total": 13,
+      "checks": [
+        {
+          "name": "交付仅含允许修改的源码文件",
+          "pass": true
+        },
+        {
+          "name": "昨天接受",
+          "pass": true
+        },
+        {
+          "name": "允许今天",
+          "pass": true
+        },
+        {
+          "name": "兼容严格早于今天的调用",
+          "pass": true
+        },
+        {
+          "name": "未来日期拒绝",
+          "pass": true
+        },
+        {
+          "name": "跨年仍按调用方today比较",
+          "pass": true
+        },
+        {
+          "name": "空值及非字符串拒绝",
+          "pass": true
+        },
+        {
+          "name": "无效日历日期拒绝",
+          "pass": true
+        },
+        {
+          "name": "闰日正确",
+          "pass": true
+        },
+        {
+          "name": "新增未来日期抛Error",
+          "pass": true
+        },
+        {
+          "name": "新增今天成功且保留数据",
+          "pass": true
+        },
+        {
+          "name": "导入逐行接受拒绝与行号",
+          "pass": true
+        },
+        {
+          "name": "导入兼容严格日期边界",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "file": "DATE_core-repair-v3_execute_1.json",
+      "passed": 13,
+      "total": 13,
+      "checks": [
+        {
+          "name": "交付仅含允许修改的源码文件",
+          "pass": true
+        },
+        {
+          "name": "昨天接受",
+          "pass": true
+        },
+        {
+          "name": "允许今天",
+          "pass": true
+        },
+        {
+          "name": "兼容严格早于今天的调用",
+          "pass": true
+        },
+        {
+          "name": "未来日期拒绝",
+          "pass": true
+        },
+        {
+          "name": "跨年仍按调用方today比较",
+          "pass": true
+        },
+        {
+          "name": "空值及非字符串拒绝",
+          "pass": true
+        },
+        {
+          "name": "无效日历日期拒绝",
+          "pass": true
+        },
+        {
+          "name": "闰日正确",
+          "pass": true
+        },
+        {
+          "name": "新增未来日期抛Error",
+          "pass": true
+        },
+        {
+          "name": "新增今天成功且保留数据",
+          "pass": true
+        },
+        {
+          "name": "导入逐行接受拒绝与行号",
+          "pass": true
+        },
+        {
+          "name": "导入兼容严格日期边界",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "file": "DATE_core-repair-v3_execute_2.json",
+      "passed": 13,
+      "total": 13,
+      "checks": [
+        {
+          "name": "交付仅含允许修改的源码文件",
+          "pass": true
+        },
+        {
+          "name": "昨天接受",
+          "pass": true
+        },
+        {
+          "name": "允许今天",
+          "pass": true
+        },
+        {
+          "name": "兼容严格早于今天的调用",
+          "pass": true
+        },
+        {
+          "name": "未来日期拒绝",
+          "pass": true
+        },
+        {
+          "name": "跨年仍按调用方today比较",
+          "pass": true
+        },
+        {
+          "name": "空值及非字符串拒绝",
+          "pass": true
+        },
+        {
+          "name": "无效日历日期拒绝",
+          "pass": true
+        },
+        {
+          "name": "闰日正确",
+          "pass": true
+        },
+        {
+          "name": "新增未来日期抛Error",
+          "pass": true
+        },
+        {
+          "name": "新增今天成功且保留数据",
+          "pass": true
+        },
+        {
+          "name": "导入逐行接受拒绝与行号",
+          "pass": true
+        },
+        {
+          "name": "导入兼容严格日期边界",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "file": "DATE_original_execute_1.json",
+      "passed": 0,
+      "total": 1,
+      "checks": [
+        {
+          "name": "原始输出JSON交付格式",
+          "pass": false,
+          "error": "Unexpected token '`', \"```json\n{\"\"... is not valid JSON"
+        }
+      ]
+    },
+    {
+      "file": "DATE_original_execute_2.json",
+      "passed": 0,
+      "total": 1,
+      "checks": [
+        {
+          "name": "原始输出JSON交付格式",
+          "pass": false,
+          "error": "Unexpected token '`', \"```json\n{\"\"... is not valid JSON"
+        }
+      ]
+    },
+    {
+      "file": "SORT_core-repair-single-pass_execute_1.json",
+      "passed": 7,
+      "total": 7,
+      "checks": [
+        {
+          "name": "交付仅含允许修改的源码文件",
+          "pass": true
+        },
+        {
+          "name": "数字升序含负数小数",
+          "pass": true
+        },
+        {
+          "name": "保留重复值",
+          "pass": true
+        },
+        {
+          "name": "支持空数组",
+          "pass": true
+        },
+        {
+          "name": "新数组且不改变输入",
+          "pass": true
+        },
+        {
+          "name": "非数组抛TypeError",
+          "pass": true
+        },
+        {
+          "name": "非有限数字抛TypeError",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "file": "SORT_core-repair-single-pass_execute_2.json",
+      "passed": 7,
+      "total": 7,
+      "checks": [
+        {
+          "name": "交付仅含允许修改的源码文件",
+          "pass": true
+        },
+        {
+          "name": "数字升序含负数小数",
+          "pass": true
+        },
+        {
+          "name": "保留重复值",
+          "pass": true
+        },
+        {
+          "name": "支持空数组",
+          "pass": true
+        },
+        {
+          "name": "新数组且不改变输入",
+          "pass": true
+        },
+        {
+          "name": "非数组抛TypeError",
+          "pass": true
+        },
+        {
+          "name": "非有限数字抛TypeError",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "file": "SORT_core-repair-v3_execute_1.json",
+      "passed": 7,
+      "total": 7,
+      "checks": [
+        {
+          "name": "交付仅含允许修改的源码文件",
+          "pass": true
+        },
+        {
+          "name": "数字升序含负数小数",
+          "pass": true
+        },
+        {
+          "name": "保留重复值",
+          "pass": true
+        },
+        {
+          "name": "支持空数组",
+          "pass": true
+        },
+        {
+          "name": "新数组且不改变输入",
+          "pass": true
+        },
+        {
+          "name": "非数组抛TypeError",
+          "pass": true
+        },
+        {
+          "name": "非有限数字抛TypeError",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "file": "SORT_core-repair-v3_execute_2.json",
+      "passed": 7,
+      "total": 7,
+      "checks": [
+        {
+          "name": "交付仅含允许修改的源码文件",
+          "pass": true
+        },
+        {
+          "name": "数字升序含负数小数",
+          "pass": true
+        },
+        {
+          "name": "保留重复值",
+          "pass": true
+        },
+        {
+          "name": "支持空数组",
+          "pass": true
+        },
+        {
+          "name": "新数组且不改变输入",
+          "pass": true
+        },
+        {
+          "name": "非数组抛TypeError",
+          "pass": true
+        },
+        {
+          "name": "非有限数字抛TypeError",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "file": "SORT_original_execute_1.json",
+      "passed": 0,
+      "total": 1,
+      "checks": [
+        {
+          "name": "原始输出JSON交付格式",
+          "pass": false,
+          "error": "Unexpected token '`', \"```json\n{\"\"... is not valid JSON"
+        }
+      ]
+    },
+    {
+      "file": "SORT_original_execute_2.json",
+      "passed": 7,
+      "total": 7,
+      "checks": [
+        {
+          "name": "交付仅含允许修改的源码文件",
+          "pass": true
+        },
+        {
+          "name": "数字升序含负数小数",
+          "pass": true
+        },
+        {
+          "name": "保留重复值",
+          "pass": true
+        },
+        {
+          "name": "支持空数组",
+          "pass": true
+        },
+        {
+          "name": "新数组且不改变输入",
+          "pass": true
+        },
+        {
+          "name": "非数组抛TypeError",
+          "pass": true
+        },
+        {
+          "name": "非有限数字抛TypeError",
+          "pass": true
+        }
+      ]
+    }
+  ]
+}

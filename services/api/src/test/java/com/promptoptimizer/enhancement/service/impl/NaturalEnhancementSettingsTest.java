@@ -13,8 +13,14 @@ class NaturalEnhancementSettingsTest {
             .withUserConfiguration(NaturalEnhancementSettings.class);
 
     @Test
-    void defaultRemains31UntilAdoptionIsExplicitlyConfigured() {
-        runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("31"));
+    void newRequestsDefaultToTheValidatedEngineeringRepair() {
+        runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v3"));
+    }
+
+    @Test
+    void stableIsStillAnExplicitRollbackTo31() {
+        runner.withPropertyValues("app.enhancement.natural.profile=STABLE").run(context ->
+                assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("31"));
     }
 
     @Test

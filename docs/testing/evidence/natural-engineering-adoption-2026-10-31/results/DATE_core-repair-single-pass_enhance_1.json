@@ -1,0 +1,338 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "DATE",
+  "strategyVersion" : "core-repair-single-pass",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T11:49:34.233812Z",
+  "input" : {
+    "rawPrompt" : "请在重点人群模块 @src/people 的新增和导入功能增加调查时间录入限制：调查时间只能填写当前当日之前的日期，不可以超过今日。请修改实现。\n\n本轮使用合成模块，保留现有接口、错误类型和逐行导入行为。仅允许改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件。\n返回一个JSON对象，键为修改的文件路径，值为完整源码字符串。仅返回确有修改的允许文件，不附其他文字；无需增加测试文件。",
+    "context" : {
+      "customDescription" : "本轮使用合成模块，保留现有接口、错误类型和逐行导入行为。仅允许改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件。",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "src/people/rules.md", "src/people/date.mjs", "src/people/create.mjs", "src/people/import.mjs", "src/archive/date.mjs" ],
+      "fileSnippets" : [ {
+        "path" : "src/people/rules.md",
+        "language" : "markdown",
+        "content" : "# 合成项目规则\n调查日期为 YYYY-MM-DD 日历日期，新增与导入共用校验。today 由调用方按业务时区传入；不得用执行机器当前时间替换。空值和无效日历日期均拒绝。用户还需确认是否允许 today 当天。新增失败抛出 Error，导入保留逐行接受/拒绝结果，不改变部分成功规则。",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/people/date.mjs",
+        "language" : "javascript",
+        "content" : "export function validSurveyDate(value, today, allowToday) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return false;\n  const parsed = new Date(value + 'T00:00:00Z');\n  if (!Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value) return false;\n  return true;\n}\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/people/create.mjs",
+        "language" : "javascript",
+        "content" : "import { validSurveyDate } from './date.mjs';\nexport function createPerson(record, today, allowToday) {\n  if (!validSurveyDate(record.surveyDate, today, allowToday)) throw new Error('调查日期无效');\n  return { ...record };\n}\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/people/import.mjs",
+        "language" : "javascript",
+        "content" : "import { validSurveyDate } from './date.mjs';\nexport function importPeople(rows, today, allowToday) {\n  const accepted = [], rejected = [];\n  rows.forEach((row, i) => {\n    if (validSurveyDate(row.surveyDate, today, allowToday)) accepted.push({ ...row });\n    else rejected.push({ row: i + 1, reason: '调查日期无效' });\n  });\n  return { accepted, rejected };\n}\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/date.mjs",
+        "language" : "javascript",
+        "content" : "// 已退役的相似模块，不属于本次修改范围。\nexport function validSurveyDate() { return true; }\n",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ {
+      "questionId" : "allowToday",
+      "question" : "调查日期是否允许等于 today（当天）？",
+      "answer" : "允许今天，即调查日期不得晚于today；allowToday参数仍保留兼容，不删既有严格早于today的调用能力。"
+    } ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-single-pass",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.customDescription",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.1",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.2",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.3",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.4",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.1",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.2",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.3",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.4",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "actualAnswers.0",
+      "kind" : "BOUND_PLAN_ANSWER"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请修改重点人群模块（src/people）的新增和导入功能，为调查时间增加录入限制：调查日期不得晚于调用方传入的 today，即允许等于 today，但超过 today 的日期必须拒绝。today 由调用方按业务时区传入，不得用执行机器当前时间替换；allowToday 参数仍保留以兼容既有调用，不删除既有严格早于 today 的调用能力。新增与导入共用同一校验；空值和无效日历日期均拒绝。新增失败仍抛出 Error，导入保留逐行接受/拒绝结果及部分成功规则，不改变现有接口和错误类型。\n\n本轮使用合成模块，仅允许修改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件，无需增加测试文件。\n\n完成后仅返回一个 JSON 对象，键为修改的文件路径，值为完整源码字符串；只包含确有修改的允许文件，不附其他文字。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "在 src/people 的新增与导入功能中实现调查日期不得晚于 today（允许等于 today）的校验，保留现有接口、错误类型和逐行导入行为，仅修改三个允许文件。",
+      "deliverable" : "仅含确有修改的允许文件路径及其完整源码字符串的 JSON 对象，不附其他文字。",
+      "requirements" : [ {
+        "text" : "调查时间只能填写当前当日之前的日期，不可以超过今日。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "请在重点人群模块 @src/people 的新增和导入功能增加调查时间录入限制：调查时间只能填写当前当日之前的日期，不可以超过今日。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "CONDITION" ]
+      }, {
+        "text" : "允许今天，即调查日期不得晚于today；allowToday参数仍保留兼容，不删既有严格早于today的调用能力。",
+        "evidence" : [ {
+          "sourceId" : "actualAnswers.0",
+          "quote" : "允许今天，即调查日期不得晚于today；allowToday参数仍保留兼容，不删既有严格早于today的调用能力。",
+          "origin" : "BOUND_PLAN_ANSWER"
+        } ],
+        "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+      }, {
+        "text" : "today 由调用方按业务时区传入；不得用执行机器当前时间替换。",
+        "evidence" : [ {
+          "sourceId" : "context.fileSnippets.0",
+          "quote" : "today 由调用方按业务时区传入；不得用执行机器当前时间替换。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "空值和无效日历日期均拒绝。",
+        "evidence" : [ {
+          "sourceId" : "context.fileSnippets.0",
+          "quote" : "空值和无效日历日期均拒绝。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "新增失败抛出 Error，导入保留逐行接受/拒绝结果，不改变部分成功规则。",
+        "evidence" : [ {
+          "sourceId" : "context.fileSnippets.0",
+          "quote" : "新增失败抛出 Error，导入保留逐行接受/拒绝结果，不改变部分成功规则。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "保留现有接口、错误类型和逐行导入行为。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "本轮使用合成模块，保留现有接口、错误类型和逐行导入行为。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "仅允许改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "仅允许改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "返回一个JSON对象，键为修改的文件路径，值为完整源码字符串。仅返回确有修改的允许文件，不附其他文字；无需增加测试文件。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "返回一个JSON对象，键为修改的文件路径，值为完整源码字符串。仅返回确有修改的允许文件，不附其他文字；无需增加测试文件。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "FORMAT", "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "新增与导入共用同一校验。",
+        "benefit" : "明确校验入口，确保新增与导入行为一致，不新增交付物。",
+        "gap" : "原提示词未说明新增与导入是否共用校验逻辑，可能导致两处实现不一致。"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "调查日期不得晚于调用方传入的 today，即允许等于 today，但超过 today 的日期必须拒绝。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "allowToday 参数仍保留以兼容既有调用，不删除既有严格早于 today 的调用能力。" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "today 由调用方按业务时区传入，不得用执行机器当前时间替换" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "空值和无效日历日期均拒绝。" ]
+        }, {
+          "index" : 4,
+          "quotes" : [ "新增失败仍抛出 Error，导入保留逐行接受/拒绝结果及部分成功规则" ]
+        }, {
+          "index" : 5,
+          "quotes" : [ "不改变现有接口和错误类型。" ]
+        }, {
+          "index" : 6,
+          "quotes" : [ "仅允许修改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件" ]
+        }, {
+          "index" : 7,
+          "quotes" : [ "完成后仅返回一个 JSON 对象，键为修改的文件路径，值为完整源码字符串；只包含确有修改的允许文件，不附其他文字。" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "新增与导入共用同一校验" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "在 src/people 的新增与导入功能中实现调查日期不得晚于 today（允许等于 today）的校验，保留现有接口、错误类型和逐行导入行为，仅修改三个允许文件。",
+    "deliverable" : "仅含确有修改的允许文件路径及其完整源码字符串的 JSON 对象，不附其他文字。",
+    "requirements" : [ {
+      "text" : "调查时间只能填写当前当日之前的日期，不可以超过今日。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请在重点人群模块 @src/people 的新增和导入功能增加调查时间录入限制：调查时间只能填写当前当日之前的日期，不可以超过今日。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "CONDITION" ]
+    }, {
+      "text" : "允许今天，即调查日期不得晚于today；allowToday参数仍保留兼容，不删既有严格早于today的调用能力。",
+      "evidence" : [ {
+        "sourceId" : "actualAnswers.0",
+        "quote" : "允许今天，即调查日期不得晚于today；allowToday参数仍保留兼容，不删既有严格早于today的调用能力。",
+        "origin" : "BOUND_PLAN_ANSWER"
+      } ],
+      "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+    }, {
+      "text" : "today 由调用方按业务时区传入；不得用执行机器当前时间替换。",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "today 由调用方按业务时区传入；不得用执行机器当前时间替换。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "空值和无效日历日期均拒绝。",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "空值和无效日历日期均拒绝。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "新增失败抛出 Error，导入保留逐行接受/拒绝结果，不改变部分成功规则。",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "新增失败抛出 Error，导入保留逐行接受/拒绝结果，不改变部分成功规则。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "保留现有接口、错误类型和逐行导入行为。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "本轮使用合成模块，保留现有接口、错误类型和逐行导入行为。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "仅允许改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "仅允许改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "返回一个JSON对象，键为修改的文件路径，值为完整源码字符串。仅返回确有修改的允许文件，不附其他文字；无需增加测试文件。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "返回一个JSON对象，键为修改的文件路径，值为完整源码字符串。仅返回确有修改的允许文件，不附其他文字；无需增加测试文件。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT", "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "新增与导入共用同一校验。",
+      "benefit" : "明确校验入口，确保新增与导入行为一致，不新增交付物。",
+      "gap" : "原提示词未说明新增与导入是否共用校验逻辑，可能导致两处实现不一致。"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "调查日期不得晚于调用方传入的 today，即允许等于 today，但超过 today 的日期必须拒绝。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "allowToday 参数仍保留以兼容既有调用，不删除既有严格早于 today 的调用能力。" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "today 由调用方按业务时区传入，不得用执行机器当前时间替换" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "空值和无效日历日期均拒绝。" ]
+      }, {
+        "index" : 4,
+        "quotes" : [ "新增失败仍抛出 Error，导入保留逐行接受/拒绝结果及部分成功规则" ]
+      }, {
+        "index" : 5,
+        "quotes" : [ "不改变现有接口和错误类型。" ]
+      }, {
+        "index" : 6,
+        "quotes" : [ "仅允许修改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件" ]
+      }, {
+        "index" : 7,
+        "quotes" : [ "完成后仅返回一个 JSON 对象，键为修改的文件路径，值为完整源码字符串；只包含确有修改的允许文件，不附其他文字。" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "新增与导入共用同一校验" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 11701
+}

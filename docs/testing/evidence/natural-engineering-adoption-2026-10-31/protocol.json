@@ -1,0 +1,74 @@
+{
+  "status": "FROZEN",
+  "date": "2026-10-31",
+  "authorization": "用户本轮明确授权新增最多32次及指定合成载荷外发",
+  "maximumActualCalls": 32,
+  "providerAndWorksMaximum": 24,
+  "productMaximum": 8,
+  "previousBudgetUsed": 30,
+  "previousBudgetMaximum": 32,
+  "previousUnusedNotConsumed": 2,
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "max_tokens": 8192,
+  "thinking": "disabled",
+  "versions": [
+    "core-repair-v3",
+    "core-repair-single-pass"
+  ],
+  "files": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptCoreRepairInstructions.java",
+      "sha256": "4f5b0345e3a61f6287f43792f76d0739a4d21bd51c7f86d28ffb2b5cd0641508"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "8dc4d573275b080f4af9d8297e829ea2efe4199c49d6252b0663d09b7c5d2b28"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRoutingRepairInstructions.java",
+      "sha256": "0545f9a05ef700f31a37bdb9061b35c1107e6d31007061925fdf5c221fa808d8"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskUnderstanding.java",
+      "sha256": "a678e2bc200fe5104d15d74ed498ac9861c60d9ceb5f2d28ab25b952914347ac"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java",
+      "sha256": "baa8629fbef7cc74be93fa6d890ebd1209caaf2dc57312d8c972c4a87bda25c9"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "01a85f8f7ac826db38ae426ca31298733f35c576030975856808974a360ad0ba"
+    },
+    {
+      "path": "docs/testing/evidence/natural-engineering-adoption-2026-10-31/cases.json",
+      "sha256": "4c6cfc01ef19b881e97708a02915e4645a5d57e3cef05ca8dc1207d05f958f21"
+    },
+    {
+      "path": "docs/testing/evidence/natural-engineering-adoption-2026-10-31/run.mjs",
+      "sha256": "2ed4972c9dc28fa7fb77f62f292f9d239c88dad558b94c6db685b3128d57b9ed"
+    },
+    {
+      "path": "docs/testing/evidence/natural-engineering-adoption-2026-10-31/run.ps1",
+      "sha256": "c9d7d9f6bfd5471e5c7ebea33020e171db1b5f1fb247103a632b5e7200bffaeb"
+    },
+    {
+      "path": "docs/testing/evidence/natural-engineering-adoption-2026-10-31/SingleStageEvaluation.java",
+      "sha256": "63417e519e6147c3bc0cfb9d13ff5920d3e50461032505ed633b89691329b252"
+    }
+  ],
+  "order": [
+    "DATE plan",
+    "SORT and DATE enhancement on both arms",
+    "semantic review",
+    "two works per original/v3/single arm",
+    "product workflow verification"
+  ],
+  "qualityRetries": 0,
+  "assumption": "Only omit independent scope analysis; writing guidance and output protections identical",
+  "acceptance": "Engineering fixes independently adopted after regression; simplification requires no serious new errors and useful completion with quality parity or gain plus lower cost. Product gain versus original is reported separately.",
+  "samples": "User feedback adapted with synthetic source; seen targeted cases, not heldout",
+  "reviewer": "Internal AI and deterministic checks; no human editing-time measurement claimed"
+}

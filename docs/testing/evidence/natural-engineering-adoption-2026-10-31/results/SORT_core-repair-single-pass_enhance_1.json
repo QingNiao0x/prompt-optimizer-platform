@@ -1,0 +1,215 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "SORT",
+  "strategyVersion" : "core-repair-single-pass",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T11:47:05.827699200Z",
+  "input" : {
+    "rawPrompt" : "弄个排序。\n\n请完善当前项目的 src/sortNumbers.mjs，规则与接口见该文件注释。仅修改这一个文件，不增加依赖或文件。\n返回一个JSON对象，键为修改的文件路径，值为完整源码字符串。仅返回确有修改的允许文件，不附其他文字；无需增加测试文件。",
+    "context" : {
+      "customDescription" : "请完善当前项目的 src/sortNumbers.mjs，规则与接口见该文件注释。仅修改这一个文件，不增加依赖或文件。",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "package.json", "src/sortNumbers.mjs" ],
+      "fileSnippets" : [ {
+        "path" : "package.json",
+        "language" : "json",
+        "content" : "{\"name\":\"synthetic-ranking\",\"type\":\"module\",\"engines\":{\"node\":\">=22\"}}",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/sortNumbers.mjs",
+        "language" : "javascript",
+        "content" : "/** 返回数值升序的新数组；支持负数和小数、空数组与重复值，保持原数组不变。\n * 非数组或包含非有限数字时抛出 TypeError；无需额外依赖。 */\nexport function sortNumbers(values) {\n  return values.sort();\n}\n",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-single-pass",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.customDescription",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.1",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.1",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请完善当前项目的 src/sortNumbers.mjs，按该文件注释中的规则与接口实现：返回数值升序的新数组，支持负数和小数、空数组与重复值，并保持原数组不变；非数组或包含非有限数字时抛出 TypeError；无需额外依赖。仅修改这一个文件，不增加依赖或文件，也无需增加测试文件。完成后返回一个 JSON 对象，键为修改的文件路径，值为完整源码字符串；仅返回确有修改的允许文件，不附其他文字。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "完善 src/sortNumbers.mjs 的 sortNumbers 实现，使其满足文件注释规定的排序、类型校验、原数组不变等规则，且只改这一个文件、不加依赖或文件。",
+      "deliverable" : "一个 JSON 对象，键为修改的文件路径，值为完整源码字符串；仅含确有修改的允许文件，无其他文字。",
+      "requirements" : [ {
+        "text" : "完善当前项目的 src/sortNumbers.mjs，规则与接口见该文件注释",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "请完善当前项目的 src/sortNumbers.mjs，规则与接口见该文件注释。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "OBJECT" ]
+      }, {
+        "text" : "返回数值升序的新数组；支持负数和小数、空数组与重复值，保持原数组不变",
+        "evidence" : [ {
+          "sourceId" : "context.fileSnippets.1",
+          "quote" : "返回数值升序的新数组；支持负数和小数、空数组与重复值，保持原数组不变。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "非数组或包含非有限数字时抛出 TypeError；无需额外依赖",
+        "evidence" : [ {
+          "sourceId" : "context.fileSnippets.1",
+          "quote" : "非数组或包含非有限数字时抛出 TypeError；无需额外依赖。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "仅修改这一个文件，不增加依赖或文件",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "仅修改这一个文件，不增加依赖或文件。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "返回一个JSON对象，键为修改的文件路径，值为完整源码字符串；仅返回确有修改的允许文件，不附其他文字",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "返回一个JSON对象，键为修改的文件路径，值为完整源码字符串。仅返回确有修改的允许文件，不附其他文字；无需增加测试文件。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "FORMAT" ]
+      } ],
+      "additions" : [ ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请完善当前项目的 src/sortNumbers.mjs，按该文件注释中的规则与接口实现" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "返回数值升序的新数组，支持负数和小数、空数组与重复值，并保持原数组不变" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "非数组或包含非有限数字时抛出 TypeError；无需额外依赖" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "仅修改这一个文件，不增加依赖或文件，也无需增加测试文件" ]
+        }, {
+          "index" : 4,
+          "quotes" : [ "完成后返回一个 JSON 对象，键为修改的文件路径，值为完整源码字符串；仅返回确有修改的允许文件，不附其他文字" ]
+        } ],
+        "additionCoverage" : [ ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "完善 src/sortNumbers.mjs 的 sortNumbers 实现，使其满足文件注释规定的排序、类型校验、原数组不变等规则，且只改这一个文件、不加依赖或文件。",
+    "deliverable" : "一个 JSON 对象，键为修改的文件路径，值为完整源码字符串；仅含确有修改的允许文件，无其他文字。",
+    "requirements" : [ {
+      "text" : "完善当前项目的 src/sortNumbers.mjs，规则与接口见该文件注释",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请完善当前项目的 src/sortNumbers.mjs，规则与接口见该文件注释。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    }, {
+      "text" : "返回数值升序的新数组；支持负数和小数、空数组与重复值，保持原数组不变",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.1",
+        "quote" : "返回数值升序的新数组；支持负数和小数、空数组与重复值，保持原数组不变。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "非数组或包含非有限数字时抛出 TypeError；无需额外依赖",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.1",
+        "quote" : "非数组或包含非有限数字时抛出 TypeError；无需额外依赖。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "仅修改这一个文件，不增加依赖或文件",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "仅修改这一个文件，不增加依赖或文件。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "返回一个JSON对象，键为修改的文件路径，值为完整源码字符串；仅返回确有修改的允许文件，不附其他文字",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "返回一个JSON对象，键为修改的文件路径，值为完整源码字符串。仅返回确有修改的允许文件，不附其他文字；无需增加测试文件。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请完善当前项目的 src/sortNumbers.mjs，按该文件注释中的规则与接口实现" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "返回数值升序的新数组，支持负数和小数、空数组与重复值，并保持原数组不变" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "非数组或包含非有限数字时抛出 TypeError；无需额外依赖" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "仅修改这一个文件，不增加依赖或文件，也无需增加测试文件" ]
+      }, {
+        "index" : 4,
+        "quotes" : [ "完成后返回一个 JSON 对象，键为修改的文件路径，值为完整源码字符串；仅返回确有修改的允许文件，不附其他文字" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 4192
+}

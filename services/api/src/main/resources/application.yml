@@ -96,8 +96,8 @@ logging:
 app:
   enhancement:
     natural:
-      # 新请求可独立试用CORE_REPAIR；STABLE回退到31，历史仍沿用记录版本。尚未采用时保持STABLE。
-      profile: ${NATURAL_ENHANCEMENT_PROFILE:STABLE}
+      # 新请求采用v3工程修复；显式STABLE可回退31，旧历史仍沿用记录版本，单阶段对照不随默认启用。
+      profile: ${NATURAL_ENHANCEMENT_PROFILE:COMPLETION_BASIS_REPAIR}
   context:
     vision:
       # 资料先在本机解析；只有用户确认模型、页码与隐私后才外发，每页一次尝试，不自动重试。
