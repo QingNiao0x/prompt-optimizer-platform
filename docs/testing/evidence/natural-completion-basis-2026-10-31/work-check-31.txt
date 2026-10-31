@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: empty
+ok 1 - empty
+  ---
+  duration_ms: 1.1704
+  type: 'test'
+  ...
+# Subtest: single
+ok 2 - single
+  ---
+  duration_ms: 0.8555
+  type: 'test'
+  ...
+# Subtest: touching is separate
+ok 3 - touching is separate
+  ---
+  duration_ms: 0.2565
+  type: 'test'
+  ...
+# Subtest: overlap merges
+ok 4 - overlap merges
+  ---
+  duration_ms: 0.1016
+  type: 'test'
+  ...
+# Subtest: contained interval
+ok 5 - contained interval
+  ---
+  duration_ms: 0.1475
+  type: 'test'
+  ...
+# Subtest: numeric order
+ok 6 - numeric order
+  ---
+  duration_ms: 0.0853
+  type: 'test'
+  ...
+# Subtest: transitive overlap
+ok 7 - transitive overlap
+  ---
+  duration_ms: 0.1248
+  type: 'test'
+  ...
+# Subtest: touching after overlap
+ok 8 - touching after overlap
+  ---
+  duration_ms: 0.1393
+  type: 'test'
+  ...
+# Subtest: identical intervals
+ok 9 - identical intervals
+  ---
+  duration_ms: 0.2185
+  type: 'test'
+  ...
+# Subtest: frozen valid input remains supported
+ok 10 - frozen valid input remains supported
+  ---
+  duration_ms: 0.3273
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 75.9345

@@ -1,0 +1,94 @@
+{
+  "date": "2026-10-31",
+  "authorization": "同一动作边界修复任务，新阶段复用32总额中17次之后结算释放的15次；用户明确要求继续修复及作品验收",
+  "totalMaximum": 32,
+  "previousActualCalls": 17,
+  "maximumActualCalls": 15,
+  "phaseMaximum": {
+    "enhance": 12,
+    "execute": 3
+  },
+  "previousClosureSha256": "f4a37929c73a9923711c96c014f53337f1ceae4c40b6f783d0738dfc63a85303",
+  "files": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptCoreRepairInstructions.java",
+      "sha256": "30793dbe6948266c1222604be872ccb99b154df679bc0eddcd2120bca87d41db"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "968f305ae3d1e0270b5f1b5d3197a4479132fa200e35dc7f3a48222dce9ac5bf"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRoutingRepairInstructions.java",
+      "sha256": "0545f9a05ef700f31a37bdb9061b35c1107e6d31007061925fdf5c221fa808d8"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptScopedInstructions.java",
+      "sha256": "aaa89ef1871340ca0f45370aad3dc2d70badf9d14e7d562bc658640d2c220358"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskUnderstanding.java",
+      "sha256": "a678e2bc200fe5104d15d74ed498ac9861c60d9ceb5f2d28ab25b952914347ac"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java",
+      "sha256": "baa8629fbef7cc74be93fa6d890ebd1209caaf2dc57312d8c972c4a87bda25c9"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "a10ef5c109d14253381f9954ebf64dff12a802ab43df0e6a31507d683c29b1cb"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementSettings.java",
+      "sha256": "7b05a56de62f24e4df7968f3fb3c3fd898657d3134d6c5936c69c50e5405817b"
+    },
+    {
+      "path": "docs/testing/evidence/natural-completion-basis-2026-10-31/cases.json",
+      "sha256": "53edea0384128c6fdbefea8e17c7f81f0e260fd5d1da9f53630acd2c46f761d2"
+    },
+    {
+      "path": "docs/testing/evidence/natural-completion-basis-2026-10-31/run.mjs",
+      "sha256": "d9b068c6bce23687e7025ee88604789222c1320a6dcd1216a449662889835b61"
+    },
+    {
+      "path": "docs/testing/evidence/natural-completion-basis-2026-10-31/run.ps1",
+      "sha256": "13c387f1d714cf84d7a65ac2db8c96ad8263c20f6547c84975fbad3662cebb0f"
+    },
+    {
+      "path": "docs/testing/evidence/natural-completion-basis-2026-10-31/CompletionBasisEvaluation.java",
+      "sha256": "1009d24e9fd6170a22ae20d6e510f37ad0e6927859c8cb85b75376de4bf9dc8e"
+    },
+    {
+      "path": "docs/testing/evidence/natural-completion-basis-2026-10-31/holdout-seal.json",
+      "sha256": "2d8f76560e4ec479a6e1fff69f06463b33eac9b8dff4a0c6e69852af004e0d2b"
+    }
+  ],
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "max_tokens": 8192,
+  "thinking": "disabled",
+  "versions": [
+    "31",
+    "core-repair-v3"
+  ],
+  "order": [
+    "R_WAIT candidate",
+    "R_RETELL candidate",
+    "R_REPORT candidate",
+    "semantic gate",
+    "open sealed code holdout",
+    "holdout candidate and 31",
+    "works: candidate, original, 31"
+  ],
+  "gates": [
+    "No extra substantive feedback for read/wait",
+    "Keep explicit retelling/report and their original format",
+    "No new facts or authority",
+    "Before works, candidate enhancement must pass semantic review"
+  ],
+  "acceptance": "Adoption requires useful actual work benefit without serious new regression; parity of already sufficient requests is allowed. No model self-score or HTTP success substitutes for this.",
+  "qualityRetries": 0,
+  "oldBudgetsReopened": false,
+  "reviewer": "Internal AI only; no human review claimed"
+}

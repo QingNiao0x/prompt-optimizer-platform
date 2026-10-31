@@ -1,0 +1,74 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "P0",
+  "strategyVersion" : "core-repair-v2",
+  "operation" : "plan",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T07:42:40.894009600Z",
+  "input" : {
+    "rawPrompt" : "把通知改成“活动改至15:00，地点不变”，只输出这句话。不要提问，其他内容不用补充。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v2",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    } ]
+  },
+  "plan" : {
+    "summary" : "用户要求把通知改成指定句子并只输出该句，需求明确且禁止提问，无需澄清。",
+    "questions" : [ ],
+    "provider" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "mock" : false
+  },
+  "taskUnderstanding" : {
+    "goal" : "把通知改成“活动改至15:00，地点不变”，并只输出这句话。",
+    "deliverable" : "仅输出“活动改至15:00，地点不变”这一句话。",
+    "requirements" : [ {
+      "text" : "把通知改成“活动改至15:00，地点不变”。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "把通知改成“活动改至15:00，地点不变”",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL" ]
+    }, {
+      "text" : "只输出这句话，不提问，不补充其他内容。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "只输出这句话。不要提问，其他内容不用补充。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT", "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : null,
+  "success" : true,
+  "elapsedMs" : 3659
+}

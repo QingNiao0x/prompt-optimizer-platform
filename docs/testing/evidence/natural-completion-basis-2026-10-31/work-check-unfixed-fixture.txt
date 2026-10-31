@@ -1,0 +1,150 @@
+TAP version 13
+# Subtest: empty
+ok 1 - empty
+  ---
+  duration_ms: 2.4586
+  type: 'test'
+  ...
+# Subtest: single
+ok 2 - single
+  ---
+  duration_ms: 1.5485
+  type: 'test'
+  ...
+# Subtest: touching is separate
+not ok 3 - touching is separate
+  ---
+  duration_ms: 2.2714
+  type: 'test'
+  location: 'E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-completion-basis-2026-10-31\\works\\unfixed-fixture\\check.mjs:17:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        {
+    +     end: 5,
+    -     end: 2,
+          start: 0
+        },
+    -   {
+    -     end: 5,
+    -     start: 2
+    -   }
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      start: 0
+      end: 2
+    1:
+      start: 2
+      end: 5
+  actual:
+    0:
+      start: 0
+      end: 5
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///E:/MyProject/prompt-optimizer-platform/tmp/natural-completion-basis-2026-10-31/works/unfixed-fixture/check.mjs:20:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: overlap merges
+ok 4 - overlap merges
+  ---
+  duration_ms: 0.3071
+  type: 'test'
+  ...
+# Subtest: contained interval
+ok 5 - contained interval
+  ---
+  duration_ms: 0.1629
+  type: 'test'
+  ...
+# Subtest: numeric order
+ok 6 - numeric order
+  ---
+  duration_ms: 0.1479
+  type: 'test'
+  ...
+# Subtest: transitive overlap
+ok 7 - transitive overlap
+  ---
+  duration_ms: 0.0753
+  type: 'test'
+  ...
+# Subtest: touching after overlap
+not ok 8 - touching after overlap
+  ---
+  duration_ms: 0.5532
+  type: 'test'
+  location: 'E:\\MyProject\\prompt-optimizer-platform\\tmp\\natural-completion-basis-2026-10-31\\works\\unfixed-fixture\\check.mjs:17:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        {
+    +     end: 7,
+    -     end: 5,
+          start: 0
+        },
+    -   {
+    -     end: 7,
+    -     start: 5
+    -   }
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      start: 0
+      end: 5
+    1:
+      start: 5
+      end: 7
+  actual:
+    0:
+      start: 0
+      end: 7
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///E:/MyProject/prompt-optimizer-platform/tmp/natural-completion-basis-2026-10-31/works/unfixed-fixture/check.mjs:20:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: identical intervals
+ok 9 - identical intervals
+  ---
+  duration_ms: 0.2874
+  type: 'test'
+  ...
+# Subtest: frozen valid input remains supported
+ok 10 - frozen valid input remains supported
+  ---
+  duration_ms: 0.4391
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 8
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 106.9267

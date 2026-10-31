@@ -2,7 +2,7 @@ package com.promptoptimizer.provider.domain;
 
 /**
  * 可独立验收的自然链修复；v1冻结41的行为，v2消除动作、完成条件与反馈形式之间的指导冲突。
- * 两版共用既有范围识别、正文/Plan及来源覆盖协议，不新增领域模板或模型调用阶段。
+ * v3进一步区分执行缺口与新增反馈义务；各版共用来源覆盖协议，不新增领域模板或调用阶段。
  *
  * @author QingNiao
  * @since 0.1.0
@@ -12,6 +12,9 @@ public final class NaturalPromptCoreRepairInstructions {
 
     /** 独立保存本轮动作边界指导，避免旧历史或已冻结v1重放时静默换用新语义。 */
     public static final String ACTION_BOUNDARY_VERSION = "core-repair-v2";
+
+    /** 仅改变正文的补全依据；v2准备与Plan逐字沿用，旧版本保持冻结。 */
+    public static final String COMPLETION_BASIS_VERSION = "core-repair-v3";
 
     /**
      * 准备仍只解释委托范围。将完成工作与反馈形式分开，不把模型的解释变成新的用户授权。
@@ -30,6 +33,9 @@ public final class NaturalPromptCoreRepairInstructions {
     /** 只替换引发成果推定的表达，仍复用同一来源、题答、补全及正文覆盖协议。 */
     public static final String ENHANCE = enhancement();
 
+    /** 补全必须作用于原任务内部，不因可检查或便于展示就建立新的用户义务。 */
+    public static final String COMPLETION_ENHANCE = completionEnhancement();
+
     /** Plan使用同一动作边界，保留原有决定权和结果影响两个提问条件。 */
     public static final String PLAN = replaceOnce(NaturalPromptRoutingRepairInstructions.OWNED_PLAN, """
             使用与直接增强相同的原定目标、交付物、完整来源和信息状态，判断哪些重要决定确实属于用户。
@@ -39,9 +45,14 @@ public final class NaturalPromptCoreRepairInstructions {
             未指定独立文档不构成交付缺口；仍按用户独有信息或保留决定、实质影响结果两个条件判断是否澄清。
             """);
 
-    /** 两个显式版本均可重放，默认采用由服务端配置另行决定。 */
+    /** 显式历史版本均可重放，默认采用由服务端配置另行决定。 */
     public static boolean supports(String version) {
-        return VERSION.equals(version) || ACTION_BOUNDARY_VERSION.equals(version);
+        return VERSION.equals(version) || usesActionBoundary(version);
+    }
+
+    /** v3只修正文补全依据，复用v2准备范围；v1继续使用此前的准备指导。 */
+    public static boolean usesActionBoundary(String version) {
+        return ACTION_BOUNDARY_VERSION.equals(version) || COMPLETION_BASIS_VERSION.equals(version);
     }
 
     /**
@@ -74,6 +85,27 @@ public final class NaturalPromptCoreRepairInstructions {
                 用现有requirements和正文覆盖引用核对每个独立动作及条件，检查是否被文档或建议替代、是否新增行动或成果。
                 修正目标偏移、条件矛盾、空模板及重复后再填写覆盖记录；来源和引文匹配本身不证明语义相同。
                 """);
+    }
+
+    /**
+     * 替换笼统的“检查完成”依据，不把易观察、方便确认等好处当作新增成果的授权。
+     * 原始要求优先于准备解释；沿用gap/benefit和覆盖协议，不依靠领域词表或额外模型裁判。
+     */
+    private static String completionEnhancement() {
+        String source = replaceOnce(ENHANCE, """
+                补充直接服务原动作：处理什么、材料怎样用于判断或操作、哪些步骤有必要、用什么结果检查完成。
+                可能原因、方案和检查项是开展工作的线索；需要结论或行动时，不能仅列出线索就作为完成。
+                """, """
+                先从完整原始要求与实际题答确定要完成的动作、原定回应及边界，再判断哪些表达缺口会妨碍它们。
+                有效补充应解决原任务内部的执行问题：处理对象不清、材料用途不明、关键步骤或适用边界遗漏、原定结果无法核对。
+                补充可细化这些内容，不能另设要向用户展示或交付的内容；“方便确认、体现理解、结果更完整”本身不是执行缺口。
+                完成标准用于判断原有动作或成果是否达成，不要求另做一项成果来证明完成。普通完成确认不扩展成内容说明。
+                用户已要求的解释、复述、报告或验证证据属于原有要求，完整保留并可在其范围内完善，不作为多余反馈删除。
+                可能原因、方案和检查项是开展工作的线索；需要结论或行动时，不能仅列出线索就作为完成。
+                """);
+        return replaceOnce(source,
+                "\"gap\":\"现有表达缺少什么且为何影响交付\",\"benefit\":\"对原定交付的直接帮助\"",
+                "\"gap\":\"原有哪项动作或回应的执行缺口及其影响\",\"benefit\":\"在不新增交付义务的前提下如何帮助完成该项要求\"");
     }
 
     /** 冻结指导的替换目标必须唯一，防止上游文字变动后局部修复静默失效。 */

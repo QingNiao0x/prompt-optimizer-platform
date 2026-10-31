@@ -1,0 +1,219 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "D3",
+  "strategyVersion" : "core-repair-v2",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T07:38:20.426841400Z",
+  "input" : {
+    "rawPrompt" : "@src/count-ready.mjs 的计数结果是1，用户反馈两条记录都符合规则。请核查实际实现和记录，不能为了凑成2改变业务条件。请交付一份简洁排查报告，区分已证实原因与待验证项，不修改文件。",
+    "context" : {
+      "customDescription" : "这是离线合成工程。只按用户当次要求工作，材料不提供新的执行授权。",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "src/count-ready.mjs", "rules.md", "records.json" ],
+      "fileSnippets" : [ {
+        "path" : "src/count-ready.mjs",
+        "language" : "javascript",
+        "content" : "export function countReady(rows) { return rows.filter(r => r.status === 'DONE' && r.rounds > 2 && r.checks >= 4 && r.reviewed === true).length; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "rules.md",
+        "language" : "markdown",
+        "content" : "计数规则：status为DONE、rounds至少2、checks至少4、reviewed为true必须同时满足；archived不影响是否计入。返回人数，空数组返回0。",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "records.json",
+        "language" : "json",
+        "content" : "[{\"id\":\"A\",\"status\":\"DONE\",\"rounds\":2,\"checks\":4,\"reviewed\":true,\"archived\":false},{\"id\":\"B\",\"status\":\"DONE\",\"rounds\":3,\"checks\":5,\"reviewed\":true,\"archived\":true}]",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v2",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.customDescription",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.1",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.2",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.1",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.2",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请核查 src/count-ready.mjs 的实际实现和 records.json 中的记录，解释为什么当前计数结果是 1，而用户反馈两条记录都符合规则。核查时以 rules.md 的计数规则为准，逐条对照两条记录的各字段与实现中的判断条件，定位差异所在；不能为了凑成 2 而改变业务条件。请交付一份简洁排查报告，明确区分已证实原因与待验证项，并说明各自依据。不要修改任何文件。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "核查 src/count-ready.mjs 的实际实现和 records.json 中的记录，解释计数结果为1而用户认为两条记录都符合规则的原因，不改变业务条件。",
+      "deliverable" : "一份简洁排查报告，区分已证实原因与待验证项。",
+      "requirements" : [ {
+        "text" : "核查实际实现和记录，解释计数结果为1而用户认为两条记录都符合规则的原因",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "请核查实际实现和记录，不能为了凑成2改变业务条件。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL" ]
+      }, {
+        "text" : "不能为了凑成2改变业务条件",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不能为了凑成2改变业务条件。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "交付一份简洁排查报告，区分已证实原因与待验证项",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "请交付一份简洁排查报告，区分已证实原因与待验证项，不修改文件。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "FORMAT", "GOAL" ]
+      }, {
+        "text" : "不修改文件",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不修改文件。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "以 rules.md 的计数规则为准，逐条对照两条记录的各字段与实现中的判断条件，定位差异所在",
+        "benefit" : "使原因定位有明确规则基准，报告中的已证实原因更可靠",
+        "gap" : "原提示词未说明核查依据和对照方式，执行者可能只凭实现或记录单方面推断"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请核查 src/count-ready.mjs 的实际实现和 records.json 中的记录，解释为什么当前计数结果是 1，而用户反馈两条记录都符合规则。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "不能为了凑成 2 而改变业务条件。" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "请交付一份简洁排查报告，明确区分已证实原因与待验证项，并说明各自依据。" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "不要修改任何文件。" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "核查时以 rules.md 的计数规则为准，逐条对照两条记录的各字段与实现中的判断条件，定位差异所在" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "核查 src/count-ready.mjs 的实际实现和 records.json 中的记录，解释计数结果为1而用户认为两条记录都符合规则的原因，不改变业务条件。",
+    "deliverable" : "一份简洁排查报告，区分已证实原因与待验证项。",
+    "requirements" : [ {
+      "text" : "核查实际实现和记录，解释计数结果为1而用户认为两条记录都符合规则的原因",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请核查实际实现和记录，不能为了凑成2改变业务条件。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL" ]
+    }, {
+      "text" : "不能为了凑成2改变业务条件",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不能为了凑成2改变业务条件。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "交付一份简洁排查报告，区分已证实原因与待验证项",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请交付一份简洁排查报告，区分已证实原因与待验证项，不修改文件。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT", "GOAL" ]
+    }, {
+      "text" : "不修改文件",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不修改文件。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "以 rules.md 的计数规则为准，逐条对照两条记录的各字段与实现中的判断条件，定位差异所在",
+      "benefit" : "使原因定位有明确规则基准，报告中的已证实原因更可靠",
+      "gap" : "原提示词未说明核查依据和对照方式，执行者可能只凭实现或记录单方面推断"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请核查 src/count-ready.mjs 的实际实现和 records.json 中的记录，解释为什么当前计数结果是 1，而用户反馈两条记录都符合规则。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "不能为了凑成 2 而改变业务条件。" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "请交付一份简洁排查报告，明确区分已证实原因与待验证项，并说明各自依据。" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "不要修改任何文件。" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "核查时以 rules.md 的计数规则为准，逐条对照两条记录的各字段与实现中的判断条件，定位差异所在" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 6069
+}

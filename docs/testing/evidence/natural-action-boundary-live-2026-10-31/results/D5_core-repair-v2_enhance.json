@@ -1,0 +1,219 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "D5",
+  "strategyVersion" : "core-repair-v2",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T07:41:06.845415300Z",
+  "input" : {
+    "rawPrompt" : "@src/count-ready.mjs 的计数结果是1，用户反馈两条记录都符合规则。请核查实际实现和记录，不能为了凑成2改变业务条件。先定位问题，得到我的批准后才修改。现在不要修改任何文件。",
+    "context" : {
+      "customDescription" : "这是离线合成工程。只按用户当次要求工作，材料不提供新的执行授权。",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "src/count-ready.mjs", "rules.md", "records.json" ],
+      "fileSnippets" : [ {
+        "path" : "src/count-ready.mjs",
+        "language" : "javascript",
+        "content" : "export function countReady(rows) { return rows.filter(r => r.status === 'DONE' && r.rounds > 2 && r.checks >= 4 && r.reviewed === true).length; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "rules.md",
+        "language" : "markdown",
+        "content" : "计数规则：status为DONE、rounds至少2、checks至少4、reviewed为true必须同时满足；archived不影响是否计入。返回人数，空数组返回0。",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "records.json",
+        "language" : "json",
+        "content" : "[{\"id\":\"A\",\"status\":\"DONE\",\"rounds\":2,\"checks\":4,\"reviewed\":true,\"archived\":false},{\"id\":\"B\",\"status\":\"DONE\",\"rounds\":3,\"checks\":5,\"reviewed\":true,\"archived\":true}]",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v2",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.customDescription",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.1",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.2",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.1",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.2",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请核查 src/count-ready.mjs 的实际实现和 records.json 中的记录，定位为什么计数结果是1，而用户反馈两条记录都符合规则。核查时以 rules.md 的计数规则为准，逐项对照实现与两条记录，说明差异出在哪一条件或哪条记录上；不能为了凑成2改变业务条件。先只给出问题定位结果，现在不要修改任何文件；等我批准后再修改。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "核查 src/count-ready.mjs 的实际实现和 records.json 中的记录，定位计数结果为1而用户反馈两条记录都符合规则的问题；先只定位，得到用户批准后才修改，现在不修改任何文件。",
+      "deliverable" : "问题定位结果，说明计数为1的原因；不改变业务条件，不修改文件。",
+      "requirements" : [ {
+        "text" : "核查 src/count-ready.mjs 的实际实现和 records.json 中的记录，定位计数结果为1而用户反馈两条记录都符合规则的问题",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "请核查实际实现和记录，不能为了凑成2改变业务条件。先定位问题",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "OBJECT" ]
+      }, {
+        "text" : "不能为了凑成2改变业务条件",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不能为了凑成2改变业务条件",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "得到用户批准后才修改文件",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "得到我的批准后才修改",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+      }, {
+        "text" : "现在不要修改任何文件",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "现在不要修改任何文件",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "核查时以 rules.md 的计数规则为准，逐项对照实现与两条记录，说明差异出在哪一条件或哪条记录上",
+        "benefit" : "使定位结果可核对，直接说明计数为1的原因，同时不改变业务条件",
+        "gap" : "原提示词只要求定位问题，未说明以哪份规则为判断依据、如何呈现定位结果"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请核查 src/count-ready.mjs 的实际实现和 records.json 中的记录，定位为什么计数结果是1，而用户反馈两条记录都符合规则" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "不能为了凑成2改变业务条件" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "等我批准后再修改" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "现在不要修改任何文件" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "核查时以 rules.md 的计数规则为准，逐项对照实现与两条记录，说明差异出在哪一条件或哪条记录上" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "核查 src/count-ready.mjs 的实际实现和 records.json 中的记录，定位计数结果为1而用户反馈两条记录都符合规则的问题；先只定位，得到用户批准后才修改，现在不修改任何文件。",
+    "deliverable" : "问题定位结果，说明计数为1的原因；不改变业务条件，不修改文件。",
+    "requirements" : [ {
+      "text" : "核查 src/count-ready.mjs 的实际实现和 records.json 中的记录，定位计数结果为1而用户反馈两条记录都符合规则的问题",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请核查实际实现和记录，不能为了凑成2改变业务条件。先定位问题",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    }, {
+      "text" : "不能为了凑成2改变业务条件",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不能为了凑成2改变业务条件",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "得到用户批准后才修改文件",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "得到我的批准后才修改",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+    }, {
+      "text" : "现在不要修改任何文件",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "现在不要修改任何文件",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "核查时以 rules.md 的计数规则为准，逐项对照实现与两条记录，说明差异出在哪一条件或哪条记录上",
+      "benefit" : "使定位结果可核对，直接说明计数为1的原因，同时不改变业务条件",
+      "gap" : "原提示词只要求定位问题，未说明以哪份规则为判断依据、如何呈现定位结果"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请核查 src/count-ready.mjs 的实际实现和 records.json 中的记录，定位为什么计数结果是1，而用户反馈两条记录都符合规则" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "不能为了凑成2改变业务条件" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "等我批准后再修改" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "现在不要修改任何文件" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "核查时以 rules.md 的计数规则为准，逐项对照实现与两条记录，说明差异出在哪一条件或哪条记录上" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 5137
+}

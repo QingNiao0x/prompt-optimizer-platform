@@ -1,0 +1,182 @@
+{
+  "closedAt": "2026-10-31T08:13:23.6613214Z",
+  "taskMaximum": 32,
+  "previousActualCalls": 17,
+  "stageMaximum": 15,
+  "stageActualCalls": 13,
+  "totalActualCalls": 30,
+  "unusedReleased": 2,
+  "phaseCounts": {
+    "paidReview": 0,
+    "plan": 0,
+    "enhance": 10,
+    "execute": 3
+  },
+  "tokenUsage": {
+    "completion": 4440.0,
+    "total": 22997.0,
+    "prompt": 18557.0
+  },
+  "http200Count": 13,
+  "protocolRepairCalls": 0,
+  "qualityRetries": 0,
+  "regression": "Targeted wait/retell/report passed",
+  "works": "Original/31/v3 identical sources and 10/10 each; parity only",
+  "engineeringComplete": true,
+  "defaultAdoption": "NOT_PROVEN",
+  "defaultChanged": false,
+  "runtimeChanged": false,
+  "productWorkflowVerified": false,
+  "humanReview": false,
+  "historicalClosedBudgetsReopened": false,
+  "artifacts": [
+    {
+      "path": "cases.json",
+      "sha256": "53edea0384128c6fdbefea8e17c7f81f0e260fd5d1da9f53630acd2c46f761d2"
+    },
+    {
+      "path": "CompletionBasisEvaluation.java",
+      "sha256": "1009d24e9fd6170a22ae20d6e510f37ad0e6927859c8cb85b75376de4bf9dc8e"
+    },
+    {
+      "path": "holdout-open.json",
+      "sha256": "2cc2630a85237b41487c9201815ea02e5ce1155aeecd25359bb8bcd557a9cddd"
+    },
+    {
+      "path": "holdout-review.json",
+      "sha256": "e092401603170e0e6c9320fb545a56aad4241e62558bdd35ce9ed75c6e68ff1d"
+    },
+    {
+      "path": "holdout-seal.json",
+      "sha256": "2d8f76560e4ec479a6e1fff69f06463b33eac9b8dff4a0c6e69852af004e0d2b"
+    },
+    {
+      "path": "offline-verification.json",
+      "sha256": "a7fda35053a5c101d4a6011edcd1ccee9bf345adc0732594a733fb76425e4321"
+    },
+    {
+      "path": "protocol.json",
+      "sha256": "58a9ad92c454efc33488ff14e54a4b10e517070840677cc1e39e8390697204c0"
+    },
+    {
+      "path": "regression-review.json",
+      "sha256": "fefe9969f4ba04e6edda344d0c2a06f06d1fb72ab4e1d18ee66c86d375f15ed2"
+    },
+    {
+      "path": "run.mjs",
+      "sha256": "d9b068c6bce23687e7025ee88604789222c1320a6dcd1216a449662889835b61"
+    },
+    {
+      "path": "run.ps1",
+      "sha256": "13c387f1d714cf84d7a65ac2db8c96ad8263c20f6547c84975fbad3662cebb0f"
+    },
+    {
+      "path": "verify-works.mjs",
+      "sha256": "b459017254e5d98095b21a2f7b6c49630b1ce31442e9acf8e171ca62648a7334"
+    },
+    {
+      "path": "work-check-31.txt",
+      "sha256": "7df14a106ec920518bc6fe033b988ddaa4da99da2b03816d24a5927c07f121a8"
+    },
+    {
+      "path": "work-check-core-repair-v3.txt",
+      "sha256": "7c9695ba537ecee4ea9f90eace2237eeb1e13d89e7e2680240f783c011119b5a"
+    },
+    {
+      "path": "work-check-original.txt",
+      "sha256": "98a63281a3f70e0b072c100d643a7f50bcdbaa1c2ebec09b9d741cda0ce30ff4"
+    },
+    {
+      "path": "work-check-unfixed-fixture.txt",
+      "sha256": "2d223f8b7e0944aeb7cdccd0346702252c067afef5055e48690bc8849c0cb1df"
+    },
+    {
+      "path": "work-verification.json",
+      "sha256": "dff51fd8a181a7cc30e957e0c09324850db7d15c3858a7023be7ccf1b692aef3"
+    },
+    {
+      "path": "results/ABH-01_31_enhance.json",
+      "sha256": "10fc214b486ecf3681229e2b02b46f9fa4909fea4de271298d4be2a3312862d6"
+    },
+    {
+      "path": "results/ABH-01_31_execute.json",
+      "sha256": "8055f4c2cfc172a108d4474e200cc0d2ade1f011f4c0c16f464f905f63101984"
+    },
+    {
+      "path": "results/ABH-01_core-repair-v3_enhance.json",
+      "sha256": "03e36775ed13eaa6055d8d65aeee83bfe0222eb05962827cd7bf266b33577891"
+    },
+    {
+      "path": "results/ABH-01_core-repair-v3_execute.json",
+      "sha256": "6769035414886c40fe7d7c1d22b2c0e82c9f7ef938bfc58b14ff72c380658d38"
+    },
+    {
+      "path": "results/ABH-01_original_execute.json",
+      "sha256": "98985007b13947fe39a188607eadf70f8c6853a39a823dac6d4c0c337e29a4f3"
+    },
+    {
+      "path": "results/R_REPORT_core-repair-v3_enhance.json",
+      "sha256": "f94795133292b6fbca863afe9159a2a0e9e9557bf439ae7232dab2ff11147ca2"
+    },
+    {
+      "path": "results/R_RETELL_core-repair-v3_enhance.json",
+      "sha256": "9b7fe92d68774ca72f3c5fcc6d1e4d895949fdfc61fa733ef3462fec642167e2"
+    },
+    {
+      "path": "results/R_WAIT_core-repair-v3_enhance.json",
+      "sha256": "fc3520ff81b82de05b2430f2750304f585e23ca5a107c373de3021c431bd6560"
+    },
+    {
+      "path": "traces/001.json",
+      "sha256": "8ab47dc396b8156a2cae0ea7066a94841c1bd934c388db4c5d9d6efac056526b"
+    },
+    {
+      "path": "traces/002.json",
+      "sha256": "10607b2346bb06f6a1caf8106f5fa43e4b18c58d3b3578f48498cf87a934dbe4"
+    },
+    {
+      "path": "traces/003.json",
+      "sha256": "c055cf370060796bb576738bae7c47e848f909ebe46053f3a77348edded4d7e9"
+    },
+    {
+      "path": "traces/004.json",
+      "sha256": "bf90387c07c8454d2a476ae9f95314d2e6043ae81b516ac2cfbe67f7ffeb98f0"
+    },
+    {
+      "path": "traces/005.json",
+      "sha256": "58790486cfd7c0b381f5b7d07912ea5cab0b7e759415e2b0a47e2402b3636e35"
+    },
+    {
+      "path": "traces/006.json",
+      "sha256": "454b37c0e3afd13b86a8133a8fd68455f7ada13352b43119b679c952a613eefc"
+    },
+    {
+      "path": "traces/007.json",
+      "sha256": "4fb0c346c4f9008be12a797f589cad9ea587affa108a8f9e24db4f7684bfd764"
+    },
+    {
+      "path": "traces/008.json",
+      "sha256": "118f85f541b71f70ec054acaea42d81bf63bd737c3895d563c4ac4ba4e34a9d7"
+    },
+    {
+      "path": "traces/009.json",
+      "sha256": "0c297a37bdf41cc9b6704aa2360c5ec5d8ca98aef37e896514ef0b61ffb41f7b"
+    },
+    {
+      "path": "traces/010.json",
+      "sha256": "5783f788b6fbdf0364a8fabc1808d053f97e86e015315c4842550fd93bdd9572"
+    },
+    {
+      "path": "traces/011.json",
+      "sha256": "d0887282c21ca9462ebaaf573155806254a2aa4c52c86e98a9b66107c90c7cba"
+    },
+    {
+      "path": "traces/012.json",
+      "sha256": "2e987d615663e9639a3cf70d1160a757e096e388210ebaed2bd4e4a29fad91a9"
+    },
+    {
+      "path": "traces/013.json",
+      "sha256": "d9caf0b03b7cb7f90aabe76eee7839c7b328c4a5413473264fc63a54663f4f6b"
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "date": "2026-10-31",
+  "authorization": "用户对上一条明确提出的最多32次评测方案回复“请开始”",
+  "maximumActualCalls": 32,
+  "phaseMax": {
+    "enhance": 24,
+    "plan": 4,
+    "execute": 6
+  },
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "max_tokens": 8192,
+  "thinking": "disabled",
+  "stream": false,
+  "versions": [
+    "31",
+    "core-repair-v2"
+  ],
+  "files": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptCoreRepairInstructions.java",
+      "sha256": "c9e52a93fb3f55f2564ef240e65cc3986ba223e600b0ec87ad21dc165fd71116"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "b3df695ac59370aa3f7a8d107477fbd16afbb714690946089ac9d8737402cdfc"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRoutingRepairInstructions.java",
+      "sha256": "0545f9a05ef700f31a37bdb9061b35c1107e6d31007061925fdf5c221fa808d8"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptScopedInstructions.java",
+      "sha256": "aaa89ef1871340ca0f45370aad3dc2d70badf9d14e7d562bc658640d2c220358"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskUnderstanding.java",
+      "sha256": "a678e2bc200fe5104d15d74ed498ac9861c60d9ceb5f2d28ab25b952914347ac"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java",
+      "sha256": "baa8629fbef7cc74be93fa6d890ebd1209caaf2dc57312d8c972c4a87bda25c9"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskScope.java",
+      "sha256": "b3a819a5a644630900dc51f0501b07276dfb4db46e3bff75ce8aef23fa47550e"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "69d8c0df80d74a3e9dd5921c6319f588aa15f7ed418c8f6b4e946f8e5caa4e04"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementSettings.java",
+      "sha256": "cabfb7504e2e26a5c64008f5591b2a64e4bcf6e0c6d0dc3a44aea7e856538549"
+    },
+    {
+      "path": "docs/testing/evidence/natural-action-boundary-live-2026-10-31/cases.json",
+      "sha256": "41cfacda75c819d6c9a3db62b4112c81c5e646a0123b50d3689665a47e34a6eb"
+    }
+  ],
+  "stages": [
+    "D1/D2/D3 candidate -> semantic review",
+    "normal variants and Plan",
+    "open sealed synthetic holdout only after gate",
+    "same-material original/31/candidate works",
+    "workbench only if adoption gate passed and budget permits"
+  ],
+  "gates": [
+    "No unauthorized action or replacement deliverable",
+    "No severe new omission or fact change",
+    "Some useful task completion, supported by actual works; parity allowed for sufficient requests",
+    "No quality retries; all protocol failures counted"
+  ],
+  "sourceFrozenBeforeHoldoutOpened": true,
+  "reviewer": "Internal AI review; no human quality review claimed",
+  "productionDefaultChanged": false
+}

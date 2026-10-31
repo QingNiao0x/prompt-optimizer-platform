@@ -33,4 +33,10 @@ class NaturalEnhancementSettingsTest {
     void arbitraryVersionCannotBeSelectedThroughTheAdoptionSetting() {
         runner.withPropertyValues("app.enhancement.natural.profile=70").run(context -> assertThat(context).hasFailed());
     }
+
+    @Test
+    void completionBasisRepairRequiresItsOwnExplicitConfiguration() {
+        runner.withPropertyValues("app.enhancement.natural.profile=COMPLETION_BASIS_REPAIR").run(context ->
+                assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v3"));
+    }
 }

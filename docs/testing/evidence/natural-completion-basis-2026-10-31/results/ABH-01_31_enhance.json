@@ -1,0 +1,203 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "ABH-01",
+  "strategyVersion" : "31",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T08:05:43.355244400Z",
+  "input" : {
+    "rawPrompt" : "combineWindows 把首尾相接的时间窗口也合并了。请修复下面的实现：窗口采用半开区间 [start,end)，首尾相接不算重叠，真正重叠的窗口应合并，结果按 start 升序排列。不能修改调用者传入的数组及其中对象，保持导出函数名和参数形状。上层已保证区间合法，不扩展参数校验。\n\n最终只返回JSON对象 {\"files\":[{\"path\":\"windows.mjs\",\"content\":\"完整文件内容\"}]}，只允许交付 windows.mjs 一个业务文件；不新增测试文件，不附说明或Markdown代码围栏。",
+    "context" : {
+      "customDescription" : "以下是合成演示文件，所有臂可见材料相同。时间窗口单位不影响本次区间逻辑。",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "windows.mjs" ],
+      "fileSnippets" : [ {
+        "path" : "windows.mjs",
+        "language" : "javascript",
+        "content" : "export function combineWindows(windows) {\n  const ordered = windows.map(window => ({ ...window }))\n    .sort((a, b) => a.start - b.start || a.end - b.end);\n  const result = [];\n  for (const window of ordered) {\n    const last = result.at(-1);\n    if (!last || window.start > last.end) {\n      result.push(window);\n    } else {\n      last.end = Math.max(last.end, window.end);\n    }\n  }\n  return result;\n}\n",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "31",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.customDescription",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "修复 windows.mjs 中 combineWindows 的实现：当前版本把首尾相接的时间窗口也合并了，需要改为窗口采用半开区间 [start,end)，首尾相接不算重叠，只有真正重叠的窗口才合并，合并后结果按 start 升序排列。不能修改调用者传入的数组及其中对象，保持导出函数名和参数形状不变。上层已保证区间合法，不要扩展参数校验。\n\n最终只返回 JSON 对象 {\"files\":[{\"path\":\"windows.mjs\",\"content\":\"完整文件内容\"}]}，只允许交付 windows.mjs 一个业务文件；不新增测试文件，不附说明或 Markdown 代码围栏。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "修复 combineWindows 将首尾相接窗口误合并的问题，按半开区间 [start,end) 语义只合并真正重叠的窗口",
+      "deliverable" : "仅返回 JSON 对象，包含 windows.mjs 的完整文件内容",
+      "requirements" : [ {
+        "text" : "窗口采用半开区间 [start,end)，首尾相接不算重叠，真正重叠的窗口应合并",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "窗口采用半开区间 [start,end)，首尾相接不算重叠，真正重叠的窗口应合并",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "CONDITION" ]
+      }, {
+        "text" : "结果按 start 升序排列",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "结果按 start 升序排列",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "FORMAT" ]
+      }, {
+        "text" : "不能修改调用者传入的数组及其中对象，保持导出函数名和参数形状",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不能修改调用者传入的数组及其中对象，保持导出函数名和参数形状",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "上层已保证区间合法，不扩展参数校验",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "上层已保证区间合法，不扩展参数校验",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "最终只返回 JSON 对象，只允许交付 windows.mjs 一个业务文件，不新增测试文件，不附说明或 Markdown 代码围栏",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "最终只返回JSON对象 {\"files\":[{\"path\":\"windows.mjs\",\"content\":\"完整文件内容\"}]}，只允许交付 windows.mjs 一个业务文件；不新增测试文件，不附说明或Markdown代码围栏。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "FORMAT" ]
+      } ],
+      "additions" : [ ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "窗口采用半开区间 [start,end)，首尾相接不算重叠，只有真正重叠的窗口才合并" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "合并后结果按 start 升序排列" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "不能修改调用者传入的数组及其中对象，保持导出函数名和参数形状不变" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "上层已保证区间合法，不要扩展参数校验" ]
+        }, {
+          "index" : 4,
+          "quotes" : [ "最终只返回 JSON 对象 {\"files\":[{\"path\":\"windows.mjs\",\"content\":\"完整文件内容\"}]}，只允许交付 windows.mjs 一个业务文件；不新增测试文件，不附说明或 Markdown 代码围栏。" ]
+        } ],
+        "additionCoverage" : [ ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "修复 combineWindows 将首尾相接窗口误合并的问题，按半开区间 [start,end) 语义只合并真正重叠的窗口",
+    "deliverable" : "仅返回 JSON 对象，包含 windows.mjs 的完整文件内容",
+    "requirements" : [ {
+      "text" : "窗口采用半开区间 [start,end)，首尾相接不算重叠，真正重叠的窗口应合并",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "窗口采用半开区间 [start,end)，首尾相接不算重叠，真正重叠的窗口应合并",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "CONDITION" ]
+    }, {
+      "text" : "结果按 start 升序排列",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "结果按 start 升序排列",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "FORMAT" ]
+    }, {
+      "text" : "不能修改调用者传入的数组及其中对象，保持导出函数名和参数形状",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不能修改调用者传入的数组及其中对象，保持导出函数名和参数形状",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "上层已保证区间合法，不扩展参数校验",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "上层已保证区间合法，不扩展参数校验",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "最终只返回 JSON 对象，只允许交付 windows.mjs 一个业务文件，不新增测试文件，不附说明或 Markdown 代码围栏",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "最终只返回JSON对象 {\"files\":[{\"path\":\"windows.mjs\",\"content\":\"完整文件内容\"}]}，只允许交付 windows.mjs 一个业务文件；不新增测试文件，不附说明或Markdown代码围栏。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "窗口采用半开区间 [start,end)，首尾相接不算重叠，只有真正重叠的窗口才合并" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "合并后结果按 start 升序排列" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "不能修改调用者传入的数组及其中对象，保持导出函数名和参数形状不变" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "上层已保证区间合法，不要扩展参数校验" ]
+      }, {
+        "index" : 4,
+        "quotes" : [ "最终只返回 JSON 对象 {\"files\":[{\"path\":\"windows.mjs\",\"content\":\"完整文件内容\"}]}，只允许交付 windows.mjs 一个业务文件；不新增测试文件，不附说明或 Markdown 代码围栏。" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 5663
+}

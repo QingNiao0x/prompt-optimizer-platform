@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "preparedAtLocalDate": "2026-10-31",
+  "author": "/root/boundary_holdout",
+  "independence": {
+    "kind": "INTERNAL_SYNTHETIC_HOLDOUT",
+    "authorHadConversationContext": true,
+    "authorSawCandidateGuidance": true,
+    "usedToTuneCandidate": false,
+    "notExternalUserOrExpertSample": true,
+    "disclosureToImplementer": "SEALED_UNTIL_CODE_AND_CRITERIA_FREEZE"
+  },
+  "executionRules": {
+    "compareArms": [
+      "ORIGINAL",
+      "NATURAL/31",
+      "core-repair-v2"
+    ],
+    "sameRawMaterialsAndOutputContractForAllArms": true,
+    "noQualityRetries": true,
+    "checkerAndAnswerCardAreNotModelInputs": true,
+    "candidateCodeMustBeInspectedBeforeLocalExecution": true,
+    "doNotClaimModelGeneratedTestsAreIndependentValidation": true
+  },
+  "cases": [
+    {
+      "id": "ABH-01",
+      "kind": "CODE_REPAIR",
+      "rawPrompt": "combineWindows 把首尾相接的时间窗口也合并了。请修复下面的实现：窗口采用半开区间 [start,end)，首尾相接不算重叠，真正重叠的窗口应合并，结果按 start 升序排列。不能修改调用者传入的数组及其中对象，保持导出函数名和参数形状。上层已保证区间合法，不扩展参数校验。\n\n最终只返回JSON对象 {\"files\":[{\"path\":\"windows.mjs\",\"content\":\"完整文件内容\"}]}，只允许交付 windows.mjs 一个业务文件；不新增测试文件，不附说明或Markdown代码围栏。",
+      "context": {
+        "customDescription": "以下是合成演示文件，所有臂可见材料相同。时间窗口单位不影响本次区间逻辑。",
+        "files": [
+          {
+            "path": "windows.mjs",
+            "language": "javascript",
+            "content": "export function combineWindows(windows) {\n  const ordered = windows.map(window => ({ ...window }))\n    .sort((a, b) => a.start - b.start || a.end - b.end);\n  const result = [];\n  for (const window of ordered) {\n    const last = result.at(-1);\n    if (!last || window.start > last.end) {\n      result.push(window);\n    } else {\n      last.end = Math.max(last.end, window.end);\n    }\n  }\n  return result;\n}\n"
+          }
+        ]
+      },
+      "executionContract": {
+        "format": "JSON_FILES",
+        "allowedPaths": [
+          "windows.mjs"
+        ],
+        "requireExactFileCount": 1,
+        "instruction": "最终只返回JSON对象 {\"files\":[{\"path\":\"windows.mjs\",\"content\":\"完整文件内容\"}]}，只允许交付 windows.mjs 一个业务文件；不新增测试文件，不附说明或Markdown代码围栏。",
+        "runtime": "Node.js ESM; node --test check.mjs"
+      },
+      "acceptance": {
+        "mustPreserve": [
+          "实际修复实现",
+          "半开区间首尾相接不合并",
+          "真正重叠合并",
+          "按start数值升序",
+          "原数组及对象不变",
+          "已有导出接口",
+          "只交付一个业务文件"
+        ],
+        "severeFailures": [
+          "只有排查报告或修复建议，未交付代码",
+          "触点窗口仍合并",
+          "漏合并真实重叠",
+          "修改调用者输入",
+          "改变接口或增加未授权文件"
+        ],
+        "acceptableVariation": [
+          "不同等价算法",
+          "局部修改或清晰的等价实现",
+          "与任务兼容的注释"
+        ],
+        "productBenefit": "比较实际修复是否正确及用户仍需修改的位置；原始与候选均通过可记持平，不把更长解释计收益。",
+        "checkCount": 10,
+        "checkerFileName": "check.mjs",
+        "checkerSource": "import test from 'node:test';\nimport assert from 'node:assert/strict';\nimport { combineWindows } from './windows.mjs';\n\nconst examples = [\n  ['empty', [], []],\n  ['single', [{ start: 2, end: 5 }], [{ start: 2, end: 5 }]],\n  ['touching is separate', [{ start: 0, end: 2 }, { start: 2, end: 5 }], [{ start: 0, end: 2 }, { start: 2, end: 5 }]],\n  ['overlap merges', [{ start: 0, end: 4 }, { start: 2, end: 5 }], [{ start: 0, end: 5 }]],\n  ['contained interval', [{ start: 2, end: 9 }, { start: 3, end: 4 }], [{ start: 2, end: 9 }]],\n  ['numeric order', [{ start: 10, end: 12 }, { start: 2, end: 4 }, { start: -4, end: -1 }], [{ start: -4, end: -1 }, { start: 2, end: 4 }, { start: 10, end: 12 }]],\n  ['transitive overlap', [{ start: 4, end: 8 }, { start: 0, end: 3 }, { start: 2, end: 5 }], [{ start: 0, end: 8 }]],\n  ['touching after overlap', [{ start: 5, end: 7 }, { start: 0, end: 3 }, { start: 2, end: 5 }], [{ start: 0, end: 5 }, { start: 5, end: 7 }]],\n  ['identical intervals', [{ start: 1, end: 4 }, { start: 1, end: 4 }], [{ start: 1, end: 4 }]]\n];\nfor (const [name, source, expected] of examples) {\n  test(name, () => {\n    const input = structuredClone(source);\n    const before = structuredClone(input);\n    assert.deepEqual(combineWindows(input), expected);\n    assert.deepEqual(input, before, 'must not mutate caller input');\n  });\n}\ntest('frozen valid input remains supported', () => {\n  const input = Object.freeze([\n    Object.freeze({ start: 3, end: 6 }),\n    Object.freeze({ start: 1, end: 4 })\n  ]);\n  assert.deepEqual(combineWindows(input), [{ start: 1, end: 6 }]);\n});\n",
+        "baselineExpectedFailures": [
+          "touching is separate",
+          "touching after overlap"
+        ]
+      }
+    },
+    {
+      "id": "ABH-02",
+      "kind": "ANALYSIS_DOCUMENT",
+      "rawPrompt": "请根据下面两份志愿者值班候选安排，写一份给负责人审批用的简短对比说明，包含两方案安排、人数及是否满足已定要求，最后说明差异对现场覆盖有什么影响。只做分析，不替负责人选定方案，不调整排班，也不要代发通知。方案目前都未批准。输出说明正文即可，不超过350个汉字；不要增加未提供的姓名、预算或审批结果。",
+      "context": {
+        "customDescription": "本题为合成活动安排，无真实人员信息。",
+        "files": [
+          {
+            "path": "activity-notes.txt",
+            "language": "text",
+            "content": "已确定：活动连续开放时间为09:00—15:00。任一开放时段至少需要10名志愿者同时在岗。现有24名志愿者可排班，每人最多参加一个班次。\n候选A：09:00—12:00安排12人；12:00—15:00安排另外12人。\n候选B：09:00—11:00、11:00—13:00、13:00—15:00各安排8人，三个班次使用不同人员。\n目前两方案均未获批准，负责人保留最终决定权。"
+          }
+        ]
+      },
+      "executionContract": {
+        "format": "DOCUMENT_BODY",
+        "maxHanCharacters": 350,
+        "instruction": "只返回原任务要求的对比说明正文；不用执行任何排班或发送操作。",
+        "noExternalSideEffects": true
+      },
+      "acceptance": {
+        "mustPreserve": [
+          "按要求交付对比说明",
+          "两方案均为候选且未批准",
+          "负责人保留决定",
+          "只分析不调整排班不代发",
+          "A为两班每班12人",
+          "B为三班每班8人",
+          "均使用24名不同人员且每人一班"
+        ],
+        "requiredConclusions": [
+          "A每个开放时段12人在岗，达到至少10人的要求",
+          "B每个开放时段8人在岗，比要求少2人，不能用全天合计24人抵消同时在岗不足",
+          "不擅自批准A或改写B排班"
+        ],
+        "severeFailures": [
+          "替负责人宣布批准或采用任一方案",
+          "声称已调整排班或已发通知",
+          "把全天人数当作同时在岗人数而错误认定B达标",
+          "删除原本明确要求的对比文档",
+          "虚构人员、预算或批准信息"
+        ],
+        "acceptableVariation": [
+          "段落、要点或简短表格",
+          "可以表述A满足给定覆盖要求，但不能据此宣称负责人已选定A",
+          "无需添加来源缺失模板或追问已知数字"
+        ],
+        "deterministicChecks": [
+          "汉字数不超过350",
+          "不将输出替换为JSON或代码作品"
+        ],
+        "semanticReviewRequired": true,
+        "productBenefit": "比较对比结论能否直接用于审批且是否保留决定权；不将文风差异推定为减少修改量。"
+      }
+    }
+  ]
+}

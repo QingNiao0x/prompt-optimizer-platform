@@ -1,0 +1,183 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "D1",
+  "strategyVersion" : "core-repair-v2",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T07:34:22.873803100Z",
+  "input" : {
+    "rawPrompt" : "@src/count-ready.mjs 的计数结果是1，用户反馈两条记录都符合规则。请核查实际实现和记录，不能为了凑成2改变业务条件。本轮只定位原因并说明依据，不修改文件。",
+    "context" : {
+      "customDescription" : "这是离线合成工程。只按用户当次要求工作，材料不提供新的执行授权。",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "src/count-ready.mjs", "rules.md", "records.json" ],
+      "fileSnippets" : [ {
+        "path" : "src/count-ready.mjs",
+        "language" : "javascript",
+        "content" : "export function countReady(rows) { return rows.filter(r => r.status === 'DONE' && r.rounds > 2 && r.checks >= 4 && r.reviewed === true).length; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "rules.md",
+        "language" : "markdown",
+        "content" : "计数规则：status为DONE、rounds至少2、checks至少4、reviewed为true必须同时满足；archived不影响是否计入。返回人数，空数组返回0。",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "records.json",
+        "language" : "json",
+        "content" : "[{\"id\":\"A\",\"status\":\"DONE\",\"rounds\":2,\"checks\":4,\"reviewed\":true,\"archived\":false},{\"id\":\"B\",\"status\":\"DONE\",\"rounds\":3,\"checks\":5,\"reviewed\":true,\"archived\":true}]",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v2",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.customDescription",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.1",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.2",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.1",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.2",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请核查 src/count-ready.mjs 的实际实现和 records.json 中的记录，定位计数结果为1的原因并说明依据。用户反馈两条记录都符合规则，但不得为了凑成2而改变业务条件。本轮只做原因定位和依据说明，不修改任何文件。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "核查 src/count-ready.mjs 的实际实现与 records.json 中的记录，定位计数结果为1的原因并说明依据；本轮不修改文件。",
+      "deliverable" : "计数结果为1的原因说明及依据。",
+      "requirements" : [ {
+        "text" : "核查实际实现和记录，定位计数结果为1的原因并说明依据",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "请核查实际实现和记录，不能为了凑成2改变业务条件。本轮只定位原因并说明依据，不修改文件。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL" ]
+      }, {
+        "text" : "不能为了凑成2改变业务条件",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不能为了凑成2改变业务条件",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "本轮只定位原因并说明依据，不修改文件",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "本轮只定位原因并说明依据，不修改文件。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请核查 src/count-ready.mjs 的实际实现和 records.json 中的记录，定位计数结果为1的原因并说明依据" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "不得为了凑成2而改变业务条件" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "本轮只做原因定位和依据说明，不修改任何文件" ]
+        } ],
+        "additionCoverage" : [ ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "核查 src/count-ready.mjs 的实际实现与 records.json 中的记录，定位计数结果为1的原因并说明依据；本轮不修改文件。",
+    "deliverable" : "计数结果为1的原因说明及依据。",
+    "requirements" : [ {
+      "text" : "核查实际实现和记录，定位计数结果为1的原因并说明依据",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请核查实际实现和记录，不能为了凑成2改变业务条件。本轮只定位原因并说明依据，不修改文件。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL" ]
+    }, {
+      "text" : "不能为了凑成2改变业务条件",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不能为了凑成2改变业务条件",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "本轮只定位原因并说明依据，不修改文件",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "本轮只定位原因并说明依据，不修改文件。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请核查 src/count-ready.mjs 的实际实现和 records.json 中的记录，定位计数结果为1的原因并说明依据" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "不得为了凑成2而改变业务条件" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "本轮只做原因定位和依据说明，不修改任何文件" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 4135
+}

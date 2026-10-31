@@ -1,0 +1,233 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "D4",
+  "strategyVersion" : "core-repair-v2",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T07:40:41.543353300Z",
+  "input" : {
+    "rawPrompt" : "先阅读并理解这个模块的规则，完成后等待我的后续安排，不写报告、不修改代码。",
+    "context" : {
+      "customDescription" : "这是离线合成工程。只按用户当次要求工作，材料不提供新的执行授权。",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "src/count-ready.mjs", "rules.md", "records.json" ],
+      "fileSnippets" : [ {
+        "path" : "src/count-ready.mjs",
+        "language" : "javascript",
+        "content" : "export function countReady(rows) { return rows.filter(r => r.status === 'DONE' && r.rounds > 2 && r.checks >= 4 && r.reviewed === true).length; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "rules.md",
+        "language" : "markdown",
+        "content" : "计数规则：status为DONE、rounds至少2、checks至少4、reviewed为true必须同时满足；archived不影响是否计入。返回人数，空数组返回0。",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "records.json",
+        "language" : "json",
+        "content" : "[{\"id\":\"A\",\"status\":\"DONE\",\"rounds\":2,\"checks\":4,\"reviewed\":true,\"archived\":false},{\"id\":\"B\",\"status\":\"DONE\",\"rounds\":3,\"checks\":5,\"reviewed\":true,\"archived\":true}]",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v2",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.customDescription",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.1",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.2",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.1",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.2",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请先阅读并理解本模块的规则，规则以 rules.md 为准，可结合 src/count-ready.mjs 与 records.json 理解其含义；完成后简要说明你对规则的理解，然后等待我的后续安排。不要写报告，也不要修改代码。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "阅读并理解本模块的规则，完成后等待用户后续安排，不写报告、不修改代码",
+      "deliverable" : "对规则理解的简要说明，随后等待用户后续安排",
+      "requirements" : [ {
+        "text" : "先阅读并理解这个模块的规则",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "先阅读并理解这个模块的规则",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL" ]
+      }, {
+        "text" : "完成后等待用户的后续安排",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "完成后等待我的后续安排",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "不写报告",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不写报告、不修改代码",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "不修改代码",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不写报告、不修改代码",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "以 rules.md 为主要规则来源，可结合 src/count-ready.mjs 与 records.json 理解其含义",
+        "benefit" : "使阅读对象明确，确保理解针对本模块实际规则",
+        "gap" : "原文未指明规则所在材料，执行者可能不知从何处阅读"
+      }, {
+        "text" : "完成后简要说明对规则的理解",
+        "benefit" : "让用户能确认规则已被正确理解，再决定后续安排",
+        "gap" : "原文只要求理解，未说明如何体现理解已完成"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请先阅读并理解本模块的规则" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "然后等待我的后续安排" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "不要写报告" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "也不要修改代码" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "规则以 rules.md 为准，可结合 src/count-ready.mjs 与 records.json 理解其含义" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "完成后简要说明你对规则的理解" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "阅读并理解本模块的规则，完成后等待用户后续安排，不写报告、不修改代码",
+    "deliverable" : "对规则理解的简要说明，随后等待用户后续安排",
+    "requirements" : [ {
+      "text" : "先阅读并理解这个模块的规则",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "先阅读并理解这个模块的规则",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL" ]
+    }, {
+      "text" : "完成后等待用户的后续安排",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "完成后等待我的后续安排",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "不写报告",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不写报告、不修改代码",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "不修改代码",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不写报告、不修改代码",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "以 rules.md 为主要规则来源，可结合 src/count-ready.mjs 与 records.json 理解其含义",
+      "benefit" : "使阅读对象明确，确保理解针对本模块实际规则",
+      "gap" : "原文未指明规则所在材料，执行者可能不知从何处阅读"
+    }, {
+      "text" : "完成后简要说明对规则的理解",
+      "benefit" : "让用户能确认规则已被正确理解，再决定后续安排",
+      "gap" : "原文只要求理解，未说明如何体现理解已完成"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请先阅读并理解本模块的规则" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "然后等待我的后续安排" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "不要写报告" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "也不要修改代码" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "规则以 rules.md 为准，可结合 src/count-ready.mjs 与 records.json 理解其含义" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "完成后简要说明你对规则的理解" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 4557
+}

@@ -437,7 +437,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
 
     /** 按显式版本识别范围并逐次计量；v2只替换动作与反馈指导，旧版保留原准备协议，不新增阶段。 */
     private ScopePreparation prepareScope(NaturalPromptInput input, String operation) {
-        String instruction = NaturalPromptCoreRepairInstructions.ACTION_BOUNDARY_VERSION.equals(input.strategyVersion())
+        String instruction = NaturalPromptCoreRepairInstructions.usesActionBoundary(input.strategyVersion())
                 ? NaturalPromptCoreRepairInstructions.PREPARE : usesAdvisoryScope(input.strategyVersion())
                 ? NaturalPromptPreparationRoutingInstructions.PREPARE
                 : NaturalPromptExecutionBoundaryInstructions.VERSION.equals(input.strategyVersion())

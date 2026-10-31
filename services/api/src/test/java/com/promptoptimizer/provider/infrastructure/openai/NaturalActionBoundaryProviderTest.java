@@ -37,7 +37,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * 实际生成是否保留执行、完成条件和反馈职责，仍须通过冻结题目与下游作品验收。
  */
 class NaturalActionBoundaryProviderTest {
-    private static final String VERSION = "core-repair-v2";
+    /** 子类复用相同传输与保护回归；不把预置响应算成语义通过。 */
+    protected String version() { return "core-repair-v2"; }
     private static final String ENDPOINT = "https://fixture.invalid/chat/completions";
     private final ObjectMapper json = new ObjectMapper();
     private MockRestServiceServer server;
@@ -60,13 +61,15 @@ class NaturalActionBoundaryProviderTest {
             "INHERENT|排查并修复统计少一条的问题，保持业务条件不变。|请定位并修复统计少一条的问题，保持业务条件不变，验证符合条件的记录按规则计入并简要说明改动。",
             "EXPLICIT|请撰写排查报告，说明原因与建议，不执行修改。|请撰写排查报告，区分已证实原因与尚待验证的假设，给出建议，不执行修改。",
             "UNSPECIFIED|只阅读项目并理解现状，完成后等待，不写文档、不修改。|只阅读项目并理解现状，完成后等待，不写文档、不修改。",
+            "EXPLICIT|读完后用三条要点复述规则，再等待，不修改。|请阅读规则，用三条要点复述规则的适用条件，然后等待，不修改。",
+            "EXPLICIT|阅读材料并交付一份对照报告，不执行修改。|请阅读材料并交付一份对照报告，依据所给材料说明差异，不执行修改。",
             "EXPLICIT|将通知中的时间改为15:00，其余内容逐字保留，只返回完整通知。|将通知中的时间改为15:00，其余内容逐字保留，只返回完整通知。"
     })
     void actionVariantsReachTheWriterWithTheirOriginalScope(String basis, String raw, String body) throws Exception {
         var input = input(raw, List.of());
         var prepared = scope(raw, basis);
         expectPreparation(prepared, input);
-        expect(writing(input, body), NaturalPromptInstructions.enhancementInstruction(VERSION), payload -> {
+        expect(writing(input, body), NaturalPromptInstructions.enhancementInstruction(version()), payload -> {
             assertThat(payload.path("taskScope")).isEqualTo(prepared);
             assertOriginalInput(payload, input);
         });
@@ -89,7 +92,7 @@ class NaturalActionBoundaryProviderTest {
         actions.add(action("修改本地实现", "CONDITIONAL", "得到我的批准后", "rawPrompt", "得到我的批准后再修改"));
         expectPreparation(prepared, input);
         String body = "先定位异常；得到我的批准后再修改。范围仅限本地实现；修改仍需等我确认，不允许修改线上数据。";
-        expect(writing(input, body), NaturalPromptInstructions.enhancementInstruction(VERSION), payload -> {
+        expect(writing(input, body), NaturalPromptInstructions.enhancementInstruction(version()), payload -> {
             assertOriginalInput(payload, input);
             assertThat(payload.path("taskScope").path("actions")).isEqualTo(actions);
             assertThat(payload.path("taskSources").findValuesAsText("kind"))
@@ -109,7 +112,7 @@ class NaturalActionBoundaryProviderTest {
         String body = "请定位问题并修复实现，验证结果后简要说明改动。";
         var response = writing(input, body);
         ((ObjectNode) response.get("taskUnderstanding")).put("deliverable", "修复后的实现与简要说明");
-        expect(response, NaturalPromptInstructions.enhancementInstruction(VERSION), payload -> {
+        expect(response, NaturalPromptInstructions.enhancementInstruction(version()), payload -> {
             assertThat(payload.path("taskScope").path("response").path("description").asText()).isEqualTo("交付排查报告");
             assertOriginalInput(payload, input);
         });
@@ -136,7 +139,7 @@ class NaturalActionBoundaryProviderTest {
                     .putArray("quotes").add("正文中不存在的确认边界");
             default -> throw new IllegalArgumentException(defect);
         }
-        expect(bad, NaturalPromptInstructions.enhancementInstruction(VERSION), payload -> assertOriginalInput(payload, input));
+        expect(bad, NaturalPromptInstructions.enhancementInstruction(version()), payload -> assertOriginalInput(payload, input));
         expect(bad, null, payload -> assertOriginalInput(payload, input));
         assertThatThrownBy(() -> provider.enhance(input, value -> checked(value, input))).isInstanceOf(ProviderException.class);
         server.verify();
@@ -174,7 +177,7 @@ class NaturalActionBoundaryProviderTest {
                     .put("whyAsk", "用户明确保留线上数据修改决定权").put("answerDifference", "不同授权决定是否执行线上数据修改");
         }
         response.set("taskUnderstanding", record);
-        expect(response, NaturalPromptInstructions.planningInstruction(VERSION), payload -> {
+        expect(response, NaturalPromptInstructions.planningInstruction(version()), payload -> {
             assertOriginalInput(payload, input);
             assertThat(payload.path("taskScope")).isEqualTo(prepared);
         });
@@ -195,7 +198,7 @@ class NaturalActionBoundaryProviderTest {
                 List.of(), List.of(), "fixture");
         var conversation = List.of(new ConversationMessage("user", "不要扩大到其他模块。"),
                 new ConversationMessage("assistant", "也可以考虑重写整个系统。"));
-        return new NaturalPromptInput(raw, context, answers, conversation, List.of(), null, context).withStrategyVersion(VERSION);
+        return new NaturalPromptInput(raw, context, answers, conversation, List.of(), null, context).withStrategyVersion(version());
     }
 
     private ObjectNode scope(String raw, String basis) {

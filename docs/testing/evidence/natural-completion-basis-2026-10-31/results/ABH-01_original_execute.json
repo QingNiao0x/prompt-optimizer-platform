@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "dfd63b16-de93-4717-83b4-8a4c80f1c231",
+    "object": "chat.completion",
+    "created": 1793434022,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"files\":[{\"path\":\"windows.mjs\",\"content\":\"export function combineWindows(windows) {\\n  const ordered = windows.map(window => ({ ...window }))\\n    .sort((a, b) => a.start - b.start || a.end - b.end);\\n  const result = [];\\n  for (const window of ordered) {\\n    const last = result.at(-1);\\n    if (!last || window.start >= last.end) {\\n      result.push(window);\\n    } else {\\n      last.end = Math.max(last.end, window.end);\\n    }\\n  }\\n  return result;\\n}\\n\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 314,
+      "completion_tokens": 142,
+      "total_tokens": 456,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 314
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}
