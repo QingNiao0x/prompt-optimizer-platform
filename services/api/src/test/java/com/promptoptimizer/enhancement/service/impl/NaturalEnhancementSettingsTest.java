@@ -45,4 +45,11 @@ class NaturalEnhancementSettingsTest {
         runner.withPropertyValues("app.enhancement.natural.profile=COMPLETION_BASIS_REPAIR").run(context ->
                 assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v3"));
     }
+
+    @Test
+    void proposedDesignStrategyIsAvailableOnlyThroughExplicitServerConfiguration() {
+        runner.withPropertyValues("app.enhancement.natural.profile=DESIGN_COMPLETION").run(context ->
+                assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-design-completion-v1"));
+        runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v3"));
+    }
 }
