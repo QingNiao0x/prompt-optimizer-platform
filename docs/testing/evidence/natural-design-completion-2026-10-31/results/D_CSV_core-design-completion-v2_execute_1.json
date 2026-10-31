@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "3ee8938d-9fd3-4d6e-93bf-c9b44887bbdc",
+    "object": "chat.completion",
+    "created": 1793453651,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"src/exportCsv.mjs\":\"/** rows为对象数组，返回可用于下载的字符串。 */\\nexport function exportCsv(rows) {\\n  const list = Array.isArray(rows) ? rows : [];\\n\\n  // 收集所有出现过的字段名，保持首次出现顺序，避免不同对象键不一致时丢列\\n  const headers = [];\\n  const seen = new Set();\\n  for (const row of list) {\\n    if (row && typeof row === \\\"object\\\") {\\n      for (const key of Object.keys(row)) {\\n        if (!seen.has(key)) {\\n          seen.add(key);\\n          headers.push(key);\\n        }\\n      }\\n    }\\n  }\\n\\n  const escapeField = (value) => {\\n    let text;\\n    if (value === null || value === undefined) {\\n      text = \\\"\\\";\\n    } else if (typeof value === \\\"object\\\") {\\n      // 外部填写内容可能包含对象/数组，统一序列化，避免出现 [object Object]\\n      try {\\n        text = JSON.stringify(value);\\n      } catch {\\n        text = String(value);\\n      }\\n    } else {\\n      text = String(value);\\n    }\\n\\n    // 含逗号、双引号、换行（CR/LF）或首尾空白时用双引号包裹，内部双引号翻倍\\n    if (/[\\\",\\\\r\\\\n]/.test(text) || /^\\\\s|\\\\s$/.test(text)) {\\n      return '\\\"' + text.replace(/\\\"/g, '\\\"\\\"') + '\\\"';\\n    }\\n    return text;\\n  };\\n\\n  const lines = [];\\n  if (headers.length > 0) {\\n    lines.push(headers.map(escapeField).join(\\\",\\\"));\\n    for (const row of list) {\\n      const record = row && typeof row === \\\"object\\\" ? row : {};\\n      lines.push(headers.map((key) => escapeField(record[key])).join(\\\",\\\"));\\n    }\\n  }\\n\\n  // 使用 CRLF 换行并加 UTF-8 BOM，提升 Excel 等表格软件打开时的兼容性\\n  return \\\"\\\\uFEFF\\\" + lines.join(\\\"\\\\r\\\\n\\\") + (lines.length > 0 ? \\\"\\\\r\\\\n\\\" : \\\"\\\");\\n}\\n\"}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 286,
+      "completion_tokens": 549,
+      "total_tokens": 835,
+      "prompt_tokens_details": {
+        "cached_tokens": 128
+      },
+      "prompt_cache_hit_tokens": 128,
+      "prompt_cache_miss_tokens": 158
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

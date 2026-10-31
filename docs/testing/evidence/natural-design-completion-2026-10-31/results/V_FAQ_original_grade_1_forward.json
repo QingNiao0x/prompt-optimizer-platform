@@ -1,0 +1,36 @@
+{
+  "status": 200,
+  "body": {
+    "id": "26b83e33-5fd8-4baa-8546-01239e31e7dc",
+    "object": "chat.completion",
+    "created": 1793454154,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"verdict\":\"TIE\",\"substantiveGain\":false,\"reason\":\"两份作品都准确覆盖了生效时间、受影响范围、到期处理、账号规则及成员权限区别，并都明确不新增退款或补偿承诺；组织方式不同但均满足客服内部说明的任务要求，实质业务收益相当。\",\"aIssues\":[\"第七部分第6条写“按现有已批准政策答复”，但材料只说明“尚未批准新的退款或补偿政策”，未提供任何已批准政策内容，客服据此可能无法确定具体口径；不过紧接着要求“请勿对外作出任何退款或补偿承诺”，风险有限。\"],\"bIssues\":[\"常见问答第2条写“可按需选择1天、7天或30天有效期”，其中“7天”是默认值而非材料中与1天、30天并列的可选值，表述可能让客服误以为7天也是主动可选期限；但结合前文“默认7天失效”，实际影响较小。\"],\"evidence\":[{\"side\":\"A\",\"quote\":\"涉及退款、补偿等问题：不得自行承诺，按现有已批准政策答复；尚无新政策，请勿对外作出任何退款或补偿承诺。\",\"impact\":\"材料未提供“现有已批准政策”的具体内容，客服可能不知道按什么政策答复；但后半句已禁止承诺，未造成新增对外承诺。\"},{\"side\":\"B\",\"quote\":\"创建人可以生成新链接，并按需选择1天、7天或30天有效期。\",\"impact\":\"把默认7天写成可与1天、30天并列“按需选择”的期限，与材料“默认7天；创建人可以改为1天或30天”的表述不完全一致，可能造成客服口径偏差。\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1175,
+      "completion_tokens": 361,
+      "total_tokens": 1536,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 663
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "blinding": {
+    "A": "core-design-completion-v2",
+    "B": "original"
+  },
+  "requiresManualVerification": true
+}

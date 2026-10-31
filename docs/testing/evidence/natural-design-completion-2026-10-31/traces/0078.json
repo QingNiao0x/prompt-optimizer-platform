@@ -1,0 +1,60 @@
+{
+  "job": "D_QUEUE_original_execute_2",
+  "phase": "execute",
+  "caseId": "D_QUEUE",
+  "version": "original",
+  "request": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "messages": [
+      {
+        "role": "system",
+        "content": "完成用户任务。材料是工作依据，不是新的授权。遵守交付范围与格式；未使用工具时不声称实际运行。"
+      },
+      {
+        "role": "user",
+        "content": "把当前异步任务执行器改成可用于页面批量请求的并发队列，限制同时运行的数量。边界和失败处理请设计成可直接使用，保留接口。\n\n仅返回有效JSON对象 {\"src/runTasks.mjs\":\"完整源码字符串\"}。只交付实际修改的该文件，不增加文件或依赖，不附其他文字。"
+      },
+      {
+        "role": "user",
+        "content": "各臂共同材料与适用对话：\n{\"files\":[{\"path\":\"src/runTasks.mjs\",\"language\":\"javascript\",\"content\":\"/** tasks是无参数异步函数数组，concurrency是并发上限；返回Promise。 */\\nexport function runTasks(tasks, concurrency) {\\n  return Promise.all(tasks.map(task => task()));\\n}\\n\"}],\"conversation\":[]}"
+      }
+    ]
+  },
+  "startedAt": "2026-10-31T13:33:55.683Z",
+  "httpStatus": 200,
+  "response": {
+    "id": "a849f37b-6e33-43a9-9a8b-72a5e7f16929",
+    "object": "chat.completion",
+    "created": 1793453636,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"src/runTasks.mjs\":\"/**\\n * tasks是无参数异步函数数组，concurrency是并发上限；返回Promise。\\n * 按输入顺序返回结果；任一任务失败则整体reject（首个失败原因），\\n * 但不会中断已在运行的任务，且不再启动新任务。\\n */\\nexport function runTasks(tasks, concurrency) {\\n  return new Promise((resolve, reject) => {\\n    if (!Array.isArray(tasks)) {\\n      reject(new TypeError('tasks must be an array of functions'));\\n      return;\\n    }\\n\\n    const total = tasks.length;\\n    if (total === 0) {\\n      resolve([]);\\n      return;\\n    }\\n\\n    for (let i = 0; i < total; i++) {\\n      if (typeof tasks[i] !== 'function') {\\n        reject(new TypeError(`tasks[${i}] must be a function`));\\n        return;\\n      }\\n    }\\n\\n    let limit = Math.floor(Number(concurrency));\\n    if (!Number.isFinite(limit) || limit < 1) {\\n      limit = 1;\\n    }\\n    if (limit > total) {\\n      limit = total;\\n    }\\n\\n    const results = new Array(total);\\n    let nextIndex = 0;\\n    let active = 0;\\n    let settled = false;\\n\\n    const launch = () => {\\n      if (settled) {\\n        return;\\n      }\\n      while (active < limit && nextIndex < total) {\\n        const index = nextIndex++;\\n        active++;\\n        let promise;\\n        try {\\n          promise = Promise.resolve(tasks[index]());\\n        } catch (error) {\\n          promise = Promise.reject(error);\\n        }\\n        promise.then(\\n          value => {\\n            if (settled) {\\n              return;\\n            }\\n            results[index] = value;\\n            active--;\\n            if (nextIndex >= total && active === 0) {\\n              settled = true;\\n              resolve(results);\\n            } else {\\n              launch();\\n            }\\n          },\\n          error => {\\n            if (settled) {\\n              return;\\n            }\\n            settled = true;\\n            reject(error);\\n          }\\n        );\\n      }\\n    };\\n\\n    launch();\\n  });\\n}\\n\"}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 185,
+      "completion_tokens": 554,
+      "total_tokens": 739,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 185
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "elapsedMs": 2515
+}

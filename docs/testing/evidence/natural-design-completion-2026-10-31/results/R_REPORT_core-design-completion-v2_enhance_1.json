@@ -1,0 +1,180 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "R_REPORT",
+  "strategyVersion" : "core-design-completion-v2",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T13:26:46.715877200Z",
+  "input" : {
+    "rawPrompt" : "阅读材料，交付一份简洁排查报告，区分已证实原因与待验证项，不修改文件。\n\n保留报告这一交付物和不修改文件的限制。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "report.txt" ],
+      "fileSnippets" : [ {
+        "path" : "report.txt",
+        "language" : "text",
+        "content" : "合成故障记录：页面显示5，接口返回5，导出文件只有4行；尚未提供导出实现。",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-design-completion-v2",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "阅读现有材料，交付一份简洁的排查报告，区分已证实原因与待验证项，不修改任何文件。\n\n材料中记录：页面显示5，接口返回5，导出文件只有4行；尚未提供导出实现。请据此梳理现象与可能原因：把材料能直接支持的事实列为已证实原因，把依赖导出实现等缺失信息才能判断的内容列为待验证项，并说明各项待验证项需要什么信息或检查才能确认。报告保持简洁，只做阅读与排查分析，不要改动或新建文件。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "阅读现有材料，交付一份简洁排查报告，区分已证实原因与待验证项，且不修改文件。",
+      "deliverable" : "一份简洁排查报告，区分已证实原因与待验证项。",
+      "requirements" : [ {
+        "text" : "阅读材料并交付一份简洁排查报告，区分已证实原因与待验证项",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "阅读材料，交付一份简洁排查报告，区分已证实原因与待验证项，不修改文件。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "FORMAT" ]
+      }, {
+        "text" : "不修改文件",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "阅读材料，交付一份简洁排查报告，区分已证实原因与待验证项，不修改文件。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "材料记录页面显示5、接口返回5、导出文件只有4行，且尚未提供导出实现",
+        "evidence" : [ {
+          "sourceId" : "context.fileSnippets.0",
+          "quote" : "合成故障记录：页面显示5，接口返回5，导出文件只有4行；尚未提供导出实现。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "OBJECT" ]
+      } ],
+      "additions" : [ {
+        "text" : "把材料能直接支持的事实列为已证实原因，把依赖导出实现等缺失信息才能判断的内容列为待验证项，并说明各项待验证项需要什么信息或检查才能确认",
+        "benefit" : "使报告的分类可核对，待验证项能指向具体缺失信息，同时不改变简洁报告和不修改文件的边界",
+        "gap" : "原任务要求区分已证实原因与待验证项，但未说明分类依据和待验证项的呈现方式"
+      } ],
+      "openDecisions" : [ {
+        "issue" : "导出实现的具体逻辑与数据来源",
+        "impact" : "决定导出文件只有4行这一现象能否被证实为原因，还是只能列为待验证项",
+        "questionId" : "",
+        "kind" : "USER_INFORMATION"
+      } ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "阅读现有材料，交付一份简洁的排查报告，区分已证实原因与待验证项" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "不修改任何文件" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "材料中记录：页面显示5，接口返回5，导出文件只有4行；尚未提供导出实现。" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "把材料能直接支持的事实列为已证实原因，把依赖导出实现等缺失信息才能判断的内容列为待验证项，并说明各项待验证项需要什么信息或检查才能确认。" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "阅读现有材料，交付一份简洁排查报告，区分已证实原因与待验证项，且不修改文件。",
+    "deliverable" : "一份简洁排查报告，区分已证实原因与待验证项。",
+    "requirements" : [ {
+      "text" : "阅读材料并交付一份简洁排查报告，区分已证实原因与待验证项",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "阅读材料，交付一份简洁排查报告，区分已证实原因与待验证项，不修改文件。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "FORMAT" ]
+    }, {
+      "text" : "不修改文件",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "阅读材料，交付一份简洁排查报告，区分已证实原因与待验证项，不修改文件。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "材料记录页面显示5、接口返回5、导出文件只有4行，且尚未提供导出实现",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "合成故障记录：页面显示5，接口返回5，导出文件只有4行；尚未提供导出实现。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "OBJECT" ]
+    } ],
+    "additions" : [ {
+      "text" : "把材料能直接支持的事实列为已证实原因，把依赖导出实现等缺失信息才能判断的内容列为待验证项，并说明各项待验证项需要什么信息或检查才能确认",
+      "benefit" : "使报告的分类可核对，待验证项能指向具体缺失信息，同时不改变简洁报告和不修改文件的边界",
+      "gap" : "原任务要求区分已证实原因与待验证项，但未说明分类依据和待验证项的呈现方式"
+    } ],
+    "openDecisions" : [ {
+      "issue" : "导出实现的具体逻辑与数据来源",
+      "impact" : "决定导出文件只有4行这一现象能否被证实为原因，还是只能列为待验证项",
+      "questionId" : "",
+      "kind" : "USER_INFORMATION"
+    } ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "阅读现有材料，交付一份简洁的排查报告，区分已证实原因与待验证项" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "不修改任何文件" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "材料中记录：页面显示5，接口返回5，导出文件只有4行；尚未提供导出实现。" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "把材料能直接支持的事实列为已证实原因，把依赖导出实现等缺失信息才能判断的内容列为待验证项，并说明各项待验证项需要什么信息或检查才能确认。" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 6175
+}

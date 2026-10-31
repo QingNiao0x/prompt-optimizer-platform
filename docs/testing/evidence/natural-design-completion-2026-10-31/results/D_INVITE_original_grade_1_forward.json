@@ -1,0 +1,36 @@
+{
+  "status": 200,
+  "body": {
+    "id": "0e5728df-6943-44c4-ac63-86a2cbb59dc4",
+    "object": "chat.completion",
+    "created": 1793454192,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"verdict\":\"TIE\",\"substantiveGain\":false,\"reason\":\"两版均完整交付邮件标题和正文，准确包含活动名称、主题、时间、线上形式、团队案例、提问交流和报名链接，且未虚构嘉宾、礼品、优惠、录播或效果承诺。A版称呼更完整、语气更正式；B版正文更紧凑，并补充“转化为可执行的行动项”的说明，但该表述属于对主题的自然解释，不构成实质业务收益差异。两版均适合直接发送，完成度相当。\",\"aIssues\":[],\"bIssues\":[],\"evidence\":[{\"side\":\"A\",\"quote\":\"分享会将结合一个团队案例，介绍相关实践，并安排提问交流环节，便于您结合自身情况参与讨论。\",\"impact\":\"准确覆盖材料中的案例和提问交流安排，未作额外承诺，满足客户了解活动内容的需求。\"},{\"side\":\"B\",\"quote\":\"届时将分享一个团队案例，并安排提问交流，帮助大家了解如何把会议决定转化为可执行的行动项。\",\"impact\":\"同样覆盖案例和提问交流，并对主题作适度解释，未虚构信息，不影响可发送性。\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 667,
+      "completion_tokens": 247,
+      "total_tokens": 914,
+      "prompt_tokens_details": {
+        "cached_tokens": 384
+      },
+      "prompt_cache_hit_tokens": 384,
+      "prompt_cache_miss_tokens": 283
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "blinding": {
+    "A": "core-design-completion-v2",
+    "B": "original"
+  },
+  "requiresManualVerification": true
+}

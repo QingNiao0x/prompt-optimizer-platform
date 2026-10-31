@@ -1,0 +1,36 @@
+{
+  "status": 200,
+  "body": {
+    "id": "59c8c88f-7a4b-4f0e-a534-525bfc7da49c",
+    "object": "chat.completion",
+    "created": 1793454144,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"verdict\":\"TIE\",\"substantiveGain\":false,\"reason\":\"两份说明都准确覆盖了生效时间、新链接默认7天且可选1天/30天、已有链接不变、到期后访客看到失效提示、创建人不能延长旧链接但可生成新链接、付费与免费规则相同、不修改文件、不改变已授权成员直接访问权限，并且都明确不新增退款或补偿承诺。组织方式略有差异：A更贴近变更清单逐项展开并附答复口径，B采用问答形式更便于客服快速查阅；两者均满足700字以内和直接可用要求，没有实质业务收益差异。\",\"aIssues\":[],\"bIssues\":[],\"evidence\":[{\"side\":\"A\",\"quote\":\"创建人不能延长已到期的旧链接，但可以生成新链接。\",\"impact\":\"准确回答到期后处理方式，未称可恢复或延长旧链接。\"},{\"side\":\"A\",\"quote\":\"涉及退款、补偿等问题：不得自行承诺，按现有已批准政策答复；尚无新政策，请勿对外作出任何退款或补偿承诺。\",\"impact\":\"避免客服新增对外承诺，符合约束。\"},{\"side\":\"B\",\"quote\":\"2026年11月20日之后新建的链接默认7天后失效，创建时也可选择1天或30天。此前已创建的链接不变。\",\"impact\":\"准确区分新链接与已有链接，便于客服回答生效范围和受影响对象。\"},{\"side\":\"B\",\"quote\":\"不能延长已到期的旧链接。创建人可以生成一个新链接。\",\"impact\":\"准确说明到期后处理方式，未误导为可恢复旧链接。\"},{\"side\":\"B\",\"quote\":\"不得提及或承诺退款、补偿及其他清单之外的政策；客户问及时，告知暂无相关信息，不作承诺。\",\"impact\":\"防止客服作出清单外承诺，符合不新增对外承诺的要求。\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1171,
+      "completion_tokens": 389,
+      "total_tokens": 1560,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 1171
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "blinding": {
+    "A": "core-design-completion-v2",
+    "B": "core-repair-v3"
+  },
+  "requiresManualVerification": true
+}

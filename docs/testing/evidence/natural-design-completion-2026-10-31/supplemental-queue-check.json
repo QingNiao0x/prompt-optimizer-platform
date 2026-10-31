@@ -1,0 +1,35 @@
+{
+  "basis": "原rubric已要求失败不得假称成功；原检查器只检查不挂起，没有检查拒绝是否被悄悄吞掉。此处补录，不回改旧判定。",
+  "results": [
+    {
+      "file": "D_QUEUE_core-design-completion-v2_execute_1.json",
+      "pass": true,
+      "handling": "rejects task failure"
+    },
+    {
+      "file": "D_QUEUE_core-design-completion-v2_execute_2.json",
+      "pass": true,
+      "handling": "rejects task failure"
+    },
+    {
+      "file": "D_QUEUE_core-repair-v3_execute_1.json",
+      "pass": true,
+      "handling": "rejects task failure"
+    },
+    {
+      "file": "D_QUEUE_core-repair-v3_execute_2.json",
+      "pass": true,
+      "handling": "rejects task failure"
+    },
+    {
+      "file": "D_QUEUE_original_execute_1.json",
+      "pass": false,
+      "error": "Rejected task disappeared into a fulfilled success result"
+    },
+    {
+      "file": "D_QUEUE_original_execute_2.json",
+      "pass": true,
+      "handling": "rejects task failure"
+    }
+  ]
+}

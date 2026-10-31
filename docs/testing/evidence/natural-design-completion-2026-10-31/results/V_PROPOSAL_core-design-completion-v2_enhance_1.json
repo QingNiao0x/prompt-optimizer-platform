@@ -1,0 +1,242 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "V_PROPOSAL",
+  "strategyVersion" : "core-design-completion-v2",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T13:36:44.988797600Z",
+  "input" : {
+    "rawPrompt" : "依据这些合成记录，为小组设计一个下月可执行的资料归档改进方案。方案细节由你安排，优先解决实际问题。\n\n直接交付方案正文，中文700字以内。不能采购新系统，也不能假定已有审批权限。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "notes.txt" ],
+      "fileSnippets" : [ {
+        "path" : "notes.txt",
+        "language" : "text",
+        "content" : "合成小组6人，现用共享文件夹。过去一个月发现：同一文件多个版本，不清楚哪个最终生效；文件名随意导致查找慢；交接时常漏附件。可由小组自行约定命名、目录、责任人和交接检查；涉及删除正式档案或变更访问权限仍须现有负责人审批。未统计每人每日检索时长，未批准预算。",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-design-completion-v2",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "依据以下合成记录，为小组设计一个下月可执行的资料归档改进方案，直接交付方案正文，中文700字以内。方案细节由你安排，优先解决实际问题。\n\n小组6人，现用共享文件夹。过去一个月发现：同一文件多个版本，不清楚哪个最终生效；文件名随意导致查找慢；交接时常漏附件。可由小组自行约定命名、目录、责任人和交接检查；涉及删除正式档案或变更访问权限仍须现有负责人审批。未统计每人每日检索时长，未批准预算。\n\n方案须满足：不能采购新系统，也不能假定已有审批权限。方案应针对上述三个实际问题给出可落地的做法，明确小组可自行约定的命名、目录、责任人和交接检查如何安排；涉及删除正式档案或变更访问权限的环节，须写明提交现有负责人审批，不得写成已获授权或已实施。不要编造检索时长、预算或审批结果；未统计、未批准的事项按现状处理。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "依据合成记录为6人小组设计下月可执行的资料归档改进方案，优先解决多版本、命名随意、交接漏附件三个实际问题，直接交付方案正文",
+      "deliverable" : "中文700字以内的资料归档改进方案正文",
+      "requirements" : [ {
+        "text" : "依据合成记录为小组设计下月可执行的资料归档改进方案，方案细节由设计者安排，优先解决实际问题",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "依据这些合成记录，为小组设计一个下月可执行的资料归档改进方案。方案细节由你安排，优先解决实际问题。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "OBJECT" ]
+      }, {
+        "text" : "直接交付方案正文，中文700字以内",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "直接交付方案正文，中文700字以内。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "FORMAT", "LENGTH" ]
+      }, {
+        "text" : "不能采购新系统，也不能假定已有审批权限",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不能采购新系统，也不能假定已有审批权限。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "可由小组自行约定命名、目录、责任人和交接检查；涉及删除正式档案或变更访问权限仍须现有负责人审批",
+        "evidence" : [ {
+          "sourceId" : "context.fileSnippets.0",
+          "quote" : "可由小组自行约定命名、目录、责任人和交接检查；涉及删除正式档案或变更访问权限仍须现有负责人审批。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+      }, {
+        "text" : "未统计每人每日检索时长，未批准预算",
+        "evidence" : [ {
+          "sourceId" : "context.fileSnippets.0",
+          "quote" : "未统计每人每日检索时长，未批准预算。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "方案针对多版本、命名随意、交接漏附件三个问题分别给出可落地做法，并明确命名、目录、责任人和交接检查的小组约定安排",
+        "benefit" : "确保方案直接回应实际问题，而非泛泛而谈，仍受700字和不得采购新系统约束",
+        "gap" : "原任务只列问题现象，未说明方案需逐项对应解决"
+      }, {
+        "text" : "涉及删除正式档案或变更访问权限的环节写明提交现有负责人审批，不写成已获授权或已实施",
+        "benefit" : "避免把未获授权写成已实施，保持权限现状",
+        "gap" : "原任务未说明方案中如何处理需审批事项"
+      }, {
+        "text" : "不编造检索时长、预算或审批结果，未统计、未批准事项按现状处理",
+        "benefit" : "防止虚构数据，保持方案可信",
+        "gap" : "原任务未说明如何处理缺失数据"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "依据以下合成记录，为小组设计一个下月可执行的资料归档改进方案" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "直接交付方案正文，中文700字以内" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "不能采购新系统，也不能假定已有审批权限" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "明确小组可自行约定的命名、目录、责任人和交接检查如何安排", "须写明提交现有负责人审批" ]
+        }, {
+          "index" : 4,
+          "quotes" : [ "未统计、未批准的事项按现状处理" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "方案应针对上述三个实际问题给出可落地的做法" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "不得写成已获授权或已实施" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "不要编造检索时长、预算或审批结果" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "依据合成记录为6人小组设计下月可执行的资料归档改进方案，优先解决多版本、命名随意、交接漏附件三个实际问题，直接交付方案正文",
+    "deliverable" : "中文700字以内的资料归档改进方案正文",
+    "requirements" : [ {
+      "text" : "依据合成记录为小组设计下月可执行的资料归档改进方案，方案细节由设计者安排，优先解决实际问题",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "依据这些合成记录，为小组设计一个下月可执行的资料归档改进方案。方案细节由你安排，优先解决实际问题。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    }, {
+      "text" : "直接交付方案正文，中文700字以内",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "直接交付方案正文，中文700字以内。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT", "LENGTH" ]
+    }, {
+      "text" : "不能采购新系统，也不能假定已有审批权限",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不能采购新系统，也不能假定已有审批权限。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "可由小组自行约定命名、目录、责任人和交接检查；涉及删除正式档案或变更访问权限仍须现有负责人审批",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "可由小组自行约定命名、目录、责任人和交接检查；涉及删除正式档案或变更访问权限仍须现有负责人审批。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+    }, {
+      "text" : "未统计每人每日检索时长，未批准预算",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "未统计每人每日检索时长，未批准预算。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "方案针对多版本、命名随意、交接漏附件三个问题分别给出可落地做法，并明确命名、目录、责任人和交接检查的小组约定安排",
+      "benefit" : "确保方案直接回应实际问题，而非泛泛而谈，仍受700字和不得采购新系统约束",
+      "gap" : "原任务只列问题现象，未说明方案需逐项对应解决"
+    }, {
+      "text" : "涉及删除正式档案或变更访问权限的环节写明提交现有负责人审批，不写成已获授权或已实施",
+      "benefit" : "避免把未获授权写成已实施，保持权限现状",
+      "gap" : "原任务未说明方案中如何处理需审批事项"
+    }, {
+      "text" : "不编造检索时长、预算或审批结果，未统计、未批准事项按现状处理",
+      "benefit" : "防止虚构数据，保持方案可信",
+      "gap" : "原任务未说明如何处理缺失数据"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "依据以下合成记录，为小组设计一个下月可执行的资料归档改进方案" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "直接交付方案正文，中文700字以内" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "不能采购新系统，也不能假定已有审批权限" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "明确小组可自行约定的命名、目录、责任人和交接检查如何安排", "须写明提交现有负责人审批" ]
+      }, {
+        "index" : 4,
+        "quotes" : [ "未统计、未批准的事项按现状处理" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "方案应针对上述三个实际问题给出可落地的做法" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "不得写成已获授权或已实施" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "不要编造检索时长、预算或审批结果" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 7279
+}

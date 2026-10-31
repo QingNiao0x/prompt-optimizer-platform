@@ -1,0 +1,214 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "D_PILOT",
+  "strategyVersion" : "core-repair-v3",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T13:29:20.058605500Z",
+  "input" : {
+    "rawPrompt" : "根据这些试点记录，写一份给业务负责人的建议，说明下一步怎样使用AI。内容重点和组织方式由你设计。\n\n直接交付一份中文建议正文，600字以内。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "pilot.txt" ],
+      "fileSnippets" : [ {
+        "path" : "pilot.txt",
+        "language" : "text",
+        "content" : "以下均为合成试点记录，不代表真实行业统计。客服：两周处理120条咨询，平均处理时间从10分钟降至7分钟，抽检20条中3条需人工纠正。资料整理：40份记录，平均耗时从30分钟降至18分钟，复核发现4份漏掉关键日期。内部通知：15份草稿，编辑平均从12分钟降至8分钟，全部由原责任人确认后发送。试点未记录投入费用或长期客户满意度。",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v3",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请根据 pilot.txt 中的试点记录，撰写一份给业务负责人的中文建议正文，说明下一步怎样使用 AI。内容重点和组织方式由你设计，但建议应基于记录中的实际数据，并说明试点未记录投入费用或长期客户满意度这一信息边界。直接交付建议正文，不要另附说明，全文控制在600字以内。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "根据 pilot.txt 的合成试点记录，撰写一份给业务负责人的中文建议正文，说明下一步怎样使用 AI；内容重点和组织方式由执行者设计，全文600字以内。",
+      "deliverable" : "一份面向业务负责人的中文建议正文，600字以内。",
+      "requirements" : [ {
+        "text" : "根据这些试点记录撰写建议",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "根据这些试点记录，写一份给业务负责人的建议，说明下一步怎样使用AI。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "OBJECT" ]
+      }, {
+        "text" : "建议对象为业务负责人，内容说明下一步怎样使用AI",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "写一份给业务负责人的建议，说明下一步怎样使用AI。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "OBJECT" ]
+      }, {
+        "text" : "内容重点和组织方式由执行者设计",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "内容重点和组织方式由你设计。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "FORMAT" ]
+      }, {
+        "text" : "直接交付中文建议正文",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "直接交付一份中文建议正文",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "FORMAT" ]
+      }, {
+        "text" : "全文600字以内",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "600字以内。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "LENGTH" ]
+      } ],
+      "additions" : [ {
+        "text" : "建议应基于记录中的实际数据，并说明试点未记录投入费用或长期客户满意度这一信息边界。",
+        "benefit" : "使建议正文与试点记录直接对应，并在涉及费用和长期满意度时保持事实边界，不新增交付物。",
+        "gap" : "原提示词只要求“根据这些试点记录”，未明确建议需引用记录数据及说明记录缺失项；若不补充，建议可能脱离试点事实或对未记录内容作无依据推断。"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请根据 pilot.txt 中的试点记录，撰写一份给业务负责人的中文建议正文" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "说明下一步怎样使用 AI" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "内容重点和组织方式由你设计" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "直接交付建议正文" ]
+        }, {
+          "index" : 4,
+          "quotes" : [ "全文控制在600字以内" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "建议应基于记录中的实际数据，并说明试点未记录投入费用或长期客户满意度这一信息边界" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "根据 pilot.txt 的合成试点记录，撰写一份给业务负责人的中文建议正文，说明下一步怎样使用 AI；内容重点和组织方式由执行者设计，全文600字以内。",
+    "deliverable" : "一份面向业务负责人的中文建议正文，600字以内。",
+    "requirements" : [ {
+      "text" : "根据这些试点记录撰写建议",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "根据这些试点记录，写一份给业务负责人的建议，说明下一步怎样使用AI。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    }, {
+      "text" : "建议对象为业务负责人，内容说明下一步怎样使用AI",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "写一份给业务负责人的建议，说明下一步怎样使用AI。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    }, {
+      "text" : "内容重点和组织方式由执行者设计",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "内容重点和组织方式由你设计。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT" ]
+    }, {
+      "text" : "直接交付中文建议正文",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "直接交付一份中文建议正文",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT" ]
+    }, {
+      "text" : "全文600字以内",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "600字以内。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "LENGTH" ]
+    } ],
+    "additions" : [ {
+      "text" : "建议应基于记录中的实际数据，并说明试点未记录投入费用或长期客户满意度这一信息边界。",
+      "benefit" : "使建议正文与试点记录直接对应，并在涉及费用和长期满意度时保持事实边界，不新增交付物。",
+      "gap" : "原提示词只要求“根据这些试点记录”，未明确建议需引用记录数据及说明记录缺失项；若不补充，建议可能脱离试点事实或对未记录内容作无依据推断。"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请根据 pilot.txt 中的试点记录，撰写一份给业务负责人的中文建议正文" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "说明下一步怎样使用 AI" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "内容重点和组织方式由你设计" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "直接交付建议正文" ]
+      }, {
+        "index" : 4,
+        "quotes" : [ "全文控制在600字以内" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "建议应基于记录中的实际数据，并说明试点未记录投入费用或长期客户满意度这一信息边界" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 5208
+}

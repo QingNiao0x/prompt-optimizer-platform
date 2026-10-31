@@ -1,0 +1,36 @@
+{
+  "status": 200,
+  "body": {
+    "id": "9ef3f685-0450-42e4-b28e-6e7b03495718",
+    "object": "chat.completion",
+    "created": 1793454151,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"verdict\":\"TIE\",\"substantiveGain\":false,\"reason\":\"两版均完整覆盖活动名称、主题、时间、线上形式、团队案例、提问交流和报名链接，且未虚构嘉宾、礼品、优惠、录播或效果承诺；正文均自然可发送、远低于350字。A在标题中直接点明主题，B在标题中补充日期和线上信息，属于可接受的吸引点与信息位置差异，不构成实质业务收益差别。\",\"aIssues\":[],\"bIssues\":[],\"evidence\":[{\"side\":\"A\",\"quote\":\"**邮件标题：邀请您参加“青叶协作实践分享会”：怎样把会议决定落到行动项**\",\"impact\":\"标题直接呈现活动与主题，客户可快速判断相关性；未遗漏关键信息。\"},{\"side\":\"B\",\"quote\":\"**标题：邀请｜青叶协作实践分享会：怎样把会议决定落到行动项（11月12日线上）**\",\"impact\":\"标题额外前置日期和线上形式，便于快速筛选日程；同样满足邀请任务。\"},{\"side\":\"A\",\"quote\":\"分享会将结合一个团队案例，介绍相关实践与经验，并安排提问交流环节\",\"impact\":\"准确使用材料中的案例和提问交流安排，没有添加未公布嘉宾或效果承诺。\"},{\"side\":\"B\",\"quote\":\"活动时间：2026年11月12日15:00—15:45\\n活动形式：线上\",\"impact\":\"以分项方式清晰呈现时间和形式，降低客户查找关键信息的成本。\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 670,
+      "completion_tokens": 319,
+      "total_tokens": 989,
+      "prompt_tokens_details": {
+        "cached_tokens": 256
+      },
+      "prompt_cache_hit_tokens": 256,
+      "prompt_cache_miss_tokens": 414
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "blinding": {
+    "A": "core-design-completion-v2",
+    "B": "core-repair-v3"
+  },
+  "requiresManualVerification": true
+}

@@ -1,0 +1,36 @@
+{
+  "status": 200,
+  "body": {
+    "id": "77b564b1-5533-497b-b0f5-a54d17f251c4",
+    "object": "chat.completion",
+    "created": 1793454219,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"verdict\":\"TIE\",\"substantiveGain\":false,\"reason\":\"两版均完整覆盖材料中的活动名称、主题、时间、线上形式、团队案例、提问交流和报名链接，未虚构嘉宾、优惠、礼品、录播或效果承诺，正文均为可直接发送的邀请邮件且远低于350字。A标题信息更全，B正文对案例与交流的说明略展开，但差异属于同等级表达取舍，不构成实质业务收益差异。\",\"aIssues\":[],\"bIssues\":[],\"evidence\":[{\"side\":\"A\",\"quote\":\"通过一个团队案例分享实践做法，并安排提问交流环节\",\"impact\":\"准确对应材料内容，帮助客户了解活动构成，无虚构。\"},{\"side\":\"B\",\"quote\":\"分享会将结合一个团队案例，介绍相关实践与经验，并安排提问交流环节，便于您结合实际情况参与讨论。\",\"impact\":\"同样准确覆盖案例与交流，并补充参与价值，未作效果承诺。\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 670,
+      "completion_tokens": 207,
+      "total_tokens": 877,
+      "prompt_tokens_details": {
+        "cached_tokens": 256
+      },
+      "prompt_cache_hit_tokens": 256,
+      "prompt_cache_miss_tokens": 414
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "blinding": {
+    "A": "core-repair-v3",
+    "B": "core-design-completion-v2"
+  },
+  "requiresManualVerification": true
+}

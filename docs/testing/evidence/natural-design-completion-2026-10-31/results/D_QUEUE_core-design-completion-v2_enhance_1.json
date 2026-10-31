@@ -1,0 +1,274 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "D_QUEUE",
+  "strategyVersion" : "core-design-completion-v2",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T13:28:55.016145700Z",
+  "input" : {
+    "rawPrompt" : "把当前异步任务执行器改成可用于页面批量请求的并发队列，限制同时运行的数量。边界和失败处理请设计成可直接使用，保留接口。\n\n仅返回有效JSON对象 {\"src/runTasks.mjs\":\"完整源码字符串\"}。只交付实际修改的该文件，不增加文件或依赖，不附其他文字。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "src/runTasks.mjs" ],
+      "fileSnippets" : [ {
+        "path" : "src/runTasks.mjs",
+        "language" : "javascript",
+        "content" : "/** tasks是无参数异步函数数组，concurrency是并发上限；返回Promise。 */\nexport function runTasks(tasks, concurrency) {\n  return Promise.all(tasks.map(task => task()));\n}\n",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-design-completion-v2",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "把当前异步任务执行器改成可用于页面批量请求的并发队列，限制同时运行的数量。边界和失败处理请设计成可直接使用，保留接口。\n\n现有接口为 src/runTasks.mjs 中的 export function runTasks(tasks, concurrency)：tasks 是无参数异步函数数组，concurrency 是并发上限，返回 Promise。改造后保持该函数名、参数与返回 Promise 的形式不变，不增加文件或依赖。\n\n实现要求：\n- 按 concurrency 限制同时运行的任务数，任一任务完成后立即启动下一个待执行任务，直到全部任务处理完。\n- 返回的 Promise 在全部任务完成后兑现，结果数组按 tasks 的原始顺序排列，与各任务实际完成先后无关。\n- 边界处理：tasks 为空时返回兑现为空数组的 Promise；concurrency 需为有效正整数，非法值（非数字、0、负数、小数等）应明确处理，不出现死循环或永不兑现的 Promise。\n- 失败处理：任一任务抛错或返回的 Promise 被拒绝时，返回的 Promise 以该错误拒绝；不得产生未处理的 Promise 拒绝，也不因单个任务失败而让已启动任务的结果丢失或让队列卡死。\n- 不修改 tasks 数组本身，不改变各任务的调用方式（每个任务函数只调用一次）。\n\n仅返回有效JSON对象 {\"src/runTasks.mjs\":\"完整源码字符串\"}。只交付实际修改的该文件，不增加文件或依赖，不附其他文字。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "把 src/runTasks.mjs 中的 runTasks 改为限制并发数的批量任务队列，保留原接口，并设计可直接使用的边界与失败处理；最终仅返回指定 JSON 对象。",
+      "deliverable" : "仅返回有效JSON对象 {\"src/runTasks.mjs\":\"完整源码字符串\"}，内容为该文件完整源码，不附其他文字。",
+      "requirements" : [ {
+        "text" : "把当前异步任务执行器改成可用于页面批量请求的并发队列，限制同时运行的数量，并设计可直接使用的边界和失败处理，保留接口。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "把当前异步任务执行器改成可用于页面批量请求的并发队列，限制同时运行的数量。边界和失败处理请设计成可直接使用，保留接口。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "CONDITION" ]
+      }, {
+        "text" : "仅返回有效JSON对象 {\"src/runTasks.mjs\":\"完整源码字符串\"}，只交付实际修改的该文件，不增加文件或依赖，不附其他文字。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "仅返回有效JSON对象 {\"src/runTasks.mjs\":\"完整源码字符串\"}。只交付实际修改的该文件，不增加文件或依赖，不附其他文字。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "FORMAT", "CONDITION" ]
+      }, {
+        "text" : "保留现有接口：tasks 是无参数异步函数数组，concurrency 是并发上限，返回 Promise。",
+        "evidence" : [ {
+          "sourceId" : "context.fileSnippets.0",
+          "quote" : "tasks是无参数异步函数数组，concurrency是并发上限；返回Promise。",
+          "origin" : "PROJECT_CONTEXT"
+        }, {
+          "sourceId" : "context.fileSnippets.0",
+          "quote" : "export function runTasks(tasks, concurrency) {",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "OBJECT", "CONDITION" ]
+      }, {
+        "text" : "只修改 src/runTasks.mjs，不增加文件或依赖。",
+        "evidence" : [ {
+          "sourceId" : "context.directoryTree.0",
+          "quote" : "src/runTasks.mjs",
+          "origin" : "PROJECT_CONTEXT"
+        }, {
+          "sourceId" : "rawPrompt",
+          "quote" : "只交付实际修改的该文件，不增加文件或依赖",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "按 concurrency 限制同时运行数，任一任务完成后立即启动下一个待执行任务，直到全部完成。",
+        "benefit" : "使队列真正限制同时运行数量，满足页面批量请求的并发控制目标，同时保留原接口。",
+        "gap" : "原实现用 Promise.all 一次性启动全部任务，未实现并发上限。"
+      }, {
+        "text" : "返回的 Promise 在全部任务完成后兑现，结果数组按 tasks 原始顺序排列，与完成先后无关。",
+        "benefit" : "保持原 Promise.all 按输入顺序返回结果的可预期行为，避免调用方按索引取结果时错位。",
+        "gap" : "并发执行后完成顺序与输入顺序不一致，需明确结果顺序。"
+      }, {
+        "text" : "tasks 为空时返回兑现为空数组的 Promise；concurrency 非法值（非数字、0、负数、小数等）应明确处理，不出现死循环或永不兑现的 Promise。",
+        "benefit" : "使边界输入可直接使用，避免队列卡死或返回永不兑现的 Promise。",
+        "gap" : "原实现未定义空数组和非法并发上限的行为。"
+      }, {
+        "text" : "任一任务抛错或返回的 Promise 被拒绝时，返回的 Promise 以该错误拒绝；不得产生未处理的 Promise 拒绝，也不因单个任务失败而让已启动任务的结果丢失或让队列卡死。",
+        "benefit" : "使失败处理可直接使用，避免未处理拒绝和队列停滞，同时保持原返回 Promise 的接口。",
+        "gap" : "原实现未定义失败时的队列行为与错误传播方式。"
+      }, {
+        "text" : "不修改 tasks 数组本身，每个任务函数只调用一次。",
+        "benefit" : "保证调用方输入不被副作用改变，任务执行次数符合预期。",
+        "gap" : "并发队列实现中容易出现重复调用或原地修改输入。"
+      } ],
+      "openDecisions" : [ {
+        "issue" : "concurrency 非法值（非数字、0、负数、小数等）的具体处理方式（如抛错、取整、按 1 处理）未由用户指定。",
+        "impact" : "不同处理方式会改变非法输入下的返回结果与错误行为。",
+        "questionId" : "",
+        "kind" : "EXECUTION_CHOICE"
+      } ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "把当前异步任务执行器改成可用于页面批量请求的并发队列，限制同时运行的数量。边界和失败处理请设计成可直接使用，保留接口。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "仅返回有效JSON对象 {\"src/runTasks.mjs\":\"完整源码字符串\"}。只交付实际修改的该文件，不增加文件或依赖，不附其他文字。" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "现有接口为 src/runTasks.mjs 中的 export function runTasks(tasks, concurrency)：tasks 是无参数异步函数数组，concurrency 是并发上限，返回 Promise。" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "只交付实际修改的该文件，不增加文件或依赖" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "按 concurrency 限制同时运行的任务数，任一任务完成后立即启动下一个待执行任务，直到全部任务处理完。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "结果数组按 tasks 的原始顺序排列，与各任务实际完成先后无关。" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "tasks 为空时返回兑现为空数组的 Promise；concurrency 需为有效正整数，非法值（非数字、0、负数、小数等）应明确处理，不出现死循环或永不兑现的 Promise。" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "任一任务抛错或返回的 Promise 被拒绝时，返回的 Promise 以该错误拒绝；不得产生未处理的 Promise 拒绝，也不因单个任务失败而让已启动任务的结果丢失或让队列卡死。" ]
+        }, {
+          "index" : 4,
+          "quotes" : [ "不修改 tasks 数组本身，不改变各任务的调用方式（每个任务函数只调用一次）。" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "把 src/runTasks.mjs 中的 runTasks 改为限制并发数的批量任务队列，保留原接口，并设计可直接使用的边界与失败处理；最终仅返回指定 JSON 对象。",
+    "deliverable" : "仅返回有效JSON对象 {\"src/runTasks.mjs\":\"完整源码字符串\"}，内容为该文件完整源码，不附其他文字。",
+    "requirements" : [ {
+      "text" : "把当前异步任务执行器改成可用于页面批量请求的并发队列，限制同时运行的数量，并设计可直接使用的边界和失败处理，保留接口。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "把当前异步任务执行器改成可用于页面批量请求的并发队列，限制同时运行的数量。边界和失败处理请设计成可直接使用，保留接口。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "CONDITION" ]
+    }, {
+      "text" : "仅返回有效JSON对象 {\"src/runTasks.mjs\":\"完整源码字符串\"}，只交付实际修改的该文件，不增加文件或依赖，不附其他文字。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "仅返回有效JSON对象 {\"src/runTasks.mjs\":\"完整源码字符串\"}。只交付实际修改的该文件，不增加文件或依赖，不附其他文字。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT", "CONDITION" ]
+    }, {
+      "text" : "保留现有接口：tasks 是无参数异步函数数组，concurrency 是并发上限，返回 Promise。",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "tasks是无参数异步函数数组，concurrency是并发上限；返回Promise。",
+        "origin" : "PROJECT_CONTEXT"
+      }, {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "export function runTasks(tasks, concurrency) {",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "OBJECT", "CONDITION" ]
+    }, {
+      "text" : "只修改 src/runTasks.mjs，不增加文件或依赖。",
+      "evidence" : [ {
+        "sourceId" : "context.directoryTree.0",
+        "quote" : "src/runTasks.mjs",
+        "origin" : "PROJECT_CONTEXT"
+      }, {
+        "sourceId" : "rawPrompt",
+        "quote" : "只交付实际修改的该文件，不增加文件或依赖",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "按 concurrency 限制同时运行数，任一任务完成后立即启动下一个待执行任务，直到全部完成。",
+      "benefit" : "使队列真正限制同时运行数量，满足页面批量请求的并发控制目标，同时保留原接口。",
+      "gap" : "原实现用 Promise.all 一次性启动全部任务，未实现并发上限。"
+    }, {
+      "text" : "返回的 Promise 在全部任务完成后兑现，结果数组按 tasks 原始顺序排列，与完成先后无关。",
+      "benefit" : "保持原 Promise.all 按输入顺序返回结果的可预期行为，避免调用方按索引取结果时错位。",
+      "gap" : "并发执行后完成顺序与输入顺序不一致，需明确结果顺序。"
+    }, {
+      "text" : "tasks 为空时返回兑现为空数组的 Promise；concurrency 非法值（非数字、0、负数、小数等）应明确处理，不出现死循环或永不兑现的 Promise。",
+      "benefit" : "使边界输入可直接使用，避免队列卡死或返回永不兑现的 Promise。",
+      "gap" : "原实现未定义空数组和非法并发上限的行为。"
+    }, {
+      "text" : "任一任务抛错或返回的 Promise 被拒绝时，返回的 Promise 以该错误拒绝；不得产生未处理的 Promise 拒绝，也不因单个任务失败而让已启动任务的结果丢失或让队列卡死。",
+      "benefit" : "使失败处理可直接使用，避免未处理拒绝和队列停滞，同时保持原返回 Promise 的接口。",
+      "gap" : "原实现未定义失败时的队列行为与错误传播方式。"
+    }, {
+      "text" : "不修改 tasks 数组本身，每个任务函数只调用一次。",
+      "benefit" : "保证调用方输入不被副作用改变，任务执行次数符合预期。",
+      "gap" : "并发队列实现中容易出现重复调用或原地修改输入。"
+    } ],
+    "openDecisions" : [ {
+      "issue" : "concurrency 非法值（非数字、0、负数、小数等）的具体处理方式（如抛错、取整、按 1 处理）未由用户指定。",
+      "impact" : "不同处理方式会改变非法输入下的返回结果与错误行为。",
+      "questionId" : "",
+      "kind" : "EXECUTION_CHOICE"
+    } ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "把当前异步任务执行器改成可用于页面批量请求的并发队列，限制同时运行的数量。边界和失败处理请设计成可直接使用，保留接口。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "仅返回有效JSON对象 {\"src/runTasks.mjs\":\"完整源码字符串\"}。只交付实际修改的该文件，不增加文件或依赖，不附其他文字。" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "现有接口为 src/runTasks.mjs 中的 export function runTasks(tasks, concurrency)：tasks 是无参数异步函数数组，concurrency 是并发上限，返回 Promise。" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "只交付实际修改的该文件，不增加文件或依赖" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "按 concurrency 限制同时运行的任务数，任一任务完成后立即启动下一个待执行任务，直到全部任务处理完。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "结果数组按 tasks 的原始顺序排列，与各任务实际完成先后无关。" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "tasks 为空时返回兑现为空数组的 Promise；concurrency 需为有效正整数，非法值（非数字、0、负数、小数等）应明确处理，不出现死循环或永不兑现的 Promise。" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "任一任务抛错或返回的 Promise 被拒绝时，返回的 Promise 以该错误拒绝；不得产生未处理的 Promise 拒绝，也不因单个任务失败而让已启动任务的结果丢失或让队列卡死。" ]
+      }, {
+        "index" : 4,
+        "quotes" : [ "不修改 tasks 数组本身，不改变各任务的调用方式（每个任务函数只调用一次）。" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 11024
+}

@@ -1,0 +1,184 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "V_FAQ",
+  "strategyVersion" : "core-repair-v3",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T13:36:23.252488400Z",
+  "input" : {
+    "rawPrompt" : "根据这份已经批准的变更清单，写一份给客服的内部说明，帮助他们回答客户问题。内容重点和安排请你设计。\n\n直接交付可用说明，中文700字以内。不要增加对外承诺。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "approved-changes.txt" ],
+      "fileSnippets" : [ {
+        "path" : "approved-changes.txt",
+        "language" : "text",
+        "content" : "合成产品变更：从2026年11月20日开始，新创建的共享链接默认7天失效；创建人可以改为1天或30天；已有链接不变。到期后访客看到链接已失效；创建人可以生成新链接，不能延长已到期旧链接。付费与免费账号规则相同。此变更不修改文件本身，也不改变已授权成员的直接访问权限。尚未批准新的退款或补偿政策。",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v3",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请根据已批准的变更清单，撰写一份供客服回答客户问题使用的内部说明，内容重点和安排由你设计。\n\n变更清单要点：从2026年11月20日开始，新创建的共享链接默认7天失效；创建人可以改为1天或30天；已有链接不变。到期后访客看到链接已失效；创建人可以生成新链接，不能延长已到期旧链接。付费与免费账号规则相同。此变更不修改文件本身，也不改变已授权成员的直接访问权限。尚未批准新的退款或补偿政策。\n\n请直接交付可用的中文说明，700字以内。说明中不要增加对外承诺，尤其不得涉及退款、补偿或清单之外的政策。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "根据已批准的变更清单，撰写一份供客服回答客户问题使用的内部说明，内容重点与安排由撰写者设计；直接交付中文说明，700字以内，不增加对外承诺。",
+      "deliverable" : "一份可直接使用的中文客服内部说明，700字以内。",
+      "requirements" : [ {
+        "text" : "根据已批准的变更清单，撰写一份供客服回答客户问题使用的内部说明，并自行设计内容重点与安排",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "根据这份已经批准的变更清单，写一份给客服的内部说明，帮助他们回答客户问题。内容重点和安排请你设计。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "OBJECT" ]
+      }, {
+        "text" : "直接交付可用的中文说明，控制在700字以内",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "直接交付可用说明，中文700字以内。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "FORMAT", "LENGTH" ]
+      }, {
+        "text" : "说明中不增加对外承诺",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不要增加对外承诺。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "将变更清单中的关键事实直接写入说明：生效日期、新链接默认7天、可改为1天或30天、已有链接不变、到期后访客看到失效、创建人可生成新链接但不能延长已到期旧链接、付费与免费规则相同、不修改文件本身、不改变已授权成员直接访问权限、尚未批准新的退款或补偿政策。",
+        "benefit" : "确保客服说明覆盖清单中的实际规则和边界，避免把未批准事项写成对外承诺。",
+        "gap" : "原提示词只指向“这份已批准的变更清单”，未在请求中复述关键事实；执行者若未准确读取清单，可能遗漏或误述生效范围、链接期限、旧链接处理及退款补偿状态。"
+      }, {
+        "text" : "明确说明不得涉及退款、补偿或清单之外的政策。",
+        "benefit" : "帮助执行者在撰写客服答复口径时守住不新增承诺的底线，同时不改变原定交付物。",
+        "gap" : "“不要增加对外承诺”较概括，未点明清单中“尚未批准新的退款或补偿政策”这一高风险边界。"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请根据已批准的变更清单，撰写一份供客服回答客户问题使用的内部说明，内容重点和安排由你设计。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "请直接交付可用的中文说明，700字以内。" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "说明中不要增加对外承诺" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "从2026年11月20日开始，新创建的共享链接默认7天失效；创建人可以改为1天或30天；已有链接不变。到期后访客看到链接已失效；创建人可以生成新链接，不能延长已到期旧链接。付费与免费账号规则相同。此变更不修改文件本身，也不改变已授权成员的直接访问权限。尚未批准新的退款或补偿政策。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "尤其不得涉及退款、补偿或清单之外的政策。" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "根据已批准的变更清单，撰写一份供客服回答客户问题使用的内部说明，内容重点与安排由撰写者设计；直接交付中文说明，700字以内，不增加对外承诺。",
+    "deliverable" : "一份可直接使用的中文客服内部说明，700字以内。",
+    "requirements" : [ {
+      "text" : "根据已批准的变更清单，撰写一份供客服回答客户问题使用的内部说明，并自行设计内容重点与安排",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "根据这份已经批准的变更清单，写一份给客服的内部说明，帮助他们回答客户问题。内容重点和安排请你设计。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    }, {
+      "text" : "直接交付可用的中文说明，控制在700字以内",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "直接交付可用说明，中文700字以内。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT", "LENGTH" ]
+    }, {
+      "text" : "说明中不增加对外承诺",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不要增加对外承诺。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "将变更清单中的关键事实直接写入说明：生效日期、新链接默认7天、可改为1天或30天、已有链接不变、到期后访客看到失效、创建人可生成新链接但不能延长已到期旧链接、付费与免费规则相同、不修改文件本身、不改变已授权成员直接访问权限、尚未批准新的退款或补偿政策。",
+      "benefit" : "确保客服说明覆盖清单中的实际规则和边界，避免把未批准事项写成对外承诺。",
+      "gap" : "原提示词只指向“这份已批准的变更清单”，未在请求中复述关键事实；执行者若未准确读取清单，可能遗漏或误述生效范围、链接期限、旧链接处理及退款补偿状态。"
+    }, {
+      "text" : "明确说明不得涉及退款、补偿或清单之外的政策。",
+      "benefit" : "帮助执行者在撰写客服答复口径时守住不新增承诺的底线，同时不改变原定交付物。",
+      "gap" : "“不要增加对外承诺”较概括，未点明清单中“尚未批准新的退款或补偿政策”这一高风险边界。"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请根据已批准的变更清单，撰写一份供客服回答客户问题使用的内部说明，内容重点和安排由你设计。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "请直接交付可用的中文说明，700字以内。" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "说明中不要增加对外承诺" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "从2026年11月20日开始，新创建的共享链接默认7天失效；创建人可以改为1天或30天；已有链接不变。到期后访客看到链接已失效；创建人可以生成新链接，不能延长已到期旧链接。付费与免费账号规则相同。此变更不修改文件本身，也不改变已授权成员的直接访问权限。尚未批准新的退款或补偿政策。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "尤其不得涉及退款、补偿或清单之外的政策。" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 7101
+}

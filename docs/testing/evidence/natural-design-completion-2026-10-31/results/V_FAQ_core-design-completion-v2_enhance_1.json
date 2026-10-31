@@ -1,0 +1,184 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "V_FAQ",
+  "strategyVersion" : "core-design-completion-v2",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T13:36:30.982747400Z",
+  "input" : {
+    "rawPrompt" : "根据这份已经批准的变更清单，写一份给客服的内部说明，帮助他们回答客户问题。内容重点和安排请你设计。\n\n直接交付可用说明，中文700字以内。不要增加对外承诺。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "approved-changes.txt" ],
+      "fileSnippets" : [ {
+        "path" : "approved-changes.txt",
+        "language" : "text",
+        "content" : "合成产品变更：从2026年11月20日开始，新创建的共享链接默认7天失效；创建人可以改为1天或30天；已有链接不变。到期后访客看到链接已失效；创建人可以生成新链接，不能延长已到期旧链接。付费与免费账号规则相同。此变更不修改文件本身，也不改变已授权成员的直接访问权限。尚未批准新的退款或补偿政策。",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-design-completion-v2",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请根据已批准的变更清单，撰写一份可直接使用的、面向客服的内部说明，帮助客服回答客户问题。内容重点和结构由你设计，但须准确覆盖清单中的生效时间、默认期限、可选期限、已有链接的处理、到期后的访客与创建人分别能做什么、付费与免费账号规则一致，以及本次变更不影响文件本身和已授权成员的直接访问权限。说明中不得增加对外承诺，尤其不得涉及尚未批准的退款或补偿政策。用中文撰写，700字以内，直接交付说明正文。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "根据已批准的变更清单，撰写一份面向客服、帮助其回答客户问题的内部说明；内容重点和安排由执行者设计，直接交付中文说明且不超过700字，不增加对外承诺。",
+      "deliverable" : "可直接使用的中文客服内部说明，700字以内。",
+      "requirements" : [ {
+        "text" : "根据已批准的变更清单，撰写面向客服的内部说明，帮助客服回答客户问题；内容重点和安排由执行者设计。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "根据这份已经批准的变更清单，写一份给客服的内部说明，帮助他们回答客户问题。内容重点和安排请你设计。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "OBJECT" ]
+      }, {
+        "text" : "直接交付可用说明，中文700字以内。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "直接交付可用说明，中文700字以内。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "FORMAT", "LENGTH" ]
+      }, {
+        "text" : "不要增加对外承诺。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不要增加对外承诺。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "说明须准确覆盖清单中的生效时间、默认期限、可选期限、已有链接的处理、到期后的访客与创建人分别能做什么、付费与免费账号规则一致，以及本次变更不影响文件本身和已授权成员的直接访问权限。",
+        "benefit" : "确保客服说明完整反映已批准变更，避免遗漏影响客户答复的规则；仍受700字以内和不增加对外承诺的边界约束。",
+        "gap" : "原任务只要求根据清单设计内容重点，未明确哪些清单事实必须进入说明，执行者可能遗漏客服回答所需的关键规则。"
+      }, {
+        "text" : "说明中不得涉及尚未批准的退款或补偿政策。",
+        "benefit" : "防止客服说明把未批准政策写成对外口径，同时不改变原任务不增加对外承诺的要求。",
+        "gap" : "清单明确退款或补偿政策尚未批准，原任务仅笼统禁止增加对外承诺，未点明这一高风险内容。"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请根据已批准的变更清单，撰写一份可直接使用的、面向客服的内部说明，帮助客服回答客户问题。内容重点和结构由你设计" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "用中文撰写，700字以内，直接交付说明正文。" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "说明中不得增加对外承诺" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "须准确覆盖清单中的生效时间、默认期限、可选期限、已有链接的处理、到期后的访客与创建人分别能做什么、付费与免费账号规则一致，以及本次变更不影响文件本身和已授权成员的直接访问权限。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "尤其不得涉及尚未批准的退款或补偿政策。" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "根据已批准的变更清单，撰写一份面向客服、帮助其回答客户问题的内部说明；内容重点和安排由执行者设计，直接交付中文说明且不超过700字，不增加对外承诺。",
+    "deliverable" : "可直接使用的中文客服内部说明，700字以内。",
+    "requirements" : [ {
+      "text" : "根据已批准的变更清单，撰写面向客服的内部说明，帮助客服回答客户问题；内容重点和安排由执行者设计。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "根据这份已经批准的变更清单，写一份给客服的内部说明，帮助他们回答客户问题。内容重点和安排请你设计。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    }, {
+      "text" : "直接交付可用说明，中文700字以内。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "直接交付可用说明，中文700字以内。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT", "LENGTH" ]
+    }, {
+      "text" : "不要增加对外承诺。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不要增加对外承诺。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "说明须准确覆盖清单中的生效时间、默认期限、可选期限、已有链接的处理、到期后的访客与创建人分别能做什么、付费与免费账号规则一致，以及本次变更不影响文件本身和已授权成员的直接访问权限。",
+      "benefit" : "确保客服说明完整反映已批准变更，避免遗漏影响客户答复的规则；仍受700字以内和不增加对外承诺的边界约束。",
+      "gap" : "原任务只要求根据清单设计内容重点，未明确哪些清单事实必须进入说明，执行者可能遗漏客服回答所需的关键规则。"
+    }, {
+      "text" : "说明中不得涉及尚未批准的退款或补偿政策。",
+      "benefit" : "防止客服说明把未批准政策写成对外口径，同时不改变原任务不增加对外承诺的要求。",
+      "gap" : "清单明确退款或补偿政策尚未批准，原任务仅笼统禁止增加对外承诺，未点明这一高风险内容。"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请根据已批准的变更清单，撰写一份可直接使用的、面向客服的内部说明，帮助客服回答客户问题。内容重点和结构由你设计" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "用中文撰写，700字以内，直接交付说明正文。" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "说明中不得增加对外承诺" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "须准确覆盖清单中的生效时间、默认期限、可选期限、已有链接的处理、到期后的访客与创建人分别能做什么、付费与免费账号规则一致，以及本次变更不影响文件本身和已授权成员的直接访问权限。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "尤其不得涉及尚未批准的退款或补偿政策。" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 6595
+}

@@ -1,0 +1,36 @@
+{
+  "status": 200,
+  "body": {
+    "id": "0ac430de-0411-4b45-9480-d8f9642dcc26",
+    "object": "chat.completion",
+    "created": 1793454211,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"verdict\":\"TIE\",\"substantiveGain\":false,\"reason\":\"A和B都完整交付了邮件标题和正文，准确包含活动名称、主题、时间、线上形式、团队案例、提问交流和报名链接，且未虚构嘉宾、礼品、优惠、录播或效果承诺。两者正文均自然可发送，字数明显低于350字。B在标题中未写日期，但正文已清楚给出时间，不影响客户获取关键信息；A标题含日期，信息更前置，但正文表达略常规。整体实质业务收益相同，无法判定一方更优。\",\"aIssues\":[],\"bIssues\":[],\"evidence\":[{\"side\":\"A\",\"quote\":\"活动将于2026年11月12日15:00—15:45线上举行，主题为“怎样把会议决定落到行动项”。\",\"impact\":\"准确传达时间、形式和主题，满足客户快速获取关键信息的需求。\"},{\"side\":\"B\",\"quote\":\"分享会将结合一个团队案例，介绍相关实践，并安排提问交流环节，便于您结合自身情况参与讨论。\",\"impact\":\"在材料范围内说明内容安排，并自然表达参与价值，未作效果承诺。\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 663,
+      "completion_tokens": 249,
+      "total_tokens": 912,
+      "prompt_tokens_details": {
+        "cached_tokens": 256
+      },
+      "prompt_cache_hit_tokens": 256,
+      "prompt_cache_miss_tokens": 407
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "blinding": {
+    "A": "core-repair-v3",
+    "B": "core-design-completion-v2"
+  },
+  "requiresManualVerification": true
+}

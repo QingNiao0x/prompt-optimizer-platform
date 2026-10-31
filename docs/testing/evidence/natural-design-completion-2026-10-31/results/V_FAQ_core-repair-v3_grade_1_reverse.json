@@ -1,0 +1,36 @@
+{
+  "status": 200,
+  "body": {
+    "id": "572b6aca-29b8-4b81-8d89-5529862f00f0",
+    "object": "chat.completion",
+    "created": 1793454195,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"verdict\":\"TIE\",\"substantiveGain\":false,\"reason\":\"两版均准确覆盖生效时间、新链接默认7天且可选1天/30天、已有链接不变、到期后访客看到失效、创建人不能延长旧链接但可生成新链接、付费与免费规则相同、不修改文件及不改变已授权成员直接访问权限，并明确不新增退款或补偿承诺。A以FAQ加注意事项组织，B以分节加答复口径组织，均满足客服内部说明的可用性；B在退款问题上的表述略更贴近“按现有已批准政策答复”，但材料明确尚无新政策，A的“告知暂无相关信息，不作承诺”同样准确，不构成实质业务收益差异。\",\"aIssues\":[],\"bIssues\":[],\"evidence\":[{\"side\":\"A\",\"quote\":\"不能延长已到期的旧链接。创建人可以生成一个新链接。\",\"impact\":\"准确回答到期后处理方式，避免客服误称可恢复或延长旧链接。\"},{\"side\":\"A\",\"quote\":\"已有链接不受影响，按原规则执行。\",\"impact\":\"避免把旧链接写成统一失效，符合变更清单。\"},{\"side\":\"B\",\"quote\":\"2026年11月20日前已创建的链接保持不变，不按新规则调整。\",\"impact\":\"准确界定受影响范围，帮助客服区分新旧链接。\"},{\"side\":\"B\",\"quote\":\"涉及退款、补偿等问题：不得自行承诺，按现有已批准政策答复；尚无新政策，请勿对外作出任何退款或补偿承诺。\",\"impact\":\"防止客服新增对外承诺，同时保留按现有政策答复的边界。\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1171,
+      "completion_tokens": 343,
+      "total_tokens": 1514,
+      "prompt_tokens_details": {
+        "cached_tokens": 256
+      },
+      "prompt_cache_hit_tokens": 256,
+      "prompt_cache_miss_tokens": 915
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "blinding": {
+    "A": "core-repair-v3",
+    "B": "core-design-completion-v2"
+  },
+  "requiresManualVerification": true
+}

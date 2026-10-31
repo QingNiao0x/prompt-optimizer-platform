@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "32f15a44-ff40-4065-b35a-79b164a97e7d",
+    "object": "chat.completion",
+    "created": 1793453598,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"src/exportCsv.mjs\":\"/** rows为对象数组，返回可用于下载的字符串。 */\\nexport function exportCsv(rows) {\\n  const list = Array.isArray(rows) ? rows : [];\\n\\n  // 收集所有出现过的字段名，保持首次出现顺序，避免遗漏外部填写带来的新字段。\\n  const columns = [];\\n  const seen = new Set();\\n  for (const row of list) {\\n    if (row === null || typeof row !== \\\"object\\\") continue;\\n    for (const key of Object.keys(row)) {\\n      if (!seen.has(key)) {\\n        seen.add(key);\\n        columns.push(key);\\n      }\\n    }\\n  }\\n\\n  const escapeCell = (value) => {\\n    let text;\\n    if (value === null || value === undefined) {\\n      text = \\\"\\\";\\n    } else if (typeof value === \\\"object\\\") {\\n      // 嵌套对象/数组序列化为 JSON，避免出现 [object Object]。\\n      try {\\n        text = JSON.stringify(value);\\n      } catch {\\n        text = String(value);\\n      }\\n    } else {\\n      text = String(value);\\n    }\\n\\n    // 防止外部内容被表格软件当作公式执行。\\n    if (/^[=+\\\\-@\\\\t\\\\r]/.test(text)) {\\n      text = \\\"'\\\" + text;\\n    }\\n\\n    if (/[\\\",\\\\r\\\\n]/.test(text)) {\\n      text = '\\\"' + text.replace(/\\\"/g, '\\\"\\\"') + '\\\"';\\n    }\\n    return text;\\n  };\\n\\n  const lines = [];\\n  lines.push(columns.map(escapeCell).join(\\\",\\\"));\\n  for (const row of list) {\\n    const source = row !== null && typeof row === \\\"object\\\" ? row : {};\\n    lines.push(columns.map((key) => escapeCell(source[key])).join(\\\",\\\"));\\n  }\\n\\n  // 带 BOM，便于表格软件正确识别 UTF-8 中文。\\n  return \\\"\\\\uFEFF\\\" + lines.join(\\\"\\\\r\\\\n\\\") + \\\"\\\\r\\\\n\\\";\\n}\\n\"}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 202,
+      "completion_tokens": 517,
+      "total_tokens": 719,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 202
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

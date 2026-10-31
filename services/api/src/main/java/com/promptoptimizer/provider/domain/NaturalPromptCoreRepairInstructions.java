@@ -16,12 +16,6 @@ public final class NaturalPromptCoreRepairInstructions {
     /** 仅改变正文的补全依据；v2准备与Plan逐字沿用，旧版本保持冻结。 */
     public static final String COMPLETION_BASIS_VERSION = "core-repair-v3";
 
-    /** 独立检验原成果内部的主动设计补全；沿用v3输入、准备、Plan及覆盖协议，采用另行决定。 */
-    public static final String DESIGN_COMPLETION_VERSION = "core-design-completion-v1";
-
-    /** v1真实回归遗漏独立限制；v2先落实原约束再补设计，保留v1失败及原指导。 */
-    public static final String FAITHFUL_DESIGN_VERSION = "core-design-completion-v2";
-
     /**
      * 准备仍只解释委托范围。将完成工作与反馈形式分开，不把模型的解释变成新的用户授权。
      * 条件、否定与实际题答保留在原有actions/response中，完整原输入继续传入后续阶段。
@@ -42,15 +36,6 @@ public final class NaturalPromptCoreRepairInstructions {
     /** 补全必须作用于原任务内部，不因可检查或便于展示就建立新的用户义务。 */
     public static final String COMPLETION_ENHANCE = completionEnhancement();
 
-    /** 事实需要来源，设计需要解决原任务中的执行问题；不把合理设计写成用户已确认的事实。 */
-    public static final String DESIGN_ENHANCE = designEnhancement();
-
-    /** 同一设计假设的一次保真修正；不增加模型阶段或按题目追加禁令。 */
-    public static final String FAITHFUL_DESIGN_ENHANCE = replaceOnce(DESIGN_ENHANCE,
-            "先确定原任务的动作、对象、原定成果及边界，再判断哪些缺口会妨碍执行；充分表达允许少改。",
-            "先将用户明确的现状限制、禁止事项、前提和保留决定作为独立要求落实到正文，再判断原任务内部的设计缺口；充分表达允许少改。\n"
-                    + "这些条件即使不妨碍当前做法也须保留；设计补充不能替代或删去它们，也不能把原本允许的内容反向缩窄。");
-
     /** Plan使用同一动作边界，保留原有决定权和结果影响两个提问条件。 */
     public static final String PLAN = replaceOnce(NaturalPromptRoutingRepairInstructions.OWNED_PLAN, """
             使用与直接增强相同的原定目标、交付物、完整来源和信息状态，判断哪些重要决定确实属于用户。
@@ -67,8 +52,7 @@ public final class NaturalPromptCoreRepairInstructions {
 
     /** v3只修正文补全依据，复用v2准备范围；v1继续使用此前的准备指导。 */
     public static boolean usesActionBoundary(String version) {
-        return ACTION_BOUNDARY_VERSION.equals(version) || COMPLETION_BASIS_VERSION.equals(version)
-                || DESIGN_COMPLETION_VERSION.equals(version) || FAITHFUL_DESIGN_VERSION.equals(version);
+        return ACTION_BOUNDARY_VERSION.equals(version) || COMPLETION_BASIS_VERSION.equals(version);
     }
 
     /**
@@ -122,34 +106,6 @@ public final class NaturalPromptCoreRepairInstructions {
         return replaceOnce(source,
                 "\"gap\":\"现有表达缺少什么且为何影响交付\",\"benefit\":\"对原定交付的直接帮助\"",
                 "\"gap\":\"原有哪项动作或回应的执行缺口及其影响\",\"benefit\":\"在不新增交付义务的前提下如何帮助完成该项要求\"");
-    }
-
-    /**
-     * 替换v3偏宽的交付禁止表述，允许在原任务内补足设计，保持独立成果和用户决定权边界。
-     * 仅正文指导变化；复用additions的gap/benefit，不添加字段、领域路由或审阅调用。
-     */
-    private static String designEnhancement() {
-        String source = replaceOnce(COMPLETION_ENHANCE, """
-                先从完整原始要求与实际题答确定要完成的动作、原定回应及边界，再判断哪些表达缺口会妨碍它们。
-                有效补充应解决原任务内部的执行问题：处理对象不清、材料用途不明、关键步骤或适用边界遗漏、原定结果无法核对。
-                补充可细化这些内容，不能另设要向用户展示或交付的内容；“方便确认、体现理解、结果更完整”本身不是执行缺口。
-                完成标准用于判断原有动作或成果是否达成，不要求另做一项成果来证明完成。普通完成确认不扩展成内容说明。
-                用户已要求的解释、复述、报告或验证证据属于原有要求，完整保留并可在其范围内完善，不作为多余反馈删除。
-                可能原因、方案和检查项是开展工作的线索；需要结论或行动时，不能仅列出线索就作为完成。
-                """, """
-                先确定原任务的动作、对象、原定成果及边界，再判断哪些缺口会妨碍执行；充分表达允许少改。
-                将适用材料中的项目事实、接口和限制融入请求，保留来源的信息状态；未提供不等于不存在。
-                对已委托的普通设计主动补足可执行内容：处理对象、输入输出、必要做法、边界和原成果内部的核对要求。
-                设计不必在来源中预先给出答案；它须能说明解决原任务的哪个具体问题，并以建议或拟议做法自然表达，不冒充用户指定或已实施事实。
-                根据实际失败方式选择必要的性能、错误处理、安全或兼容要求；不编造业务参数、性能数值，不统一追加清单。
-                允许完善原成果内部的内容、方法和组织；不得增设另一项交付义务，或用报告、提纲、建议替代用户委托的行动。
-                用户明确要求的复述、报告及验证证据完整保留；只阅读理解后等待时，沿原动作完善阅读重点，不另加说明成果。
-                用户独有且实质影响结果的重要决定保持未决；已有实际回答优先，不把普通设计变成前置问卷，缺口只限制相关部分。
-                补充应落实为可直接执行的正文，按所选模式紧凑组织；示例只在有助于原任务且符合交付范围时出现，不填空栏目。
-                """);
-        return replaceOnce(source,
-                "\"gap\":\"原有哪项动作或回应的执行缺口及其影响\",\"benefit\":\"在不新增交付义务的前提下如何帮助完成该项要求\"",
-                "\"gap\":\"原任务中未解决的具体执行问题\",\"benefit\":\"此设计或补充怎样改善原定成果，仍需满足哪些已有边界\"");
     }
 
     /** 冻结指导的替换目标必须唯一，防止上游文字变动后局部修复静默失效。 */

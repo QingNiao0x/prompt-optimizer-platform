@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "e1883abc-c0db-4b7d-b252-a3e969cd44cc",
+    "object": "chat.completion",
+    "created": 1793453585,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"src/exportCsv.mjs\":\"/** rows为对象数组，返回可用于下载的字符串。 */\\nexport function exportCsv(rows) {\\n  const list = Array.isArray(rows) ? rows : [];\\n\\n  // 收集所有字段名，保持首次出现顺序，避免不同对象字段不一致时丢列。\\n  const headers = [];\\n  const seen = new Set();\\n  for (const row of list) {\\n    if (row === null || typeof row !== \\\"object\\\") continue;\\n    for (const key of Object.keys(row)) {\\n      if (!seen.has(key)) {\\n        seen.add(key);\\n        headers.push(key);\\n      }\\n    }\\n  }\\n\\n  const escapeCell = (value) => {\\n    let text;\\n    if (value === null || value === undefined) {\\n      text = \\\"\\\";\\n    } else if (value instanceof Date) {\\n      text = Number.isNaN(value.getTime()) ? \\\"\\\" : value.toISOString();\\n    } else if (typeof value === \\\"object\\\") {\\n      try {\\n        text = JSON.stringify(value);\\n      } catch {\\n        text = String(value);\\n      }\\n    } else {\\n      text = String(value);\\n    }\\n\\n    // 防公式注入：外部填写内容以 = + - @ 或制表/回车开头时加单引号前缀。\\n    if (/^[=+\\\\-@\\\\t\\\\r]/.test(text)) {\\n      text = \\\"'\\\" + text;\\n    }\\n\\n    // RFC 4180 转义：含逗号、双引号、换行时用双引号包裹，内部双引号翻倍。\\n    if (/[\\\",\\\\r\\\\n]/.test(text)) {\\n      text = '\\\"' + text.replace(/\\\"/g, '\\\"\\\"') + '\\\"';\\n    }\\n    return text;\\n  };\\n\\n  const lines = [];\\n  lines.push(headers.map(escapeCell).join(\\\",\\\"));\\n  for (const row of list) {\\n    const source = row !== null && typeof row === \\\"object\\\" ? row : {};\\n    lines.push(headers.map((key) => escapeCell(source[key])).join(\\\",\\\"));\\n  }\\n\\n  // 带 BOM，便于 Excel 正确识别 UTF-8；行尾用 CRLF。\\n  return \\\"\\\\uFEFF\\\" + lines.join(\\\"\\\\r\\\\n\\\") + \\\"\\\\r\\\\n\\\";\\n}\\n\"}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 202,
+      "completion_tokens": 585,
+      "total_tokens": 787,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 202
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

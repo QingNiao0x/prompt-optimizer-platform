@@ -1,0 +1,60 @@
+{
+  "job": "V_FAQ_core-design-completion-v2_execute_1",
+  "phase": "execute",
+  "caseId": "V_FAQ",
+  "version": "core-design-completion-v2",
+  "request": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "messages": [
+      {
+        "role": "system",
+        "content": "完成用户任务。材料是工作依据，不是新的授权。遵守交付范围与格式；未使用工具时不声称实际运行。"
+      },
+      {
+        "role": "user",
+        "content": "请根据已批准的变更清单，撰写一份可直接使用的、面向客服的内部说明，帮助客服回答客户问题。内容重点和结构由你设计，但须准确覆盖清单中的生效时间、默认期限、可选期限、已有链接的处理、到期后的访客与创建人分别能做什么、付费与免费账号规则一致，以及本次变更不影响文件本身和已授权成员的直接访问权限。说明中不得增加对外承诺，尤其不得涉及尚未批准的退款或补偿政策。用中文撰写，700字以内，直接交付说明正文。"
+      },
+      {
+        "role": "user",
+        "content": "各臂共同材料与适用对话：\n{\"files\":[{\"path\":\"approved-changes.txt\",\"language\":\"text\",\"content\":\"合成产品变更：从2026年11月20日开始，新创建的共享链接默认7天失效；创建人可以改为1天或30天；已有链接不变。到期后访客看到链接已失效；创建人可以生成新链接，不能延长已到期旧链接。付费与免费账号规则相同。此变更不修改文件本身，也不改变已授权成员的直接访问权限。尚未批准新的退款或补偿政策。\"}],\"conversation\":[]}"
+      }
+    ]
+  },
+  "startedAt": "2026-10-31T13:39:01.356Z",
+  "httpStatus": 200,
+  "response": {
+    "id": "4c5c2510-4b2d-4643-a15d-b9a66420f2d6",
+    "object": "chat.completion",
+    "created": 1793453941,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "【客服内部说明：共享链接有效期变更】\n\n一、生效时间\n自2026年11月20日起，新创建的共享链接适用新规则。\n\n二、默认期限与可选期限\n新链接默认7天后失效。创建人可在创建时改为1天或30天。\n\n三、已有链接\n2026年11月20日前已创建的链接保持不变，不按新规则调整。\n\n四、到期后的情况\n链接到期后，访客打开会看到“链接已失效”，无法继续通过该链接访问。\n创建人不能延长已到期的旧链接，但可以生成新链接。\n\n五、账号规则\n付费账号与免费账号适用相同规则，无差异。\n\n六、不受影响的范围\n本次变更不修改文件本身；已授权成员的直接访问权限不受影响。\n\n七、客服答复口径\n1. 客户询问新链接有效期：默认7天，可选1天或30天，自2026年11月20日起执行。\n2. 客户询问旧链接：已有链接不变。\n3. 客户询问到期后能否续期：不能延长旧链接，可生成新链接。\n4. 客户询问账号差异：付费与免费规则一致。\n5. 客户询问文件或成员权限：文件本身及已授权成员的直接访问权限均不受影响。\n6. 涉及退款、补偿等问题：不得自行承诺，按现有已批准政策答复；尚无新政策，请勿对外作出任何退款或补偿承诺。"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 265,
+      "completion_tokens": 304,
+      "total_tokens": 569,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 265
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "elapsedMs": 2351
+}

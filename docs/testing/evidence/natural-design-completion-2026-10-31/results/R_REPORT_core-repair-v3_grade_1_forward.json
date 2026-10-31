@@ -1,0 +1,36 @@
+{
+  "status": 200,
+  "body": {
+    "id": "c231dd63-494d-42a2-b463-7ff32994370b",
+    "object": "chat.completion",
+    "created": 1793454167,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"verdict\":\"B\",\"substantiveGain\":true,\"reason\":\"B更严格区分“已证实原因”与“待验证项”，没有把“差异发生在导出链路”写成已证实原因；A将“差异只能定位到导出链路”列为已证实原因，超出材料直接支持范围，因为材料未提供导出实现，无法排除行数口径、数据时点变化等解释。B还补充了“4行是否含表头”和“接口返回5是否为记录条数”等关键口径核验，对排查更有帮助。\",\"aIssues\":[\"把“差异只能定位到导出链路”列为已证实原因，材料仅显示页面5、接口5、导出4行且未提供导出实现，不能据此排除行数口径、数据时点变化等可能。\",\"已证实原因第2条表述过强，将导出链路锁定为已证实结论，与后文“不能认定具体导出缺陷”存在张力。\"],\"bIssues\":[\"“已证实的原因：无”略保守；材料至少可证实页面与接口数量一致、导出文件为4行这一观测差异，但B在下一节已补充，不影响整体判断。\"],\"evidence\":[{\"side\":\"A\",\"quote\":\"差异发生在导出环节或其数据来源\",\"impact\":\"将导出链路作为已证实原因，可能误导用户跳过行数口径、数据时点等基础核验。\"},{\"side\":\"B\",\"quote\":\"无。现有材料仅记录了页面、接口与导出文件三处的观测结果，未提供导出实现、日志、数据源或调用链信息，不足以证实任何具体原因。\",\"impact\":\"更符合“区分已证实原因与待验证项”的要求，避免把推测写成根因。\"},{\"side\":\"B\",\"quote\":\"确认“4 行”是否包含表头；若包含表头，则实际数据行可能为 3，差异性质需重新界定。\",\"impact\":\"补充了关键行数口径核验，直接提升排查报告的有用性。\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1450,
+      "completion_tokens": 421,
+      "total_tokens": 1871,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 1450
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "blinding": {
+    "A": "core-design-completion-v2",
+    "B": "core-repair-v3"
+  },
+  "requiresManualVerification": true
+}

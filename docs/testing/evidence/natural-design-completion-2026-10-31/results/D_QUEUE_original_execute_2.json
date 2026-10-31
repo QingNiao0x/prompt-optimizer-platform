@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "a849f37b-6e33-43a9-9a8b-72a5e7f16929",
+    "object": "chat.completion",
+    "created": 1793453636,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"src/runTasks.mjs\":\"/**\\n * tasks是无参数异步函数数组，concurrency是并发上限；返回Promise。\\n * 按输入顺序返回结果；任一任务失败则整体reject（首个失败原因），\\n * 但不会中断已在运行的任务，且不再启动新任务。\\n */\\nexport function runTasks(tasks, concurrency) {\\n  return new Promise((resolve, reject) => {\\n    if (!Array.isArray(tasks)) {\\n      reject(new TypeError('tasks must be an array of functions'));\\n      return;\\n    }\\n\\n    const total = tasks.length;\\n    if (total === 0) {\\n      resolve([]);\\n      return;\\n    }\\n\\n    for (let i = 0; i < total; i++) {\\n      if (typeof tasks[i] !== 'function') {\\n        reject(new TypeError(`tasks[${i}] must be a function`));\\n        return;\\n      }\\n    }\\n\\n    let limit = Math.floor(Number(concurrency));\\n    if (!Number.isFinite(limit) || limit < 1) {\\n      limit = 1;\\n    }\\n    if (limit > total) {\\n      limit = total;\\n    }\\n\\n    const results = new Array(total);\\n    let nextIndex = 0;\\n    let active = 0;\\n    let settled = false;\\n\\n    const launch = () => {\\n      if (settled) {\\n        return;\\n      }\\n      while (active < limit && nextIndex < total) {\\n        const index = nextIndex++;\\n        active++;\\n        let promise;\\n        try {\\n          promise = Promise.resolve(tasks[index]());\\n        } catch (error) {\\n          promise = Promise.reject(error);\\n        }\\n        promise.then(\\n          value => {\\n            if (settled) {\\n              return;\\n            }\\n            results[index] = value;\\n            active--;\\n            if (nextIndex >= total && active === 0) {\\n              settled = true;\\n              resolve(results);\\n            } else {\\n              launch();\\n            }\\n          },\\n          error => {\\n            if (settled) {\\n              return;\\n            }\\n            settled = true;\\n            reject(error);\\n          }\\n        );\\n      }\\n    };\\n\\n    launch();\\n  });\\n}\\n\"}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 185,
+      "completion_tokens": 554,
+      "total_tokens": 739,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 185
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "status": 200,
+  "body": {
+    "id": "9633013e-4b9a-41f4-b5fa-436e27e31cd5",
+    "object": "chat.completion",
+    "created": 1793454177,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"verdict\":\"TIE\",\"substantiveGain\":false,\"reason\":\"两版均完整覆盖活动名称、主题、时间、线上形式、团队案例、提问交流和报名链接，未虚构嘉宾、礼品、优惠、录播或效果承诺，正文均远低于350字，可直接发送。A在标题中直接点出核心主题，B在正文中更明确称呼“尊敬的客户”并说明可结合自身情况参与讨论；这些属于可接受的表达差异，不构成实质业务收益差异。\",\"aIssues\":[],\"bIssues\":[],\"evidence\":[{\"side\":\"A\",\"quote\":\"届时将分享一个团队案例，并安排提问交流，帮助大家了解如何把会议决定转化为可执行的行动项。\",\"impact\":\"准确传达材料中的案例与交流安排，并以“帮助了解”而非效果承诺表述，符合不虚构、不承诺的要求。\"},{\"side\":\"B\",\"quote\":\"分享会将结合一个团队案例，介绍相关实践，并安排提问交流环节，便于您结合自身情况参与讨论。\",\"impact\":\"同样准确覆盖材料内容，并补充了客户参与讨论的合理场景，未超出材料范围。\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 667,
+      "completion_tokens": 242,
+      "total_tokens": 909,
+      "prompt_tokens_details": {
+        "cached_tokens": 256
+      },
+      "prompt_cache_hit_tokens": 256,
+      "prompt_cache_miss_tokens": 411
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "blinding": {
+    "A": "original",
+    "B": "core-design-completion-v2"
+  },
+  "requiresManualVerification": true
+}

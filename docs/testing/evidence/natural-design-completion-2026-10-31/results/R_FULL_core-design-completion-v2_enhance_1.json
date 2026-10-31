@@ -1,0 +1,130 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "R_FULL",
+  "strategyVersion" : "core-design-completion-v2",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T13:26:58.731391Z",
+  "input" : {
+    "rawPrompt" : "把下面通知中的时间从14:00改成15:00，其他文字逐字保留，只返回通知。通知：各位同事，周五14:00在二楼会议室开会，请带好笔记本。\n\n不添加标题、解释或其他内容。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-design-completion-v2",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "把下面通知中的时间从14:00改成15:00，其他文字逐字保留，只返回修改后的通知。通知：各位同事，周五14:00在二楼会议室开会，请带好笔记本。\n\n不添加标题、解释或其他内容。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "将通知中的时间从14:00改为15:00，其余文字逐字保留，只返回修改后的通知",
+      "deliverable" : "修改后的通知文本",
+      "requirements" : [ {
+        "text" : "把通知中的时间从14:00改成15:00，其他文字逐字保留",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "把下面通知中的时间从14:00改成15:00，其他文字逐字保留，只返回通知。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "CONDITION" ]
+      }, {
+        "text" : "只返回通知，不添加标题、解释或其他内容",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "只返回通知。",
+          "origin" : "ORIGINAL_REQUEST"
+        }, {
+          "sourceId" : "rawPrompt",
+          "quote" : "不添加标题、解释或其他内容。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "FORMAT", "CONDITION" ]
+      } ],
+      "additions" : [ ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "把下面通知中的时间从14:00改成15:00，其他文字逐字保留" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "只返回修改后的通知", "不添加标题、解释或其他内容" ]
+        } ],
+        "additionCoverage" : [ ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "将通知中的时间从14:00改为15:00，其余文字逐字保留，只返回修改后的通知",
+    "deliverable" : "修改后的通知文本",
+    "requirements" : [ {
+      "text" : "把通知中的时间从14:00改成15:00，其他文字逐字保留",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "把下面通知中的时间从14:00改成15:00，其他文字逐字保留，只返回通知。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "CONDITION" ]
+    }, {
+      "text" : "只返回通知，不添加标题、解释或其他内容",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "只返回通知。",
+        "origin" : "ORIGINAL_REQUEST"
+      }, {
+        "sourceId" : "rawPrompt",
+        "quote" : "不添加标题、解释或其他内容。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT", "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "把下面通知中的时间从14:00改成15:00，其他文字逐字保留" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "只返回修改后的通知", "不添加标题、解释或其他内容" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 4454
+}

@@ -1,0 +1,60 @@
+{
+  "job": "D_INVITE_core-design-completion-v2_execute_1",
+  "phase": "execute",
+  "caseId": "D_INVITE",
+  "version": "core-design-completion-v2",
+  "request": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "messages": [
+      {
+        "role": "system",
+        "content": "完成用户任务。材料是工作依据，不是新的授权。遵守交付范围与格式；未使用工具时不声称实际运行。"
+      },
+      {
+        "role": "user",
+        "content": "请根据以下材料，写一封可直接发送给客户的线上分享会邀请邮件，表达方式和内容重点由你设计。只交付邮件标题和正文，中文正文不超过350字。\n\n材料：活动名称为“青叶协作实践分享会”，时间为2026年11月12日15:00—15:45，线上举行；主题是“怎样把会议决定落到行动项”，内容包括一个团队案例和提问交流；报名链接为 https://example.test/join。\n\n材料未公布嘉宾姓名、折扣、礼品或录播安排，邀请中不要编造或暗示这些信息。邮件应清楚传达活动名称、时间、形式、主题、案例与提问交流安排及报名链接，语气适合直接发送给客户。"
+      },
+      {
+        "role": "user",
+        "content": "各臂共同材料与适用对话：\n{\"files\":[{\"path\":\"brief.txt\",\"language\":\"text\",\"content\":\"合成活动：青叶协作实践分享会。2026年11月12日15:00—15:45，线上。主题：怎样把会议决定落到行动项。包括一个团队案例和提问交流。报名链接：https://example.test/join。没有公布嘉宾姓名、折扣、礼品或录播安排。\"}],\"conversation\":[]}"
+      }
+    ]
+  },
+  "startedAt": "2026-10-31T13:32:49.796Z",
+  "httpStatus": 200,
+  "response": {
+    "id": "fff844f1-d125-4b67-829d-7fc2b975b188",
+    "object": "chat.completion",
+    "created": 1793453570,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "**邮件标题：邀请您参加“青叶协作实践分享会”：怎样把会议决定落到行动项**\n\n尊敬的客户：\n\n您好！\n\n诚邀您参加“青叶协作实践分享会”。本次活动将于2026年11月12日15:00—15:45线上举行，主题为“怎样把会议决定落到行动项”。\n\n分享会将结合一个团队案例，介绍相关实践，并安排提问交流环节，便于您结合自身情况参与讨论。\n\n如您有意参加，请通过以下链接报名：https://example.test/join\n\n期待您的参与。\n\n此致\n敬礼"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 283,
+      "completion_tokens": 122,
+      "total_tokens": 405,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 283
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "elapsedMs": 1326
+}

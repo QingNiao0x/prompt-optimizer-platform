@@ -1,0 +1,56 @@
+{
+  "job": "D_INVITE_core-repair-v3_grade_1_forward",
+  "phase": "grade",
+  "caseId": "D_INVITE",
+  "version": "core-repair-v3",
+  "request": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "messages": [
+      {
+        "role": "system",
+        "content": "匿名评阅同信息作品。只按用户需求、材料和允许设计空间判断；不同合理方案可持平。不要因篇幅、标题、术语或JSON围栏差别认定实质业务收益。检查原任务、事实、约束、完成程度、有用设计及必要修改量；引用作品原句说明具体错误或帮助。无法确定写uncertain。返回有效JSON：{\"verdict\":\"A|B|TIE|BOTH_FAIL|UNCERTAIN\",\"substantiveGain\":false,\"reason\":\"...\",\"aIssues\":[\"...\"],\"bIssues\":[\"...\"],\"evidence\":[{\"side\":\"A|B\",\"quote\":\"作品原句\",\"impact\":\"如何影响用户任务\"}]}。不能从材料没提供推断现实不存在，不能把你偏好的唯一方案当用户要求。"
+      },
+      {
+        "role": "user",
+        "content": "{\"rawPrompt\":\"根据材料写一封给客户的线上分享会邀请，安排表达和内容重点由你设计，适合直接发送。\\n\\n只交付邮件标题和正文，中文正文不超过350字。\",\"context\":{\"customDescription\":\"\",\"files\":[{\"path\":\"brief.txt\",\"language\":\"text\",\"content\":\"合成活动：青叶协作实践分享会。2026年11月12日15:00—15:45，线上。主题：怎样把会议决定落到行动项。包括一个团队案例和提问交流。报名链接：https://example.test/join。没有公布嘉宾姓名、折扣、礼品或录播安排。\"}]},\"actualAnswers\":[],\"rubric\":[\"客户能迅速知道为什么参加、时间、形式及报名办法；主题与材料相符。\",\"不虚构嘉宾、礼品、优惠、录播或效果承诺；不交付大纲、填空模板、资料问卷。\",\"表达自然、可发送；允许不同吸引点和段落安排，不按唯一范文判分。\"],\"A\":\"**邮件标题：邀请您参加“青叶协作实践分享会”：怎样把会议决定落到行动项**\\n\\n尊敬的客户：\\n\\n您好！\\n\\n诚邀您参加“青叶协作实践分享会”。本次活动将于2026年11月12日15:00—15:45线上举行，主题为“怎样把会议决定落到行动项”。\\n\\n分享会将结合一个团队案例，介绍相关实践，并安排提问交流环节，便于您结合自身情况参与讨论。\\n\\n如您有意参加，请通过以下链接报名：https://example.test/join\\n\\n期待您的参与。\\n\\n此致\\n敬礼\",\"B\":\"**邮件标题：邀请｜青叶协作实践分享会：怎样把会议决定落到行动项（11月12日线上）**\\n\\n尊敬的客户：\\n\\n您好！诚邀您参加“青叶协作实践分享会”。\\n\\n活动将于2026年11月12日15:00—15:45线上举行，主题为“怎样把会议决定落到行动项”。分享会将结合一个团队案例，介绍相关实践，并安排提问交流环节，期待与您共同探讨。\\n\\n报名链接：https://example.test/join\\n\\n期待您的参与！\\n\\n此致\\n敬礼\"}"
+      }
+    ]
+  },
+  "startedAt": "2026-10-31T13:42:21.697Z",
+  "httpStatus": 200,
+  "response": {
+    "id": "fc7c74f9-1832-4d3f-82ad-0ce0f4d5f41e",
+    "object": "chat.completion",
+    "created": 1793454141,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"verdict\":\"TIE\",\"substantiveGain\":false,\"reason\":\"两版均完整覆盖活动名称、时间、线上形式、主题、团队案例、提问交流和报名链接，未虚构嘉宾、礼品、优惠、录播或效果承诺，正文均远低于350字，表达自然可直接发送。A与B的差异主要是标题信息量和个别措辞，未构成实质业务收益差异。\",\"aIssues\":[],\"bIssues\":[],\"evidence\":[{\"side\":\"A\",\"quote\":\"分享会将结合一个团队案例，介绍相关实践，并安排提问交流环节，便于您结合自身情况参与讨论。\",\"impact\":\"准确传达材料中的案例和提问交流安排，并说明参与价值，未作效果承诺。\"},{\"side\":\"B\",\"quote\":\"活动将于2026年11月12日15:00—15:45线上举行，主题为“怎样把会议决定落到行动项”。\",\"impact\":\"清楚给出时间、形式和主题，满足客户快速获取关键信息的需求。\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 663,
+      "completion_tokens": 212,
+      "total_tokens": 875,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 663
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "elapsedMs": 1743
+}

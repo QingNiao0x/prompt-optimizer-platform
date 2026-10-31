@@ -1,0 +1,36 @@
+{
+  "status": 200,
+  "body": {
+    "id": "a3a93390-7989-4a89-a040-a0979e44967d",
+    "object": "chat.completion",
+    "created": 1793454233,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"verdict\":\"TIE\",\"substantiveGain\":false,\"reason\":\"两版均完整覆盖材料中的活动名称、主题、时间、线上形式、团队案例、提问交流和报名链接，未虚构嘉宾、礼品、优惠、录播或效果承诺，正文均自然可发送且远低于350字。B在标题和正文中对“把会议决定转化为清晰、可执行的行动项”作了更具体的主题展开，属于合理表达设计，但未带来足以区分优劣的实质业务收益；A同样满足客户快速获知参加理由、时间、形式和报名办法的核心任务。\",\"aIssues\":[],\"bIssues\":[],\"evidence\":[{\"side\":\"A\",\"quote\":\"分享会将结合一个团队案例，介绍相关实践与经验，并安排提问交流环节，便于您结合实际情况参与讨论。\",\"impact\":\"准确对应材料中的团队案例和提问交流，未作额外承诺，满足邀请函内容要求。\"},{\"side\":\"B\",\"quote\":\"届时将通过一个团队案例，分享如何把会议决定转化为清晰、可执行的行动项，并设置提问交流环节，便于您结合实际情况参与讨论。\",\"impact\":\"在材料主题范围内补充了“清晰、可执行”的合理展开，有助于客户理解参加价值，且未虚构事实。\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 684,
+      "completion_tokens": 267,
+      "total_tokens": 951,
+      "prompt_tokens_details": {
+        "cached_tokens": 384
+      },
+      "prompt_cache_hit_tokens": 384,
+      "prompt_cache_miss_tokens": 300
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "blinding": {
+    "A": "core-design-completion-v2",
+    "B": "original"
+  },
+  "requiresManualVerification": true
+}

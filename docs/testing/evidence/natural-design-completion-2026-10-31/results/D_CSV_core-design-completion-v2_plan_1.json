@@ -1,0 +1,110 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "D_CSV",
+  "strategyVersion" : "core-design-completion-v2",
+  "operation" : "plan",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T13:30:46.319145700Z",
+  "input" : {
+    "rawPrompt" : "给当前项目实现CSV导出，方便同事把筛选后的数据放进表格软件。字段内容来自外部填写，具体导出细节请你设计，保留调用方式。\n\n仅返回有效JSON对象 {\"src/exportCsv.mjs\":\"完整源码字符串\"}。只交付实际修改的该文件，不增加文件或依赖，不附其他文字。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "src/exportCsv.mjs" ],
+      "fileSnippets" : [ {
+        "path" : "src/exportCsv.mjs",
+        "language" : "javascript",
+        "content" : "/** rows为对象数组，返回可用于下载的字符串。 */\nexport function exportCsv(rows) {\n  return \"\";\n}\n",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-design-completion-v2",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "plan" : {
+    "summary" : "原任务已明确：在保留 exportCsv(rows) 调用方式的前提下实现 CSV 导出，导出细节由实现者设计，并严格以指定 JSON 对象返回唯一修改文件。现有材料足以开展，无需向用户提问。",
+    "questions" : [ ],
+    "provider" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "mock" : false
+  },
+  "taskUnderstanding" : {
+    "goal" : "为当前项目实现 CSV 导出，让同事能把筛选后的数据放进表格软件；字段内容来自外部填写，导出细节由实现者设计，并保留现有调用方式。",
+    "deliverable" : "仅返回有效 JSON 对象 {\"src/exportCsv.mjs\":\"完整源码字符串\"}，只包含实际修改的该文件，不增加文件或依赖，不附其他文字。",
+    "requirements" : [ {
+      "text" : "为当前项目实现 CSV 导出，方便同事把筛选后的数据放进表格软件。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "给当前项目实现CSV导出，方便同事把筛选后的数据放进表格软件。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL" ]
+    }, {
+      "text" : "字段内容来自外部填写，具体导出细节由实现者设计。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "字段内容来自外部填写，具体导出细节请你设计，保留调用方式。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "保留现有调用方式 exportCsv(rows)，rows 为对象数组，返回可用于下载的字符串。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "保留调用方式。",
+        "origin" : "ORIGINAL_REQUEST"
+      }, {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "export function exportCsv(rows) {",
+        "origin" : "PROJECT_CONTEXT"
+      }, {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "/** rows为对象数组，返回可用于下载的字符串。 */",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "仅返回有效 JSON 对象 {\"src/exportCsv.mjs\":\"完整源码字符串\"}，只交付实际修改的该文件，不增加文件或依赖，不附其他文字。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "仅返回有效JSON对象 {\"src/exportCsv.mjs\":\"完整源码字符串\"}。只交付实际修改的该文件，不增加文件或依赖，不附其他文字。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT", "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : null,
+  "success" : true,
+  "elapsedMs" : 4842
+}

@@ -1,0 +1,36 @@
+{
+  "status": 200,
+  "body": {
+    "id": "fc7c74f9-1832-4d3f-82ad-0ce0f4d5f41e",
+    "object": "chat.completion",
+    "created": 1793454141,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"verdict\":\"TIE\",\"substantiveGain\":false,\"reason\":\"两版均完整覆盖活动名称、时间、线上形式、主题、团队案例、提问交流和报名链接，未虚构嘉宾、礼品、优惠、录播或效果承诺，正文均远低于350字，表达自然可直接发送。A与B的差异主要是标题信息量和个别措辞，未构成实质业务收益差异。\",\"aIssues\":[],\"bIssues\":[],\"evidence\":[{\"side\":\"A\",\"quote\":\"分享会将结合一个团队案例，介绍相关实践，并安排提问交流环节，便于您结合自身情况参与讨论。\",\"impact\":\"准确传达材料中的案例和提问交流安排，并说明参与价值，未作效果承诺。\"},{\"side\":\"B\",\"quote\":\"活动将于2026年11月12日15:00—15:45线上举行，主题为“怎样把会议决定落到行动项”。\",\"impact\":\"清楚给出时间、形式和主题，满足客户快速获取关键信息的需求。\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 663,
+      "completion_tokens": 212,
+      "total_tokens": 875,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 663
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "blinding": {
+    "A": "core-design-completion-v2",
+    "B": "core-repair-v3"
+  },
+  "requiresManualVerification": true
+}

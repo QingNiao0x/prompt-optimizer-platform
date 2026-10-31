@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "dc11de9b-cd39-4259-9e0a-cc7c9557bfd7",
+    "object": "chat.completion",
+    "created": 1793453656,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"src/runTasks.mjs\":\"/** tasks是无参数异步函数数组，concurrency是并发上限；返回Promise。 */\\nexport function runTasks(tasks, concurrency) {\\n  if (!Array.isArray(tasks)) {\\n    return Promise.reject(new TypeError('tasks must be an array of functions'));\\n  }\\n\\n  const total = tasks.length;\\n  if (total === 0) {\\n    return Promise.resolve([]);\\n  }\\n\\n  let limit = Number(concurrency);\\n  if (!Number.isFinite(limit) || limit < 1) {\\n    limit = 1;\\n  } else {\\n    limit = Math.floor(limit);\\n  }\\n  if (limit > total) {\\n    limit = total;\\n  }\\n\\n  return new Promise((resolve, reject) => {\\n    const results = new Array(total);\\n    let nextIndex = 0;\\n    let running = 0;\\n    let settled = false;\\n\\n    function fail(error) {\\n      if (settled) return;\\n      settled = true;\\n      reject(error);\\n    }\\n\\n    function launch() {\\n      if (settled) return;\\n\\n      while (running < limit && nextIndex < total) {\\n        const index = nextIndex++;\\n        const task = tasks[index];\\n\\n        if (typeof task !== 'function') {\\n          fail(new TypeError('tasks[' + index + '] must be a function'));\\n          return;\\n        }\\n\\n        running++;\\n\\n        let promise;\\n        try {\\n          promise = Promise.resolve(task());\\n        } catch (error) {\\n          promise = Promise.reject(error);\\n        }\\n\\n        promise.then(\\n          value => {\\n            if (settled) return;\\n            results[index] = value;\\n            running--;\\n            if (nextIndex >= total && running === 0) {\\n              settled = true;\\n              resolve(results);\\n            } else {\\n              launch();\\n            }\\n          },\\n          error => {\\n            running--;\\n            fail(error);\\n          }\\n        );\\n      }\\n    }\\n\\n    launch();\\n  });\\n}\\n\"}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 250,
+      "completion_tokens": 510,
+      "total_tokens": 760,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 250
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

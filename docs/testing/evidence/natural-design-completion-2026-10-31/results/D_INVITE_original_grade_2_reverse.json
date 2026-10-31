@@ -1,0 +1,36 @@
+{
+  "status": 200,
+  "body": {
+    "id": "5e4bf421-1f5d-4aee-be47-f04bcdb24f2e",
+    "object": "chat.completion",
+    "created": 1793454258,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"verdict\":\"TIE\",\"substantiveGain\":false,\"reason\":\"两版均完整交付邮件标题和正文，准确包含主题、时间、线上形式、案例与提问交流、报名链接，且未虚构嘉宾、礼品、优惠、录播或效果承诺；正文自然可发送，字数均明显低于350字。A标题更突出收益，B标题更直接复述主题，属于允许的不同吸引点，不构成实质业务收益差异。\",\"aIssues\":[],\"bIssues\":[],\"evidence\":[{\"side\":\"A\",\"quote\":\"邀请您参加“青叶协作实践分享会”：让会议决定真正落地\",\"impact\":\"标题突出参加收益，同时与材料主题一致，不影响信息准确性。\"},{\"side\":\"B\",\"quote\":\"邀请您参加“青叶协作实践分享会”：怎样把会议决定落到行动项\",\"impact\":\"标题直接使用材料主题，信息清楚，但吸引点较平实；仍满足邀请任务。\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 684,
+      "completion_tokens": 204,
+      "total_tokens": 888,
+      "prompt_tokens_details": {
+        "cached_tokens": 256
+      },
+      "prompt_cache_hit_tokens": 256,
+      "prompt_cache_miss_tokens": 428
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "blinding": {
+    "A": "original",
+    "B": "core-design-completion-v2"
+  },
+  "requiresManualVerification": true
+}

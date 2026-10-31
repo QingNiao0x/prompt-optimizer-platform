@@ -1,0 +1,60 @@
+{
+  "job": "D_QUEUE_core-repair-v3_execute_2",
+  "phase": "execute",
+  "caseId": "D_QUEUE",
+  "version": "core-repair-v3",
+  "request": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "messages": [
+      {
+        "role": "system",
+        "content": "完成用户任务。材料是工作依据，不是新的授权。遵守交付范围与格式；未使用工具时不声称实际运行。"
+      },
+      {
+        "role": "user",
+        "content": "把当前 src/runTasks.mjs 中的异步任务执行器改成可用于页面批量请求的并发队列，限制同时运行的任务数量，并保留现有接口：runTasks(tasks, concurrency)，其中 tasks 是无参数异步函数数组，concurrency 是并发上限，返回 Promise。边界和失败处理要设计成可直接使用，例如空任务数组、并发上限的合理取值以及单个任务失败时的处理方式，均需在实现中明确落地。仅返回有效 JSON 对象 {\"src/runTasks.mjs\":\"完整源码字符串\"}，只交付实际修改的该文件，不增加文件或依赖，不附其他文字。"
+      },
+      {
+        "role": "user",
+        "content": "各臂共同材料与适用对话：\n{\"files\":[{\"path\":\"src/runTasks.mjs\",\"language\":\"javascript\",\"content\":\"/** tasks是无参数异步函数数组，concurrency是并发上限；返回Promise。 */\\nexport function runTasks(tasks, concurrency) {\\n  return Promise.all(tasks.map(task => task()));\\n}\\n\"}],\"conversation\":[]}"
+      }
+    ]
+  },
+  "startedAt": "2026-10-31T13:33:58.337Z",
+  "httpStatus": 200,
+  "response": {
+    "id": "0daf5d63-dac3-41d1-b576-20f9de760bd9",
+    "object": "chat.completion",
+    "created": 1793453638,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"src/runTasks.mjs\":\"/** tasks是无参数异步函数数组，concurrency是并发上限；返回Promise。 */\\nexport function runTasks(tasks, concurrency) {\\n  if (!Array.isArray(tasks)) {\\n    return Promise.reject(new TypeError('tasks must be an array of functions'));\\n  }\\n\\n  const total = tasks.length;\\n  if (total === 0) {\\n    return Promise.resolve([]);\\n  }\\n\\n  for (let i = 0; i < total; i += 1) {\\n    if (typeof tasks[i] !== 'function') {\\n      return Promise.reject(new TypeError(`tasks[${i}] must be a function`));\\n    }\\n  }\\n\\n  let limit = concurrency;\\n  if (limit === undefined || limit === null) {\\n    limit = total;\\n  }\\n  if (typeof limit !== 'number' || Number.isNaN(limit) || !Number.isFinite(limit)) {\\n    return Promise.reject(new TypeError('concurrency must be a finite number'));\\n  }\\n  limit = Math.floor(limit);\\n  if (limit < 1) {\\n    limit = 1;\\n  }\\n  if (limit > total) {\\n    limit = total;\\n  }\\n\\n  return new Promise((resolve, reject) => {\\n    const results = new Array(total);\\n    let nextIndex = 0;\\n    let running = 0;\\n    let completed = 0;\\n    let settled = false;\\n\\n    function fail(error) {\\n      if (settled) {\\n        return;\\n      }\\n      settled = true;\\n      reject(error);\\n    }\\n\\n    function launch() {\\n      if (settled) {\\n        return;\\n      }\\n      while (running < limit && nextIndex < total) {\\n        const index = nextIndex;\\n        nextIndex += 1;\\n        running += 1;\\n\\n        let promise;\\n        try {\\n          promise = Promise.resolve(tasks[index]());\\n        } catch (error) {\\n          fail(error);\\n          return;\\n        }\\n\\n        promise.then(\\n          value => {\\n            if (settled) {\\n              return;\\n            }\\n            results[index] = value;\\n            running -= 1;\\n            completed += 1;\\n            if (completed === total) {\\n              settled = true;\\n              resolve(results);\\n              return;\\n            }\\n            launch();\\n          },\\n          error => {\\n            fail(error);\\n          }\\n        );\\n      }\\n    }\\n\\n    launch();\\n  });\\n}\\n\"}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 250,
+      "completion_tokens": 611,
+      "total_tokens": 861,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 250
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "elapsedMs": 2951
+}

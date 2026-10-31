@@ -1,0 +1,250 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "D_INVITE",
+  "strategyVersion" : "core-repair-v3",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T13:29:06.646938900Z",
+  "input" : {
+    "rawPrompt" : "根据材料写一封给客户的线上分享会邀请，安排表达和内容重点由你设计，适合直接发送。\n\n只交付邮件标题和正文，中文正文不超过350字。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "brief.txt" ],
+      "fileSnippets" : [ {
+        "path" : "brief.txt",
+        "language" : "text",
+        "content" : "合成活动：青叶协作实践分享会。2026年11月12日15:00—15:45，线上。主题：怎样把会议决定落到行动项。包括一个团队案例和提问交流。报名链接：https://example.test/join。没有公布嘉宾姓名、折扣、礼品或录播安排。",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v3",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请根据 brief.txt 中的活动信息，写一封可直接发送给客户的线上分享会邀请邮件。表达方式和内容重点由你设计，需清楚传达活动名称、时间、形式、主题、团队案例与提问交流安排，并给出报名链接；只使用材料中已公布的信息，不要编造嘉宾姓名、折扣、礼品或录播安排。只交付邮件标题和正文，中文正文不超过350字。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "根据 brief.txt 材料撰写一封可直接发送给客户的线上分享会邀请邮件，表达和内容重点由执行者设计，并准确传达已公布的活动信息。",
+      "deliverable" : "邮件标题和正文；中文正文不超过350字。",
+      "requirements" : [ {
+        "text" : "根据材料写一封给客户的线上分享会邀请，安排表达和内容重点由你设计，适合直接发送。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "根据材料写一封给客户的线上分享会邀请，安排表达和内容重点由你设计，适合直接发送。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "CONDITION" ]
+      }, {
+        "text" : "只交付邮件标题和正文，中文正文不超过350字。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "只交付邮件标题和正文，中文正文不超过350字。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "FORMAT", "LENGTH" ]
+      }, {
+        "text" : "活动为青叶协作实践分享会，2026年11月12日15:00—15:45，线上举行。",
+        "evidence" : [ {
+          "sourceId" : "context.fileSnippets.0",
+          "quote" : "合成活动：青叶协作实践分享会。2026年11月12日15:00—15:45，线上。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "OBJECT" ]
+      }, {
+        "text" : "主题是怎样把会议决定落到行动项，包括一个团队案例和提问交流。",
+        "evidence" : [ {
+          "sourceId" : "context.fileSnippets.0",
+          "quote" : "主题：怎样把会议决定落到行动项。包括一个团队案例和提问交流。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "OBJECT" ]
+      }, {
+        "text" : "报名链接为 https://example.test/join。",
+        "evidence" : [ {
+          "sourceId" : "context.fileSnippets.0",
+          "quote" : "报名链接：https://example.test/join。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "OBJECT" ]
+      }, {
+        "text" : "没有公布嘉宾姓名、折扣、礼品或录播安排，不得编造这些信息。",
+        "evidence" : [ {
+          "sourceId" : "context.fileSnippets.0",
+          "quote" : "没有公布嘉宾姓名、折扣、礼品或录播安排。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "邀请中需清楚传达活动名称、时间、形式、主题、团队案例与提问交流安排，并给出报名链接。",
+        "benefit" : "确保邀请邮件包含客户报名所需的核心信息，同时不改变原有交付物和篇幅限制。",
+        "gap" : "原提示词只要求根据材料写邀请，未明确哪些已公布信息必须进入邮件，可能导致遗漏关键活动信息。"
+      }, {
+        "text" : "只使用材料中已公布的信息，不要编造嘉宾姓名、折扣、礼品或录播安排。",
+        "benefit" : "防止邀请邮件出现虚假承诺，保证内容与材料一致。",
+        "gap" : "材料明确说明这些信息未公布，若不写入约束，执行者可能自行补充不实内容。"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请根据 brief.txt 中的活动信息，写一封可直接发送给客户的线上分享会邀请邮件。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "只交付邮件标题和正文，中文正文不超过350字。" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "需清楚传达活动名称、时间、形式、主题、团队案例与提问交流安排" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "需清楚传达活动名称、时间、形式、主题、团队案例与提问交流安排" ]
+        }, {
+          "index" : 4,
+          "quotes" : [ "并给出报名链接" ]
+        }, {
+          "index" : 5,
+          "quotes" : [ "不要编造嘉宾姓名、折扣、礼品或录播安排" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "需清楚传达活动名称、时间、形式、主题、团队案例与提问交流安排，并给出报名链接" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "只使用材料中已公布的信息，不要编造嘉宾姓名、折扣、礼品或录播安排" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "根据 brief.txt 材料撰写一封可直接发送给客户的线上分享会邀请邮件，表达和内容重点由执行者设计，并准确传达已公布的活动信息。",
+    "deliverable" : "邮件标题和正文；中文正文不超过350字。",
+    "requirements" : [ {
+      "text" : "根据材料写一封给客户的线上分享会邀请，安排表达和内容重点由你设计，适合直接发送。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "根据材料写一封给客户的线上分享会邀请，安排表达和内容重点由你设计，适合直接发送。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "CONDITION" ]
+    }, {
+      "text" : "只交付邮件标题和正文，中文正文不超过350字。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "只交付邮件标题和正文，中文正文不超过350字。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT", "LENGTH" ]
+    }, {
+      "text" : "活动为青叶协作实践分享会，2026年11月12日15:00—15:45，线上举行。",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "合成活动：青叶协作实践分享会。2026年11月12日15:00—15:45，线上。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "OBJECT" ]
+    }, {
+      "text" : "主题是怎样把会议决定落到行动项，包括一个团队案例和提问交流。",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "主题：怎样把会议决定落到行动项。包括一个团队案例和提问交流。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "OBJECT" ]
+    }, {
+      "text" : "报名链接为 https://example.test/join。",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "报名链接：https://example.test/join。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "OBJECT" ]
+    }, {
+      "text" : "没有公布嘉宾姓名、折扣、礼品或录播安排，不得编造这些信息。",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "没有公布嘉宾姓名、折扣、礼品或录播安排。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "邀请中需清楚传达活动名称、时间、形式、主题、团队案例与提问交流安排，并给出报名链接。",
+      "benefit" : "确保邀请邮件包含客户报名所需的核心信息，同时不改变原有交付物和篇幅限制。",
+      "gap" : "原提示词只要求根据材料写邀请，未明确哪些已公布信息必须进入邮件，可能导致遗漏关键活动信息。"
+    }, {
+      "text" : "只使用材料中已公布的信息，不要编造嘉宾姓名、折扣、礼品或录播安排。",
+      "benefit" : "防止邀请邮件出现虚假承诺，保证内容与材料一致。",
+      "gap" : "材料明确说明这些信息未公布，若不写入约束，执行者可能自行补充不实内容。"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请根据 brief.txt 中的活动信息，写一封可直接发送给客户的线上分享会邀请邮件。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "只交付邮件标题和正文，中文正文不超过350字。" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "需清楚传达活动名称、时间、形式、主题、团队案例与提问交流安排" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "需清楚传达活动名称、时间、形式、主题、团队案例与提问交流安排" ]
+      }, {
+        "index" : 4,
+        "quotes" : [ "并给出报名链接" ]
+      }, {
+        "index" : 5,
+        "quotes" : [ "不要编造嘉宾姓名、折扣、礼品或录播安排" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "需清楚传达活动名称、时间、形式、主题、团队案例与提问交流安排，并给出报名链接" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "只使用材料中已公布的信息，不要编造嘉宾姓名、折扣、礼品或录播安排" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 5924
+}

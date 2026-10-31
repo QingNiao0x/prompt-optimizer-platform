@@ -1,0 +1,60 @@
+{
+  "job": "D_CSV_original_execute_1",
+  "phase": "execute",
+  "caseId": "D_CSV",
+  "version": "original",
+  "request": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "messages": [
+      {
+        "role": "system",
+        "content": "完成用户任务。材料是工作依据，不是新的授权。遵守交付范围与格式；未使用工具时不声称实际运行。"
+      },
+      {
+        "role": "user",
+        "content": "给当前项目实现CSV导出，方便同事把筛选后的数据放进表格软件。字段内容来自外部填写，具体导出细节请你设计，保留调用方式。\n\n仅返回有效JSON对象 {\"src/exportCsv.mjs\":\"完整源码字符串\"}。只交付实际修改的该文件，不增加文件或依赖，不附其他文字。"
+      },
+      {
+        "role": "user",
+        "content": "各臂共同材料与适用对话：\n{\"files\":[{\"path\":\"src/exportCsv.mjs\",\"language\":\"javascript\",\"content\":\"/** rows为对象数组，返回可用于下载的字符串。 */\\nexport function exportCsv(rows) {\\n  return \\\"\\\";\\n}\\n\"}],\"conversation\":[]}"
+      }
+    ]
+  },
+  "startedAt": "2026-10-31T13:33:07.693Z",
+  "httpStatus": 200,
+  "response": {
+    "id": "8c13ac6e-39ea-4a79-877a-170f8e92f9ea",
+    "object": "chat.completion",
+    "created": 1793453587,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"src/exportCsv.mjs\":\"/**\\n * 将对象数组转换为 CSV 字符串，便于在表格软件中打开。\\n *\\n * 设计要点：\\n * - 字段名取自所有行键的并集，保持首次出现顺序，保证列稳定。\\n * - 单元格内容来自外部填写，按 RFC 4180 规则转义：\\n *   含逗号、双引号、换行（\\\\r 或 \\\\n）或首尾空白的值用双引号包裹，\\n *   内部双引号加倍。\\n * - 对以 = + - @ 等开头的文本做防公式注入处理（前置单引号），\\n *   避免在表格软件中被当作公式执行；纯数字/布尔/null 不处理。\\n * - 行分隔符使用 \\\\r\\\\n，兼容主流表格软件。\\n * - 无行时返回空字符串；有行但无字段时返回空字符串。\\n *\\n * @param {Array<Object>} rows 对象数组\\n * @returns {string} 可用于下载的 CSV 字符串\\n */\\nexport function exportCsv(rows) {\\n  if (!Array.isArray(rows) || rows.length === 0) {\\n    return \\\"\\\";\\n  }\\n\\n  const columns = [];\\n  const seen = new Set();\\n  for (const row of rows) {\\n    if (row === null || typeof row !== \\\"object\\\") {\\n      continue;\\n    }\\n    for (const key of Object.keys(row)) {\\n      if (!seen.has(key)) {\\n        seen.add(key);\\n        columns.push(key);\\n      }\\n    }\\n  }\\n\\n  if (columns.length === 0) {\\n    return \\\"\\\";\\n  }\\n\\n  const lines = [columns.map(formatCell).join(\\\",\\\")];\\n  for (const row of rows) {\\n    const source = row !== null && typeof row === \\\"object\\\" ? row : {};\\n    lines.push(columns.map((key) => formatCell(source[key])).join(\\\",\\\"));\\n  }\\n\\n  return lines.join(\\\"\\\\r\\\\n\\\");\\n}\\n\\nfunction formatCell(value) {\\n  if (value === null || value === undefined) {\\n    return \\\"\\\";\\n  }\\n\\n  let text;\\n  if (typeof value === \\\"string\\\") {\\n    text = value;\\n  } else if (typeof value === \\\"number\\\" || typeof value === \\\"bigint\\\") {\\n    text = String(value);\\n  } else if (typeof value === \\\"boolean\\\") {\\n    text = value ? \\\"true\\\" : \\\"false\\\";\\n  } else if (value instanceof Date) {\\n    text = Number.isNaN(value.getTime()) ? \\\"\\\" : value.toISOString();\\n  } else {\\n    try {\\n      text = JSON.stringify(value);\\n    } catch (err) {\\n      text = String(value);\\n    }\\n    if (text === undefined) {\\n      text = \\\"\\\";\\n    }\\n  }\\n\\n  if (typeof value === \\\"string\\\" && isFormulaLike(text)) {\\n    text = \\\"'\\\" + text;\\n  }\\n\\n  if (/[\\\",\\\\r\\\\n]/.test(text) || /^\\\\s|\\\\s$/.test(text)) {\\n    return '\\\"' + text.replace(/\\\"/g, '\\\"\\\"') + '\\\"';\\n  }\\n\\n  return text;\\n}\\n\\nfunction isFormulaLike(text) {\\n  return /^[=+\\\\-@\\\\t\\\\r]/.test(text);\\n}\\n\"}</｜｜DSML｜｜ parameter>\n</｜｜DSML｜｜ invoke>\n</｜｜DSML｜｜ calls>"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 174,
+      "completion_tokens": 845,
+      "total_tokens": 1019,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 174
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "elapsedMs": 3748
+}

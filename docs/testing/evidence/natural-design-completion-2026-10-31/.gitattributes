@@ -1,0 +1,4 @@
+# 保留本批原件的字节与指纹，避免Windows检出时自动转换换行。
+* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# 补丁的空白上下文行是字节原件的一部分，不自动修剪。
+*.patch -whitespace

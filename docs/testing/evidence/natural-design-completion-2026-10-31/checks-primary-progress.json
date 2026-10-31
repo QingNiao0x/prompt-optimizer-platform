@@ -1,0 +1,733 @@
+[
+  {
+    "file": "D_CSV_core-design-completion-v2_execute_1.json",
+    "caseId": "D_CSV",
+    "delivery": [
+      {
+        "name": "原始响应是有效JSON",
+        "pass": true
+      },
+      {
+        "name": "只含允许的完整源码文件",
+        "pass": true
+      },
+      {
+        "name": "只返回实际修改文件",
+        "pass": true
+      }
+    ],
+    "behavior": [
+      {
+        "name": "返回字符串",
+        "pass": true
+      },
+      {
+        "name": "所有行与字段可读取",
+        "pass": true
+      },
+      {
+        "name": "不修改输入",
+        "pass": true
+      },
+      {
+        "name": "空输入可结束并返回字符串",
+        "pass": true
+      },
+      {
+        "name": "外部公式值避免直接执行风险",
+        "pass": false,
+        "error": "The expression evaluated to a falsy value:\n\n  assert.ok(!/^[=+@-]/.test(table[3]?.[index]??''))\n"
+      }
+    ],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_CSV_core-design-completion-v2_execute_2.json",
+    "caseId": "D_CSV",
+    "delivery": [
+      {
+        "name": "原始响应是有效JSON",
+        "pass": true
+      },
+      {
+        "name": "只含允许的完整源码文件",
+        "pass": true
+      },
+      {
+        "name": "只返回实际修改文件",
+        "pass": true
+      }
+    ],
+    "behavior": [
+      {
+        "name": "返回字符串",
+        "pass": true
+      },
+      {
+        "name": "所有行与字段可读取",
+        "pass": true
+      },
+      {
+        "name": "不修改输入",
+        "pass": true
+      },
+      {
+        "name": "空输入可结束并返回字符串",
+        "pass": true
+      },
+      {
+        "name": "外部公式值避免直接执行风险",
+        "pass": false,
+        "error": "The expression evaluated to a falsy value:\n\n  assert.ok(!/^[=+@-]/.test(table[3]?.[index]??''))\n"
+      }
+    ],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_CSV_core-repair-v3_execute_1.json",
+    "caseId": "D_CSV",
+    "delivery": [
+      {
+        "name": "原始响应是有效JSON",
+        "pass": true
+      },
+      {
+        "name": "只含允许的完整源码文件",
+        "pass": true
+      },
+      {
+        "name": "只返回实际修改文件",
+        "pass": true
+      }
+    ],
+    "behavior": [
+      {
+        "name": "返回字符串",
+        "pass": true
+      },
+      {
+        "name": "所有行与字段可读取",
+        "pass": true
+      },
+      {
+        "name": "不修改输入",
+        "pass": true
+      },
+      {
+        "name": "空输入可结束并返回字符串",
+        "pass": true
+      },
+      {
+        "name": "外部公式值避免直接执行风险",
+        "pass": true
+      }
+    ],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_CSV_core-repair-v3_execute_2.json",
+    "caseId": "D_CSV",
+    "delivery": [
+      {
+        "name": "原始响应是有效JSON",
+        "pass": true
+      },
+      {
+        "name": "只含允许的完整源码文件",
+        "pass": true
+      },
+      {
+        "name": "只返回实际修改文件",
+        "pass": true
+      }
+    ],
+    "behavior": [
+      {
+        "name": "返回字符串",
+        "pass": true
+      },
+      {
+        "name": "所有行与字段可读取",
+        "pass": true
+      },
+      {
+        "name": "不修改输入",
+        "pass": true
+      },
+      {
+        "name": "空输入可结束并返回字符串",
+        "pass": true
+      },
+      {
+        "name": "外部公式值避免直接执行风险",
+        "pass": true
+      }
+    ],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_CSV_original_execute_1.json",
+    "caseId": "D_CSV",
+    "delivery": [
+      {
+        "name": "原始响应是有效JSON",
+        "pass": false,
+        "error": "Unexpected non-whitespace character after JSON at position 2149 (line 1 column 2150)"
+      }
+    ],
+    "behavior": []
+  },
+  {
+    "file": "D_CSV_original_execute_2.json",
+    "caseId": "D_CSV",
+    "delivery": [
+      {
+        "name": "原始响应是有效JSON",
+        "pass": true
+      },
+      {
+        "name": "只含允许的完整源码文件",
+        "pass": true
+      },
+      {
+        "name": "只返回实际修改文件",
+        "pass": true
+      }
+    ],
+    "behavior": [
+      {
+        "name": "返回字符串",
+        "pass": true
+      },
+      {
+        "name": "所有行与字段可读取",
+        "pass": true
+      },
+      {
+        "name": "不修改输入",
+        "pass": true
+      },
+      {
+        "name": "空输入可结束并返回字符串",
+        "pass": true
+      },
+      {
+        "name": "外部公式值避免直接执行风险",
+        "pass": true
+      }
+    ],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_INVITE_core-design-completion-v2_execute_1.json",
+    "caseId": "D_INVITE",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      },
+      {
+        "name": "明确篇幅上限",
+        "pass": true
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_INVITE_core-design-completion-v2_execute_2.json",
+    "caseId": "D_INVITE",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      },
+      {
+        "name": "明确篇幅上限",
+        "pass": true
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_INVITE_core-repair-v3_execute_1.json",
+    "caseId": "D_INVITE",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      },
+      {
+        "name": "明确篇幅上限",
+        "pass": true
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_INVITE_core-repair-v3_execute_2.json",
+    "caseId": "D_INVITE",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      },
+      {
+        "name": "明确篇幅上限",
+        "pass": true
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_INVITE_original_execute_1.json",
+    "caseId": "D_INVITE",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      },
+      {
+        "name": "明确篇幅上限",
+        "pass": true
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_INVITE_original_execute_2.json",
+    "caseId": "D_INVITE",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      },
+      {
+        "name": "明确篇幅上限",
+        "pass": true
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_PILOT_core-design-completion-v2_execute_1.json",
+    "caseId": "D_PILOT",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      },
+      {
+        "name": "明确篇幅上限",
+        "pass": true
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_PILOT_core-design-completion-v2_execute_2.json",
+    "caseId": "D_PILOT",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      },
+      {
+        "name": "明确篇幅上限",
+        "pass": true
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_PILOT_core-repair-v3_execute_1.json",
+    "caseId": "D_PILOT",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      },
+      {
+        "name": "明确篇幅上限",
+        "pass": true
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_PILOT_core-repair-v3_execute_2.json",
+    "caseId": "D_PILOT",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      },
+      {
+        "name": "明确篇幅上限",
+        "pass": true
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_PILOT_original_execute_1.json",
+    "caseId": "D_PILOT",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      },
+      {
+        "name": "明确篇幅上限",
+        "pass": false,
+        "error": "含标点的宽容上限720字符，超过需复核"
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_PILOT_original_execute_2.json",
+    "caseId": "D_PILOT",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      },
+      {
+        "name": "明确篇幅上限",
+        "pass": false,
+        "error": "含标点的宽容上限720字符，超过需复核"
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_QUEUE_core-design-completion-v2_execute_1.json",
+    "caseId": "D_QUEUE",
+    "delivery": [
+      {
+        "name": "原始响应是有效JSON",
+        "pass": true
+      },
+      {
+        "name": "只含允许的完整源码文件",
+        "pass": true
+      },
+      {
+        "name": "只返回实际修改文件",
+        "pass": true
+      }
+    ],
+    "behavior": [
+      {
+        "name": "并发上限且所有任务执行一次",
+        "pass": true
+      },
+      {
+        "name": "空任务队列结束",
+        "pass": true
+      },
+      {
+        "name": "并发为1仍完成",
+        "pass": true
+      },
+      {
+        "name": "任务失败不会无限等待",
+        "pass": true
+      },
+      {
+        "name": "无效并发不会无限等待",
+        "pass": true
+      }
+    ],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_QUEUE_core-design-completion-v2_execute_2.json",
+    "caseId": "D_QUEUE",
+    "delivery": [
+      {
+        "name": "原始响应是有效JSON",
+        "pass": true
+      },
+      {
+        "name": "只含允许的完整源码文件",
+        "pass": true
+      },
+      {
+        "name": "只返回实际修改文件",
+        "pass": true
+      }
+    ],
+    "behavior": [
+      {
+        "name": "并发上限且所有任务执行一次",
+        "pass": true
+      },
+      {
+        "name": "空任务队列结束",
+        "pass": true
+      },
+      {
+        "name": "并发为1仍完成",
+        "pass": true
+      },
+      {
+        "name": "任务失败不会无限等待",
+        "pass": true
+      },
+      {
+        "name": "无效并发不会无限等待",
+        "pass": true
+      }
+    ],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_QUEUE_core-repair-v3_execute_1.json",
+    "caseId": "D_QUEUE",
+    "delivery": [
+      {
+        "name": "原始响应是有效JSON",
+        "pass": true
+      },
+      {
+        "name": "只含允许的完整源码文件",
+        "pass": true
+      },
+      {
+        "name": "只返回实际修改文件",
+        "pass": true
+      }
+    ],
+    "behavior": [
+      {
+        "name": "并发上限且所有任务执行一次",
+        "pass": true
+      },
+      {
+        "name": "空任务队列结束",
+        "pass": true
+      },
+      {
+        "name": "并发为1仍完成",
+        "pass": true
+      },
+      {
+        "name": "任务失败不会无限等待",
+        "pass": true
+      },
+      {
+        "name": "无效并发不会无限等待",
+        "pass": true
+      }
+    ],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_QUEUE_core-repair-v3_execute_2.json",
+    "caseId": "D_QUEUE",
+    "delivery": [
+      {
+        "name": "原始响应是有效JSON",
+        "pass": true
+      },
+      {
+        "name": "只含允许的完整源码文件",
+        "pass": true
+      },
+      {
+        "name": "只返回实际修改文件",
+        "pass": true
+      }
+    ],
+    "behavior": [
+      {
+        "name": "并发上限且所有任务执行一次",
+        "pass": true
+      },
+      {
+        "name": "空任务队列结束",
+        "pass": true
+      },
+      {
+        "name": "并发为1仍完成",
+        "pass": true
+      },
+      {
+        "name": "任务失败不会无限等待",
+        "pass": true
+      },
+      {
+        "name": "无效并发不会无限等待",
+        "pass": true
+      }
+    ],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_QUEUE_original_execute_1.json",
+    "caseId": "D_QUEUE",
+    "delivery": [
+      {
+        "name": "原始响应是有效JSON",
+        "pass": true
+      },
+      {
+        "name": "只含允许的完整源码文件",
+        "pass": true
+      },
+      {
+        "name": "只返回实际修改文件",
+        "pass": true
+      }
+    ],
+    "behavior": [
+      {
+        "name": "并发上限且所有任务执行一次",
+        "pass": true
+      },
+      {
+        "name": "空任务队列结束",
+        "pass": true
+      },
+      {
+        "name": "并发为1仍完成",
+        "pass": true
+      },
+      {
+        "name": "任务失败不会无限等待",
+        "pass": true
+      },
+      {
+        "name": "无效并发不会无限等待",
+        "pass": true
+      }
+    ],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "D_QUEUE_original_execute_2.json",
+    "caseId": "D_QUEUE",
+    "delivery": [
+      {
+        "name": "原始响应是有效JSON",
+        "pass": true
+      },
+      {
+        "name": "只含允许的完整源码文件",
+        "pass": true
+      },
+      {
+        "name": "只返回实际修改文件",
+        "pass": true
+      }
+    ],
+    "behavior": [
+      {
+        "name": "并发上限且所有任务执行一次",
+        "pass": true
+      },
+      {
+        "name": "空任务队列结束",
+        "pass": true
+      },
+      {
+        "name": "并发为1仍完成",
+        "pass": true
+      },
+      {
+        "name": "任务失败不会无限等待",
+        "pass": true
+      },
+      {
+        "name": "无效并发不会无限等待",
+        "pass": true
+      }
+    ],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "R_FULL_core-design-completion-v2_execute_1.json",
+    "caseId": "R_FULL",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "R_FULL_core-repair-v3_execute_1.json",
+    "caseId": "R_FULL",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "R_FULL_original_execute_1.json",
+    "caseId": "R_FULL",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "R_REPORT_core-design-completion-v2_execute_1.json",
+    "caseId": "R_REPORT",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "R_REPORT_core-repair-v3_execute_1.json",
+    "caseId": "R_REPORT",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  },
+  {
+    "file": "R_REPORT_original_execute_1.json",
+    "caseId": "R_REPORT",
+    "delivery": [
+      {
+        "name": "有实际内容",
+        "pass": true
+      }
+    ],
+    "behavior": [],
+    "semanticReviewRequired": true
+  }
+]

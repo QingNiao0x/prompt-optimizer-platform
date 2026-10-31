@@ -1,0 +1,36 @@
+{
+  "status": 200,
+  "body": {
+    "id": "84fce573-e35a-43d6-b75d-cb979919ac43",
+    "object": "chat.completion",
+    "created": 1793454240,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"verdict\":\"B\",\"substantiveGain\":true,\"reason\":\"两版都保留了报告交付物、未修改文件，并正确区分已证实与待验证项，也未把“未提供导出实现”误写成“现实没有实现”。B 的实质增益在于把“已证实原因”限定得更准确：A 将“差异发生在导出环节”列为已证实原因，但材料只能证明导出结果与页面/接口数量不一致，尚不能排除导出数据来源独立查询等链路因素；B 明确写成“导出环节或其数据来源”，并补充了取数同源、分页截断、去重合并、写出格式、权限环境等可执行验证项，排查设计更完整。\",\"aIssues\":[\"将“差异发生在导出环节”列为已证实原因，表述略强于材料支持范围；材料只能证实导出结果与页面/接口数量不一致，具体差异位置仍需验证。\",\"待验证项较完整，但对导出取数是否同源、权限/环境差异等链路因素的拆分不如 B 明确。\"],\"bIssues\":[\"“该差异只能定位到‘导出所取数据/导出处理/文件写出’这一链路”中的“只能”略有排他性，但后文已限定不能认定具体缺陷，影响较小。\",\"表格较详细，简洁性略弱于 A，但仍符合简洁排查报告要求。\"],\"evidence\":[{\"side\":\"A\",\"quote\":\"差异发生在导出环节（导出实现未提供，无法进一步定位具体代码位置）\",\"impact\":\"把差异位置作为已证实原因，可能让用户过早排除导出数据来源独立查询等仍需验证的链路因素。\"},{\"side\":\"B\",\"quote\":\"差异发生在导出环节或其数据来源\",\"impact\":\"更准确地区分已证实现象与待验证范围，避免把导出链路中的具体原因提前定死。\"},{\"side\":\"B\",\"quote\":\"导出是否调用同一接口/同一查询条件，是否存在额外过滤（如状态、权限、时间范围）\",\"impact\":\"给出可直接执行的验证方向，有助于用户补齐导出实现后定位少 1 行的原因。\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1358,
+      "completion_tokens": 441,
+      "total_tokens": 1799,
+      "prompt_tokens_details": {
+        "cached_tokens": 128
+      },
+      "prompt_cache_hit_tokens": 128,
+      "prompt_cache_miss_tokens": 1230
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "blinding": {
+    "A": "original",
+    "B": "core-design-completion-v2"
+  },
+  "requiresManualVerification": true
+}

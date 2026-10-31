@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "ab79aa59-e82c-44c3-8d3c-6c20fc281df1",
+    "object": "chat.completion",
+    "created": 1793453596,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"src/runTasks.mjs\":\"/** tasks是无参数异步函数数组，concurrency是并发上限；返回Promise。 */\\nexport function runTasks(tasks, concurrency) {\\n  return new Promise((resolve, reject) => {\\n    if (!Array.isArray(tasks)) {\\n      reject(new TypeError('tasks must be an array of functions'));\\n      return;\\n    }\\n\\n    const total = tasks.length;\\n    if (total === 0) {\\n      resolve([]);\\n      return;\\n    }\\n\\n    if (\\n      typeof concurrency !== 'number' ||\\n      !Number.isInteger(concurrency) ||\\n      concurrency <= 0\\n    ) {\\n      reject(\\n        new RangeError('concurrency must be a positive integer')\\n      );\\n      return;\\n    }\\n\\n    const results = new Array(total);\\n    let nextIndex = 0;\\n    let completed = 0;\\n    let settled = false;\\n\\n    const fail = (error) => {\\n      if (settled) return;\\n      settled = true;\\n      reject(error);\\n    };\\n\\n    const launchNext = () => {\\n      if (settled) return;\\n      if (nextIndex >= total) return;\\n\\n      const index = nextIndex++;\\n      let taskResult;\\n\\n      try {\\n        taskResult = tasks[index]();\\n      } catch (error) {\\n        fail(error);\\n        return;\\n      }\\n\\n      Promise.resolve(taskResult).then(\\n        (value) => {\\n          if (settled) return;\\n          results[index] = value;\\n          completed += 1;\\n\\n          if (completed === total) {\\n            settled = true;\\n            resolve(results);\\n            return;\\n          }\\n\\n          launchNext();\\n        },\\n        (error) => {\\n          fail(error);\\n        }\\n      );\\n    };\\n\\n    const initial = Math.min(concurrency, total);\\n    for (let i = 0; i < initial; i += 1) {\\n      launchNext();\\n    }\\n  });\\n}\\n\"}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 433,
+      "completion_tokens": 497,
+      "total_tokens": 930,
+      "prompt_tokens_details": {
+        "cached_tokens": 256
+      },
+      "prompt_cache_hit_tokens": 256,
+      "prompt_cache_miss_tokens": 177
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}
