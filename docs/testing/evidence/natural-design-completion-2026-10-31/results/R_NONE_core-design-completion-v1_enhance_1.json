@@ -1,0 +1,150 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "R_NONE",
+  "strategyVersion" : "core-design-completion-v1",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T13:20:14.116737700Z",
+  "input" : {
+    "rawPrompt" : "我没有历史用电资料，也不能访问外网。请设计一张可从今天开始记录家庭用电的表格，字段和填写方式由你安排，直接给我可用表格。\n\n不要求先补历史数据，不虚构实际用电值。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-design-completion-v1",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请设计一张可从今天开始使用的家庭用电记录表，直接给出可用表格，字段和填写方式由你安排。表格应便于每天记录，并支持按日、按周或按月汇总用电情况；请说明各字段的含义、填写频率和填写示例，示例数值须明确标注为示例，不能当作实际用电数据。不要要求我先补历史数据，也不要虚构任何实际用电值。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "设计一张可从今天开始记录家庭用电的表格，字段和填写方式由设计者安排，并直接交付可用表格；不要求先补历史数据，不虚构实际用电值。",
+      "deliverable" : "可直接使用的家庭用电记录表格",
+      "requirements" : [ {
+        "text" : "设计一张可从今天开始记录家庭用电的表格，字段和填写方式由设计者安排，并直接交付可用表格",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "请设计一张可从今天开始记录家庭用电的表格，字段和填写方式由你安排，直接给我可用表格。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "OBJECT", "FORMAT" ]
+      }, {
+        "text" : "不要求先补历史数据，不虚构实际用电值",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不要求先补历史数据，不虚构实际用电值。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "表格应便于每天记录，并支持按日、按周或按月汇总用电情况",
+        "benefit" : "使表格结构覆盖日常记录与周期汇总，仍保持直接交付可用表格的边界",
+        "gap" : "原任务只要求可用表格，未说明记录粒度与汇总方式，可能影响表格结构是否满足日常使用"
+      }, {
+        "text" : "说明各字段的含义、填写频率和填写示例，示例数值须明确标注为示例",
+        "benefit" : "让使用者能直接按表填写，同时避免示例被误认为实际用电数据",
+        "gap" : "原任务要求设计者安排字段和填写方式，但未明确需说明字段含义与填写方式"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请设计一张可从今天开始使用的家庭用电记录表，直接给出可用表格，字段和填写方式由你安排。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "不要要求我先补历史数据，也不要虚构任何实际用电值。" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "表格应便于每天记录，并支持按日、按周或按月汇总用电情况" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "请说明各字段的含义、填写频率和填写示例，示例数值须明确标注为示例，不能当作实际用电数据。" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "设计一张可从今天开始记录家庭用电的表格，字段和填写方式由设计者安排，并直接交付可用表格；不要求先补历史数据，不虚构实际用电值。",
+    "deliverable" : "可直接使用的家庭用电记录表格",
+    "requirements" : [ {
+      "text" : "设计一张可从今天开始记录家庭用电的表格，字段和填写方式由设计者安排，并直接交付可用表格",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请设计一张可从今天开始记录家庭用电的表格，字段和填写方式由你安排，直接给我可用表格。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT", "FORMAT" ]
+    }, {
+      "text" : "不要求先补历史数据，不虚构实际用电值",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不要求先补历史数据，不虚构实际用电值。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "表格应便于每天记录，并支持按日、按周或按月汇总用电情况",
+      "benefit" : "使表格结构覆盖日常记录与周期汇总，仍保持直接交付可用表格的边界",
+      "gap" : "原任务只要求可用表格，未说明记录粒度与汇总方式，可能影响表格结构是否满足日常使用"
+    }, {
+      "text" : "说明各字段的含义、填写频率和填写示例，示例数值须明确标注为示例",
+      "benefit" : "让使用者能直接按表填写，同时避免示例被误认为实际用电数据",
+      "gap" : "原任务要求设计者安排字段和填写方式，但未明确需说明字段含义与填写方式"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请设计一张可从今天开始使用的家庭用电记录表，直接给出可用表格，字段和填写方式由你安排。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "不要要求我先补历史数据，也不要虚构任何实际用电值。" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "表格应便于每天记录，并支持按日、按周或按月汇总用电情况" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "请说明各字段的含义、填写频率和填写示例，示例数值须明确标注为示例，不能当作实际用电数据。" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 5265
+}

@@ -1,0 +1,170 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "R_WAIT",
+  "strategyVersion" : "core-design-completion-v1",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T13:19:58.512651200Z",
+  "input" : {
+    "rawPrompt" : "只阅读并理解项目资料，完成后等待后续安排。不写说明、不修改代码。\n\n保持本次只阅读、理解后等待的范围。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "project.txt" ],
+      "fileSnippets" : [ {
+        "path" : "project.txt",
+        "language" : "text",
+        "content" : "合成项目：新增入口和导入入口共用日期校验；导入逐行返回接受或拒绝。",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-design-completion-v1",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请只阅读并理解项目资料，完成后等待后续安排。\n\n阅读时重点把握以下已提供的项目事实：项目资料位于 project.txt；其中说明“新增入口和导入入口共用日期校验；导入逐行返回接受或拒绝”。请据此理解入口与导入流程在日期校验上的共用关系，以及导入按行给出接受或拒绝结果的机制。\n\n本次仅限阅读和理解，不写说明、不修改代码，也不输出其他成果；理解完成后保持等待，不要自行推进后续工作。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "阅读并理解项目资料，完成后等待后续安排；不写说明、不修改代码。",
+      "deliverable" : "",
+      "requirements" : [ {
+        "text" : "只阅读并理解项目资料，完成后等待后续安排。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "只阅读并理解项目资料，完成后等待后续安排。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "CONDITION" ]
+      }, {
+        "text" : "不写说明、不修改代码。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不写说明、不修改代码。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "保持本次只阅读、理解后等待的范围。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "保持本次只阅读、理解后等待的范围。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "阅读时重点把握以下已提供的项目事实：项目资料位于 project.txt；其中说明“新增入口和导入入口共用日期校验；导入逐行返回接受或拒绝”。请据此理解入口与导入流程在日期校验上的共用关系，以及导入按行给出接受或拒绝结果的机制。",
+        "benefit" : "将已提供的项目事实直接用于阅读理解，使理解聚焦于入口共用日期校验和导入逐行返回结果，同时不改变只阅读、不写说明、不修改代码的边界。",
+        "gap" : "原任务只说阅读并理解项目资料，未点明已提供的具体资料位置和内容重点，执行者可能遗漏关键事实。"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请只阅读并理解项目资料，完成后等待后续安排。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "不写说明、不修改代码" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "本次仅限阅读和理解", "理解完成后保持等待，不要自行推进后续工作。" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "阅读时重点把握以下已提供的项目事实：项目资料位于 project.txt；其中说明“新增入口和导入入口共用日期校验；导入逐行返回接受或拒绝”。" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "阅读并理解项目资料，完成后等待后续安排；不写说明、不修改代码。",
+    "deliverable" : "",
+    "requirements" : [ {
+      "text" : "只阅读并理解项目资料，完成后等待后续安排。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "只阅读并理解项目资料，完成后等待后续安排。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "CONDITION" ]
+    }, {
+      "text" : "不写说明、不修改代码。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不写说明、不修改代码。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "保持本次只阅读、理解后等待的范围。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "保持本次只阅读、理解后等待的范围。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "阅读时重点把握以下已提供的项目事实：项目资料位于 project.txt；其中说明“新增入口和导入入口共用日期校验；导入逐行返回接受或拒绝”。请据此理解入口与导入流程在日期校验上的共用关系，以及导入按行给出接受或拒绝结果的机制。",
+      "benefit" : "将已提供的项目事实直接用于阅读理解，使理解聚焦于入口共用日期校验和导入逐行返回结果，同时不改变只阅读、不写说明、不修改代码的边界。",
+      "gap" : "原任务只说阅读并理解项目资料，未点明已提供的具体资料位置和内容重点，执行者可能遗漏关键事实。"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请只阅读并理解项目资料，完成后等待后续安排。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "不写说明、不修改代码" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "本次仅限阅读和理解", "理解完成后保持等待，不要自行推进后续工作。" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "阅读时重点把握以下已提供的项目事实：项目资料位于 project.txt；其中说明“新增入口和导入入口共用日期校验；导入逐行返回接受或拒绝”。" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 5030
+}

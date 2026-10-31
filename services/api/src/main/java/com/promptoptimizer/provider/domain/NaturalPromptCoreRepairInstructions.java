@@ -19,6 +19,9 @@ public final class NaturalPromptCoreRepairInstructions {
     /** 独立检验原成果内部的主动设计补全；沿用v3输入、准备、Plan及覆盖协议，采用另行决定。 */
     public static final String DESIGN_COMPLETION_VERSION = "core-design-completion-v1";
 
+    /** v1真实回归遗漏独立限制；v2先落实原约束再补设计，保留v1失败及原指导。 */
+    public static final String FAITHFUL_DESIGN_VERSION = "core-design-completion-v2";
+
     /**
      * 准备仍只解释委托范围。将完成工作与反馈形式分开，不把模型的解释变成新的用户授权。
      * 条件、否定与实际题答保留在原有actions/response中，完整原输入继续传入后续阶段。
@@ -42,6 +45,12 @@ public final class NaturalPromptCoreRepairInstructions {
     /** 事实需要来源，设计需要解决原任务中的执行问题；不把合理设计写成用户已确认的事实。 */
     public static final String DESIGN_ENHANCE = designEnhancement();
 
+    /** 同一设计假设的一次保真修正；不增加模型阶段或按题目追加禁令。 */
+    public static final String FAITHFUL_DESIGN_ENHANCE = replaceOnce(DESIGN_ENHANCE,
+            "先确定原任务的动作、对象、原定成果及边界，再判断哪些缺口会妨碍执行；充分表达允许少改。",
+            "先将用户明确的现状限制、禁止事项、前提和保留决定作为独立要求落实到正文，再判断原任务内部的设计缺口；充分表达允许少改。\n"
+                    + "这些条件即使不妨碍当前做法也须保留；设计补充不能替代或删去它们，也不能把原本允许的内容反向缩窄。");
+
     /** Plan使用同一动作边界，保留原有决定权和结果影响两个提问条件。 */
     public static final String PLAN = replaceOnce(NaturalPromptRoutingRepairInstructions.OWNED_PLAN, """
             使用与直接增强相同的原定目标、交付物、完整来源和信息状态，判断哪些重要决定确实属于用户。
@@ -59,7 +68,7 @@ public final class NaturalPromptCoreRepairInstructions {
     /** v3只修正文补全依据，复用v2准备范围；v1继续使用此前的准备指导。 */
     public static boolean usesActionBoundary(String version) {
         return ACTION_BOUNDARY_VERSION.equals(version) || COMPLETION_BASIS_VERSION.equals(version)
-                || DESIGN_COMPLETION_VERSION.equals(version);
+                || DESIGN_COMPLETION_VERSION.equals(version) || FAITHFUL_DESIGN_VERSION.equals(version);
     }
 
     /**

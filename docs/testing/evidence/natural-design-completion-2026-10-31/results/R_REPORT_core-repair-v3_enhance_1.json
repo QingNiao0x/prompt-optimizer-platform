@@ -1,0 +1,148 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "R_REPORT",
+  "strategyVersion" : "core-repair-v3",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T13:21:53.552259500Z",
+  "input" : {
+    "rawPrompt" : "阅读材料，交付一份简洁排查报告，区分已证实原因与待验证项，不修改文件。\n\n保留报告这一交付物和不修改文件的限制。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "report.txt" ],
+      "fileSnippets" : [ {
+        "path" : "report.txt",
+        "language" : "text",
+        "content" : "合成故障记录：页面显示5，接口返回5，导出文件只有4行；尚未提供导出实现。",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v3",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请阅读现有材料（包括 report.txt 中的故障记录），交付一份简洁的排查报告，明确区分已证实的原因与待验证项。材料显示：页面显示5、接口返回5、导出文件只有4行，且尚未提供导出实现；据此判断哪些结论已有材料支持、哪些仍需验证，不要将推测写成已证实原因。只输出报告，不修改任何文件。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "阅读现有材料并交付一份简洁排查报告，区分已证实原因与待验证项，且不修改文件",
+      "deliverable" : "一份简洁排查报告，区分已证实原因与待验证项",
+      "requirements" : [ {
+        "text" : "阅读材料，交付一份简洁排查报告，区分已证实原因与待验证项，不修改文件",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "阅读材料，交付一份简洁排查报告，区分已证实原因与待验证项，不修改文件。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "FORMAT", "CONDITION" ]
+      }, {
+        "text" : "保留报告这一交付物和不修改文件的限制",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "保留报告这一交付物和不修改文件的限制。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "FORMAT", "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "将材料中的页面显示5、接口返回5、导出文件只有4行及尚未提供导出实现作为报告判断依据，并避免把推测写成已证实原因",
+        "benefit" : "使报告在原有交付物范围内明确证据边界，落实区分已证实原因与待验证项的要求",
+        "gap" : "原提示词未说明材料中哪些事实可用于区分已证实与待验证，可能导致报告依据不清或把推测列为已证实"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请阅读现有材料（包括 report.txt 中的故障记录），交付一份简洁的排查报告，明确区分已证实的原因与待验证项。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "只输出报告，不修改任何文件。" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "材料显示：页面显示5、接口返回5、导出文件只有4行，且尚未提供导出实现；据此判断哪些结论已有材料支持、哪些仍需验证，不要将推测写成已证实原因。" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "阅读现有材料并交付一份简洁排查报告，区分已证实原因与待验证项，且不修改文件",
+    "deliverable" : "一份简洁排查报告，区分已证实原因与待验证项",
+    "requirements" : [ {
+      "text" : "阅读材料，交付一份简洁排查报告，区分已证实原因与待验证项，不修改文件",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "阅读材料，交付一份简洁排查报告，区分已证实原因与待验证项，不修改文件。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "FORMAT", "CONDITION" ]
+    }, {
+      "text" : "保留报告这一交付物和不修改文件的限制",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "保留报告这一交付物和不修改文件的限制。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT", "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "将材料中的页面显示5、接口返回5、导出文件只有4行及尚未提供导出实现作为报告判断依据，并避免把推测写成已证实原因",
+      "benefit" : "使报告在原有交付物范围内明确证据边界，落实区分已证实原因与待验证项的要求",
+      "gap" : "原提示词未说明材料中哪些事实可用于区分已证实与待验证，可能导致报告依据不清或把推测列为已证实"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请阅读现有材料（包括 report.txt 中的故障记录），交付一份简洁的排查报告，明确区分已证实的原因与待验证项。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "只输出报告，不修改任何文件。" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "材料显示：页面显示5、接口返回5、导出文件只有4行，且尚未提供导出实现；据此判断哪些结论已有材料支持、哪些仍需验证，不要将推测写成已证实原因。" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 5093
+}

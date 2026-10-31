@@ -1,0 +1,136 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "R_NONE",
+  "strategyVersion" : "core-repair-v3",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T13:22:03.350018600Z",
+  "input" : {
+    "rawPrompt" : "我没有历史用电资料，也不能访问外网。请设计一张可从今天开始记录家庭用电的表格，字段和填写方式由你安排，直接给我可用表格。\n\n不要求先补历史数据，不虚构实际用电值。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v3",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "我没有历史用电资料，也不能访问外网。请设计一张可从今天开始记录家庭用电的表格，字段和填写方式由你安排，直接给我可用表格。表格应便于从今天起逐日填写，并说明各字段的填写方式。不要求先补历史数据，不虚构实际用电值。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "设计一张可从今天开始记录家庭用电的表格，字段和填写方式由设计者安排，并直接交付可用表格；不要求先补历史数据，不虚构实际用电值。",
+      "deliverable" : "可直接使用的家庭用电记录表格，含设计者安排的字段和填写方式说明。",
+      "requirements" : [ {
+        "text" : "设计一张可从今天开始记录家庭用电的表格，字段和填写方式由设计者安排，并直接交付可用表格",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "请设计一张可从今天开始记录家庭用电的表格，字段和填写方式由你安排，直接给我可用表格。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "OBJECT", "FORMAT" ]
+      }, {
+        "text" : "不要求先补历史数据，不虚构实际用电值",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不要求先补历史数据，不虚构实际用电值。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "表格应便于从今天起逐日填写，并说明各字段的填写方式",
+        "benefit" : "使交付的表格能直接用于从今天开始的日常记录，并让使用者清楚每个字段如何填写，不新增额外交付物。",
+        "gap" : "原要求已指定字段和填写方式由设计者安排，但未明确表格需覆盖逐日填写场景及填写说明的呈现方式，可能影响表格直接可用性。"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请设计一张可从今天开始记录家庭用电的表格，字段和填写方式由你安排，直接给我可用表格。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "不要求先补历史数据，不虚构实际用电值。" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "表格应便于从今天起逐日填写，并说明各字段的填写方式。" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "设计一张可从今天开始记录家庭用电的表格，字段和填写方式由设计者安排，并直接交付可用表格；不要求先补历史数据，不虚构实际用电值。",
+    "deliverable" : "可直接使用的家庭用电记录表格，含设计者安排的字段和填写方式说明。",
+    "requirements" : [ {
+      "text" : "设计一张可从今天开始记录家庭用电的表格，字段和填写方式由设计者安排，并直接交付可用表格",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请设计一张可从今天开始记录家庭用电的表格，字段和填写方式由你安排，直接给我可用表格。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT", "FORMAT" ]
+    }, {
+      "text" : "不要求先补历史数据，不虚构实际用电值",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不要求先补历史数据，不虚构实际用电值。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "表格应便于从今天起逐日填写，并说明各字段的填写方式",
+      "benefit" : "使交付的表格能直接用于从今天开始的日常记录，并让使用者清楚每个字段如何填写，不新增额外交付物。",
+      "gap" : "原要求已指定字段和填写方式由设计者安排，但未明确表格需覆盖逐日填写场景及填写说明的呈现方式，可能影响表格直接可用性。"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请设计一张可从今天开始记录家庭用电的表格，字段和填写方式由你安排，直接给我可用表格。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "不要求先补历史数据，不虚构实际用电值。" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "表格应便于从今天起逐日填写，并说明各字段的填写方式。" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 5043
+}

@@ -19,7 +19,7 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app.enhancement.natural")
 public class NaturalEnhancementSettings {
     /** 默认v3；DESIGN_COMPLETION仅显式试用，不凭注册自动采用，历史仍按保存版本。 */
-    public enum Profile { STABLE, CORE_REPAIR, ACTION_BOUNDARY_REPAIR, COMPLETION_BASIS_REPAIR, DESIGN_COMPLETION }
+    public enum Profile { STABLE, CORE_REPAIR, ACTION_BOUNDARY_REPAIR, COMPLETION_BASIS_REPAIR, DESIGN_COMPLETION, FAITHFUL_DESIGN }
 
     @NotNull
     private Profile profile = Profile.COMPLETION_BASIS_REPAIR;
@@ -38,6 +38,7 @@ public class NaturalEnhancementSettings {
             case ACTION_BOUNDARY_REPAIR -> NaturalPromptCoreRepairInstructions.ACTION_BOUNDARY_VERSION;
             case COMPLETION_BASIS_REPAIR -> NaturalPromptCoreRepairInstructions.COMPLETION_BASIS_VERSION;
             case DESIGN_COMPLETION -> NaturalPromptCoreRepairInstructions.DESIGN_COMPLETION_VERSION;
+            case FAITHFUL_DESIGN -> NaturalPromptCoreRepairInstructions.FAITHFUL_DESIGN_VERSION;
         };
     }
 }

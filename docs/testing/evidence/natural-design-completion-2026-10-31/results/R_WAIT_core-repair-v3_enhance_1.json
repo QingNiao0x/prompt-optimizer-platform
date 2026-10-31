@@ -1,0 +1,170 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "R_WAIT",
+  "strategyVersion" : "core-repair-v3",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T13:21:48.577964300Z",
+  "input" : {
+    "rawPrompt" : "只阅读并理解项目资料，完成后等待后续安排。不写说明、不修改代码。\n\n保持本次只阅读、理解后等待的范围。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "project.txt" ],
+      "fileSnippets" : [ {
+        "path" : "project.txt",
+        "language" : "text",
+        "content" : "合成项目：新增入口和导入入口共用日期校验；导入逐行返回接受或拒绝。",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v3",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请只阅读并理解项目资料，完成后等待后续安排。不要写说明，也不要修改代码。\n\n本次任务仅限阅读和理解，理解完成后即停止，保持等待状态，不要自行开展后续工作。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "阅读并理解项目资料，完成后等待后续安排；不写说明、不修改代码。",
+      "deliverable" : "",
+      "requirements" : [ {
+        "text" : "只阅读并理解项目资料，完成后等待后续安排。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "只阅读并理解项目资料，完成后等待后续安排。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "CONDITION" ]
+      }, {
+        "text" : "不写说明、不修改代码。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不写说明、不修改代码。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "保持本次只阅读、理解后等待的范围。",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "保持本次只阅读、理解后等待的范围。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "理解完成后即停止，保持等待状态，不要自行开展后续工作。",
+        "benefit" : "明确任务终点，确保只完成阅读与理解并停在等待状态，不新增任何交付物。",
+        "gap" : "原文已说明完成后等待，但未明确理解完成后不得自行推进后续动作，执行者可能误以为需要继续处理。"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请只阅读并理解项目资料，完成后等待后续安排。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "不要写说明，也不要修改代码。" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "本次任务仅限阅读和理解" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "理解完成后即停止，保持等待状态，不要自行开展后续工作。" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "阅读并理解项目资料，完成后等待后续安排；不写说明、不修改代码。",
+    "deliverable" : "",
+    "requirements" : [ {
+      "text" : "只阅读并理解项目资料，完成后等待后续安排。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "只阅读并理解项目资料，完成后等待后续安排。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "CONDITION" ]
+    }, {
+      "text" : "不写说明、不修改代码。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不写说明、不修改代码。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "保持本次只阅读、理解后等待的范围。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "保持本次只阅读、理解后等待的范围。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "理解完成后即停止，保持等待状态，不要自行开展后续工作。",
+      "benefit" : "明确任务终点，确保只完成阅读与理解并停在等待状态，不新增任何交付物。",
+      "gap" : "原文已说明完成后等待，但未明确理解完成后不得自行推进后续动作，执行者可能误以为需要继续处理。"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请只阅读并理解项目资料，完成后等待后续安排。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "不要写说明，也不要修改代码。" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "本次任务仅限阅读和理解" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "理解完成后即停止，保持等待状态，不要自行开展后续工作。" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 4321
+}
