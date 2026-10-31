@@ -1,0 +1,40 @@
+{
+  "status": 200,
+  "body": {
+    "requestId": "be0fc3ce-088e-43f2-9df6-decc2506fad6",
+    "data": {
+      "summary": "原任务要求先确认新交付日期和补偿方案，再撰写仅含正文的服务延期通知。这两项均由用户决定且原文要求先确认，因此需向用户提问；确认后再生成正文。",
+      "questions": [
+        {
+          "id": "q1",
+          "question": "请确认新的交付日期是什么？",
+          "hint": "该日期将写入延期通知正文，是正文中必须明确的交付时间承诺。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "q2",
+          "question": "请确认向客户提供的补偿方案是什么？",
+          "hint": "该方案将写入延期通知正文，决定向客户说明的补偿内容。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "AUTO",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 4419,
+      "planId": "f26e2a8d-a91c-4651-8b45-8bdc54f67a92",
+      "planningContext": null,
+      "expiresAt": "2026-10-31T18:04:00.985791Z"
+    }
+  }
+}

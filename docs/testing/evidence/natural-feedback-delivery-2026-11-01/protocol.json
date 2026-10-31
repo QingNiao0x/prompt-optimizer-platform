@@ -1,0 +1,93 @@
+{
+  "status": "FROZEN",
+  "frozenAt": "2026-10-31T17:29:30.550Z",
+  "authorization": "本轮新增500次，原阶段67次已结算，后续同任务合成材料及派生内容仍在总授权内",
+  "totalMaximum": 500,
+  "priorCalls": 67,
+  "stageMaximum": 48,
+  "phaseLimits": {
+    "enhance": 16,
+    "plan": 0,
+    "execute": 8,
+    "grade": 0,
+    "product": 24
+  },
+  "qualityRetries": 0,
+  "versions": [
+    "core-repair-v3"
+  ],
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "max_tokens": 8192,
+  "thinking": "disabled",
+  "files": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRevision.java",
+      "sha256": "e09ca728c4dcba03eaf4e16b5c74fa9195bbe9933b51d4fc8b5c04b725f6d4d2"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInput.java",
+      "sha256": "e9d19aea5131268208d7888e89a5188b55e33352736311c89a20201b7b8f625c"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskSource.java",
+      "sha256": "b29fdf89e6e9566f988f54d71c6bd566cdc5bba90159c7d21e487538a2dbf290"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java",
+      "sha256": "1cd13c802b6fb0a3cb99592dd8ab4efba2611b932158c719a27aa6e4295c9a37"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptCoreRepairInstructions.java",
+      "sha256": "b77a597457c20adeda4c0c00d21a8fe803476ccd8770b252cff6e87a6e52ea5b"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "a9f610b9b8a0c920734ee395f2f548030923d51ce6e9fabc9fb830384641c762"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementService.java",
+      "sha256": "62d9d15a6996f7b5489baba47daaa76efc881beaefd4adebff4f177e5e1f7d89"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/history/service/impl/MybatisOptimizationHistoryService.java",
+      "sha256": "0afa1cf0d12305a125551328f6c58e5536368975665a82bd1b123d68f5fdb3de"
+    },
+    {
+      "path": "docs/testing/evidence/natural-feedback-delivery-2026-11-01/run.mjs",
+      "sha256": "131f2273a0ba6d3f947a913e4cb68d03f7efbf83d090cb057dfbabe1b7e3e754"
+    },
+    {
+      "path": "docs/testing/evidence/natural-feedback-delivery-2026-11-01/run.ps1",
+      "sha256": "cdcfc0425700f31930d4d375e728f4463203d390abb670be2269cc99bbf03224"
+    },
+    {
+      "path": "docs/testing/evidence/natural-feedback-delivery-2026-11-01/SimplificationFeedbackEvaluation.java",
+      "sha256": "12f9b5a12e4caffc5cca2bcebc15f18551768d9e67e928ece3061e110415a88d"
+    },
+    {
+      "path": "docs/testing/evidence/natural-feedback-delivery-2026-11-01/cases.json",
+      "sha256": "aec5f3d7380d94d6693850786c51a3a94c46c86759849b8f2e26345988294ba8"
+    },
+    {
+      "path": "docs/testing/evidence/natural-feedback-delivery-2026-11-01/product-cases.json",
+      "sha256": "e439791c8ceb2d41b7449a10106db52bb3b8cb40193b207d08ab31d111b9a0c5"
+    },
+    {
+      "path": "docs/testing/evidence/natural-feedback-delivery-2026-11-01/product-relay.mjs",
+      "sha256": "430b65234b45e506407bb6ab46b9782c94facad338ba6eda2497310abc059ed7"
+    },
+    {
+      "path": "docs/testing/evidence/natural-feedback-delivery-2026-11-01/product.ps1",
+      "sha256": "7b2fb47554d441c2765493bcadc290c7c0411e98996d0c8078a83ffee7380c6c"
+    },
+    {
+      "path": "docs/testing/evidence/natural-feedback-delivery-2026-11-01/product-browser.mjs",
+      "sha256": "567e8499a8c96ef1ef4c89900862f53887e7c1e286749ff5c6d3304c1dd62c1b"
+    }
+  ],
+  "hypothesis": "Feedback scope preparation and body generation obey their own output contract; body strategy stays v3. No per-case rule.",
+  "acceptance": "Apply feedback, preserve unaffected original requirements and bound answers, no new severe error. Verify real authentication, API, copy and persistent history. No default switch to simplified.",
+  "payloadScope": "Frozen synthetic cases and their derived Plan, prompts and work only; no real business code or credentials."
+}

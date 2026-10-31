@@ -1,0 +1,204 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "F_FIX",
+  "strategyVersion" : "core-repair-v3",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T17:29:31.706628500Z",
+  "input" : {
+    "rawPrompt" : "排查 @src/cart.ts 中重复提交导致重复订单的问题并修复，保留现有接口。",
+    "context" : {
+      "customDescription" : "只能修改src/cart.ts，不允许新增依赖。",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v3",
+    "revision" : {
+      "previousPrompt" : "请出具排查报告，分析src/cart.ts中重复提交导致重复订单的问题并给出修改建议，保留现有接口，不新增依赖，只修改src/cart.ts。",
+      "earlierFeedback" : [ ],
+      "feedback" : "不要改成报告，直接定位并修复；其余范围和技术细节保留。"
+    },
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "revision.previousPrompt",
+      "kind" : "ASSISTANT_CONVERSATION"
+    }, {
+      "id" : "revision.feedback",
+      "kind" : "USER_REVISION"
+    }, {
+      "id" : "context.customDescription",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请直接排查并修复 src/cart.ts 中重复提交导致重复订单的问题，不要改成出具报告或只给修改建议。修复时保留现有接口，不新增依赖，并且只修改 src/cart.ts。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "直接定位 src/cart.ts 中重复提交导致重复订单的问题并完成修复，保留现有接口，只修改 src/cart.ts，不新增依赖。",
+      "deliverable" : "对 src/cart.ts 的修复结果；不产出排查报告或仅修改建议。",
+      "requirements" : [ {
+        "text" : "排查 src/cart.ts 中重复提交导致重复订单的问题并修复",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "排查 @src/cart.ts 中重复提交导致重复订单的问题并修复，保留现有接口。",
+          "origin" : "ORIGINAL_REQUEST"
+        }, {
+          "sourceId" : "revision.feedback",
+          "quote" : "不要改成报告，直接定位并修复；其余范围和技术细节保留。",
+          "origin" : "USER_REVISION"
+        } ],
+        "dimensions" : [ "GOAL" ]
+      }, {
+        "text" : "修复时保留现有接口",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "保留现有接口。",
+          "origin" : "ORIGINAL_REQUEST"
+        }, {
+          "sourceId" : "revision.feedback",
+          "quote" : "其余范围和技术细节保留。",
+          "origin" : "USER_REVISION"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "只修改 src/cart.ts，不新增依赖",
+        "evidence" : [ {
+          "sourceId" : "context.customDescription",
+          "quote" : "只能修改src/cart.ts，不允许新增依赖。",
+          "origin" : "PROJECT_CONTEXT"
+        }, {
+          "sourceId" : "revision.feedback",
+          "quote" : "其余范围和技术细节保留。",
+          "origin" : "USER_REVISION"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "不要改成出具报告或只给修改建议",
+        "evidence" : [ {
+          "sourceId" : "revision.feedback",
+          "quote" : "不要改成报告，直接定位并修复",
+          "origin" : "USER_REVISION"
+        } ],
+        "dimensions" : [ "FORMAT" ]
+      } ],
+      "additions" : [ ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请直接排查并修复 src/cart.ts 中重复提交导致重复订单的问题" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "修复时保留现有接口" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "不新增依赖，并且只修改 src/cart.ts" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "不要改成出具报告或只给修改建议" ]
+        } ],
+        "additionCoverage" : [ ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "直接定位 src/cart.ts 中重复提交导致重复订单的问题并完成修复，保留现有接口，只修改 src/cart.ts，不新增依赖。",
+    "deliverable" : "对 src/cart.ts 的修复结果；不产出排查报告或仅修改建议。",
+    "requirements" : [ {
+      "text" : "排查 src/cart.ts 中重复提交导致重复订单的问题并修复",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "排查 @src/cart.ts 中重复提交导致重复订单的问题并修复，保留现有接口。",
+        "origin" : "ORIGINAL_REQUEST"
+      }, {
+        "sourceId" : "revision.feedback",
+        "quote" : "不要改成报告，直接定位并修复；其余范围和技术细节保留。",
+        "origin" : "USER_REVISION"
+      } ],
+      "dimensions" : [ "GOAL" ]
+    }, {
+      "text" : "修复时保留现有接口",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "保留现有接口。",
+        "origin" : "ORIGINAL_REQUEST"
+      }, {
+        "sourceId" : "revision.feedback",
+        "quote" : "其余范围和技术细节保留。",
+        "origin" : "USER_REVISION"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "只修改 src/cart.ts，不新增依赖",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "只能修改src/cart.ts，不允许新增依赖。",
+        "origin" : "PROJECT_CONTEXT"
+      }, {
+        "sourceId" : "revision.feedback",
+        "quote" : "其余范围和技术细节保留。",
+        "origin" : "USER_REVISION"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "不要改成出具报告或只给修改建议",
+      "evidence" : [ {
+        "sourceId" : "revision.feedback",
+        "quote" : "不要改成报告，直接定位并修复",
+        "origin" : "USER_REVISION"
+      } ],
+      "dimensions" : [ "FORMAT" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请直接排查并修复 src/cart.ts 中重复提交导致重复订单的问题" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "修复时保留现有接口" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "不新增依赖，并且只修改 src/cart.ts" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "不要改成出具报告或只给修改建议" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 4434
+}
