@@ -123,17 +123,37 @@ const readingLabel = computed(() => {
 
 const indexingLabel = computed(() => {
   if (props.isPausing) {
-    return '正在保存当前批次和暂停检查点…';
+    return props.indexProgress?.phase === 'PREPARING'
+      ? '已请求暂停，正在等待本地索引准备完成…'
+      : '正在保存当前批次和暂停检查点…';
   }
   if (!props.indexProgress) {
     return '正在初始化本地索引…';
   }
   const progress = props.indexProgress;
+  if (progress.phase === 'PREPARING') {
+    const preparation = progress.preparation;
+    const elapsed = `已用 ${formatDuration(progress.elapsedMs)}`;
+    if (preparation?.stage === 'UPGRADING_STORAGE') {
+      if (preparation.total !== undefined && preparation.completed === preparation.total) {
+        return `旧索引转换已完成，正在提交本地存储 · ${elapsed}`;
+      }
+      const count = preparation.total === undefined ? ''
+        : ` · 已转换 ${(preparation.completed ?? 0).toLocaleString()} / ${preparation.total.toLocaleString()} 个旧片段`;
+      return `正在升级已有本地索引${count} · ${elapsed}；尚未开始统计本次目录`;
+    }
+    if (preparation?.stage === 'CLEANING_STORAGE') return `正在清理到期的旧索引 · ${preparation.completed ?? 0} / ${preparation.total ?? 0} 个项目 · ${elapsed}`;
+    if (preparation?.stage === 'STARTING_WORKER') return `正在启动目录索引线程 · ${elapsed}`;
+    if (preparation?.stage === 'READING_RULES') return `正在读取目录筛选规则 · ${elapsed}`;
+    if (preparation?.stage === 'SAVING_SOURCE') return `正在保存本次目录授权 · ${elapsed}`;
+    if (preparation?.stage === 'REQUESTING_STORAGE') return `正在申请浏览器持久存储 · ${elapsed}`;
+    return `正在打开已有本地索引 · ${elapsed}；尚未开始统计本次目录`;
+  }
   const speed = progress.filesPerSecond > 0
     ? `${Math.round(progress.filesPerSecond).toLocaleString()} 文件/秒`
     : '正在计算速度';
   if (progress.phase === 'SCANNING') {
-    return `正在统计文件范围 · 已发现 ${progress.discoveredFiles.toLocaleString()} 个文件 · 排除 ${progress.ignoredDirectories ?? 0} 个目录`;
+    return `正在统计文件范围 · 已发现 ${progress.discoveredFiles.toLocaleString()} 个文件 · 排除 ${progress.ignoredDirectories ?? 0} 个目录 · 已用 ${formatDuration(progress.elapsedMs)}`;
   }
   const total = progress.totalFiles === undefined
     ? progress.processedFiles.toLocaleString()
@@ -426,7 +446,7 @@ const addManualFile = (): void => {
                     : '请选择需要授权的项目目录…' }}
             </small>
             <small v-if="isIndexing && indexProgress?.currentPath" class="reading-meta" :title="indexProgress.currentPath">
-              当前文件：{{ indexProgress.currentPath }}
+              {{ indexProgress.phase === 'INDEXING' ? '当前文件' : '当前位置' }}：{{ indexProgress.currentPath }}
             </small>
             <small v-if="isReading && progress && !['scan', 'read'].includes(progress.phase)" class="reading-meta">
               本批第 {{ progress.current }} / {{ progress.total }} 个文件 · 已完成 {{ progress.accepted }} · 未完成 {{ progress.skipped }}

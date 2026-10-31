@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
   countDirectoryEntries,
@@ -12,6 +12,24 @@ const fileHandle = (name: string, content: string): FileSystemHandleLike => ({
   kind: 'file',
   name,
   getFile: async () => new File([content], name, { type: 'text/plain' }),
+});
+
+it('原生枚举尚未返回时报告真实位置和零计数，完成后停止心跳', async () => {
+  vi.useFakeTimers();
+  let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  const progress: { currentPath: string; discoveredFiles: number }[] = [];
+  const root: DirectoryHandleLike = { kind: 'directory', name: 'waiting-root',
+    async *values() { await gate; yield fileHandle('source.ts', 'export const value=1'); } };
+  const pending = countDirectoryEntries(root, value => progress.push(value));
+  try {
+    await vi.advanceTimersByTimeAsync(2100);
+    expect(progress.length).toBeGreaterThanOrEqual(3);
+    expect(progress.every(value => value.currentPath === 'waiting-root' && value.discoveredFiles === 0)).toBe(true);
+    release();
+    expect((await pending).totalFiles).toBe(1);
+    expect(vi.getTimerCount()).toBe(0);
+  } finally { release(); await pending; vi.useRealTimers(); }
 });
 
 const directoryHandle = (

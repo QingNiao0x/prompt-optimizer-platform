@@ -120,7 +120,10 @@ test('旧索引升级保留全部关联，更新删除与回滚不污染其他�
     const { IndexedDbProjectIndexRepository } = await import(modulePath) as
       typeof import('../src/features/project-index/indexedDbProjectIndexRepository');
     const repo = new IndexedDbProjectIndexRepository();
+    const preparation: import('../src/features/project-index/projectIndexer').ProjectIndexPreparationProgress[] = [];
+    const stopObserving = repo.observePreparation(progress => preparation.push(progress));
     const migrated = await repo.findCandidateChunks('p', ['shared'], 3);
+    stopObserving();
     const db = await request(indexedDB.open(dbName));
     const preservedBodies = await request<Chunk[]>(db.transaction('chunks').objectStore('chunks').getAll());
     const preservedTerms = await request<{ id: string; searchTerms: string[] }[]>(db.transaction('chunkSearch').objectStore('chunkSearch').getAll());
@@ -150,6 +153,8 @@ test('旧索引升级保留全部关联，更新删除与回滚不污染其他�
     const other = await repo.findCandidateChunks('q', ['shared'], 1);
     db.close();
     return {
+      migrationCounts: preparation.filter(p => p.stage === 'UPGRADING_STORAGE' && p.completed !== undefined)
+        .map(p => [p.completed, p.total]),
       unchangedData: preserved.every(row => {
         const source = original.find(item => item.id === row.id)!;
         return Object.keys(source).every(key => JSON.stringify(row[key as keyof Chunk]) === JSON.stringify(source[key as keyof Chunk]));
@@ -165,7 +170,7 @@ test('旧索引升级保留全部关联，更新删除与回滚不污染其他�
         && final.blocks.every(r => Object.values(r.ids).every((id: string) => id.startsWith('q\0'))),
     };
   });
-  expect(result).toEqual({ unchangedData: true, sameOrder: true, insertionOrderPreserved: true, oldTermRemoved: true,
+  expect(result).toEqual({ migrationCounts: [[0, 28], [28, 28]], unchangedData: true, sameOrder: true, insertionOrderPreserved: true, oldTermRemoved: true,
     newTermFound: true, rolledBack: true, replacementCount: 1, removed: 2,
     cleanedIds: ['p\u00000-new.txt\u00000', 'p\0keep.txt\u00000', 'q\0a.txt\u00000'], noStalePostings: true, isolated: true });
 });

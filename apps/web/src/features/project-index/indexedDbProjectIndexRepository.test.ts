@@ -25,6 +25,26 @@ describe('IndexedDbProjectIndexRepository connection recovery', () => {
     expect(openCount).toBe(2);
   });
 
+  it('should close an abandoned blocked connection rather than overwrite a successful retry', async () => {
+    const lateDatabase = createHealthyDatabase(), healthyDatabase = createHealthyDatabase();
+    const blocked = { result: lateDatabase } as IDBOpenDBRequest;
+    let openings = 0;
+    vi.stubGlobal('indexedDB', { open: () => {
+      if (++openings === 1) {
+        queueMicrotask(() => blocked.onblocked?.(new Event('blocked') as IDBVersionChangeEvent));
+        return blocked;
+      }
+      return createOpenRequest(healthyDatabase);
+    } });
+    const repository = new IndexedDbProjectIndexRepository();
+    await expect(repository.findProject('p')).rejects.toThrow('其他标签页');
+    await expect(repository.findProject('p')).resolves.toBeUndefined();
+    blocked.onsuccess?.(new Event('success'));
+    expect(lateDatabase.close).toHaveBeenCalledOnce();
+    await expect(repository.findProject('p')).resolves.toBeUndefined();
+    expect(openings).toBe(2);
+  });
+
   it('should delete a project with one atomic key-range transaction', async () => {
     const deleted = new Map<string, unknown[]>();
     vi.stubGlobal('IDBKeyRange', {

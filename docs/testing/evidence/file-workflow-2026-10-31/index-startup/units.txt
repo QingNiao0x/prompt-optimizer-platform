@@ -1,0 +1,29 @@
+
+> @prompt-optimizer/web@0.1.0 test
+> vitest run src/features/project-index src/composables/useProjectIndex.test.ts src/composables/useProjectIndexPreparation.test.ts src/workers/projectIndex.worker.test.ts
+
+
+ RUN  v3.2.7 E:/MyProject/prompt-optimizer-platform/apps/web
+
+ ✓ src/features/project-index/projectIndexFailure.test.ts (6 tests) 5ms
+ ✓ src/features/project-index/projectPathReferences.test.ts (18 tests) 247ms
+ ✓ src/features/project-index/projectFileScope.test.ts (4 tests) 161ms
+ ✓ src/composables/useProjectIndex.test.ts (2 tests) 13ms
+ ✓ src/features/project-index/fileSystemDirectorySource.test.ts (12 tests) 296ms
+ ✓ src/features/project-index/indexedDbProjectIndexRepository.test.ts (3 tests) 100ms
+ ✓ src/composables/useProjectIndexPreparation.test.ts (2 tests) 213ms
+ ✓ src/workers/projectIndex.worker.test.ts (1 test) 1311ms
+   ✓ pre-counts handles then reads each file once and reports completion after persistence  1309ms
+ ✓ src/features/project-index/projectIndexer.test.ts (39 tests) 6777ms
+   ✓ indexProject > preloads small files with bounded concurrency and retains complete content and metadata  321ms
+   ✓ indexProject > retains committed batches and the original quota error when failure-state persistence also fails  800ms
+   ✓ indexProject > should write a large file in bounded batches and reuse its completed fingerprint  1347ms
+   ✓ indexProject > should stream every eligible source file without stopping at one thousand files  1814ms
+   ✓ indexProject > should preserve a paused checkpoint and skip completed files when resumed  512ms
+   ✓ retrieveProjectContext > should recall an explicit directory before generic matches exhaust the candidate budget  1135ms
+
+ Test Files  9 passed (9)
+      Tests  87 passed (87)
+   Start at  13:06:12
+   Duration  10.95s (transform 8.22s, setup 0ms, collect 14.13s, tests 9.12s, environment 3ms, prepare 4.34s)
+

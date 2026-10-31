@@ -72,6 +72,12 @@ scope.onmessage = async (event: MessageEvent<ProjectIndexWorkerRequest>): Promis
   isRunning = true;
   try {
     const startedAt = performance.now();
+    scope.postMessage({ type: 'progress', progress: {
+      phase: 'PREPARING', preparation: { stage: 'READING_RULES' }, currentPath: rootHandle.name,
+      processedFiles: 0, discoveredFiles: 0, indexedFiles: 0, eligibleFiles: 0, ignoredFiles: 0,
+      failedFiles: 0, addedFiles: 0, updatedFiles: 0, unchangedFiles: 0, chunkCount: 0,
+      indexedCharacters: 0, filesPerSecond: 0, elapsedMs: 0,
+    } });
     const fileScope = await loadProjectFileScope(rootHandle, respectGitignore);
     // 为真实百分比仅预枚举句柄，不读取正文、不保存全项目 File 数组。统计与索引共用冻结的规则。
     const counted = await countDirectoryEntries(rootHandle, (count) => scope.postMessage({

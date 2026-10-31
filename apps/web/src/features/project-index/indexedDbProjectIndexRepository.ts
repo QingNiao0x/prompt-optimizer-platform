@@ -3,6 +3,7 @@ import type {
   IndexedProjectFile,
   ProjectIndexRepository,
   ProjectIndexSummary,
+  ProjectIndexPreparationProgress,
 } from './projectIndexer';
 import type { DirectoryHandleLike } from './fileSystemDirectorySource';
 import { referencedPathVariants } from './projectPathReferences';
@@ -29,6 +30,20 @@ interface ProjectSourceRecord {
 export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
   private databasePromise?: Promise<IDBDatabase>;
   private activeDatabase?: IDBDatabase;
+  private preparation?: ProjectIndexPreparationProgress;
+  private preparationListeners = new Set<(progress: ProjectIndexPreparationProgress) => void>();
+
+  /** 观察共享连接的准备进度；订阅不启动迁移，离开页面只解除订阅，不删除或中断其他调用的数据。 */
+  observePreparation(listener: (progress: ProjectIndexPreparationProgress) => void): () => void {
+    this.preparationListeners.add(listener);
+    if (this.preparation) listener(this.preparation);
+    return () => { this.preparationListeners.delete(listener); };
+  }
+
+  private reportPreparation(progress: ProjectIndexPreparationProgress): void {
+    this.preparation = progress;
+    for (const listener of this.preparationListeners) listener(progress);
+  }
 
   async beginProject(summary: ProjectIndexSummary): Promise<void> {
     await this.putProject(summary);
@@ -297,9 +312,13 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
       const reachedExpiry = Number.isFinite(expiresAt) && expiresAt <= now.getTime();
       return reachedExpiry;
     });
+    this.reportPreparation({ stage: 'CLEANING_STORAGE', completed: 0, total: expired.length });
+    let cleaned = 0;
     for (const project of expired) {
       await this.deleteProject(project.id);
+      this.reportPreparation({ stage: 'CLEANING_STORAGE', completed: ++cleaned, total: expired.length });
     }
+    this.preparation = undefined;
     return expired.length;
   }
 
@@ -405,10 +424,15 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
 
   private openDatabase(): Promise<IDBDatabase> {
     if (!this.databasePromise) {
+      this.reportPreparation({ stage: 'OPENING_STORAGE' });
       let openingPromise: Promise<IDBDatabase>;
       openingPromise = new Promise((resolve, reject) => {
+        let abandoned = false;
         const request = indexedDB.open(DATABASE_NAME, DATABASE_VERSION);
         request.onupgradeneeded = (event) => {
+          // blocked 后调用方已收到失败；晚到的升级不能在重试背后另开连接或修改旧库。
+          if (abandoned) { request.transaction?.abort(); return; }
+          this.reportPreparation({ stage: 'UPGRADING_STORAGE' });
           const database = request.result;
           if (!database.objectStoreNames.contains(PROJECT_STORE)) {
             database.createObjectStore(PROJECT_STORE, { keyPath: 'id' });
@@ -439,7 +463,8 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
           if ((event as IDBVersionChangeEvent).oldVersion < 4) {
             createSearchStores(database);
             if (chunkStore.indexNames.contains('searchTerms')) chunkStore.deleteIndex('searchTerms');
-            migrateChunkSearch(request.transaction!, chunkStore);
+            migrateChunkSearch(request.transaction!, chunkStore, (completed, total) =>
+              this.reportPreparation({ stage: 'UPGRADING_STORAGE', completed, total }));
           }
           if (!database.objectStoreNames.contains(SOURCE_STORE)) {
             database.createObjectStore(SOURCE_STORE, { keyPath: 'projectId' });
@@ -447,7 +472,9 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
         };
         request.onsuccess = () => {
           const database = request.result;
+          if (abandoned) { database.close(); return; }
           this.activeDatabase = database;
+          this.preparation = undefined;
           database.onversionchange = () => this.invalidateDatabase(database);
           database.onclose = () => this.clearDatabaseCache(database, openingPromise);
           resolve(database);
@@ -457,8 +484,9 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
           reject(request.error ?? new Error('无法打开本地项目索引'));
         };
         request.onblocked = () => {
+          abandoned = true;
           this.clearDatabaseCache(undefined, openingPromise);
-          reject(new Error('本地项目索引正在被其他页面占用'));
+          reject(new Error('其他页面仍占用旧版项目索引。请关闭或刷新同一站点的其他标签页，再点击“继续索引”；无需删除已有数据。'));
         };
       });
       this.databasePromise = openingPromise;
@@ -487,6 +515,7 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     }
     this.activeDatabase = undefined;
     this.databasePromise = undefined;
+    this.preparation = undefined;
   }
 }
 

@@ -99,8 +99,10 @@ export const countDirectoryEntries = async (
     scopeExcludedFiles: 0, excludedDirectorySamples: [] };
   let lastReportedFiles = -1;
   let lastReportedAt = 0;
+  let currentLocation = root.name;
 
   const report = (currentPath: string, force = false): void => {
+    currentLocation = currentPath;
     const now = performance.now();
     if (
       !force
@@ -116,6 +118,7 @@ export const countDirectoryEntries = async (
   };
 
   const countDirectory = async (directory: DirectoryHandleLike, parentPath: string): Promise<void> => {
+    report(parentPath || root.name);
     for await (const handle of directory.values()) {
       if (shouldStop() || summary.totalFiles >= maxFiles) return;
       const path = parentPath ? `${parentPath}/${handle.name}` : handle.name;
@@ -135,10 +138,14 @@ export const countDirectoryEntries = async (
     }
   };
 
-  report('', true);
-  await countDirectory(root, '');
-  report('', true);
-  return summary;
+  report(root.name, true);
+  // 原生目录枚举等待期间也报告当前位置；只重复真实计数，不把等待伪装成新发现的文件。
+  const heartbeat = onProgress ? setInterval(() => report(currentLocation, true), 1000) : undefined;
+  try {
+    await countDirectory(root, '');
+    report(root.name, true);
+    return summary;
+  } finally { if (heartbeat !== undefined) clearInterval(heartbeat); }
 };
 
 const walkDirectory = async function* (

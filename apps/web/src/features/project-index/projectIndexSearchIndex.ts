@@ -81,9 +81,17 @@ export const lookupSearchChunkIds = async (
 };
 
 /** 逐批迁移旧完整词表；升级事务失败整体回滚，不先清空已保存的源码。 */
-export const migrateChunkSearch = (transaction: IDBTransaction, chunks: IDBObjectStore): void => {
+export const migrateChunkSearch = (
+  transaction: IDBTransaction, chunks: IDBObjectStore,
+  onProgress?: (completed: number, total: number) => void,
+): void => {
   let pending: IndexedProjectChunk[] = [];
   let termReferences = 0;
+  let completed = 0, total = 0;
+  // 只统计元数据条数，不把全部旧正文读入内存；完成条数是迁移准备进度，提交仍由外层事务确认。
+  const count = chunks.count();
+  count.onsuccess = () => { total = count.result; onProgress?.(0, total); };
+  count.onerror = () => transaction.abort();
   const request = chunks.openCursor();
   request.onsuccess = () => {
     const cursor = request.result;
@@ -97,7 +105,11 @@ export const migrateChunkSearch = (transaction: IDBTransaction, chunks: IDBObjec
       const batch = pending;
       pending = [];
       termReferences = 0;
-      void upsertSearchIndex(transaction, batch).then(() => cursor?.continue()).catch(() => transaction.abort());
+      void upsertSearchIndex(transaction, batch).then(() => {
+        completed += batch.length;
+        onProgress?.(completed, total);
+        cursor?.continue();
+      }).catch(() => transaction.abort());
     } else cursor.continue();
   };
   request.onerror = () => transaction.abort();

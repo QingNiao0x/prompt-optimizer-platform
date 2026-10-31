@@ -1,0 +1,19 @@
+
+> @prompt-optimizer/web@0.1.0 test:e2e
+> playwright test project-index-preparation.spec.ts project-index-storage.spec.ts project-index-recovery.spec.ts --project=desktop-chrome
+
+
+Running 6 tests using 1 worker
+
+(node:31420) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chrome] › e2e\project-index-preparation.spec.ts:6:1 › 旧库准备期间显示真实阶段，取消后不复活任务，再次选择能完成真实 Worker 索引 (40.4s)
+  ok 2 [desktop-chrome] › e2e\project-index-recovery.spec.ts:6:1 › 存储失败保留已提交批次，重试不会清空索引或复用残缺内容 (4.8s)
+  ok 3 [desktop-chrome] › e2e\project-index-recovery.spec.ts:49:1 › 真实 Worker 的空配额异常有可读提示，点击继续后完成剩余文件 (18.7s)
+INDEX_STORAGE {"usage":100245504,"indexedMs":12402.5,"retrievalMs":7.399999998509884,"count":500,"terms":500500,"complete":true,"tailFound":true}
+  ok 4 [desktop-chrome] › e2e\project-index-storage.spec.ts:5:1 › 长路径共享词全文词表完整且存储不重复放大路径 (16.7s)
+INDEX_STORAGE {"usage":41271296,"indexedMs":2690.7000000029802,"retrievalMs":7,"count":200,"terms":200200,"complete":true,"tailFound":true}
+  ok 5 [desktop-chrome] › e2e\project-index-storage.spec.ts:5:1 › 长路径不同词全文词表完整且存储不重复放大路径 (4.1s)
+  ok 6 [desktop-chrome] › e2e\project-index-storage.spec.ts:67:1 › 旧索引升级保留全部关联，更新删除与回滚不污染其他文件项目 (708ms)
+
+  6 passed (1.6m)

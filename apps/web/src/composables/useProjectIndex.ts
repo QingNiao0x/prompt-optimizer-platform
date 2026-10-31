@@ -15,6 +15,7 @@ import {
   type ProjectIndexMode,
   type ProjectIndexProgress,
   type ProjectIndexSummary,
+  type ProjectIndexPreparationProgress,
 } from '@/features/project-index/projectIndexer';
 import type { DiscoveredDocument } from '@/workers/projectIndex.worker';
 
@@ -67,6 +68,8 @@ export const useProjectIndex = () => {
   let activeProjectId = '';
   let currentRootHandle: DirectoryHandleLike | undefined;
   let operationVersion = 0;
+  let activeProjectHasData = false;
+  let disposePreparation: (() => void) | undefined;
 
   const indexDirectory = async (
     options: ProjectIndexStartOptions,
@@ -137,22 +140,42 @@ export const useProjectIndex = () => {
     const operationId = ++operationVersion;
     activeProjectId = projectId;
     retryProjectId = projectId;
+    activeProjectHasData = summary.value?.id === projectId || (mode !== 'FULL' && activeProjectHasData);
     canRetry.value = false;
     isIndexing.value = true;
     isPausing.value = false;
     progress.value = emptyProgress();
     errorMessage.value = '';
+    const preparationStartedAt = performance.now();
+    const reportPreparation = (preparation: ProjectIndexPreparationProgress): void => {
+      if (operationId !== operationVersion) return;
+      progress.value = { ...emptyProgress(), preparation, elapsedMs: performance.now() - preparationStartedAt };
+    };
+    const stopObserving = projectIndexRepository.observePreparation(reportPreparation);
+    // 原生存储提交期间可能没有逐条回调；只更新已用时间，不虚构文件数或百分比。
+    const clock = setInterval(() => {
+      if (operationId === operationVersion && progress.value?.phase === 'PREPARING') {
+        progress.value = { ...progress.value, elapsedMs: performance.now() - preparationStartedAt };
+      }
+    }, 1000);
+    const stopPreparation = (): void => { stopObserving(); clearInterval(clock); };
+    disposePreparation = stopPreparation;
     try {
       const sessionId = getBrowserSessionId();
       await projectIndexRepository.cleanupProjects();
       assertOperationActive(operationId, operationVersion);
+      stopObserving();
       // 失败索引保留至原定期限；继续时校验已有指纹，目录句柄不自动重新取得授权。
+      reportPreparation({ stage: 'SAVING_SOURCE' });
+      activeProjectHasData = true;
       await projectIndexRepository.saveProjectSource(projectId, rootHandle);
       assertOperationActive(operationId, operationVersion);
       if (options.retention === 'PERSISTENT') {
+        reportPreparation({ stage: 'REQUESTING_STORAGE' });
         await requestPersistentStorage();
         assertOperationActive(operationId, operationVersion);
       }
+      reportPreparation({ stage: 'STARTING_WORKER' });
       const result = await indexInWorker(projectId, rootHandle, {
         limits: options.limits,
         retention: options.retention,
@@ -174,6 +197,8 @@ export const useProjectIndex = () => {
       canRetry.value = true;
       throw Object.assign(new Error(errorMessage.value), { cause: error });
     } finally {
+      stopPreparation();
+      if (disposePreparation === stopPreparation) disposePreparation = undefined;
       if (operationId === operationVersion) {
         activeWorker?.terminate();
         activeWorker = undefined;
@@ -246,8 +271,11 @@ export const useProjectIndex = () => {
 
   const cancelIndexing = async (): Promise<void> => {
     operationVersion += 1;
+    disposePreparation?.();
+    disposePreparation = undefined;
     isSelecting.value = false;
     const projectId = activeProjectId || retryProjectId || summary.value?.id || '';
+    const deleteStoredProject = activeProjectHasData || summary.value?.id === projectId;
     activeWorker?.terminate();
     activeWorker = undefined;
     activeWorkerReject?.(new ProjectIndexCancelledError());
@@ -260,10 +288,12 @@ export const useProjectIndex = () => {
     canRetry.value = false;
     errorMessage.value = '';
     activeProjectId = '';
+    activeProjectHasData = false;
     isIndexing.value = false;
     isPausing.value = false;
     progress.value = undefined;
-    if (projectId) {
+    // 尚在打开旧库的新任务没有写入自身数据；取消无需再排队等待旧库迁移，旧项目继续保留。
+    if (projectId && deleteStoredProject) {
       await projectIndexRepository.deleteProject(projectId);
     }
   };
@@ -271,12 +301,15 @@ export const useProjectIndex = () => {
   const resetPageState = (): void => {
     // 页面离开时只终止当前任务并清空内存引用，不主动删除 IndexedDB 中的索引数据。
     operationVersion += 1;
+    disposePreparation?.();
+    disposePreparation = undefined;
     isSelecting.value = false;
     activeWorker?.terminate();
     activeWorker = undefined;
     activeWorkerReject?.(new ProjectIndexCancelledError());
     activeWorkerReject = undefined;
     activeProjectId = '';
+    activeProjectHasData = false;
     currentRootHandle = undefined;
     isSelecting.value = false;
     isIndexing.value = false;
@@ -312,7 +345,8 @@ export const useProjectIndex = () => {
 };
 
 const emptyProgress = (): ProjectIndexProgress => ({
-  phase: 'SCANNING',
+  phase: 'PREPARING',
+  preparation: { stage: 'OPENING_STORAGE' },
   currentPath: '',
   processedFiles: 0,
   filesPerSecond: 0,
