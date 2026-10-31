@@ -1,0 +1,97 @@
+{
+  "backendDistinctTests": 49,
+  "frontendDistinctTests": 42,
+  "browserConfigurationsPassed": 12,
+  "summaries": [
+    {
+      "file": "backend-red-offline.txt",
+      "sha256": "4f44cf95f76ce86d9f49910c7873e77ea8de88db25558c8da43b91c996bfd578",
+      "results": [
+        "[ERROR] Tests run: 2, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 9.047 s <<< FAILURE! -- in com.promptoptimizer.context.service.impl.TemporaryDocumentIndexServiceTest",
+        "com.promptoptimizer.context.service.DocumentUploadException: ��ǰ�ĵ�״̬������ִ�иò�����READY",
+        "[ERROR]   TemporaryDocumentIndexServiceTest.completingTheSameUploadAgainDoesNotRestartExtraction:67 ? DocumentUpload ��ǰ�ĵ�״̬������ִ�иò�����READY",
+        "[ERROR] Tests run: 2, Failures: 0, Errors: 2, Skipped: 0",
+        "[INFO] BUILD FAILURE"
+      ]
+    },
+    {
+      "file": "frontend-red-corrected.txt",
+      "sha256": "e7d60a24bc750876ab045709fa13856dbd27ac4bfcb6adec7ab29a0edfc89c0a",
+      "results": [
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯",
+        "AssertionError: expected [ [Function] ] to have a length of 3 but got 1",
+        "AssertionError: expected \"spy\" to be called once, but got 3 times",
+        " Test Files  1 failed (1)",
+        "      Tests  3 failed | 3 passed (6)"
+      ]
+    },
+    {
+      "file": "backend-green.txt",
+      "sha256": "f98c1dc0daf2112c0556aac53d2a3d12b21a3946f8a2b47f2057f0ba06d3d127",
+      "results": [
+        "[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 17.02 s -- in com.promptoptimizer.context.dto.DocumentUploadControllerTest",
+        "[INFO] Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.618 s -- in com.promptoptimizer.context.service.impl.ComplexDocumentCompatibilityTest",
+        "[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.082 s -- in com.promptoptimizer.context.service.impl.ContextVisualDocumentWorkflowTest",
+        "[INFO] Tests run: 25, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.791 s -- in com.promptoptimizer.context.service.impl.TemporaryDocumentIndexServiceTest",
+        "[INFO] Tests run: 47, Failures: 0, Errors: 0, Skipped: 0",
+        "[INFO] BUILD SUCCESS"
+      ]
+    },
+    {
+      "file": "backend-extra.txt",
+      "sha256": "258ecf9146e831de907f4e1de769e50ec8aaef45245e670cac118822ddfac203",
+      "results": [
+        "[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.651 s -- in com.promptoptimizer.context.service.impl.TemporaryDocumentIndexServiceTest",
+        "[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0",
+        "[INFO] BUILD SUCCESS"
+      ]
+    },
+    {
+      "file": "frontend-shared.txt",
+      "sha256": "a217ee2aeff8db3a2edee3339895523b6f58692505582aef5f6b6ea10be8aee5",
+      "results": [
+        " Test Files  5 passed (5)",
+        "      Tests  40 passed (40)"
+      ]
+    },
+    {
+      "file": "frontend-extra.txt",
+      "sha256": "9eb8968ae3a8c44da0fa3091b01863891f1b0e225d2617606f294de9f7151ba3",
+      "results": [
+        " Test Files  1 passed (1)",
+        "      Tests  8 passed (8)"
+      ]
+    },
+    {
+      "file": "edge-ui.txt",
+      "sha256": "d7824b61a083b7a9cd4138a31c4a27e5fe54bb993d7f89d37aff4c25d7f3fa69",
+      "results": [
+        "    Error: expect(locator).toBeVisible() failed",
+        "    Error: locator.click: Test timeout of 60000ms exceeded.",
+        "  2 failed",
+        "  4 passed (1.6m)"
+      ]
+    },
+    {
+      "file": "edge-upload-ui-final.txt",
+      "sha256": "8c211bab8be0fffca08be9cf265f445b40252fdab648d59e7b05191b396eb5ff",
+      "results": [
+        "  2 passed (22.2s)"
+      ]
+    },
+    {
+      "file": "chrome-ui.txt",
+      "sha256": "807647beec71e761d6b9a988800b3db5e43239c2c166574512fbb8ec9f1a656f",
+      "results": [
+        "  6 passed (53.8s)"
+      ]
+    },
+    {
+      "file": "build.txt",
+      "sha256": "91e24e2ff075c7b07e2bf0be23d38bc855449f57066284f4e196d3f3b656d3b7",
+      "results": [
+        "✓ built in 22.11s"
+      ]
+    }
+  ]
+}

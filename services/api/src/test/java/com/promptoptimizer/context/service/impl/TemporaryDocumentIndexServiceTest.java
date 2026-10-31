@@ -56,6 +56,113 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TemporaryDocumentIndexServiceTest {
 
     @Test
+    void completingTheSameUploadAgainDoesNotRestartExtraction() throws Exception {
+        try (var cleanup = new ServiceCleanup(createService())) {
+            var service = cleanup.service();
+            byte[] bytes = "重复完成只能处理一次，保留全文末尾。".getBytes(StandardCharsets.UTF_8);
+            var created = service.create(new DocumentUploadCreateRequest("retry.txt", "text", bytes.length));
+            uploadAllChunks(service, created.documentId(), bytes, created.chunkSizeBytes());
+            service.completeUpload(created.documentId());
+            var ready = awaitTerminalStatus(service, created.documentId());
+            var retried = service.completeUpload(created.documentId());
+            assertThat(retried.phase()).isEqualTo(DocumentProcessingPhase.READY);
+            assertThat(retried.chunkCount()).isEqualTo(ready.chunkCount());
+            assertThat(service.retrieve(created.documentId(), "全文末尾", 1000, 2).orElseThrow().content())
+                    .contains("全文末尾");
+        }
+    }
+
+    @Test
+    void pollingOneDocumentDoesNotWaitForAnotherExpiredSessionLock() throws Exception {
+        var service = createService();
+        var pool = java.util.concurrent.Executors.newFixedThreadPool(2);
+        var locked = new java.util.concurrent.CountDownLatch(1);
+        var release = new java.util.concurrent.CountDownLatch(1);
+        try {
+            var old = service.create(new DocumentUploadCreateRequest("expired.txt", "text", 4));
+            var active = service.create(new DocumentUploadCreateRequest("active.txt", "text", 4));
+            var field = TemporaryDocumentIndexService.class.getDeclaredField("sessions");
+            field.setAccessible(true);
+            Object expired = ((java.util.Map<?, ?>) field.get(service)).get(old.documentId());
+            var expiry = expired.getClass().getDeclaredField("expiresAt");
+            expiry.setAccessible(true);
+            expiry.set(expired, java.time.Instant.now().minusSeconds(1));
+            var monitor = expired.getClass().getDeclaredField("monitor");
+            monitor.setAccessible(true);
+            pool.submit(() -> {
+                synchronized (monitorValue(monitor, expired)) {
+                    locked.countDown();
+                    try { release.await(); } catch (InterruptedException failure) { Thread.currentThread().interrupt(); }
+                }
+            });
+            assertThat(locked.await(2, java.util.concurrent.TimeUnit.SECONDS)).isTrue();
+            var poll = pool.submit(() -> service.getStatus(active.documentId()));
+            assertThat(poll.get(500, java.util.concurrent.TimeUnit.MILLISECONDS).documentId()).isEqualTo(active.documentId());
+            assertThatThrownBy(() -> service.getStatus(old.documentId())).isInstanceOf(DocumentUploadException.class);
+        } finally {
+            release.countDown();
+            pool.shutdownNow();
+            service.close();
+        }
+    }
+
+    private static Object monitorValue(java.lang.reflect.Field field, Object target) {
+        try { return field.get(target); } catch (IllegalAccessException failure) { throw new AssertionError(failure); }
+    }
+
+    private record ServiceCleanup(TemporaryDocumentIndexService service) implements AutoCloseable {
+        @Override public void close() { service.close(); }
+    }
+
+    @Test
+    void outOfOrderParallelChunksPreserveAllBytesAndDoNotDoubleCountRetries() throws Exception {
+        var service = createService();
+        var workers = java.util.concurrent.Executors.newFixedThreadPool(3);
+        try {
+            byte[] content = new byte[TemporaryDocumentIndexService.UPLOAD_CHUNK_BYTES * 3 + 19];
+            new java.util.Random(20261031).nextBytes(content);
+            var created = service.create(new DocumentUploadCreateRequest("parallel.txt", "text", content.length));
+            List<java.util.concurrent.Future<?>> writes = new ArrayList<>();
+            for (int index : new int[]{3, 1, 0, 2, 1}) {
+                int from = index * created.chunkSizeBytes();
+                byte[] chunk = java.util.Arrays.copyOfRange(content, from, Math.min(content.length, from + created.chunkSizeBytes()));
+                writes.add(workers.submit(() -> service.appendChunk(created.documentId(), index, chunk)));
+            }
+            for (var write : writes) write.get(5, java.util.concurrent.TimeUnit.SECONDS);
+            var root = TemporaryDocumentIndexService.class.getDeclaredField("rootDirectory");
+            root.setAccessible(true);
+            var file = ((java.nio.file.Path) root.get(service)).resolve(created.documentId()).resolve("source.upload");
+            assertThat(java.nio.file.Files.readAllBytes(file)).isEqualTo(content);
+            assertThat(service.getStatus(created.documentId()).uploadedBytes()).isEqualTo(content.length);
+        } finally { workers.shutdownNow(); service.close(); }
+    }
+
+    @Test
+    void concurrentBrowsersCannotOversubscribeTheSourceReservation() throws Exception {
+        var service = createService();
+        var workers = java.util.concurrent.Executors.newFixedThreadPool(20);
+        var start = new java.util.concurrent.CountDownLatch(1);
+        try {
+            var tasks = new ArrayList<java.util.concurrent.Future<Boolean>>();
+            for (int i = 0; i < 20; i++) {
+                int index = i;
+                tasks.add(workers.submit(() -> {
+                    start.await();
+                    try {
+                        service.create(new DocumentUploadCreateRequest("capacity-" + index + ".txt", "text",
+                                TemporaryDocumentIndexService.MAX_DOCUMENT_BYTES));
+                        return true;
+                    } catch (DocumentUploadException expected) { return false; }
+                }));
+            }
+            start.countDown();
+            int admitted = 0;
+            for (var task : tasks) if (task.get(5, java.util.concurrent.TimeUnit.SECONDS)) admitted++;
+            assertThat(admitted).isEqualTo(10);
+        } finally { start.countDown(); workers.shutdownNow(); service.close(); }
+    }
+
+    @Test
     void asynchronousEmbeddingKeepsOnlyTrustedTenantAuditScope() throws Exception {
         UUID tenant = TestActors.identity(TestActors.USER_ID).tenantId();
         var facts = new java.util.concurrent.ConcurrentLinkedQueue<ModelCallObservation>();

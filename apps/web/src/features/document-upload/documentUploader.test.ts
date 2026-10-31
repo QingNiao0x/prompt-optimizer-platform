@@ -1,4 +1,5 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { AxiosError } from 'axios';
 
 vi.mock('@/services/documentUploadApi', () => ({
   createDocumentUpload: vi.fn(),
@@ -16,6 +17,7 @@ import {
   uploadDocumentChunk,
   confirmContextVision,
   getDocumentUploadStatus,
+  deleteDocumentUpload,
 } from '@/services/documentUploadApi';
 import type { DocumentUploadStatus } from '@/types/api';
 
@@ -38,6 +40,85 @@ const status = (overrides: Partial<DocumentUploadStatus> = {}): DocumentUploadSt
 });
 
 describe('uploadAndIndexDocument', () => {
+  beforeEach(() => { vi.resetAllMocks(); vi.mocked(deleteDocumentUpload).mockResolvedValue(undefined); });
+  afterEach(() => vi.useRealTimers());
+
+  it('overlaps at most three chunks and waits for every acknowledgement before completion', async () => {
+    vi.mocked(createDocumentUpload).mockResolvedValue({ requestId: 'create', data: status({ chunkSizeBytes: 4 }) });
+    const pending: (() => void)[] = [];
+    vi.mocked(uploadDocumentChunk).mockImplementation(() => new Promise(resolve => {
+      pending.push(() => resolve({ requestId: 'chunk', data: status() }));
+    }));
+    vi.mocked(completeDocumentUpload).mockResolvedValue({ requestId: 'complete', data: status({ phase: 'READY' }) });
+    const operation = uploadAndIndexDocument(new File(['0123456789abcdef'], 'sample.txt'), 'sample.txt', 'text');
+    await vi.waitFor(() => expect(pending).toHaveLength(3));
+    expect(completeDocumentUpload).not.toHaveBeenCalled();
+    pending[1]!();
+    await vi.waitFor(() => expect(pending).toHaveLength(4));
+    pending[3]!(); pending[2]!(); pending[0]!();
+    await operation;
+    expect(completeDocumentUpload).toHaveBeenCalledOnce();
+  });
+
+  it('recovers a lost completion response and transient status errors without deleting or reuploading', async () => {
+    vi.useFakeTimers();
+    vi.mocked(createDocumentUpload).mockResolvedValue({ requestId: 'create', data: status({ chunkSizeBytes: 4 }) });
+    vi.mocked(uploadDocumentChunk).mockResolvedValue({ requestId: 'chunk', data: status() });
+    vi.mocked(completeDocumentUpload).mockRejectedValueOnce(new AxiosError('network', 'ERR_NETWORK'))
+      .mockResolvedValue({ requestId: 'retry', data: status({ phase: 'INDEXING', progressPercent: 88 }) });
+    vi.mocked(getDocumentUploadStatus).mockRejectedValueOnce(new AxiosError('network', 'ERR_NETWORK'))
+      .mockResolvedValue({ requestId: 'status', data: status({ phase: 'READY' }) });
+    const operation = uploadAndIndexDocument(new File(['data'], 'sample.txt'), 'sample.txt', 'text');
+    const assertion = expect(operation).resolves.toMatchObject({ status: { phase: 'READY' } });
+    await vi.runAllTimersAsync();
+    await assertion;
+    expect(uploadDocumentChunk).toHaveBeenCalledOnce();
+    expect(deleteDocumentUpload).not.toHaveBeenCalled();
+  });
+
+  it('does not retry a rejected upload authorization', async () => {
+    vi.useFakeTimers();
+    vi.mocked(createDocumentUpload).mockResolvedValue({ requestId: 'create', data: status({ chunkSizeBytes: 4 }) });
+    const denied = new AxiosError('denied', 'ERR_BAD_REQUEST', undefined, undefined, { status: 403 } as never);
+    vi.mocked(uploadDocumentChunk).mockRejectedValue(denied);
+    const operation = uploadAndIndexDocument(new File(['data'], 'sample.txt'), 'sample.txt', 'text');
+    const assertion = expect(operation).rejects.toBe(denied);
+    await vi.runAllTimersAsync();
+    await assertion;
+    expect(uploadDocumentChunk).toHaveBeenCalledOnce();
+  });
+
+  it('queries the backend after a long browser timer suspension before reporting a timeout', async () => {
+    vi.useFakeTimers();
+    vi.mocked(createDocumentUpload).mockResolvedValue({ requestId: 'create', data: status({ chunkSizeBytes: 4 }) });
+    vi.mocked(uploadDocumentChunk).mockResolvedValue({ requestId: 'chunk', data: status() });
+    vi.mocked(completeDocumentUpload).mockResolvedValue({ requestId: 'complete', data: status({ phase: 'INDEXING' }) });
+    vi.mocked(getDocumentUploadStatus).mockResolvedValue({ requestId: 'ready', data: status({ phase: 'READY' }) });
+    const operation = uploadAndIndexDocument(new File(['data'], 'sample.txt'), 'sample.txt', 'text');
+    await vi.advanceTimersByTimeAsync(1);
+    vi.setSystemTime(Date.now() + 15 * 60_000);
+    await vi.runAllTimersAsync();
+    expect((await operation).status.phase).toBe('READY');
+    expect(deleteDocumentUpload).not.toHaveBeenCalled();
+  });
+
+  it('aborts sibling chunks and drains them before cleaning up a failed upload', async () => {
+    vi.useFakeTimers();
+    vi.mocked(createDocumentUpload).mockResolvedValue({ requestId: 'create', data: status({ chunkSizeBytes: 4 }) });
+    let drained = 0;
+    vi.mocked(uploadDocumentChunk).mockImplementation(async (_id, index, _chunk, _progress, signal) => {
+      if (index === 1) throw new AxiosError('invalid chunk', 'ERR_BAD_REQUEST', undefined, undefined, { status: 400 } as never);
+      await new Promise<void>(resolve => signal?.addEventListener('abort', () => { drained++; resolve(); }, { once: true }));
+      throw new DOMException('cancelled', 'AbortError');
+    });
+    vi.mocked(deleteDocumentUpload).mockImplementation(async () => { expect(drained).toBe(2); });
+    const operation = uploadAndIndexDocument(new File(['0123456789abcdef'], 'sample.txt'), 'sample.txt', 'text');
+    await expect(operation).rejects.toThrow('invalid chunk');
+    expect(uploadDocumentChunk).toHaveBeenCalledTimes(3);
+    expect(completeDocumentUpload).not.toHaveBeenCalled();
+    expect(deleteDocumentUpload).toHaveBeenCalledOnce();
+  });
+
   it('reports every acknowledged chunk even when the browser emits no upload events', async () => {
     vi.clearAllMocks();
     vi.mocked(createDocumentUpload).mockResolvedValue({ requestId: 'create', data: status({ chunkSizeBytes: 4 }) });

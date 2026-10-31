@@ -290,12 +290,18 @@ export const useProjectFiles = (options?: {
 
       const documentWarnings: string[] = [];
       let failedDocuments = 0;
-      for (let index = 0; index < documentCandidates.length; index += 1) {
+      const documentOrder = new Map(documentCandidates.map((file, index) => [getProjectFilePath(file), index]));
+      const activeProgress = new Map<number, FileProcessingProgress>();
+      const publishProgress = (): void => {
+        if (!isCurrentOperation() || !activeProgress.size) return;
+        // 展示最早尚未完成的文件，避免并行响应使文件名、字节数来回闪烁。
+        const first = activeProgress.get(Math.min(...activeProgress.keys()))!;
+        progress.value = { ...first, accepted: selection.files.length + uploadedDocuments.length,
+          skipped: skippedDocumentBudget + failedDocuments + inlineCandidates.length - selection.files.length };
+      };
+      const processDocument = async (index: number): Promise<void> => {
         const candidate = documentCandidates[index];
-        if (!isCurrentOperation()) {
-          await deleteDocumentReferences(uploadedDocuments);
-          return [];
-        }
+        if (!isCurrentOperation()) return;
         const acceptedBeforeDocument = selection.files.length + uploadedDocuments.length;
         try {
           const uploaded = await uploadAndIndexDocument(
@@ -306,7 +312,7 @@ export const useProjectFiles = (options?: {
               if (!isCurrentOperation()) {
                 return;
               }
-              progress.value = {
+              activeProgress.set(index, {
                 current: inlineCandidates.length + index + 1,
                 total: inlineCandidates.length + documentCandidates.length,
                 fileName: getProjectFilePath(candidate),
@@ -318,7 +324,8 @@ export const useProjectFiles = (options?: {
                 totalBytes: documentProgress.totalBytes,
                 extractedCharacters: documentProgress.extractedCharacters,
                 indexedChunks: documentProgress.indexedChunks,
-              };
+              });
+              publishProgress();
             },
             abortController.signal,
             options?.reviewVision,
@@ -329,14 +336,24 @@ export const useProjectFiles = (options?: {
           ));
         } catch (error: unknown) {
           if (abortController.signal.aborted || !isCurrentOperation()) {
-            await deleteDocumentReferences(uploadedDocuments);
-            return [];
+            return;
           }
           const message = error instanceof Error ? error.message : '解析失败';
           failedDocuments += 1;
           documentWarnings.push(`${getProjectFilePath(candidate)}：${message}`);
+        } finally {
+          activeProgress.delete(index);
+          publishProgress();
         }
-      }
+      };
+      let nextDocument = 0;
+      // 纯文本/办公文档两路流水，让下一份上传与上一份解析重叠；视觉审阅保持串行，不叠加确认弹窗。
+      const parallelDocuments = options?.reviewVision
+        && documentCandidates.some(file => ['jpeg', 'jpg', 'png', 'pdf'].includes(getProjectFileLanguage(file))) ? 1 : 2;
+      await Promise.all(Array.from({ length: Math.min(parallelDocuments, documentCandidates.length) }, async () => {
+        while (isCurrentOperation() && nextDocument < documentCandidates.length) await processDocument(nextDocument++);
+      }));
+      uploadedDocuments.sort((left, right) => (documentOrder.get(left.path) ?? 0) - (documentOrder.get(right.path) ?? 0));
       if (import.meta.env.DEV) {
         console.info('[file-upload] read finished', {
           files: selection.files.length + uploadedDocuments.length,

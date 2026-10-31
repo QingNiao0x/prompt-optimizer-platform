@@ -43,4 +43,34 @@ describe('document upload routing', () => {
     expect(vi.mocked(uploadAndIndexDocument).mock.calls.map((call) => call[1])).toEqual(paths.slice(0, 3));
     expect(state.warnings.value).toContain('已跳过 2 个敏感文件（密钥、私钥、.env 或凭据文件），不会上传。');
   });
+
+  it('pipelines two documents while preserving selection order after out-of-order completion', async () => {
+    const normal = vi.mocked(uploadAndIndexDocument).getMockImplementation()!;
+    const finish: (() => void)[] = [];
+    vi.mocked(uploadAndIndexDocument).mockImplementation((...args) => new Promise(resolve => {
+      finish.push(() => { void normal(...args).then(resolve); });
+    }));
+    const state = useProjectFiles();
+    const result = state.selectFileArray(['a', 'b', 'c'].map(name => new File(['fixture'], `${name}.docx`)));
+    await vi.waitFor(() => expect(finish).toHaveLength(2));
+    finish[1]!();
+    await vi.waitFor(() => expect(finish).toHaveLength(3));
+    finish[2]!(); finish[0]!();
+    expect((await result).map(file => file.path)).toEqual(['a.docx', 'b.docx', 'c.docx']);
+  });
+
+  it('keeps vision review sequential so two consent dialogs never compete', async () => {
+    const normal = vi.mocked(uploadAndIndexDocument).getMockImplementation()!;
+    const finish: (() => void)[] = [];
+    vi.mocked(uploadAndIndexDocument).mockImplementation((...args) => new Promise(resolve => {
+      finish.push(() => { void normal(...args).then(resolve); });
+    }));
+    const state = useProjectFiles({ reviewVision: vi.fn() });
+    const result = state.selectFileArray(['a', 'b'].map(name => new File(['fixture'], `${name}.pdf`)));
+    await vi.waitFor(() => expect(finish).toHaveLength(1));
+    finish[0]!();
+    await vi.waitFor(() => expect(finish).toHaveLength(2));
+    finish[1]!();
+    expect(await result).toHaveLength(2);
+  });
 });

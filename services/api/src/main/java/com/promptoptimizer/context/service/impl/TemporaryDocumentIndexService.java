@@ -46,6 +46,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -94,6 +96,8 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
     private final ContentChunkSelector contentChunkSelector = new ContentChunkSelector();
     private final Map<String, UploadSession> sessions = new ConcurrentHashMap<>();
     private final ExecutorService executor;
+    private final ScheduledExecutorService maintenance;
+    private final Object admissionMonitor = new Object();
     private final Path rootDirectory;
 
     public TemporaryDocumentIndexService(
@@ -127,6 +131,10 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
         } catch (IOException exception) {
             throw new IllegalStateException("无法创建大型文档临时目录", exception);
         }
+        // 过期磁盘清理独立于请求和解析线程，旧任务不能拖住新上传或进度轮询。
+        this.maintenance = Executors.newSingleThreadScheduledExecutor(
+                Thread.ofPlatform().daemon().name("document-index-cleanup").factory());
+        maintenance.scheduleWithFixedDelay(this::cleanupExpired, 60, 60, TimeUnit.SECONDS);
     }
 
     /**
@@ -134,7 +142,6 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
      */
     public DocumentUploadStatus create(DocumentUploadCreateRequest request) {
         ActorIdentity owner = currentActor.require();
-        cleanupExpired();
         String path = normalizeAndValidatePath(request.path());
         String language = normalizeLanguage(request.language());
         if (request.visionRequested() && (visualExtractor == null || !visualExtractor.supports(language)))
@@ -145,42 +152,45 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
                     "单个文档不能超过 50 MB"
             );
         }
-        if (sessions.size() >= MAX_ACTIVE_DOCUMENTS || activeSourceBytes() + request.sizeBytes() > MAX_ACTIVE_SOURCE_BYTES) {
-            throw new DocumentUploadException(
-                    DocumentUploadException.Reason.CAPACITY_EXCEEDED,
-                    "当前正在处理的文档较多，请稍后重试"
-            );
-        }
+        // 并行浏览器/标签页必须共享同一容量预算；检查与登记原子完成，不能一起穿透上限。
+        synchronized (admissionMonitor) {
+            if (sessions.size() >= MAX_ACTIVE_DOCUMENTS || activeSourceBytes() + request.sizeBytes() > MAX_ACTIVE_SOURCE_BYTES) {
+                throw new DocumentUploadException(
+                        DocumentUploadException.Reason.CAPACITY_EXCEEDED,
+                        "当前正在处理的文档较多，请稍后重试"
+                );
+            }
 
-        String documentId = UUID.randomUUID().toString();
-        Path directory = rootDirectory.resolve(documentId).normalize();
-        assertInsideRoot(directory);
-        try {
-            Files.createDirectory(directory);
-            Path sourceFile = directory.resolve("source.upload");
-            Files.createFile(sourceFile);
-            UploadSession session = new UploadSession(
-                    documentId,
-                    owner,
-                    path,
-                    language,
-                    request.sizeBytes(),
-                    directory,
-                    sourceFile,
-                    directory.resolve("chunks.data"),
-                    directory.resolve("vectors.data"),
-                    Instant.now().plus(DOCUMENT_TTL)
-            );
-            session.visionRequested = request.visionRequested();
-            sessions.put(documentId, session);
-            return statusOf(session);
-        } catch (IOException exception) {
-            deleteDirectoryQuietly(directory);
-            throw new DocumentUploadException(
-                    DocumentUploadException.Reason.CONFLICT,
-                    "无法创建文档上传任务",
-                    exception
-            );
+            String documentId = UUID.randomUUID().toString();
+            Path directory = rootDirectory.resolve(documentId).normalize();
+            assertInsideRoot(directory);
+            try {
+                Files.createDirectory(directory);
+                Path sourceFile = directory.resolve("source.upload");
+                Files.createFile(sourceFile);
+                UploadSession session = new UploadSession(
+                        documentId,
+                        owner,
+                        path,
+                        language,
+                        request.sizeBytes(),
+                        directory,
+                        sourceFile,
+                        directory.resolve("chunks.data"),
+                        directory.resolve("vectors.data"),
+                        Instant.now().plus(DOCUMENT_TTL)
+                );
+                session.visionRequested = request.visionRequested();
+                sessions.put(documentId, session);
+                return statusOf(session);
+            } catch (IOException exception) {
+                deleteDirectoryQuietly(directory);
+                throw new DocumentUploadException(
+                        DocumentUploadException.Reason.CONFLICT,
+                        "无法创建文档上传任务",
+                        exception
+                );
+            }
         }
     }
 
@@ -231,6 +241,8 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
     public DocumentUploadStatus completeUpload(String documentId) {
         UploadSession session = requireSession(documentId);
         synchronized (session.monitor) {
+            // 完成响应可能丢失；已启动、已完成和失败状态均只返回原任务，不重复解析或模型调用。
+            if (session.phase != DocumentProcessingPhase.UPLOADING) return statusOf(session);
             assertPhase(session, DocumentProcessingPhase.UPLOADING);
             if (session.receivedChunks.cardinality() != session.expectedChunks
                     || session.uploadedBytes != session.fileSizeBytes) {
@@ -245,6 +257,7 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
             session.requestId = MDC.get("requestId");
             // 异步工作线程只继承租户对账范围，不继承账号身份或整个 SecurityContext。
             session.modelAuditContext = ModelCallAuditContext.capture();
+            session.queuedAtNanos = System.nanoTime();
             session.task = executor.submit(() -> process(session));
             return statusOf(session);
         }
@@ -288,6 +301,7 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
             session.requestId = MDC.get("requestId");
             session.modelAuditContext = ModelCallAuditContext.capture();
             session.expiresAt = Instant.now().plus(DOCUMENT_TTL);
+            session.queuedAtNanos = System.nanoTime();
             session.task = executor.submit(() -> process(session));
             return statusOf(session);
         }
@@ -417,11 +431,12 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
         try (LogCorrelation.Scope requestScope = LogCorrelation.bindRequestId(session.requestId);
              LogCorrelation.Scope workflowScope = LogCorrelation.bindWorkflow("document-upload", session.documentId);
              ModelCallAuditContext.Scope auditScope = ModelCallAuditContext.bind(session.modelAuditContext)) {
-            LOGGER.info("event=document.index.started requestId={} workflowId={} fileBytes={} expectedChunks={}",
+            LOGGER.info("event=document.index.started requestId={} workflowId={} fileBytes={} expectedChunks={} queueDurationMs={}",
                     LogFields.value(MDC.get("requestId")),
                     LogFields.value(MDC.get("workflowId")),
                     session.fileSizeBytes,
-                    session.expectedChunks);
+                    session.expectedChunks,
+                    elapsedMillis(session.queuedAtNanos));
             processDocument(session, startedAt);
         }
     }
@@ -559,7 +574,10 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
             deleteFileQuietly(session.vectorFile);
         } finally {
             // 等待明确外发确认期间保留私有原件；取消、失败、完成和 TTL 到期仍清理。
-            if (!awaitingReview) deleteFileQuietly(session.sourceFile);
+            if (!awaitingReview) {
+                deleteFileQuietly(session.sourceFile);
+                session.sourceRetained = Files.exists(session.sourceFile);
+            }
         }
     }
 
@@ -845,12 +863,11 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
         }
     }
 
-    /** 查找上传会话前先清理过期任务，避免继续操作已失效的临时数据。 */
+    /** 只检查当前文档身份和有效期；全局过期文件清理由独立维护线程执行。 */
     private UploadSession requireSession(String documentId) {
         ActorIdentity owner = currentActor.require();
-        cleanupExpired();
         UploadSession session = sessions.get(documentId);
-        if (session == null || !sameScope(session.owner, owner)) {
+        if (session == null || !sameScope(session.owner, owner) || !session.expiresAt.isAfter(Instant.now())) {
             throw new DocumentUploadException(
                     DocumentUploadException.Reason.NOT_FOUND,
                     "文档上传任务不存在或已过期"
@@ -884,10 +901,8 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
 
     private long activeSourceBytes() {
         return sessions.values().stream()
-                .filter(session -> session.phase == DocumentProcessingPhase.UPLOADING
-                        || session.phase == DocumentProcessingPhase.QUEUED
-                        || session.phase == DocumentProcessingPhase.AWAITING_CONFIRMATION
-                        || session.phase == DocumentProcessingPhase.EXTRACTING)
+                // 原件直到摘要结束才删除；进入 INDEXING/SUMMARIZING 不代表磁盘预算已经释放。
+                .filter(session -> session.sourceRetained)
                 .mapToLong(session -> session.fileSizeBytes)
                 .sum();
     }
@@ -941,11 +956,17 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
     /** 清理过期上传任务及其临时数据，控制磁盘和内存占用。 */
     private void cleanupExpired() {
         Instant now = Instant.now();
-        sessions.values().stream()
-                .filter(session -> session.expiresAt.isBefore(now))
-                .map(session -> session.documentId)
-                .toList()
-                .forEach(this::deleteSession);
+        for (UploadSession session : sessions.values()) {
+            if (session.expiresAt.isAfter(now)) continue;
+            synchronized (session.monitor) {
+                // 锁内再次检查，避免在遍历后删掉刚被合法请求续期的任务。
+                if (session.expiresAt.isAfter(Instant.now()) || !sessions.remove(session.documentId, session)) continue;
+                session.cancelled = true;
+                session.phase = DocumentProcessingPhase.CANCELLED;
+                if (session.task != null) session.task.cancel(true);
+            }
+            deleteDirectoryQuietly(session.directory);
+        }
     }
 
     private void deleteFileQuietly(Path path) {
@@ -970,6 +991,7 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
 
     @PreDestroy
     public void close() {
+        maintenance.shutdownNow();
         executor.shutdownNow();
         sessions.clear();
         deleteDirectoryQuietly(rootDirectory);
@@ -1094,6 +1116,8 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
         private volatile Instant expiresAt;
         private volatile boolean cancelled;
         private volatile Future<?> task;
+        private volatile long queuedAtNanos;
+        private volatile boolean sourceRetained = true;
         private volatile boolean visionRequested;
         private volatile boolean visionConfirmed;
         private volatile boolean sensitiveRedacted;

@@ -7,6 +7,9 @@ import type { DocumentUploadStatus } from '../src/types/api';
 
 // 工作台会请求平台模型目录；浏览器用例不应把该请求落到真实后端触发登录过期。
 test.beforeEach(async ({ page }) => {
+  // 独立界面夹具不携带真实 Cookie；未登记的新接口显式失败，不能落到本机后端触发退出。
+  await page.route('**/api/**', (route) => route.fulfill({ status: 501,
+    json: { error: { message: '此界面夹具未登记接口' } } }));
   await page.route('**/api/v1/analytics/events', (route) => route.fulfill({ status: 204 }));
   await page.route('**/api/v1/models', (route) => route.fulfill({ status: 200, json: {
     data: [{ id: 'mock:default', displayName: '测试模型', provider: 'Mock', defaultModel: true }],
@@ -51,13 +54,15 @@ test('文档文件夹保留嵌套路径并完整上传中等大小 TXT 与办公
     const status = sessions.get(documentId)!;
     if (path.includes('/chunks/')) {
       const bytes = request.postDataBuffer()!;
-      uploaded.get(documentId)!.push(bytes);
+      const chunkIndex = Number(path.split('/chunks/')[1]);
+      uploaded.get(documentId)![chunkIndex] = bytes;
       status.uploadedBytes += bytes.length;
-      if (inputProgressGate && status.path.endsWith('方案.txt') && uploaded.get(documentId)!.length === 2) {
-        // 第二片返回前验证界面使用已传字节，而非把整份解析流程的 40% 当上传完成率。
-        const previousBytes = status.uploadedBytes - bytes.length;
-        const expected = Math.floor(previousBytes / status.fileSizeBytes * 1000) / 10;
-        await expect(page.locator('.read-progress')).toHaveAttribute('aria-valuenow', String(expected));
+      if (inputProgressGate && status.path.endsWith('方案.txt') && chunkIndex === 0) {
+        // 并发上传事件可早于响应：核对界面显示真实字节比例，不依赖分片响应的先后次序。
+        await expect.poll(async () => Number(await page.locator('.read-progress').getAttribute('aria-valuenow')))
+          .toBeGreaterThan(40);
+        const percent = Number(await page.locator('.read-progress').getAttribute('aria-valuenow'));
+        expect(percent).toBeLessThanOrEqual(100);
         inputProgressGate = false;
       }
     }
