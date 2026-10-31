@@ -134,6 +134,7 @@ const indexingLabel = computed(() => {
   if (progress.phase === 'PREPARING') {
     const preparation = progress.preparation;
     const elapsed = `已用 ${formatDuration(progress.elapsedMs)}`;
+    if (preparation?.stage === 'PREPARING_STORAGE') return `正在准备本项目的独立索引 · ${elapsed}`;
     if (preparation?.stage === 'UPGRADING_STORAGE') {
       if (preparation.total !== undefined && preparation.completed === preparation.total) {
         return `旧索引转换已完成，正在提交本地存储 · ${elapsed}`;

@@ -12,10 +12,10 @@ test('旧库准备期间显示真实阶段，取消后不复活任务，再次�
   ] } }));
   await page.route(url => url.pathname.endsWith('/indexedDbProjectIndexRepository.ts'), async route => {
     const response = await route.fetch(), source = await response.text();
-    const marker = 'const projects = await this.listProjects();';
+    const marker = 'async prepareProject(projectId, expiresAt, retention) {';
     expect(source).toContain(marker);
     const gate = `if (!globalThis.__preparationReleased) await new Promise(resolve => { globalThis.__releasePreparation = () => { globalThis.__preparationReleased = true; resolve(); }; });`;
-    await route.fulfill({ response, body: source.replace(marker, gate + marker) });
+    await route.fulfill({ response, body: source.replace(marker, marker + gate) });
   });
   let workerLoads = 0;
   page.on('request', request => { if (new URL(request.url()).pathname.endsWith('/projectIndex.worker.ts')) workerLoads++; });
@@ -34,7 +34,7 @@ test('旧库准备期间显示真实阶段，取消后不复活任务，再次�
     await page.getByRole('menuitem', { name: '选择文件夹' }).click();
   };
   await chooseFolder();
-  await expect(page.locator('.reading-meta').filter({ hasText: '正在打开已有本地索引' })).toBeVisible();
+  await expect(page.locator('.reading-meta').filter({ hasText: '正在准备本项目的独立索引' })).toBeVisible();
   await expect(page.getByText(/正在统计文件范围/)).toHaveCount(0);
   await expect(page.locator('.reading-meta').filter({ hasText: /已用 [2-9] 秒/ })).toBeVisible({ timeout: 12_000 });
   expect(workerLoads).toBe(0);
@@ -45,7 +45,7 @@ test('旧库准备期间显示真实阶段，取消后不复活任务，再次�
   await page.evaluate(() => {
     (globalThis as typeof globalThis & { __releasePreparation: () => void }).__releasePreparation();
   });
-  await expect(page.getByText(/正在打开已有本地索引/)).toHaveCount(0);
+  await expect(page.getByText(/正在准备本项目的独立索引/)).toHaveCount(0);
   expect(workerLoads).toBe(0);
   await chooseFolder();
   await expect(page.getByText('20 个文本文件已完整建立本地索引')).toBeVisible({ timeout: 30_000 });

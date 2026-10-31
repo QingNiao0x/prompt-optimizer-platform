@@ -8,6 +8,10 @@ import type {
 import type { DirectoryHandleLike } from './fileSystemDirectorySource';
 import { referencedPathVariants } from './projectPathReferences';
 import {
+  deleteIsolatedStorage, isIsolatedProject, listIsolatedProjects,
+  prepareIsolatedStorage, projectDatabaseLocation, type ProjectIndexDatabaseLocation,
+} from './projectIndexStorage';
+import {
   SEARCH_STORE, SEARCH_KEY_STORE, createSearchStores, migrateChunkSearch, chunkBodyRecord,
   lookupSearchChunkIds, removeSearchFiles, removeProjectSearch, upsertSearchIndex,
 } from './projectIndexSearchIndex';
@@ -28,6 +32,7 @@ interface ProjectSourceRecord {
  * IndexedDB 仓库将大项目索引保留在浏览器本地，页面状态只保存索引编号和摘要。
  */
 export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
+  constructor(private readonly location?: ProjectIndexDatabaseLocation) {}
   private databasePromise?: Promise<IDBDatabase>;
   private activeDatabase?: IDBDatabase;
   private preparation?: ProjectIndexPreparationProgress;
@@ -426,10 +431,17 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     if (!this.databasePromise) {
       this.reportPreparation({ stage: 'OPENING_STORAGE' });
       let openingPromise: Promise<IDBDatabase>;
-      openingPromise = new Promise((resolve, reject) => {
+      openingPromise = (this.location?.factory() ?? Promise.resolve(indexedDB)).then(factory => new Promise<IDBDatabase>((resolve, reject) => {
         let abandoned = false;
-        const request = indexedDB.open(DATABASE_NAME, DATABASE_VERSION);
+        const request = factory.open(this.location?.name ?? DATABASE_NAME, DATABASE_VERSION);
+        // 只限制无响应的打开阶段；正在正常迁移的旧库保留原子事务和真实迁移进度。
+        const timer = setTimeout(() => {
+          abandoned = true;
+          this.clearDatabaseCache(undefined, openingPromise);
+          reject(new Error('浏览器本地索引被长时间占用，请刷新本页面后继续索引；已有数据仍保留'));
+        }, 20_000);
         request.onupgradeneeded = (event) => {
+          clearTimeout(timer);
           // blocked 后调用方已收到失败；晚到的升级不能在重试背后另开连接或修改旧库。
           if (abandoned) { request.transaction?.abort(); return; }
           this.reportPreparation({ stage: 'UPGRADING_STORAGE' });
@@ -471,6 +483,7 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
           }
         };
         request.onsuccess = () => {
+          clearTimeout(timer);
           const database = request.result;
           if (abandoned) { database.close(); return; }
           this.activeDatabase = database;
@@ -480,18 +493,26 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
           resolve(database);
         };
         request.onerror = () => {
+          clearTimeout(timer);
           this.clearDatabaseCache(undefined, openingPromise);
           reject(request.error ?? new Error('无法打开本地项目索引'));
         };
         request.onblocked = () => {
+          clearTimeout(timer);
           abandoned = true;
           this.clearDatabaseCache(undefined, openingPromise);
           reject(new Error('其他页面仍占用旧版项目索引。请关闭或刷新同一站点的其他标签页，再点击“继续索引”；无需删除已有数据。'));
         };
-      });
+      }));
       this.databasePromise = openingPromise;
+      void openingPromise.catch(() => this.clearDatabaseCache(undefined, openingPromise));
     }
     return this.databasePromise;
+  }
+
+  /** 项目独立存储被清理时释放当前连接；不删除其他项目或用户的源文件。 */
+  close(): void {
+    if (this.activeDatabase) this.invalidateDatabase(this.activeDatabase);
   }
 
   private invalidateDatabase(database: IDBDatabase): void {
@@ -594,4 +615,97 @@ const transactionComplete = (transaction: IDBTransaction): Promise<void> =>
 const isClosingConnectionError = (error: unknown): boolean =>
   error instanceof DOMException && error.name === 'InvalidStateError';
 
-export const projectIndexRepository = new IndexedDbProjectIndexRepository();
+/**
+ * 新项目使用 ID 中固定的独立存储路由，旧 ID 继续访问旧库。
+ * 共享编排、Worker、检索和设置页复用此入口，不把旧库迁移/清理放进新导入的前置步骤。
+ */
+export class RoutedProjectIndexRepository implements ProjectIndexRepository {
+  private readonly legacy = new IndexedDbProjectIndexRepository();
+  private readonly projects = new Map<string, IndexedDbProjectIndexRepository>();
+  private cleanupPending = false;
+
+  private repository(projectId: string): IndexedDbProjectIndexRepository {
+    const location = projectDatabaseLocation(projectId);
+    if (!location) return this.legacy;
+    let repository = this.projects.get(projectId);
+    if (!repository) {
+      repository = new IndexedDbProjectIndexRepository(location);
+      this.projects.set(projectId, repository);
+    }
+    return repository;
+  }
+
+  async prepareProject(projectId: string, expiresAt: string, retention: 'SESSION' | 'PERSISTENT'): Promise<void> {
+    if (isIsolatedProject(projectId)) await prepareIsolatedStorage(projectId, expiresAt, retention);
+    else await this.legacy.cleanupProjects();
+  }
+
+  observePreparation(listener: (progress: ProjectIndexPreparationProgress) => void, projectId: string): () => void {
+    return this.repository(projectId).observePreparation(listener);
+  }
+
+  beginProject(summary: ProjectIndexSummary): Promise<void> { return this.repository(summary.id).beginProject(summary); }
+  findFiles(id: string, paths: string[]): Promise<IndexedProjectFile[]> { return this.repository(id).findFiles(id, paths); }
+  writeBatch(files: IndexedProjectFile[], chunks: IndexedProjectChunk[], paths: string[] = [], checkpoint?: ProjectIndexSummary): Promise<void> {
+    const id = checkpoint?.id ?? files[0]?.projectId ?? chunks[0]?.projectId;
+    if (!id) return Promise.resolve();
+    if (files.some(file => file.projectId !== id) || chunks.some(chunk => chunk.projectId !== id)) {
+      return Promise.reject(new Error('索引批次不能混入其他项目的数据'));
+    }
+    return this.repository(id).writeBatch(files, chunks, paths, checkpoint);
+  }
+  pauseProject(summary: ProjectIndexSummary): Promise<void> { return this.repository(summary.id).pauseProject(summary); }
+  completeProject(summary: ProjectIndexSummary): Promise<void> { return this.repository(summary.id).completeProject(summary); }
+  removeUnseenFiles(id: string, scanId: string): Promise<number> { return this.repository(id).removeUnseenFiles(id, scanId); }
+  failProject(id: string, message: string): Promise<void> { return this.repository(id).failProject(id, message); }
+  findCandidateChunks(id: string, terms: string[], limit: number): Promise<IndexedProjectChunk[]> {
+    return this.repository(id).findCandidateChunks(id, terms, limit);
+  }
+  findChunksByPaths(id: string, paths: string[], limit: number): Promise<IndexedProjectChunk[]> {
+    return this.repository(id).findChunksByPaths(id, paths, limit);
+  }
+  saveProjectSource(id: string, handle: DirectoryHandleLike): Promise<void> { return this.repository(id).saveProjectSource(id, handle); }
+  findProjectSource(id: string): Promise<DirectoryHandleLike | undefined> { return this.repository(id).findProjectSource(id); }
+  findProject(id: string): Promise<ProjectIndexSummary | undefined> { return this.repository(id).findProject(id); }
+
+  async deleteProject(id: string): Promise<void> {
+    if (!isIsolatedProject(id)) return this.legacy.deleteProject(id);
+    this.projects.get(id)?.close();
+    await deleteIsolatedStorage(id);
+    this.projects.delete(id);
+  }
+
+  /** 后台保留期维护与导入解耦；失败不把新项目误标为失败，下一次维护仍可重试。 */
+  async cleanupProjects(now = new Date()): Promise<number> {
+    let count = 0;
+    // 独立桶由浏览器按期限回收；兼容路径只检查摘要，不迁移其他项目正文。
+    await listIsolatedProjects('bucket');
+    for (const id of await listIsolatedProjects('database')) {
+      const project = await this.repository(id).findProject(id);
+      if (project && Date.parse(project.expiresAt) <= now.getTime()) { await this.deleteProject(id); count++; }
+    }
+    return count + await this.legacy.cleanupProjects(now);
+  }
+
+  scheduleCleanup(): void {
+    if (this.cleanupPending) return;
+    this.cleanupPending = true;
+    // 保留既有到期清理，但必须等本轮完整交付后再启动；旧库失败不影响已完成的新索引。
+    setTimeout(() => {
+      void this.cleanupProjects().catch(() => undefined).finally(() => { this.cleanupPending = false; });
+    }, 1000);
+  }
+
+  async deleteAllProjects(): Promise<void> {
+    const failures: unknown[] = [];
+    // 两类存储独立清理，一处被占用也不阻塞另一处；有失败则明确报错，不声称全部清空。
+    for (const kind of ['bucket', 'database'] as const) {
+      try { for (const id of await listIsolatedProjects(kind)) await this.deleteProject(id); }
+      catch (error) { failures.push(error); }
+    }
+    try { await this.legacy.deleteAllProjects(); } catch (error) { failures.push(error); }
+    if (failures.length) throw Object.assign(new Error('部分本地索引尚未清理完成，请稍后重试'), { cause: failures[0] });
+  }
+}
+
+export const projectIndexRepository = new RoutedProjectIndexRepository();

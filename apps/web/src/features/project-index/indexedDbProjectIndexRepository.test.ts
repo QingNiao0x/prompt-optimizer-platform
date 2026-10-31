@@ -5,6 +5,24 @@ import { IndexedDbProjectIndexRepository } from './indexedDbProjectIndexReposito
 describe('IndexedDbProjectIndexRepository connection recovery', () => {
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.useRealTimers();
+  });
+
+  it('打开请求长期没有事件时超时报错，晚到连接关闭且不阻碍重试', async () => {
+    vi.useFakeTimers();
+    const lateDatabase = createHealthyDatabase(), healthyDatabase = createHealthyDatabase();
+    const stalled = { result: lateDatabase } as IDBOpenDBRequest;
+    let openings = 0;
+    vi.stubGlobal('indexedDB', { open: () => ++openings === 1 ? stalled : createOpenRequest(healthyDatabase) });
+    const repository = new IndexedDbProjectIndexRepository();
+    const pending = repository.findProject('p');
+    const assertion = expect(pending).rejects.toThrow('长时间占用');
+    await vi.advanceTimersByTimeAsync(20_000); await assertion;
+    await expect(repository.findProject('p')).resolves.toBeUndefined();
+    stalled.onsuccess?.(new Event('success'));
+    expect(lateDatabase.close).toHaveBeenCalledOnce();
+    await expect(repository.findProject('p')).resolves.toBeUndefined();
+    expect(openings).toBe(2);
   });
 
   it('should reopen IndexedDB when the cached connection is closing', async () => {

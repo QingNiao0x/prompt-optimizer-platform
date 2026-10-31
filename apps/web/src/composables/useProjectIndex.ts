@@ -10,6 +10,7 @@ import {
   type DirectoryHandleLike,
 } from '@/features/project-index/fileSystemDirectorySource';
 import { projectIndexRepository } from '@/features/project-index/indexedDbProjectIndexRepository';
+import { createIsolatedProjectId, isIsolatedProject } from '@/features/project-index/projectIndexStorage';
 import { indexFailureMessage } from '@/features/project-index/projectIndexFailure';
 import {
   type ProjectIndexMode,
@@ -91,7 +92,7 @@ export const useProjectIndex = () => {
       if (selectionId === operationVersion) isSelecting.value = false;
     }
     if (selectionId !== operationVersion) return undefined;
-    const projectId = createProjectId();
+    const projectId = createIsolatedProjectId();
     currentRootHandle = rootHandle;
     return runIndex(projectId, rootHandle, options, 'FULL');
   };
@@ -151,7 +152,7 @@ export const useProjectIndex = () => {
       if (operationId !== operationVersion) return;
       progress.value = { ...emptyProgress(), preparation, elapsedMs: performance.now() - preparationStartedAt };
     };
-    const stopObserving = projectIndexRepository.observePreparation(reportPreparation);
+    const stopObserving = projectIndexRepository.observePreparation(reportPreparation, projectId);
     // 原生存储提交期间可能没有逐条回调；只更新已用时间，不虚构文件数或百分比。
     const clock = setInterval(() => {
       if (operationId === operationVersion && progress.value?.phase === 'PREPARING') {
@@ -162,7 +163,10 @@ export const useProjectIndex = () => {
     disposePreparation = stopPreparation;
     try {
       const sessionId = getBrowserSessionId();
-      await projectIndexRepository.cleanupProjects();
+      const expiresAt = createExpiryDate(options.autoCleanupDays);
+      // 新目录只准备自己的存储，不等待无关旧项目的大型迁移或删除事务。
+      if (isIsolatedProject(projectId)) reportPreparation({ stage: 'PREPARING_STORAGE' });
+      await projectIndexRepository.prepareProject(projectId, expiresAt, options.retention);
       assertOperationActive(operationId, operationVersion);
       stopObserving();
       // 失败索引保留至原定期限；继续时校验已有指纹，目录句柄不自动重新取得授权。
@@ -170,7 +174,7 @@ export const useProjectIndex = () => {
       activeProjectHasData = true;
       await projectIndexRepository.saveProjectSource(projectId, rootHandle);
       assertOperationActive(operationId, operationVersion);
-      if (options.retention === 'PERSISTENT') {
+      if (options.retention === 'PERSISTENT' && !projectId.startsWith('pi-b1-')) {
         reportPreparation({ stage: 'REQUESTING_STORAGE' });
         await requestPersistentStorage();
         assertOperationActive(operationId, operationVersion);
@@ -180,13 +184,14 @@ export const useProjectIndex = () => {
         limits: options.limits,
         retention: options.retention,
         sessionId,
-        expiresAt: createExpiryDate(options.autoCleanupDays),
+        expiresAt,
         mode,
         respectGitignore: options.respectGitignore,
       });
       assertOperationActive(operationId, operationVersion);
       summary.value = result.summary;
       options.onDocumentsDiscovered?.(result.documents, result.omittedDocuments);
+      if (result.summary.status === 'READY') projectIndexRepository.scheduleCleanup();
       return result.summary;
     } catch (error) {
       if (error instanceof ProjectIndexCancelledError) {

@@ -147,7 +147,7 @@ export interface ProjectIndexSummary {
 
 /** 准备阶段处理旧库和目录授权，计数不代表本轮已扫描或已索引文件。 */
 export interface ProjectIndexPreparationProgress {
-  stage: 'OPENING_STORAGE' | 'UPGRADING_STORAGE' | 'CLEANING_STORAGE'
+  stage: 'OPENING_STORAGE' | 'PREPARING_STORAGE' | 'UPGRADING_STORAGE' | 'CLEANING_STORAGE'
     | 'SAVING_SOURCE' | 'REQUESTING_STORAGE' | 'STARTING_WORKER' | 'READING_RULES';
   completed?: number;
   total?: number;
