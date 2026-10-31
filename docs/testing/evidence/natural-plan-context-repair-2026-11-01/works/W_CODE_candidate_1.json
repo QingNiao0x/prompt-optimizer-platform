@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "8f1b6641-204d-4a38-aa0b-d4882d19f3ae",
+    "object": "chat.completion",
+    "created": 1793472589,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"files\":[{\"path\":\"src/limits.mjs\",\"content\":\"export function cleanBatch(input) {\\n  if (!Array.isArray(input)) {\\n    throw new TypeError(\\\"expected array\\\");\\n  }\\n\\n  const values = [];\\n  const errors = [];\\n\\n  for (let index = 0; index < input.length; index += 1) {\\n    const item = input[index];\\n\\n    if (typeof item !== \\\"string\\\") {\\n      errors.push({ index, reason: \\\"not a string\\\" });\\n      continue;\\n    }\\n\\n    const trimmed = item.trim();\\n\\n    if (trimmed.length === 0) {\\n      errors.push({ index, reason: \\\"empty string\\\" });\\n      continue;\\n    }\\n\\n    if (trimmed.length > 20) {\\n      errors.push({ index, reason: \\\"string exceeds 20 characters\\\" });\\n      continue;\\n    }\\n\\n    values.push(trimmed);\\n  }\\n\\n  return { values, errors };\\n}\\n\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 332,
+      "completion_tokens": 245,
+      "total_tokens": 577,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 332
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

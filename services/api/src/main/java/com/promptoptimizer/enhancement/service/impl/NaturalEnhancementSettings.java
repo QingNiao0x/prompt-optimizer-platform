@@ -20,15 +20,15 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties(prefix = "app.enhancement.natural")
 public class NaturalEnhancementSettings {
-    /** 默认v3修复普通入口；STABLE及已显式选择的旧配置不被改写，历史仍按保存版本。 */
+    /** 默认v4修复已答状态与来源关联；显式旧配置不被改写，历史仍按保存版本。 */
     public enum Profile {
         STABLE, CORE_REPAIR, ACTION_BOUNDARY_REPAIR, COMPLETION_BASIS_REPAIR,
-        /** 仅修复阶段协议、已答状态及来源关联；采用前不改变v3默认。 */ PLAN_CONTEXT_REPAIR,
-        /** 显式验证精简指导及阶段协议；未完成真实验证前不替换缺省v3。 */ SIMPLIFIED
+        /** 采用已验证的阶段协议、已答状态及来源关联修复，继续沿用v3正文补全原则。 */ PLAN_CONTEXT_REPAIR,
+        /** 精简正文指导尚未证明作品收益，仅供显式对照，不随工程修复默认采用。 */ SIMPLIFIED
     }
 
     @NotNull
-    private Profile profile = Profile.COMPLETION_BASIS_REPAIR;
+    private Profile profile = Profile.PLAN_CONTEXT_REPAIR;
 
     /** 读取服务端配置，不从模型输出或用户任务文本推断采用策略。 */
     public Profile getProfile() { return profile; }

@@ -1,0 +1,243 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "R_REPORT",
+  "strategyVersion" : "core-repair-v4",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T18:31:23.392388700Z",
+  "input" : {
+    "rawPrompt" : "请写一份排查报告，仅说明现象、可能原因和验证方法，不执行修改。",
+    "context" : {
+      "customDescription" : "设备每周偶发两次重启；尚未取得运行日志，原因未确认。",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v4",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.customDescription",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请写一份设备重启排查报告，仅说明现象、可能原因和验证方法，不执行任何修改。已知情况：设备每周偶发两次重启；目前尚未取得运行日志，原因未确认。报告中的现象部分按已知情况如实描述，并注明缺少运行日志这一信息缺口；可能原因部分基于该现象提出待验证的推测，明确标注为尚未确认；验证方法部分给出可用于后续排查的具体验证步骤及所需观察或采集的信息，用于确认或排除各可能原因。不要将任何推测写成已确认结论，也不要编造日志内容、参数或排查结果。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "撰写一份设备重启排查报告，仅说明现象、可能原因和验证方法，不执行修改",
+      "deliverable" : "包含现象、可能原因和验证方法的排查报告",
+      "requirements" : [ {
+        "text" : "写一份排查报告",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "请写一份排查报告",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "FORMAT" ]
+      }, {
+        "text" : "仅说明现象、可能原因和验证方法",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "仅说明现象、可能原因和验证方法",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "OBJECT", "CONDITION" ]
+      }, {
+        "text" : "不执行修改",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不执行修改",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "设备每周偶发两次重启",
+        "evidence" : [ {
+          "sourceId" : "context.customDescription",
+          "quote" : "设备每周偶发两次重启",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "OBJECT" ]
+      }, {
+        "text" : "尚未取得运行日志，原因未确认",
+        "evidence" : [ {
+          "sourceId" : "context.customDescription",
+          "quote" : "尚未取得运行日志，原因未确认",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "现象部分如实描述已知情况并注明缺少运行日志的信息缺口",
+        "benefit" : "使现象描述与已知事实一致，并明确信息缺口",
+        "gap" : "原文未说明如何在报告中处理日志缺失，可能导致编造现象或遗漏信息边界"
+      }, {
+        "text" : "可能原因标注为待验证推测，验证方法给出具体步骤及所需观察或采集的信息",
+        "benefit" : "避免将未确认原因写成结论，并使验证方法可用于后续排查",
+        "gap" : "原文未区分推测与结论，也未说明验证方法应达到的可操作性"
+      }, {
+        "text" : "不编造日志内容、参数或排查结果",
+        "benefit" : "保证报告不超出已知事实边界",
+        "gap" : "缺少对未知信息的禁止性约束，存在虚构风险"
+      } ],
+      "openDecisions" : [ {
+        "issue" : "运行日志尚未取得，具体故障原因未知",
+        "impact" : "仅影响可能原因的确定性和验证方法的具体指向，报告仍可按已知现象完成",
+        "questionId" : "",
+        "kind" : "USER_INFORMATION"
+      } ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请写一份设备重启排查报告" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "仅说明现象、可能原因和验证方法" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "不执行任何修改" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "设备每周偶发两次重启" ]
+        }, {
+          "index" : 4,
+          "quotes" : [ "目前尚未取得运行日志，原因未确认" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "现象部分按已知情况如实描述，并注明缺少运行日志这一信息缺口" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "可能原因部分基于该现象提出待验证的推测，明确标注为尚未确认", "验证方法部分给出可用于后续排查的具体验证步骤及所需观察或采集的信息" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "不要编造日志内容、参数或排查结果" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "撰写一份设备重启排查报告，仅说明现象、可能原因和验证方法，不执行修改",
+    "deliverable" : "包含现象、可能原因和验证方法的排查报告",
+    "requirements" : [ {
+      "text" : "写一份排查报告",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请写一份排查报告",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "FORMAT" ]
+    }, {
+      "text" : "仅说明现象、可能原因和验证方法",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "仅说明现象、可能原因和验证方法",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "OBJECT", "CONDITION" ]
+    }, {
+      "text" : "不执行修改",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不执行修改",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "设备每周偶发两次重启",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "设备每周偶发两次重启",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "OBJECT" ]
+    }, {
+      "text" : "尚未取得运行日志，原因未确认",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "尚未取得运行日志，原因未确认",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "现象部分如实描述已知情况并注明缺少运行日志的信息缺口",
+      "benefit" : "使现象描述与已知事实一致，并明确信息缺口",
+      "gap" : "原文未说明如何在报告中处理日志缺失，可能导致编造现象或遗漏信息边界"
+    }, {
+      "text" : "可能原因标注为待验证推测，验证方法给出具体步骤及所需观察或采集的信息",
+      "benefit" : "避免将未确认原因写成结论，并使验证方法可用于后续排查",
+      "gap" : "原文未区分推测与结论，也未说明验证方法应达到的可操作性"
+    }, {
+      "text" : "不编造日志内容、参数或排查结果",
+      "benefit" : "保证报告不超出已知事实边界",
+      "gap" : "缺少对未知信息的禁止性约束，存在虚构风险"
+    } ],
+    "openDecisions" : [ {
+      "issue" : "运行日志尚未取得，具体故障原因未知",
+      "impact" : "仅影响可能原因的确定性和验证方法的具体指向，报告仍可按已知现象完成",
+      "questionId" : "",
+      "kind" : "USER_INFORMATION"
+    } ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请写一份设备重启排查报告" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "仅说明现象、可能原因和验证方法" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "不执行任何修改" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "设备每周偶发两次重启" ]
+      }, {
+        "index" : 4,
+        "quotes" : [ "目前尚未取得运行日志，原因未确认" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "现象部分按已知情况如实描述，并注明缺少运行日志这一信息缺口" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "可能原因部分基于该现象提出待验证的推测，明确标注为尚未确认", "验证方法部分给出可用于后续排查的具体验证步骤及所需观察或采集的信息" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "不要编造日志内容、参数或排查结果" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 5815
+}

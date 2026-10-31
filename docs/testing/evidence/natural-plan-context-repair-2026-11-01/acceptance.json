@@ -1,0 +1,168 @@
+{
+  "hypothesis": "Same v3 prose strategy with phase-specific protocols, answered interaction state and explicit user/context evidence roles",
+  "regression": [
+    {
+      "file": "R_DEFER_core-repair-v4_enhance.json",
+      "success": true,
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ]
+    },
+    {
+      "file": "R_FORBID_core-repair-v4_enhance.json",
+      "success": true,
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ]
+    },
+    {
+      "file": "R_KNOWN_core-repair-v4_enhance.json",
+      "success": true,
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ]
+    },
+    {
+      "file": "R_REPORT_core-repair-v4_enhance.json",
+      "success": true,
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ]
+    },
+    {
+      "file": "R_WAIT_core-repair-v4_enhance.json",
+      "success": true,
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ]
+    },
+    {
+      "file": "W_CODE_core-repair-v4_enhance.json",
+      "success": true,
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ]
+    }
+  ],
+  "product": [
+    {
+      "id": "D_NOTICE",
+      "realAccount": true,
+      "generationCount": 1,
+      "revisionCount": 1,
+      "planQuestions": 0,
+      "default": "core-repair-v4",
+      "copyHistoryEqual": true,
+      "originalHistoryUnchanged": true,
+      "bodyGenerated": true,
+      "recordId": "95645739-4e82-496d-bc1b-303658a1677d"
+    },
+    {
+      "id": "D_PLAN",
+      "realAccount": true,
+      "generationCount": 1,
+      "revisionCount": 1,
+      "planQuestions": 2,
+      "default": "core-repair-v4",
+      "copyHistoryEqual": true,
+      "originalHistoryUnchanged": true,
+      "bodyGenerated": true,
+      "recordId": "b0163756-0249-44c8-a8c6-b4554ee26758"
+    }
+  ],
+  "answerPreservation": {
+    "answersFromSavedHistory": true,
+    "questionsAndAnswersExact": true,
+    "feedbackCalls": 3
+  },
+  "tests": [
+    {
+      "suite": "com.promptoptimizer.enhancement.service.impl.NaturalEnhancementSettingsTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.411
+    },
+    {
+      "suite": "com.promptoptimizer.enhancement.service.impl.NaturalEnhancementServiceTest",
+      "tests": 37,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.02
+    },
+    {
+      "suite": "com.promptoptimizer.history.service.impl.MybatisOptimizationHistoryServiceTest",
+      "tests": 35,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.635
+    },
+    {
+      "suite": "com.promptoptimizer.provider.domain.NaturalTaskReviewTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.055
+    },
+    {
+      "suite": "com.promptoptimizer.provider.domain.NaturalTaskScopeTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.257
+    },
+    {
+      "suite": "com.promptoptimizer.provider.infrastructure.openai.NaturalCompletionBasisProviderTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.357
+    },
+    {
+      "suite": "com.promptoptimizer.provider.infrastructure.openai.NaturalPlanContextProviderTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.825
+    },
+    {
+      "suite": "com.promptoptimizer.provider.infrastructure.openai.NaturalSimplifiedProviderTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.507
+    }
+  ],
+  "actualWorks": "work-checks.json",
+  "engineeringAdoption": true,
+  "broadQualityImprovementProven": false,
+  "independentHumanReview": false,
+  "sourceDefault": "PLAN_CONTEXT_REPAIR -> core-repair-v4",
+  "runtime": "Isolated 9047 API verified with explicit v4. Existing 9000 process version not verified; see runtime-observation.json. No production deployment.",
+  "retryCauses": [
+    {
+      "failed": "traces/0006.json",
+      "repaired": "traces/0007.json",
+      "cause": "Unexpected task.kind field; rejected by strict phase DTO reader."
+    },
+    {
+      "failed": "traces/0022.json",
+      "repaired": "traces/0023.json",
+      "cause": "Assistant previous prompt placed in userEvidence; rejected by source-kind check."
+    }
+  ]
+}

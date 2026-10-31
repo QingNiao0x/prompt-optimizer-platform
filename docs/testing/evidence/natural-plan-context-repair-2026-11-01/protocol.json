@@ -1,0 +1,108 @@
+{
+  "status": "FROZEN",
+  "frozenAt": "2026-10-31T18:29:58.633Z",
+  "authorization": "本轮用户新增最多200次，合成材料及派生结果至DeepSeek官方端点，旧批次不重开",
+  "totalMaximum": 200,
+  "stageMaximum": 96,
+  "phaseLimits": {
+    "enhance": 40,
+    "plan": 8,
+    "product": 36,
+    "execute": 12
+  },
+  "qualityRetries": 0,
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "max_tokens": 8192,
+  "thinking": "disabled",
+  "versions": [
+    "core-repair-v3",
+    "core-repair-v4"
+  ],
+  "files": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptPlanContextInstructions.java",
+      "sha256": "4e4972cc972bc72630f75bf5305f1f6f36b3793eade1512cb6740bf1c658215b"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskScopeSources.java",
+      "sha256": "35cfc1b1916e559e6012c5c7e8eae2726959f35b9eaea7f74070a6834d89c6a3"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskScope.java",
+      "sha256": "ebe5835c536bed35b97d4c8803088f41cf44e4fd849be881f252db4e017cfa1e"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "59f77652828589b6bcf301b986cd3aebb5677111b2b3595bae4fa4012969e0d7"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptStageInstructions.java",
+      "sha256": "28f36b182095c9432143f72268f7e74ecf63e791a1f4b1804251a00b93793d2e"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRevision.java",
+      "sha256": "e09ca728c4dcba03eaf4e16b5c74fa9195bbe9933b51d4fc8b5c04b725f6d4d2"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskSource.java",
+      "sha256": "b29fdf89e6e9566f988f54d71c6bd566cdc5bba90159c7d21e487538a2dbf290"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java",
+      "sha256": "1cd13c802b6fb0a3cb99592dd8ab4efba2611b932158c719a27aa6e4295c9a37"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptPhasePayloads.java",
+      "sha256": "3f0b90546b60d3713ee0061a240da4546890a5670c4835bf980895cae8bae17d"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "1aac21e7204a3ebb4d758b8aa4e0e7eb45211d94bffbd04e92978af287c4a223"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementService.java",
+      "sha256": "62d9d15a6996f7b5489baba47daaa76efc881beaefd4adebff4f177e5e1f7d89"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/history/service/impl/MybatisOptimizationHistoryService.java",
+      "sha256": "0afa1cf0d12305a125551328f6c58e5536368975665a82bd1b123d68f5fdb3de"
+    },
+    {
+      "path": "docs/testing/evidence/natural-plan-context-repair-2026-11-01/run.mjs",
+      "sha256": "57fba91b8f79a2b569d939c81351b880a1ecd991ca0e1db3958926a81a5e31f0"
+    },
+    {
+      "path": "docs/testing/evidence/natural-plan-context-repair-2026-11-01/run.ps1",
+      "sha256": "9b19048f9c1d885aab8ce0a7d5e5f5b495be46f490b1b31507e48ba714bacde2"
+    },
+    {
+      "path": "docs/testing/evidence/natural-plan-context-repair-2026-11-01/PlanContextEvaluation.java",
+      "sha256": "53f390cabc2c8f8bf849a41ec5827c64f35e76b7d66c85c9348b546b8012db4a"
+    },
+    {
+      "path": "docs/testing/evidence/natural-plan-context-repair-2026-11-01/cases.json",
+      "sha256": "b8876692b39da22dc9b6669ba51baec2d7a1e019f509c8160612552ee8235096"
+    },
+    {
+      "path": "docs/testing/evidence/natural-plan-context-repair-2026-11-01/product-cases.json",
+      "sha256": "e439791c8ceb2d41b7449a10106db52bb3b8cb40193b207d08ab31d111b9a0c5"
+    },
+    {
+      "path": "docs/testing/evidence/natural-plan-context-repair-2026-11-01/product-relay.mjs",
+      "sha256": "69471a1e6c06a068a75282845068a2af81e2aba7a898919ecb9bd9256f3f6899"
+    },
+    {
+      "path": "docs/testing/evidence/natural-plan-context-repair-2026-11-01/product.ps1",
+      "sha256": "61c37969fec3c3753d69d0c490565b081239a7a1faaf46a5a56ba0b9d7dfe541"
+    },
+    {
+      "path": "docs/testing/evidence/natural-plan-context-repair-2026-11-01/product-browser.mjs",
+      "sha256": "1ca28226950963b810f3755d995313c28594e5b3613b3b7bc8b41d4386712178"
+    }
+  ],
+  "hypothesis": "Same v3 prose strategy with phase-specific protocols, answered interaction state and explicit user/context evidence roles",
+  "acceptance": "No repeated request for already answered decisions; original task/limits/unknowns retained; context supports authorized action; valid phase delivery; real Plan-to-revision-copy-history consistency. Engineering adoption independent of broad prose quality.",
+  "review": "Deterministic checks and internal developer semantic review, not independent human evaluation."
+}

@@ -1,0 +1,203 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "W_CODE",
+  "strategyVersion" : "core-repair-v4",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T18:31:09.551681900Z",
+  "input" : {
+    "rawPrompt" : "修复 @src/limits.mjs 的批量输入处理，保留有效项顺序，别让坏数据影响整个批次。",
+    "context" : {
+      "customDescription" : "输入是数组，合法项为非空字符串（去除两端空白后最长20个字符）；每个无效项返回原索引和原因。顶层非数组仍抛TypeError。保留重复有效值，不修改输入；返回{values,errors}。只交付src/limits.mjs一个完整文件，格式为JSON对象{\"files\":[{\"path\":\"src/limits.mjs\",\"content\":\"完整源码\"}]}，不增加依赖。",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "src/limits.mjs" ],
+      "fileSnippets" : [ {
+        "path" : "src/limits.mjs",
+        "language" : "javascript",
+        "content" : "export function cleanBatch(input) { if (!Array.isArray(input)) throw new TypeError(\"expected array\"); return { values: input.map(item => item.trim()), errors: [] }; }",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v4",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.customDescription",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "修复 src/limits.mjs 的批量输入处理：保留有效项顺序，别让坏数据影响整个批次。输入为数组；合法项是去除两端空白后非空且最长 20 个字符的字符串，每个无效项返回原索引和原因；顶层非数组仍抛 TypeError；保留重复有效值，不修改输入；返回 {values, errors}。只交付 src/limits.mjs 一个完整文件，格式为 JSON 对象 {\"files\":[{\"path\":\"src/limits.mjs\",\"content\":\"完整源码\"}]}，不增加依赖。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "修复 src/limits.mjs 的批量输入处理，保留有效项顺序并隔离无效项",
+      "deliverable" : "JSON 对象 {\"files\":[{\"path\":\"src/limits.mjs\",\"content\":\"完整源码\"}]}，content 为修复后的完整源码",
+      "requirements" : [ {
+        "text" : "修复 src/limits.mjs 的批量输入处理，保留有效项顺序，别让坏数据影响整个批次",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "修复 @src/limits.mjs 的批量输入处理，保留有效项顺序，别让坏数据影响整个批次。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "CONDITION" ]
+      }, {
+        "text" : "输入是数组，合法项为非空字符串（去除两端空白后最长20个字符）；每个无效项返回原索引和原因",
+        "evidence" : [ {
+          "sourceId" : "context.customDescription",
+          "quote" : "输入是数组，合法项为非空字符串（去除两端空白后最长20个字符）；每个无效项返回原索引和原因。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "OBJECT", "CONDITION" ]
+      }, {
+        "text" : "顶层非数组仍抛TypeError",
+        "evidence" : [ {
+          "sourceId" : "context.customDescription",
+          "quote" : "顶层非数组仍抛TypeError。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "保留重复有效值，不修改输入；返回{values,errors}",
+        "evidence" : [ {
+          "sourceId" : "context.customDescription",
+          "quote" : "保留重复有效值，不修改输入；返回{values,errors}。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "CONDITION", "FORMAT" ]
+      }, {
+        "text" : "只交付src/limits.mjs一个完整文件，格式为JSON对象{\"files\":[{\"path\":\"src/limits.mjs\",\"content\":\"完整源码\"}]}，不增加依赖",
+        "evidence" : [ {
+          "sourceId" : "context.customDescription",
+          "quote" : "只交付src/limits.mjs一个完整文件，格式为JSON对象{\"files\":[{\"path\":\"src/limits.mjs\",\"content\":\"完整源码\"}]}，不增加依赖。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "FORMAT", "CONDITION" ]
+      } ],
+      "additions" : [ ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "修复 src/limits.mjs 的批量输入处理：保留有效项顺序，别让坏数据影响整个批次。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "输入为数组；合法项是去除两端空白后非空且最长 20 个字符的字符串，每个无效项返回原索引和原因；" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "顶层非数组仍抛 TypeError；" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "保留重复有效值，不修改输入；返回 {values, errors}。" ]
+        }, {
+          "index" : 4,
+          "quotes" : [ "只交付 src/limits.mjs 一个完整文件，格式为 JSON 对象 {\"files\":[{\"path\":\"src/limits.mjs\",\"content\":\"完整源码\"}]}，不增加依赖。" ]
+        } ],
+        "additionCoverage" : [ ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "修复 src/limits.mjs 的批量输入处理，保留有效项顺序并隔离无效项",
+    "deliverable" : "JSON 对象 {\"files\":[{\"path\":\"src/limits.mjs\",\"content\":\"完整源码\"}]}，content 为修复后的完整源码",
+    "requirements" : [ {
+      "text" : "修复 src/limits.mjs 的批量输入处理，保留有效项顺序，别让坏数据影响整个批次",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "修复 @src/limits.mjs 的批量输入处理，保留有效项顺序，别让坏数据影响整个批次。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "CONDITION" ]
+    }, {
+      "text" : "输入是数组，合法项为非空字符串（去除两端空白后最长20个字符）；每个无效项返回原索引和原因",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "输入是数组，合法项为非空字符串（去除两端空白后最长20个字符）；每个无效项返回原索引和原因。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "OBJECT", "CONDITION" ]
+    }, {
+      "text" : "顶层非数组仍抛TypeError",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "顶层非数组仍抛TypeError。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "保留重复有效值，不修改输入；返回{values,errors}",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "保留重复有效值，不修改输入；返回{values,errors}。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION", "FORMAT" ]
+    }, {
+      "text" : "只交付src/limits.mjs一个完整文件，格式为JSON对象{\"files\":[{\"path\":\"src/limits.mjs\",\"content\":\"完整源码\"}]}，不增加依赖",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "只交付src/limits.mjs一个完整文件，格式为JSON对象{\"files\":[{\"path\":\"src/limits.mjs\",\"content\":\"完整源码\"}]}，不增加依赖。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "FORMAT", "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "修复 src/limits.mjs 的批量输入处理：保留有效项顺序，别让坏数据影响整个批次。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "输入为数组；合法项是去除两端空白后非空且最长 20 个字符的字符串，每个无效项返回原索引和原因；" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "顶层非数组仍抛 TypeError；" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "保留重复有效值，不修改输入；返回 {values, errors}。" ]
+      }, {
+        "index" : 4,
+        "quotes" : [ "只交付 src/limits.mjs 一个完整文件，格式为 JSON 对象 {\"files\":[{\"path\":\"src/limits.mjs\",\"content\":\"完整源码\"}]}，不增加依赖。" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 6892
+}

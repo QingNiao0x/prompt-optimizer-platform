@@ -1,0 +1,194 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "R_KNOWN",
+  "strategyVersion" : "core-repair-v4",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T18:30:57.750715600Z",
+  "input" : {
+    "rawPrompt" : "给客户写一封服务延期通知，只输出正文。新交付日期和补偿方案由我决定，请先确认这两项；其他措辞由AI设计。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ {
+      "questionId" : "q1",
+      "question" : "请确认新的交付日期是什么？",
+      "answer" : "新交付日期为11月8日。"
+    }, {
+      "questionId" : "q2",
+      "question" : "请确认向客户提供的补偿方案是什么？",
+      "answer" : "提供一个月免费服务，不支付现金赔偿。"
+    } ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v4",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "actualAnswers.0",
+      "kind" : "BOUND_PLAN_ANSWER"
+    }, {
+      "id" : "actualAnswers.1",
+      "kind" : "BOUND_PLAN_ANSWER"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请给客户写一封服务延期通知，只输出通知正文，不要附加标题、说明或其他内容。通知中需写明新交付日期为11月8日，补偿方案为提供一个月免费服务、不支付现金赔偿；其他措辞由你设计。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "给客户写一封服务延期通知，只输出正文",
+      "deliverable" : "服务延期通知正文",
+      "requirements" : [ {
+        "text" : "给客户写一封服务延期通知，只输出正文",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "给客户写一封服务延期通知，只输出正文。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "FORMAT" ]
+      }, {
+        "text" : "新交付日期为11月8日",
+        "evidence" : [ {
+          "sourceId" : "actualAnswers.0",
+          "quote" : "新交付日期为11月8日。",
+          "origin" : "BOUND_PLAN_ANSWER"
+        } ],
+        "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+      }, {
+        "text" : "补偿方案为提供一个月免费服务，不支付现金赔偿",
+        "evidence" : [ {
+          "sourceId" : "actualAnswers.1",
+          "quote" : "提供一个月免费服务，不支付现金赔偿。",
+          "origin" : "BOUND_PLAN_ANSWER"
+        } ],
+        "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+      }, {
+        "text" : "其他措辞由AI设计",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "其他措辞由AI设计。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "只输出通知正文，不附加标题、说明或其他内容",
+        "benefit" : "确保交付物严格为通知正文，符合用户对输出范围的限定",
+        "gap" : "原文“只输出正文”未明确排除标题和附加说明，可能影响输出格式"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请给客户写一封服务延期通知，只输出通知正文" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "通知中需写明新交付日期为11月8日" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "补偿方案为提供一个月免费服务、不支付现金赔偿" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "其他措辞由你设计" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "不要附加标题、说明或其他内容" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "给客户写一封服务延期通知，只输出正文",
+    "deliverable" : "服务延期通知正文",
+    "requirements" : [ {
+      "text" : "给客户写一封服务延期通知，只输出正文",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "给客户写一封服务延期通知，只输出正文。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "FORMAT" ]
+    }, {
+      "text" : "新交付日期为11月8日",
+      "evidence" : [ {
+        "sourceId" : "actualAnswers.0",
+        "quote" : "新交付日期为11月8日。",
+        "origin" : "BOUND_PLAN_ANSWER"
+      } ],
+      "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+    }, {
+      "text" : "补偿方案为提供一个月免费服务，不支付现金赔偿",
+      "evidence" : [ {
+        "sourceId" : "actualAnswers.1",
+        "quote" : "提供一个月免费服务，不支付现金赔偿。",
+        "origin" : "BOUND_PLAN_ANSWER"
+      } ],
+      "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+    }, {
+      "text" : "其他措辞由AI设计",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "其他措辞由AI设计。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "只输出通知正文，不附加标题、说明或其他内容",
+      "benefit" : "确保交付物严格为通知正文，符合用户对输出范围的限定",
+      "gap" : "原文“只输出正文”未明确排除标题和附加说明，可能影响输出格式"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请给客户写一封服务延期通知，只输出通知正文" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "通知中需写明新交付日期为11月8日" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "补偿方案为提供一个月免费服务、不支付现金赔偿" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "其他措辞由你设计" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "不要附加标题、说明或其他内容" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 3595
+}

@@ -1,0 +1,35 @@
+{
+  "rawPrompt": "给客户写一封服务延期通知，只输出正文。新交付日期和补偿方案由我决定，请先确认这两项；其他措辞由AI设计。",
+  "modelId": "deepseek:deepseek-flash",
+  "context": {
+    "customDescription": "",
+    "files": []
+  },
+  "enhancement": {
+    "templateCode": "AUTO",
+    "includeConversationHistory": false,
+    "includePermissionBoundaries": true,
+    "promptFormat": "COMPACT"
+  },
+  "conversationHistory": [],
+  "permissionPolicy": {
+    "protectedPaths": [],
+    "requireConfirmationFor": []
+  },
+  "planConfirmation": {
+    "planId": "7e7c47e1-d2ea-4e8a-ade5-d9a69b863804",
+    "planningContext": null,
+    "answers": [
+      {
+        "questionId": "newDeliveryDate",
+        "question": "请确认新的交付日期。",
+        "answer": "新交付日期由我稍后确认，当前不承诺具体日期。"
+      },
+      {
+        "questionId": "compensationPlan",
+        "question": "请确认补偿方案。",
+        "answer": "不承诺额外赔偿。"
+      }
+    ]
+  }
+}

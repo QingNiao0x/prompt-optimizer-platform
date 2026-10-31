@@ -1,0 +1,40 @@
+{
+  "status": 200,
+  "body": {
+    "requestId": "4bca9fab-306f-48c9-8f43-cb48601c036c",
+    "data": {
+      "summary": "用户要求先确认新交付日期和补偿方案，再撰写仅含正文的服务延期通知；这两项由用户保留决定，属于必须澄清的用户独有信息。",
+      "questions": [
+        {
+          "id": "newDeliveryDate",
+          "question": "请确认新的交付日期。",
+          "hint": "新交付日期是通知正文的核心事实，用户明确保留决定权，未确认前无法写入正文。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "compensationPlan",
+          "question": "请确认补偿方案。",
+          "hint": "补偿方案是通知正文的关键承诺内容，用户明确保留决定权，未确认前无法写入。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "AUTO",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 4744,
+      "planId": "7e7c47e1-d2ea-4e8a-ade5-d9a69b863804",
+      "planningContext": null,
+      "expiresAt": "2026-10-31T19:17:12.362858700Z"
+    }
+  }
+}

@@ -1,0 +1,214 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "R_DEFER",
+  "strategyVersion" : "core-repair-v4",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T18:30:22.804988600Z",
+  "input" : {
+    "rawPrompt" : "给客户写一封服务延期通知，只输出正文。新交付日期和补偿方案由我决定，请先确认这两项；其他措辞由AI设计。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ {
+      "questionId" : "q1",
+      "question" : "请确认新的交付日期是什么？",
+      "answer" : "新交付日期由我稍后确认，当前不承诺具体日期。"
+    }, {
+      "questionId" : "q2",
+      "question" : "请确认向客户提供的补偿方案是什么？",
+      "answer" : "不承诺额外赔偿。"
+    } ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v4",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "actualAnswers.0",
+      "kind" : "BOUND_PLAN_ANSWER"
+    }, {
+      "id" : "actualAnswers.1",
+      "kind" : "BOUND_PLAN_ANSWER"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "给客户写一封服务延期通知，只输出通知正文，不要附加说明、标题或其他内容。新交付日期由我稍后确认，当前不承诺具体日期；不承诺额外赔偿。请据此设计其余措辞，正文中不要编造具体交付日期或补偿方案。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "给客户写一封服务延期通知，只输出正文",
+      "deliverable" : "服务延期通知正文",
+      "requirements" : [ {
+        "text" : "给客户写一封服务延期通知，只输出正文",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "给客户写一封服务延期通知，只输出正文。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "FORMAT" ]
+      }, {
+        "text" : "新交付日期由我稍后确认，当前不承诺具体日期",
+        "evidence" : [ {
+          "sourceId" : "actualAnswers.0",
+          "quote" : "新交付日期由我稍后确认，当前不承诺具体日期。",
+          "origin" : "BOUND_PLAN_ANSWER"
+        } ],
+        "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+      }, {
+        "text" : "不承诺额外赔偿",
+        "evidence" : [ {
+          "sourceId" : "actualAnswers.1",
+          "quote" : "不承诺额外赔偿。",
+          "origin" : "BOUND_PLAN_ANSWER"
+        } ],
+        "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+      }, {
+        "text" : "其他措辞由AI设计",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "其他措辞由AI设计。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "正文中不要编造具体交付日期或补偿方案",
+        "benefit" : "确保通知正文不虚构未确认的日期与补偿，符合用户已确认的边界",
+        "gap" : "已确认不承诺具体日期和额外赔偿，若不写明，正文可能自行填入日期或补偿内容，违背用户保留的决定"
+      } ],
+      "openDecisions" : [ {
+        "issue" : "新的具体交付日期",
+        "impact" : "仅影响正文中交付日期的具体表述，其余内容可正常完成",
+        "questionId" : "",
+        "kind" : "USER_INFORMATION"
+      }, {
+        "issue" : "是否提供补偿方案及具体内容",
+        "impact" : "仅影响正文中补偿相关表述，当前按不承诺额外赔偿处理",
+        "questionId" : "",
+        "kind" : "USER_INFORMATION"
+      } ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "给客户写一封服务延期通知，只输出通知正文，不要附加说明、标题或其他内容。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "新交付日期由我稍后确认，当前不承诺具体日期；" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "不承诺额外赔偿。" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "请据此设计其余措辞，" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "正文中不要编造具体交付日期或补偿方案。" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "给客户写一封服务延期通知，只输出正文",
+    "deliverable" : "服务延期通知正文",
+    "requirements" : [ {
+      "text" : "给客户写一封服务延期通知，只输出正文",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "给客户写一封服务延期通知，只输出正文。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "FORMAT" ]
+    }, {
+      "text" : "新交付日期由我稍后确认，当前不承诺具体日期",
+      "evidence" : [ {
+        "sourceId" : "actualAnswers.0",
+        "quote" : "新交付日期由我稍后确认，当前不承诺具体日期。",
+        "origin" : "BOUND_PLAN_ANSWER"
+      } ],
+      "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+    }, {
+      "text" : "不承诺额外赔偿",
+      "evidence" : [ {
+        "sourceId" : "actualAnswers.1",
+        "quote" : "不承诺额外赔偿。",
+        "origin" : "BOUND_PLAN_ANSWER"
+      } ],
+      "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+    }, {
+      "text" : "其他措辞由AI设计",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "其他措辞由AI设计。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "正文中不要编造具体交付日期或补偿方案",
+      "benefit" : "确保通知正文不虚构未确认的日期与补偿，符合用户已确认的边界",
+      "gap" : "已确认不承诺具体日期和额外赔偿，若不写明，正文可能自行填入日期或补偿内容，违背用户保留的决定"
+    } ],
+    "openDecisions" : [ {
+      "issue" : "新的具体交付日期",
+      "impact" : "仅影响正文中交付日期的具体表述，其余内容可正常完成",
+      "questionId" : "",
+      "kind" : "USER_INFORMATION"
+    }, {
+      "issue" : "是否提供补偿方案及具体内容",
+      "impact" : "仅影响正文中补偿相关表述，当前按不承诺额外赔偿处理",
+      "questionId" : "",
+      "kind" : "USER_INFORMATION"
+    } ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "给客户写一封服务延期通知，只输出通知正文，不要附加说明、标题或其他内容。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "新交付日期由我稍后确认，当前不承诺具体日期；" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "不承诺额外赔偿。" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "请据此设计其余措辞，" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "正文中不要编造具体交付日期或补偿方案。" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 6257
+}

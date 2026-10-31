@@ -1,0 +1,215 @@
+{
+  "assessedAt": "2026-10-31T18:54:15.713Z",
+  "rules": "works-protocol.json",
+  "codeExecution": "Reviewed source, VM with no host filesystem/network bindings, 1-second execution timeout; no model call.",
+  "noticeReview": "All four directly deliver a notice without asking again or promising a date/compensation. Original round 2 adds an unprovided project-progress explanation. Candidate has generic progress wording, not evidence of the real project state. No independent human preference evaluation.",
+  "limitations": "Two synthetic tasks, two executions per arm; no v3 work comparison because prior corresponding v3 generation failed. Code tie is not a quality gain.",
+  "results": [
+    {
+      "name": "W_CODE_original_1",
+      "checks": [
+        {
+          "label": "Only requested file, valid JSON and no dependency",
+          "passed": true
+        },
+        {
+          "label": "Empty batch",
+          "passed": true
+        },
+        {
+          "label": "Trim, preserve order and duplicates",
+          "passed": true
+        },
+        {
+          "label": "Mixed invalid items are local failures with original indices",
+          "passed": true
+        },
+        {
+          "label": "Length boundary applies after trimming",
+          "passed": true
+        },
+        {
+          "label": "Input is not modified",
+          "passed": true
+        },
+        {
+          "label": "Non-array top level throws TypeError",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "W_CODE_original_2",
+      "checks": [
+        {
+          "label": "Only requested file, valid JSON and no dependency",
+          "passed": true
+        },
+        {
+          "label": "Empty batch",
+          "passed": true
+        },
+        {
+          "label": "Trim, preserve order and duplicates",
+          "passed": true
+        },
+        {
+          "label": "Mixed invalid items are local failures with original indices",
+          "passed": true
+        },
+        {
+          "label": "Length boundary applies after trimming",
+          "passed": true
+        },
+        {
+          "label": "Input is not modified",
+          "passed": true
+        },
+        {
+          "label": "Non-array top level throws TypeError",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "W_CODE_candidate_1",
+      "checks": [
+        {
+          "label": "Only requested file, valid JSON and no dependency",
+          "passed": true
+        },
+        {
+          "label": "Empty batch",
+          "passed": true
+        },
+        {
+          "label": "Trim, preserve order and duplicates",
+          "passed": true
+        },
+        {
+          "label": "Mixed invalid items are local failures with original indices",
+          "passed": true
+        },
+        {
+          "label": "Length boundary applies after trimming",
+          "passed": true
+        },
+        {
+          "label": "Input is not modified",
+          "passed": true
+        },
+        {
+          "label": "Non-array top level throws TypeError",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "W_CODE_candidate_2",
+      "checks": [
+        {
+          "label": "Only requested file, valid JSON and no dependency",
+          "passed": true
+        },
+        {
+          "label": "Empty batch",
+          "passed": true
+        },
+        {
+          "label": "Trim, preserve order and duplicates",
+          "passed": true
+        },
+        {
+          "label": "Mixed invalid items are local failures with original indices",
+          "passed": true
+        },
+        {
+          "label": "Length boundary applies after trimming",
+          "passed": true
+        },
+        {
+          "label": "Input is not modified",
+          "passed": true
+        },
+        {
+          "label": "Non-array top level throws TypeError",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "D_PLAN_original_1",
+      "characters": 110,
+      "checks": [
+        {
+          "label": "No more than 100 non-whitespace characters",
+          "passed": false,
+          "error": "110 > 100"
+        },
+        {
+          "label": "Semantic review: notice delivered directly, no concrete date or compensation promise, no repeated question",
+          "passed": true,
+          "reviewer": "developer",
+          "independentHumanReview": false
+        }
+      ],
+      "passed": false
+    },
+    {
+      "name": "D_PLAN_original_2",
+      "characters": 103,
+      "checks": [
+        {
+          "label": "No more than 100 non-whitespace characters",
+          "passed": false,
+          "error": "103 > 100"
+        },
+        {
+          "label": "Semantic review: notice delivered directly, no concrete date or compensation promise, no repeated question",
+          "passed": true,
+          "reviewer": "developer",
+          "independentHumanReview": false
+        }
+      ],
+      "passed": false
+    },
+    {
+      "name": "D_PLAN_candidate_1",
+      "characters": 76,
+      "checks": [
+        {
+          "label": "No more than 100 non-whitespace characters",
+          "passed": true
+        },
+        {
+          "label": "Semantic review: notice delivered directly, no concrete date or compensation promise, no repeated question",
+          "passed": true,
+          "reviewer": "developer",
+          "independentHumanReview": false
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "D_PLAN_candidate_2",
+      "characters": 75,
+      "checks": [
+        {
+          "label": "No more than 100 non-whitespace characters",
+          "passed": true
+        },
+        {
+          "label": "Semantic review: notice delivered directly, no concrete date or compensation promise, no repeated question",
+          "passed": true,
+          "reviewer": "developer",
+          "independentHumanReview": false
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "frozenAt": "2026-10-31T18:49:23.909Z",
+  "scriptSha256": "ec7386c4ad7a0ae8d8e687a56492f9a5996658b8e0d17f3d4be43f29ed190b48",
+  "sourceFiles": [
+    {
+      "path": "cases.json"
+    },
+    {
+      "path": "product-cases.json"
+    },
+    {
+      "path": "results/W_CODE_core-repair-v4_enhance.json"
+    },
+    {
+      "path": "product/D_PLAN-revision-response.json"
+    },
+    {
+      "path": "product/D_PLAN-generation-request.json"
+    }
+  ],
+  "pairs": [
+    {
+      "id": "W_CODE",
+      "original": "修复 @src/limits.mjs 的批量输入处理，保留有效项顺序，别让坏数据影响整个批次。",
+      "candidate": "修复 src/limits.mjs 的批量输入处理：保留有效项顺序，别让坏数据影响整个批次。输入为数组；合法项是去除两端空白后非空且最长 20 个字符的字符串，每个无效项返回原索引和原因；顶层非数组仍抛 TypeError；保留重复有效值，不修改输入；返回 {values, errors}。只交付 src/limits.mjs 一个完整文件，格式为 JSON 对象 {\"files\":[{\"path\":\"src/limits.mjs\",\"content\":\"完整源码\"}]}，不增加依赖。",
+      "common": "{\"context\":{\"customDescription\":\"输入是数组，合法项为非空字符串（去除两端空白后最长20个字符）；每个无效项返回原索引和原因。顶层非数组仍抛TypeError。保留重复有效值，不修改输入；返回{values,errors}。只交付src/limits.mjs一个完整文件，格式为JSON对象{\\\"files\\\":[{\\\"path\\\":\\\"src/limits.mjs\\\",\\\"content\\\":\\\"完整源码\\\"}]}，不增加依赖。\",\"files\":[{\"path\":\"src/limits.mjs\",\"language\":\"javascript\",\"content\":\"export function cleanBatch(input) { if (!Array.isArray(input)) throw new TypeError(\\\"expected array\\\"); return { values: input.map(item => item.trim()), errors: [] }; }\"}]},\"conversation\":[]}",
+      "rubric": [
+        "空白、非字符串、超长项局部报错",
+        "原索引和顺序正确",
+        "重复合法值保留",
+        "原数组不修改",
+        "顶层TypeError保留",
+        "只返回允许文件和JSON"
+      ]
+    },
+    {
+      "id": "D_PLAN",
+      "original": "给客户写一封服务延期通知，只输出正文。新交付日期和补偿方案由我决定，请先确认这两项；其他措辞由AI设计。",
+      "candidate": "请给客户写一封服务延期通知，只输出通知正文，不要附加标题、说明或其他内容。正文须保持正式语气，控制在100字以内。通知中不要承诺具体的新交付日期，可表述为新交付日期将在稍后确认；不要承诺额外赔偿或补偿方案。其余措辞由你设计，需礼貌、清楚地说明延期情况。",
+      "common": "{\"actualPlanAnswers\":[{\"questionId\":\"newDeliveryDate\",\"question\":\"请确认新的交付日期。\",\"answer\":\"新交付日期由我稍后确认，当前不承诺具体日期。\"},{\"questionId\":\"compensationPlan\",\"question\":\"请确认补偿方案。\",\"answer\":\"不承诺额外赔偿。\"}],\"latestUserFeedback\":\"保持正式语气，缩短为100字以内，保留已确认的日期与补偿限制。\"}",
+      "rubric": [
+        "直接给出通知正文",
+        "100字以内且正式",
+        "不得编造日期或承诺补偿",
+        "不要求再次确认已答问题"
+      ]
+    }
+  ],
+  "plannedCalls": 8,
+  "repetitions": 2,
+  "qualityRetries": 0,
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "max_tokens": 8192,
+  "assessment": "Code behavior tests and developer semantic review; no independent human review; original and candidate receive identical common information."
+}

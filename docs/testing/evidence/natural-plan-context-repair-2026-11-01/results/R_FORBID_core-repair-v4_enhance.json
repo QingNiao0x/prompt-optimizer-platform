@@ -1,0 +1,180 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "R_FORBID",
+  "strategyVersion" : "core-repair-v4",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T18:31:02.497357200Z",
+  "input" : {
+    "rawPrompt" : "给客户写一封服务延期通知，只输出正文。新交付日期和补偿方案由我决定，请先确认这两项；其他措辞由AI设计。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ {
+      "questionId" : "q1",
+      "question" : "请确认新的交付日期是什么？",
+      "answer" : "通知中不得填写具体新交付日期。"
+    }, {
+      "questionId" : "q2",
+      "question" : "请确认向客户提供的补偿方案是什么？",
+      "answer" : "不得承诺任何补偿。"
+    } ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v4",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "actualAnswers.0",
+      "kind" : "BOUND_PLAN_ANSWER"
+    }, {
+      "id" : "actualAnswers.1",
+      "kind" : "BOUND_PLAN_ANSWER"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请给客户写一封服务延期通知，只输出通知正文，不要输出标题、说明或其他附加内容。通知中不得填写具体的新交付日期，也不得承诺任何补偿；其他措辞由你设计。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "给客户写一封服务延期通知，只输出正文",
+      "deliverable" : "服务延期通知的正文",
+      "requirements" : [ {
+        "text" : "给客户写一封服务延期通知，只输出正文",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "给客户写一封服务延期通知，只输出正文。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "FORMAT" ]
+      }, {
+        "text" : "通知中不得填写具体新交付日期",
+        "evidence" : [ {
+          "sourceId" : "actualAnswers.0",
+          "quote" : "通知中不得填写具体新交付日期。",
+          "origin" : "BOUND_PLAN_ANSWER"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "不得承诺任何补偿",
+        "evidence" : [ {
+          "sourceId" : "actualAnswers.1",
+          "quote" : "不得承诺任何补偿。",
+          "origin" : "BOUND_PLAN_ANSWER"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "其他措辞由AI设计",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "其他措辞由AI设计。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请给客户写一封服务延期通知，只输出通知正文，不要输出标题、说明或其他附加内容。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "通知中不得填写具体的新交付日期，也不得承诺任何补偿；" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "通知中不得填写具体的新交付日期，也不得承诺任何补偿；" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "其他措辞由你设计。" ]
+        } ],
+        "additionCoverage" : [ ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "给客户写一封服务延期通知，只输出正文",
+    "deliverable" : "服务延期通知的正文",
+    "requirements" : [ {
+      "text" : "给客户写一封服务延期通知，只输出正文",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "给客户写一封服务延期通知，只输出正文。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "FORMAT" ]
+    }, {
+      "text" : "通知中不得填写具体新交付日期",
+      "evidence" : [ {
+        "sourceId" : "actualAnswers.0",
+        "quote" : "通知中不得填写具体新交付日期。",
+        "origin" : "BOUND_PLAN_ANSWER"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "不得承诺任何补偿",
+      "evidence" : [ {
+        "sourceId" : "actualAnswers.1",
+        "quote" : "不得承诺任何补偿。",
+        "origin" : "BOUND_PLAN_ANSWER"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "其他措辞由AI设计",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "其他措辞由AI设计。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请给客户写一封服务延期通知，只输出通知正文，不要输出标题、说明或其他附加内容。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "通知中不得填写具体的新交付日期，也不得承诺任何补偿；" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "通知中不得填写具体的新交付日期，也不得承诺任何补偿；" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "其他措辞由你设计。" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 5834
+}
