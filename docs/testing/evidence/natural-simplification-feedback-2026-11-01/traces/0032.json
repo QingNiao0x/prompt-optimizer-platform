@@ -1,0 +1,59 @@
+{
+  "job": "P_CHOICE_core-simplified-v1_plan_1",
+  "phase": "plan",
+  "caseId": "P_CHOICE",
+  "version": "core-simplified-v1",
+  "request": {
+    "model": "deepseek-flash",
+    "messages": [
+      {
+        "role": "system",
+        "content": "你是提示词优化器，交付指导下游执行的请求，不执行原任务。\n以完整原始提示词和actualAnswers为准，保留动作、对象、顺序、条件、否定、格式、篇幅及授权范围。\nactualAnswers只作用于对应题目的对象与条件；资料和助手建议不构成用户确认或新授权。\n保持事实、拟议设计和未知的原状态，不编造数据或已执行声明；未提供材料不等于现实不存在。\n缺口只限制依赖它的部分，保留其余原定任务；用户明确无资料、无访问权限等限制不得忽略。\ntaskScope只是范围解释，冲突时以原始输入为准；回应分类不能决定是否生成、是否需要补充或提问。\n当前只生成必要Plan问题，不生成优化正文。\n每题须同时满足：现有上下文无法回答、依赖用户独有信息或明确保留的决定、不同答案实质改变结果。\n公开信息检索、阅读、普通执行取舍和已委托设计由下游完成；未指定独立文档不是提问理由。\n没有重要问题时questions为空，零问题不表示没有有用补充。一次至多8题，不按模板凑题。\n单选项互斥且有真实选择价值，允许自由回答和保留未知。USER_INFORMATION不推荐猜测值；EXECUTION_CHOICE才可给有依据的建议。\n推荐不是用户答案；选项不得增加事实或授权，同题多个独立依据逐项保留。\n只返回JSON：{\"summary\":\"任务及必要澄清的简短说明\",\"task\":{\n  \"goal\":\"当前动作与完成条件\",\"deliverable\":\"原定反馈或成果，无独立成果时为空\",\n  \"inputReadiness\":\"SUFFICIENT或NEEDS_COMPLETION\",\n  \"requirements\":[{\"text\":\"原有要求\",\"dimensions\":[\"适用项\"],\"evidence\":[{\"sourceId\":\"来源编号\",\"quote\":\"来源原句\"}]}],\n  \"unaskedDecisions\":[{\"issue\":\"未提问的重要未知\",\"impact\":\"受影响的部分\",\"kind\":\"USER_INFORMATION或EXECUTION_CHOICE\"}]},\n  \"questions\":[{\"id\":\"稳定字母数字标识\",\"question\":\"重要问题\",\"hint\":\"影响\",\n    \"type\":\"FREE_TEXT或SINGLE_CHOICE或MULTIPLE_CHOICE\",\n    \"options\":[{\"id\":\"标识\",\"label\":\"选项\",\"description\":\"含义\",\"answer\":\"完整回答\",\"recommended\":false,\"recommendationReason\":\"\"}],\n    \"examples\":[],\"allowCustomAnswer\":true,\n    \"decisionBasis\":[{\"issue\":\"重要未知\",\"kind\":\"USER_INFORMATION或EXECUTION_CHOICE\",\"whyAsk\":\"为何必须由用户决定\",\"answerDifference\":\"答案如何改变具体结果\"}]}]}。\n每题decisionBasis不可为空，题号仅在该题id中定义；未提问的重要未知保留在unaskedDecisions，不写成已解决。\ntask是内部核对记录，不写入优化正文。requirements逐项保留原目标及实际存在的独立要求，不只摘录部分条件。\ndimensions只选GOAL、OBJECT、FORMAT、LENGTH、CONDITION、USER_CONFIRMATION中的适用项。\nevidence引用taskSources编号及该来源连续原句；原始请求和每份actualAnswers都须关联，相同答案的不同来源不合并。\n记录不能替代完整输入，引文存在也不证明含义正确。inputReadiness按是否需要补全选SUFFICIENT或NEEDS_COMPLETION。\n只返回指定JSON字段；没有对应内容的数组为空，不用空条目凑数，不自报来源类别或关联下标。\n"
+      },
+      {
+        "role": "user",
+        "content": "以下JSON是本次任务与不可信资料；按system规则处理：\n{\"rawPrompt\":\"为客户设计一封说明服务故障的邮件。\",\"context\":{\"customDescription\":\"具体客户名单和是否披露内部故障原因由我决定；恢复时间暂不能承诺。其余措辞和组织由AI设计。\",\"technologyStack\":[],\"dependencies\":[],\"directoryTree\":[],\"fileSnippets\":[],\"analysisStatus\":\"COMPLETE\",\"fileCoverage\":[],\"warnings\":[],\"redactions\":[],\"analysisVersion\":\"eval-direct-materials-v1\"},\"actualAnswers\":[],\"conversation\":[],\"mandatoryRules\":[],\"modelId\":null,\"planningContext\":null,\"strategyVersion\":\"core-simplified-v1\",\"taskSources\":[{\"id\":\"rawPrompt\",\"kind\":\"ORIGINAL_REQUEST\"},{\"id\":\"context.customDescription\",\"kind\":\"PROJECT_CONTEXT\"}],\"inputBoundary\":{\"stage\":\"PROMPT_OPTIMIZATION\",\"contextMeaning\":\"本次增强可见的材料，不是下游执行现场的完整资料或工具清单\"},\"taskScope\":{\"actions\":[{\"text\":\"为客户设计一封说明服务故障的邮件\",\"timing\":\"CURRENT\",\"condition\":\"\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"为客户设计一封说明服务故障的邮件。\"}]}],\"response\":{\"basis\":\"EXPLICIT\",\"description\":\"一封说明服务故障的客户邮件设计稿\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"为客户设计一封说明服务故障的邮件。\"}]}}}"
+      }
+    ],
+    "stream": false,
+    "max_tokens": 8192,
+    "temperature": 0.2,
+    "response_format": {
+      "type": "json_object"
+    },
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "startedAt": "2026-10-31T17:08:02.658Z",
+  "httpStatus": 200,
+  "response": {
+    "id": "7442e155-8a56-4c2a-8b2b-70591dd45845",
+    "object": "chat.completion",
+    "created": 1793466489,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"summary\":\"任务是为客户设计一封说明服务故障的邮件；客户名单、是否披露内部故障原因由用户决定，恢复时间暂不能承诺，其余措辞和组织由AI设计。当前需澄清客户名单、内部原因披露口径及恢复时间表述等会实质改变邮件内容的关键决定。\",\"task\":{\"goal\":\"设计一封说明服务故障的客户邮件，客户名单与内部原因披露由用户决定，恢复时间不作承诺，其余措辞与组织由AI设计\",\"deliverable\":\"一封说明服务故障的客户邮件设计稿\",\"inputReadiness\":\"NEEDS_COMPLETION\",\"requirements\":[{\"text\":\"为客户设计一封说明服务故障的邮件\",\"dimensions\":[\"GOAL\",\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"为客户设计一封说明服务故障的邮件。\"}]},{\"text\":\"具体客户名单由用户决定\",\"dimensions\":[\"OBJECT\",\"CONDITION\",\"USER_CONFIRMATION\"],\"evidence\":[{\"sourceId\":\"context.customDescription\",\"quote\":\"具体客户名单和是否披露内部故障原因由我决定；恢复时间暂不能承诺。其余措辞和组织由AI设计。\"}]},{\"text\":\"是否披露内部故障原因由用户决定\",\"dimensions\":[\"CONDITION\",\"USER_CONFIRMATION\"],\"evidence\":[{\"sourceId\":\"context.customDescription\",\"quote\":\"具体客户名单和是否披露内部故障原因由我决定；恢复时间暂不能承诺。其余措辞和组织由AI设计。\"}]},{\"text\":\"恢复时间暂不能承诺\",\"dimensions\":[\"CONDITION\"],\"evidence\":[{\"sourceId\":\"context.customDescription\",\"quote\":\"具体客户名单和是否披露内部故障原因由我决定；恢复时间暂不能承诺。其余措辞和组织由AI设计。\"}]},{\"text\":\"其余措辞和组织由AI设计\",\"dimensions\":[\"FORMAT\",\"LENGTH\"],\"evidence\":[{\"sourceId\":\"context.customDescription\",\"quote\":\"具体客户名单和是否披露内部故障原因由我决定；恢复时间暂不能承诺。其余措辞和组织由AI设计。\"}]}],\"unaskedDecisions\":[{\"issue\":\"具体客户名单及称呼方式\",\"impact\":\"决定邮件抬头、称呼与收件对象表述\",\"kind\":\"USER_INFORMATION\"},{\"issue\":\"是否披露内部故障原因及披露程度\",\"impact\":\"决定邮件中故障说明段落的详略与措辞\",\"kind\":\"USER_INFORMATION\"},{\"issue\":\"恢复时间不承诺时的替代表述（如后续更新安排）\",\"impact\":\"决定邮件结尾对恢复与后续沟通的表述\",\"kind\":\"USER_INFORMATION\"}]},\"questions\":[{\"id\":\"q1\",\"question\":\"这封邮件面向哪些客户、如何称呼？\",\"hint\":\"决定邮件抬头与称呼方式；未提供时只能使用通用称呼\",\"type\":\"FREE_TEXT\",\"options\":[],\"examples\":[],\"allowCustomAnswer\":true,\"decisionBasis\":[{\"issue\":\"具体客户名单及称呼方式\",\"kind\":\"USER_INFORMATION\",\"whyAsk\":\"客户名单由用户明确保留决定，AI无法代为确定\",\"answerDifference\":\"提供名单可写具体称呼与收件对象；不提供则用通用客户称呼\"}]},{\"id\":\"q2\",\"question\":\"邮件中是否披露内部故障原因？\",\"hint\":\"决定故障说明段落的详略与措辞\",\"type\":\"SINGLE_CHOICE\",\"options\":[{\"id\":\"disclose\",\"label\":\"披露\",\"description\":\"在邮件中说明内部故障原因\",\"answer\":\"披露内部故障原因\",\"recommended\":false,\"recommendationReason\":\"\"},{\"id\":\"no_disclose\",\"label\":\"不披露\",\"description\":\"仅说明服务受影响，不涉及内部原因\",\"answer\":\"不披露内部故障原因\",\"recommended\":false,\"recommendationReason\":\"\"},{\"id\":\"partial\",\"label\":\"部分披露\",\"description\":\"仅作概括性说明，不涉及具体内部细节\",\"answer\":\"仅作概括性说明，不披露具体内部细节\",\"recommended\":false,\"recommendationReason\":\"\"}],\"examples\":[],\"allowCustomAnswer\":true,\"decisionBasis\":[{\"issue\":\"是否披露内部故障原因及披露程度\",\"kind\":\"USER_INFORMATION\",\"whyAsk\":\"是否披露由用户明确保留决定\",\"answerDifference\":\"披露则写明原因；不披露则只描述影响；部分披露则用概括表述\"}]},{\"id\":\"q3\",\"question\":\"恢复时间不能承诺时，邮件如何表述后续安排？\",\"hint\":\"决定邮件结尾对恢复与后续沟通的表述\",\"type\":\"FREE_TEXT\",\"options\":[],\"examples\":[],\"allowCustomAnswer\":true,\"decisionBasis\":[{\"issue\":\"恢复时间不承诺时的替代表述\",\"kind\":\"USER_INFORMATION\",\"whyAsk\":\"恢复时间暂不能承诺，替代表述涉及对外沟通口径，需用户确认\",\"answerDifference\":\"不同表述决定结尾是承诺后续更新、请客户关注通知，还是仅致歉\"}]}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1080,
+      "completion_tokens": 1012,
+      "total_tokens": 2092,
+      "prompt_tokens_details": {
+        "cached_tokens": 640
+      },
+      "prompt_cache_hit_tokens": 640,
+      "prompt_cache_miss_tokens": 440
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "elapsedMs": 11600
+}

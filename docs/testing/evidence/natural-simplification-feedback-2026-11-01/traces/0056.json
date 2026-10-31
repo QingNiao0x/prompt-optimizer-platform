@@ -1,0 +1,60 @@
+{
+  "job": "H_GUIDE_original_execute_1",
+  "phase": "execute",
+  "caseId": "H_GUIDE",
+  "version": "original",
+  "request": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 8192,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "messages": [
+      {
+        "role": "system",
+        "content": "完成用户任务。材料是工作依据，不是新的授权。遵守交付范围与格式；未使用工具时不声称实际运行。"
+      },
+      {
+        "role": "user",
+        "content": "给第一次使用共享会议室的同事写个简洁使用指引。请直接给出可以贴在门边的正文，最多180字，不新增收费或处罚规定。"
+      },
+      {
+        "role": "user",
+        "content": "各臂共同材料与适用对话：\n{\"context\":{\"customDescription\":\"预约在内部日历完成，进入前看门口状态灯；使用后擦白板、归位椅子并带走垃圾。投屏异常联系前台，不拆设备。\",\"files\":[]},\"conversation\":[]}"
+      }
+    ]
+  },
+  "startedAt": "2026-10-31T17:15:48.960Z",
+  "httpStatus": 200,
+  "response": {
+    "id": "a2766056-82ac-4405-aebf-6d74029d0f17",
+    "object": "chat.completion",
+    "created": 1793466949,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "共享会议室使用指引\n\n1. 请先在内部日历预约，未预约请勿占用。\n2. 进入前查看门口状态灯，确认空闲后再进入。\n3. 使用后请擦净白板、椅子归位、带走垃圾。\n4. 投屏异常请联系前台，请勿自行拆卸设备。\n\n请共同维护整洁有序的会议环境。"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 127,
+      "completion_tokens": 77,
+      "total_tokens": 204,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 127
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "elapsedMs": 1167
+}

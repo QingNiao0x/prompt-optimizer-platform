@@ -1,0 +1,168 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "R_WAIT",
+  "strategyVersion" : "core-repair-v3",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T17:05:17.018439400Z",
+  "input" : {
+    "rawPrompt" : "阅读 @src/catalog 项目结构并理解调用关系，然后等待我的任务；不用复述、写文档或修改代码。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "src/catalog/index.ts", "src/catalog/service.ts" ],
+      "fileSnippets" : [ {
+        "path" : "src/catalog/index.ts",
+        "language" : "typescript",
+        "content" : "import { listItems } from \"./service\"; export const loadCatalog = () => listItems();",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/catalog/service.ts",
+        "language" : "typescript",
+        "content" : "export const listItems = () => [{ id: 1, name: \"sample\" }];",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v3",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.1",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.1",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "阅读 src/catalog 的项目结构并理解其中的调用关系，然后等待我给出后续任务。不要复述结构或调用关系，不要写文档，也不要修改代码。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "阅读 src/catalog 项目结构并理解调用关系，完成后等待用户给出后续任务",
+      "deliverable" : "",
+      "requirements" : [ {
+        "text" : "阅读 src/catalog 项目结构并理解调用关系",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "阅读 @src/catalog 项目结构并理解调用关系",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "OBJECT" ]
+      }, {
+        "text" : "完成后等待用户后续任务",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "然后等待我的任务",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "不复述、不写文档、不修改代码",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不用复述、写文档或修改代码",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "阅读 src/catalog 的项目结构并理解其中的调用关系" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "然后等待我给出后续任务" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "不要复述结构或调用关系，不要写文档，也不要修改代码" ]
+        } ],
+        "additionCoverage" : [ ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "阅读 src/catalog 项目结构并理解调用关系，完成后等待用户给出后续任务",
+    "deliverable" : "",
+    "requirements" : [ {
+      "text" : "阅读 src/catalog 项目结构并理解调用关系",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "阅读 @src/catalog 项目结构并理解调用关系",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    }, {
+      "text" : "完成后等待用户后续任务",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "然后等待我的任务",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "不复述、不写文档、不修改代码",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不用复述、写文档或修改代码",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "阅读 src/catalog 的项目结构并理解其中的调用关系" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "然后等待我给出后续任务" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "不要复述结构或调用关系，不要写文档，也不要修改代码" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 3646
+}

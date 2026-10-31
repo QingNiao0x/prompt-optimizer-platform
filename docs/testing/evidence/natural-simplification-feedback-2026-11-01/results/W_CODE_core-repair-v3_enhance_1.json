@@ -1,0 +1,55 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "W_CODE",
+  "strategyVersion" : "core-repair-v3",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T17:06:22.456345200Z",
+  "input" : {
+    "rawPrompt" : "修复 @src/limits.mjs 的批量输入处理，保留有效项顺序，别让坏数据影响整个批次。",
+    "context" : {
+      "customDescription" : "输入是数组，合法项为非空字符串（去除两端空白后最长20个字符）；每个无效项返回原索引和原因。顶层非数组仍抛TypeError。保留重复有效值，不修改输入；返回{values,errors}。只交付src/limits.mjs一个完整文件，格式为JSON对象{\"files\":[{\"path\":\"src/limits.mjs\",\"content\":\"完整源码\"}]}，不增加依赖。",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "src/limits.mjs" ],
+      "fileSnippets" : [ {
+        "path" : "src/limits.mjs",
+        "language" : "javascript",
+        "content" : "export function cleanBatch(input) { if (!Array.isArray(input)) throw new TypeError(\"expected array\"); return { values: input.map(item => item.trim()), errors: [] }; }",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v3",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.customDescription",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "errorType" : "MissingUserAuthority",
+  "failureType" : "INVALID_RESPONSE",
+  "message" : "任务动作与回应边界无效",
+  "success" : false,
+  "elapsedMs" : 4569
+}

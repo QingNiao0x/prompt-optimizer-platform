@@ -1,0 +1,239 @@
+{
+  "cases": [
+    {
+      "id": "R_WAIT",
+      "rawPrompt": "阅读 @src/catalog 项目结构并理解调用关系，然后等待我的任务；不用复述、写文档或修改代码。",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "src/catalog/index.ts",
+            "language": "typescript",
+            "content": "import { listItems } from \"./service\"; export const loadCatalog = () => listItems();"
+          },
+          {
+            "path": "src/catalog/service.ts",
+            "language": "typescript",
+            "content": "export const listItems = () => [{ id: 1, name: \"sample\" }];"
+          }
+        ]
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "layer": "regression",
+      "rubric": [
+        "保留原动作与限制",
+        "补充不越界",
+        "不贴材料全文",
+        "语义可用，不按字数评分"
+      ]
+    },
+    {
+      "id": "R_REPORT",
+      "rawPrompt": "请写一份排查报告，说明购物车偶发重复计费的可能原因、证据与验证方法；不要修改代码，也不要把猜测写成已证实结论。",
+      "context": {
+        "customDescription": "日志显示同一个requestId有两次payment提交记录，尚未核查服务端幂等实现。",
+        "files": []
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "layer": "regression",
+      "rubric": [
+        "保留原动作与限制",
+        "补充不越界",
+        "不贴材料全文",
+        "语义可用，不按字数评分"
+      ]
+    },
+    {
+      "id": "R_FULL",
+      "rawPrompt": "将下面通知改成80字以内的中文正式通知，只输出通知正文。周三14:00在会议室B进行半小时安全培训，面向全体新员工，带工牌，不需要电脑。",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "layer": "regression",
+      "rubric": [
+        "保留原动作与限制",
+        "补充不越界",
+        "不贴材料全文",
+        "语义可用，不按字数评分"
+      ]
+    },
+    {
+      "id": "R_QUERY",
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业。",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "layer": "regression",
+      "rubric": [
+        "真正围绕行业和职业回答而非统计口径教程",
+        "不编造排名和来源",
+        "不强迫用户先交全球数据",
+        "组织发现、典型工作和依据"
+      ]
+    },
+    {
+      "id": "W_NOTICE",
+      "rawPrompt": "给客户写个延期通知，清楚一点。",
+      "context": {
+        "customDescription": "原交付日期11月4日；因验收发现一项数据同步问题而延期。新交付日期将在11月3日18:00前确认。已交付功能可继续使用。只返回120字以内可直接发送的通知，不承诺赔偿，不把日期待确认写成项目无限延期。",
+        "files": []
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "layer": "work",
+      "rubric": [
+        "直接发送的通知",
+        "4项具体事实完整",
+        "120字以内",
+        "无赔偿或未确认日期承诺",
+        "不输出写作说明"
+      ]
+    },
+    {
+      "id": "W_CODE",
+      "rawPrompt": "修复 @src/limits.mjs 的批量输入处理，保留有效项顺序，别让坏数据影响整个批次。",
+      "context": {
+        "customDescription": "输入是数组，合法项为非空字符串（去除两端空白后最长20个字符）；每个无效项返回原索引和原因。顶层非数组仍抛TypeError。保留重复有效值，不修改输入；返回{values,errors}。只交付src/limits.mjs一个完整文件，格式为JSON对象{\"files\":[{\"path\":\"src/limits.mjs\",\"content\":\"完整源码\"}]}，不增加依赖。",
+        "files": [
+          {
+            "path": "src/limits.mjs",
+            "language": "javascript",
+            "content": "export function cleanBatch(input) { if (!Array.isArray(input)) throw new TypeError(\"expected array\"); return { values: input.map(item => item.trim()), errors: [] }; }"
+          }
+        ]
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "layer": "work",
+      "rubric": [
+        "空白、非字符串、超长项局部报错",
+        "原索引和顺序正确",
+        "重复合法值保留",
+        "原数组不修改",
+        "顶层TypeError保留",
+        "只返回允许文件和JSON"
+      ]
+    },
+    {
+      "id": "P_NONE",
+      "rawPrompt": "写一条80字以内的中文停水通知，只输出正文。停水时间周二09:00至11:00，范围A栋，原因设备检修，请提前储水。",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "layer": "plan",
+      "rubric": [
+        "保留原动作与限制",
+        "补充不越界",
+        "不贴材料全文",
+        "语义可用，不按字数评分"
+      ]
+    },
+    {
+      "id": "P_CHOICE",
+      "rawPrompt": "为客户设计一封说明服务故障的邮件。",
+      "context": {
+        "customDescription": "具体客户名单和是否披露内部故障原因由我决定；恢复时间暂不能承诺。其余措辞和组织由AI设计。",
+        "files": []
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "layer": "plan",
+      "rubric": [
+        "保留原动作与限制",
+        "补充不越界",
+        "不贴材料全文",
+        "语义可用，不按字数评分"
+      ]
+    },
+    {
+      "id": "F_FIX",
+      "rawPrompt": "排查 @src/cart.ts 中重复提交导致重复订单的问题并修复，保留现有接口。",
+      "context": {
+        "customDescription": "只能修改src/cart.ts，不允许新增依赖。",
+        "files": []
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "layer": "feedback",
+      "rubric": [
+        "保留原动作与限制",
+        "补充不越界",
+        "不贴材料全文",
+        "语义可用，不按字数评分"
+      ],
+      "revision": {
+        "previousPrompt": "请出具排查报告，分析src/cart.ts中重复提交导致重复订单的问题并给出修改建议，保留现有接口，不新增依赖，只修改src/cart.ts。",
+        "earlierFeedback": [],
+        "feedback": "不要改成报告，直接定位并修复；其余范围和技术细节保留。"
+      }
+    },
+    {
+      "id": "F_REPORT",
+      "rawPrompt": "请写购物车重复扣款的排查报告，不执行修复。",
+      "context": {
+        "customDescription": "现有证据仅能证明一次请求出现两条支付日志。",
+        "files": []
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "layer": "feedback",
+      "rubric": [
+        "保留原动作与限制",
+        "补充不越界",
+        "不贴材料全文",
+        "语义可用，不按字数评分"
+      ],
+      "revision": {
+        "previousPrompt": "请写购物车重复扣款排查报告，区分已知证据和待核实原因，不执行修复。",
+        "earlierFeedback": [],
+        "feedback": "保留报告形式和不修改代码的要求，按证据、原因假设、验证方法组织。"
+      }
+    },
+    {
+      "id": "F_PLAN",
+      "rawPrompt": "写一封服务延期通知，只输出正文。",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "actualAnswers": [
+        {
+          "questionId": "date",
+          "question": "怎样处理新交付日期？",
+          "answer": "新日期由我确认，当前不能承诺。"
+        },
+        {
+          "questionId": "pay",
+          "question": "是否提供补偿？",
+          "answer": "不承诺额外赔偿。"
+        }
+      ],
+      "conversation": [],
+      "layer": "feedback",
+      "rubric": [
+        "保留原动作与限制",
+        "补充不越界",
+        "不贴材料全文",
+        "语义可用，不按字数评分"
+      ],
+      "revision": {
+        "previousPrompt": "请写一封正式延期通知，直接输出正文，新日期由用户确认，当前不能承诺，也不承诺额外赔偿。",
+        "earlierFeedback": [
+          "保留正式语气"
+        ],
+        "feedback": "更简短，控制在100字以内，保留其他要求。"
+      }
+    }
+  ]
+}

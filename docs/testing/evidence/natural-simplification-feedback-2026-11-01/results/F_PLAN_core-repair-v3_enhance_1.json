@@ -1,0 +1,216 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "F_PLAN",
+  "strategyVersion" : "core-repair-v3",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T17:08:32.509256700Z",
+  "input" : {
+    "rawPrompt" : "写一封服务延期通知，只输出正文。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ {
+      "questionId" : "date",
+      "question" : "怎样处理新交付日期？",
+      "answer" : "新日期由我确认，当前不能承诺。"
+    }, {
+      "questionId" : "pay",
+      "question" : "是否提供补偿？",
+      "answer" : "不承诺额外赔偿。"
+    } ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v3",
+    "revision" : {
+      "previousPrompt" : "请写一封正式延期通知，直接输出正文，新日期由用户确认，当前不能承诺，也不承诺额外赔偿。",
+      "earlierFeedback" : [ "保留正式语气" ],
+      "feedback" : "更简短，控制在100字以内，保留其他要求。"
+    },
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "revision.previousPrompt",
+      "kind" : "ASSISTANT_CONVERSATION"
+    }, {
+      "id" : "revision.earlierFeedback.0",
+      "kind" : "USER_REVISION"
+    }, {
+      "id" : "revision.feedback",
+      "kind" : "USER_REVISION"
+    }, {
+      "id" : "actualAnswers.0",
+      "kind" : "BOUND_PLAN_ANSWER"
+    }, {
+      "id" : "actualAnswers.1",
+      "kind" : "BOUND_PLAN_ANSWER"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请写一封服务延期通知，只输出正文。正文保持正式语气，篇幅更简短，控制在100字以内。新交付日期由用户确认，当前不能承诺具体日期；不承诺额外赔偿。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "写一封服务延期通知，只输出正文；保持正式语气，篇幅更简短，控制在100字以内；新交付日期由用户确认，当前不能承诺；不承诺额外赔偿。",
+      "deliverable" : "服务延期通知正文（正式语气，100字以内）",
+      "requirements" : [ {
+        "text" : "写一封服务延期通知，只输出正文",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "写一封服务延期通知，只输出正文。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "FORMAT" ]
+      }, {
+        "text" : "保留正式语气",
+        "evidence" : [ {
+          "sourceId" : "revision.earlierFeedback.0",
+          "quote" : "保留正式语气",
+          "origin" : "USER_REVISION"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "更简短，控制在100字以内，保留其他要求",
+        "evidence" : [ {
+          "sourceId" : "revision.feedback",
+          "quote" : "更简短，控制在100字以内，保留其他要求。",
+          "origin" : "USER_REVISION"
+        } ],
+        "dimensions" : [ "LENGTH", "CONDITION" ]
+      }, {
+        "text" : "新日期由用户确认，当前不能承诺",
+        "evidence" : [ {
+          "sourceId" : "actualAnswers.0",
+          "quote" : "新日期由我确认，当前不能承诺。",
+          "origin" : "BOUND_PLAN_ANSWER"
+        } ],
+        "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+      }, {
+        "text" : "不承诺额外赔偿",
+        "evidence" : [ {
+          "sourceId" : "actualAnswers.1",
+          "quote" : "不承诺额外赔偿。",
+          "origin" : "BOUND_PLAN_ANSWER"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请写一封服务延期通知，只输出正文。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "正文保持正式语气" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "篇幅更简短，控制在100字以内" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "新交付日期由用户确认，当前不能承诺具体日期" ]
+        }, {
+          "index" : 4,
+          "quotes" : [ "不承诺额外赔偿" ]
+        } ],
+        "additionCoverage" : [ ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "写一封服务延期通知，只输出正文；保持正式语气，篇幅更简短，控制在100字以内；新交付日期由用户确认，当前不能承诺；不承诺额外赔偿。",
+    "deliverable" : "服务延期通知正文（正式语气，100字以内）",
+    "requirements" : [ {
+      "text" : "写一封服务延期通知，只输出正文",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "写一封服务延期通知，只输出正文。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "FORMAT" ]
+    }, {
+      "text" : "保留正式语气",
+      "evidence" : [ {
+        "sourceId" : "revision.earlierFeedback.0",
+        "quote" : "保留正式语气",
+        "origin" : "USER_REVISION"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "更简短，控制在100字以内，保留其他要求",
+      "evidence" : [ {
+        "sourceId" : "revision.feedback",
+        "quote" : "更简短，控制在100字以内，保留其他要求。",
+        "origin" : "USER_REVISION"
+      } ],
+      "dimensions" : [ "LENGTH", "CONDITION" ]
+    }, {
+      "text" : "新日期由用户确认，当前不能承诺",
+      "evidence" : [ {
+        "sourceId" : "actualAnswers.0",
+        "quote" : "新日期由我确认，当前不能承诺。",
+        "origin" : "BOUND_PLAN_ANSWER"
+      } ],
+      "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+    }, {
+      "text" : "不承诺额外赔偿",
+      "evidence" : [ {
+        "sourceId" : "actualAnswers.1",
+        "quote" : "不承诺额外赔偿。",
+        "origin" : "BOUND_PLAN_ANSWER"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请写一封服务延期通知，只输出正文。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "正文保持正式语气" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "篇幅更简短，控制在100字以内" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "新交付日期由用户确认，当前不能承诺具体日期" ]
+      }, {
+        "index" : 4,
+        "quotes" : [ "不承诺额外赔偿" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 6796
+}

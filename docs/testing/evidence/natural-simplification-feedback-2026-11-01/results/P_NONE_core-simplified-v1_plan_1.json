@@ -1,0 +1,106 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "P_NONE",
+  "strategyVersion" : "core-simplified-v1",
+  "operation" : "plan",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T17:07:44.306546200Z",
+  "input" : {
+    "rawPrompt" : "写一条80字以内的中文停水通知，只输出正文。停水时间周二09:00至11:00，范围A栋，原因设备检修，请提前储水。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-simplified-v1",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    } ]
+  },
+  "plan" : {
+    "summary" : "用户要求生成一条80字以内的中文停水通知正文，停水时间、范围、原因和储水提醒均已明确，无需额外澄清。",
+    "questions" : [ ],
+    "provider" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "mock" : false
+  },
+  "taskUnderstanding" : {
+    "goal" : "写一条80字以内的中文停水通知，只输出正文",
+    "deliverable" : "80字以内的中文停水通知正文",
+    "requirements" : [ {
+      "text" : "写一条80字以内的中文停水通知",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "写一条80字以内的中文停水通知，只输出正文。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "LENGTH" ]
+    }, {
+      "text" : "只输出正文",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "写一条80字以内的中文停水通知，只输出正文。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT" ]
+    }, {
+      "text" : "停水时间周二09:00至11:00",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "停水时间周二09:00至11:00，范围A栋，原因设备检修，请提前储水。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "停水范围A栋",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "停水时间周二09:00至11:00，范围A栋，原因设备检修，请提前储水。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "OBJECT" ]
+    }, {
+      "text" : "停水原因设备检修",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "停水时间周二09:00至11:00，范围A栋，原因设备检修，请提前储水。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "请提前储水",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "停水时间周二09:00至11:00，范围A栋，原因设备检修，请提前储水。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : null,
+  "success" : true,
+  "elapsedMs" : 3763
+}

@@ -1,0 +1,158 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "R_FULL",
+  "strategyVersion" : "core-repair-v3",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T17:05:40.005950200Z",
+  "input" : {
+    "rawPrompt" : "将下面通知改成80字以内的中文正式通知，只输出通知正文。周三14:00在会议室B进行半小时安全培训，面向全体新员工，带工牌，不需要电脑。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v3",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "将下面通知改写为80字以内的中文正式通知，只输出通知正文，不要添加标题、说明或其他内容。通知内容：周三14:00在会议室B进行半小时安全培训，面向全体新员工，需携带工牌，不需要电脑。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "将给定通知改写为80字以内的中文正式通知，只输出通知正文",
+      "deliverable" : "改写后的通知正文",
+      "requirements" : [ {
+        "text" : "将给定通知改写为80字以内的中文正式通知",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "将下面通知改成80字以内的中文正式通知，只输出通知正文。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "LENGTH", "FORMAT" ]
+      }, {
+        "text" : "只输出通知正文",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "只输出通知正文。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "FORMAT", "CONDITION" ]
+      }, {
+        "text" : "通知须包含：周三14:00、会议室B、半小时安全培训、面向全体新员工、带工牌、不需要电脑",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "周三14:00在会议室B进行半小时安全培训，面向全体新员工，带工牌，不需要电脑。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "OBJECT", "CONDITION" ]
+      } ],
+      "additions" : [ {
+        "text" : "明确不要添加标题、说明或其他内容",
+        "benefit" : "确保输出严格限定为通知正文，符合原定格式要求",
+        "gap" : "“只输出通知正文”未说明是否允许标题或附加说明，可能导致输出多余内容"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "将下面通知改写为80字以内的中文正式通知" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "只输出通知正文" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "周三14:00在会议室B进行半小时安全培训，面向全体新员工，需携带工牌，不需要电脑" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "不要添加标题、说明或其他内容" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "将给定通知改写为80字以内的中文正式通知，只输出通知正文",
+    "deliverable" : "改写后的通知正文",
+    "requirements" : [ {
+      "text" : "将给定通知改写为80字以内的中文正式通知",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "将下面通知改成80字以内的中文正式通知，只输出通知正文。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "LENGTH", "FORMAT" ]
+    }, {
+      "text" : "只输出通知正文",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "只输出通知正文。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT", "CONDITION" ]
+    }, {
+      "text" : "通知须包含：周三14:00、会议室B、半小时安全培训、面向全体新员工、带工牌、不需要电脑",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "周三14:00在会议室B进行半小时安全培训，面向全体新员工，带工牌，不需要电脑。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "OBJECT", "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "明确不要添加标题、说明或其他内容",
+      "benefit" : "确保输出严格限定为通知正文，符合原定格式要求",
+      "gap" : "“只输出通知正文”未说明是否允许标题或附加说明，可能导致输出多余内容"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "将下面通知改写为80字以内的中文正式通知" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "只输出通知正文" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "周三14:00在会议室B进行半小时安全培训，面向全体新员工，需携带工牌，不需要电脑" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "不要添加标题、说明或其他内容" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 11830
+}

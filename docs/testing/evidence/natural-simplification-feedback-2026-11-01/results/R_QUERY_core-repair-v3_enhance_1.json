@@ -1,0 +1,156 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "R_QUERY",
+  "strategyVersion" : "core-repair-v3",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T17:05:57.989579500Z",
+  "input" : {
+    "rawPrompt" : "请帮我查询全球使用AI最多的职业/行业。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v3",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请查询全球范围内使用AI最多的职业或行业，并给出查询结果。结果中应说明所依据的统计口径（如使用AI的员工比例、企业采用率或使用频次等）、数据来源与统计时间范围；若不同来源的排名或口径存在差异，请分别列出并说明差异原因。若现有资料不足以确定某一职业或行业为全球使用AI最多，请说明受影响的结论，并给出可获得的、有来源支撑的排名或分布情况。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "查询全球范围内使用AI最多的职业或行业，并给出有依据的查询结果",
+      "deliverable" : "全球使用AI最多的职业/行业的查询结果，含统计口径、数据来源与时间范围，以及来源差异说明",
+      "requirements" : [ {
+        "text" : "查询全球使用AI最多的职业/行业",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "请帮我查询全球使用AI最多的职业/行业。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "OBJECT" ]
+      } ],
+      "additions" : [ {
+        "text" : "说明统计口径（使用AI的员工比例、企业采用率或使用频次等）",
+        "benefit" : "使查询结果有明确比较基础，便于判断哪个职业或行业居首",
+        "gap" : "“使用AI最多”缺少比较定义，无法确定排名依据，影响结论可核对性"
+      }, {
+        "text" : "注明数据来源与统计时间范围",
+        "benefit" : "保证查询结果可追溯并反映时效",
+        "gap" : "未要求来源与时间，结果无法验证且可能过时"
+      }, {
+        "text" : "不同来源排名或口径存在差异时分别列出并说明原因",
+        "benefit" : "完整呈现查询结果，避免以偏概全",
+        "gap" : "全球统计通常多来源且口径不一，单一排名可能掩盖冲突"
+      }, {
+        "text" : "资料不足以确定唯一最多时说明受影响结论，并给出有来源支撑的排名或分布",
+        "benefit" : "在资料限制下仍交付可用的查询结果",
+        "gap" : "可能不存在统一全球统计，需明确结论边界而非编造排名"
+      } ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请查询全球范围内使用AI最多的职业或行业，并给出查询结果。" ]
+        } ],
+        "additionCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "结果中应说明所依据的统计口径（如使用AI的员工比例、企业采用率或使用频次等）" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "数据来源与统计时间范围" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "若不同来源的排名或口径存在差异，请分别列出并说明差异原因。" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "若现有资料不足以确定某一职业或行业为全球使用AI最多，请说明受影响的结论，并给出可获得的、有来源支撑的排名或分布情况。" ]
+        } ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "查询全球范围内使用AI最多的职业或行业，并给出有依据的查询结果",
+    "deliverable" : "全球使用AI最多的职业/行业的查询结果，含统计口径、数据来源与时间范围，以及来源差异说明",
+    "requirements" : [ {
+      "text" : "查询全球使用AI最多的职业/行业",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请帮我查询全球使用AI最多的职业/行业。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    } ],
+    "additions" : [ {
+      "text" : "说明统计口径（使用AI的员工比例、企业采用率或使用频次等）",
+      "benefit" : "使查询结果有明确比较基础，便于判断哪个职业或行业居首",
+      "gap" : "“使用AI最多”缺少比较定义，无法确定排名依据，影响结论可核对性"
+    }, {
+      "text" : "注明数据来源与统计时间范围",
+      "benefit" : "保证查询结果可追溯并反映时效",
+      "gap" : "未要求来源与时间，结果无法验证且可能过时"
+    }, {
+      "text" : "不同来源排名或口径存在差异时分别列出并说明原因",
+      "benefit" : "完整呈现查询结果，避免以偏概全",
+      "gap" : "全球统计通常多来源且口径不一，单一排名可能掩盖冲突"
+    }, {
+      "text" : "资料不足以确定唯一最多时说明受影响结论，并给出有来源支撑的排名或分布",
+      "benefit" : "在资料限制下仍交付可用的查询结果",
+      "gap" : "可能不存在统一全球统计，需明确结论边界而非编造排名"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请查询全球范围内使用AI最多的职业或行业，并给出查询结果。" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "结果中应说明所依据的统计口径（如使用AI的员工比例、企业采用率或使用频次等）" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "数据来源与统计时间范围" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "若不同来源的排名或口径存在差异，请分别列出并说明差异原因。" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "若现有资料不足以确定某一职业或行业为全球使用AI最多，请说明受影响的结论，并给出可获得的、有来源支撑的排名或分布情况。" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 5490
+}

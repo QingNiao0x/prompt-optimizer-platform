@@ -1,0 +1,257 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "W_NOTICE",
+  "strategyVersion" : "core-repair-v3",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T17:06:09.111355600Z",
+  "input" : {
+    "rawPrompt" : "给客户写个延期通知，清楚一点。",
+    "context" : {
+      "customDescription" : "原交付日期11月4日；因验收发现一项数据同步问题而延期。新交付日期将在11月3日18:00前确认。已交付功能可继续使用。只返回120字以内可直接发送的通知，不承诺赔偿，不把日期待确认写成项目无限延期。",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v3",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.customDescription",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请给客户写一份延期通知，要求清楚、可直接发送。通知中需说明：原交付日期为11月4日；因验收发现一项数据同步问题，交付延期；新交付日期将在11月3日18:00前确认；已交付功能可继续使用。全文控制在120字以内，不承诺赔偿，也不要把日期待确认写成项目无限延期。只返回通知正文。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "为客户撰写一份清楚、可直接发送的延期通知，说明原交付日期11月4日、因验收发现数据同步问题而延期、新交付日期将在11月3日18:00前确认、已交付功能可继续使用。",
+      "deliverable" : "120字以内可直接发送的延期通知正文。",
+      "requirements" : [ {
+        "text" : "给客户写一个延期通知，内容清楚",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "给客户写个延期通知，清楚一点。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "FORMAT" ]
+      }, {
+        "text" : "说明原交付日期11月4日",
+        "evidence" : [ {
+          "sourceId" : "context.customDescription",
+          "quote" : "原交付日期11月4日；因验收发现一项数据同步问题而延期。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "OBJECT" ]
+      }, {
+        "text" : "说明因验收发现一项数据同步问题而延期",
+        "evidence" : [ {
+          "sourceId" : "context.customDescription",
+          "quote" : "原交付日期11月4日；因验收发现一项数据同步问题而延期。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "OBJECT", "CONDITION" ]
+      }, {
+        "text" : "说明新交付日期将在11月3日18:00前确认",
+        "evidence" : [ {
+          "sourceId" : "context.customDescription",
+          "quote" : "新交付日期将在11月3日18:00前确认。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "OBJECT", "CONDITION" ]
+      }, {
+        "text" : "说明已交付功能可继续使用",
+        "evidence" : [ {
+          "sourceId" : "context.customDescription",
+          "quote" : "已交付功能可继续使用。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "OBJECT" ]
+      }, {
+        "text" : "只返回120字以内可直接发送的通知",
+        "evidence" : [ {
+          "sourceId" : "context.customDescription",
+          "quote" : "只返回120字以内可直接发送的通知，不承诺赔偿，不把日期待确认写成项目无限延期。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "FORMAT", "LENGTH" ]
+      }, {
+        "text" : "不承诺赔偿",
+        "evidence" : [ {
+          "sourceId" : "context.customDescription",
+          "quote" : "只返回120字以内可直接发送的通知，不承诺赔偿，不把日期待确认写成项目无限延期。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "不把日期待确认写成项目无限延期",
+        "evidence" : [ {
+          "sourceId" : "context.customDescription",
+          "quote" : "只返回120字以内可直接发送的通知，不承诺赔偿，不把日期待确认写成项目无限延期。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请给客户写一份延期通知，要求清楚、可直接发送。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "原交付日期为11月4日" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "因验收发现一项数据同步问题，交付延期" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "新交付日期将在11月3日18:00前确认" ]
+        }, {
+          "index" : 4,
+          "quotes" : [ "已交付功能可继续使用" ]
+        }, {
+          "index" : 5,
+          "quotes" : [ "全文控制在120字以内", "只返回通知正文" ]
+        }, {
+          "index" : 6,
+          "quotes" : [ "不承诺赔偿" ]
+        }, {
+          "index" : 7,
+          "quotes" : [ "也不要把日期待确认写成项目无限延期" ]
+        } ],
+        "additionCoverage" : [ ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "为客户撰写一份清楚、可直接发送的延期通知，说明原交付日期11月4日、因验收发现数据同步问题而延期、新交付日期将在11月3日18:00前确认、已交付功能可继续使用。",
+    "deliverable" : "120字以内可直接发送的延期通知正文。",
+    "requirements" : [ {
+      "text" : "给客户写一个延期通知，内容清楚",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "给客户写个延期通知，清楚一点。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "FORMAT" ]
+    }, {
+      "text" : "说明原交付日期11月4日",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "原交付日期11月4日；因验收发现一项数据同步问题而延期。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "OBJECT" ]
+    }, {
+      "text" : "说明因验收发现一项数据同步问题而延期",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "原交付日期11月4日；因验收发现一项数据同步问题而延期。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "OBJECT", "CONDITION" ]
+    }, {
+      "text" : "说明新交付日期将在11月3日18:00前确认",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "新交付日期将在11月3日18:00前确认。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "OBJECT", "CONDITION" ]
+    }, {
+      "text" : "说明已交付功能可继续使用",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "已交付功能可继续使用。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "OBJECT" ]
+    }, {
+      "text" : "只返回120字以内可直接发送的通知",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "只返回120字以内可直接发送的通知，不承诺赔偿，不把日期待确认写成项目无限延期。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "FORMAT", "LENGTH" ]
+    }, {
+      "text" : "不承诺赔偿",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "只返回120字以内可直接发送的通知，不承诺赔偿，不把日期待确认写成项目无限延期。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "不把日期待确认写成项目无限延期",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "只返回120字以内可直接发送的通知，不承诺赔偿，不把日期待确认写成项目无限延期。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请给客户写一份延期通知，要求清楚、可直接发送。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "原交付日期为11月4日" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "因验收发现一项数据同步问题，交付延期" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "新交付日期将在11月3日18:00前确认" ]
+      }, {
+        "index" : 4,
+        "quotes" : [ "已交付功能可继续使用" ]
+      }, {
+        "index" : 5,
+        "quotes" : [ "全文控制在120字以内", "只返回通知正文" ]
+      }, {
+        "index" : 6,
+        "quotes" : [ "不承诺赔偿" ]
+      }, {
+        "index" : 7,
+        "quotes" : [ "也不要把日期待确认写成项目无限延期" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 5432
+}

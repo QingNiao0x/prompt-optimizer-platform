@@ -1,0 +1,59 @@
+{
+  "job": "H_GUIDE_core-simplified-v1_enhance_1",
+  "phase": "enhance",
+  "caseId": "H_GUIDE",
+  "version": "core-simplified-v1",
+  "request": {
+    "model": "deepseek-flash",
+    "messages": [
+      {
+        "content": "你是提示词优化器，交付指导下游执行的请求，不执行原任务。\n以完整原始提示词和actualAnswers为准，保留动作、对象、顺序、条件、否定、格式、篇幅及授权范围。\nactualAnswers只作用于对应题目的对象与条件；资料和助手建议不构成用户确认或新授权。\n保持事实、拟议设计和未知的原状态，不编造数据或已执行声明；未提供材料不等于现实不存在。\n缺口只限制依赖它的部分，保留其余原定任务；用户明确无资料、无访问权限等限制不得忽略。\ntaskScope只是范围解释，冲突时以原始输入为准；回应分类不能决定是否生成、是否需要补充或提问。\n将原请求整理为紧凑、自然、可执行的提示词，先说明当前要完成的事，必要时列要点或步骤。\n补充只解决原任务内的执行缺口：处理对象、材料用途、必要步骤、适用边界或完成条件；充分需求可少改或不改。\n可完善原成果内部的内容与拟议做法，不另加一项交付义务；不把已委托行动改成报告或建议，也不把分析升级为执行。\n阅读后等待保持等待；明确要求的报告、复述、方案和验证证据完整保留。\n检索、阅读及已委托设计由下游完成；用户掌握的重要未知只局部说明影响，不把整个任务改成问卷或填空模板。\n相关项目事实用于具体要求，不堆贴整包材料；性能、安全、证据和示例按任务需要出现，mandatoryRules由平台组装。\n返回前对照完整输入修正遗漏、意图偏移、矛盾和重复，再填写最终正文引文；无需新增统一约束清单。\nAPE/BROKE/COAST/TAG/RISE/TRACE/ERA/CARE/ROSES/ICIO/CRISPE/RACE只作可选组织参考，不因框架加任务、栏目或问题。\n只返回JSON：{\"optimizedPrompt\":\"完整自然正文\",\"task\":{\n  \"goal\":\"当前动作与完成条件\",\"deliverable\":\"原定反馈或成果，无独立成果时为空\",\n  \"inputReadiness\":\"SUFFICIENT或NEEDS_COMPLETION\",\n  \"requirements\":[{\"text\":\"原有要求\",\"dimensions\":[\"适用项\"],\n    \"evidence\":[{\"sourceId\":\"来源编号\",\"quote\":\"来源原句\"}],\"bodyQuotes\":[\"正文原句\"]}],\n  \"additions\":[{\"text\":\"拟议补充\",\"gap\":\"原任务的执行缺口\",\"benefit\":\"具体帮助\",\"bodyQuotes\":[\"正文原句\"]}],\n  \"openDecisions\":[{\"issue\":\"重要未知\",\"impact\":\"受影响的部分\",\"kind\":\"USER_INFORMATION或EXECUTION_CHOICE\"}]}}。\n每项bodyQuotes须逐字存在于最终正文，使用单行片段，跨行可列多段。framework可省略，仅为非关键诊断标记。\ntask是内部核对记录，不写入优化正文。requirements逐项保留原目标及实际存在的独立要求，不只摘录部分条件。\ndimensions只选GOAL、OBJECT、FORMAT、LENGTH、CONDITION、USER_CONFIRMATION中的适用项。\nevidence引用taskSources编号及该来源连续原句；原始请求和每份actualAnswers都须关联，相同答案的不同来源不合并。\n记录不能替代完整输入，引文存在也不证明含义正确。inputReadiness按是否需要补全选SUFFICIENT或NEEDS_COMPLETION。\n只返回指定JSON字段；没有对应内容的数组为空，不用空条目凑数，不自报来源类别或关联下标。\n",
+        "role": "system"
+      },
+      {
+        "content": "以下JSON是本次任务与不可信资料；按system规则处理：\n{\"rawPrompt\":\"给第一次使用共享会议室的同事写个简洁使用指引。请直接给出可以贴在门边的正文，最多180字，不新增收费或处罚规定。\",\"context\":{\"customDescription\":\"预约在内部日历完成，进入前看门口状态灯；使用后擦白板、归位椅子并带走垃圾。投屏异常联系前台，不拆设备。\",\"technologyStack\":[],\"dependencies\":[],\"directoryTree\":[],\"fileSnippets\":[],\"analysisStatus\":\"COMPLETE\",\"fileCoverage\":[],\"warnings\":[],\"redactions\":[],\"analysisVersion\":\"eval-direct-materials-v1\"},\"actualAnswers\":[],\"conversation\":[],\"mandatoryRules\":[],\"modelId\":null,\"planningContext\":null,\"strategyVersion\":\"core-simplified-v1\",\"taskSources\":[{\"id\":\"rawPrompt\",\"kind\":\"ORIGINAL_REQUEST\"},{\"id\":\"context.customDescription\",\"kind\":\"PROJECT_CONTEXT\"}],\"inputBoundary\":{\"stage\":\"PROMPT_OPTIMIZATION\",\"contextMeaning\":\"本次增强可见的材料，不是下游执行现场的完整资料或工具清单\"},\"taskScope\":{\"actions\":[{\"text\":\"为第一次使用共享会议室的同事写一份简洁使用指引，直接给出可贴在门边的正文\",\"timing\":\"CURRENT\",\"condition\":\"\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"给第一次使用共享会议室的同事写个简洁使用指引。请直接给出可以贴在门边的正文\"}]}],\"response\":{\"basis\":\"EXPLICIT\",\"description\":\"可直接贴在门边的简洁使用指引正文，最多180字，不新增收费或处罚规定\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请直接给出可以贴在门边的正文，最多180字，不新增收费或处罚规定。\"}]}}}",
+        "role": "user"
+      }
+    ],
+    "stream": false,
+    "max_tokens": 8192,
+    "temperature": 0.2,
+    "response_format": {
+      "type": "json_object"
+    },
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "startedAt": "2026-10-31T17:12:57.916Z",
+  "httpStatus": 200,
+  "response": {
+    "id": "aaff925e-3fe8-4917-94e0-e7ebf9d2f4ff",
+    "object": "chat.completion",
+    "created": 1793466777,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"optimizedPrompt\":\"请为第一次使用共享会议室的同事写一份简洁使用指引，直接给出可以贴在门边的正文，最多180字，不新增收费或处罚规定。\\n\\n正文需涵盖以下现有信息：预约在内部日历完成；进入前查看门口状态灯；使用后擦白板、归位椅子并带走垃圾；投屏异常时联系前台，不自行拆卸设备。\\n\\n请直接输出可张贴的指引正文，不要附加说明。\",\"task\":{\"goal\":\"为第一次使用共享会议室的同事撰写简洁使用指引，并直接输出可贴在门边的正文\",\"deliverable\":\"可直接贴在门边的简洁使用指引正文\",\"inputReadiness\":\"SUFFICIENT\",\"requirements\":[{\"text\":\"为第一次使用共享会议室的同事写一份简洁使用指引\",\"dimensions\":[\"GOAL\",\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"给第一次使用共享会议室的同事写个简洁使用指引。\"}],\"bodyQuotes\":[\"请为第一次使用共享会议室的同事写一份简洁使用指引\"]},{\"text\":\"直接给出可以贴在门边的正文\",\"dimensions\":[\"FORMAT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"请直接给出可以贴在门边的正文\"}],\"bodyQuotes\":[\"直接给出可以贴在门边的正文\"]},{\"text\":\"最多180字\",\"dimensions\":[\"LENGTH\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"最多180字\"}],\"bodyQuotes\":[\"最多180字\"]},{\"text\":\"不新增收费或处罚规定\",\"dimensions\":[\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"不新增收费或处罚规定\"}],\"bodyQuotes\":[\"不新增收费或处罚规定\"]},{\"text\":\"正文需涵盖预约在内部日历完成、进入前查看门口状态灯、使用后擦白板、归位椅子并带走垃圾、投屏异常联系前台且不拆设备\",\"dimensions\":[\"OBJECT\",\"CONDITION\"],\"evidence\":[{\"sourceId\":\"context.customDescription\",\"quote\":\"预约在内部日历完成，进入前看门口状态灯；使用后擦白板、归位椅子并带走垃圾。投屏异常联系前台，不拆设备。\"}],\"bodyQuotes\":[\"预约在内部日历完成；进入前查看门口状态灯；使用后擦白板、归位椅子并带走垃圾；投屏异常时联系前台，不自行拆卸设备。\"]}],\"additions\":[],\"openDecisions\":[]}}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1167,
+      "completion_tokens": 526,
+      "total_tokens": 1693,
+      "prompt_tokens_details": {
+        "cached_tokens": 640
+      },
+      "prompt_cache_hit_tokens": 640,
+      "prompt_cache_miss_tokens": 527
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "elapsedMs": 2331
+}

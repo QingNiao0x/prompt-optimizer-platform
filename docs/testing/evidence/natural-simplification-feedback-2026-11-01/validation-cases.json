@@ -1,0 +1,38 @@
+{
+  "cases": [
+    {
+      "context": {
+        "customDescription": "预约在内部日历完成，进入前看门口状态灯；使用后擦白板、归位椅子并带走垃圾。投屏异常联系前台，不拆设备。",
+        "files": []
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "layer": "post-freeze-validation",
+      "id": "H_GUIDE",
+      "rawPrompt": "给第一次使用共享会议室的同事写个简洁使用指引。请直接给出可以贴在门边的正文，最多180字，不新增收费或处罚规定。",
+      "rubric": [
+        "覆盖预约、状态灯、收尾、故障联系",
+        "可直接张贴",
+        "180字内",
+        "无新增罚款或设备维修授权"
+      ]
+    },
+    {
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "layer": "post-freeze-validation",
+      "id": "H_CODE",
+      "rawPrompt": "实现一个JavaScript函数选择最近的几条消息，适配现有ES模块。由你设计简单的内部实现；输入是带id和timestamp的消息数组，按timestamp降序选择最多limit条，时间相同保留输入顺序，不修改输入。空数组返回空数组，limit为非负整数，非法limit抛RangeError；无需做其他输入验证。只返回一个ES模块代码块，导出latestMessages，不新增依赖。",
+      "rubric": [
+        "排序、同时间稳定性、limit边界与不改原数组",
+        "正常输入可执行",
+        "不增加额外API或依赖",
+        "只返回ES模块"
+      ]
+    }
+  ]
+}

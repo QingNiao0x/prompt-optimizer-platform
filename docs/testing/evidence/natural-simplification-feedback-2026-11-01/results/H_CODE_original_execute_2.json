@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "e073501c-dce3-4686-be50-d33636878361",
+    "object": "chat.completion",
+    "created": 1793466973,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```javascript\n/**\n * Select the most recent messages by timestamp.\n *\n * @param {Array<{id: *, timestamp: number}>} messages - Input messages.\n * @param {number} limit - Maximum number of messages to return (non-negative integer).\n * @returns {Array<{id: *, timestamp: number}>} New array with up to `limit` messages,\n *   sorted by timestamp descending; ties preserve input order.\n * @throws {RangeError} If limit is not a non-negative integer.\n */\nexport function latestMessages(messages, limit) {\n  if (!Number.isInteger(limit) || limit < 0) {\n    throw new RangeError('limit must be a non-negative integer');\n  }\n\n  if (messages.length === 0 || limit === 0) {\n    return [];\n  }\n\n  // Decorate with original index so ties keep input order.\n  const indexed = messages.map((message, index) => ({ message, index }));\n\n  indexed.sort((a, b) => {\n    if (b.message.timestamp !== a.message.timestamp) {\n      return b.message.timestamp - a.message.timestamp;\n    }\n    return a.index - b.index;\n  });\n\n  return indexed.slice(0, limit).map((entry) => entry.message);\n}\n```"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 146,
+      "completion_tokens": 267,
+      "total_tokens": 413,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 146
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

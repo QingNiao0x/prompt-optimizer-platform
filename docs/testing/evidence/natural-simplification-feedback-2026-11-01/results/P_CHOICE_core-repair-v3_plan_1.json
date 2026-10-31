@@ -1,0 +1,111 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "P_CHOICE",
+  "strategyVersion" : "core-repair-v3",
+  "operation" : "plan",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T17:07:49.231943500Z",
+  "input" : {
+    "rawPrompt" : "为客户设计一封说明服务故障的邮件。",
+    "context" : {
+      "customDescription" : "具体客户名单和是否披露内部故障原因由我决定；恢复时间暂不能承诺。其余措辞和组织由AI设计。",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v3",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.customDescription",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "plan" : {
+    "summary" : "原定任务是为客户设计一封说明服务故障的邮件；用户已明确客户名单与是否披露内部故障原因由其自行决定、恢复时间暂不能承诺，其余措辞和组织交由AI设计。这些保留决定属于用户后续自行处理的范围，不构成本轮必须澄清的缺口，可直接交付邮件设计稿。",
+    "questions" : [ ],
+    "provider" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "mock" : false
+  },
+  "taskUnderstanding" : {
+    "goal" : "为客户设计一封说明服务故障的邮件",
+    "deliverable" : "一封说明服务故障的客户邮件设计稿",
+    "requirements" : [ {
+      "text" : "为客户设计一封说明服务故障的邮件",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "为客户设计一封说明服务故障的邮件。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    }, {
+      "text" : "具体客户名单由用户决定",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "具体客户名单和是否披露内部故障原因由我决定；恢复时间暂不能承诺。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+    }, {
+      "text" : "是否披露内部故障原因由用户决定",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "具体客户名单和是否披露内部故障原因由我决定；恢复时间暂不能承诺。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+    }, {
+      "text" : "恢复时间暂不能承诺",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "具体客户名单和是否披露内部故障原因由我决定；恢复时间暂不能承诺。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "其余措辞和组织由AI设计",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "其余措辞和组织由AI设计。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "FORMAT" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ {
+      "issue" : "具体客户名单",
+      "impact" : "决定邮件称呼、收件对象及是否按客户差异化表述",
+      "questionId" : "",
+      "kind" : "USER_INFORMATION"
+    }, {
+      "issue" : "是否披露内部故障原因",
+      "impact" : "决定邮件是否包含故障原因说明及其详细程度",
+      "questionId" : "",
+      "kind" : "USER_INFORMATION"
+    } ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : null,
+  "success" : true,
+  "elapsedMs" : 4306
+}

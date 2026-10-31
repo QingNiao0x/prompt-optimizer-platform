@@ -1,0 +1,144 @@
+{
+  "status": "FROZEN",
+  "frozenAt": "2026-10-31T17:15:00.171Z",
+  "authorization": "用户本轮新增最多500次真实调用；按批准方案使用合成输入及派生作品，不发送真实源码或凭据",
+  "totalMaximum": 500,
+  "phaseLimits": {
+    "enhance": 80,
+    "plan": 24,
+    "execute": 36,
+    "grade": 24,
+    "product": 24
+  },
+  "qualityRetries": 0,
+  "versions": [
+    "core-repair-v3",
+    "core-simplified-v1"
+  ],
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "max_tokens": 8192,
+  "thinking": "disabled",
+  "files": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptSimplifiedInstructions.java",
+      "sha256": "a341a3e5d3ab2a9bc452ee741b2b8f0b04fca3e210c6ce7c941870a65ead104d"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRevision.java",
+      "sha256": "62e24d4ba9371dba7b51036a17fcd5ad6a599f5fa736010e4c7c3e2a60162cca"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskSource.java",
+      "sha256": "b29fdf89e6e9566f988f54d71c6bd566cdc5bba90159c7d21e487538a2dbf290"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptCoreRepairInstructions.java",
+      "sha256": "b77a597457c20adeda4c0c00d21a8fe803476ccd8770b252cff6e87a6e52ea5b"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "5f7728c83957401f901145a9dd0a7fe29bf47f8ad36d922c6139c72f58e41615"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskUnderstanding.java",
+      "sha256": "a678e2bc200fe5104d15d74ed498ac9861c60d9ceb5f2d28ab25b952914347ac"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java",
+      "sha256": "1cd13c802b6fb0a3cb99592dd8ab4efba2611b932158c719a27aa6e4295c9a37"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInput.java",
+      "sha256": "e9d19aea5131268208d7888e89a5188b55e33352736311c89a20201b7b8f625c"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "73fdf49a755f737a5ebcdb981a9615ab8ea4cd724c333539b3ba6ca1341ed513"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementService.java",
+      "sha256": "62d9d15a6996f7b5489baba47daaa76efc881beaefd4adebff4f177e5e1f7d89"
+    },
+    {
+      "path": "docs/testing/evidence/natural-simplification-feedback-2026-11-01/cases.json",
+      "sha256": "a21c11560f35d28498ec73fadaec2f4fae52d72ef3843d2502153902e1c377c8"
+    },
+    {
+      "path": "docs/testing/evidence/natural-simplification-feedback-2026-11-01/run-works.mjs",
+      "sha256": "60f95d05655fe9e144fd802b6625042396a3e8de69ec9584556b05c3608ba522"
+    },
+    {
+      "path": "docs/testing/evidence/natural-simplification-feedback-2026-11-01/run-works.ps1",
+      "sha256": "7d96b1adf93a8d8563c938b3af963e6922e12524f32a9e50a132f588024c9393"
+    },
+    {
+      "path": "docs/testing/evidence/natural-simplification-feedback-2026-11-01/SimplificationFeedbackEvaluation.java",
+      "sha256": "12f9b5a12e4caffc5cca2bcebc15f18551768d9e67e928ece3061e110415a88d"
+    },
+    {
+      "path": "docs/testing/evidence/natural-simplification-feedback-2026-11-01/validation-cases.json",
+      "sha256": "9ac82fb534b6176e8c6b22e06431bcd6ddf8031ca17fa31be4a64a9300d965ed"
+    },
+    {
+      "path": "docs/testing/evidence/natural-simplification-feedback-2026-11-01/validation-seal.json",
+      "sha256": "5ce88aaa9a5063f2ed423429b6fa61fdf7217956eb2fd12a76e943704b698439"
+    }
+  ],
+  "hypothesis": "Compare simplified instructions and phase protocol with daily v3 using equal inputs and model. Feedback editing is a separate functional hypothesis: preserve unaffected requirements and actual answers while applying explicit changes.",
+  "acceptance": "All original requirements and authority preserved; no new serious violation. Simplification adoption requires reliable delivery, no serious regression, and lower protocol burden with useful works at least as usable as v3; do not claim universal prose gains. Feedback must apply the opinion without changing unrelated requirements. Fully specified parity is allowed. No fixed unique algorithm or prose. Failed pairs and conflicts retained; no global superiority claim.",
+  "phases": "Regression and semantic review, then design works, then post-freeze validation works. Original/v3/candidate share all materials and actual Plan answers. Two works per design case per arm; two order-reversed anonymous graders for each candidate comparison.",
+  "cases": [
+    {
+      "id": "R_WAIT",
+      "layer": "regression"
+    },
+    {
+      "id": "R_REPORT",
+      "layer": "regression"
+    },
+    {
+      "id": "R_FULL",
+      "layer": "regression"
+    },
+    {
+      "id": "R_QUERY",
+      "layer": "regression"
+    },
+    {
+      "id": "W_NOTICE",
+      "layer": "work"
+    },
+    {
+      "id": "W_CODE",
+      "layer": "work"
+    },
+    {
+      "id": "P_NONE",
+      "layer": "plan"
+    },
+    {
+      "id": "P_CHOICE",
+      "layer": "plan"
+    },
+    {
+      "id": "F_FIX",
+      "layer": "feedback"
+    },
+    {
+      "id": "F_REPORT",
+      "layer": "feedback"
+    },
+    {
+      "id": "F_PLAN",
+      "layer": "feedback"
+    }
+  ],
+  "postFreezeValidationIds": [
+    "H_GUIDE",
+    "H_CODE"
+  ],
+  "reviewers": "Same-model independent requests plus internal AI manual verification; not human or independent expert review",
+  "baseline": "v3 daily; previous budgets remain closed, unused prior balances not consumed"
+}

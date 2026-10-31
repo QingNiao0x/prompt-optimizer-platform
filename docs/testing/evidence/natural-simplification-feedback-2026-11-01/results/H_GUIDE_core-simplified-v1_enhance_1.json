@@ -1,0 +1,191 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "H_GUIDE",
+  "strategyVersion" : "core-simplified-v1",
+  "operation" : "enhance",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-10-31T17:12:55.722100800Z",
+  "input" : {
+    "rawPrompt" : "给第一次使用共享会议室的同事写个简洁使用指引。请直接给出可以贴在门边的正文，最多180字，不新增收费或处罚规定。",
+    "context" : {
+      "customDescription" : "预约在内部日历完成，进入前看门口状态灯；使用后擦白板、归位椅子并带走垃圾。投屏异常联系前台，不拆设备。",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-simplified-v1",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.customDescription",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请为第一次使用共享会议室的同事写一份简洁使用指引，直接给出可以贴在门边的正文，最多180字，不新增收费或处罚规定。\n\n正文需涵盖以下现有信息：预约在内部日历完成；进入前查看门口状态灯；使用后擦白板、归位椅子并带走垃圾；投屏异常时联系前台，不自行拆卸设备。\n\n请直接输出可张贴的指引正文，不要附加说明。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "为第一次使用共享会议室的同事撰写简洁使用指引，并直接输出可贴在门边的正文",
+      "deliverable" : "可直接贴在门边的简洁使用指引正文",
+      "requirements" : [ {
+        "text" : "为第一次使用共享会议室的同事写一份简洁使用指引",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "给第一次使用共享会议室的同事写个简洁使用指引。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "OBJECT" ]
+      }, {
+        "text" : "直接给出可以贴在门边的正文",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "请直接给出可以贴在门边的正文",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "FORMAT" ]
+      }, {
+        "text" : "最多180字",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "最多180字",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "LENGTH" ]
+      }, {
+        "text" : "不新增收费或处罚规定",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不新增收费或处罚规定",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "正文需涵盖预约在内部日历完成、进入前查看门口状态灯、使用后擦白板、归位椅子并带走垃圾、投屏异常联系前台且不拆设备",
+        "evidence" : [ {
+          "sourceId" : "context.customDescription",
+          "quote" : "预约在内部日历完成，进入前看门口状态灯；使用后擦白板、归位椅子并带走垃圾。投屏异常联系前台，不拆设备。",
+          "origin" : "PROJECT_CONTEXT"
+        } ],
+        "dimensions" : [ "OBJECT", "CONDITION" ]
+      } ],
+      "additions" : [ ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请为第一次使用共享会议室的同事写一份简洁使用指引" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "直接给出可以贴在门边的正文" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "最多180字" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "不新增收费或处罚规定" ]
+        }, {
+          "index" : 4,
+          "quotes" : [ "预约在内部日历完成；进入前查看门口状态灯；使用后擦白板、归位椅子并带走垃圾；投屏异常时联系前台，不自行拆卸设备。" ]
+        } ],
+        "additionCoverage" : [ ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "为第一次使用共享会议室的同事撰写简洁使用指引，并直接输出可贴在门边的正文",
+    "deliverable" : "可直接贴在门边的简洁使用指引正文",
+    "requirements" : [ {
+      "text" : "为第一次使用共享会议室的同事写一份简洁使用指引",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "给第一次使用共享会议室的同事写个简洁使用指引。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    }, {
+      "text" : "直接给出可以贴在门边的正文",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请直接给出可以贴在门边的正文",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT" ]
+    }, {
+      "text" : "最多180字",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "最多180字",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "LENGTH" ]
+    }, {
+      "text" : "不新增收费或处罚规定",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不新增收费或处罚规定",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "正文需涵盖预约在内部日历完成、进入前查看门口状态灯、使用后擦白板、归位椅子并带走垃圾、投屏异常联系前台且不拆设备",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "预约在内部日历完成，进入前看门口状态灯；使用后擦白板、归位椅子并带走垃圾。投屏异常联系前台，不拆设备。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "OBJECT", "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请为第一次使用共享会议室的同事写一份简洁使用指引" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "直接给出可以贴在门边的正文" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "最多180字" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "不新增收费或处罚规定" ]
+      }, {
+        "index" : 4,
+        "quotes" : [ "预约在内部日历完成；进入前查看门口状态灯；使用后擦白板、归位椅子并带走垃圾；投屏异常时联系前台，不自行拆卸设备。" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 4603
+}

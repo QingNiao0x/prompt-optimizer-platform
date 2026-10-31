@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "7cf421da-d0a9-4944-a6d7-1fff434c05bb",
+    "object": "chat.completion",
+    "created": 1793466969,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```javascript\nexport function latestMessages(messages, limit) {\n  if (!Number.isInteger(limit) || limit < 0) {\n    throw new RangeError('limit must be a non-negative integer');\n  }\n  if (messages.length === 0 || limit === 0) {\n    return [];\n  }\n  return messages\n    .map((message, index) => ({ message, index }))\n    .sort((a, b) => b.message.timestamp - a.message.timestamp || a.index - b.index)\n    .slice(0, limit)\n    .map(({ message }) => message);\n}\n```"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 160,
+      "completion_tokens": 129,
+      "total_tokens": 289,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 160
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}
