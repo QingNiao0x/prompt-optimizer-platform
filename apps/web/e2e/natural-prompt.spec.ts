@@ -19,6 +19,9 @@ const fixture = (): OptimizationResult => ({
 /** 固定响应验证浏览器闭环；路由白名单阻止测试误发真实模型请求，不创建用户账号。 */
 const setup = async (page: Page, planning: 'off' | 'zero' | 'question', overrides: Partial<OptimizationResult> = {}) => {
   await mockAuthentication(page);
+  // 偏好同步有独立验收；本套件不让模拟身份请求落入真实账户服务。
+  await page.route('**/api/v1/me/settings', route => route.fulfill({ status: 503,
+    json: { error: { message: '受控偏好加载不可用' } } }));
   await page.addInitScript(enabled => localStorage.setItem('prompt-optimizer.plan-mode.v1',
     JSON.stringify({ enabled, introSeen: true })), planning !== 'off');
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
@@ -26,7 +29,8 @@ const setup = async (page: Page, planning: 'off' | 'zero' | 'question', override
     { id: 'mock', displayName: '受控测试模型', provider: 'mock', defaultModel: true },
   ] } }));
   await page.route('**/api/v1/optimizations/plan-events', route => route.fulfill({ status: 204 }));
-  const state = { current: { ...fixture(), ...overrides }, requests: [] as OptimizationRequest[], plans: 0, edits: 0, failSave: false };
+  const state = { current: { ...fixture(), ...overrides }, requests: [] as OptimizationRequest[], plans: 0, edits: 0, failSave: false,
+    revisions: [] as { feedback: string; expectedRevision: number }[], failRevision: false };
   await page.route('**/api/v2/**', async route => {
     const path = new URL(route.request().url()).pathname;
     if (path === '/api/v2/optimizations/plan') {
@@ -46,6 +50,15 @@ const setup = async (page: Page, planning: 'off' | 'zero' | 'question', override
       state.current = current;
       // 原生TEXT协议省略sections，验证API适配器不会要求模型制造四段。
       return route.fulfill({ json: { data: { ...current, sections: undefined } } });
+    }
+    if (path.endsWith('/revise')) {
+      const input = route.request().postDataJSON();
+      expect(Object.keys(input).sort()).toEqual(['context', 'expectedRevision', 'feedback']);
+      state.revisions.push(input);
+      if (state.failRevision) return route.fulfill({ status: 502, json: { error: { code: 'PROVIDER_ERROR', message: '模型调用失败，原结果已保留。' } } });
+      state.current = { ...state.current, recordId: '33333333-3333-4333-8333-333333333333', editRevision: 0,
+        optimizedPrompt: '请写简洁的客户延期邮件，新日期由用户确认，不承诺额外赔偿。' };
+      return route.fulfill({ json: { data: { recordId: state.current.recordId, result: state.current } } });
     }
     if (path.endsWith('/document')) {
       state.edits++;
@@ -78,6 +91,33 @@ const generate = async (page: Page, plan = false) => {
   await page.getByLabel('原始提示词', { exact: true }).fill(raw);
   await page.getByRole('button', { name: plan ? '先确认并增强' : '直接增强提示词', exact: true }).click();
 };
+
+test('按意见修改保留失败输入，成功后复制与历史使用新正文且不重开Plan', async ({ page }) => {
+  const state = await setup(page, 'off');
+  await generate(page); await openWorkbenchPane(page, 'result');
+  await page.getByTestId('revise-prompt').click();
+  const dialog = page.getByRole('dialog', { name: '按意见修改提示词' });
+  await expect(dialog).toBeVisible();
+  const box = await dialog.boundingBox();
+  expect(box!.width).toBeLessThanOrEqual(page.viewportSize()!.width);
+  await page.getByLabel('本次修改意见').fill('精简语言，保留新日期由我确认和不承诺赔偿。');
+  state.failRevision = true;
+  await dialog.getByRole('button', { name: '应用修改意见' }).click();
+  await expect(dialog.getByRole('alert')).toContainText('模型调用失败');
+  await expect(page.getByLabel('本次修改意见')).not.toHaveValue('');
+  await expect(page.getByTestId('compact-prompt')).toHaveText(fixture().optimizedPrompt);
+  state.failRevision = false;
+  await dialog.getByRole('button', { name: '应用修改意见' }).click();
+  await expect(dialog).not.toBeVisible();
+  await expect(page.getByTestId('compact-prompt')).toHaveText(state.current.optimizedPrompt);
+  expect(state.plans).toBe(0);
+  expect(state.revisions[1]!.expectedRevision).toBe(0);
+  await page.getByRole('button', { name: '复制提示词', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(state.current.optimizedPrompt);
+  await page.goto('/history');
+  await page.getByRole('button', { name: '查看', exact: true }).first().click();
+  await expect(page.getByRole('dialog')).toContainText(state.current.optimizedPrompt);
+});
 
 for (const mode of ['generated', 'unchanged', 'preserved'] as const) {
   test('自然增强处理状态：' + mode, async ({ page }) => {

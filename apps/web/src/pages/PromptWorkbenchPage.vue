@@ -442,6 +442,18 @@ const handleOptimize = async (): Promise<void> => {
   await continueEnhancement();
 };
 
+/** 定向修改复用当前材料选择与发送确认；准备期间切换任务时不把意见提交给另一结果。 */
+const handleRevise = async (feedback: string, complete: (saved: boolean, message?: string) => void): Promise<void> => {
+  const source = result.value;
+  const lease = store.captureContext();
+  if (!source?.recordId) { complete(false); return; }
+  const contextFiles = await prepareContextTransmission(`${rawPrompt.value}\n${feedback}`, '按意见修改', true);
+  if (!contextFiles || !store.isCurrentContext(lease) || result.value !== source) { complete(false); return; }
+  const saved = await store.reviseResult(feedback, contextFiles, source.recordId);
+  complete(saved, store.errorMessage);
+  if (saved) ElMessage.success('已按意见修改，并保存为新记录。');
+};
+
 const handleReEnhance = async (): Promise<void> => {
   if (!beginEnhancement('reenhance')) {
     return;
@@ -884,6 +896,7 @@ onBeforeUnmount(() => {
         @save="handleSaveResult"
         @update:edit-draft="resultDraft = $event"
         @re-enhance="handleReEnhance"
+        @revise="handleRevise"
         @undo="store.undoResultAndPersist()"
         @regenerate-with-format="handleRegenerateWithFormat"
       />

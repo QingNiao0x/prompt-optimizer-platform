@@ -123,6 +123,17 @@ export const reoptimizeHistory = async (
     : response.data;
 };
 
+/** 仅提交意见与本次主动选择的材料；原稿、原始需求及真实题答由历史服务恢复。 */
+export const reviseNaturalPrompt = async (id: string, feedback: string, expectedRevision: number,
+  context: ContextAnalysisRequest): Promise<ApiResponse<ReoptimizationResult>> => {
+  const response = await httpClient.post<ApiResponse<ReoptimizationResult>>(
+    `/api/v2/optimization-history/${encodeURIComponent(id)}/revise`,
+    { feedback, expectedRevision, context }, { timeout: NATURAL_GENERATION_TIMEOUT_MS },
+  );
+  return { ...response.data, data: { ...response.data.data,
+    result: { ...response.data.data.result, sections: response.data.data.result.sections ?? [] } } };
+};
+
 /** 自然编辑不调用模型；服务端按当前身份、删除状态和编辑版本保存同一份正文。 */
 export const saveNaturalPrompt = async (
   id: string,

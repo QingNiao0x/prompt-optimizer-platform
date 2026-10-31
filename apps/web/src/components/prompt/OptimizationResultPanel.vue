@@ -34,6 +34,7 @@ interface Emits {
   (event: 'save', draft: PromptSection[] | string, complete: (saved: boolean, message?: string) => void): void;
   (event: 'update:edit-draft', draft: PromptSection[] | string | undefined): void;
   (event: 're-enhance'): void;
+  (event: 'revise', feedback: string, complete: (saved: boolean, message?: string) => void): void;
   (event: 'undo'): void;
   (event: 'regenerate-with-format'): void;
 }
@@ -52,6 +53,21 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 const { result } = toRefs(props);
 const editing = ref(props.editDraft !== undefined);
+const revisionVisible = ref(false);
+const revisionFeedback = ref('');
+const revisionError = ref('');
+const revisionPending = ref(false);
+/** 只提交本次意见；完整历史与确认题答由后端绑定，失败保留输入以便继续修改。 */
+const submitRevision = (): void => {
+  if (!revisionFeedback.value.trim() || props.busy || revisionPending.value) return;
+  revisionPending.value = true;
+  revisionError.value = '';
+  emit('revise', revisionFeedback.value.trim(), (saved, message) => {
+    revisionPending.value = false;
+    if (saved) { revisionVisible.value = false; revisionFeedback.value = ''; }
+    else revisionError.value = message || '未完成修改，原结果和意见已保留。';
+  });
+};
 const copying = ref(false);
 const copied = ref(false);
 const lastCopiedPrompt = ref<string>();
@@ -414,6 +430,21 @@ const saveEditing = (): void => {
     >
       {{ planModeEnabled ? '先确认并再次增强' : '直接再次增强' }}
     </ElButton>
+
+    <ElButton v-if="result?.resultKind === 'TEXT' && result.recordId && !editing" size="small"
+      :disabled="busy" data-testid="revise-prompt" @click="revisionVisible = true">按意见修改</ElButton>
+    <ElDialog v-model="revisionVisible" title="按意见修改提示词" width="min(560px, 92vw)" append-to-body
+      :close-on-click-modal="false" :close-on-press-escape="!revisionPending" :show-close="!revisionPending">
+      <p>基于当前已保存的结果修改，保留原始需求与已确认信息。使用该结果的模型，成功后保存为新记录。</p>
+      <ElInput v-model="revisionFeedback" type="textarea" :rows="5" maxlength="4000" show-word-limit
+        :disabled="revisionPending" aria-label="本次修改意见" placeholder="例如：保留技术细节，将排查报告改为直接定位并修复问题。" />
+      <p v-if="revisionError" role="alert">{{ revisionError }}</p>
+      <template #footer>
+        <ElButton :disabled="revisionPending" @click="revisionVisible = false">取消</ElButton>
+        <ElButton type="primary" :loading="revisionPending" :disabled="busy || !revisionFeedback.trim()"
+          @click="submitRevision">应用修改意见</ElButton>
+      </template>
+    </ElDialog>
 
     <div v-if="result && !editing" class="export-guidance">
       <p class="platform-copy-hint">当前结果：{{ result.promptFormat === 'COMPACT' ? '自然表达' : '结构化' }}。复制内容与当前结果一致。</p>

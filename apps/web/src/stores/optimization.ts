@@ -32,6 +32,7 @@ import {
   preparePlanningContext as requestPlanningContext,
   listAvailableModels,
   saveNaturalPrompt,
+  reviseNaturalPrompt,
 } from '@/services/promptOptimizerApi';
 import { MAX_FILES } from '@/workers/fileReaderCore';
 import type {
@@ -564,6 +565,35 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
   };
 
+  /** 意见修改绑定当前历史稿；失败和迟到响应不覆盖原稿，不用当前输入框伪造历史原始需求。 */
+  const reviseResult = async (feedback: string, preparedFiles: ContextFileInput[], sourceId: string): Promise<boolean> => {
+    const source = result.value;
+    if (!source?.recordId || source.recordId !== sourceId || source.resultKind !== 'TEXT'
+      || hasUnsavedResultDraft.value || isOptimizing.value || isPlanning.value || isAnalyzing.value
+      || !feedback.trim() || !acceptsPrepared(preparedFiles)) return false;
+    const lease = captureContext();
+    isOptimizing.value = true;
+    errorMessage.value = '';
+    try {
+      beginTransmission(preparedFiles, 'ENHANCEMENT');
+      const response = await reviseNaturalPrompt(source.recordId, feedback.trim(), source.editRevision ?? 0,
+        { customDescription: customDescription.value, files: preparedFiles });
+      if (!isCurrentContext(lease) || result.value !== source) return false;
+      finishTransmission(response.data.result.contextReport, response.requestId);
+      applyReoptimized(response.data);
+      requestId.value = response.requestId;
+      return true;
+    } catch (error: unknown) {
+      if (!isCurrentContext(lease) || result.value !== source) return false;
+      failTransmission();
+      errorMessage.value = getApiErrorMessage(error);
+      requestId.value = getApiErrorRequestId(error);
+      return false;
+    } finally {
+      if (isCurrentContext(lease)) isOptimizing.value = false;
+    }
+  };
+
   /** 用户显式操作后，仅改变上次成功请求的增强模式；原始需求、资料和真实 Plan 确认逐字复用。 */
   const regenerateWithPromptFormat = async (): Promise<boolean> => {
     if (isAnalyzing.value || isPlanning.value || isOptimizing.value || isPreparingContext.value) return false;
@@ -800,6 +830,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     preparePlanningContext,
     createOptimizationPlan,
     runOptimization,
+    reviseResult,
     regenerateWithPromptFormat,
     saveEditedSections,
     saveEditedText,
