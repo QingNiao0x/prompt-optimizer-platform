@@ -1,0 +1,124 @@
+{
+  "status": "FROZEN",
+  "frozenAt": "2026-10-31T13:18:48.546Z",
+  "authorization": "用户本轮新增最多500次真实调用；按批准方案使用合成输入及派生作品，不发送真实源码或凭据",
+  "totalMaximum": 500,
+  "phaseLimits": {
+    "enhance": 100,
+    "plan": 24,
+    "execute": 36,
+    "grade": 48,
+    "product": 8
+  },
+  "qualityRetries": 0,
+  "versions": [
+    "core-repair-v3",
+    "core-design-completion-v1"
+  ],
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "max_tokens": 8192,
+  "thinking": "disabled",
+  "files": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptCoreRepairInstructions.java",
+      "sha256": "805160bf5457379735482c14c54152d7311337cb2ebed7e584bcb11c624fe254"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "efd7dec1b5f71d6aec74272c92024b78a1ed081591e7d424d1192e9d2143cb44"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskUnderstanding.java",
+      "sha256": "a678e2bc200fe5104d15d74ed498ac9861c60d9ceb5f2d28ab25b952914347ac"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java",
+      "sha256": "baa8629fbef7cc74be93fa6d890ebd1209caaf2dc57312d8c972c4a87bda25c9"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInput.java",
+      "sha256": "ed6b7aa7b576b75f90c9e4966d6ae8c73a5adb82f151ea30f1b79925e2a828d5"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "a10ef5c109d14253381f9954ebf64dff12a802ab43df0e6a31507d683c29b1cb"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementService.java",
+      "sha256": "787c2765846bef818d209af93096ee62ae18d9382a4288088fdff7c2309fab5a"
+    },
+    {
+      "path": "docs/testing/evidence/natural-design-completion-2026-10-31/cases.json",
+      "sha256": "77247bfb33ef097ce3f2c320e74dc7f102d7b8417203a041835ae42cab950108"
+    },
+    {
+      "path": "docs/testing/evidence/natural-design-completion-2026-10-31/run.mjs",
+      "sha256": "8ba636af3f2952730e66a6a1ef7b576920115f1d19b4222da4baa80ce280fbae"
+    },
+    {
+      "path": "docs/testing/evidence/natural-design-completion-2026-10-31/run.ps1",
+      "sha256": "a3d8606c154c8cf36cf10ce9f2bf60d438d90da13dc3e377be7e334185797e9f"
+    },
+    {
+      "path": "docs/testing/evidence/natural-design-completion-2026-10-31/DesignCompletionEvaluation.java",
+      "sha256": "b7437d7e94eda4e562ed614c755381537a824de9ab866c173db4e3ba7f5a4600"
+    },
+    {
+      "path": "docs/testing/evidence/natural-design-completion-2026-10-31/check.mjs",
+      "sha256": "5fc993a145a1fcb7ff01c3ad8630fc0693852ef5ebc239ae3d7b9ce87c5328eb"
+    }
+  ],
+  "hypothesis": "Only change body design-completion guidance; same source, scope, Plan and protection. Ordinary design may be proposed with reasons, not reported as confirmed fact.",
+  "acceptance": "All original requirements and authority preserved; no new serious violation. Design-gap works need substantive completion/error/edit gains over v3 and original, supported on more than one task and repeated works. Fully specified parity is allowed. No fixed unique algorithm or prose. Failed pairs and conflicts retained; no global superiority claim.",
+  "phases": "Regression and semantic review, then design works, then post-freeze validation works. Original/v3/candidate share all materials and actual Plan answers. Two works per design case per arm; two order-reversed anonymous graders for each candidate comparison.",
+  "cases": [
+    {
+      "id": "D_CSV",
+      "layer": "DESIGN_GAP"
+    },
+    {
+      "id": "D_QUEUE",
+      "layer": "DESIGN_GAP"
+    },
+    {
+      "id": "D_INVITE",
+      "layer": "DESIGN_GAP"
+    },
+    {
+      "id": "D_PILOT",
+      "layer": "DESIGN_GAP"
+    },
+    {
+      "id": "R_CONTEXT",
+      "layer": "CONTEXT_SUFFICIENT"
+    },
+    {
+      "id": "R_WAIT",
+      "layer": "REGRESSION"
+    },
+    {
+      "id": "R_REPORT",
+      "layer": "REGRESSION"
+    },
+    {
+      "id": "R_FULL",
+      "layer": "SUFFICIENT"
+    },
+    {
+      "id": "R_NONE",
+      "layer": "REGRESSION"
+    },
+    {
+      "id": "P_BILL",
+      "layer": "USER_DECISION"
+    }
+  ],
+  "postFreezeValidationIds": [
+    "V_FAQ",
+    "V_PROPOSAL"
+  ],
+  "reviewers": "Same-model independent requests plus internal AI manual verification; not human or independent expert review",
+  "baseline": "v3 daily; previous budgets remain closed, unused prior balances not consumed"
+}

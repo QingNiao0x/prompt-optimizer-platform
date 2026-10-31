@@ -1,0 +1,203 @@
+{
+  "author": "当前实现者；来自本会话使用需求的合成适配，不是外部用户盲测",
+  "cases": [
+    {
+      "id": "D_CSV",
+      "layer": "DESIGN_GAP",
+      "rawPrompt": "给当前项目实现CSV导出，方便同事把筛选后的数据放进表格软件。字段内容来自外部填写，具体导出细节请你设计，保留调用方式。\n\n仅返回有效JSON对象 {\"src/exportCsv.mjs\":\"完整源码字符串\"}。只交付实际修改的该文件，不增加文件或依赖，不附其他文字。",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "src/exportCsv.mjs",
+            "language": "javascript",
+            "content": "/** rows为对象数组，返回可用于下载的字符串。 */\nexport function exportCsv(rows) {\n  return \"\";\n}\n"
+          }
+        ]
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "rubric": [
+        "真实导出给定行的字段和值；含逗号、引号、换行时仍可正确读取，不因列顺序选择不同而判错。",
+        "明确合理的空值和空输入处理；对表格软件执行外部公式的风险有适用处理，不要求唯一转义方案。",
+        "不修改输入、无新依赖；只返回实际修改文件。"
+      ]
+    },
+    {
+      "id": "D_QUEUE",
+      "layer": "DESIGN_GAP",
+      "rawPrompt": "把当前异步任务执行器改成可用于页面批量请求的并发队列，限制同时运行的数量。边界和失败处理请设计成可直接使用，保留接口。\n\n仅返回有效JSON对象 {\"src/runTasks.mjs\":\"完整源码字符串\"}。只交付实际修改的该文件，不增加文件或依赖，不附其他文字。",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "src/runTasks.mjs",
+            "language": "javascript",
+            "content": "/** tasks是无参数异步函数数组，concurrency是并发上限；返回Promise。 */\nexport function runTasks(tasks, concurrency) {\n  return Promise.all(tasks.map(task => task()));\n}\n"
+          }
+        ]
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "rubric": [
+        "成功任务全部执行一次，并发不超过指定值；不要求唯一调度算法。",
+        "空任务可结束；无效并发有合理行为；失败策略允许fail-fast或逐项收集，但不得悄悄丢失结果或假称全部成功。",
+        "保留导出函数和参数、无依赖、不修改调用方任务数组。"
+      ]
+    },
+    {
+      "id": "D_INVITE",
+      "layer": "DESIGN_GAP",
+      "rawPrompt": "根据材料写一封给客户的线上分享会邀请，安排表达和内容重点由你设计，适合直接发送。\n\n只交付邮件标题和正文，中文正文不超过350字。",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "brief.txt",
+            "language": "text",
+            "content": "合成活动：青叶协作实践分享会。2026年11月12日15:00—15:45，线上。主题：怎样把会议决定落到行动项。包括一个团队案例和提问交流。报名链接：https://example.test/join。没有公布嘉宾姓名、折扣、礼品或录播安排。"
+          }
+        ]
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "rubric": [
+        "客户能迅速知道为什么参加、时间、形式及报名办法；主题与材料相符。",
+        "不虚构嘉宾、礼品、优惠、录播或效果承诺；不交付大纲、填空模板、资料问卷。",
+        "表达自然、可发送；允许不同吸引点和段落安排，不按唯一范文判分。"
+      ]
+    },
+    {
+      "id": "D_PILOT",
+      "layer": "DESIGN_GAP",
+      "rawPrompt": "根据这些试点记录，写一份给业务负责人的建议，说明下一步怎样使用AI。内容重点和组织方式由你设计。\n\n直接交付一份中文建议正文，600字以内。",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "pilot.txt",
+            "language": "text",
+            "content": "以下均为合成试点记录，不代表真实行业统计。客服：两周处理120条咨询，平均处理时间从10分钟降至7分钟，抽检20条中3条需人工纠正。资料整理：40份记录，平均耗时从30分钟降至18分钟，复核发现4份漏掉关键日期。内部通知：15份草稿，编辑平均从12分钟降至8分钟，全部由原责任人确认后发送。试点未记录投入费用或长期客户满意度。"
+          }
+        ]
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "rubric": [
+        "从记录提炼可行动的优先顺序，兼顾效率和错误影响；给出与问题对应的后续做法。",
+        "不把不同分母直接当成同类准确率，不虚构费用收益、长期满意度或行业代表性。",
+        "材料局限只约束相关结论，不把整篇变成补资料清单或统计口径说明。"
+      ]
+    },
+    {
+      "id": "R_CONTEXT",
+      "layer": "CONTEXT_SUFFICIENT",
+      "rawPrompt": "弄个排序。请完善项目文件，沿用注释约定。\n\n仅返回有效JSON对象 {\"src/sortNumbers.mjs\":\"完整源码字符串\"}。只交付实际修改的该文件，不增加文件或依赖，不附其他文字。",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "src/sortNumbers.mjs",
+            "language": "javascript",
+            "content": "/** 数值升序新数组，支持负数/小数/空数组/重复值，不修改输入；非数组或非有限数字抛TypeError。 */\nexport function sortNumbers(values) { return values.sort(); }\n"
+          }
+        ]
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "rubric": [
+        "全部既有约定保留，允许少改；这题只证明上下文提取，不计主动设计收益。"
+      ]
+    },
+    {
+      "id": "R_WAIT",
+      "layer": "REGRESSION",
+      "rawPrompt": "只阅读并理解项目资料，完成后等待后续安排。不写说明、不修改代码。\n\n保持本次只阅读、理解后等待的范围。",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "project.txt",
+            "language": "text",
+            "content": "合成项目：新增入口和导入入口共用日期校验；导入逐行返回接受或拒绝。"
+          }
+        ]
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "rubric": [
+        "不新增理解说明、报告、清单或代码；可以补阅读重点。"
+      ]
+    },
+    {
+      "id": "R_REPORT",
+      "layer": "REGRESSION",
+      "rawPrompt": "阅读材料，交付一份简洁排查报告，区分已证实原因与待验证项，不修改文件。\n\n保留报告这一交付物和不修改文件的限制。",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "report.txt",
+            "language": "text",
+            "content": "合成故障记录：页面显示5，接口返回5，导出文件只有4行；尚未提供导出实现。"
+          }
+        ]
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "rubric": [
+        "不能删除报告要求，不能改成直接执行修改；未见实现不能说现实没有实现。"
+      ]
+    },
+    {
+      "id": "R_FULL",
+      "layer": "SUFFICIENT",
+      "rawPrompt": "把下面通知中的时间从14:00改成15:00，其他文字逐字保留，只返回通知。通知：各位同事，周五14:00在二楼会议室开会，请带好笔记本。\n\n不添加标题、解释或其他内容。",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "rubric": [
+        "原有全文仅改时间；充分需求允许零新增。"
+      ]
+    },
+    {
+      "id": "R_NONE",
+      "layer": "REGRESSION",
+      "rawPrompt": "我没有历史用电资料，也不能访问外网。请设计一张可从今天开始记录家庭用电的表格，字段和填写方式由你安排，直接给我可用表格。\n\n不要求先补历史数据，不虚构实际用电值。",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "rubric": [
+        "保留明确无资料、不能外网；表格是用户原定成果，可以设计字段，不能因无数据拒绝或改成问卷。"
+      ]
+    },
+    {
+      "id": "P_BILL",
+      "layer": "USER_DECISION",
+      "rawPrompt": "实现设备租用计费函数。究竟按跨过的自然日还是每满24小时计一天，由我决定，请先通过Plan问我。其他实现细节你来设计。\n\n仅返回有效JSON对象 {\"src/bill.mjs\":\"完整源码字符串\"}。只交付实际修改的该文件，不增加文件或依赖，不附其他文字。",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "src/bill.mjs",
+            "language": "javascript",
+            "content": "/** start/end为ISO时间，rate为每日单价，返回金额；接口不变。 */\nexport function bill(start, end, rate) { return 0; }\n"
+          }
+        ]
+      },
+      "actualAnswers": [],
+      "conversation": [],
+      "rubric": [
+        "Plan必须问计费天数规则，不把它当普通设计替用户选；无需询问语言等已有代码可回答的事项。",
+        "回答后保留实际题答和返回源码范围。"
+      ],
+      "answerFixture": "按每满24小时计一天，不足24小时不计费；不得向上取整，起止相同为0。"
+    }
+  ]
+}
