@@ -143,6 +143,47 @@ class NaturalPlanContextProviderTest {
         server.verify();
     }
 
+    @Test
+    void taskAndContextUseSeparateEvidenceAndBothReachBodyGeneration() throws Exception {
+        var input = input(List.of());
+        var prepared = scope(input);
+        ((ObjectNode)prepared.path("actions").get(0)).putArray("detailEvidence").addObject()
+                .put("sourceId", "context.customDescription").put("quote", "合成背景");
+        ((ObjectNode)prepared.path("response")).putArray("detailEvidence").addObject()
+                .put("sourceId", "context.customDescription").put("quote", "合成背景");
+        expect(prepared, input, true);
+        expect(enhancement(input, RAW), input, false);
+        assertThat(provider.enhance(input, draft -> draft).completedStages()).contains(NaturalProcessing.Stage.BODY_GENERATION);
+        server.verify();
+    }
+
+    @Test
+    void savedMaterialOnlyScopeStillRequiresOriginalDelegation() throws Exception {
+        var trace = json.readTree(Path.of("../../docs/testing/evidence/natural-simplification-feedback-2026-11-01/traces/0021.json").toFile());
+        String user = trace.path("request").path("messages").get(1).path("content").asText();
+        ObjectNode payload = (ObjectNode) json.readTree(user.substring(user.indexOf('{')));
+        payload.remove(List.of("taskSources", "taskScope", "inputBoundary"));
+        var input = json.treeToValue(payload, NaturalPromptInput.class);
+        var saved = json.readValue(trace.path("response").path("choices").get(0).path("message").path("content").asText(), NaturalTaskScope.class);
+        assertThatThrownBy(() -> saved.resolveAdvisory(input)).isInstanceOf(NaturalTaskScope.MissingUserAuthority.class);
+        assertThat(input.taskSources().stream().filter(source -> source.id().equals("context.customDescription")).findFirst().orElseThrow().kind())
+                .isEqualTo(NaturalTaskSource.Kind.PROJECT_CONTEXT);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"missing", "context", "forged"})
+    void missingOrFalseUserAuthorityIsNeverRepairedByAddingRawPromptAutomatically(String defect) throws Exception {
+        var input = input(List.of());
+        var prepared = scope(input);
+        var evidence = ((ObjectNode)prepared.path("actions").get(0)).putArray("userEvidence");
+        if (defect.equals("context")) evidence.addObject().put("sourceId", "context.customDescription").put("quote", "合成背景");
+        if (defect.equals("forged")) evidence.addObject().put("sourceId", "rawPrompt").put("quote", "用户从未提供的委托");
+        expect(prepared, input, true);
+        expect(prepared, input, true);
+        assertThatThrownBy(() -> provider.enhance(input, result -> result)).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
     private NaturalPromptInput input(List<PlanAnswer> answers) {
         return new NaturalPromptInput(RAW, new ContextSnapshot("合成背景", List.of(), List.of(), List.of(),
                 List.of(), List.of(), List.of(), "fixture"), answers, List.of(), List.of(), null).withStrategyVersion(VERSION);
@@ -150,8 +191,8 @@ class NaturalPlanContextProviderTest {
 
     private ObjectNode scope(NaturalPromptInput input) {
         var evidence = List.of(Map.of("sourceId", "rawPrompt", "quote", input.rawPrompt()));
-        return json.valueToTree(Map.of("actions", List.of(Map.of("text", "写通知", "timing", "CURRENT", "condition", "", "evidence", evidence)),
-                "response", Map.of("basis", "EXPLICIT", "description", "通知正文", "evidence", evidence)));
+        return json.valueToTree(Map.of("actions", List.of(Map.of("text", "写通知", "timing", "CURRENT", "condition", "", "userEvidence", evidence, "detailEvidence", List.of())),
+                "response", Map.of("basis", "EXPLICIT", "description", "通知正文", "userEvidence", evidence, "detailEvidence", List.of())));
     }
 
     private ObjectNode enhancement(NaturalPromptInput input, String body) {

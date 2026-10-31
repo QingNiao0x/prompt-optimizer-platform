@@ -48,6 +48,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
     private final ObjectReader diagnosticEnhancementReader;
     private final ObjectReader diagnosticPlanningReader;
     private final ObjectReader scopeReader;
+    private final ObjectReader scopeSourcesReader;
     private final ObjectReader materialPreparationReader;
     private final ObjectReader requirementPreparationReader;
     private final ObjectReader completionPreparationReader;
@@ -101,6 +102,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         this.diagnosticEnhancementReader = diagnostics.readerFor(NaturalPromptPhasePayloads.Enhancement.class);
         this.diagnosticPlanningReader = diagnostics.readerFor(NaturalPromptPhasePayloads.Planning.class);
         this.scopeReader = phases.readerFor(NaturalTaskScope.class);
+        // v4将委托与资料引用分开，转换后仍通过原范围校验；旧版本不接收新字段。
+        this.scopeSourcesReader = phases.readerFor(NaturalTaskScopeSources.class);
         this.materialPreparationReader = phases.readerFor(NaturalTaskPreparation.class);
         // 49独立严格DTO不改变旧scope/正文reader，防止新字段被旧协议忽略后伪造成功。
         this.requirementPreparationReader = phases.readerFor(NaturalPromptRequirementRegistry.Preparation.class);
@@ -458,6 +461,10 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                         ? NaturalPromptExecutionBoundaryInstructions.PREPARE : NaturalPromptScopedInstructions.PREPARE;
         return invoke(input, instruction, operation, (body, metadata) -> {
             try {
+                if (NaturalPromptPlanContextInstructions.VERSION.equals(input.strategyVersion())) {
+                    NaturalTaskScopeSources sources = scopeSourcesReader.readValue(body);
+                    return new ScopePreparation(sources.toScope(input), metadata);
+                }
                 NaturalTaskScope scope = scopeReader.readValue(body);
                 return new ScopePreparation((NaturalPromptRoutingRepairInstructions.ADVISORY_TIMING_VERSION.equals(input.strategyVersion())
                         || NaturalPromptRoutingRepairInstructions.OWNED_DECISIONS_VERSION.equals(input.strategyVersion())
@@ -905,6 +912,9 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                         // 无效候选留在独立user数据中；诊断只定位确定性错误，不把错误出处或助手建议升级为来源。
                         attemptUser = NaturalPromptRepairContext.userMessage(json, payload, invalidCandidate, parsedCandidate, input, false);
                         repairHint = NaturalPromptBoundedRepairInstructions.REPAIR;
+                    } else if (retry && NaturalPromptPlanContextInstructions.VERSION.equals(input.strategyVersion())
+                            && failure instanceof NaturalTaskScopeSources.InvalidUserEvidence missing) {
+                        repairHint = missing.repairInstruction();
                     } else if (retry && (NaturalPromptCoreRepairInstructions.supports(input.strategyVersion())
                             || NaturalPromptSimplifiedInstructions.VERSION.equals(input.strategyVersion()))
                             && failure instanceof NaturalTaskScope.MissingUserAuthority missing) {

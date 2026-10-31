@@ -114,6 +114,7 @@ public final class NaturalPromptStageInstructions {
     /** 21—23逐一消融协议、框架必填及框架指导；24必须逐字复用21，兼容处理仅发生在读取端。 */
     public static String enhancementInstruction(String version) {
         if (!supports(version)) throw new IllegalArgumentException("分阶段自然增强版本不受支持");
+        if (NaturalPromptPlanContextInstructions.VERSION.equals(version)) return NaturalPromptPlanContextInstructions.ENHANCE;
         if (NaturalPromptSimplifiedInstructions.VERSION.equals(version)) return NaturalPromptSimplifiedInstructions.ENHANCE;
         if (NaturalPromptSinglePassInstructions.supports(version)) return NaturalPromptSinglePassInstructions.enhancementInstruction(version);
         if (NaturalPromptBodyFirstInstructions.supports(version)) return NaturalPromptBodyFirstInstructions.bodyInstruction(version);
@@ -134,6 +135,7 @@ public final class NaturalPromptStageInstructions {
     /** 阶段候选使用同一Plan协议，解析兼容和框架消融不改变提问要求或真实题答绑定。 */
     public static String planningInstruction(String version) {
         if (!supports(version)) throw new IllegalArgumentException("分阶段自然Plan版本不受支持");
+        if (NaturalPromptPlanContextInstructions.VERSION.equals(version)) return NaturalPromptPlanContextInstructions.PLAN;
         if (NaturalPromptSimplifiedInstructions.VERSION.equals(version)) return NaturalPromptSimplifiedInstructions.PLAN;
         if (NaturalPromptSinglePassInstructions.supports(version)) return NaturalPromptSinglePassInstructions.PLAN;
         if (NaturalPromptBodyFirstInstructions.supports(version)) return NaturalPromptBodyFirstInstructions.PLAN;
