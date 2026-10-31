@@ -74,7 +74,8 @@ public final class NaturalPromptStageInstructions {
 
     /** 仅服务端显式选择的候选采用新协议，旧历史继续使用原指导。 */
     public static boolean supports(String version) {
-        return NaturalPromptSimplifiedInstructions.VERSION.equals(version)
+        return NaturalPromptPlanContextInstructions.VERSION.equals(version)
+                || NaturalPromptSimplifiedInstructions.VERSION.equals(version)
                 || NaturalPromptPreparationRoutingInstructions.VERSION.equals(version)
                 || NaturalPromptIntentCompletionInstructions.VERSION.equals(version)
                 || NaturalPromptContentScopeInstructions.VERSION.equals(version)
@@ -92,7 +93,8 @@ public final class NaturalPromptStageInstructions {
                 || NaturalPromptPreparationRoutingInstructions.VERSION.equals(version)
                 || NaturalPromptIntentCompletionInstructions.VERSION.equals(version)
                 || NaturalPromptContentScopeInstructions.VERSION.equals(version)) return false;
-        return VERSION.equals(version) || DIAGNOSTIC_COMPATIBILITY_VERSION.equals(version)
+        return NaturalPromptPlanContextInstructions.VERSION.equals(version)
+                || VERSION.equals(version) || DIAGNOSTIC_COMPATIBILITY_VERSION.equals(version)
                 || NaturalPromptActionContractInstructions.VERSION.equals(version)
                 || NaturalPromptSinglePassInstructions.supports(version) || NaturalPromptBodyFirstInstructions.supports(version)
                 || NaturalPromptScopedInstructions.supports(version);
@@ -144,6 +146,9 @@ public final class NaturalPromptStageInstructions {
 
     /** 54复用既有增强wire文本，调用方仅替换成果说明；原24指导和字段契约均不重新生成。 */
     static String enhancementTaskProtocol() { return ENHANCEMENT_PROTOCOL; }
+
+    /** 新工程修复只复用Plan阶段协议，提问指导由调用方提供。 */
+    static String planningTaskProtocol() { return PLANNING_PROTOCOL; }
 
     /** 定位冻结指导中的唯一边界，避免字符串模板漂移被当成协议单变量。 */
     private static int boundary(String source, String marker) {

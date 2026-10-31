@@ -191,7 +191,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                     false, prepared.scope(), (body, metadata) -> {
                         var draft = readEnhancementPhase(body, input, metadata);
                         // 精简协议仍实际完成范围准备与正文生成；不以框架标签或范围分类跳过正文。
-                        if (NaturalPromptSimplifiedInstructions.VERSION.equals(input.strategyVersion())) {
+                        if (NaturalPromptSimplifiedInstructions.VERSION.equals(input.strategyVersion())
+                                || NaturalPromptPlanContextInstructions.VERSION.equals(input.strategyVersion())) {
                             draft = draft.withStages(List.of(NaturalProcessing.Stage.SCOPE_ANALYSIS, NaturalProcessing.Stage.BODY_GENERATION));
                         }
                         return validation.apply(draft);
@@ -437,7 +438,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
 
     /** 范围解释不覆盖原输入；36—38及精简协议复用阶段读取器，旧版响应与行为保持原样。 */
     private static boolean usesAdvisoryScope(String version) {
-        return NaturalPromptSimplifiedInstructions.VERSION.equals(version)
+        return NaturalPromptPlanContextInstructions.VERSION.equals(version)
+                || NaturalPromptSimplifiedInstructions.VERSION.equals(version)
                 || NaturalPromptPreparationRoutingInstructions.VERSION.equals(version)
                 || NaturalPromptIntentCompletionInstructions.VERSION.equals(version)
                 || NaturalPromptContentScopeInstructions.VERSION.equals(version);
@@ -445,7 +447,9 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
 
     /** 按显式版本识别范围并逐次计量；精简协议保留v3准备字节及建议性质，不新增阶段。 */
     private ScopePreparation prepareScope(NaturalPromptInput input, String operation) {
-        String instruction = NaturalPromptSimplifiedInstructions.VERSION.equals(input.strategyVersion())
+        String instruction = NaturalPromptPlanContextInstructions.VERSION.equals(input.strategyVersion())
+                ? NaturalPromptPlanContextInstructions.PREPARE
+                : NaturalPromptSimplifiedInstructions.VERSION.equals(input.strategyVersion())
                 ? NaturalPromptSimplifiedInstructions.PREPARE
                 : NaturalPromptCoreRepairInstructions.usesActionBoundary(input.strategyVersion())
                 ? NaturalPromptCoreRepairInstructions.PREPARE : usesAdvisoryScope(input.strategyVersion())
@@ -751,6 +755,14 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 if (materialPreparation != null) {
                     layered.set("executionResponsibilities", json.valueToTree(materialPreparation.dependencies()));
                 }
+            }
+            // 只记录已经收到题答，不推断参数已知、不制造默认答案；原始实际题答继续完整传输。
+            if (NaturalPromptPlanContextInstructions.VERSION.equals(input.strategyVersion())
+                    && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode answered) {
+                var progress = answered.putObject("planProgress");
+                progress.put("state", input.actualAnswers().isEmpty() ? "NO_BOUND_ANSWERS" : "ANSWERS_RECEIVED");
+                progress.set("answeredQuestionIds", json.valueToTree(input.actualAnswers().stream()
+                        .map(com.promptoptimizer.enhancement.dto.PlanAnswer::questionId).toList()));
             }
             if (scope != null && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode scoped) {
                 scoped.set("taskScope", json.valueToTree(scope));
