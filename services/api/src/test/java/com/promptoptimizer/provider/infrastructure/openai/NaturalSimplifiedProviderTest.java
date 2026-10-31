@@ -251,8 +251,9 @@ class NaturalSimplifiedProviderTest {
         var response = enhancement(input, BODY);
         coveredRequirement((ArrayNode) response.path("task").path("requirements"), "语气简明", "FORMAT",
                 "revision.feedback", "语气简明", "请写活动通知");
-        expect(scope(input, "EXPLICIT"), input, true, system -> assertThat(system).contains(NaturalPromptRevision.INSTRUCTION));
-        expect(response, input, false, system -> assertThat(system).contains(NaturalPromptRevision.INSTRUCTION));
+        expect(scope(input, "EXPLICIT"), input, true, system -> assertThat(system)
+                .contains(NaturalPromptRevision.forStage(false)).doesNotContain("requirements须引用"));
+        expect(response, input, false, system -> assertThat(system).contains(NaturalPromptRevision.forStage(true)));
         assertThat(provider.enhance(input, draft -> checkDraft(draft, input)).optimizedPrompt()).isEqualTo(BODY);
         server.verify();
     }

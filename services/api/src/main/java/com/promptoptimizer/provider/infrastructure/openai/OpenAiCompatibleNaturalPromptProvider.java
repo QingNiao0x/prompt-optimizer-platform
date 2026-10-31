@@ -817,7 +817,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 try {
                     String system = metadataRepair != null ? metadataRepair.instruction() : instruction + (attempt > 1
                             ? "\n上次响应未满足协议或必要保护。请重新按完整输入生成合法JSON并保留全部要求；每个字段只出现一次，不添加额外内容。" + repairHint : "");
-                    if (input.revision() != null) system += "\n" + NaturalPromptRevision.INSTRUCTION;
+                    if (input.revision() != null) system += "\n" + NaturalPromptRevision.forStage(scope != null);
                     JsonNode response = (reasoning ? reasoningClient : client).post().uri(route.endpoint())
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + route.apiKey())
                             .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
