@@ -2,6 +2,7 @@ package com.promptoptimizer.enhancement.service.impl;
 
 import com.promptoptimizer.provider.domain.NaturalPromptCoreRepairInstructions;
 import com.promptoptimizer.provider.domain.NaturalPromptInstructions;
+import com.promptoptimizer.provider.domain.NaturalPromptSimplifiedInstructions;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,10 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app.enhancement.natural")
 public class NaturalEnhancementSettings {
     /** 默认v3修复普通入口；STABLE及已显式选择的旧配置不被改写，历史仍按保存版本。 */
-    public enum Profile { STABLE, CORE_REPAIR, ACTION_BOUNDARY_REPAIR, COMPLETION_BASIS_REPAIR }
+    public enum Profile {
+        STABLE, CORE_REPAIR, ACTION_BOUNDARY_REPAIR, COMPLETION_BASIS_REPAIR,
+        /** 显式验证精简指导及阶段协议；未完成真实验证前不替换缺省v3。 */ SIMPLIFIED
+    }
 
     @NotNull
     private Profile profile = Profile.COMPLETION_BASIS_REPAIR;
@@ -37,6 +41,7 @@ public class NaturalEnhancementSettings {
             case CORE_REPAIR -> NaturalPromptCoreRepairInstructions.VERSION;
             case ACTION_BOUNDARY_REPAIR -> NaturalPromptCoreRepairInstructions.ACTION_BOUNDARY_VERSION;
             case COMPLETION_BASIS_REPAIR -> NaturalPromptCoreRepairInstructions.COMPLETION_BASIS_VERSION;
+            case SIMPLIFIED -> NaturalPromptSimplifiedInstructions.VERSION;
         };
     }
 }

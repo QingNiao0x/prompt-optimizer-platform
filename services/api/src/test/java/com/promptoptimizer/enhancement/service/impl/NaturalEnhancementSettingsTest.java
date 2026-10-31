@@ -45,4 +45,10 @@ class NaturalEnhancementSettingsTest {
         runner.withPropertyValues("app.enhancement.natural.profile=COMPLETION_BASIS_REPAIR").run(context ->
                 assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v3"));
     }
+
+    @Test
+    void simplifiedProtocolIsSelectableWithoutReplacingTheValidatedDefault() {
+        runner.withPropertyValues("app.enhancement.natural.profile=SIMPLIFIED").run(context ->
+                assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-simplified-v1"));
+    }
 }

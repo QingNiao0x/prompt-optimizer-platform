@@ -55,6 +55,7 @@ public final class NaturalPromptInstructions {
                     NaturalPromptCoreRepairInstructions.VERSION -> NaturalPromptRoutingRepairInstructions.ENHANCE;
             case NaturalPromptCoreRepairInstructions.ACTION_BOUNDARY_VERSION -> NaturalPromptCoreRepairInstructions.ENHANCE;
             case NaturalPromptCoreRepairInstructions.COMPLETION_BASIS_VERSION -> NaturalPromptCoreRepairInstructions.COMPLETION_ENHANCE;
+            case NaturalPromptSimplifiedInstructions.VERSION -> NaturalPromptSimplifiedInstructions.ENHANCE;
             case NaturalPromptContentQualityInstructions.VERSION -> NaturalPromptContentQualityInstructions.ENHANCE;
             case NaturalPromptGroundedCompletionInstructions.VERSION -> NaturalPromptGroundedCompletionInstructions.ENHANCE;
             case NaturalPromptMultidimensionalInstructions.VERSION -> NaturalPromptMultidimensionalInstructions.ENHANCE;
@@ -123,6 +124,7 @@ public final class NaturalPromptInstructions {
                     -> NaturalPromptRoutingRepairInstructions.OWNED_PLAN;
             case NaturalPromptCoreRepairInstructions.ACTION_BOUNDARY_VERSION,
                     NaturalPromptCoreRepairInstructions.COMPLETION_BASIS_VERSION -> NaturalPromptCoreRepairInstructions.PLAN;
+            case NaturalPromptSimplifiedInstructions.VERSION -> NaturalPromptSimplifiedInstructions.PLAN;
             case NaturalPromptContextualRewriteInstructions.VERSION -> NaturalPromptContextualRewriteInstructions.PLAN;
             case NaturalPromptUsefulDeliveryInstructions.VERSION -> NaturalPromptUsefulDeliveryInstructions.PLAN;
             case NaturalPromptEffectiveRequestInstructions.VERSION -> NaturalPromptEffectiveRequestInstructions.PLAN;

@@ -5,6 +5,7 @@ package com.promptoptimizer.provider.domain;
  * 21只改变协议，22仅取消框架标记必填，23再移除十二框架组织参考；24沿用21指导，仅兼容无权威诊断字段。
  * 27复用24协议，将动作与成果的语义指导交给独立候选，不回改21—24冻结内容。
  * 28先识别范围，再复用阶段响应及覆盖校验；模型不重复填写目标和成果。
+ * 精简指导独立复用阶段DTO，框架可选；不修改旧候选的业务指导、字段或兼容策略。
  * 默认版本仍由原入口管理，候选存在不表示质量通过。
  *
  * @author QingNiao
@@ -73,7 +74,8 @@ public final class NaturalPromptStageInstructions {
 
     /** 仅服务端显式选择的候选采用新协议，旧历史继续使用原指导。 */
     public static boolean supports(String version) {
-        return NaturalPromptPreparationRoutingInstructions.VERSION.equals(version)
+        return NaturalPromptSimplifiedInstructions.VERSION.equals(version)
+                || NaturalPromptPreparationRoutingInstructions.VERSION.equals(version)
                 || NaturalPromptIntentCompletionInstructions.VERSION.equals(version)
                 || NaturalPromptContentScopeInstructions.VERSION.equals(version)
                 || VERSION.equals(version) || OPTIONAL_FRAMEWORK_VERSION.equals(version) || NO_FRAMEWORK_VERSION.equals(version)
@@ -83,7 +85,7 @@ public final class NaturalPromptStageInstructions {
                 || NaturalPromptScopedInstructions.supports(version);
     }
 
-    /** 21/24仍校验原十二框架标记，22/23将其降为不影响正文交付的可选诊断。 */
+    /** 旧版本维持各自契约；22/23及精简指导的框架仅为非关键诊断，不作为正文交付条件。 */
     public static boolean requiresFramework(String version) {
         // 35只保留组织参考；未选择框架不阻断合法正文，旧版本必填契约不变。
         if (NaturalPromptMaterialInstructions.VERSION.equals(version)
@@ -110,6 +112,7 @@ public final class NaturalPromptStageInstructions {
     /** 21—23逐一消融协议、框架必填及框架指导；24必须逐字复用21，兼容处理仅发生在读取端。 */
     public static String enhancementInstruction(String version) {
         if (!supports(version)) throw new IllegalArgumentException("分阶段自然增强版本不受支持");
+        if (NaturalPromptSimplifiedInstructions.VERSION.equals(version)) return NaturalPromptSimplifiedInstructions.ENHANCE;
         if (NaturalPromptSinglePassInstructions.supports(version)) return NaturalPromptSinglePassInstructions.enhancementInstruction(version);
         if (NaturalPromptBodyFirstInstructions.supports(version)) return NaturalPromptBodyFirstInstructions.bodyInstruction(version);
         if (NaturalPromptContentScopeInstructions.VERSION.equals(version)) return NaturalPromptContentScopeInstructions.ENHANCE;
@@ -129,6 +132,7 @@ public final class NaturalPromptStageInstructions {
     /** 阶段候选使用同一Plan协议，解析兼容和框架消融不改变提问要求或真实题答绑定。 */
     public static String planningInstruction(String version) {
         if (!supports(version)) throw new IllegalArgumentException("分阶段自然Plan版本不受支持");
+        if (NaturalPromptSimplifiedInstructions.VERSION.equals(version)) return NaturalPromptSimplifiedInstructions.PLAN;
         if (NaturalPromptSinglePassInstructions.supports(version)) return NaturalPromptSinglePassInstructions.PLAN;
         if (NaturalPromptBodyFirstInstructions.supports(version)) return NaturalPromptBodyFirstInstructions.PLAN;
         if (NaturalPromptContentScopeInstructions.VERSION.equals(version)) return NaturalPromptContentScopeInstructions.PLAN;
