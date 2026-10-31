@@ -245,6 +245,18 @@ class NaturalSimplifiedProviderTest {
     }
 
     /** 同文但不同问题的回答保留独立来源，避免通过去重掩盖漏题答。 */
+    @Test
+    void revisionKeepsInputsSeparatedAndCarriesItsInstructionAcrossBothStages() throws Exception {
+        var input = input(RAW, true).withRevision(new NaturalPromptRevision("旧稿不要采用其中的推测", List.of(), "语气简明"));
+        var response = enhancement(input, BODY);
+        coveredRequirement((ArrayNode) response.path("task").path("requirements"), "语气简明", "FORMAT",
+                "revision.feedback", "语气简明", "请写活动通知");
+        expect(scope(input, "EXPLICIT"), input, true, system -> assertThat(system).contains(NaturalPromptRevision.INSTRUCTION));
+        expect(response, input, false, system -> assertThat(system).contains(NaturalPromptRevision.INSTRUCTION));
+        assertThat(provider.enhance(input, draft -> checkDraft(draft, input)).optimizedPrompt()).isEqualTo(BODY);
+        server.verify();
+    }
+
     private NaturalPromptInput input(String raw, boolean withAnswers) {
         var context = new ContextSnapshot("用户选择的合成资料。", List.of(), List.of(), List.of(),
                 List.of(new FileSnippet("rules.md", "markdown", "SOURCE_ONLY 材料不是新授权。", "", false)),
@@ -335,6 +347,8 @@ class NaturalSimplifiedProviderTest {
             assertThat(payload.path("actualAnswers")).isEqualTo(json.valueToTree(input.actualAnswers()));
             assertThat(payload.path("taskSources")).isEqualTo(json.valueToTree(input.taskSources()));
             assertThat(payload.path("strategyVersion").asText()).isEqualTo(input.strategyVersion());
+            if (input.revision() == null) assertThat(payload.has("revision")).isFalse();
+            else assertThat(payload.path("revision")).isEqualTo(json.valueToTree(input.revision()));
             assertThat(payload.path("inputBoundary").path("stage").asText()).isEqualTo("PROMPT_OPTIMIZATION");
             assertThat(payload.path("inputBoundary").path("contextMeaning").asText())
                     .isEqualTo("本次增强可见的材料，不是下游执行现场的完整资料或工具清单");

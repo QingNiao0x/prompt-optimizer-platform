@@ -76,7 +76,8 @@ public record NaturalTaskReview(InputReadiness inputReadiness, List<Coverage> re
         }
         Set<String> userSources = input.taskSources().stream()
                 .filter(source -> source.kind() == NaturalTaskSource.Kind.ORIGINAL_REQUEST
-                        || source.kind() == NaturalTaskSource.Kind.BOUND_PLAN_ANSWER)
+                        || source.kind() == NaturalTaskSource.Kind.BOUND_PLAN_ANSWER
+                        || source.kind() == NaturalTaskSource.Kind.USER_REVISION)
                 .map(NaturalTaskSource::id).collect(Collectors.toSet());
         if (!referenced.containsAll(userSources)) {
             var missing = new java.util.TreeSet<>(userSources);

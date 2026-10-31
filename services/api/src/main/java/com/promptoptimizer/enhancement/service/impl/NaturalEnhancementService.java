@@ -97,6 +97,22 @@ public class NaturalEnhancementService {
 
     /** 两个入口共享相同安全过滤、策略协议和正文校验；身份/Plan授权在各自入口完成。 */
     private PromptDocument generate(OptimizationRequest request, String strategyVersion, PlanningSessionService.ConfirmedPlan confirmed) {
+        return generate(request, strategyVersion, confirmed, null);
+    }
+
+    /** 仅供已核验归属的历史服务调用；历史题答不冒充仍有效的短期Plan会话。 */
+    public PromptDocument revise(OptimizationRequest request, List<PlanAnswer> savedAnswers, NaturalPromptRevision revision) {
+        actor.require();
+        rejectInput(revision.previousPrompt());
+        rejectInput(revision.feedback());
+        revision.earlierFeedback().forEach(this::rejectInput);
+        return generate(request, settings.strategyVersion(),
+                new PlanningSessionService.ConfirmedPlan(savedAnswers, null, false), revision);
+    }
+
+    /** 首次增强与定向修改复用资料过滤、权限、来源及组装前后检查。 */
+    private PromptDocument generate(OptimizationRequest request, String strategyVersion,
+            PlanningSessionService.ConfirmedPlan confirmed, NaturalPromptRevision revision) {
         if (!NaturalPromptInstructions.supports(strategyVersion)) {
             throw new com.promptoptimizer.common.exception.UnsupportedResultVersionException("自然增强版本暂不支持，请恢复原始需求重新增强。");
         }
@@ -126,7 +142,7 @@ public class NaturalEnhancementService {
         List<String> permissions = additionalPermissions(request.permissionPolicy());
         var groups = new ConstraintBundle(List.of(), List.of(), permissions);
         var input = new NaturalPromptInput(request.rawPrompt(), context, confirmed.answers(), conversation, groups.visibleConstraints(),
-                model.publicId(), planningContext).withStrategyVersion(strategyVersion);
+                model.publicId(), planningContext).withStrategyVersion(strategyVersion).withRevision(revision);
         String workflowId = request.planConfirmation() == null ? null : request.planConfirmation().planId();
         try (var scope = LogCorrelation.bindWorkflow("planning-plan", workflowId)) {
             return provider.enhance(input, draft -> {
@@ -150,7 +166,7 @@ public class NaturalEnhancementService {
                                 draft.provider().mock() ? "" : model.displayName()),
                         Math.max(0, clock.millis() - start), warnings.stream().distinct().toList(), List.of(),
                         PromptFormat.COMPACT, groups, PromptDocument.NATURAL_PIPELINE, strategyVersion, draft.framework().name(), null, 0,
-                        confirmed.bound() ? confirmed.answers() : null)
+                        confirmed.bound() || revision != null ? confirmed.answers() : null)
                         .withProcessing(draft.provider().mock() ? null
                                 : NaturalProcessing.completed(draft.completedStages(), request.rawPrompt(), body));
             });

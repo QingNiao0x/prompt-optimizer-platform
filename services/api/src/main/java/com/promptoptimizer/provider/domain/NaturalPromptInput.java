@@ -20,7 +20,9 @@ public record NaturalPromptInput(
         List<String> mandatoryRules,
         String modelId,
         ContextSnapshot planningContext,
-        String strategyVersion
+        String strategyVersion,
+        @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+        NaturalPromptRevision revision
 ) {
     public NaturalPromptInput {
         actualAnswers = List.copyOf(actualAnswers);
@@ -38,7 +40,20 @@ public record NaturalPromptInput(
     /** 只有服务端历史分发与受控评测可选择兼容版本；原文及来源保持不变。 */
     public NaturalPromptInput withStrategyVersion(String version) {
         return new NaturalPromptInput(rawPrompt, context, actualAnswers, conversation,
-                mandatoryRules, modelId, planningContext, version);
+                mandatoryRules, modelId, planningContext, version, revision);
+    }
+
+    /** 只在定向修改入口附带上一稿与意见，普通增强的序列化输入保持不变。 */
+    public NaturalPromptInput withRevision(NaturalPromptRevision value) {
+        return new NaturalPromptInput(rawPrompt, context, actualAnswers, conversation,
+                mandatoryRules, modelId, planningContext, strategyVersion, value);
+    }
+
+    /** 兼容现有显式版本调用，不为首次增强注入反馈字段。 */
+    public NaturalPromptInput(String rawPrompt, ContextSnapshot context, List<PlanAnswer> actualAnswers,
+            List<ConversationMessage> conversation, List<String> mandatoryRules, String modelId,
+            ContextSnapshot planningContext, String strategyVersion) {
+        this(rawPrompt, context, actualAnswers, conversation, mandatoryRules, modelId, planningContext, strategyVersion, null);
     }
 
     /** 兼容调用方；新请求使用当前策略，旧历史必须显式传回原版本。 */

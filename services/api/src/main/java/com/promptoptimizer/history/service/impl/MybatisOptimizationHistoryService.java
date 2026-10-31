@@ -173,6 +173,11 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
     @Override
     @Transactional
     public UUID saveDocument(OptimizationRequest request, PromptDocument result) {
+        return persistDocument(request, result, Map.of());
+    }
+
+    /** 追加元数据仅由历史服务计算，不能从HTTP载荷直接合并到持久化记录。 */
+    private UUID persistDocument(OptimizationRequest request, PromptDocument result, Map<String, Object> extra) {
         ActorIdentity context = currentActor.require();
 
         OptimizationRecordEntity entity = new OptimizationRecordEntity();
@@ -184,7 +189,9 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
         entity.setRawPrompt(request.rawPrompt());
         entity.setOptimizedPrompt(result.optimizedPrompt());
         entity.setContextSnapshot(sanitizeContext(result.contextReport()));
-        entity.setResultMetadata(buildResultMetadata(request, result));
+        Map<String, Object> metadata = new LinkedHashMap<>(buildResultMetadata(request, result));
+        metadata.putAll(extra);
+        entity.setResultMetadata(metadata);
         entity.setPermissionPolicy(toMap(request.permissionPolicy()));
         entity.setLatencyMs((int) Math.min(Integer.MAX_VALUE, result.latencyMs()));
 
@@ -230,6 +237,62 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
         }
         UUID recordId = saveDocument(request, result);
         return new DocumentReoptimizationResult(recordId, result.withRecordId(recordId));
+    }
+
+    /** 按当前保存稿定向修改；保持原始需求及完整题答分层，模型调用期间不持有数据库事务。 */
+    @Override
+    public DocumentReoptimizationResult reviseDocument(UUID id,
+            com.promptoptimizer.history.dto.PromptRevisionRequest command) {
+        OptimizationRecordEntity source = findRecord(id);
+        var metadata = source.getResultMetadata();
+        if (!PromptDocument.ResultKind.TEXT.name().equals(metadata.get("resultKind"))
+                || !PromptDocument.NATURAL_PIPELINE.equals(metadata.get("generationPipeline"))) {
+            throw new InvalidOptimizationRequestException("按意见修改仅适用于自然增强结果。");
+        }
+        requireRevision(source, command.expectedRevision());
+        if (command.feedback() == null || command.feedback().isBlank() || command.feedback().length() > 4000) {
+            throw new InvalidOptimizationRequestException("请填写不超过4,000字的修改意见。");
+        }
+        List<String> earlier = metadata.containsKey("revisionFeedback")
+                ? objectMapper.convertValue(metadata.get("revisionFeedback"), new TypeReference<List<String>>() { }) : List.of();
+        if (earlier.size() >= 20 || earlier.stream().mapToInt(String::length).sum() + command.feedback().length() > 16000) {
+            throw new InvalidOptimizationRequestException("累计修改意见已达到容量，请整理原始需求后重新增强。");
+        }
+        OptimizationRequest base = rebuildRequest(source, false);
+        var supplied = command.context();
+        String description = base.context().customDescription();
+        if (supplied != null && supplied.customDescription() != null && !supplied.customDescription().isBlank()
+                && !supplied.customDescription().equals(description)) {
+            description = description + "\n本次适用上下文：\n" + supplied.customDescription();
+        }
+        var request = new OptimizationRequest(source.getRawPrompt(),
+                new ContextAnalysisRequest(description, supplied == null ? List.of() : supplied.files()),
+                base.enhancement(), base.conversationHistory(), base.permissionPolicy(), null, base.modelId());
+        PlanConfirmation saved = metadata.containsKey("planConfirmation")
+                ? objectMapper.convertValue(metadata.get("planConfirmation"), PlanConfirmation.class) : null;
+        var revision = new com.promptoptimizer.provider.domain.NaturalPromptRevision(
+                source.getOptimizedPrompt(), earlier, command.feedback().strip());
+        var result = naturalEnhancement.revise(request, saved == null ? List.of() : saved.answers(), revision);
+        // 删除或编辑发生在模型生成期间时不发布过期稿；原记录始终不被覆盖。
+        requireRevision(findRecord(id), command.expectedRevision());
+        Map<String, Object> extra = new LinkedHashMap<>();
+        List<String> feedback = new java.util.ArrayList<>(earlier);
+        feedback.add(command.feedback().strip());
+        extra.put("revisionFeedback", List.copyOf(feedback));
+        extra.put("revisionSourceId", id.toString());
+        extra.put("revisionSourceEditRevision", command.expectedRevision());
+        if (saved != null) extra.put("planConfirmation", toMap(saved));
+        UUID nextId = persistDocument(request, result, extra);
+        return new DocumentReoptimizationResult(nextId, result.withRecordId(nextId));
+    }
+
+    /** 版本与实际保存稿绑定，拒绝过期页面；无编辑历史的记录版本为零。 */
+    private void requireRevision(OptimizationRecordEntity source, long expected) {
+        Object value = source.getResultMetadata().get("editRevision");
+        long current = value instanceof Number number ? number.longValue() : 0;
+        if (expected < 0 || expected != current) {
+            throw new InvalidOptimizationRequestException("结果已被编辑，请刷新后核对；修改意见已保留。");
+        }
     }
 
     /** 自然编辑保留生成快照，仅校验明确追加权限后以CAS保存，不调用模型或重建四要素。 */
@@ -432,6 +495,11 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
      * 从保存的元数据重建优化请求，文件正文不再保留，只使用脱敏摘要。
      */
     private OptimizationRequest rebuildRequest(OptimizationRecordEntity entity) {
+        return rebuildRequest(entity, true);
+    }
+
+    /** 旧再次增强保持既有兼容行为；定向修改独立传递真实题答，不拼入原始提示词。 */
+    private OptimizationRequest rebuildRequest(OptimizationRecordEntity entity, boolean flattenAnswers) {
         Map<String, Object> metadata = entity.getResultMetadata();
         Map<String, Object> options = toMap(metadata.get("enhancementOptions"));
         Map<String, Object> context = entity.getContextSnapshot() == null
@@ -459,7 +527,7 @@ public class MybatisOptimizationHistoryService implements OptimizationHistorySer
                 : null;
         // 历史回答是已保存的用户事实，不能伪装成仍有效的短期 Plan 会话。
         String rawPrompt = entity.getRawPrompt();
-        if (savedPlanConfirmation != null && !savedPlanConfirmation.answers().isEmpty()) {
+        if (flattenAnswers && savedPlanConfirmation != null && !savedPlanConfirmation.answers().isEmpty()) {
             String confirmedFacts = savedPlanConfirmation.answers().stream()
                     .map(answer -> answer.question() + "：" + answer.answer())
                     .collect(java.util.stream.Collectors.joining("\n"));

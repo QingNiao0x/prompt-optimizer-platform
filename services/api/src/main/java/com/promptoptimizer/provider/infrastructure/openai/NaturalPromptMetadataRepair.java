@@ -81,7 +81,7 @@ final class NaturalPromptMetadataRepair {
             if (source == null || !reference.path("quote").isTextual() || reference.path("quote").asText().isBlank()
                     || !source.text().contains(reference.path("quote").asText())) continue;
             if (switch (source.kind()) {
-                case ORIGINAL_REQUEST, USER_CONVERSATION, BOUND_PLAN_ANSWER -> true;
+                case ORIGINAL_REQUEST, USER_CONVERSATION, BOUND_PLAN_ANSWER, USER_REVISION -> true;
                 case PROJECT_CONTEXT, ASSISTANT_CONVERSATION -> false;
             }) return true;
         }

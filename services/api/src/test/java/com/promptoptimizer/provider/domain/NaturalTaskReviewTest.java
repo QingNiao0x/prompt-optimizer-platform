@@ -10,6 +10,18 @@ import static org.assertj.core.api.Assertions.*;
 
 /** 覆盖声明必须有当前来源与最终正文锚点；不以协议检查冒充语义或真实作品验收。 */
 class NaturalTaskReviewTest {
+    @Test
+    void revisionFeedbackIsRequiredButPreviousAssistantTextIsNotPromotedToUserFact() {
+        var revised = input().withRevision(new NaturalPromptRevision("错误的上一稿", List.of("保留时间"), "只修改语气"));
+        assertThat(revised.taskSources()).anySatisfy(source -> {
+            assertThat(source.id()).isEqualTo("revision.previousPrompt");
+            assertThat(source.kind()).isEqualTo(NaturalTaskSource.Kind.ASSISTANT_CONVERSATION);
+        });
+        assertThatThrownBy(() -> task(review()).resolve(revised)).isInstanceOfSatisfying(
+                NaturalTaskReview.MissingSources.class, failure -> assertThat(failure.sourceIds())
+                        .containsExactlyInAnyOrder("revision.earlierFeedback.0", "revision.feedback"));
+    }
+
     private static final String RAW = "请写一条通知，50字以内，只输出正文；若时间未定就写待定。";
     private static final String BODY = "请写一条50字以内的通知，只输出正文；活动时间未定，请写“待定”。";
 

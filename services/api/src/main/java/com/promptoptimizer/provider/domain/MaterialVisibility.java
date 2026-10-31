@@ -46,7 +46,7 @@ public record MaterialVisibility(State requestMaterials, List<SourceState> sourc
                 case PROJECT_CONTEXT -> State.VISIBLE_NOW;
                 // 完整题答包含题干，不能用其中的缺失词判断回答，更不能抹去条件或否定。
                 case BOUND_PLAN_ANSWER -> State.BOUND_ANSWER;
-                case ORIGINAL_REQUEST, USER_CONVERSATION -> State.USER_STATED;
+                case ORIGINAL_REQUEST, USER_CONVERSATION, USER_REVISION -> State.USER_STATED;
                 case ASSISTANT_CONVERSATION -> State.ASSISTANT_SUGGESTION;
             }));
         }

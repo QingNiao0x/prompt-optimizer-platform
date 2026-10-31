@@ -80,6 +80,14 @@ public class DocumentHistoryController {
         return ApiResponse.success(requestId(request), history.reoptimizeDocument(id));
     }
 
+    /** 从服务端历史恢复原始需求与题答，定向修改后保存新记录，不覆盖用户编辑。 */
+    @PostMapping("/{id}/revise")
+    public ApiResponse<DocumentReoptimizationResult> revise(@PathVariable UUID id,
+            @Valid @RequestBody com.promptoptimizer.history.dto.PromptRevisionRequest input, HttpServletRequest request) {
+        analytics.recordOptimizationSubmission(true, request);
+        return ApiResponse.success(requestId(request), history.reviseDocument(id, input));
+    }
+
     /** 不调用模型；当前记录归属、编辑版本和固定权限均由服务端再次校验。 */
     @PatchMapping("/{id}/document")
     public ApiResponse<PromptTextEditResult> edit(@PathVariable UUID id,

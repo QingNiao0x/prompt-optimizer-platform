@@ -91,7 +91,7 @@ public record NaturalTaskScope(List<Action> actions, Response response) {
             NaturalTaskSource source = sources.get(value.sourceId());
             if (source == null || !source.text().contains(value.quote())) throw invalid();
             user |= switch (source.kind()) {
-                case ORIGINAL_REQUEST, USER_CONVERSATION, BOUND_PLAN_ANSWER -> true;
+                case ORIGINAL_REQUEST, USER_CONVERSATION, BOUND_PLAN_ANSWER, USER_REVISION -> true;
                 case PROJECT_CONTEXT, ASSISTANT_CONVERSATION -> false;
             };
         }

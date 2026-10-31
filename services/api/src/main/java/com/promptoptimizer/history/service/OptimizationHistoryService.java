@@ -73,6 +73,12 @@ public interface OptimizationHistoryService {
         return new DocumentReoptimizationResult(result.recordId(), PromptDocument.legacy(result.result()));
     }
 
+    /** 定向修改保存为新记录；客户端只提交意见、编辑版本和主动选择的上下文。 */
+    default DocumentReoptimizationResult reviseDocument(UUID id,
+            com.promptoptimizer.history.dto.PromptRevisionRequest request) {
+        throw new UnsupportedOperationException("当前历史适配器不支持按意见修改");
+    }
+
     /** 只编辑当前用户范围内的自然结果；保留初始生成正文，并执行版本及服务端保护校验。 */
     default com.promptoptimizer.history.domain.PromptTextEditResult editText(UUID id,
             com.promptoptimizer.history.dto.PromptTextEditRequest request) {

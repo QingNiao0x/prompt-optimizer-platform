@@ -46,7 +46,7 @@ public record NaturalPromptRequirementsOnlyPreparation(List<NaturalPromptPhasePa
         for (var requirement : requirements) {
             if (!requirement.dimensions().contains(NaturalTaskUnderstanding.Dimension.GOAL)) continue;
             boolean user = requirement.evidence().stream().anyMatch(evidence -> switch (evidence.origin()) {
-                case ORIGINAL_REQUEST, USER_CONVERSATION, BOUND_PLAN_ANSWER -> true;
+                case ORIGINAL_REQUEST, USER_CONVERSATION, BOUND_PLAN_ANSWER, USER_REVISION -> true;
                 case PROJECT_CONTEXT, ASSISTANT_CONVERSATION -> false;
             });
             if (!user) throw NaturalPromptRequirementRegistry.invalid("任务目标要求缺少用户来源");

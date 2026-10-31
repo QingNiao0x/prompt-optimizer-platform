@@ -409,6 +409,68 @@ class MybatisOptimizationHistoryServiceTest {
         verify(orchestrator, never()).optimize(any());
     }
 
+    @Test
+    void revisionUsesSavedOriginalEditedBodyAndCanonicalAnswersAndPersistsNewRecord() {
+        var source = naturalRecord();
+        source.getResultMetadata().put("editRevision", 2L);
+        source.getResultMetadata().put("revisionFeedback", List.of("保留已有接口"));
+        var answers = List.of(new com.promptoptimizer.enhancement.dto.PlanAnswer("q1", "范围？", "只读"));
+        source.getResultMetadata().put("planConfirmation", objectMapper.convertValue(
+                new com.promptoptimizer.enhancement.dto.PlanConfirmation("expired", null, answers), Map.class));
+        when(recordMapper.selectByIdAndScope(source.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(source);
+        var natural = mock(com.promptoptimizer.enhancement.service.impl.NaturalEnhancementService.class);
+        var output = new PromptDocument("修改后的完整提示词", PromptDocument.ResultKind.TEXT, null,
+                resultWithFileContent().contextReport(), List.of(), List.of(), TemplateCode.GENERAL,
+                new ProviderMetadata("mock", "fixture", true), 1, List.of(), List.of(), PromptFormat.COMPACT,
+                null, "NATURAL", "core-repair-v3", "APE", null, 0, answers);
+        when(natural.revise(any(), any(), any())).thenReturn(output);
+        service.setNaturalEnhancement(natural);
+        var result = service.reviseDocument(source.getId(), new com.promptoptimizer.history.dto.PromptRevisionRequest(
+                "精简措辞", 2, new ContextAnalysisRequest("新增适用背景", List.of())));
+        var request = ArgumentCaptor.forClass(OptimizationRequest.class);
+        var revision = ArgumentCaptor.forClass(com.promptoptimizer.provider.domain.NaturalPromptRevision.class);
+        verify(natural).revise(request.capture(), eq(answers), revision.capture());
+        assertThat(request.getValue().rawPrompt()).isEqualTo(source.getRawPrompt());
+        assertThat(request.getValue().planConfirmation()).isNull();
+        assertThat(revision.getValue().previousPrompt()).isEqualTo(source.getOptimizedPrompt());
+        assertThat(revision.getValue().earlierFeedback()).containsExactly("保留已有接口");
+        var saved = ArgumentCaptor.forClass(OptimizationRecordEntity.class);
+        verify(persistenceService).persist(saved.capture(), eq(ACTOR));
+        assertThat(saved.getValue().getId()).isNotEqualTo(source.getId()).isEqualTo(result.recordId());
+        assertThat(saved.getValue().getResultMetadata()).containsEntry("revisionFeedback", List.of("保留已有接口", "精简措辞"))
+                .containsEntry("planConfirmation", source.getResultMetadata().get("planConfirmation"));
+        assertThat(saved.getValue().getContextSnapshot()).doesNotContainKey("fileSnippets");
+    }
+
+    @Test
+    void staleOrInaccessibleRevisionCannotCallModel() {
+        var source = naturalRecord();
+        source.getResultMetadata().put("editRevision", 1L);
+        when(recordMapper.selectByIdAndScope(source.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(source);
+        var natural = mock(com.promptoptimizer.enhancement.service.impl.NaturalEnhancementService.class);
+        service.setNaturalEnhancement(natural);
+        assertThatThrownBy(() -> service.reviseDocument(source.getId(),
+                new com.promptoptimizer.history.dto.PromptRevisionRequest("精简", 0, null))).hasMessageContaining("结果已被编辑");
+        when(recordMapper.selectByIdAndScope(source.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(null);
+        assertThatThrownBy(() -> service.reviseDocument(source.getId(),
+                new com.promptoptimizer.history.dto.PromptRevisionRequest("精简", 1, null))).isInstanceOf(ResourceNotFoundException.class);
+        verify(natural, never()).revise(any(), any(), any());
+        verify(persistenceService, never()).persist(any(), any());
+    }
+
+    @Test
+    void failedRevisionLeavesExistingRecordUntouched() {
+        var source = naturalRecord();
+        when(recordMapper.selectByIdAndScope(source.getId(), TENANT_ID, WORKSPACE_ID)).thenReturn(source);
+        var natural = mock(com.promptoptimizer.enhancement.service.impl.NaturalEnhancementService.class);
+        when(natural.revise(any(), any(), any())).thenThrow(new IllegalStateException("fixture failure"));
+        service.setNaturalEnhancement(natural);
+        assertThatThrownBy(() -> service.reviseDocument(source.getId(),
+                new com.promptoptimizer.history.dto.PromptRevisionRequest("精简", 0, null))).hasMessage("fixture failure");
+        verify(persistenceService, never()).persist(any(), any());
+        verify(recordMapper, never()).updateNaturalText(any(), any(), any(), org.mockito.ArgumentMatchers.anyLong(), any(), any());
+    }
+
     private OptimizationRecordEntity naturalRecord() {
         var entity = recordEntity();
         entity.setOptimizedPrompt("自然正文。事实边界。");

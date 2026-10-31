@@ -111,7 +111,7 @@ public record NaturalTaskPreparation(NaturalTaskScope taskScope, List<Dependency
             NaturalTaskSource source = sources.get(evidence.sourceId());
             if (source == null || !source.text().contains(evidence.quote())) throw invalid();
             hasUserSource |= switch (source.kind()) {
-                case ORIGINAL_REQUEST, USER_CONVERSATION, BOUND_PLAN_ANSWER -> true;
+                case ORIGINAL_REQUEST, USER_CONVERSATION, BOUND_PLAN_ANSWER, USER_REVISION -> true;
                 case PROJECT_CONTEXT, ASSISTANT_CONVERSATION -> false;
             };
         }

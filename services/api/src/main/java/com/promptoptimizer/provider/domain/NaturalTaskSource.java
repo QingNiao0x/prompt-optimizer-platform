@@ -23,13 +23,22 @@ public record NaturalTaskSource(String id, Kind kind, @com.fasterxml.jackson.ann
         /** 既有助手文本，仅是讨论或建议，不能自行升级为用户选择。 */
         ASSISTANT_CONVERSATION,
         /** 经服务端绑定的完整题答，只在题目涉及的对象、属性和条件内生效。 */
-        BOUND_PLAN_ANSWER
+        BOUND_PLAN_ANSWER,
+        /** 当前或此前明确提交的修改意见，与上一稿中的助手建议分离。 */
+        USER_REVISION
     }
 
     /** 保留所有可用来源；不按职业、场景关键词或摘要预算截掉独立条件。 */
     public static List<NaturalTaskSource> from(NaturalPromptInput input) {
         List<NaturalTaskSource> sources = new ArrayList<>();
         add(sources, "rawPrompt", Kind.ORIGINAL_REQUEST, input.rawPrompt());
+        if (input.revision() != null) {
+            add(sources, "revision.previousPrompt", Kind.ASSISTANT_CONVERSATION, input.revision().previousPrompt());
+            for (int i = 0; i < input.revision().earlierFeedback().size(); i++) {
+                add(sources, "revision.earlierFeedback." + i, Kind.USER_REVISION, input.revision().earlierFeedback().get(i));
+            }
+            add(sources, "revision.feedback", Kind.USER_REVISION, input.revision().feedback());
+        }
         context(sources, "context", input.context());
         context(sources, "planningContext", input.planningContext());
         for (int i = 0; i < input.conversation().size(); i++) {

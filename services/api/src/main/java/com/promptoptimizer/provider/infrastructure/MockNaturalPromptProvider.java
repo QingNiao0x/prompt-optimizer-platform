@@ -24,6 +24,10 @@ public class MockNaturalPromptProvider implements NaturalPromptProvider {
 
     @Override
     public <T> T enhance(NaturalPromptInput input, Function<NaturalPromptDraft, T> validation) {
+        if (input.revision() != null) {
+            throw new ProviderException(ProviderFailureType.REQUEST_REJECTED,
+                    "离线Mock不执行语义修改，请选择真实模型后使用按意见修改。", false);
+        }
         String body = input.rawPrompt().strip();
         if (!input.context().customDescription().isBlank()) body += "\n\n结合以下已提供背景完成任务：" + input.context().customDescription();
         if (!input.actualAnswers().isEmpty()) body += "\n\n遵守本次实际确认："
