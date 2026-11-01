@@ -1,0 +1,52 @@
+{
+  "status": 200,
+  "requestId": "ad40e2ad-7618-491c-be50-1fe8eb475d5d",
+  "body": {
+    "requestId": "ad40e2ad-7618-491c-be50-1fe8eb475d5d",
+    "data": {
+      "summary": "原任务是在重点人群模块的新增与导入功能中实现调查时间不得晚于今日的校验，并返回修改文件的完整源码 JSON。现有材料已明确日期格式、共用校验、today 由调用方传入、空值与无效日期拒绝、错误与逐行导入行为及允许修改的文件；但“是否允许 today 当天”在项目规则中明确标注需用户确认，且不同答案会直接改变校验边界和交付源码，因此需提出该问题。",
+      "questions": [
+        {
+          "id": "allowToday",
+          "question": "调查时间是否允许填写 today 当天（即等于调用方传入的 today）？",
+          "hint": "项目规则明确标注“用户还需确认是否允许 today 当天”，该选择直接决定日期比较边界，并改变 date.mjs 中共用校验的实现及最终返回的源码。",
+          "type": "SINGLE_CHOICE",
+          "options": [
+            {
+              "id": "allow_today",
+              "label": "允许 today 当天",
+              "description": "调查日期等于 today 时通过校验，仅拒绝晚于 today 的日期。",
+              "answer": "允许调查日期等于调用方传入的 today，仅拒绝晚于 today 的日期。",
+              "recommended": false,
+              "recommendationReason": ""
+            },
+            {
+              "id": "reject_today",
+              "label": "不允许 today 当天",
+              "description": "调查日期必须严格早于 today，等于 today 也拒绝。",
+              "answer": "调查日期必须严格早于调用方传入的 today，等于 today 也拒绝。",
+              "recommended": false,
+              "recommendationReason": ""
+            }
+          ],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "AUTO",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 7276,
+      "planId": "40516faa-5cb0-4c18-bcd4-b2cd7e67a225",
+      "planningContext": {
+        "contextId": "31f8477d-b064-48d8-8e29-7b408e9933e6",
+        "version": "sha256:abd678cada6d011859eff57efaff576500511d8096f91a47af113d3cafb7dc03"
+      },
+      "expiresAt": "2026-11-01T02:32:21.465095900Z"
+    }
+  }
+}

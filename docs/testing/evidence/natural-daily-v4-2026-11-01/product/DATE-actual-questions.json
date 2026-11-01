@@ -1,0 +1,28 @@
+[
+  {
+    "id": "allowToday",
+    "question": "调查时间是否允许填写 today 当天（即等于调用方传入的 today）？",
+    "hint": "项目规则明确标注“用户还需确认是否允许 today 当天”，该选择直接决定日期比较边界，并改变 date.mjs 中共用校验的实现及最终返回的源码。",
+    "type": "SINGLE_CHOICE",
+    "options": [
+      {
+        "id": "allow_today",
+        "label": "允许 today 当天",
+        "description": "调查日期等于 today 时通过校验，仅拒绝晚于 today 的日期。",
+        "answer": "允许调查日期等于调用方传入的 today，仅拒绝晚于 today 的日期。",
+        "recommended": false,
+        "recommendationReason": ""
+      },
+      {
+        "id": "reject_today",
+        "label": "不允许 today 当天",
+        "description": "调查日期必须严格早于 today，等于 today 也拒绝。",
+        "answer": "调查日期必须严格早于调用方传入的 today，等于 today 也拒绝。",
+        "recommended": false,
+        "recommendationReason": ""
+      }
+    ],
+    "examples": [],
+    "allowCustomAnswer": true
+  }
+]

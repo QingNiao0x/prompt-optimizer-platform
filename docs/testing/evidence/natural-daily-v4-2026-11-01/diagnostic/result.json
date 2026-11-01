@@ -1,0 +1,51 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "D_NOTICE_REVISION",
+  "strategyVersion" : "core-repair-v4",
+  "operation" : "ENHANCE",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-11-01T02:04:37.225336200Z",
+  "input" : {
+    "rawPrompt" : "给客户写个延期通知，清楚一点。\n原交付日期11月4日；因验收发现一项数据同步问题而延期。新交付日期将在11月3日18:00前确认。已交付功能可继续使用。只返回120字以内可直接发送的通知，不承诺赔偿，不把日期待确认写成项目无限延期。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v4",
+    "revision" : {
+      "previousPrompt" : "请给客户写一份延期通知，表达清楚、可直接发送。通知中写明：原交付日期为11月4日；因验收发现一项数据同步问题，项目需要延期；新的交付日期将在11月3日18:00前确认；已交付功能可继续使用。只返回通知正文，控制在120字以内。不要承诺赔偿，也不要把“新交付日期待确认”写成项目无限延期。",
+      "earlierFeedback" : [ ],
+      "feedback" : "压缩到80字以内，保留所有具体事实与原有限制。"
+    },
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "revision.previousPrompt",
+      "kind" : "ASSISTANT_CONVERSATION"
+    }, {
+      "id" : "revision.feedback",
+      "kind" : "USER_REVISION"
+    } ]
+  },
+  "errorType" : "InvalidUserEvidence",
+  "failureType" : "INVALID_RESPONSE",
+  "message" : "范围准备缺少有效用户委托来源",
+  "success" : false,
+  "elapsedMs" : 5262
+}

@@ -1,0 +1,54 @@
+{
+  "id": "2a04610e-197f-45d9-b580-6f646d941a2d",
+  "rawPrompt": "请在重点人群模块 @src/people 的新增和导入功能增加调查时间录入限制：调查时间只能填写当前当日之前的日期，不可以超过今日。请修改实现。\n返回一个JSON对象，键为修改的文件路径，值为完整源码字符串。仅返回确有修改的允许文件，不附其他文字；无需增加测试文件。",
+  "optimizedPrompt": "请修改重点人群模块的新增和导入功能，为调查时间增加录入限制：调查日期不得晚于调用方传入的 today，允许等于 today；allowToday 参数保留兼容，不删除既有严格早于 today 的调用能力。新增与导入共用校验；today 由调用方按业务时区传入，不得用执行机器当前时间替换；空值和无效日历日期均拒绝。新增失败抛出 Error，导入保留逐行接受/拒绝结果，不改变部分成功规则。仅允许修改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件，也无需增加测试文件。完成后仅返回一个 JSON 对象，键为修改的文件路径，值为完整源码字符串；只包含确有修改的允许文件，不附其他文字。",
+  "sections": [],
+  "contextSummary": {
+    "warnings": [],
+    "redactions": [],
+    "dependencies": [],
+    "directoryTree": [
+      "src/",
+      "src/people/",
+      "src/people/create.mjs",
+      "src/people/date.mjs",
+      "src/people/import.mjs",
+      "src/people/rules.md"
+    ],
+    "analysisVersion": "v3",
+    "technologyStack": [],
+    "customDescription": "本轮使用合成模块，保留现有接口、错误类型和逐行导入行为。仅允许改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件。"
+  },
+  "ambiguities": [],
+  "appliedConstraints": [],
+  "templateCode": "GENERAL",
+  "providerName": "deepseek",
+  "modelName": "deepseek:deepseek-flash",
+  "mock": false,
+  "latencyMs": 7807,
+  "createdAt": "2026-11-01T02:02:49.226239Z",
+  "includePermissionBoundaries": true,
+  "conversationHistory": [],
+  "permissionPolicy": {
+    "protectedPaths": [],
+    "requireConfirmationFor": []
+  },
+  "modelVersion": "DeepSeek-V4.1-Flash",
+  "promptFormat": "COMPACT",
+  "constraintGroups": {
+    "platformMandatory": [],
+    "taskSpecific": [],
+    "additionalPermissions": []
+  },
+  "resultKind": "TEXT",
+  "generationPipeline": "NATURAL",
+  "chainVersion": "core-repair-v4",
+  "framework": "APE",
+  "processing": {
+    "completedStages": [
+      "SCOPE_ANALYSIS",
+      "BODY_GENERATION"
+    ],
+    "originalPreserved": false
+  }
+}
