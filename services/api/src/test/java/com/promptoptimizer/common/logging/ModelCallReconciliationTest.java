@@ -70,6 +70,21 @@ class ModelCallReconciliationTest {
     }
 
     @Test
+    void scopeDiagnosticsKeepOnlyBoundedCodeDefinedEvidencePaths() {
+        for (String path : java.util.List.of("actions[0].userEvidence[1].sourceId",
+                "actions[63].userEvidence", "response.userEvidence[63].sourceId", "response.userEvidence")) {
+            assertThat(ModelCallObservation.safeValidationField(path)).isEqualTo(path);
+        }
+        for (String path : java.util.List.of("actions[64].userEvidence", "response.userEvidence[64].sourceId",
+                "actions[0].userEvidence[0].quote", "actions[0].userEvidence[0].sourceId=private",
+                "revision.previousPrompt", "actions[-1].userEvidence")) {
+            assertThat(ModelCallObservation.safeValidationField(path)).isNull();
+        }
+        assertThat(ModelCallObservation.safeValidationReason("USER_AUTHORITY_REFERENCE_INVALID"))
+                .isEqualTo("USER_AUTHORITY_REFERENCE_INVALID");
+    }
+
+    @Test
     void unknownFailedAttemptDoesNotReusePreviousTokensAndLocalRejectIsNotSent() {
         var facts = new ArrayList<ModelCallObservation>();
         try (var scope = ModelCallAuditContext.bind(new ModelCallAuditContext.Snapshot(UUID.randomUUID(), (t, c) -> facts.add(c)))) {

@@ -1058,6 +1058,12 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
 
     private void fail(String operation, OpenAiCompatibleProperties.ModelSelection model, ProviderException failure,
             Integer status, boolean retry, int attempt, long started) {
+        if (failure instanceof NaturalTaskScopeSources.InvalidUserEvidence invalidSource) {
+            // 仅记录固定原因和程序构造的字段路径，后续定位不依赖收集用户正文或完整模型响应。
+            ModelCallLogger.captureValidationFailure(
+                    com.promptoptimizer.provider.domain.ProviderResponseValidationException.Reason.USER_AUTHORITY_REFERENCE_INVALID,
+                    invalidSource.field());
+        }
         ModelCallLogger.failed(operation, model.route().key(), model.publicModelId(), "PLATFORM_CATALOG",
                 failure.getFailureType().name(), failure.isRetryable(), status, retry, attempt, 1, elapsed(started), null);
     }

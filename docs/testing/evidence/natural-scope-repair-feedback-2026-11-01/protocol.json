@@ -1,0 +1,99 @@
+{
+  "status": "FROZEN",
+  "frozenAt": "2026-11-01T02:14:43.712Z",
+  "previousActual": 48,
+  "totalMaximum": 200,
+  "stageMaximum": 20,
+  "productMaximum": 16,
+  "worksMaximum": 4,
+  "qualityRetries": 0,
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "max_tokens": 10000,
+  "thinking": "disabled",
+  "frontend": "http://localhost:5173",
+  "backend": "http://localhost:9000",
+  "files": [
+    {
+      "path": "docs/testing/evidence/natural-scope-repair-feedback-2026-11-01/prepare.mjs",
+      "sha256": "441f0e3628243f1eace67aaf809511b126a335c1c4b6ca9fd4abcbbffdb3d209"
+    },
+    {
+      "path": "docs/testing/evidence/natural-scope-repair-feedback-2026-11-01/controlled-repair.mjs",
+      "sha256": "39d11fe580790da8af6d46059e19296db1dfc6a1922ed43df6271b433ba86053"
+    },
+    {
+      "path": "docs/testing/evidence/natural-scope-repair-feedback-2026-11-01/controlled-repair.ps1",
+      "sha256": "90a4562bbdd03c4fa0b5d1ed5331e286999194759b4298d19745c1ba00f3289c"
+    },
+    {
+      "path": "docs/testing/evidence/natural-scope-repair-feedback-2026-11-01/common.mjs",
+      "sha256": "7bc5c7633952d5092f2741df521523cf1e909f7611bc0733fce7f53b66b8761c"
+    },
+    {
+      "path": "docs/testing/evidence/natural-scope-repair-feedback-2026-11-01/browser.mjs",
+      "sha256": "b54fd7ffb07c7c561e8a2b56b27efe139ad647dce3f3f13f59a3176e66e1b2e0"
+    },
+    {
+      "path": "docs/testing/evidence/natural-scope-repair-feedback-2026-11-01/browser.ps1",
+      "sha256": "9e61fbeae066c48fee466e2002014e8fe79b77cbf87a4547676a34b11d34db65"
+    },
+    {
+      "path": "docs/testing/evidence/natural-scope-repair-feedback-2026-11-01/works.mjs",
+      "sha256": "ba99118ff8e06054223b0b8d1f82365bc79a49ac5138714b3975b9e0f9bbf0d3"
+    },
+    {
+      "path": "docs/testing/evidence/natural-scope-repair-feedback-2026-11-01/cases.json",
+      "sha256": "46d9dfa37ea6b2fca63201f929b312724421b74942523d28e82972bacac1def0"
+    },
+    {
+      "path": "docs/testing/evidence/natural-scope-repair-feedback-2026-11-01/diagnostic/case.json",
+      "sha256": "068687b3367123db0a016f35599cc3e2a6f0a03fcc845bedaf96f6940160e373"
+    },
+    {
+      "path": "docs/testing/evidence/natural-scope-repair-feedback-2026-11-01/ScopeRepairEvaluation.java",
+      "sha256": "7f1587cd7ec5574a9edcddc0d5cade5e2dd79d450d1cc145d3f3fb9f1f540b41"
+    },
+    {
+      "path": "docs/testing/evidence/natural-daily-v4-2026-11-01/diagnostic/call-1.json",
+      "sha256": "fcbd7141e2d60af45946ee758e68338ab64e920775485dc1ab02e93bf754da7b"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskScopeSources.java",
+      "sha256": "2be2a478d21cb28cf1292f7ba75af6250dd4cb055bee37dcd50ae58fa2f4fff9"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/ProviderResponseValidationException.java",
+      "sha256": "c42529f8644aabeef120dc8dcb30f500ee18fc9eec7a32c715530c2befb29919"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "be31568f743197b2ef0389b62764b30b63376c922cf5c4db4c55a48036a31ddd"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptPlanContextInstructions.java",
+      "sha256": "4e4972cc972bc72630f75bf5305f1f6f36b3793eade1512cb6740bf1c658215b"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptRevision.java",
+      "sha256": "e09ca728c4dcba03eaf4e16b5c74fa9195bbe9933b51d4fc8b5c04b725f6d4d2"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementSettings.java",
+      "sha256": "ae9f169ccc6fb821878e4011e73ad7e39261ae2414955a4db6be85ba1e29c86e"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/common/logging/ModelCallObservation.java",
+      "sha256": "5cceb3492babd20e1ad0926c3aceaa3d31640e0afc675134339a0489e2568948"
+    }
+  ],
+  "hypothesis": "Precisely identifying the invalid assistant source helps the existing single protocol repair; no validation weakening or new generation strategy.",
+  "sequence": [
+    "Replay identical saved first failure at zero model cost; live corrected preparation and body",
+    "Restart daily after offline and controlled checks pass",
+    "D_NOTICE actual generation/revision/copy/history",
+    "Same-information notice works only if delivered prompt passes review"
+  ],
+  "limits": "Development regression only; no unseen-sample or universal quality claim. Original uncaptured browser failure remains unproven exact cause; captured diagnosis is direct evidence."
+}

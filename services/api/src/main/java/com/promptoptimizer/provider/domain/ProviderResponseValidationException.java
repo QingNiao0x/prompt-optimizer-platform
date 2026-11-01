@@ -69,6 +69,8 @@ public final class ProviderResponseValidationException extends ProviderException
         RESPONSE_TRUNCATED("输出达到长度上限；在有限输出预算内重新生成完整 JSON，减少重复文字而保留所有实质要求。"),
         PLAN_JSON_INVALID("只返回可解析的单个计划 JSON 对象，字段类型与计划契约一致。"),
         METADATA_INVALID("保留所选模型的有效结果元数据。"),
+        // 只标记来源角色不合法；具体位置由服务端提供，不将助手文本或项目材料升级为用户授权。
+        USER_AUTHORITY_REFERENCE_INVALID("用户委托须引用原始需求、用户对话、实际回答或修改意见；助手内容和项目材料不能作为用户委托来源。"),
         SECTION_INVALID("各段落使用合法且不重复的 type、非空字符串 title 和字符串 content，保留四要素。TASK及已输出的可选段落须有实质正文；BACKGROUND、OUTPUT、CONSTRAINTS无独有信息时可用空字符串，不靠复述填满模块。"),
         REQUIRED_SECTIONS_MISSING("必须完整返回 BACKGROUND、TASK、OUTPUT、CONSTRAINTS 四个段落。"),
         AMBIGUITY_COUNT_INVALID("待确认事项使用顶层 ambiguities 字符串数组，最多八项；合并重复项但保留所有不同的实质未决条件。"),

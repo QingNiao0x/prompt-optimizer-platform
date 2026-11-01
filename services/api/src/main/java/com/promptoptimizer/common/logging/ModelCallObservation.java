@@ -69,6 +69,11 @@ public record ModelCallObservation(
     /** 只保留固定协议位置；未知路径不回显，避免错误调用方将模型值写入字段位置。 */
     public static String safeValidationField(String value) {
         if (value == null || value.length() > 120) return null;
+        // 自然准备阶段最多64项；只开放来源字段及受限下标，不接受来源ID、引文或任意JSON路径。
+        String index = "(?:[0-9]|[1-5][0-9]|6[0-3])";
+        if (value.matches("(?:actions\\[" + index + "\\]|response)\\.userEvidence(?:\\[" + index + "\\]\\.sourceId)?")) {
+            return value;
+        }
         return value.matches("(?:assessment(?:\\.gaps)?|ambiguities|ambiguityReferences|metadata|model|response(?:\\.(?:json|choices|content|finishReason))?|choices(?:\\[0\\])?(?:\\.message\\.content)?|sections(?:\\.(?:BACKGROUND|TASK|OUTPUT|CONSTRAINTS|ACCEPTANCE|CLARIFICATIONS|type|title|content))?|context\\.(?:conflicts|files|summary)|plan(?:\\.(?:json|questions|summary))?|questions(?:\\.(?:type|id|question|hint|options|examples|recommendedOptionId))?)")
                 ? value : null;
     }

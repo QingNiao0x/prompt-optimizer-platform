@@ -184,6 +184,59 @@ class NaturalPlanContextProviderTest {
         server.verify();
     }
 
+    @Test
+    void recordedRevisionFailuresIdentifyTheAssistantEntryWithoutAcceptingIt() throws Exception {
+        for (int number : List.of(1, 2)) {
+            var trace = json.readTree(Path.of("../../docs/testing/evidence/natural-daily-v4-2026-11-01/diagnostic/call-" + number + ".json").toFile());
+            String user = trace.path("request").path("messages").get(1).path("content").asText();
+            var payload = (ObjectNode)json.readTree(user.substring(user.indexOf('{')));
+            payload.remove(List.of("taskSources", "inputBoundary", "planProgress"));
+            var input = json.treeToValue(payload, NaturalPromptInput.class);
+            var recorded = json.readValue(trace.path("response").path("choices").get(0).path("message").path("content").asText(), NaturalTaskScopeSources.class);
+            assertThatThrownBy(() -> recorded.toScope(input))
+                    .isInstanceOfSatisfying(NaturalTaskScopeSources.InvalidUserEvidence.class, failure -> {
+                        assertThat(failure.field()).isEqualTo("actions[0].userEvidence[1].sourceId");
+                        assertThat(failure.repairInstruction()).contains("助手生成内容", "revision.previousPrompt", "即使复述用户原意")
+                                .doesNotContain("11月4日", "数据同步问题");
+                    });
+        }
+    }
+
+    @Test
+    void repairPinpointsMisclassifiedDraftAndKeepsTheOriginalAuthorityGate() throws Exception {
+        var input = input(List.of()).withRevision(new NaturalPromptRevision("助手提供的旧稿", List.of(), "表达紧凑些"));
+        var invalid = scope(input);
+        ((com.fasterxml.jackson.databind.node.ArrayNode)invalid.path("actions").get(0).path("userEvidence"))
+                .addObject().put("sourceId", "revision.previousPrompt").put("quote", input.revision().previousPrompt());
+        expect(invalid, input, true);
+        var corrected = scope(input);
+        ((com.fasterxml.jackson.databind.node.ArrayNode)corrected.path("actions").get(0).path("detailEvidence"))
+                .addObject().put("sourceId", "revision.previousPrompt").put("quote", input.revision().previousPrompt());
+        expect(corrected, input, true, "actions[0].userEvidence[1].sourceId");
+        var result = enhancement(input, RAW);
+        addRequirement((com.fasterxml.jackson.databind.node.ArrayNode)result.path("task").path("requirements"),
+                "revision.feedback", input.revision().feedback(), RAW, "USER_CONFIRMATION");
+        expect(result, input, false);
+        assertThat(provider.enhance(input, draft -> draft).completedStages()).contains(NaturalProcessing.Stage.BODY_GENERATION);
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"context.customDescription", "untrusted-secret-text"})
+    void invalidSourceDiagnosticsDoNotEchoModelSuppliedValues(String sourceId) {
+        var input = input(List.of());
+        var valid = new NaturalTaskScope.Evidence("rawPrompt", RAW);
+        var bad = new NaturalTaskScope.Evidence(sourceId, "不应输出的引文");
+        var scope = new NaturalTaskScopeSources(List.of(new NaturalTaskScopeSources.Action("写通知", NaturalTaskScope.Timing.CURRENT,
+                "", List.of(valid, bad), List.of())), new NaturalTaskScopeSources.Response(
+                NaturalTaskScope.ResponseBasis.EXPLICIT, "通知", List.of(valid), List.of()));
+        assertThatThrownBy(() -> scope.toScope(input))
+                .isInstanceOfSatisfying(NaturalTaskScopeSources.InvalidUserEvidence.class, failure -> {
+                    assertThat(failure.field()).isEqualTo("actions[0].userEvidence[1].sourceId");
+                    assertThat(failure.repairInstruction()).doesNotContain(sourceId, "不应输出的引文");
+                });
+    }
+
     private NaturalPromptInput input(List<PlanAnswer> answers) {
         return new NaturalPromptInput(RAW, new ContextSnapshot("合成背景", List.of(), List.of(), List.of(),
                 List.of(), List.of(), List.of(), "fixture"), answers, List.of(), List.of(), null).withStrategyVersion(VERSION);
@@ -217,10 +270,18 @@ class NaturalPlanContextProviderTest {
 
     /** 同一来源与题答逐字进入两个阶段；交互状态不能替代实际回答，也不额外调用模型判断已答。 */
     private void expect(ObjectNode content, NaturalPromptInput input, boolean preparing) throws Exception {
+        expect(content, input, preparing, null);
+    }
+
+    /** 修复调用必须携带安全的具体字段反馈；正常调用不额外添加检查负担。 */
+    private void expect(ObjectNode content, NaturalPromptInput input, boolean preparing, String repairField) throws Exception {
         String response = json.writeValueAsString(Map.of("choices", List.of(Map.of("finish_reason", "stop", "message",
                 Map.of("content", json.writeValueAsString(content))))));
         server.expect(requestTo(ENDPOINT)).andExpect(request -> {
             var sent = json.readTree(((MockClientHttpRequest)request).getBodyAsString());
+            if (repairField != null) {
+                assertThat(sent.path("messages").get(0).path("content").asText()).contains(repairField, "助手生成内容");
+            }
             String user = sent.path("messages").get(1).path("content").asText();
             JsonNode payload = json.readTree(user.substring(user.indexOf('{')));
             assertThat(payload.path("rawPrompt").asText()).isEqualTo(input.rawPrompt());

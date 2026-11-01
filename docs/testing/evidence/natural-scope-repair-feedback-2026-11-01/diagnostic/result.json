@@ -1,0 +1,273 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "D_NOTICE_REVISION",
+  "strategyVersion" : "core-repair-v4",
+  "operation" : "ENHANCE",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-11-01T02:16:13.475561400Z",
+  "input" : {
+    "rawPrompt" : "给客户写个延期通知，清楚一点。\n原交付日期11月4日；因验收发现一项数据同步问题而延期。新交付日期将在11月3日18:00前确认。已交付功能可继续使用。只返回120字以内可直接发送的通知，不承诺赔偿，不把日期待确认写成项目无限延期。",
+    "context" : {
+      "customDescription" : "",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ ],
+      "fileSnippets" : [ ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v4",
+    "revision" : {
+      "previousPrompt" : "请给客户写一份延期通知，表达清楚、可直接发送。通知中写明：原交付日期为11月4日；因验收发现一项数据同步问题，项目需要延期；新的交付日期将在11月3日18:00前确认；已交付功能可继续使用。只返回通知正文，控制在120字以内。不要承诺赔偿，也不要把“新交付日期待确认”写成项目无限延期。",
+      "earlierFeedback" : [ ],
+      "feedback" : "压缩到80字以内，保留所有具体事实与原有限制。"
+    },
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "revision.previousPrompt",
+      "kind" : "ASSISTANT_CONVERSATION"
+    }, {
+      "id" : "revision.feedback",
+      "kind" : "USER_REVISION"
+    } ]
+  },
+  "draft" : {
+    "optimizedPrompt" : "请给客户写一份延期通知，表达清楚、可直接发送。通知中写明：原交付日期为11月4日；因验收发现一项数据同步问题，项目需要延期；新的交付日期将在11月3日18:00前确认；已交付功能可继续使用。只返回通知正文，控制在80字以内。不要承诺赔偿，也不要把“新交付日期待确认”写成项目无限延期。",
+    "framework" : "APE",
+    "provider" : {
+      "provider" : "deepseek",
+      "model" : "deepseek:deepseek-flash",
+      "mock" : false,
+      "modelVersion" : ""
+    },
+    "taskUnderstanding" : {
+      "goal" : "给客户写一份清楚、可直接发送的延期通知",
+      "deliverable" : "80字以内的通知正文，只返回正文",
+      "requirements" : [ {
+        "text" : "给客户写延期通知，表达清楚、可直接发送",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "给客户写个延期通知，清楚一点。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "GOAL", "FORMAT" ]
+      }, {
+        "text" : "写明原交付日期为11月4日",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "原交付日期11月4日",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "OBJECT" ]
+      }, {
+        "text" : "写明因验收发现一项数据同步问题而延期",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "因验收发现一项数据同步问题而延期",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "OBJECT", "CONDITION" ]
+      }, {
+        "text" : "写明新交付日期将在11月3日18:00前确认",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "新交付日期将在11月3日18:00前确认。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "OBJECT", "CONDITION" ]
+      }, {
+        "text" : "写明已交付功能可继续使用",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "已交付功能可继续使用。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "OBJECT" ]
+      }, {
+        "text" : "只返回通知正文，控制在80字以内",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "只返回120字以内可直接发送的通知",
+          "origin" : "ORIGINAL_REQUEST"
+        }, {
+          "sourceId" : "revision.feedback",
+          "quote" : "压缩到80字以内，保留所有具体事实与原有限制。",
+          "origin" : "USER_REVISION"
+        } ],
+        "dimensions" : [ "FORMAT", "LENGTH" ]
+      }, {
+        "text" : "不承诺赔偿",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不承诺赔偿",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      }, {
+        "text" : "不把日期待确认写成项目无限延期",
+        "evidence" : [ {
+          "sourceId" : "rawPrompt",
+          "quote" : "不把日期待确认写成项目无限延期。",
+          "origin" : "ORIGINAL_REQUEST"
+        } ],
+        "dimensions" : [ "CONDITION" ]
+      } ],
+      "additions" : [ ],
+      "openDecisions" : [ ],
+      "review" : {
+        "inputReadiness" : "SUFFICIENT",
+        "requirementCoverage" : [ {
+          "index" : 0,
+          "quotes" : [ "请给客户写一份延期通知，表达清楚、可直接发送。" ]
+        }, {
+          "index" : 1,
+          "quotes" : [ "原交付日期为11月4日" ]
+        }, {
+          "index" : 2,
+          "quotes" : [ "因验收发现一项数据同步问题，项目需要延期" ]
+        }, {
+          "index" : 3,
+          "quotes" : [ "新的交付日期将在11月3日18:00前确认" ]
+        }, {
+          "index" : 4,
+          "quotes" : [ "已交付功能可继续使用" ]
+        }, {
+          "index" : 5,
+          "quotes" : [ "只返回通知正文，控制在80字以内。" ]
+        }, {
+          "index" : 6,
+          "quotes" : [ "不要承诺赔偿" ]
+        }, {
+          "index" : 7,
+          "quotes" : [ "也不要把“新交付日期待确认”写成项目无限延期。" ]
+        } ],
+        "additionCoverage" : [ ],
+        "planImpacts" : [ ]
+      }
+    }
+  },
+  "taskUnderstanding" : {
+    "goal" : "给客户写一份清楚、可直接发送的延期通知",
+    "deliverable" : "80字以内的通知正文，只返回正文",
+    "requirements" : [ {
+      "text" : "给客户写延期通知，表达清楚、可直接发送",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "给客户写个延期通知，清楚一点。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "FORMAT" ]
+    }, {
+      "text" : "写明原交付日期为11月4日",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "原交付日期11月4日",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "OBJECT" ]
+    }, {
+      "text" : "写明因验收发现一项数据同步问题而延期",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "因验收发现一项数据同步问题而延期",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "OBJECT", "CONDITION" ]
+    }, {
+      "text" : "写明新交付日期将在11月3日18:00前确认",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "新交付日期将在11月3日18:00前确认。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "OBJECT", "CONDITION" ]
+    }, {
+      "text" : "写明已交付功能可继续使用",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "已交付功能可继续使用。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "OBJECT" ]
+    }, {
+      "text" : "只返回通知正文，控制在80字以内",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "只返回120字以内可直接发送的通知",
+        "origin" : "ORIGINAL_REQUEST"
+      }, {
+        "sourceId" : "revision.feedback",
+        "quote" : "压缩到80字以内，保留所有具体事实与原有限制。",
+        "origin" : "USER_REVISION"
+      } ],
+      "dimensions" : [ "FORMAT", "LENGTH" ]
+    }, {
+      "text" : "不承诺赔偿",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不承诺赔偿",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "不把日期待确认写成项目无限延期",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不把日期待确认写成项目无限延期。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请给客户写一份延期通知，表达清楚、可直接发送。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "原交付日期为11月4日" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "因验收发现一项数据同步问题，项目需要延期" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "新的交付日期将在11月3日18:00前确认" ]
+      }, {
+        "index" : 4,
+        "quotes" : [ "已交付功能可继续使用" ]
+      }, {
+        "index" : 5,
+        "quotes" : [ "只返回通知正文，控制在80字以内。" ]
+      }, {
+        "index" : 6,
+        "quotes" : [ "不要承诺赔偿" ]
+      }, {
+        "index" : 7,
+        "quotes" : [ "也不要把“新交付日期待确认”写成项目无限延期。" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+  "processing" : {
+    "completedStages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ],
+    "originalPreserved" : false
+  },
+  "success" : true,
+  "elapsedMs" : 4947
+}
