@@ -1,0 +1,27 @@
+{
+  "observedAt": "2026-11-01T02:25:13.943Z",
+  "sourceCommit": "0efcdb39",
+  "pid": 21312,
+  "port": 9000,
+  "startedAt": "2026-11-01T10:19:22.5667090+08:00",
+  "healthy": true,
+  "migrationsEnabled": false,
+  "actualResponseVersion": "core-repair-v4",
+  "actualRepairAuditReason": "USER_AUTHORITY_REFERENCE_INVALID",
+  "actualRepairAuditField": "actions[0].userEvidence[1].sourceId",
+  "productionDeployment": false,
+  "classes": [
+    {
+      "path": "provider/domain/NaturalTaskScopeSources.class",
+      "sha256": "79921f16ebbd4d118b41a70c2c95e109f6a9eafaae08292a573ab20fabe89656"
+    },
+    {
+      "path": "provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.class",
+      "sha256": "da558801f4f17538e6aaddf5a0514ef5f9ca25d824313a5f8b73efb7e13aa7c8"
+    },
+    {
+      "path": "common/logging/ModelCallObservation.class",
+      "sha256": "296dc86f6b887400c84fc585841083cdec5f1df0c46d882193e6e8a26cffeb32"
+    }
+  ]
+}
