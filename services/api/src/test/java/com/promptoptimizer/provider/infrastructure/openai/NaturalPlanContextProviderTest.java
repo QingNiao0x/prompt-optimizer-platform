@@ -73,7 +73,7 @@ class NaturalPlanContextProviderTest {
         assertThat(NaturalPromptInstructions.planningInstruction("core-repair-v3"))
                 .isEqualTo(NaturalPromptCoreRepairInstructions.PLAN);
         assertThat(NaturalPromptInstructions.enhancementInstruction(VERSION))
-                .contains("补充可细化这些内容", "bodyQuotes", "已回答不等于参数已确定")
+                .contains("补充可细化这些内容", "bodyQuotes", "已回答不等于参数已确定", "summarySourceId", "directoryTreeSourceIds")
                 .doesNotContain("\"planImpacts\":", "\"review\":", "\"taskUnderstanding\":");
         assertThat(NaturalPromptInstructions.planningInstruction(VERSION))
                 .contains("decisionBasis", "决定权条件")

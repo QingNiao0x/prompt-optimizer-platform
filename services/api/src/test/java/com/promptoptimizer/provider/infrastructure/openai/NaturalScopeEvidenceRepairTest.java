@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.promptoptimizer.common.logging.ModelCallAuditContext;
 import com.promptoptimizer.common.logging.ModelCallObservation;
 import com.promptoptimizer.context.domain.ContextSnapshot;
+import com.promptoptimizer.context.domain.DependencyItem;
 import com.promptoptimizer.context.domain.FileSnippet;
+import com.promptoptimizer.context.domain.TechnologyStackItem;
 import com.promptoptimizer.enhancement.domain.NaturalProcessing;
 import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import com.promptoptimizer.provider.domain.*;
@@ -90,9 +92,17 @@ class NaturalScopeEvidenceRepairTest {
         var details = invalid.path("actions").get(0).path("detailEvidence");
         ((ObjectNode)details.get(0)).put("sourceId", "model-supplied-private-id");
         ((ObjectNode)details.get(1)).put("quote", "export const category0 = 0;");
+        ((com.fasterxml.jackson.databind.node.ArrayNode)details).addObject()
+                .put("sourceId", "context.fileSnippets.2").put("quote", "这段原文不存在");
         assertThatThrownBy(() -> json.treeToValue(invalid, NaturalTaskScopeSources.class).toScope(input))
                 .isInstanceOfSatisfying(NaturalTaskScopeSources.InvalidEvidence.class, failure -> {
-                    assertThat(failure.fields()).containsExactly("actions[0].detailEvidence[0].sourceId", "actions[0].detailEvidence[1].quote");
+                    assertThat(failure.fields()).containsExactly("actions[0].detailEvidence[0].sourceId",
+                            "actions[0].detailEvidence[1].quote", "actions[0].detailEvidence[2].quote");
+                    assertThat(failure.issues()).extracting(NaturalTaskScopeSources.ReferenceIssue::reason)
+                            .containsExactly(NaturalTaskScopeSources.ReferenceFailureReason.UNKNOWN_SOURCE_ID,
+                                    NaturalTaskScopeSources.ReferenceFailureReason.QUOTE_FOUND_IN_OTHER_SOURCE,
+                                    NaturalTaskScopeSources.ReferenceFailureReason.QUOTE_NOT_FOUND);
+                    assertThat(failure.issues().get(1).candidateSourceIds()).containsExactly("context.fileSnippets.0");
                     assertThat(failure.repairInstruction()).doesNotContain("model-supplied-private-id", "category0", RAW);
                 });
     }
@@ -109,22 +119,42 @@ class NaturalScopeEvidenceRepairTest {
         assertThat(payload.path("protocolRepair").path("candidateOmitted").asText()).isEqualTo("SENSITIVE_VALUE");
         assertThat(payload.path("protocolRepair").path("invalidResponse").isNull()).isTrue();
         assertThat(payload.path("taskSources")).isEqualTo(original.path("taskSources"));
+        assertThat(payload.path("protocolRepair").path("issues").get(0).path("code").asText())
+                .isEqualTo("QUOTE_FOUND_IN_OTHER_SOURCE");
+        assertThat(payload.path("protocolRepair").path("issues").get(0).path("candidateSourceIds").get(0).asText())
+                .isEqualTo("context.fileSnippets.1");
         assertThat(repaired).doesNotContain("sk-test-secret");
+    }
+
+    @Test
+    void sourceLabelsOnlyExistOnCoreRepairPreparationInput() {
+        var input = input();
+        var bodyPayload = json.valueToTree(input);
+        NaturalPromptPreparationSourceLabels.annotate("core-repair-v3", true, bodyPayload, input);
+        NaturalPromptPreparationSourceLabels.annotate("core-repair-v4", false, bodyPayload, input);
+        assertThat(bodyPayload.path("context").path("fileSnippets").get(0).has("sourceId")).isFalse();
+        assertThat(bodyPayload.path("context").has("directoryTreeSourceIds")).isFalse();
     }
 
     private NaturalPromptInput input() {
         var files = IntStream.range(0, 22).mapToObj(index -> new FileSnippet("src/catalog/file" + index + ".ts", "typescript",
                 "// 合成测试材料，不含业务源码。\n".repeat(240) + "export const category" + index + " = " + index + ";\n",
                 "合成模块" + index, false)).toList();
-        return new NaturalPromptInput(RAW, new ContextSnapshot("", List.of(), List.of(), List.of(), files, List.of(), List.of(), "fixture"),
+        var context = new ContextSnapshot("合成项目背景", List.of(new TechnologyStackItem("TypeScript", "package.json", 1.0)),
+                List.of(new DependencyItem("npm", "vue", "3", "package.json")), List.of("src/catalog"), files,
+                List.of(), List.of(), "fixture");
+        var planning = new ContextSnapshot("历史项目上下文", List.of(), List.of(), List.of(),
+                List.of(new FileSnippet("src/catalog/previous.ts", "typescript", "export const previous = true;", "先前材料", false)),
+                List.of(), List.of(), "fixture");
+        return new NaturalPromptInput(RAW, context,
                 List.of(new PlanAnswer("scope", "允许修改哪些文件？", "只允许修改业务文件，不新增测试文件。")),
-                List.of(), List.of(), null).withStrategyVersion("core-repair-v4");
+                List.of(), List.of(), null, planning).withStrategyVersion("core-repair-v4");
     }
 
     private ObjectNode scope(NaturalPromptInput input, boolean invalid) {
         var user = List.of(Map.of("sourceId", "rawPrompt", "quote", RAW));
-        var details = List.of(Map.of("sourceId", "context.fileSnippets.0", "quote", invalid ? "模块零使用常量" : "export const category0 = 0;"),
-                Map.of("sourceId", "context.fileSnippets.1", "quote", invalid ? "模块一使用常量" : "export const category1 = 1;"));
+        var details = List.of(Map.of("sourceId", "context.fileSnippets.0", "quote", invalid ? "export const category1 = 1;" : "export const category0 = 0;"),
+                Map.of("sourceId", "context.fileSnippets.1", "quote", invalid ? "不存在的材料片段" : "export const category1 = 1;"));
         return json.valueToTree(Map.of("actions", List.of(Map.of("text", "修复新增和导入数量校验", "timing", "CURRENT", "condition", "",
                         "userEvidence", user, "detailEvidence", details)),
                 "response", Map.of("basis", "EXPLICIT", "description", "修改的业务文件", "userEvidence", user, "detailEvidence", List.of())));
@@ -162,7 +192,31 @@ class NaturalScopeEvidenceRepairTest {
             var sent = json.readTree(((MockClientHttpRequest)request).getBodyAsString());
             String user = sent.path("messages").get(1).path("content").asText();
             var payload = json.readTree(user.substring(user.indexOf('{')));
-            assertThat(payload.path("context")).isEqualTo(json.valueToTree(input.context()));
+            var context = payload.path("context").deepCopy();
+            stripPreparationLabels(context);
+            assertThat(context).isEqualTo(json.valueToTree(input.context()));
+            var planningContext = payload.path("planningContext").deepCopy();
+            stripPreparationLabels(planningContext);
+            assertThat(planningContext).isEqualTo(json.valueToTree(input.planningContext()));
+            if (preparing) {
+                assertThat(payload.path("context").path("customDescriptionSourceId").asText())
+                        .isEqualTo("context.customDescription");
+                assertThat(payload.path("context").path("fileSnippets").get(0).path("sourceId").asText())
+                        .isEqualTo("context.fileSnippets.0");
+                assertThat(payload.path("context").path("fileSnippets").get(0).path("summarySourceId").asText())
+                        .isEqualTo("context.fileSnippets.0.summary");
+                assertThat(payload.path("context").path("technologyStack").get(0).path("sourceId").asText())
+                        .isEqualTo("context.technologyStack.0");
+                assertThat(payload.path("context").path("dependencies").get(0).path("sourceId").asText())
+                        .isEqualTo("context.dependencies.0");
+                assertThat(payload.path("context").path("directoryTreeSourceIds").get(0).asText())
+                        .isEqualTo("context.directoryTree.0");
+                assertThat(payload.path("planningContext").path("fileSnippets").get(0).path("sourceId").asText())
+                        .isEqualTo("planningContext.fileSnippets.0");
+            } else {
+                assertThat(payload.path("context").path("fileSnippets").get(0).has("sourceId")).isFalse();
+                assertThat(payload.path("planningContext").path("fileSnippets").get(0).has("sourceId")).isFalse();
+            }
             assertThat(payload.path("rawPrompt").asText()).isEqualTo(RAW);
             assertThat(payload.path("actualAnswers")).isEqualTo(json.valueToTree(input.actualAnswers()));
             assertThat(payload.path("taskSources")).isEqualTo(json.valueToTree(input.taskSources()));
@@ -171,12 +225,26 @@ class NaturalScopeEvidenceRepairTest {
             else {
                 String system = sent.path("messages").get(0).path("content").asText();
                 assertThat(system).contains("actions[0].detailEvidence[0].quote", "actions[0].detailEvidence[1].quote")
-                        .doesNotContain("模块零使用常量", "模块一使用常量", RAW);
+                        .doesNotContain("export const category1 = 1;", "不存在的材料片段", RAW);
                 var repair = payload.path("protocolRepair");
                 assertThat(repair.path("candidateTrust").asText()).isEqualTo("UNTRUSTED_MODEL_OUTPUT");
                 assertThat(json.readTree(repair.path("invalidResponse").asText())).isEqualTo(invalid);
                 assertThat(repair.path("issues")).hasSize(2);
+                assertThat(repair.path("issues").get(0).path("code").asText()).isEqualTo("QUOTE_FOUND_IN_OTHER_SOURCE");
+                assertThat(repair.path("issues").get(0).path("candidateSourceIds").get(0).asText())
+                        .isEqualTo("context.fileSnippets.1");
+                assertThat(repair.path("issues").get(1).path("code").asText()).isEqualTo("QUOTE_NOT_FOUND");
             }
         }).andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
+    }
+
+    private void stripPreparationLabels(JsonNode context) {
+        if (!(context instanceof ObjectNode snapshot)) return;
+        snapshot.remove(List.of("customDescriptionSourceId", "directoryTreeSourceIds"));
+        for (String field : List.of("technologyStack", "dependencies", "fileSnippets")) {
+            snapshot.path(field).forEach(item -> {
+                if (item instanceof ObjectNode object) object.remove(List.of("sourceId", "summarySourceId"));
+            });
+        }
     }
 }

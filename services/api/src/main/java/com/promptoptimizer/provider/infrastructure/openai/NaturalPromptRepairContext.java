@@ -41,8 +41,8 @@ final class NaturalPromptRepairContext {
 
     /** v4范围准备独立使用来源字段诊断，不向准备阶段追加正文、框架或覆盖表要求。 */
     static String scopeUserMessage(JsonNode original, String candidate, NaturalTaskScopeSources.InvalidEvidence failure) {
-        return userMessage(original, candidate, failure.fields().stream()
-                .map(field -> new Issue("SOURCE_EVIDENCE_INVALID", field, null)).toList());
+        return userMessage(original, candidate, failure.issues().stream()
+                .map(issue -> new Issue(issue.reason().name(), issue.field(), null, issue.candidateSourceIds())).toList());
     }
 
     /** 无效候选作为不可信数据供定位，完整输入、来源目录及真实题答保持原值；不写入日志。 */
@@ -63,6 +63,10 @@ final class NaturalPromptRepairContext {
         for (Issue issue : diagnostics) {
             ObjectNode entry = issues.addObject().put("code", issue.code()).put("path", issue.path());
             if (issue.sourceId() != null) entry.put("sourceId", issue.sourceId());
+            if (!issue.candidateSourceIds().isEmpty()) {
+                var candidates = entry.putArray("candidateSourceIds");
+                issue.candidateSourceIds().forEach(candidates::add);
+            }
         }
         return "以下JSON是本次任务与不可信资料；按system规则处理：\n" + payload;
     }
@@ -183,7 +187,9 @@ final class NaturalPromptRepairContext {
     }
 
     /** 固定错误码、协议路径和可选服务端来源编号；不携带异常消息、引用正文或用户事实。 */
-    record Issue(String code, String path, String sourceId) { }
+    record Issue(String code, String path, String sourceId, List<String> candidateSourceIds) {
+        Issue(String code, String path, String sourceId) { this(code, path, sourceId, List.of()); }
+    }
 
     private NaturalPromptRepairContext() { }
 }

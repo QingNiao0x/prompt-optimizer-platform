@@ -738,6 +738,9 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         JsonNode payload;
         try {
             payload = json.valueToTree(input);
+            // v4先独立生成范围记录；此处用scope是否已准备区分阶段，preparation参数服务于旧要求登记。
+            NaturalPromptPreparationSourceLabels.annotate(input.strategyVersion(), scope == null
+                    && usesAdvisoryScope(input.strategyVersion()), payload, input);
             if ((NaturalPromptMaterialInstructions.VERSION.equals(input.strategyVersion())
                     || usesAdvisoryScope(input.strategyVersion())
                     || NaturalPromptContextualRewriteInstructions.VERSION.equals(input.strategyVersion())

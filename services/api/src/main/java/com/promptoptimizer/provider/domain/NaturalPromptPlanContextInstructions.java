@@ -45,6 +45,9 @@ public final class NaturalPromptPlanContextInstructions {
                 userEvidence只引用原始提示词、用户对话、实际Plan回答或修改意见中的连续原句；不能填入项目描述、文件或助手建议。
                 同一动作可引用简短委托原句及详细材料两份证据，不能因细节只在材料中就遗漏委托或拒绝联合理解。
                 材料细化已有委托，不建立无关的新动作或授权。当前及条件动作、非空回应都必须有userEvidence，禁止服务器或模型猜造原句。
+                项目上下文中的sourceId和summarySourceId是服务端附在对应条目上的编号，不是材料内容；逐条使用该编号，禁止根据文件顺序猜编号。
+                fileSnippets的sourceId对应路径和content，summarySourceId仅对应summary；technologyStack和dependencies条目自身带sourceId。
+                directoryTreeSourceIds与directoryTree按相同位置对应；customDescriptionSourceId对应customDescription。只有字段旁确有编号时才引用该项。
                 来源编号使用taskSources中的id，quote逐字来自对应完整输入；detailEvidence没有适用细节时为空数组。
                 只返回JSON：{"actions":[{"text":"原动作及对象","timing":"CURRENT或CONDITIONAL或DESCRIPTIVE","condition":"原条件，无则为空",
                   "userEvidence":[{"sourceId":"用户来源编号","quote":"用户委托原句"}],
