@@ -71,7 +71,7 @@ public record ModelCallObservation(
         if (value == null || value.length() > 120) return null;
         // 自然准备阶段最多64项；只开放来源字段及受限下标，不接受来源ID、引文或任意JSON路径。
         String index = "(?:[0-9]|[1-5][0-9]|6[0-3])";
-        if (value.matches("(?:actions\\[" + index + "\\]|response)\\.userEvidence(?:\\[" + index + "\\]\\.sourceId)?")) {
+        if (value.matches("(?:actions\\[" + index + "\\]|response)\\.(?:userEvidence|detailEvidence)(?:\\[" + index + "\\]\\.(?:sourceId|quote))?")) {
             return value;
         }
         return value.matches("(?:assessment(?:\\.gaps)?|ambiguities|ambiguityReferences|metadata|model|response(?:\\.(?:json|choices|content|finishReason))?|choices(?:\\[0\\])?(?:\\.message\\.content)?|sections(?:\\.(?:BACKGROUND|TASK|OUTPUT|CONSTRAINTS|ACCEPTANCE|CLARIFICATIONS|type|title|content))?|context\\.(?:conflicts|files|summary)|plan(?:\\.(?:json|questions|summary))?|questions(?:\\.(?:type|id|question|hint|options|examples|recommendedOptionId))?)")

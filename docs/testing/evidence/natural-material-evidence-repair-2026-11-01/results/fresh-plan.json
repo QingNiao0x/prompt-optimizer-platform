@@ -1,0 +1,584 @@
+{
+  "schemaVersion" : 1,
+  "caseId" : "DATE",
+  "strategyVersion" : "core-repair-v4",
+  "operation" : "PLAN",
+  "evaluationScope" : "PROVIDER_DIRECT",
+  "productWorkflowVerified" : false,
+  "answerBinding" : "SYNTHETIC_FIXTURE_NOT_PRODUCT_SESSION_VERIFIED",
+  "startedAt" : "2026-11-01T03:24:34.204827300Z",
+  "input" : {
+    "rawPrompt" : "请在重点人群模块 @src/people 的新增和导入功能增加调查时间录入限制：调查时间只能填写当前当日之前的日期，不可以超过今日。请修改实现。\n返回一个JSON对象，键为修改的文件路径，值为完整源码字符串。仅返回确有修改的允许文件，不附其他文字；无需增加测试文件。",
+    "context" : {
+      "customDescription" : "本轮使用合成模块，保留现有接口、错误类型和逐行导入行为。仅允许改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件。",
+      "technologyStack" : [ ],
+      "dependencies" : [ ],
+      "directoryTree" : [ "src/people/rules.md", "src/people/date.mjs", "src/people/create.mjs", "src/people/import.mjs", "src/archive/date.mjs", "src/archive/module-01/records.mjs", "src/archive/module-02/records.mjs", "src/archive/module-03/records.mjs", "src/archive/module-04/records.mjs", "src/archive/module-05/records.mjs", "src/archive/module-06/records.mjs", "src/archive/module-07/records.mjs", "src/archive/module-08/records.mjs", "src/archive/module-09/records.mjs", "src/archive/module-10/records.mjs", "src/archive/module-11/records.mjs", "src/archive/module-12/records.mjs", "src/archive/module-13/records.mjs", "src/archive/module-14/records.mjs", "src/archive/module-15/records.mjs", "src/archive/module-16/records.mjs", "src/archive/module-17/records.mjs", "src/archive/module-18/records.mjs", "src/archive/module-19/records.mjs", "src/archive/module-20/records.mjs", "src/archive/module-21/records.mjs", "src/archive/module-22/records.mjs", "src/archive/module-23/records.mjs", "src/archive/module-24/records.mjs", "src/archive/module-25/records.mjs", "src/archive/module-26/records.mjs", "src/archive/module-27/records.mjs", "src/archive/module-28/records.mjs", "src/archive/module-29/records.mjs", "src/archive/module-30/records.mjs", "src/archive/module-31/records.mjs", "src/archive/module-32/records.mjs" ],
+      "fileSnippets" : [ {
+        "path" : "src/people/rules.md",
+        "language" : "markdown",
+        "content" : "# 合成项目规则\n调查日期为 YYYY-MM-DD 日历日期，新增与导入共用校验。today 由调用方按业务时区传入；不得用执行机器当前时间替换。空值和无效日历日期均拒绝。用户还需确认是否允许 today 当天。新增失败抛出 Error，导入保留逐行接受/拒绝结果，不改变部分成功规则。",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/people/date.mjs",
+        "language" : "javascript",
+        "content" : "export function validSurveyDate(value, today, allowToday) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return false;\n  const parsed = new Date(value + 'T00:00:00Z');\n  if (!Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== value) return false;\n  return true;\n}\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/people/create.mjs",
+        "language" : "javascript",
+        "content" : "import { validSurveyDate } from './date.mjs';\nexport function createPerson(record, today, allowToday) {\n  if (!validSurveyDate(record.surveyDate, today, allowToday)) throw new Error('调查日期无效');\n  return { ...record };\n}\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/people/import.mjs",
+        "language" : "javascript",
+        "content" : "import { validSurveyDate } from './date.mjs';\nexport function importPeople(rows, today, allowToday) {\n  const accepted = [], rejected = [];\n  rows.forEach((row, i) => {\n    if (validSurveyDate(row.surveyDate, today, allowToday)) accepted.push({ ...row });\n    else rejected.push({ row: i + 1, reason: '调查日期无效' });\n  });\n  return { accepted, rejected };\n}\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/date.mjs",
+        "language" : "javascript",
+        "content" : "// 已退役的相似模块，不属于本次修改范围。\nexport function validSurveyDate() { return true; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-01/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 1; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-1' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-1' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-1' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-1' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-1' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-1' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-1' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-1' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-1' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-1' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-1' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-1' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-1' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-1' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-1' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-1' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-1' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-1' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-1' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-1' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-1' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-1' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-02/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 2; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-2' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-2' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-2' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-2' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-2' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-2' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-2' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-2' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-2' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-2' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-2' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-2' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-2' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-2' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-2' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-2' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-2' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-2' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-2' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-2' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-2' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-2' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-03/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 3; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-3' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-3' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-3' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-3' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-3' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-3' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-3' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-3' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-3' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-3' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-3' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-3' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-3' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-3' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-3' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-3' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-3' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-3' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-3' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-3' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-3' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-3' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-04/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 4; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-4' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-4' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-4' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-4' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-4' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-4' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-4' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-4' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-4' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-4' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-4' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-4' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-4' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-4' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-4' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-4' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-4' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-4' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-4' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-4' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-4' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-4' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-05/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 5; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-5' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-5' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-5' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-5' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-5' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-5' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-5' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-5' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-5' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-5' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-5' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-5' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-5' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-5' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-5' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-5' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-5' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-5' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-5' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-5' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-5' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-5' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-06/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 6; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-6' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-6' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-6' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-6' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-6' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-6' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-6' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-6' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-6' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-6' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-6' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-6' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-6' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-6' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-6' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-6' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-6' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-6' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-6' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-6' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-6' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-6' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-07/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 7; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-7' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-7' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-7' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-7' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-7' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-7' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-7' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-7' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-7' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-7' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-7' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-7' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-7' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-7' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-7' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-7' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-7' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-7' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-7' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-7' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-7' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-7' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-08/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 8; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-8' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-8' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-8' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-8' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-8' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-8' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-8' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-8' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-8' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-8' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-8' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-8' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-8' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-8' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-8' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-8' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-8' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-8' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-8' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-8' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-8' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-8' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-09/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 9; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-9' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-9' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-9' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-9' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-9' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-9' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-9' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-9' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-9' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-9' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-9' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-9' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-9' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-9' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-9' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-9' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-9' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-9' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-9' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-9' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-9' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-9' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-10/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 10; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-10' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-10' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-10' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-10' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-10' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-10' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-10' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-10' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-10' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-10' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-10' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-10' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-10' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-10' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-10' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-10' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-10' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-10' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-10' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-10' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-10' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-10' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-11/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 11; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-11' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-11' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-11' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-11' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-11' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-11' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-11' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-11' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-11' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-11' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-11' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-11' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-11' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-11' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-11' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-11' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-11' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-11' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-11' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-11' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-11' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-11' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-12/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 12; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-12' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-12' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-12' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-12' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-12' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-12' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-12' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-12' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-12' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-12' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-12' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-12' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-12' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-12' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-12' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-12' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-12' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-12' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-12' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-12' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-12' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-12' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-13/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 13; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-13' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-13' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-13' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-13' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-13' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-13' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-13' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-13' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-13' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-13' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-13' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-13' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-13' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-13' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-13' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-13' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-13' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-13' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-13' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-13' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-13' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-13' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-14/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 14; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-14' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-14' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-14' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-14' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-14' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-14' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-14' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-14' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-14' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-14' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-14' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-14' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-14' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-14' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-14' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-14' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-14' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-14' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-14' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-14' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-14' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-14' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-15/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 15; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-15' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-15' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-15' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-15' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-15' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-15' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-15' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-15' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-15' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-15' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-15' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-15' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-15' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-15' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-15' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-15' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-15' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-15' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-15' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-15' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-15' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-15' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-16/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 16; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-16' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-16' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-16' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-16' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-16' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-16' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-16' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-16' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-16' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-16' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-16' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-16' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-16' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-16' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-16' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-16' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-16' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-16' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-16' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-16' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-16' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-16' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-17/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 17; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-17' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-17' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-17' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-17' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-17' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-17' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-17' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-17' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-17' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-17' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-17' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-17' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-17' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-17' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-17' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-17' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-17' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-17' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-17' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-17' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-17' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-17' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-18/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 18; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-18' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-18' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-18' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-18' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-18' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-18' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-18' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-18' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-18' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-18' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-18' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-18' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-18' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-18' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-18' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-18' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-18' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-18' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-18' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-18' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-18' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-18' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-19/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 19; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-19' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-19' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-19' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-19' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-19' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-19' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-19' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-19' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-19' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-19' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-19' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-19' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-19' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-19' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-19' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-19' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-19' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-19' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-19' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-19' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-19' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-19' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-20/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 20; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-20' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-20' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-20' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-20' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-20' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-20' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-20' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-20' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-20' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-20' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-20' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-20' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-20' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-20' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-20' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-20' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-20' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-20' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-20' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-20' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-20' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-20' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-21/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 21; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-21' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-21' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-21' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-21' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-21' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-21' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-21' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-21' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-21' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-21' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-21' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-21' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-21' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-21' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-21' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-21' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-21' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-21' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-21' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-21' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-21' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-21' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-22/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 22; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-22' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-22' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-22' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-22' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-22' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-22' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-22' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-22' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-22' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-22' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-22' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-22' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-22' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-22' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-22' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-22' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-22' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-22' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-22' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-22' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-22' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-22' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-23/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 23; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-23' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-23' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-23' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-23' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-23' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-23' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-23' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-23' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-23' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-23' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-23' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-23' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-23' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-23' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-23' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-23' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-23' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-23' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-23' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-23' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-23' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-23' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-24/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 24; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-24' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-24' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-24' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-24' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-24' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-24' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-24' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-24' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-24' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-24' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-24' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-24' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-24' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-24' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-24' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-24' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-24' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-24' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-24' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-24' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-24' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-24' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-25/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 25; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-25' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-25' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-25' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-25' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-25' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-25' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-25' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-25' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-25' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-25' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-25' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-25' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-25' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-25' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-25' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-25' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-25' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-25' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-25' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-25' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-25' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-25' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-26/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 26; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-26' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-26' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-26' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-26' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-26' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-26' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-26' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-26' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-26' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-26' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-26' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-26' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-26' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-26' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-26' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-26' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-26' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-26' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-26' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-26' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-26' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-26' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-27/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 27; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-27' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-27' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-27' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-27' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-27' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-27' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-27' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-27' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-27' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-27' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-27' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-27' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-27' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-27' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-27' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-27' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-27' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-27' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-27' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-27' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-27' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-27' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-28/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 28; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-28' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-28' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-28' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-28' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-28' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-28' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-28' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-28' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-28' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-28' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-28' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-28' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-28' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-28' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-28' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-28' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-28' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-28' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-28' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-28' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-28' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-28' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-29/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 29; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-29' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-29' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-29' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-29' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-29' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-29' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-29' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-29' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-29' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-29' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-29' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-29' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-29' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-29' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-29' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-29' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-29' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-29' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-29' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-29' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-29' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-29' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-30/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 30; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-30' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-30' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-30' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-30' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-30' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-30' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-30' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-30' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-30' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-30' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-30' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-30' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-30' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-30' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-30' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-30' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-30' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-30' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-30' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-30' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-30' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-30' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-31/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 31; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-31' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-31' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-31' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-31' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-31' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-31' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-31' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-31' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-31' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-31' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-31' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-31' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-31' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-31' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-31' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-31' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-31' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-31' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-31' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-31' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-31' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-31' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      }, {
+        "path" : "src/archive/module-32/records.mjs",
+        "language" : "javascript",
+        "content" : "// Synthetic archived records module 32; excluded from the requested people-module change.\nexport function archiveField0(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 0, label: 'archive-32' }; }\nexport function archiveField1(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 1, label: 'archive-32' }; }\nexport function archiveField2(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 2, label: 'archive-32' }; }\nexport function archiveField3(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 3, label: 'archive-32' }; }\nexport function archiveField4(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 4, label: 'archive-32' }; }\nexport function archiveField5(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 5, label: 'archive-32' }; }\nexport function archiveField6(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 6, label: 'archive-32' }; }\nexport function archiveField7(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 7, label: 'archive-32' }; }\nexport function archiveField8(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 8, label: 'archive-32' }; }\nexport function archiveField9(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 9, label: 'archive-32' }; }\nexport function archiveField10(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 10, label: 'archive-32' }; }\nexport function archiveField11(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 11, label: 'archive-32' }; }\nexport function archiveField12(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 12, label: 'archive-32' }; }\nexport function archiveField13(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 13, label: 'archive-32' }; }\nexport function archiveField14(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 14, label: 'archive-32' }; }\nexport function archiveField15(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 15, label: 'archive-32' }; }\nexport function archiveField16(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 16, label: 'archive-32' }; }\nexport function archiveField17(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 17, label: 'archive-32' }; }\nexport function archiveField18(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 18, label: 'archive-32' }; }\nexport function archiveField19(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 19, label: 'archive-32' }; }\nexport function archiveField20(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 20, label: 'archive-32' }; }\nexport function archiveField21(row) { return { id: row.id, surveyDate: row.surveyDate, revision: 21, label: 'archive-32' }; }\n",
+        "summary" : "",
+        "truncated" : false
+      } ],
+      "analysisStatus" : "COMPLETE",
+      "fileCoverage" : [ ],
+      "warnings" : [ ],
+      "redactions" : [ ],
+      "analysisVersion" : "eval-direct-materials-v1"
+    },
+    "actualAnswers" : [ ],
+    "conversation" : [ ],
+    "mandatoryRules" : [ ],
+    "modelId" : null,
+    "planningContext" : null,
+    "strategyVersion" : "core-repair-v4",
+    "taskSources" : [ {
+      "id" : "rawPrompt",
+      "kind" : "ORIGINAL_REQUEST"
+    }, {
+      "id" : "context.customDescription",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.1",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.2",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.3",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.4",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.5",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.6",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.7",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.8",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.9",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.10",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.11",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.12",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.13",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.14",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.15",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.16",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.17",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.18",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.19",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.20",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.21",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.22",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.23",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.24",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.25",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.26",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.27",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.28",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.29",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.30",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.31",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.32",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.33",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.34",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.35",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.fileSnippets.36",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.0",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.1",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.2",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.3",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.4",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.5",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.6",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.7",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.8",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.9",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.10",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.11",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.12",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.13",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.14",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.15",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.16",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.17",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.18",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.19",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.20",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.21",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.22",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.23",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.24",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.25",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.26",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.27",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.28",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.29",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.30",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.31",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.32",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.33",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.34",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.35",
+      "kind" : "PROJECT_CONTEXT"
+    }, {
+      "id" : "context.directoryTree.36",
+      "kind" : "PROJECT_CONTEXT"
+    } ]
+  },
+  "plan" : {
+    "summary" : "原定任务是在重点人群模块的新增与导入功能中落实调查时间不得晚于今日的限制，并仅返回确有修改的允许文件的完整源码 JSON。现有材料已明确修改范围、接口与错误行为，但“是否允许填写今日当天”在项目规则中被明确列为待用户确认，且会直接改变校验边界和交付源码，因此需要澄清。",
+    "questions" : [ {
+      "id" : "allowToday",
+      "question" : "调查时间是否允许填写今日当天？",
+      "hint" : "项目规则明确把“是否允许 today 当天”列为需用户确认项；该选择直接决定日期比较边界，并改变 date.mjs 的校验逻辑及新增/导入对今日日期的接受或拒绝结果。",
+      "type" : "SINGLE_CHOICE",
+      "options" : [ {
+        "id" : "allow",
+        "label" : "允许今日当天",
+        "description" : "调查时间可等于 today，仅拒绝晚于 today 的日期。",
+        "answer" : "允许调查时间等于 today，拒绝晚于 today 的日期。",
+        "recommended" : false,
+        "recommendationReason" : ""
+      }, {
+        "id" : "disallow",
+        "label" : "不允许今日当天",
+        "description" : "调查时间必须严格早于 today，等于 today 也拒绝。",
+        "answer" : "调查时间必须严格早于 today，等于 today 的日期同样拒绝。",
+        "recommended" : false,
+        "recommendationReason" : ""
+      } ],
+      "examples" : [ ],
+      "allowCustomAnswer" : true
+    } ],
+    "provider" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "mock" : false
+  },
+  "taskUnderstanding" : {
+    "goal" : "修改 src/people 下新增与导入功能的调查时间校验，使调查时间不能超过今日，并返回修改后的完整源码 JSON。",
+    "deliverable" : "一个 JSON 对象，键为确有修改的允许文件路径（仅限 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs），值为完整源码字符串；不附其他文字，不增加测试文件。",
+    "requirements" : [ {
+      "text" : "在重点人群模块的新增和导入功能中增加调查时间录入限制：调查时间只能填写当前当日之前的日期，不可以超过今日。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请在重点人群模块 @src/people 的新增和导入功能增加调查时间录入限制：调查时间只能填写当前当日之前的日期，不可以超过今日。请修改实现。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT", "CONDITION" ]
+    }, {
+      "text" : "仅允许修改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件。",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "仅允许改 src/people/date.mjs、src/people/create.mjs、src/people/import.mjs，不增加文件。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "OBJECT", "CONDITION" ]
+    }, {
+      "text" : "保留现有接口、错误类型和逐行导入行为。",
+      "evidence" : [ {
+        "sourceId" : "context.customDescription",
+        "quote" : "本轮使用合成模块，保留现有接口、错误类型和逐行导入行为。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "调查日期为 YYYY-MM-DD 日历日期，新增与导入共用校验；today 由调用方按业务时区传入，不得用执行机器当前时间替换；空值和无效日历日期均拒绝。",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "调查日期为 YYYY-MM-DD 日历日期，新增与导入共用校验。today 由调用方按业务时区传入；不得用执行机器当前时间替换。空值和无效日历日期均拒绝。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "新增失败抛出 Error，导入保留逐行接受/拒绝结果，不改变部分成功规则。",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "新增失败抛出 Error，导入保留逐行接受/拒绝结果，不改变部分成功规则。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "返回一个 JSON 对象，键为修改的文件路径，值为完整源码字符串；仅返回确有修改的允许文件，不附其他文字；无需增加测试文件。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "返回一个JSON对象，键为修改的文件路径，值为完整源码字符串。仅返回确有修改的允许文件，不附其他文字；无需增加测试文件。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT", "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ {
+      "issue" : "调查时间是否允许等于 today（今日当天）",
+      "impact" : "若允许今日当天，校验条件为调查日期不晚于 today，今日日期在新增和导入中均被接受；若不允许，校验条件为调查日期严格早于 today，今日日期在新增中抛错、在导入中被逐行拒绝。两种答案产生不同的源码与不同的接受/拒绝结果。",
+      "questionId" : "allowToday",
+      "kind" : "USER_INFORMATION"
+    } ],
+    "review" : {
+      "inputReadiness" : "NEEDS_COMPLETION",
+      "requirementCoverage" : [ ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ {
+        "questionId" : "allowToday",
+        "whyAsk" : "项目规则明确写明“用户还需确认是否允许 today 当天”，现有材料未给出该业务决定，执行者不能自行假定；且原文“当前当日之前”与“不可以超过今日”对今日当天的含义存在需要用户裁定的边界。",
+        "answerDifference" : "若允许今日当天，校验条件为调查日期不晚于 today，今日日期在新增和导入中均被接受；若不允许，校验条件为调查日期严格早于 today，今日日期在新增中抛错、在导入中被逐行拒绝。两种答案产生不同的源码与不同的接受/拒绝结果。"
+      } ]
+    }
+  },
+  "completedStages" : null,
+  "success" : true,
+  "elapsedMs" : 9135
+}

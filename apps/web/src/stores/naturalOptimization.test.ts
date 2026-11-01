@@ -26,15 +26,16 @@ describe('native natural result lifecycle', () => {
       email: 'fixture@example.test', displayName: '自然正文测试用户', platformAdmin: false };
     vi.stubGlobal('window', { localStorage: { getItem: () => null, setItem: () => undefined, removeItem: () => undefined } });
   });
-  it('saves the same full text to the server and current result without synthesizing sections', async () => {
+  it('saves edited text without restoring retired fixed clauses or synthesizing sections', async () => {
     const store = useOptimizationStore();
     store.applyReoptimized({ recordId: 'record-1', result: document() });
     vi.mocked(saveNaturalPrompt).mockImplementation(async (_id, body) => ({
       requestId: 'save', data: { optimizedPrompt: body, editRevision: 1 },
     }));
     expect(await store.saveEditedText('新的完整邮件要求。')).toBe(true);
-    expect(saveNaturalPrompt).toHaveBeenCalledWith('record-1', '新的完整邮件要求。\n\n事实不得捏造。', 0);
-    expect(store.result?.optimizedPrompt).toBe('新的完整邮件要求。\n\n事实不得捏造。');
+    // 自然模式已取消固定约束尾注；旧历史的platformMandatory也不能重新写回编辑稿。
+    expect(saveNaturalPrompt).toHaveBeenCalledWith('record-1', '新的完整邮件要求。', 0);
+    expect(store.result?.optimizedPrompt).toBe('新的完整邮件要求。');
     expect(store.result?.sections).toEqual([]);
     expect(store.result?.editRevision).toBe(1);
   });

@@ -1,0 +1,58 @@
+{
+  "status": "FROZEN",
+  "at": "2026-11-01T03:22:33.373Z",
+  "taskMaximum": 200,
+  "priorRecordedActual": 59,
+  "observedManualDiagnosticCalls": 6,
+  "stageMaximum": 12,
+  "perJobMaximum": 4,
+  "qualityRetries": 0,
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "max_tokens": 8192,
+  "jobs": [
+    "controlled-enhance",
+    "fresh-plan"
+  ],
+  "files": [
+    {
+      "path": "docs/testing/evidence/natural-material-evidence-repair-2026-11-01/evaluate.mjs",
+      "sha256": "41ca8f85e0b0866163adf57de9c6b2819c7d535422d90fcb13ced0fc71d5938d"
+    },
+    {
+      "path": "docs/testing/evidence/natural-material-evidence-repair-2026-11-01/cases.json",
+      "sha256": "b79c51a969ce6cebae08a5448c159f281f640e08673b32cf97effb60d9c3fec6"
+    },
+    {
+      "path": "docs/testing/evidence/natural-plan-context-repair-2026-11-01/PlanContextEvaluation.java",
+      "sha256": "53f390cabc2c8f8bf849a41ec5827c64f35e76b7d66c85c9348b546b8012db4a"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskScopeSources.java",
+      "sha256": "5cdea024cf575d6087cc36c7f91f37688aa9d548d8db246874cc4167f6713861"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptPlanContextInstructions.java",
+      "sha256": "4e4972cc972bc72630f75bf5305f1f6f36b3793eade1512cb6740bf1c658215b"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "6ce2c67681b8013b242443b11d75646d6448eb989e6f04e189e9fc0bfda2b18f"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/NaturalPromptRepairContext.java",
+      "sha256": "2b6a8e52d1ecc98fd754e27799438a41c030d3bc46736fcfce745a281bc261c8"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/ProviderResponseValidationException.java",
+      "sha256": "a29ca41b1eacdae0945aca9a52f2b3f470d26b339b877f983d53757c64f9c2ae"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/common/logging/ModelCallObservation.java",
+      "sha256": "7ce65124375d0b8f21fdd8161a9c432474666e2a933bd84cb76bd08659fce42e"
+    }
+  ],
+  "hypothesis": "The existing one repair can correct multiple material source references when it receives exact fields and the invalid candidate as untrusted data.",
+  "scope": "Provider direct regression, not browser/history acceptance or overall writing-quality evaluation. Manual retries of private input are metadata-only and never replayed here."
+}

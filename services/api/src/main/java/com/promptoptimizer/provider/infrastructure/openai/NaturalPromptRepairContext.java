@@ -9,6 +9,7 @@ import com.promptoptimizer.provider.domain.NaturalPromptDraft;
 import com.promptoptimizer.provider.domain.NaturalPromptInput;
 import com.promptoptimizer.provider.domain.NaturalTaskReview;
 import com.promptoptimizer.provider.domain.NaturalTaskSource;
+import com.promptoptimizer.provider.domain.NaturalTaskScopeSources;
 import com.promptoptimizer.provider.domain.NaturalTaskUnderstanding;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +36,17 @@ final class NaturalPromptRepairContext {
      */
     static String userMessage(ObjectMapper json, JsonNode original, String candidate, JsonNode parsed,
             NaturalPromptInput input, boolean malformedJson) {
+        return userMessage(original, candidate, inspect(json, parsed, input, malformedJson));
+    }
+
+    /** v4范围准备独立使用来源字段诊断，不向准备阶段追加正文、框架或覆盖表要求。 */
+    static String scopeUserMessage(JsonNode original, String candidate, NaturalTaskScopeSources.InvalidEvidence failure) {
+        return userMessage(original, candidate, failure.fields().stream()
+                .map(field -> new Issue("SOURCE_EVIDENCE_INVALID", field, null)).toList());
+    }
+
+    /** 无效候选作为不可信数据供定位，完整输入、来源目录及真实题答保持原值；不写入日志。 */
+    private static String userMessage(JsonNode original, String candidate, List<Issue> diagnostics) {
         ObjectNode payload = original.deepCopy();
         ObjectNode repair = payload.putObject("protocolRepair");
         repair.put("candidateTrust", "UNTRUSTED_MODEL_OUTPUT");
@@ -47,7 +59,6 @@ final class NaturalPromptRepairContext {
             repair.put("invalidResponse", candidate);
         }
         var issues = repair.putArray("issues");
-        List<Issue> diagnostics = inspect(json, parsed, input, malformedJson);
         if (diagnostics.isEmpty()) diagnostics = List.of(new Issue("RESPONSE_VALIDATION_FAILED", "", null));
         for (Issue issue : diagnostics) {
             ObjectNode entry = issues.addObject().put("code", issue.code()).put("path", issue.path());

@@ -72,16 +72,21 @@ class ModelCallReconciliationTest {
     @Test
     void scopeDiagnosticsKeepOnlyBoundedCodeDefinedEvidencePaths() {
         for (String path : java.util.List.of("actions[0].userEvidence[1].sourceId",
-                "actions[63].userEvidence", "response.userEvidence[63].sourceId", "response.userEvidence")) {
+                "actions[63].userEvidence", "response.userEvidence[63].sourceId", "response.userEvidence",
+                "actions[0].detailEvidence[0].quote", "response.detailEvidence[63].sourceId",
+                "actions[0].userEvidence[0].quote")) {
             assertThat(ModelCallObservation.safeValidationField(path)).isEqualTo(path);
         }
         for (String path : java.util.List.of("actions[64].userEvidence", "response.userEvidence[64].sourceId",
-                "actions[0].userEvidence[0].quote", "actions[0].userEvidence[0].sourceId=private",
+                "actions[0].detailEvidence[64].quote", "actions[0].userEvidence[0].sourceId=private",
+                "actions[0].detailEvidence[0].quote=private", "response.detailEvidence[0].private",
                 "revision.previousPrompt", "actions[-1].userEvidence")) {
             assertThat(ModelCallObservation.safeValidationField(path)).isNull();
         }
         assertThat(ModelCallObservation.safeValidationReason("USER_AUTHORITY_REFERENCE_INVALID"))
                 .isEqualTo("USER_AUTHORITY_REFERENCE_INVALID");
+        assertThat(ModelCallObservation.safeValidationReason("SOURCE_EVIDENCE_INVALID"))
+                .isEqualTo("SOURCE_EVIDENCE_INVALID");
     }
 
     @Test

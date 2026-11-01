@@ -913,6 +913,11 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                         attemptUser = NaturalPromptRepairContext.userMessage(json, payload, invalidCandidate, parsedCandidate, input, false);
                         repairHint = NaturalPromptBoundedRepairInstructions.REPAIR;
                     } else if (retry && NaturalPromptPlanContextInstructions.VERSION.equals(input.strategyVersion())
+                            && failure instanceof NaturalTaskScopeSources.InvalidEvidence invalidEvidence) {
+                        // 此异常仅来自v4范围DTO；preparation参数属于旧要求预登记路径，不能用它误关范围修复。
+                        repairHint = invalidEvidence.repairInstruction();
+                        attemptUser = NaturalPromptRepairContext.scopeUserMessage(payload, invalidCandidate, invalidEvidence);
+                    } else if (retry && NaturalPromptPlanContextInstructions.VERSION.equals(input.strategyVersion())
                             && failure instanceof NaturalTaskScopeSources.InvalidUserEvidence missing) {
                         repairHint = missing.repairInstruction();
                     } else if (retry && (NaturalPromptCoreRepairInstructions.supports(input.strategyVersion())
@@ -1063,6 +1068,10 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             ModelCallLogger.captureValidationFailure(
                     com.promptoptimizer.provider.domain.ProviderResponseValidationException.Reason.USER_AUTHORITY_REFERENCE_INVALID,
                     invalidSource.field());
+        } else if (failure instanceof NaturalTaskScopeSources.InvalidEvidence invalidEvidence) {
+            ModelCallLogger.captureValidationFailure(
+                    com.promptoptimizer.provider.domain.ProviderResponseValidationException.Reason.SOURCE_EVIDENCE_INVALID,
+                    invalidEvidence.fields().getFirst());
         }
         ModelCallLogger.failed(operation, model.route().key(), model.publicModelId(), "PLATFORM_CATALOG",
                 failure.getFailureType().name(), failure.isRetryable(), status, retry, attempt, 1, elapsed(started), null);

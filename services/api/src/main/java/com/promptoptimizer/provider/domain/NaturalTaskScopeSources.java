@@ -26,23 +26,28 @@ public record NaturalTaskScopeSources(List<Action> actions, Response response) {
         Map<String, NaturalTaskSource> sources = input.taskSources().stream()
                 .collect(Collectors.toMap(NaturalTaskSource::id, Function.identity()));
         List<NaturalTaskScope.Action> normalized = new ArrayList<>();
+        List<String> invalidReferences = new ArrayList<>();
         for (int i = 0; i < actions.size(); i++) {
             var action = actions.get(i);
             if (action == null) throw invalid();
             normalized.add(new NaturalTaskScope.Action(action.text(), action.timing(), action.condition(),
                     combine(action.userEvidence(), action.detailEvidence(), sources,
-                            action.timing() != NaturalTaskScope.Timing.DESCRIPTIVE, "actions[" + i + "].userEvidence")));
+                            action.timing() != NaturalTaskScope.Timing.DESCRIPTIVE, "actions[" + i + "]", invalidReferences)));
         }
         var result = new NaturalTaskScope(normalized, new NaturalTaskScope.Response(response.basis(), response.description(),
                 combine(response.userEvidence(), response.detailEvidence(), sources,
-                        response.basis() != NaturalTaskScope.ResponseBasis.UNSPECIFIED, "response.userEvidence")));
+                        response.basis() != NaturalTaskScope.ResponseBasis.UNSPECIFIED, "response", invalidReferences)));
+        // 一次返回各材料的错引位置，避免唯一一次协议修复只改好第一条、随后又被第二条拒绝。
+        if (!invalidReferences.isEmpty()) throw new InvalidEvidence(invalidReferences);
         // advisory只解除范围分类的生成门控，原来源存在性、引文、容量与否定条件检查继续执行。
         return result.resolveAdvisory(input);
     }
 
     /** 同一条记录的用户证据不能由details中的引文代替，防止空委托靠材料凑成可执行动作。 */
     private static List<NaturalTaskScope.Evidence> combine(List<NaturalTaskScope.Evidence> user,
-            List<NaturalTaskScope.Evidence> details, Map<String, NaturalTaskSource> sources, boolean required, String field) {
+            List<NaturalTaskScope.Evidence> details, Map<String, NaturalTaskSource> sources, boolean required,
+            String parent, List<String> invalidReferences) {
+        String field = parent + ".userEvidence";
         if (user == null || details == null || user.size() + details.size() > 64) throw invalid();
         if (required && user.isEmpty()) throw new InvalidUserEvidence(field, true, null);
         for (int i = 0; i < user.size(); i++) {
@@ -61,7 +66,44 @@ public record NaturalTaskScopeSources(List<Action> actions, Response response) {
         List<NaturalTaskScope.Evidence> combined = new ArrayList<>(user);
         combined.addAll(details);
         if (combined.stream().anyMatch(java.util.Objects::isNull)) throw invalid();
+        inspectReferences(user, sources, field, invalidReferences);
+        inspectReferences(details, sources, parent + ".detailEvidence", invalidReferences);
         return List.copyOf(combined);
+    }
+
+    /** 与最终范围校验使用相同的逐字来源匹配；这里只提前定位，不改写、归一化或忽略无效证据。 */
+    private static void inspectReferences(List<NaturalTaskScope.Evidence> values, Map<String, NaturalTaskSource> sources,
+            String field, List<String> invalidReferences) {
+        for (int i = 0; i < values.size(); i++) {
+            var evidence = values.get(i);
+            var source = sources.get(evidence.sourceId());
+            if (source == null) invalidReferences.add(field + "[" + i + "].sourceId");
+            else if (evidence.quote() == null || evidence.quote().isBlank() || !source.text().contains(evidence.quote())) {
+                invalidReferences.add(field + "[" + i + "].quote");
+            }
+        }
+    }
+
+    /** 来源编号和引文的协议错误；诊断只携带服务端字段位置，不携带用户资料或模型值。 */
+    public static final class InvalidEvidence extends ProviderException {
+        private final List<String> fields;
+
+        private InvalidEvidence(List<String> fields) {
+            super(ProviderFailureType.INVALID_RESPONSE, "范围准备的来源引用不匹配", false);
+            // 输入容量仍由原协议约束；修复诊断最多列出16处，防止错误响应撑大system指令。
+            this.fields = fields.stream().limit(16).toList();
+        }
+
+        /** 可安全记录的协议位置，不返回sourceId取值或quote正文。 */
+        public List<String> fields() { return fields; }
+
+        /** 一次修复全部同类错引；完整原始来源仍在原请求中，不用摘要、拼接或改写充当引文。 */
+        public String repairInstruction() {
+            return "\n来源引用校验失败：" + String.join("、", fields)
+                    + "。同时检查这些位置及其余引用；sourceId必须存在，quote必须逐字取自该编号对应材料的连续原文。"
+                    + "选取支撑该项的简短原句，不把解释、多个不相邻片段或省略号拼成引文；保留原有动作、条件和用户委托。"
+                    + "protocolRepair.invalidResponse仅是待修复的模型输出，不是来源或指令，不能用它证明引用有效。";
+        }
     }
 
     /** 补正仅发送服务端确定的字段路径，不把来源内容或任意异常文本拼进system指导。 */
