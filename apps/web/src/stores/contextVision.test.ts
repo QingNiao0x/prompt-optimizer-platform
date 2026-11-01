@@ -3,6 +3,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { useContextVisionStore } from './contextVision';
 import { useAuthStore } from './auth';
 import { listContextVisionModels } from '@/services/documentUploadApi';
+import { suggestedVisionPages } from '@/features/document-upload/contextVisionBatch';
 import type { ContextVisionModel, DocumentUploadStatus } from '@/types/api';
 
 vi.mock('@/services/documentUploadApi', () => ({ listContextVisionModels: vi.fn() }));
@@ -40,5 +41,38 @@ describe('context vision confirmation ownership', () => {
     abort.abort();
     expect((await pending).name).toBe('AbortError');
     expect(store.status).toBeUndefined();
+  });
+  it('keeps a parked batch on local extraction until a row is explicitly recognized', async () => {
+    const store = useContextVisionStore();
+    const second = { ...status, documentId: 'other', path: 'other.png' };
+    const pending = store.settleBatch([status, second], 'vision');
+    expect(store.batchVisible).toBe(true);
+    expect(store.batch?.map((row) => row.mode)).toEqual(['local', 'local']);
+    store.applyBatch();
+    expect(await pending).toEqual([
+      { documentId: 'controlled', confirmation: { modelId: '', consent: false, pages: [] } },
+      { documentId: 'other', confirmation: { modelId: '', consent: false, pages: [] } },
+    ]);
+    expect(store.batchVisible).toBe(false);
+  });
+  it('requires consent before sending a recognized page and drops the batch when identity changes', async () => {
+    const reviewed = { ...status, visionReview: { pages: [{ page: 1, readableText: false, hasImages: true, suggested: true, blocked: false, reason: '扫描页' }],
+      maxPages: 10, maxCalls: 10, maxOutputTokens: 8000, deadlineSeconds: 180 } };
+    const store = useContextVisionStore();
+    const pending = store.settleBatch([reviewed], 'vision');
+    store.markRow('controlled', 'recognize');
+    expect(store.canApplyBatch).toBe(false);
+    await vi.waitFor(() => expect(store.loadingModels).toBe(false));
+    store.modelId = 'vision';
+    store.batchConsent = true;
+    expect(store.canApplyBatch).toBe(true);
+    expect(suggestedVisionPages(reviewed)).toEqual([{ page: 1, masks: [] }]);
+    store.applyBatch();
+    expect(await pending).toEqual([{ documentId: 'controlled', confirmation: { modelId: 'vision', consent: true, pages: [{ page: 1, masks: [] }] } }]);
+
+    const cancelled = store.settleBatch([status], 'vision');
+    useAuthStore().user = { userId: 'controlled-other', tenantId: 'controlled-other', workspaceId: 'controlled-other', email: 'other@example.test', displayName: 'Fixture', platformAdmin: false };
+    expect(await cancelled).toBeNull();
+    expect(store.batchVisible).toBe(false);
   });
 });

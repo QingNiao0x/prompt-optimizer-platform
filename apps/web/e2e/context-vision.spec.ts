@@ -52,26 +52,34 @@ async function setup(page: Page, modelFailure = false, delayedRecognition = fals
   const chooser = page.waitForEvent('filechooser');
   await page.getByRole('menuitem', { name: '选择文件', exact: true }).click();
   await (await chooser).setFiles({ name: '混合资料.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF controlled') });
-  await page.getByRole('dialog', { name: '确认上传需要解析的文档' }).getByRole('button', { name: '确认上传所选文档' }).click();
-  await expect(page.getByRole('dialog', { name: '确认图片与 PDF 识别范围' })).toBeVisible();
+  const upload = page.getByRole('dialog', { name: '确认上传需要解析的文档' });
+  await upload.getByText('我要挑选后再识别', { exact: true }).click();
+  await upload.getByRole('button', { name: '确认上传所选文档' }).click();
+  await expect(page.getByRole('dialog', { name: '选择需要视觉识别的图片与 PDF' })).toBeVisible();
   return state;
 }
 
 test('先审阅并遮挡，明确同意后才识别，最终上下文仅传临时索引引用', async ({ page }, testInfo) => {
   const state = await setup(page);
-  const dialog = page.getByRole('dialog', { name: '确认图片与 PDF 识别范围' });
-  await expect(dialog.getByRole('button', { name: '确认识别所选页面' })).toBeDisabled();
-  await expect(dialog.getByRole('img', { name: '第 1 页私有预览' })).toBeVisible();
+  const batch = page.getByRole('dialog', { name: '选择需要视觉识别的图片与 PDF' });
   expect(state.confirmations).toHaveLength(0); expect(state.createdWithReview).toBe(true);
+  await batch.getByText('进入识别', { exact: true }).click();
+  await batch.getByRole('button', { name: '检查页面' }).click();
+  const dialog = page.getByRole('dialog', { name: '确认图片与 PDF 识别范围' });
+  await expect(dialog.getByRole('img', { name: '第 1 页私有预览' })).toBeVisible();
+  await expect(dialog.getByRole('button', { name: '保存页面选择' })).toBeEnabled();
+  expect(state.confirmations).toHaveLength(0);
   await dialog.locator('summary').click();
   const inputs = dialog.locator('.exact-mask input');
   for (const [index, value] of ['10','10','30','20'].entries()) await inputs.nth(index).fill(value);
   await dialog.getByRole('button', { name: '添加遮挡', exact: true }).click();
   await expect(dialog.getByText('本页遮挡 1 处', { exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('context-vision-review.png'), fullPage: true, animations: 'disabled' });
-  await dialog.locator('.vision-consent .el-checkbox').click();
-  await dialog.getByRole('button', { name: '确认识别所选页面' }).click();
+  await dialog.getByRole('button', { name: '保存页面选择' }).click();
   await expect(dialog).not.toBeVisible();
+  await batch.locator('.vision-consent .el-checkbox').click();
+  await batch.getByRole('button', { name: '确认本批处理' }).click();
+  await expect(batch).not.toBeVisible();
   expect(state.confirmations).toEqual([{ modelId: 'vision', consent: true, pages: [{ page: 1, masks: [{ x: 0.1, y: 0.1, width: 0.3, height: 0.2 }] }] }]);
   await expect(page.getByText('混合资料.pdf', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: '分析上下文资料', exact: true }).click();
@@ -86,27 +94,28 @@ test('先审阅并遮挡，明确同意后才识别，最终上下文仅传临�
 
 test('模型目录不可用时仍可仅本地提取，并明确显示未识别页', async ({ page }) => {
   const state = await setup(page, true);
-  const dialog = page.getByRole('dialog', { name: '确认图片与 PDF 识别范围' });
-  await expect(dialog.getByText('模型目录暂不可用')).toBeVisible();
-  await dialog.getByRole('button', { name: '仅本地提取' }).click();
-  await expect(dialog).not.toBeVisible();
+  const batch = page.getByRole('dialog', { name: '选择需要视觉识别的图片与 PDF' });
+  await expect(batch.getByText('模型目录暂不可用')).toBeVisible();
+  await batch.getByRole('button', { name: '全部仅本地提取' }).click();
+  await expect(batch).not.toBeVisible();
   await expect(page.getByText(/第 1 页未识别；仍保留第 2 页文字层/)).toBeVisible();
   expect(state.confirmations).toEqual([{ modelId: '', consent: false, pages: [] }]);
 });
 
 test('取消待审阅文件清理服务端会话且不发送识别确认', async ({ page }) => {
   const state = await setup(page);
-  await page.getByRole('dialog', { name: '确认图片与 PDF 识别范围' }).getByRole('button', { name: '取消此文件' }).click();
+  await page.getByRole('dialog', { name: '选择需要视觉识别的图片与 PDF' }).getByRole('button', { name: '取消本批' }).click();
   await expect.poll(() => state.deleted).toBe(1);
   expect(state.confirmations).toHaveLength(0);
 });
 
 test('后台识别完成前禁用分析和增强，避免空文件集合被提前提交', async ({ page }) => {
   const state = await setup(page, false, true);
-  const dialog = page.getByRole('dialog', { name: '确认图片与 PDF 识别范围' });
-  await dialog.locator('.vision-consent .el-checkbox').click();
-  await dialog.getByRole('button', { name: '确认识别所选页面' }).click();
-  await expect(dialog).not.toBeVisible();
+  const batch = page.getByRole('dialog', { name: '选择需要视觉识别的图片与 PDF' });
+  await batch.getByText('进入识别', { exact: true }).click();
+  await batch.locator('.vision-consent .el-checkbox').click();
+  await batch.getByRole('button', { name: '确认本批处理' }).click();
+  await expect(batch).not.toBeVisible();
   const analyze = page.getByRole('button', { name: '分析上下文资料', exact: true });
   await expect(analyze).toBeDisabled();
   expect(state.analyzed).toHaveLength(0);

@@ -10,7 +10,7 @@ vi.mock('@/services/documentUploadApi', () => ({
   confirmContextVision: vi.fn(),
 }));
 
-import { uploadAndIndexDocument } from './documentUploader';
+import { isDeferredVisionUpload, uploadAndIndexDocument } from './documentUploader';
 import {
   completeDocumentUpload,
   createDocumentUpload,
@@ -152,6 +152,29 @@ describe('uploadAndIndexDocument', () => {
     expect(getDocumentUploadStatus).toHaveBeenCalledOnce();
     expect(result.status.phase).toBe('PARTIAL');
     expect(createDocumentUpload).toHaveBeenCalledWith(expect.objectContaining({ visionRequested: true }), undefined);
+    vi.clearAllMocks();
+  });
+  it('parks a vision file for one batch decision and discards it without sending pages', async () => {
+    const waiting = status({ language: 'png', path: 'scan.png', phase: 'AWAITING_CONFIRMATION', visionReview: { pages: [{ page: 1, readableText: false,
+      hasImages: true, suggested: true, blocked: false, reason: '扫描页' }], maxPages: 10, maxCalls: 10, maxOutputTokens: 8000, deadlineSeconds: 180 } });
+    vi.mocked(createDocumentUpload).mockResolvedValue({ requestId: 'create', data: status({ language: 'png', path: 'scan.png' }) });
+    vi.mocked(uploadDocumentChunk).mockResolvedValue({ requestId: 'chunk', data: status({ language: 'png' }) });
+    vi.mocked(completeDocumentUpload).mockResolvedValue({ requestId: 'complete', data: waiting });
+    const parked = await uploadAndIndexDocument(new File(['synthetic'], 'scan.png'), 'scan.png', 'png', undefined, undefined, undefined, true);
+    if (!isDeferredVisionUpload(parked)) throw new Error('视觉文件应停在确认阶段');
+    expect(confirmContextVision).not.toHaveBeenCalled();
+    await parked.discard();
+    expect(deleteDocumentUpload).toHaveBeenCalledWith('document-123');
+    expect(confirmContextVision).not.toHaveBeenCalled();
+    vi.clearAllMocks();
+  });
+  it('does not request vision review for ordinary text when batch deferral is enabled', async () => {
+    vi.mocked(createDocumentUpload).mockResolvedValue({ requestId: 'create', data: status() });
+    vi.mocked(uploadDocumentChunk).mockResolvedValue({ requestId: 'chunk', data: status() });
+    vi.mocked(completeDocumentUpload).mockResolvedValue({ requestId: 'complete', data: status({ phase: 'READY', progressPercent: 100 }) });
+    const uploaded = await uploadAndIndexDocument(new File(['notes'], 'notes.txt'), 'notes.txt', 'text', undefined, undefined, undefined, true);
+    expect(isDeferredVisionUpload(uploaded)).toBe(false);
+    expect(createDocumentUpload).toHaveBeenCalledWith(expect.not.objectContaining({ visionRequested: true }), undefined);
     vi.clearAllMocks();
   });
   it('should upload fixed chunks and return only a lightweight document reference', async () => {

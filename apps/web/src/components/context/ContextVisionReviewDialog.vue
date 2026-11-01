@@ -25,8 +25,9 @@ const review = computed(() => store.status?.visionReview);
 const currentMasks = computed(() => masks.value[page.value] ?? []);
 const selectedModel = computed(() => store.models.find(model => model.id === store.modelId));
 const maxPages = computed(() => Math.min(review.value?.maxPages ?? 0, review.value?.maxCalls ?? 0));
-const canConfirm = computed(() => consent.value && selected.value.length > 0 && selected.value.length <= maxPages.value
-  && selectedModel.value?.vision && !store.loadingModels && !previewLoading.value && !previewError.value);
+const pageSelectionReady = computed(() => selected.value.length > 0 && selected.value.length <= maxPages.value
+  && Boolean(selectedModel.value?.vision) && !store.loadingModels && !previewLoading.value && !previewError.value);
+const canConfirm = computed(() => pageSelectionReady.value && consent.value);
 
 const clearPreview = (): void => { if (preview.value) URL.revokeObjectURL(preview.value); preview.value = ''; };
 /** 预览只以临时 Blob URL 留在内存中，页码或身份变化后撤销迟到响应及旧 URL。 */
@@ -44,9 +45,15 @@ const loadPreview = async (): Promise<void> => {
   finally { if (sequence === previewSequence) previewLoading.value = false; }
 };
 watch(() => store.status?.documentId, () => {
-  selected.value = review.value?.pages.filter(item => item.suggested && !item.blocked).slice(0, maxPages.value).map(item => item.page) ?? [];
-  page.value = selected.value[0] ?? 1;
-  masks.value = {}; consent.value = false; dragStart.value = undefined; dragEnd.value = undefined;
+  if (store.drafting && store.draftPages.length) {
+    selected.value = store.draftPages.map((item) => item.page);
+    masks.value = Object.fromEntries(store.draftPages.map((item) => [item.page, item.masks.map((mask) => ({ ...mask }))]));
+  } else {
+    selected.value = review.value?.pages.filter(item => item.suggested && !item.blocked).slice(0, maxPages.value).map(item => item.page) ?? [];
+    masks.value = {};
+  }
+  page.value = selected.value[0] ?? review.value?.pages[0]?.page ?? 1;
+  consent.value = false; dragStart.value = undefined; dragEnd.value = undefined;
 });
 watch([() => store.status?.documentId, page], () => { void loadPreview(); }, { flush: 'post' });
 // 更换接收模型、页码集合或遮挡内容后重新确认；旧勾选不授权新的数据范围。
@@ -76,10 +83,15 @@ const finishMask = (): void => {
 };
 const addExactMask = (): void => addMask({ x: exact.value.x / 100, y: exact.value.y / 100,
   width: Math.min(exact.value.width / 100, 1 - exact.value.x / 100), height: Math.min(exact.value.height / 100, 1 - exact.value.y / 100) });
+const selectionPayload = () => ({ modelId: store.modelId, consent: true as const, pages: [...selected.value].sort((a, b) => a - b)
+  .map(number => ({ page: number, masks: (masks.value[number] ?? []).map(mask => ({ ...mask })) })) });
 const confirm = (): void => {
   if (!canConfirm.value) return;
-  store.confirm({ modelId: store.modelId, consent: true, pages: [...selected.value].sort((a, b) => a - b)
-    .map(number => ({ page: number, masks: (masks.value[number] ?? []).map(mask => ({ ...mask })) })) });
+  store.confirm(selectionPayload());
+};
+const saveDraft = (): void => {
+  if (!pageSelectionReady.value) return;
+  store.confirm(selectionPayload());
 };
 onBeforeUnmount(() => { previewSequence++; previewController?.abort(); clearPreview(); });
 </script>
@@ -137,15 +149,17 @@ onBeforeUnmount(() => { previewSequence++; previewController?.abort(); clearPrev
           </details>
         </div>
       </div>
-      <div class="vision-consent">
+      <div v-if="!store.drafting" class="vision-consent">
         <ElCheckbox v-model="consent"><strong>我已检查所选页面隐私</strong>，同意将遮挡后的页面发送至 {{ selectedModel?.displayName ?? '所选模型服务' }} 进行识别并产生调用费用。</ElCheckbox>
         <p>识别后脱敏无法阻止原图中的隐私首次被供应商看到。系统不保证自动发现全部敏感信息；禁止外发的材料请仅使用本地提取。</p>
       </div>
+      <p v-else class="review-hint">页面和遮挡会回到本批清单。只有在清单中勾选同意后，这些页面才会发送给视觉模型。</p>
     </template>
     <template #footer>
-      <ElButton @click="store.cancel">取消此文件</ElButton>
+      <ElButton @click="store.cancel">{{ store.drafting ? '返回清单' : '取消此文件' }}</ElButton>
       <ElButton @click="store.confirm({ modelId: '', consent: false, pages: [] })">仅本地提取</ElButton>
-      <ElButton type="primary" :disabled="!canConfirm" @click="confirm">确认识别所选页面</ElButton>
+      <ElButton v-if="store.drafting" type="primary" :disabled="!pageSelectionReady" @click="saveDraft">保存页面选择</ElButton>
+      <ElButton v-else type="primary" :disabled="!canConfirm" @click="confirm">确认识别所选页面</ElButton>
     </template>
   </ElDialog>
 </template>

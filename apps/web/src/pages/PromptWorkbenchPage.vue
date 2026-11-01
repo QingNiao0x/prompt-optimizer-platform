@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { optimizationCompletionNotice } from '@/features/optimization/processingStatus';
 import ContextVisionReviewDialog from '@/components/context/ContextVisionReviewDialog.vue';
+import ContextVisionBatchDialog from '@/components/context/ContextVisionBatchDialog.vue';
 import { useContextVisionStore } from '@/stores/contextVision';
 import { WarningFilled } from '@element-plus/icons-vue';
 import { ElAlert, ElButton, ElInput, ElMessage, ElMessageBox } from 'element-plus';
@@ -9,7 +10,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 
 import ContextPanel from '@/components/context/ContextPanel.vue';
-import ContextUploadConfirmDialog, { type UploadCandidate } from '@/components/context/ContextUploadConfirmDialog.vue';
+import ContextUploadConfirmDialog, { type UploadCandidate, type UploadConfirmation } from '@/components/context/ContextUploadConfirmDialog.vue';
 import PlanModeIntroDialog from '@/components/prompt/PlanModeIntroDialog.vue';
 import PlanQuestionDialog from '@/components/prompt/PlanQuestionDialog.vue';
 import IntentComposer from '@/components/prompt/IntentComposer.vue';
@@ -77,6 +78,7 @@ const {
 } = storeToRefs(store);
 
 const contextVision = useContextVisionStore();
+let pendingVisionPolicy: 'local-only' | 'batch-review' = 'local-only';
 const respectProjectIgnore = ref(true);
 const fileSelectionProgress = ref<FileProcessingProgress | null>(null);
 const {
@@ -86,7 +88,8 @@ const {
   selectFileArray,
   reset: resetProjectFiles,
 } = useProjectFiles({ respectGitignore: () => respectProjectIgnore.value,
-  reviewVision: (status, signal) => contextVision.review(status, signal, store.selectedModelId) });
+  visionPolicy: () => pendingVisionPolicy,
+  settleVisionBatch: (pending, signal) => contextVision.settleBatch(pending, store.selectedModelId, signal) });
 const {
   isSupported: supportsDirectoryPicker,
   isSelecting: isSelectingDirectory,
@@ -391,9 +394,10 @@ const handleFilesDropped = async ({ files: droppedFiles }: DroppedFileCollection
   await handleSelectedContextFiles(droppedFiles);
 };
 
-const handleUploadConfirmed = async (indices: number[]): Promise<void> => {
+const handleUploadConfirmed = async (confirmation: UploadConfirmation): Promise<void> => {
   const currentLifecycle = pageLifecycleVersion;
-  const selected = indices.map((index) => uploadCandidates.value[index]?.file)
+  pendingVisionPolicy = confirmation.visionPolicy;
+  const selected = confirmation.indices.map((index) => uploadCandidates.value[index]?.file)
     .filter((file): file is File => Boolean(file));
   uploadCandidates.value = [];
   try {
@@ -909,6 +913,7 @@ onBeforeUnmount(() => {
       @confirm="handleUploadConfirmed"
       @update:model-value="handleUploadDialogVisibility"
     />
+    <ContextVisionBatchDialog />
     <ContextVisionReviewDialog />
     <PlanQuestionDialog
       v-model="planDialogVisible"

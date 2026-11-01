@@ -1,9 +1,10 @@
 import { nextTick, readonly, ref } from 'vue';
 
-import { uploadAndIndexDocument } from '@/features/document-upload/documentUploader';
+import { uploadAndIndexDocument, type DeferredVisionUpload } from '@/features/document-upload/documentUploader';
+import { isContextVisionLanguage, isDeferredVisionUpload } from '@/features/document-upload/contextVisionBatch';
 import { deleteDocumentUpload } from '@/services/documentUploadApi';
 import { loadSelectedFileScopes } from '@/features/project-index/projectFileScope';
-import type { ContextFileInput, DocumentProcessingPhase } from '@/types/api';
+import type { ContextFileInput, ContextVisionConfirmation, DocumentProcessingPhase, DocumentUploadStatus } from '@/types/api';
 import {
   collectCandidateFiles,
   getProjectFileLanguage,
@@ -97,9 +98,23 @@ const deleteDocumentReferences = async (files: readonly ContextFileInput[]): Pro
   await Promise.all(documentIds.map((id) => deleteDocumentUpload(id).catch(() => undefined)));
 };
 
+export type ContextVisionPolicy = 'local-only' | 'batch-review' | 'per-file';
+
+export interface VisionBatchSettlement {
+  documentId: string;
+  confirmation: ContextVisionConfirmation;
+}
+
 export const useProjectFiles = (options?: {
   respectGitignore?: () => boolean;
-  reviewVision?: (status: import('@/types/api').DocumentUploadStatus, signal?: AbortSignal) => Promise<import('@/types/api').ContextVisionConfirmation>;
+  /** 未提供时，沿用 reviewVision 的逐文件确认；两者都没有则图片和 PDF 只做本地提取。 */
+  visionPolicy?: () => ContextVisionPolicy;
+  reviewVision?: (status: DocumentUploadStatus, signal?: AbortSignal) => Promise<ContextVisionConfirmation>;
+  /** 整批停在确认阶段后调用。返回 null 表示放弃这些文件，已上传的会话会被删除。 */
+  settleVisionBatch?: (
+    pending: readonly DocumentUploadStatus[],
+    signal: AbortSignal,
+  ) => Promise<readonly VisionBatchSettlement[] | null>;
 }) => {
   const isReading = ref(false);
   const warnings = ref<string[]>([]);
@@ -290,7 +305,11 @@ export const useProjectFiles = (options?: {
 
       const documentWarnings: string[] = [];
       let failedDocuments = 0;
+      const deferredVision: DeferredVisionUpload[] = [];
       const documentOrder = new Map(documentCandidates.map((file, index) => [getProjectFilePath(file), index]));
+      // 本地提取不请求视觉审阅，因此可以恢复两路上传。逐文件弹窗仍保持串行，避免两张确认叠在一起。
+      const visionPolicy = options?.visionPolicy?.()
+        ?? (options?.reviewVision ? 'per-file' : 'local-only');
       const activeProgress = new Map<number, FileProcessingProgress>();
       const publishProgress = (): void => {
         if (!isCurrentOperation() || !activeProgress.size) return;
@@ -299,41 +318,43 @@ export const useProjectFiles = (options?: {
         progress.value = { ...first, accepted: selection.files.length + uploadedDocuments.length,
           skipped: skippedDocumentBudget + failedDocuments + inlineCandidates.length - selection.files.length };
       };
+      const rememberDocument = (file: ContextFileInput, warningsForFile: readonly string[]): void => {
+        uploadedDocuments.push(file);
+        documentWarnings.push(...warningsForFile.map((warning) => `${file.path}：${warning}`));
+      };
       const processDocument = async (index: number): Promise<void> => {
         const candidate = documentCandidates[index];
         if (!isCurrentOperation()) return;
         const acceptedBeforeDocument = selection.files.length + uploadedDocuments.length;
+        const language = getProjectFileLanguage(candidate);
+        const report = (documentProgress: { phase: DocumentProcessingPhase; percent: number; uploadedBytes: number; totalBytes: number; extractedCharacters: number; indexedChunks: number }): void => {
+          if (!isCurrentOperation()) return;
+          activeProgress.set(index, {
+            current: inlineCandidates.length + index + 1,
+            total: inlineCandidates.length + documentCandidates.length,
+            fileName: getProjectFilePath(candidate),
+            percent: documentProgress.percent,
+            accepted: acceptedBeforeDocument,
+            skipped: skippedDocumentBudget + failedDocuments + inlineCandidates.length - selection.files.length,
+            phase: mapDocumentPhase(documentProgress.phase),
+            uploadedBytes: documentProgress.uploadedBytes,
+            totalBytes: documentProgress.totalBytes,
+            extractedCharacters: documentProgress.extractedCharacters,
+            indexedChunks: documentProgress.indexedChunks,
+          });
+          publishProgress();
+        };
         try {
-          const uploaded = await uploadAndIndexDocument(
-            candidate,
-            getProjectFilePath(candidate),
-            getProjectFileLanguage(candidate),
-            (documentProgress) => {
-              if (!isCurrentOperation()) {
-                return;
-              }
-              activeProgress.set(index, {
-                current: inlineCandidates.length + index + 1,
-                total: inlineCandidates.length + documentCandidates.length,
-                fileName: getProjectFilePath(candidate),
-                percent: documentProgress.percent,
-                accepted: acceptedBeforeDocument,
-                skipped: skippedDocumentBudget + failedDocuments + inlineCandidates.length - selection.files.length,
-                phase: mapDocumentPhase(documentProgress.phase),
-                uploadedBytes: documentProgress.uploadedBytes,
-                totalBytes: documentProgress.totalBytes,
-                extractedCharacters: documentProgress.extractedCharacters,
-                indexedChunks: documentProgress.indexedChunks,
-              });
-              publishProgress();
-            },
-            abortController.signal,
-            options?.reviewVision,
-          );
-          uploadedDocuments.push(uploaded.file);
-          documentWarnings.push(...uploaded.status.warnings.map(
-            (warning) => `${uploaded.file.path}：${warning}`,
-          ));
+          const deferVisionReview = visionPolicy === 'batch-review' && isContextVisionLanguage(language);
+          const outcome = deferVisionReview
+            ? await uploadAndIndexDocument(candidate, getProjectFilePath(candidate), language, report, abortController.signal, undefined, true)
+            : await uploadAndIndexDocument(candidate, getProjectFilePath(candidate), language, report, abortController.signal,
+              visionPolicy === 'per-file' ? options?.reviewVision : undefined);
+          if (isDeferredVisionUpload(outcome)) {
+            deferredVision.push(outcome);
+            return;
+          }
+          rememberDocument(outcome.file, outcome.status.warnings);
         } catch (error: unknown) {
           if (abortController.signal.aborted || !isCurrentOperation()) {
             return;
@@ -347,12 +368,52 @@ export const useProjectFiles = (options?: {
         }
       };
       let nextDocument = 0;
-      // 纯文本/办公文档两路流水，让下一份上传与上一份解析重叠；视觉审阅保持串行，不叠加确认弹窗。
-      const parallelDocuments = options?.reviewVision
-        && documentCandidates.some(file => ['jpeg', 'jpg', 'png', 'pdf'].includes(getProjectFileLanguage(file))) ? 1 : 2;
+      const parallelDocuments = visionPolicy === 'per-file'
+        && documentCandidates.some(file => isContextVisionLanguage(getProjectFileLanguage(file))) ? 1 : 2;
       await Promise.all(Array.from({ length: Math.min(parallelDocuments, documentCandidates.length) }, async () => {
         while (isCurrentOperation() && nextDocument < documentCandidates.length) await processDocument(nextDocument++);
       }));
+      if (!isCurrentOperation()) {
+        await Promise.all(deferredVision.map((item) => item.discard()));
+        await deleteDocumentReferences(uploadedDocuments);
+        return [];
+      }
+      if (deferredVision.length > 0) {
+        let cancelled = false;
+        try {
+          const decisions = await options?.settleVisionBatch?.(deferredVision.map((item) => item.status), abortController.signal) ?? null;
+          if (!isCurrentOperation() || decisions === null) {
+            cancelled = isCurrentOperation();
+          } else {
+            const byId = new Map(decisions.map((decision) => [decision.documentId, decision.confirmation]));
+            for (const item of deferredVision) {
+              if (!isCurrentOperation()) break;
+              try {
+                const confirmation = byId.get(item.status.documentId) ?? { modelId: '', consent: false, pages: [] };
+                const uploaded = await item.finish(confirmation);
+                rememberDocument(uploaded.file, uploaded.status.warnings);
+              } catch (error: unknown) {
+                if (abortController.signal.aborted || !isCurrentOperation()) break;
+                failedDocuments += 1;
+                documentWarnings.push(`${item.status.path}：${error instanceof Error ? error.message : '解析失败'}`);
+              }
+            }
+          }
+        } catch (error: unknown) {
+          await deleteDocumentReferences(uploadedDocuments);
+          throw error;
+        } finally {
+          // finish 成功后 discard 不会再删除；尚未提交或失败残留的会话在这里清掉。
+          await Promise.all(deferredVision.map((item) => item.discard()));
+        }
+        if (!isCurrentOperation()) {
+          await deleteDocumentReferences(uploadedDocuments);
+          return [];
+        }
+        if (cancelled) {
+          documentWarnings.push(`已取消 ${deferredVision.length} 个图片或 PDF 的识别确认，这些文件未加入上下文。`);
+        }
+      }
       uploadedDocuments.sort((left, right) => (documentOrder.get(left.path) ?? 0) - (documentOrder.get(right.path) ?? 0));
       if (import.meta.env.DEV) {
         console.info('[file-upload] read finished', {

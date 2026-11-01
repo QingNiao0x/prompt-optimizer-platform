@@ -73,4 +73,44 @@ describe('document upload routing', () => {
     finish[1]!();
     expect(await result).toHaveLength(2);
   });
+
+  it('uploads several images together when the batch stays on local extraction', async () => {
+    const normal = vi.mocked(uploadAndIndexDocument).getMockImplementation()!;
+    const finish: (() => void)[] = [];
+    vi.mocked(uploadAndIndexDocument).mockImplementation((...args) => new Promise(resolve => {
+      finish.push(() => { void normal(...args).then(resolve); });
+    }));
+    const state = useProjectFiles({ visionPolicy: () => 'local-only' });
+    const result = state.selectFileArray(['a', 'b'].map(name => new File(['fixture'], `${name}.png`)));
+    await vi.waitFor(() => expect(finish).toHaveLength(2));
+    expect(vi.mocked(uploadAndIndexDocument).mock.calls.map((call) => call[6])).toEqual([undefined, undefined]);
+    finish[0]!();
+    finish[1]!();
+    expect(await result).toHaveLength(2);
+  });
+
+  it('asks once after every vision file is parked and keeps cancelled files out of context', async () => {
+    vi.mocked(uploadAndIndexDocument).mockImplementation(async (file, path, language, _progress, _signal, _review, defer) => {
+      if (!defer) throw new Error('批量识别应延后确认');
+      return {
+        deferred: true as const,
+        status: {
+          documentId: `id-${path}`, path, language, phase: 'AWAITING_CONFIRMATION' as const, fileSizeBytes: file.size,
+          uploadedBytes: file.size, progressPercent: 45, extractedCharacters: 0, chunkCount: 0, summary: '', warnings: [],
+          errorMessage: '', expiresAt: '2099-01-01T00:00:00Z', chunkSizeBytes: 1_048_576,
+          visionReview: { pages: [], maxPages: 1, maxCalls: 1, maxOutputTokens: 10, deadlineSeconds: 30 },
+        },
+        finish: vi.fn(),
+        discard: vi.fn(async () => undefined),
+      };
+    });
+    const state = useProjectFiles({
+      visionPolicy: () => 'batch-review',
+      settleVisionBatch: async () => null,
+    });
+    const result = await state.selectFileArray(['a', 'b'].map(name => new File(['fixture'], `${name}.png`)));
+    expect(result).toEqual([]);
+    expect(uploadAndIndexDocument).toHaveBeenCalledTimes(2);
+    expect(state.warnings.value.some((warning) => warning.includes('已取消 2 个图片或 PDF'))).toBe(true);
+  });
 });
