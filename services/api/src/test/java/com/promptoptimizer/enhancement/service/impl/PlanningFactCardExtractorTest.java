@@ -13,6 +13,15 @@ import java.util.stream.IntStream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PlanningFactCardExtractorTest {
+    @org.junit.jupiter.api.Test
+    void styleReferenceDoesNotIntroduceBusinessFacts() {
+        var file = new com.promptoptimizer.context.domain.FileSnippet("rules.md", "markdown",
+                "审批金额：五万元。订单超过五万元必须由财务审批。", "审批规则", false,
+                com.promptoptimizer.context.domain.MaterialPurpose.STYLE_REFERENCE);
+        var snapshot = new com.promptoptimizer.context.domain.ContextSnapshot("", java.util.List.of(), java.util.List.of(),
+                java.util.List.of(), java.util.List.of(file), java.util.List.of(), java.util.List.of(), "fixture");
+        assertThat(new PlanningFactCardExtractor().extract(snapshot, "根据 rules.md 的格式整理审批说明").cards()).isEmpty();
+    }
     private final PlanningFactCardExtractor extractor = new PlanningFactCardExtractor();
 
     @Test

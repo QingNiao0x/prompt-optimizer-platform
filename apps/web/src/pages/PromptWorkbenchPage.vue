@@ -851,6 +851,7 @@ onBeforeUnmount(() => {
         @files-dropped="handleFilesDropped"
         @add-manual-file="handleAddManualFile"
         @remove-file="store.removeFile"
+        @file-purpose-changed="store.setFilePurpose"
         @clear-files="handleClearContextFiles"
         @analyze="handleAnalyze"
         @index-project="handleIndexProject"

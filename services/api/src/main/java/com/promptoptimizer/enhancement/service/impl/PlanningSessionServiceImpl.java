@@ -514,6 +514,11 @@ public class PlanningSessionServiceImpl implements PlanningSessionService {
             update(digest, file.documentId());
             update(digest, file.sizeBytes() == null ? "" : file.sizeBytes().toString());
             update(digest, file.content());
+            // 用途变化会改变材料解释，必须重新分析。旧请求无用途时保留原指纹字节。
+            if (file.purpose() != null) {
+                update(digest, "material-purpose");
+                update(digest, file.purpose().name());
+            }
         }
         return "sha256:" + HexFormat.of().formatHex(digest.digest());
     }

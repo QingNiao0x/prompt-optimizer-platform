@@ -85,6 +85,8 @@ final class PlanningEvidencePolicy {
     /** 只影响证据候选，不从上传列表、本地索引或分析报告删除任何文件。 */
     boolean allows(FileSnippet file) {
         if (file == null || file.path() == null || file.path().isBlank()) return false;
+        // 用户将材料限定为格式或风格时，其业务内容不进入事实卡片及事实冲突判断。
+        if (file.purpose() == com.promptoptimizer.context.domain.MaterialPurpose.STYLE_REFERENCE) return false;
         String path = sourcePath(file.path());
         if (!explicitlyNamed(path) && RESEARCH_DOCUMENT.matcher(path).find()
                 && !query.matches("(?s).*(调研|竞品|研究|论文|对标|比较工具|research).*")) return false;

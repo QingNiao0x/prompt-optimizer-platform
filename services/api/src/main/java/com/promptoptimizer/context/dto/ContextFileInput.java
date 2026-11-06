@@ -2,6 +2,7 @@ package com.promptoptimizer.context.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import com.promptoptimizer.context.domain.MaterialPurpose;
 
 /**
  * 用户主动选择的单个文件输入。
@@ -19,13 +20,20 @@ public record ContextFileInput(
         String language,
         @Size(max = 64, message = "临时文档索引编号不能超过 64 个字符")
         String documentId,
-        Long sizeBytes
+        Long sizeBytes,
+        @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+        MaterialPurpose purpose
 ) {
 
     /**
      * 兼容普通文本、代码片段和旧版 Base64 文件输入。
      */
     public ContextFileInput(String path, String content, String language) {
-        this(path, content, language, null, null);
+        this(path, content, language, null, null, null);
+    }
+
+    /** 旧客户端及既有临时文档引用不指定用途，由原始需求决定材料的使用方式。 */
+    public ContextFileInput(String path, String content, String language, String documentId, Long sizeBytes) {
+        this(path, content, language, documentId, sizeBytes, null);
     }
 }

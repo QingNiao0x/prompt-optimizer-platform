@@ -52,6 +52,20 @@ const readyIndex = (): ProjectIndexSummary => ({
 });
 
 describe('optimization store project context', () => {
+  it('updates material purpose and invalidates Plan without replacing the document reference', () => {
+    const store = useOptimizationStore();
+    store.addFile({ path: 'notes.txt', language: 'text', content: '', documentId: 'document-1' });
+    store.plan = { summary: '旧Plan', questions: [], templateCode: 'GENERAL',
+      provider: { provider: 'fixture', model: 'fixture', mock: true }, latencyMs: 0 };
+    const lease = store.captureContext();
+    store.setFilePurpose('notes.txt', 'STYLE_REFERENCE');
+    expect(store.files[0]).toMatchObject({ documentId: 'document-1', purpose: 'STYLE_REFERENCE' });
+    expect(store.isCurrentContext(lease)).toBe(false);
+    expect(store.plan).toBeUndefined();
+    store.setFilePurpose('notes.txt', undefined);
+    expect(store.files[0]?.purpose).toBeUndefined();
+    expect(store.files[0]?.documentId).toBe('document-1');
+  });
   beforeEach(() => {
     vi.clearAllMocks();
     setActivePinia(createPinia());

@@ -67,6 +67,7 @@ interface Emits {
   (event: 'files-dropped', value: DroppedFileCollection): void;
   (event: 'add-manual-file', value: ContextFileInput): void;
   (event: 'remove-file', path: string): void;
+  (event: 'file-purpose-changed', path: string, purpose: ContextFileInput['purpose']): void;
   (event: 'clear-files'): void;
   (event: 'analyze'): void;
   (event: 'index-project'): void;
@@ -594,6 +595,19 @@ const addManualFile = (): void => {
               >
                 <Close />
               </button>
+              <ElSelect
+                class="file-purpose"
+                size="small"
+                :model-value="file.purpose ?? 'AUTO'"
+                :aria-label="`${file.path} 的材料用途`"
+                @change="emit('file-purpose-changed', file.path, $event === 'AUTO' ? undefined : $event)"
+              >
+                <ElOption label="按原始需求自动判断" value="AUTO" />
+                <ElOption label="处理对象" value="TASK_TARGET" />
+                <ElOption label="事实参考" value="FACT_REFERENCE" />
+                <ElOption label="格式或风格参考" value="STYLE_REFERENCE" />
+                <ElOption label="排查线索" value="DIAGNOSTIC_REFERENCE" />
+              </ElSelect>
             </li>
           </ul>
         </ElScrollbar>
@@ -1049,6 +1063,13 @@ h2 {
   background: rgba(111, 124, 255, 0.08);
 }
 
+.file-purpose {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+  margin: 4px 0 8px;
+}
+
 .file-language,
 .file-path {
   font-family: var(--font-mono);
@@ -1056,6 +1077,9 @@ h2 {
 }
 
 .file-language {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--accent-blue);
   text-transform: uppercase;
 }

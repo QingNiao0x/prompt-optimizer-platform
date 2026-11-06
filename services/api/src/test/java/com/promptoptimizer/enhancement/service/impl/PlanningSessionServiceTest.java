@@ -52,6 +52,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PlanningSessionServiceTest {
+    @Test
+    void changingMaterialPurposeInvalidatesTheContextFingerprint() {
+        var sessions = service(PlanningSessionServiceTest::snapshot);
+        var source = new ContextFileInput("notes.txt", "同一份材料", "text");
+        var reference = new ContextFileInput("notes.txt", "同一份材料", "text", null, null,
+                com.promptoptimizer.context.domain.MaterialPurpose.STYLE_REFERENCE);
+        var automatic = sessions.prepareContext(new PlanningContextRequest("分析材料", new ContextAnalysisRequest("", List.of(source)), PermissionPolicyInput.empty()));
+        var style = sessions.prepareContext(new PlanningContextRequest("分析材料", new ContextAnalysisRequest("", List.of(reference)), PermissionPolicyInput.empty()));
+        assertThat(style.version()).isNotEqualTo(automatic.version());
+    }
 
     private static final Clock CLOCK = Clock.fixed(
             Instant.parse("2026-09-14T08:00:00Z"),

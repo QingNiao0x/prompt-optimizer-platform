@@ -13,6 +13,8 @@ export interface ApiErrorPayload {
   };
 }
 
+export type MaterialPurpose = 'TASK_TARGET' | 'FACT_REFERENCE' | 'STYLE_REFERENCE' | 'DIAGNOSTIC_REFERENCE';
+
 export interface ContextFileInput {
   path: string;
   content: string;
@@ -21,6 +23,8 @@ export interface ContextFileInput {
   documentId?: string;
   /** 原始文件字节数，仅用于展示本次发送范围，不包含文件正文。 */
   sizeBytes?: number;
+  /** 可选用途提示，未指定时结合原始需求自动理解。 */
+  purpose?: MaterialPurpose;
 }
 
 export interface ContextAnalysisRequest {
@@ -47,6 +51,8 @@ export interface FileSnippet {
   content: string;
   summary: string;
   truncated: boolean;
+  purpose?: MaterialPurpose;
+  purposeGuidance?: string;
 }
 
 export interface ContextSnapshot {

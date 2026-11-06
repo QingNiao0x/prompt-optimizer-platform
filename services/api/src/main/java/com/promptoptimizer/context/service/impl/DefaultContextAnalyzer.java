@@ -10,6 +10,7 @@ import com.promptoptimizer.context.domain.ContextSnapshot;
 import com.promptoptimizer.context.domain.DependencyItem;
 import com.promptoptimizer.context.domain.DocumentSelection;
 import com.promptoptimizer.context.domain.FileAnalysisCoverage;
+import com.promptoptimizer.context.domain.MaterialPurpose;
 import com.promptoptimizer.context.domain.FileSnippet;
 import com.promptoptimizer.context.domain.TechnologyStackItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,8 +130,11 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
         List<DependencyItem> dependencies = new ArrayList<>();
 
         for (AnalyzedFile file : files.values()) {
-            detectTechnology(file, stack);
-            extractDependencies(file, dependencies, warnings);
+            // 格式参考保留正文供比较，不据此推断当前项目的技术栈与依赖。
+            if (file.purpose() != MaterialPurpose.STYLE_REFERENCE) {
+                detectTechnology(file, stack);
+                extractDependencies(file, dependencies, warnings);
+            }
         }
 
         return new ContextSnapshot(
@@ -194,6 +198,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
                         input.documentId(),
                         path,
                         query,
+                        input.purpose(),
                         files,
                         warnings,
                         redactions,
@@ -203,7 +208,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
             }
             String content = input.content() == null ? "" : input.content();
             if (binaryContentExtractor.supports(language)) {
-                totalBytes = collectBinaryFile(path, language, content, files, warnings, redactions, totalBytes);
+                totalBytes = collectBinaryFile(path, language, content, input.purpose(), files, warnings, redactions, totalBytes);
                 continue;
             }
 
@@ -233,7 +238,8 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
                     sensitive ? "[CONTENT REDACTED: sensitive material detected]" : content,
                     language,
                     bytes >= MAX_FILE_BYTES,
-                    ""
+                    "",
+                    input.purpose()
             ));
         }
         return files;
@@ -246,6 +252,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
             String path,
             String language,
             String base64Content,
+            MaterialPurpose purpose,
             Map<String, AnalyzedFile> files,
             List<String> warnings,
             List<String> redactions,
@@ -280,7 +287,8 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
                     sensitive ? "[CONTENT REDACTED: sensitive material detected]" : extracted.content(),
                     language,
                     extracted.truncated(),
-                    ""
+                    "",
+                    purpose
             ));
             return totalBytes + decoded.length;
         } catch (IllegalArgumentException exception) {
@@ -296,6 +304,7 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
             String documentId,
             String requestedPath,
             String query,
+            MaterialPurpose purpose,
             Map<String, AnalyzedFile> files,
             List<String> warnings,
             List<String> redactions,
@@ -352,7 +361,8 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
                 content,
                 selection.language(),
                 !selection.completelyParsed(),
-                sensitive ? "" : selection.summary()
+                sensitive ? "" : selection.summary(),
+                purpose
         ));
         boolean contextLimited = selection.selectedChunks() < selection.totalChunks()
                 || selection.selectedCharacters() < selection.extractedCharacters();
@@ -641,7 +651,8 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
                     file.language(),
                     selection.content(),
                     summary,
-                    truncated
+                    truncated,
+                    file.purpose()
             ));
             totalCharacters += selection.selectedCharacters();
             if (selection.contextLimited() && !file.truncated()) {
@@ -814,7 +825,8 @@ public class DefaultContextAnalyzer implements ContextAnalyzer {
             String content,
             String language,
             boolean truncated,
-            String summary
+            String summary,
+            MaterialPurpose purpose
     ) {
     }
 }

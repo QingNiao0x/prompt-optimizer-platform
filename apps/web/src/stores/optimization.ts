@@ -286,6 +286,16 @@ export const useOptimizationStore = defineStore('optimization', () => {
     invalidateContext();
   };
 
+  /** 用途随当前材料保存，变更后撤销旧Plan与上下文请求的有效性，复用同一文档索引。 */
+  const setFilePurpose = (path: string, purpose: ContextFileInput['purpose']): void => {
+    const current = files.value.find(file => file.path === path);
+    if (!current || current.purpose === purpose) return;
+    const updatePurpose = (file: ContextFileInput): ContextFileInput => file.path === path ? { ...file, purpose } : file;
+    files.value = files.value.map(updatePurpose);
+    supplementalFiles.value = supplementalFiles.value.map(updatePurpose);
+    invalidateContext();
+  };
+
   const clearFiles = (): void => {
     // 本地索引的物理删除由 useProjectIndex 统一负责，避免同一项目被重复删除。
     projectIndex.value = undefined;
@@ -821,6 +831,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     discardContextFiles,
     refreshAvailableModels,
     setFiles,
+    setFilePurpose,
     setProjectIndex,
     addFile,
     removeFile,
