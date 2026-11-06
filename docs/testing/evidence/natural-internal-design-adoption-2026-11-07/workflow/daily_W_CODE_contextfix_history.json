@@ -1,0 +1,57 @@
+{
+  "samePrompt": true,
+  "history": {
+    "id": "1995dfee-aba9-48c8-834f-fa7a6e8f8d02",
+    "rawPrompt": "请在@src/occupationalInfo新增和导入功能限制调查日期，不能晚于今日，允许填写今天。沿用现有逐行导入反馈，其他行为保持可用。只返回实际修改的文件。",
+    "optimizedPrompt": "请在 src/occupationalInfo 的新增和导入功能中限制调查日期不能晚于今日，允许填写今天。today 由调用方按业务时区传入合法 YYYY-MM-DD 日历日期；调查日期必须是真实公历日期，不能接受 2 月 30 日等无效日历值。保留现有函数签名与返回类型，沿用现有逐行导入反馈（错误仍按行号与消息记录），其他行为保持可用。只修改三个现有 mjs 业务文件，不增加依赖或文件；只返回实际修改的文件，统一以 JSON 对象 {\"files\":[{\"path\":\"实际修改的相对路径\",\"content\":\"完整文件正文\"}]} 交付。",
+    "sections": [],
+    "contextSummary": {
+      "warnings": [],
+      "redactions": [],
+      "dependencies": [],
+      "directoryTree": [
+        "project-conventions.txt",
+        "src/",
+        "src/occupationalInfo/",
+        "src/occupationalInfo/date.mjs",
+        "src/occupationalInfo/form.mjs",
+        "src/occupationalInfo/import.mjs"
+      ],
+      "analysisVersion": "v3",
+      "technologyStack": [],
+      "customDescription": ""
+    },
+    "ambiguities": [],
+    "appliedConstraints": [],
+    "templateCode": "GENERAL",
+    "providerName": "deepseek",
+    "modelName": "deepseek:deepseek-flash",
+    "mock": false,
+    "latencyMs": 10666,
+    "createdAt": "2026-11-06T17:59:13.419568Z",
+    "includePermissionBoundaries": true,
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "modelVersion": "DeepSeek-V4.1-Flash",
+    "promptFormat": "COMPACT",
+    "constraintGroups": {
+      "platformMandatory": [],
+      "taskSpecific": [],
+      "additionalPermissions": []
+    },
+    "resultKind": "TEXT",
+    "generationPipeline": "NATURAL",
+    "chainVersion": "core-repair-v4",
+    "framework": "APE",
+    "processing": {
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ],
+      "originalPreserved": false
+    }
+  }
+}

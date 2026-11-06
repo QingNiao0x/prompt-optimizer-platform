@@ -1,0 +1,255 @@
+{
+  "caseId": "W_OFFICE",
+  "stage": "daily",
+  "responses": [
+    {
+      "route": "/api/v2/optimizations",
+      "input": {
+        "rawPrompt": "根据会议记录整理一份同事能直接使用的纪要，参考另一份文件的组织方式。",
+        "modelId": "deepseek:deepseek-flash",
+        "context": {
+          "customDescription": "",
+          "files": [
+            {
+              "path": "meeting.txt",
+              "content": "2026-11-06合成项目评审。决定11月12日评审第一批导入，周工准备脱敏样本，李工完成现有字段对照。第二批发布日期尚未决定，陈工提议11月20日上线但未表决。客户不接受导入过程中覆盖旧数据。会议未分配自动提醒功能负责人，是否增加自动提醒留待下次评审。",
+              "language": "text",
+              "purpose": "TASK_TARGET"
+            },
+            {
+              "path": "style-reference.txt",
+              "content": "另一项目的格式样例。组织顺序为简短结论、已决定事项、行动安排、待决问题。样例业务内容为12月1日上线，赵工负责，预算30万元。这些是另一项目事实。",
+              "language": "text",
+              "purpose": "STYLE_REFERENCE"
+            }
+          ]
+        },
+        "enhancement": {
+          "templateCode": "AUTO",
+          "includeConversationHistory": false,
+          "includePermissionBoundaries": true,
+          "promptFormat": "COMPACT"
+        },
+        "conversationHistory": [],
+        "permissionPolicy": {
+          "protectedPaths": [],
+          "requireConfirmationFor": []
+        },
+        "planConfirmation": null
+      },
+      "status": 200,
+      "body": {
+        "requestId": "32456d02-2ad4-4cd7-95c0-a4898891ff2d",
+        "data": {
+          "optimizedPrompt": "请根据 meeting.txt 中的会议记录整理一份同事能直接使用的会议纪要，并参考 style-reference.txt 的组织方式：按简短结论、已决定事项、行动安排、待决问题四部分编排。纪要内容只使用本次会议的事实，不要混入 style-reference.txt 中另一项目的业务内容（如12月1日上线、赵工负责、预算30万元）。会议记录中的已决定事项、行动安排（含负责人和日期）、尚未决定或未表决的事项、客户约束以及留待下次评审的问题，都要按实际情况归入对应部分，不得把提议写成决定，也不得为未分配负责人的事项补造负责人。",
+          "resultKind": "TEXT",
+          "contextReport": {
+            "customDescription": "",
+            "technologyStack": [],
+            "dependencies": [],
+            "directoryTree": [
+              "meeting.txt",
+              "style-reference.txt"
+            ],
+            "fileSnippets": [
+              {
+                "path": "meeting.txt",
+                "language": "text",
+                "content": "[片段 1/1]\n2026-11-06合成项目评审。决定11月12日评审第一批导入，周工准备脱敏样本，李工完成现有字段对照。第二批发布日期尚未决定，陈工提议11月20日上线但未表决。客户不接受导入过程中覆盖旧数据。会议未分配自动提醒功能负责人，是否增加自动提醒留待下次评审。",
+                "summary": "文件内容摘要：2026-11-06合成项目评审。；决定11月12日评审第一批导入，周工准备脱敏样本，李工完成现有字段对照。；第二批发布日期尚未决定，陈工提议11月20日上线但未表决。；客户不接受导入过程中覆盖旧数据。；会议未分配自动提醒功能负责人，是否增加自动提醒留待下次评审。",
+                "truncated": false,
+                "purpose": "TASK_TARGET",
+                "purposeGuidance": "该材料是本次任务的处理对象，具体动作和授权范围以原始提示词为准。"
+              },
+              {
+                "path": "style-reference.txt",
+                "language": "text",
+                "content": "[片段 1/1]\n另一项目的格式样例。组织顺序为简短结论、已决定事项、行动安排、待决问题。样例业务内容为12月1日上线，赵工负责，预算30万元。这些是另一项目事实。",
+                "summary": "文件内容摘要：另一项目的格式样例。；组织顺序为简短结论、已决定事项、行动安排、待决问题。；样例业务内容为12月1日上线，赵工负责，预算30万元。；这些是另一项目事实。",
+                "truncated": false,
+                "purpose": "STYLE_REFERENCE",
+                "purposeGuidance": "该材料提供格式或风格参考，具体内容以本次原始需求和适用事实为准。"
+              }
+            ],
+            "analysisStatus": "COMPLETE",
+            "fileCoverage": [],
+            "warnings": [],
+            "redactions": [],
+            "analysisVersion": "v3"
+          },
+          "ambiguities": [],
+          "appliedConstraints": [],
+          "templateCode": "GENERAL",
+          "provider": {
+            "provider": "deepseek",
+            "model": "deepseek:deepseek-flash",
+            "mock": false,
+            "modelVersion": "DeepSeek-V4.1-Flash"
+          },
+          "latencyMs": 6365,
+          "warnings": [],
+          "evidenceCards": [],
+          "promptFormat": "COMPACT",
+          "constraintGroups": {
+            "platformMandatory": [],
+            "taskSpecific": [],
+            "additionalPermissions": []
+          },
+          "generationPipeline": "NATURAL",
+          "chainVersion": "core-repair-v4",
+          "framework": "APE",
+          "recordId": "a6c50c7a-254c-430d-8f20-577daf16e67f",
+          "editRevision": 0,
+          "processing": {
+            "completedStages": [
+              "SCOPE_ANALYSIS",
+              "BODY_GENERATION"
+            ],
+            "originalPreserved": false
+          }
+        }
+      }
+    }
+  ],
+  "input": {
+    "rawPrompt": "根据会议记录整理一份同事能直接使用的纪要，参考另一份文件的组织方式。",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": [
+        {
+          "path": "meeting.txt",
+          "content": "2026-11-06合成项目评审。决定11月12日评审第一批导入，周工准备脱敏样本，李工完成现有字段对照。第二批发布日期尚未决定，陈工提议11月20日上线但未表决。客户不接受导入过程中覆盖旧数据。会议未分配自动提醒功能负责人，是否增加自动提醒留待下次评审。",
+          "language": "text",
+          "purpose": "TASK_TARGET"
+        },
+        {
+          "path": "style-reference.txt",
+          "content": "另一项目的格式样例。组织顺序为简短结论、已决定事项、行动安排、待决问题。样例业务内容为12月1日上线，赵工负责，预算30万元。这些是另一项目事实。",
+          "language": "text",
+          "purpose": "STYLE_REFERENCE"
+        }
+      ]
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "response": {
+    "route": "/api/v2/optimizations",
+    "input": {
+      "rawPrompt": "根据会议记录整理一份同事能直接使用的纪要，参考另一份文件的组织方式。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": [
+          {
+            "path": "meeting.txt",
+            "content": "2026-11-06合成项目评审。决定11月12日评审第一批导入，周工准备脱敏样本，李工完成现有字段对照。第二批发布日期尚未决定，陈工提议11月20日上线但未表决。客户不接受导入过程中覆盖旧数据。会议未分配自动提醒功能负责人，是否增加自动提醒留待下次评审。",
+            "language": "text",
+            "purpose": "TASK_TARGET"
+          },
+          {
+            "path": "style-reference.txt",
+            "content": "另一项目的格式样例。组织顺序为简短结论、已决定事项、行动安排、待决问题。样例业务内容为12月1日上线，赵工负责，预算30万元。这些是另一项目事实。",
+            "language": "text",
+            "purpose": "STYLE_REFERENCE"
+          }
+        ]
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": null
+    },
+    "status": 200,
+    "body": {
+      "requestId": "32456d02-2ad4-4cd7-95c0-a4898891ff2d",
+      "data": {
+        "optimizedPrompt": "请根据 meeting.txt 中的会议记录整理一份同事能直接使用的会议纪要，并参考 style-reference.txt 的组织方式：按简短结论、已决定事项、行动安排、待决问题四部分编排。纪要内容只使用本次会议的事实，不要混入 style-reference.txt 中另一项目的业务内容（如12月1日上线、赵工负责、预算30万元）。会议记录中的已决定事项、行动安排（含负责人和日期）、尚未决定或未表决的事项、客户约束以及留待下次评审的问题，都要按实际情况归入对应部分，不得把提议写成决定，也不得为未分配负责人的事项补造负责人。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "meeting.txt",
+            "style-reference.txt"
+          ],
+          "fileSnippets": [
+            {
+              "path": "meeting.txt",
+              "language": "text",
+              "content": "[片段 1/1]\n2026-11-06合成项目评审。决定11月12日评审第一批导入，周工准备脱敏样本，李工完成现有字段对照。第二批发布日期尚未决定，陈工提议11月20日上线但未表决。客户不接受导入过程中覆盖旧数据。会议未分配自动提醒功能负责人，是否增加自动提醒留待下次评审。",
+              "summary": "文件内容摘要：2026-11-06合成项目评审。；决定11月12日评审第一批导入，周工准备脱敏样本，李工完成现有字段对照。；第二批发布日期尚未决定，陈工提议11月20日上线但未表决。；客户不接受导入过程中覆盖旧数据。；会议未分配自动提醒功能负责人，是否增加自动提醒留待下次评审。",
+              "truncated": false,
+              "purpose": "TASK_TARGET",
+              "purposeGuidance": "该材料是本次任务的处理对象，具体动作和授权范围以原始提示词为准。"
+            },
+            {
+              "path": "style-reference.txt",
+              "language": "text",
+              "content": "[片段 1/1]\n另一项目的格式样例。组织顺序为简短结论、已决定事项、行动安排、待决问题。样例业务内容为12月1日上线，赵工负责，预算30万元。这些是另一项目事实。",
+              "summary": "文件内容摘要：另一项目的格式样例。；组织顺序为简短结论、已决定事项、行动安排、待决问题。；样例业务内容为12月1日上线，赵工负责，预算30万元。；这些是另一项目事实。",
+              "truncated": false,
+              "purpose": "STYLE_REFERENCE",
+              "purposeGuidance": "该材料提供格式或风格参考，具体内容以本次原始需求和适用事实为准。"
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 6365,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "core-repair-v4",
+        "framework": "APE",
+        "recordId": "a6c50c7a-254c-430d-8f20-577daf16e67f",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  }
+}

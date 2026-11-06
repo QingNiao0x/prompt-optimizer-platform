@@ -1,0 +1,98 @@
+{
+  "input": {
+    "rawPrompt": "给客户写一则80字以内的维护通知。维护时间为11月10日22:00至23:00，仅报表导出暂停，查询和登录正常。不承诺补偿。只输出可发送的通知正文。",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "STRUCTURED"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "requestId": "97ef4d30-3694-4380-aba7-ecc9993db972",
+      "data": {
+        "optimizedPrompt": "## 背景\n面向客户发布一则系统维护通知，需让客户清楚维护时段内哪些功能受影响、哪些功能不受影响。\n\n## 任务\n撰写一则可直接发送给客户的维护通知正文，说明维护时间、受影响功能及不受影响的功能，并明确不承诺补偿。\n\n## 输出要求\n- 只输出可发送的通知正文，不附加标题说明、写作思路、备注或额外解释。\n- 正文不超过80字（含标点）。\n- 语气简洁、礼貌，适合直接发送给客户。\n\n## 约束条件\n- 维护时间为11月10日22:00至23:00。\n- 仅报表导出暂停，查询和登录正常。\n- 不承诺补偿。\n- 只输出可发送的通知正文。\n用户明确规则（须遵守平台权限边界）：\n- 维护时间为11月10日22:00至23:00，仅报表导出暂停，查询和登录正常。\n\n约束条件：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。\n\n## 验收标准\n- 正文包含维护时间、报表导出暂停、查询和登录正常三项信息。\n- 未出现补偿承诺。\n- 正文不超过80字，且无正文之外的附加内容。",
+        "resultKind": "SECTIONS",
+        "sections": [
+          {
+            "type": "BACKGROUND",
+            "title": "背景",
+            "content": "面向客户发布一则系统维护通知，需让客户清楚维护时段内哪些功能受影响、哪些功能不受影响。"
+          },
+          {
+            "type": "TASK",
+            "title": "任务",
+            "content": "撰写一则可直接发送给客户的维护通知正文，说明维护时间、受影响功能及不受影响的功能，并明确不承诺补偿。"
+          },
+          {
+            "type": "OUTPUT",
+            "title": "输出要求",
+            "content": "- 只输出可发送的通知正文，不附加标题说明、写作思路、备注或额外解释。\n- 正文不超过80字（含标点）。\n- 语气简洁、礼貌，适合直接发送给客户。"
+          },
+          {
+            "type": "CONSTRAINTS",
+            "title": "约束条件",
+            "content": "- 维护时间为11月10日22:00至23:00。\n- 仅报表导出暂停，查询和登录正常。\n- 不承诺补偿。\n- 只输出可发送的通知正文。\n用户明确规则（须遵守平台权限边界）：\n- 维护时间为11月10日22:00至23:00，仅报表导出暂停，查询和登录正常。\n\n约束条件：\n- 明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+          },
+          {
+            "type": "ACCEPTANCE",
+            "title": "验收标准",
+            "content": "- 正文包含维护时间、报表导出暂停、查询和登录正常三项信息。\n- 未出现补偿承诺。\n- 正文不超过80字，且无正文之外的附加内容。"
+          }
+        ],
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [
+          "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+        ],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2421,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "STRUCTURED",
+        "constraintGroups": {
+          "platformMandatory": [
+            "明确区分已知事实、用户确认信息和必要假设，不得把猜测写成事实。"
+          ],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "LEGACY",
+        "chainVersion": "2",
+        "framework": null,
+        "recordId": "e1749228-b8e0-42fa-8fec-6fbb099f1219",
+        "editRevision": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "input": {
+    "rawPrompt": "给客户写一则80字以内的维护通知。维护时间为11月10日22:00至23:00，仅报表导出暂停，查询和登录正常。不承诺补偿。只输出可发送的通知正文。",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": {
+      "planId": "5ac74044-bbfe-4038-93d8-af7b644218be",
+      "answers": []
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "requestId": "9048bb1d-8ea7-4385-8fe4-95c032020cae",
+      "data": {
+        "optimizedPrompt": "给客户写一则维护通知，正文控制在80字以内。维护时间为11月10日22:00至23:00，期间仅报表导出暂停，查询和登录正常。不要承诺任何补偿。只输出可直接发送的通知正文，不要附加标题、说明或其他内容。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4305,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "core-repair-v4",
+        "framework": "APE",
+        "recordId": "836181cb-41d0-4fdf-87f0-6b51110a3ed2",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  }
+}

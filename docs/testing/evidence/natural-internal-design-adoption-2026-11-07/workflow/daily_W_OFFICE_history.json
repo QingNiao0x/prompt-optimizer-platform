@@ -1,0 +1,53 @@
+{
+  "samePrompt": true,
+  "history": {
+    "id": "a6c50c7a-254c-430d-8f20-577daf16e67f",
+    "rawPrompt": "根据会议记录整理一份同事能直接使用的纪要，参考另一份文件的组织方式。",
+    "optimizedPrompt": "请根据 meeting.txt 中的会议记录整理一份同事能直接使用的会议纪要，并参考 style-reference.txt 的组织方式：按简短结论、已决定事项、行动安排、待决问题四部分编排。纪要内容只使用本次会议的事实，不要混入 style-reference.txt 中另一项目的业务内容（如12月1日上线、赵工负责、预算30万元）。会议记录中的已决定事项、行动安排（含负责人和日期）、尚未决定或未表决的事项、客户约束以及留待下次评审的问题，都要按实际情况归入对应部分，不得把提议写成决定，也不得为未分配负责人的事项补造负责人。",
+    "sections": [],
+    "contextSummary": {
+      "warnings": [],
+      "redactions": [],
+      "dependencies": [],
+      "directoryTree": [
+        "meeting.txt",
+        "style-reference.txt"
+      ],
+      "analysisVersion": "v3",
+      "technologyStack": [],
+      "customDescription": ""
+    },
+    "ambiguities": [],
+    "appliedConstraints": [],
+    "templateCode": "GENERAL",
+    "providerName": "deepseek",
+    "modelName": "deepseek:deepseek-flash",
+    "mock": false,
+    "latencyMs": 6365,
+    "createdAt": "2026-11-06T17:59:23.973662Z",
+    "includePermissionBoundaries": true,
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "modelVersion": "DeepSeek-V4.1-Flash",
+    "promptFormat": "COMPACT",
+    "constraintGroups": {
+      "platformMandatory": [],
+      "taskSpecific": [],
+      "additionalPermissions": []
+    },
+    "resultKind": "TEXT",
+    "generationPipeline": "NATURAL",
+    "chainVersion": "core-repair-v4",
+    "framework": "APE",
+    "processing": {
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ],
+      "originalPreserved": false
+    }
+  }
+}

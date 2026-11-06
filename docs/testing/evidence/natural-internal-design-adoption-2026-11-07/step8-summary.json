@@ -1,0 +1,123 @@
+{
+  "completedAt": "2026-11-06T18:07:11.733Z",
+  "scope": "Local daily entry, not production release",
+  "actualCalls": 129,
+  "maximum": 200,
+  "relayCalls": 127,
+  "officialDirectCalls": 2,
+  "step8Calls": 17,
+  "phases": {
+    "author": 1,
+    "enhancement": 39,
+    "regression": 16,
+    "workflow": 21,
+    "execute": 40,
+    "review": 12
+  },
+  "inputTokens": 286133,
+  "outputTokens": 106394,
+  "missingMonetaryCost": true,
+  "checks": [
+    {
+      "case": "daily_W_CODE_contextfix",
+      "status": 200,
+      "chainVersion": "core-repair-v4",
+      "bodyGenerated": true,
+      "copiedAndHistoryExact": true,
+      "handoffReceivedExact": true,
+      "selectedFiles": [
+        "project-conventions.txt",
+        "src/occupationalInfo/date.mjs#chunk-1",
+        "src/occupationalInfo/form.mjs#chunk-1",
+        "src/occupationalInfo/import.mjs#chunk-1"
+      ]
+    },
+    {
+      "case": "daily_W_OFFICE",
+      "status": 200,
+      "chainVersion": "core-repair-v4",
+      "bodyGenerated": true,
+      "copiedAndHistoryExact": true,
+      "handoffReceivedExact": true,
+      "selectedFiles": [
+        "meeting.txt",
+        "style-reference.txt"
+      ]
+    },
+    {
+      "case": "daily_R_PLAN",
+      "status": 200,
+      "chainVersion": "core-repair-v4",
+      "bodyGenerated": true,
+      "copiedAndHistoryExact": true,
+      "handoffReceivedExact": true,
+      "selectedFiles": []
+    }
+  ],
+  "sourceFreezeVerified": "Production and original frozen tools unchanged. Later evaluation tool corrections verified against their retained pre-scoring manifests.",
+  "planRevision": {
+    "status": 200,
+    "changeReviewShown": true,
+    "historyExact": true
+  },
+  "zeroQuestionPlan": {
+    "status": 200,
+    "questions": 0,
+    "generatedStatus": 200
+  },
+  "structured": {
+    "status": 200,
+    "chainVersion": "2",
+    "sections": 5,
+    "verification": "Authenticated request through daily frontend proxy"
+  },
+  "direct": {
+    "requestId": "55819616-ce22-4f6a-b492-524896ff7d21",
+    "status": 200,
+    "version": "core-repair-v4",
+    "copiedAndHistoryExact": true,
+    "actualCalls": 2
+  },
+  "bodyCandidateAdopted": false,
+  "engineeringRepairAdopted": true,
+  "limitations": [
+    "Internal AI assessment, no new human or expert review",
+    "Query protocol failure retained",
+    "Downstream code includes unchanged files in five of six compared works",
+    "Plan compensation phrasing can be broader than extra compensation wording",
+    "Structured response repeats some constraints; availability does not prove body quality gain",
+    "Original private-project source quote failure not retested",
+    "Local Redis 3.2, Redis 7 deployment not verified"
+  ],
+  "runtime": {
+    "checkedAt": "2026-11-06T18:04:38.1101867Z",
+    "backendPid": 13316,
+    "backendBelongsToWorkspace": true,
+    "backendHealthy": true,
+    "frontendStatus": 200,
+    "listeners": [
+      {
+        "LocalAddress": "127.0.0.1",
+        "LocalPort": 9000,
+        "OwningProcess": 13316
+      },
+      {
+        "LocalAddress": "127.0.0.1",
+        "LocalPort": 6379,
+        "OwningProcess": 22696
+      },
+      {
+        "LocalAddress": "127.0.0.1",
+        "LocalPort": 5173,
+        "OwningProcess": 23448
+      }
+    ],
+    "naturalProfile": "PLAN_CONTEXT_REPAIR",
+    "naturalVersionObservedInActualResponse": "core-repair-v4",
+    "modelEndpoint": "https://api.deepseek.com/chat/completions",
+    "temporaryRelayNeeded": false,
+    "migrationsEnabled": false,
+    "redisVersion": "3.2 existing local binary",
+    "productionRelease": false
+  }
+}
