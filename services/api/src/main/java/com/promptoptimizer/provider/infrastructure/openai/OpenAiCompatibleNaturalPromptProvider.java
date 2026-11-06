@@ -195,7 +195,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                         var draft = readEnhancementPhase(body, input, metadata);
                         // 精简协议仍实际完成范围准备与正文生成；不以框架标签或范围分类跳过正文。
                         if (NaturalPromptSimplifiedInstructions.VERSION.equals(input.strategyVersion())
-                                || NaturalPromptPlanContextInstructions.VERSION.equals(input.strategyVersion())) {
+                                || NaturalPromptPlanContextInstructions.usesProtocol(input.strategyVersion())) {
                             draft = draft.withStages(List.of(NaturalProcessing.Stage.SCOPE_ANALYSIS, NaturalProcessing.Stage.BODY_GENERATION));
                         }
                         return validation.apply(draft);
@@ -441,7 +441,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
 
     /** 范围解释不覆盖原输入；36—38及精简协议复用阶段读取器，旧版响应与行为保持原样。 */
     private static boolean usesAdvisoryScope(String version) {
-        return NaturalPromptPlanContextInstructions.VERSION.equals(version)
+        return NaturalPromptPlanContextInstructions.usesProtocol(version)
                 || NaturalPromptSimplifiedInstructions.VERSION.equals(version)
                 || NaturalPromptPreparationRoutingInstructions.VERSION.equals(version)
                 || NaturalPromptIntentCompletionInstructions.VERSION.equals(version)
@@ -450,7 +450,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
 
     /** 按显式版本识别范围并逐次计量；精简协议保留v3准备字节及建议性质，不新增阶段。 */
     private ScopePreparation prepareScope(NaturalPromptInput input, String operation) {
-        String instruction = NaturalPromptPlanContextInstructions.VERSION.equals(input.strategyVersion())
+        String instruction = NaturalPromptPlanContextInstructions.usesProtocol(input.strategyVersion())
                 ? NaturalPromptPlanContextInstructions.PREPARE
                 : NaturalPromptSimplifiedInstructions.VERSION.equals(input.strategyVersion())
                 ? NaturalPromptSimplifiedInstructions.PREPARE
@@ -461,7 +461,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                         ? NaturalPromptExecutionBoundaryInstructions.PREPARE : NaturalPromptScopedInstructions.PREPARE;
         return invoke(input, instruction, operation, (body, metadata) -> {
             try {
-                if (NaturalPromptPlanContextInstructions.VERSION.equals(input.strategyVersion())) {
+                if (NaturalPromptPlanContextInstructions.usesProtocol(input.strategyVersion())) {
                     NaturalTaskScopeSources sources = scopeSourcesReader.readValue(body);
                     return new ScopePreparation(sources.toScope(input), metadata);
                 }
@@ -767,7 +767,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 }
             }
             // 只记录已经收到题答，不推断参数已知、不制造默认答案；原始实际题答继续完整传输。
-            if (NaturalPromptPlanContextInstructions.VERSION.equals(input.strategyVersion())
+            if (NaturalPromptPlanContextInstructions.usesProtocol(input.strategyVersion())
                     && payload instanceof com.fasterxml.jackson.databind.node.ObjectNode answered) {
                 var progress = answered.putObject("planProgress");
                 progress.put("state", input.actualAnswers().isEmpty() ? "NO_BOUND_ANSWERS" : "ANSWERS_RECEIVED");
@@ -915,12 +915,12 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                         // 无效候选留在独立user数据中；诊断只定位确定性错误，不把错误出处或助手建议升级为来源。
                         attemptUser = NaturalPromptRepairContext.userMessage(json, payload, invalidCandidate, parsedCandidate, input, false);
                         repairHint = NaturalPromptBoundedRepairInstructions.REPAIR;
-                    } else if (retry && NaturalPromptPlanContextInstructions.VERSION.equals(input.strategyVersion())
+                    } else if (retry && NaturalPromptPlanContextInstructions.usesProtocol(input.strategyVersion())
                             && failure instanceof NaturalTaskScopeSources.InvalidEvidence invalidEvidence) {
                         // 此异常仅来自v4范围DTO；preparation参数属于旧要求预登记路径，不能用它误关范围修复。
                         repairHint = invalidEvidence.repairInstruction();
                         attemptUser = NaturalPromptRepairContext.scopeUserMessage(payload, invalidCandidate, invalidEvidence);
-                    } else if (retry && NaturalPromptPlanContextInstructions.VERSION.equals(input.strategyVersion())
+                    } else if (retry && NaturalPromptPlanContextInstructions.usesProtocol(input.strategyVersion())
                             && failure instanceof NaturalTaskScopeSources.InvalidUserEvidence missing) {
                         repairHint = missing.repairInstruction();
                     } else if (retry && (NaturalPromptCoreRepairInstructions.supports(input.strategyVersion())

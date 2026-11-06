@@ -53,6 +53,12 @@ class NaturalEnhancementSettingsTest {
     }
 
     @Test
+    void internalDesignCandidateRequiresExplicitConfiguration() {
+        runner.withPropertyValues("app.enhancement.natural.profile=INTERNAL_DESIGN").run(context ->
+                assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("internal-design-v1"));
+    }
+
+    @Test
     void applicationConfigurationAndExplicitPlanRepairSelectTheSameVersion() throws Exception {
         try (var input = getClass().getResourceAsStream("/application.yml")) {
             assertThat(input).isNotNull();

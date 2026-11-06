@@ -34,6 +34,11 @@ public final class NaturalPromptPlanContextInstructions {
             没有需要本轮提问的未知可保留空questionId，不把建议或推荐写成实际用户答案。
             """, ""), NaturalPromptStageInstructions.planningTaskProtocol()) + ANSWER_STATE;
 
+    /** v4及仅调整正文补全的候选共用阶段协议、来源编号与已答状态，历史版本不在此扩大兼容。 */
+    public static boolean usesProtocol(String version) {
+        return VERSION.equals(version) || NaturalPromptInternalDesignInstructions.VERSION.equals(version);
+    }
+
     /** 委托与材料细节分栏，避免模型只引用更详细的材料后漏掉原始动作的用户依据。 */
     private static String preparation() {
         String source = NaturalPromptCoreRepairInstructions.PREPARE;

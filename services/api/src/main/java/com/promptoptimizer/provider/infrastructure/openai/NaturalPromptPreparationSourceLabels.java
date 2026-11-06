@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 final class NaturalPromptPreparationSourceLabels {
     private NaturalPromptPreparationSourceLabels() { }
 
-    /** 仅作用于v4的范围准备调用；正文、Plan结果和其他版本继续接收原输入结构。 */
+    /** 共用v4协议的范围准备调用就近携带来源编号，正文与Plan结果继续使用原输入结构。 */
     static void annotate(String version, boolean scopePreparation, JsonNode payload, NaturalPromptInput input) {
-        if (!NaturalPromptPlanContextInstructions.VERSION.equals(version) || !scopePreparation
+        if (!NaturalPromptPlanContextInstructions.usesProtocol(version) || !scopePreparation
                 || !(payload instanceof ObjectNode root)) return;
         Set<String> sourceIds = input.taskSources().stream().map(NaturalTaskSource::id).collect(Collectors.toSet());
         annotateSnapshot(root.get("context"), "context", sourceIds);

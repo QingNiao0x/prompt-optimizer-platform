@@ -8,12 +8,18 @@ import java.nio.file.Path;
 /**
  * 导出范围准备、正文、Plan及定向修改的完整运行指导，供离线冻结与对照使用。
  * 只加载已编译的公开指导常量，不创建供应商、读取凭据或调用模型。
+ *
+ * @author QingNiao
+ * @since 0.1.0
  */
 class ExportInstructions {
     /** 输出目录由本批捕获脚本指定，历史文件由捕获脚本保护。 */
     public static void main(String[] args) throws Exception {
         Path output = Path.of(args[0]);
         String version = args.length > 1 ? args[1] : NaturalPromptPlanContextInstructions.VERSION;
+        if (!NaturalPromptPlanContextInstructions.usesProtocol(version)) {
+            throw new IllegalArgumentException("本批仅导出共用v4阶段协议的策略");
+        }
         Files.createDirectories(output);
         write(output, "prepare.txt", NaturalPromptPlanContextInstructions.PREPARE);
         write(output, "enhance.txt", NaturalPromptInstructions.enhancementInstruction(version));

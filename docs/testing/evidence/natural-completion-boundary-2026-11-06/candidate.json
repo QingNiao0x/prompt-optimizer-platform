@@ -1,0 +1,50 @@
+{
+  "version": "internal-design-v1",
+  "profile": "INTERNAL_DESIGN",
+  "baselineVersion": "core-repair-v4",
+  "baselineCaptureCommit": "7f645d9a",
+  "sourceDefaultProfile": "PLAN_CONTEXT_REPAIR",
+  "sourceDefaultVersion": "core-repair-v4",
+  "changedStage": "BODY_GENERATION",
+  "stageEquality": {
+    "prepare.txt": true,
+    "plan.txt": true,
+    "revision-prepare.txt": true,
+    "revision-enhance.txt": true
+  },
+  "bodyInstructionSha256": "e43182f603a1c001021da24e237eb6010388d024782af3c51bd7968efd647c23",
+  "sourceHashes": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInternalDesignInstructions.java",
+      "sha256": "7cdd2f8b4381e7e941c70d308fc1f428c02f1c4d5cfeea84122b587339e6df49"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptPlanContextInstructions.java",
+      "sha256": "0d30af2a100486f0ea0b24a5934b3cbb8fb7d6997e443196a9268aeed9eebb2f"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "346dde542639deab8482e48917424e5bc44bf6404848f534f4371f791602fecf"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptStageInstructions.java",
+      "sha256": "775a5bcbb6de1c9cbdd0339905fe050296248f1d0808be786b188fd6409fb163"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "5b7aa356532e20162e716971173544f793334aafa4ce441aa049152d16189417"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/NaturalPromptPreparationSourceLabels.java",
+      "sha256": "0cdcb332f40ee561eb48fed6873f84218563ad83cae7f8be924d6ede3bb40f52"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementSettings.java",
+      "sha256": "4d8c5eb53237ff8176cf5cf8835eb429903c9b3dca8d5f7b2cceed26a7bf46cb"
+    }
+  ],
+  "modelCalls": 0,
+  "adoption": "CANDIDATE_ONLY",
+  "runtimeVerification": "NOT_VERIFIED",
+  "workQuality": "NOT_EVALUATED"
+}

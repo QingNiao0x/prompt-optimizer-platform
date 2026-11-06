@@ -2,6 +2,7 @@ package com.promptoptimizer.enhancement.service.impl;
 
 import com.promptoptimizer.provider.domain.NaturalPromptCoreRepairInstructions;
 import com.promptoptimizer.provider.domain.NaturalPromptInstructions;
+import com.promptoptimizer.provider.domain.NaturalPromptInternalDesignInstructions;
 import com.promptoptimizer.provider.domain.NaturalPromptPlanContextInstructions;
 import com.promptoptimizer.provider.domain.NaturalPromptSimplifiedInstructions;
 import jakarta.validation.constraints.NotNull;
@@ -24,7 +25,8 @@ public class NaturalEnhancementSettings {
     public enum Profile {
         STABLE, CORE_REPAIR, ACTION_BOUNDARY_REPAIR, COMPLETION_BASIS_REPAIR,
         /** 采用已验证的阶段协议、已答状态及来源关联修复，继续沿用v3正文补全原则。 */ PLAN_CONTEXT_REPAIR,
-        /** 精简正文指导尚未证明作品收益，仅供显式对照，不随工程修复默认采用。 */ SIMPLIFIED
+        /** 精简正文指导尚未证明作品收益，仅供显式对照，不随工程修复默认采用。 */ SIMPLIFIED,
+        /** 仅调整原任务内部设计补全的候选，实际作品验收后再决定采用。 */ INTERNAL_DESIGN
     }
 
     @NotNull
@@ -45,6 +47,7 @@ public class NaturalEnhancementSettings {
             case COMPLETION_BASIS_REPAIR -> NaturalPromptCoreRepairInstructions.COMPLETION_BASIS_VERSION;
             case PLAN_CONTEXT_REPAIR -> NaturalPromptPlanContextInstructions.VERSION;
             case SIMPLIFIED -> NaturalPromptSimplifiedInstructions.VERSION;
+            case INTERNAL_DESIGN -> NaturalPromptInternalDesignInstructions.VERSION;
         };
     }
 }

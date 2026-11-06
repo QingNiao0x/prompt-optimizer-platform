@@ -22,7 +22,7 @@ import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.http.client.MockClientHttpRequest;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -51,9 +51,9 @@ class NaturalScopeEvidenceRepairTest {
     }
 
     @ParameterizedTest
-    @ValueSource(booleans = {false, true})
-    void repairsAllMaterialQuotesInOneAttemptWithoutChangingInputOrMixingPlanProtocol(boolean plan) throws Exception {
-        var input = input();
+    @CsvSource({"core-repair-v4,false", "core-repair-v4,true", "internal-design-v1,false", "internal-design-v1,true"})
+    void repairsAllMaterialQuotesInOneAttemptWithoutChangingInputOrMixingPlanProtocol(String version, boolean plan) throws Exception {
+        var input = input().withStrategyVersion(version);
         var invalid = scope(input, true);
         var valid = scope(input, false);
         expect(invalid, input, null, true);
