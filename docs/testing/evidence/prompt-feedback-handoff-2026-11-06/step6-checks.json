@@ -1,0 +1,66 @@
+{
+  "step": 6,
+  "completedDate": "2026-11-07",
+  "frontendUnitTests": {
+    "promptDiff": 9,
+    "optimizationRequest": 13,
+    "contextTransmission": 8,
+    "promptHandoff": 10,
+    "optimizationRevision": 4,
+    "optimization": 20,
+    "total": 64
+  },
+  "typecheck": "passed",
+  "frontendBuild": "passed",
+  "backend": "Step 5 verified 92 affected tests. This step changes no backend code.",
+  "browserUniqueCases": 24,
+  "browserPassesBySuite": {
+    "natural-prompt": 16,
+    "context-material-purpose": 2,
+    "mixed-project-document": 2,
+    "prompt-handoff": 4
+  },
+  "browserProjects": ["desktop-chrome", "mobile-chrome"],
+  "handoffModesAndThemes": ["natural-light", "structured-dark"],
+  "receiver": "Actual clipboard paste into a new blank browser page with a textarea and no application state.",
+  "initialFindings": [
+    {
+      "passed": 0,
+      "failed": 4,
+      "cause": "Two natural cases revealed final request mapping lost material purpose. Two structured cases targeted hidden native switch inputs.",
+      "log": "tmp/handoff-step6-browser.log"
+    },
+    {
+      "passed": 0,
+      "failed": 4,
+      "cause": "Checkbox actions targeted hidden native inputs. Tests now click visible labels and verify checked state.",
+      "log": "tmp/handoff-step6-browser-verified.log"
+    },
+    {
+      "passed": 20,
+      "failed": 4,
+      "cause": "Viewport assertions exposed that scoped dialog styles did not match the teleported dialog. Unique global selectors now bound the dialog and scroll only its body.",
+      "log": "tmp/handoff-step6-browser-regression.log"
+    },
+    {
+      "passed": 2,
+      "failed": 2,
+      "cause": "Desktop preview scrolling produced intersection ratio 0.9998429. Preview now requires 0.999 to allow measured subpixel rounding. Title and action still require ratio 1.",
+      "log": "tmp/handoff-step6-browser-preview-rounding.log"
+    }
+  ],
+  "finalLogs": {
+    "unit": "tmp/handoff-step6-front-final.log",
+    "browserHandoff": "tmp/handoff-step6-browser-layout-final.log",
+    "browserRelatedPaths": "tmp/handoff-step6-browser-regression.log",
+    "build": "tmp/handoff-step6-build.log"
+  },
+  "actualModelCalls": 0,
+  "limitations": [
+    "Current saved result snippets only. Earlier Plan source sets are not guaranteed to remain available.",
+    "Historical snapshots may omit raw snippets. Missing originals must be provided manually.",
+    "No automatic original file export or external AI submission.",
+    "Real model feedback fidelity and downstream work quality are pending separate evaluation.",
+    "Frontend build retains the existing large analytics chunk warning."
+  ]
+}

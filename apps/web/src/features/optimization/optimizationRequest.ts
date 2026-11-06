@@ -36,6 +36,8 @@ export const buildOptimizationRequest = (
       language: file.language.trim(),
       ...(file.documentId ? { documentId: file.documentId } : {}),
       ...(file.sizeBytes !== undefined ? { sizeBytes: file.sizeBytes } : {}),
+      // 用途决定材料如何参与当前任务，直接增强及Plan确认后的组装均须保留。
+      ...(file.purpose ? { purpose: file.purpose } : {}),
     })),
   },
   enhancement: {

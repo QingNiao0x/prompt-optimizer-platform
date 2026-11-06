@@ -8,6 +8,16 @@ import {
 } from './optimizationRequest';
 
 describe('buildOptimizationRequest', () => {
+  it.each(['COMPACT', 'STRUCTURED'] as const)('keeps material purpose in direct and confirmed %s requests', promptFormat => {
+    const files = (['TASK_TARGET', 'FACT_REFERENCE', 'STYLE_REFERENCE', 'DIAGNOSTIC_REFERENCE'] as const)
+      .map((purpose, index) => ({ path: `material-${index}.txt`, content: `原文${index}`, language: 'text', purpose }));
+    const draft = { rawPrompt: '按原要求处理资料', customDescription: '', files, promptFormat,
+      templateCode: 'AUTO' as const, includePermissionBoundaries: true };
+    expect(buildOptimizationRequest(draft).context.files).toEqual(files);
+    expect(buildOptimizationRequest({ ...draft, planConfirmation: { planId: 'fixture', answers: [] } }).context.files).toEqual(files);
+    expect(buildPlanningContextRequest(draft.rawPrompt, '', files).context.files).toEqual(files);
+  });
+
   it('preserves an explicit example request without sending the retired option', () => {
     const rawPrompt = '解释排序方法，提供一组输入和预期输出示例，不得编造业务数据。';
     const request = buildOptimizationRequest({ rawPrompt, customDescription: '', files: [],

@@ -78,7 +78,7 @@ test('本地样例项目索引与单独方案文件共同参与 Plan 和最终�
     requestOrder.push('context');
     const body = route.request().postDataJSON() as {
       rawPrompt: string;
-      context: { files: Array<{ path: string; content: string }> };
+      context: { files: Array<{ path: string; content: string; purpose?: string }> };
     };
     const paths = body.context.files.map((file) => file.path);
     receivedFiles.push(paths);
@@ -88,6 +88,7 @@ test('本地样例项目索引与单独方案文件共同参与 Plan 和最终�
     expect(paths.some((path) => path.startsWith('frontend/package.json#chunk-'))).toBe(true);
     expect(body.context.files.find((file) => file.path === '审批方案.txt')?.content)
       .toContain('财务复核');
+    expect(body.context.files.find((file) => file.path === '审批方案.txt')?.purpose).toBe('FACT_REFERENCE');
     await route.fulfill({ status: 200, json: {
       requestId: 'mixed-context',
       data: {
@@ -139,12 +140,13 @@ test('本地样例项目索引与单独方案文件共同参与 Plan 和最终�
   await page.route('**/api/v2/optimizations', async (route) => {
     requestOrder.push('final');
     const body = route.request().postDataJSON() as {
-      context: { files: Array<{ path: string }> };
+      context: { files: Array<{ path: string; purpose?: string }> };
       planConfirmation: { answers: Array<{ answer: string }> };
     };
     const paths = body.context.files.map((file) => file.path);
     receivedFiles.push(paths);
     expect(paths).toContain('审批方案.txt');
+    expect(body.context.files.find((file) => file.path === '审批方案.txt')?.purpose).toBe('FACT_REFERENCE');
     expect(paths.some((path) => path.startsWith('backend/pom.xml#chunk-'))).toBe(true);
     expect(body.planConfirmation.answers).toEqual([expect.objectContaining({
       answer: '返回 409 状态与审批失败原因。',
@@ -208,6 +210,9 @@ test('本地样例项目索引与单独方案文件共同参与 Plan 和最终�
     name: '审批方案.txt', mimeType: 'text/plain', buffer: Buffer.from(solution, 'utf8'),
   });
   await expect(page.getByText('审批方案.txt', { exact: true })).toBeVisible();
+  const solutionRow = page.locator('.file-list > li').filter({ hasText: '审批方案.txt' });
+  await solutionRow.locator('.file-purpose .el-select__wrapper').click();
+  await page.getByRole('option', { name: '事实参考', exact: true }).click();
   await openWorkbenchPane(page, 'intent');
   await page.getByLabel('原始提示词').fill('按审批方案在样例项目开发订单接口');
   await page.getByRole('button', { name: '先确认并增强' }).click();

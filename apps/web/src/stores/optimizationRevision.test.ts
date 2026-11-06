@@ -62,3 +62,12 @@ it('ignores late responses after switching to another task', async () => {
   expect(store.result).toBeUndefined();
   expect(store.previousResult).toBeUndefined();
 });
+
+it('keeps selected material purpose when submitting local feedback', async () => {
+  const store = useOptimizationStore();
+  store.applyReoptimized({ recordId: 'source', result: result() });
+  vi.mocked(reviseNaturalPrompt).mockResolvedValue({ requestId: 'revision', data: { recordId: 'next', result: result('next') } });
+  const files = [{ path: 'reference.md', content: '参考格式', language: 'markdown', purpose: 'STYLE_REFERENCE' as const }];
+  expect(await store.reviseResult('只改语气', files, 'source')).toBe(true);
+  expect(reviseNaturalPrompt).toHaveBeenCalledWith('source', '只改语气', 2, { customDescription: '', files });
+});

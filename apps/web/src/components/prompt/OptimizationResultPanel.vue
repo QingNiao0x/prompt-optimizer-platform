@@ -20,6 +20,7 @@ import ResultMetaBar from '@/components/prompt/ResultMetaBar.vue';
 import { reportClientAnalyticsEventBestEffort } from '@/services/adminAnalyticsApi';
 import type { OptimizationResult, PromptFormat, PromptSection, PromptSectionType } from '@/types/api';
 import PromptChangeReview from './PromptChangeReview.vue';
+import PromptHandoffDialog from './PromptHandoffDialog.vue';
 
 interface Props {
   result?: OptimizationResult;
@@ -59,6 +60,7 @@ const revisionVisible = ref(false);
 const revisionFeedback = ref('');
 const revisionError = ref('');
 const revisionPending = ref(false);
+const handoffVisible = ref(false);
 /** 只提交本次意见；完整历史与确认题答由后端绑定，失败保留输入以便继续修改。 */
 const submitRevision = (): void => {
   if (!revisionFeedback.value.trim() || props.busy || revisionPending.value) return;
@@ -201,7 +203,7 @@ const selectManualPrompt = (): void => {
 };
 
 /** 所有复制入口共用剪贴板处理；只有写入成功才记录导出，不把平台选择当作已发送。 */
-const copyPrompt = async (content: string, platform?: CopyPlatform): Promise<void> => {
+const copyPrompt = async (content: string, platform?: CopyPlatform, handoff = false): Promise<void> => {
   if (copyDisabled.value || !content.trim()) return;
   const source = result.value;
   resetCopyFeedback();
@@ -226,11 +228,17 @@ const copyPrompt = async (content: string, platform?: CopyPlatform): Promise<voi
     closePendingPlatformTab();
     return;
   }
-  copied.value = true;
+  copied.value = !handoff || content === source?.optimizedPrompt;
   lastCopiedPrompt.value = content;
   copyFeedbackTimer = setTimeout(() => { copied.value = false; }, 2000);
   if (platform && !openCopiedPlatform(platform)) blockedPlatform.value = platform;
-  ElMessage.success('已复制，请在目标平台粘贴。');
+  ElMessage.success(handoff ? '交接内容已复制，请连同所需原文件提供给执行端。' : '已复制，请在目标平台粘贴。');
+};
+
+/** 交接内容绑定生成它的保存稿，迟到点击不能把旧资料冒充新结果。 */
+const copyHandoff = (content: string, source: OptimizationResult): void => {
+  if (result.value !== source || copyDisabled.value) return;
+  void copyPrompt(content, undefined, true);
 };
 
 /** 读取当前已保存的完整结果；生成中或编辑中的内容不从平台入口导出。 */
@@ -261,6 +269,7 @@ const handlePlatformCopy = (platformName: unknown): void => {
 };
 
 watch(result, () => {
+  handoffVisible.value = false;
   resetCopyFeedback();
   editing.value = false;
   ambiguitiesOpen.value = false;
@@ -435,6 +444,10 @@ const saveEditing = (): void => {
 
     <ElButton v-if="result?.resultKind === 'TEXT' && result.recordId && !editing" size="small"
       :disabled="busy" data-testid="revise-prompt" @click="revisionVisible = true">按意见修改</ElButton>
+    <ElButton v-if="result && !editing" size="small" :disabled="copyDisabled" data-testid="prompt-handoff"
+      @click="handoffVisible = true">交给执行 AI</ElButton>
+    <PromptHandoffDialog v-if="result" v-model="handoffVisible" :result="result" :disabled="copyDisabled"
+      :copying="copying" @copy="copyHandoff" />
     <ElDialog v-model="revisionVisible" title="按意见修改提示词" width="min(560px, 92vw)" append-to-body
       :close-on-click-modal="false" :close-on-press-escape="!revisionPending" :show-close="!revisionPending">
       <p>基于当前已保存的结果修改，保留原始需求与已确认信息。使用该结果的模型，成功后保存为新记录。</p>
