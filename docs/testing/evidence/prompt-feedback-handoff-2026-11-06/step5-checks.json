@@ -1,0 +1,53 @@
+{
+  "step": 5,
+  "backend": [
+    {
+      "suite": "MybatisOptimizationHistoryServiceTest",
+      "tests": 35,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "NaturalPlanContextProviderTest",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "NaturalEnhancementServiceTest",
+      "tests": 39,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "backendTotal": 92,
+  "frontendUnitTests": 32,
+  "typecheck": "passed",
+  "browserUniqueCases": 16,
+  "browserProjects": [
+    "desktop-chrome",
+    "mobile-chrome"
+  ],
+  "initialFindings": [
+    {
+      "scope": "unit",
+      "passed": 31,
+      "failed": 1,
+      "cause": "Expected common suffix omitted two shared characters; full input reconstruction assertions remained unchanged."
+    },
+    {
+      "scope": "browser",
+      "passed": 15,
+      "failed": 1,
+      "cause": "One mobile page showed navigation without the workbench. Root cause unconfirmed; interface isolation was completed before the successful rerun."
+    }
+  ],
+  "actualModelCalls": 0,
+  "limitations": [
+    "Diff state follows the current-session undo stack.",
+    "Provider responses in browser tests are controlled, not a live quality evaluation."
+  ]
+}

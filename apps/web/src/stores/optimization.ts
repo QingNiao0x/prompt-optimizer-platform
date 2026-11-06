@@ -196,6 +196,8 @@ export const useOptimizationStore = defineStore('optimization', () => {
     && !isPlanning.value
     && !isOptimizing.value);
   const canUndoResult = computed(() => resultUndoStack.value.length > 0);
+  // 对照与撤销读取同一份保存稿，失败或未保存草稿不制造新的版本关系。
+  const previousResult = computed(() => resultUndoStack.value.at(-1));
   const hasPendingPromptFormat = computed(() => Boolean(result.value)
     && promptFormat.value !== (result.value?.promptFormat ?? 'STRUCTURED'));
   const canReuseGenerationSource = computed(() => Boolean(generationSource.value
@@ -816,6 +818,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     isPreparingContext,
     canOptimize,
     canUndoResult,
+    previousResult,
     hasPendingPromptFormat,
     canReuseGenerationSource,
     modeRegenerationRawPrompt,

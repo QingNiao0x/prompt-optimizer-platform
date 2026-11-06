@@ -74,6 +74,7 @@ const {
   isPreparingContext,
   canOptimize,
   canUndoResult,
+  previousResult,
   canReuseGenerationSource,
 } = storeToRefs(store);
 
@@ -894,6 +895,7 @@ onBeforeUnmount(() => {
         :result="result"
         :edit-draft="resultDraft"
         :can-undo="canUndoResult"
+        :previous-result="previousResult"
         :selected-prompt-format="promptFormat"
         :can-regenerate-with-format="canReuseGenerationSource && trial.canUse('PROMPT_ENHANCEMENT')"
         :busy="isAnalyzing || isPlanning || isOptimizing || isPreparingContext"

@@ -30,9 +30,12 @@ it('sends only feedback and selected context and keeps the old result available 
   expect(await store.reviseResult('只修改语气', [], 'source')).toBe(true);
   expect(reviseNaturalPrompt).toHaveBeenCalledWith('source', '只修改语气', 2, { customDescription: '', files: [] });
   expect(store.result?.optimizedPrompt).toBe('新稿');
+  expect(store.previousResult?.optimizedPrompt).toBe('原稿');
+  expect(store.previousResult?.recordId).toBe('source');
   expect(store.rawPrompt).toBe('输入框的新文字不能改写历史原始需求');
   expect(store.undoResult()).toBe(true);
   expect(store.result?.recordId).toBe('source');
+  expect(store.previousResult).toBeUndefined();
 });
 
 it('keeps the source on failure and never sends unsaved manual changes', async () => {
@@ -44,6 +47,7 @@ it('keeps the source on failure and never sends unsaved manual changes', async (
   vi.mocked(reviseNaturalPrompt).mockRejectedValue(new Error('fixture failure'));
   expect(await store.reviseResult('精简', [], 'source')).toBe(false);
   expect(store.result?.optimizedPrompt).toBe('原稿');
+  expect(store.previousResult).toBeUndefined();
   expect(store.isOptimizing).toBe(false);
 });
 
@@ -56,4 +60,5 @@ it('ignores late responses after switching to another task', async () => {
   finish({ requestId: 'late', data: { recordId: 'next', result: result('next') } });
   expect(await pending).toBe(false);
   expect(store.result).toBeUndefined();
+  expect(store.previousResult).toBeUndefined();
 });

@@ -18,6 +18,8 @@ const fixture = (): OptimizationResult => ({
 
 /** 固定响应验证浏览器闭环；路由白名单阻止测试误发真实模型请求，不创建用户账号。 */
 const setup = async (page: Page, planning: 'off' | 'zero' | 'question', overrides: Partial<OptimizationResult> = {}) => {
+  await page.route('**/api/**', route => route.fulfill({ status: 501,
+    json: { error: { message: '此自然增强夹具未登记接口' } } }));
   await mockAuthentication(page);
   // 偏好同步有独立验收；本套件不让模拟身份请求落入真实账户服务。
   await page.route('**/api/v1/me/settings', route => route.fulfill({ status: 503,
@@ -58,6 +60,8 @@ const setup = async (page: Page, planning: 'off' | 'zero' | 'question', override
       if (state.failRevision) return route.fulfill({ status: 502, json: { error: { code: 'PROVIDER_ERROR', message: '模型调用失败，原结果已保留。' } } });
       state.current = { ...state.current, recordId: '33333333-3333-4333-8333-333333333333', editRevision: 0,
         optimizedPrompt: '请写简洁的客户延期邮件，新日期由用户确认，不承诺额外赔偿。' };
+      const answer = state.requests.at(-1)?.planConfirmation?.answers[0]?.answer;
+      if (answer) state.current.optimizedPrompt += '\n' + answer;
       return route.fulfill({ json: { data: { recordId: state.current.recordId, result: state.current } } });
     }
     if (path.endsWith('/document')) {
@@ -92,7 +96,7 @@ const generate = async (page: Page, plan = false) => {
   await page.getByRole('button', { name: plan ? '先确认并增强' : '直接增强提示词', exact: true }).click();
 };
 
-test('按意见修改保留失败输入，成功后复制与历史使用新正文且不重开Plan', async ({ page }) => {
+test('按意见修改保留失败输入，成功后复制与历史使用新正文且不重开Plan', async ({ page }, testInfo) => {
   const state = await setup(page, 'off');
   await generate(page); await openWorkbenchPane(page, 'result');
   await page.getByTestId('revise-prompt').click();
@@ -106,12 +110,21 @@ test('按意见修改保留失败输入，成功后复制与历史使用新正�
   await expect(dialog.getByRole('alert')).toContainText('模型调用失败');
   await expect(page.getByLabel('本次修改意见')).not.toHaveValue('');
   await expect(page.getByTestId('compact-prompt')).toHaveText(fixture().optimizedPrompt);
+  await expect(page.getByTestId('prompt-change-review')).toHaveCount(0);
   state.failRevision = false;
   await dialog.getByRole('button', { name: '应用修改意见' }).click();
   await expect(dialog).not.toBeVisible();
   await expect(page.getByTestId('compact-prompt')).toHaveText(state.current.optimizedPrompt);
   expect(state.plans).toBe(0);
   expect(state.revisions[1]!.expectedRevision).toBe(0);
+  const comparison = page.getByTestId('prompt-change-review');
+  await comparison.getByText('查看与上一稿的差异', { exact: true }).click();
+  await expect(comparison.locator('.change-content del')).toHaveText(fixture().optimizedPrompt);
+  await expect(comparison.locator('.change-content ins')).toHaveText(state.current.optimizedPrompt);
+  await expect(comparison).toContainText('11111111');
+  await expect(comparison).toContainText('33333333');
+  await page.screenshot({ path: testInfo.outputPath('prompt-revision-diff.png'), fullPage: true, animations: 'disabled' });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
   await page.getByRole('button', { name: '复制提示词', exact: true }).click();
   await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe(state.current.optimizedPrompt);
   await page.goto('/history');
@@ -202,5 +215,18 @@ for (const mode of ['zero', 'question'] as const) {
     expect(state.requests[0]!.planConfirmation?.planId).toBe('22222222-2222-4222-8222-222222222222');
     expect(state.requests[0]!.planConfirmation?.answers).toHaveLength(mode === 'zero' ? 0 : 1);
     expect(state.requests[0]!.enhancement.promptFormat).toBe('COMPACT');
+    if (mode === 'question') {
+      await page.getByTestId('revise-prompt').click();
+      await page.getByLabel('本次修改意见').fill('只调整语气，保留已回答的日期状态和不赔偿的限制。');
+      await page.getByRole('button', { name: '应用修改意见', exact: true }).click();
+      await expect(page.getByRole('dialog', { name: '按意见修改提示词' })).not.toBeVisible();
+      await expect(page.getByTestId('compact-prompt')).toContainText('交付日期尚未确定，不得编造日期。');
+      await expect(page.getByTestId('compact-prompt')).toContainText('不承诺额外赔偿');
+      expect(state.plans).toBe(1);
+      expect(state.revisions).toHaveLength(1);
+      await page.getByRole('button', { name: '撤销', exact: true }).click();
+      await expect(page.getByTestId('compact-prompt')).toContainText('交付日期尚未确定，不得编造日期。');
+      await expect(page.getByTestId('prompt-change-review')).toHaveCount(0);
+    }
   });
 }

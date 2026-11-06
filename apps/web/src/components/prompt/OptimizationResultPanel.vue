@@ -19,6 +19,7 @@ import ResultCard from '@/components/prompt/ResultCard.vue';
 import ResultMetaBar from '@/components/prompt/ResultMetaBar.vue';
 import { reportClientAnalyticsEventBestEffort } from '@/services/adminAnalyticsApi';
 import type { OptimizationResult, PromptFormat, PromptSection, PromptSectionType } from '@/types/api';
+import PromptChangeReview from './PromptChangeReview.vue';
 
 interface Props {
   result?: OptimizationResult;
@@ -26,6 +27,7 @@ interface Props {
   planModeEnabled: boolean;
   editDraft?: PromptSection[] | string;
   canUndo?: boolean;
+  previousResult?: OptimizationResult;
   selectedPromptFormat?: PromptFormat;
   canRegenerateWithFormat?: boolean;
 }
@@ -552,6 +554,7 @@ const saveEditing = (): void => {
         aria-label="增强结果内容，可滚动查看完整提示词"
       >
         <ResultMetaBar :result="result" />
+        <PromptChangeReview v-if="previousResult && !editing" :previous="previousResult" :current="result" />
 
         <ElCollapse v-if="result.evidenceCards?.length && !editing" class="evidence-details" data-testid="result-evidence">
           <ElCollapseItem name="sources" :title="`资料依据 · ${result.evidenceCards.length} 项（展开核对）`">
