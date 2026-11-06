@@ -73,8 +73,10 @@ class NaturalPlanContextProviderTest {
         assertThat(NaturalPromptInstructions.planningInstruction("core-repair-v3"))
                 .isEqualTo(NaturalPromptCoreRepairInstructions.PLAN);
         assertThat(NaturalPromptInstructions.enhancementInstruction(VERSION))
-                .contains("补充可细化这些内容", "bodyQuotes", "已回答不等于参数已确定", "summarySourceId", "directoryTreeSourceIds")
+                .contains("补充可细化这些内容", "bodyQuotes", "已回答不等于参数已确定")
                 .doesNotContain("\"planImpacts\":", "\"review\":", "\"taskUnderstanding\":");
+        assertThat(NaturalPromptPlanContextInstructions.PREPARE)
+                .contains("summarySourceId", "directoryTreeSourceIds");
         assertThat(NaturalPromptInstructions.planningInstruction(VERSION))
                 .contains("decisionBasis", "决定权条件")
                 .doesNotContain("\"bodyQuotes\":", "\"planImpacts\":", "taskUnderstanding.openDecisions");
@@ -279,6 +281,10 @@ class NaturalPlanContextProviderTest {
                 Map.of("content", json.writeValueAsString(content))))));
         server.expect(requestTo(ENDPOINT)).andExpect(request -> {
             var sent = json.readTree(((MockClientHttpRequest)request).getBodyAsString());
+            if (preparing) {
+                assertThat(sent.path("messages").get(0).path("content").asText())
+                        .contains("summarySourceId", "directoryTreeSourceIds");
+            }
             if (repairField != null) {
                 assertThat(sent.path("messages").get(0).path("content").asText()).contains(repairField, "助手生成内容");
             }

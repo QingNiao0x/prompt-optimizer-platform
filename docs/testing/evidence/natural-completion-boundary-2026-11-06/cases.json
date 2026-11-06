@@ -1,0 +1,85 @@
+{
+  "collection": "DEVELOPMENT_AND_REGRESSION",
+  "author": "Codex implementation agent",
+  "visibility": "已向实现者公开，不能用作未见题或独立质量证明",
+  "cases": [
+    {
+      "id": "USER_QUERY",
+      "origin": "用户实际反馈，原始需求逐字保留",
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "materials": [],
+      "actualAnswers": [],
+      "mustPreserve": ["全球范围", "同时回答职业和行业", "查询并给出实质发现"],
+      "allowedDesign": ["组织主要职业和行业的比较、应用情况和结论", "依据与比较定义服务具体结论"],
+      "failureSignals": ["主体变成统计口径讨论", "变成用户必须先补资料的问卷", "声称已经检索到具体数据"]
+    },
+    {
+      "id": "REPAIR",
+      "origin": "已有失败机制的合成回归，非新增真实用户样本",
+      "rawPrompt": "上传附件后保存失败，请定位原因并修复代码，保留其他保存行为。",
+      "materials": [],
+      "actualAnswers": [],
+      "mustPreserve": ["定位并实际修复", "保留其他保存行为"],
+      "allowedDesign": ["沿上传与保存调用链定位", "按定位结果设计修复和相关边界检查"],
+      "failureSignals": ["只交排查报告或修改建议", "未读代码便断定具体根因", "断言用户没有源码"]
+    },
+    {
+      "id": "REPORT",
+      "sourceCase": {"path": "docs/testing/evidence/natural-plan-context-repair-2026-11-01/cases.json", "id": "R_REPORT"},
+      "mustPreserve": ["明确要求排查报告", "不执行修改"],
+      "allowedDesign": ["完善报告内部分析与验证内容"],
+      "failureSignals": ["删去报告义务", "擅自执行代码修改"]
+    },
+    {
+      "id": "WAIT",
+      "sourceCase": {"path": "docs/testing/evidence/natural-plan-context-repair-2026-11-01/cases.json", "id": "R_WAIT"},
+      "mustPreserve": ["阅读理解后等待", "不修改文件", "不交付说明文档"],
+      "allowedDesign": ["仅在既有阅读范围内明确关注点"],
+      "failureSignals": ["新增报告、说明或清单", "提前执行后续任务"]
+    },
+    {
+      "id": "PLAN_DEFER",
+      "sourceCase": {"path": "docs/testing/evidence/natural-plan-context-repair-2026-11-01/cases.json", "id": "R_DEFER"},
+      "mustPreserve": ["逐字使用原实际题答", "保留用户决定权", "日期暂未确定仍可生成其余通知内容"],
+      "allowedDesign": ["通知组织和措辞由AI设计"],
+      "failureSignals": ["重复询问已回答问题", "编造日期或赔偿承诺", "把题干或推荐项当作回答"]
+    },
+    {
+      "id": "SUFFICIENT_NOTICE",
+      "sourceCase": {"path": "docs/testing/evidence/natural-plan-context-repair-2026-11-01/product-cases.json", "id": "D_NOTICE"},
+      "mustPreserve": ["全部日期与事实", "120字以内", "不承诺赔偿", "只返回可发送的通知"],
+      "allowedDesign": ["保留原文或少量改善组织和措辞"],
+      "failureSignals": ["为体现增强而新增内容", "改变日期状态", "新增交付物"]
+    },
+    {
+      "id": "WRITING",
+      "origin": "合成开发题，产品信息全部为测试材料",
+      "rawPrompt": "根据产品介绍写一段面向首次使用者的介绍文案，语气自然。",
+      "materials": [{"path": "product.txt", "content": "合成产品。它允许用户选择文件、整理需求、编辑并复制提示词，不承诺自动完成用户工作。"}],
+      "actualAnswers": [],
+      "mustPreserve": ["首次使用者", "介绍文案", "自然语气", "材料中的功能边界"],
+      "allowedDesign": ["安排信息先后和具体使用价值", "根据受众选择易懂表达"],
+      "failureSignals": ["编造销量或用户评价", "改成技术报告", "要求用户决定全部写法"]
+    },
+    {
+      "id": "OFFICE",
+      "origin": "合成开发题，会议内容全部为测试材料",
+      "rawPrompt": "根据会议记录整理会议纪要，让同事看得懂后续安排。",
+      "materials": [{"path": "meeting.txt", "content": "测试会议。已决定下周一评审。李工负责准备现有方案。陈工建议增加自动提醒，该建议尚未表决。"}],
+      "actualAnswers": [],
+      "mustPreserve": ["已决定事项与待讨论建议分开", "已有负责人", "已有时间"],
+      "allowedDesign": ["按议题、决定和行动事项组织纪要"],
+      "failureSignals": ["把建议写成决定", "增加负责人或截止日期", "交付填空模板"]
+    },
+    {
+      "id": "DATA",
+      "origin": "合成开发题，表格内容全部为测试材料",
+      "rawPrompt": "分析附件中的销售变化，告诉我哪些地方值得关注。",
+      "materials": [{"path": "sales.csv", "content": "月份,品类,销售额（元）\n1月,A,100\n2月,A,120\n1月,B,100\n2月,B,80\n"}],
+      "actualAnswers": [],
+      "mustPreserve": ["分析附件中的实际数据", "回答值得关注的变化"],
+      "allowedDesign": ["比较总体与品类变化", "提供能解释发现的结果组织方式"],
+      "failureSignals": ["编造变化的业务原因", "要求用户补全已在表中的字段", "默认输出通用数据收集模板"]
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "recordedAt": "2026-11-06T07:13:11.077Z",
+  "timeZone": "Asia/Shanghai",
+  "sourceCommit": "c9d9cc9b7af4f7f01661dc436c4e07b3e436c1a1",
+  "existingChanges": [
+    "M README.md",
+    " M services/api/src/test/java/com/promptoptimizer/provider/infrastructure/openai/NaturalPlanContextProviderTest.java",
+    "?? docs/images/guide/",
+    "?? docs/testing/evidence/natural-completion-boundary-2026-11-06/",
+    "?? pelican-bicycle.html"
+  ],
+  "sourceDefaultProfile": "PLAN_CONTEXT_REPAIR",
+  "sourceDefaultVersion": "core-repair-v4",
+  "runtimeVersion": null,
+  "runtimeVerification": "NOT_VERIFIED",
+  "runtimeProbes": [
+    {
+      "port": 9000,
+      "reachable": false,
+      "status": null
+    },
+    {
+      "port": 5173,
+      "reachable": false,
+      "status": null
+    }
+  ],
+  "modelCalls": 0,
+  "sources": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptPlanContextInstructions.java",
+      "sha256": "7eaab0e0aef5fbfd71fe9c1ab3c3cfe5b3ac51a03dd5893b53920e4379b5ea15"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptCoreRepairInstructions.java",
+      "sha256": "b77a597457c20adeda4c0c00d21a8fe803476ccd8770b252cff6e87a6e52ea5b"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptStageInstructions.java",
+      "sha256": "28f36b182095c9432143f72268f7e74ecf63e791a1f4b1804251a00b93793d2e"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "59f77652828589b6bcf301b986cd3aebb5677111b2b3595bae4fa4012969e0d7"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "f59c480c31d0aaf382bafa8c1815e2df82e533f030f9e72573451cc891f5da77"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/NaturalPromptPreparationSourceLabels.java",
+      "sha256": "a75e7127be40ff116684eac8d5a7e7aa9852d96ec0e3312df4954116f5efe817"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementSettings.java",
+      "sha256": "ae9f169ccc6fb821878e4011e73ad7e39261ae2414955a4db6be85ba1e29c86e"
+    },
+    {
+      "path": "services/api/src/main/resources/application.yml",
+      "sha256": "9dc49c254504501a7f8f8ea8ab854a356236932487153d05c2b2bd039ca68ab4"
+    }
+  ],
+  "caseSources": [
+    {
+      "path": "docs/testing/evidence/natural-plan-context-repair-2026-11-01/cases.json",
+      "sha256": "b8876692b39da22dc9b6669ba51baec2d7a1e019f509c8160612552ee8235096"
+    },
+    {
+      "path": "docs/testing/evidence/natural-plan-context-repair-2026-11-01/product-cases.json",
+      "sha256": "e439791c8ceb2d41b7449a10106db52bb3b8cb40193b207d08ab31d111b9a0c5"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "cases.json",
+      "bytes": 5247,
+      "sha256": "a42aba71ab7151434d759bdbb0828f033e4658c4cb3cc4a178bc01922abb1839"
+    },
+    {
+      "path": "instructions/enhance.txt",
+      "bytes": 8304,
+      "sha256": "1773a31974aa73e18b9df3aaec1ee8e9a2159f9a954a02ec9768a27835250ae5"
+    },
+    {
+      "path": "instructions/plan.txt",
+      "bytes": 7859,
+      "sha256": "b7db7b082d2cb9c9281ca8735b696972a6689baa3942df12f00631470a08940c"
+    },
+    {
+      "path": "instructions/prepare.txt",
+      "bytes": 4723,
+      "sha256": "1fe18881ce948ec3b6ae8385cc5b7284193f4135470946bf47c63e3c68bf673f"
+    },
+    {
+      "path": "instructions/revision-enhance.txt",
+      "bytes": 1004,
+      "sha256": "40b7920ed42a08d9392b05d4ada73fd22e82621d9443ea54ba341826fd8decfe"
+    },
+    {
+      "path": "instructions/revision-prepare.txt",
+      "bytes": 905,
+      "sha256": "18a0be380babbcb8cbb5f931005e552de6bf0468e1307be09169229fcae0b59a"
+    }
+  ]
+}
