@@ -1,0 +1,92 @@
+{
+  "caseId": "R_WAIT",
+  "stage": "candidate",
+  "input": {
+    "rawPrompt": "先阅读附件并熟悉项目的模块关系，理解后等我安排具体任务，不要改文件，也不用写项目说明。",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": [
+        {
+          "path": "project.txt",
+          "language": "text",
+          "content": "合成项目包含采集、查询和导出模块。采集保存后供查询，导出读取查询结果。"
+        }
+      ]
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "requestId": "b6d5f2b5-d64f-4b47-909e-186c57c19397",
+      "data": {
+        "optimizedPrompt": "请先阅读附件 project.txt，熟悉该项目的模块关系：采集模块保存数据后供查询模块使用，导出模块读取查询结果。理解后请等待我安排具体任务；不要修改任何文件，也不用撰写项目说明。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "project.txt"
+          ],
+          "fileSnippets": [
+            {
+              "path": "project.txt",
+              "language": "text",
+              "content": "[片段 1/1]\n合成项目包含采集、查询和导出模块。采集保存后供查询，导出读取查询结果。",
+              "summary": "文件内容摘要：合成项目包含采集、查询和导出模块。；采集保存后供查询，导出读取查询结果。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 4331,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "internal-design-v1",
+        "framework": "APE",
+        "recordId": "160f1ca2-e347-4b69-a139-a65f73b52f70",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  }
+}

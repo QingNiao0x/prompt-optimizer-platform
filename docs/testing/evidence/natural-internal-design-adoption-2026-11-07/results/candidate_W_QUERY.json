@@ -1,0 +1,36 @@
+{
+  "caseId": "W_QUERY",
+  "stage": "candidate",
+  "input": {
+    "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "response": {
+    "status": 502,
+    "body": {
+      "requestId": "397389e0-6fc3-45bf-bd68-f10bdac18338",
+      "error": {
+        "code": "RESULT_INVALID",
+        "message": "模型响应未通过结构、内容或安全校验，本次增强未完成。",
+        "retryable": false,
+        "details": {}
+      }
+    }
+  }
+}

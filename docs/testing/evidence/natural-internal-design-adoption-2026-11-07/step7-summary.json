@@ -1,0 +1,230 @@
+{
+  "completedAt": "2026-11-06T17:40:00.322Z",
+  "actualCalls": 112,
+  "maximum": 200,
+  "phases": {
+    "author": 1,
+    "enhancement": 39,
+    "regression": 16,
+    "workflow": 4,
+    "execute": 40,
+    "review": 12
+  },
+  "inputTokens": 248137,
+  "outputTokens": 99077,
+  "missingUsage": 0,
+  "actualResponseModels": [
+    "deepseek-flash"
+  ],
+  "price": "Unknown, no monetary savings inferred",
+  "generation": [
+    {
+      "arm": "current",
+      "caseId": "W_QUERY",
+      "status": 502
+    },
+    {
+      "arm": "current",
+      "caseId": "W_CODE",
+      "status": 200,
+      "chainVersion": "core-repair-v4"
+    },
+    {
+      "arm": "current",
+      "caseId": "W_DATA",
+      "status": 200,
+      "chainVersion": "core-repair-v4"
+    },
+    {
+      "arm": "current",
+      "caseId": "W_OFFICE",
+      "status": 502
+    },
+    {
+      "arm": "current",
+      "caseId": "W_DESIGN",
+      "status": 200,
+      "chainVersion": "core-repair-v4"
+    },
+    {
+      "arm": "current",
+      "caseId": "R_SUFFICIENT",
+      "status": 200,
+      "chainVersion": "core-repair-v4"
+    },
+    {
+      "arm": "current",
+      "caseId": "R_WAIT",
+      "status": 200,
+      "chainVersion": "core-repair-v4"
+    },
+    {
+      "arm": "current",
+      "caseId": "R_REPORT",
+      "status": 200,
+      "chainVersion": "core-repair-v4"
+    },
+    {
+      "arm": "current",
+      "caseId": "R_PLAN",
+      "status": 200,
+      "chainVersion": "core-repair-v4"
+    },
+    {
+      "arm": "current",
+      "caseId": "H1",
+      "status": 200,
+      "chainVersion": "core-repair-v4"
+    },
+    {
+      "arm": "current",
+      "caseId": "H2",
+      "status": 200,
+      "chainVersion": "core-repair-v4"
+    },
+    {
+      "arm": "candidate",
+      "caseId": "W_QUERY",
+      "status": 502
+    },
+    {
+      "arm": "candidate",
+      "caseId": "W_CODE",
+      "status": 200,
+      "chainVersion": "internal-design-v1"
+    },
+    {
+      "arm": "candidate",
+      "caseId": "W_DATA",
+      "status": 200,
+      "chainVersion": "internal-design-v1"
+    },
+    {
+      "arm": "candidate",
+      "caseId": "W_OFFICE",
+      "status": 200,
+      "chainVersion": "internal-design-v1"
+    },
+    {
+      "arm": "candidate",
+      "caseId": "W_DESIGN",
+      "status": 200,
+      "chainVersion": "internal-design-v1"
+    },
+    {
+      "arm": "candidate",
+      "caseId": "R_SUFFICIENT",
+      "status": 200,
+      "chainVersion": "internal-design-v1"
+    },
+    {
+      "arm": "candidate",
+      "caseId": "R_WAIT",
+      "status": 200,
+      "chainVersion": "internal-design-v1"
+    },
+    {
+      "arm": "candidate",
+      "caseId": "R_REPORT",
+      "status": 200,
+      "chainVersion": "internal-design-v1"
+    },
+    {
+      "arm": "candidate",
+      "caseId": "R_PLAN",
+      "status": 200,
+      "chainVersion": "internal-design-v1"
+    },
+    {
+      "arm": "candidate",
+      "caseId": "H1",
+      "status": 200,
+      "chainVersion": "internal-design-v1"
+    },
+    {
+      "arm": "candidate",
+      "caseId": "H2",
+      "status": 200,
+      "chainVersion": "internal-design-v1"
+    }
+  ],
+  "works": 40,
+  "completeWorkResponses": 40,
+  "codeChecks": [
+    {
+      "id": "W_CODE_candidate_1",
+      "passed": false,
+      "passedChecks": 15,
+      "totalChecks": 16,
+      "failures": [
+        {
+          "name": "只返回实际修改的文件",
+          "passed": false,
+          "error": "返回了未修改文件 src/occupationalInfo/form.mjs"
+        }
+      ]
+    },
+    {
+      "id": "W_CODE_raw_1",
+      "passed": true,
+      "passedChecks": 16,
+      "totalChecks": 16,
+      "failures": []
+    },
+    {
+      "id": "W_CODE_current_1",
+      "passed": false,
+      "passedChecks": 15,
+      "totalChecks": 16,
+      "failures": [
+        {
+          "name": "只返回实际修改的文件",
+          "passed": false,
+          "error": "返回了未修改文件 src/occupationalInfo/form.mjs"
+        }
+      ]
+    },
+    {
+      "id": "W_CODE_current_2",
+      "passed": false,
+      "passedChecks": 15,
+      "totalChecks": 16,
+      "failures": [
+        {
+          "name": "只返回实际修改的文件",
+          "passed": false,
+          "error": "返回了未修改文件 src/occupationalInfo/form.mjs"
+        }
+      ]
+    },
+    {
+      "id": "W_CODE_candidate_2",
+      "passed": false,
+      "passedChecks": 15,
+      "totalChecks": 16,
+      "failures": [
+        {
+          "name": "只返回实际修改的文件",
+          "passed": false,
+          "error": "返回了未修改文件 src/occupationalInfo/form.mjs"
+        }
+      ]
+    },
+    {
+      "id": "W_CODE_raw_2",
+      "passed": false,
+      "passedChecks": 15,
+      "totalChecks": 16,
+      "failures": [
+        {
+          "name": "只返回实际修改的文件",
+          "passed": false,
+          "error": "返回了未修改文件 src/occupationalInfo/form.mjs"
+        }
+      ]
+    }
+  ],
+  "candidateDecision": "DO_NOT_ADOPT",
+  "reason": "No stable upgrade benefit over v4 demonstrated in two tasks including a post-freeze task. Protocol delivery and actual work scope defects remain. Engineering retrieval repair is assessed separately.",
+  "humanReview": "Not performed. Internal AI assistance and implementation-agent audit only."
+}

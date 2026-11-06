@@ -30,6 +30,18 @@ export const extractProjectPathReferences = (query: string): ProjectPathReferenc
   return result.sort((left, right) => left.start - right.start);
 };
 
+/**
+ * 未加引号的@引用可能紧邻中文任务文字。完整路径未命中时才尝试脚本边界处的路径，
+ * 必须由当前索引核实，不截短ASCII名称、不改写带引号的路径或纯中文文件名。
+ */
+export const attachedTextPathReference = (query: string, reference: ProjectPathReference): ProjectPathReference | undefined => {
+  if (query[reference.start] !== '@' || /["'`]/.test(query[reference.start + 1] ?? '')) return undefined;
+  const match = /^(.*[A-Za-z0-9_.-])\p{Script=Han}+$/u.exec(reference.path);
+  const path = match?.[1];
+  if (!path) return undefined;
+  return { ...reference, path, end: reference.end - (reference.path.length - path.length) };
+};
+
 /** 在已选项目内解析相对路径；只去除真实 rootName，不猜测任意项目名前缀。 */
 export const referencedPathVariants = (reference: string, rootName?: string): string[] => {
   const path = normalizeReferencedPath(reference);

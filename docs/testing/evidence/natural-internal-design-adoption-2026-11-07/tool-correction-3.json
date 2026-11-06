@@ -1,0 +1,20 @@
+{
+  "recordedAt": "2026-11-06T17:23:01.319Z",
+  "beforeAnyWork": true,
+  "candidateUnchanged": true,
+  "changes": [
+    "Use the separately retained post-context-repair W_CODE generation for both arms.",
+    "Do not spend execution or review calls when both enhancement arms failed.",
+    "AST inspection excludes comments from forbidden-capability checks. Function calls and mutation checks execute inside VM timeouts."
+  ],
+  "files": [
+    {
+      "path": "works-contextfix.mjs",
+      "sha256": "2ff26030a2c5ee16732e1736b279490bbce7748e42da0d6b39a070e3b76c864a"
+    },
+    {
+      "path": "check-works-contextfix.mjs",
+      "sha256": "cf7acceadb840b0e0243264c169ce94eac7ffa630ddd4f1e361fa77bd110261c"
+    }
+  ]
+}

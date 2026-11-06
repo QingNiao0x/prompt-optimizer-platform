@@ -1,0 +1,57 @@
+{
+  "caseId": "R_PLAN",
+  "pass": 2,
+  "payload": {
+    "model": "deepseek-flash",
+    "temperature": 0.2,
+    "max_tokens": 10000,
+    "thinking": {
+      "type": "disabled"
+    },
+    "stream": false,
+    "response_format": {
+      "type": "json_object"
+    },
+    "messages": [
+      {
+        "role": "system",
+        "content": "评阅匿名实际作品。按用户原始目标、共同材料和真实答案判断可直接使用程度、具体错误和必要修改。合理方案允许不同。长度、标题和更专业的措辞本身不算收益。不要追加用户未要求的交付或把主观偏好说成硬性错误。只返回JSON，所有问题须引用实际原句。"
+      },
+      {
+        "role": "user",
+        "content": "{\"rawPrompt\":\"给客户写一则服务延期通知，只输出正文。新的交付日期和补偿方案由我决定，请先确认这两项。其他措辞由AI设计。\",\"context\":{\"files\":[],\"actualUserAnswer\":\"新交付日期由我稍后确认，当前不承诺具体日期。不承诺额外赔偿。\"},\"rubric\":[\"只问会改变结果的日期与补偿决定\",\"回答后继续生成，不重复询问\",\"保留日期未决和不承诺赔偿\",\"反馈修改保留既有答案\"],\"works\":[{\"label\":\"C1\",\"content\":\"尊敬的客户：\\n\\n您好！\\n\\n感谢您一直以来对我们的信任与支持。现就本次服务交付安排向您作如下说明。\\n\\n由于相关服务进度调整，原定交付时间将有所延后。新的交付日期我们正在加紧确认中，待确定后将第一时间与您同步，并全力推进后续工作，尽可能减少对您的影响。\\n\\n就本次延期给您带来的不便，我们深表歉意。关于补偿事宜，目前暂无法提供额外补偿方案，敬请谅解。我们会在后续服务中持续跟进，确保交付质量与沟通顺畅。\\n\\n如您有任何疑问或需要进一步了解进展情况，请随时与我们联系，我们将及时为您解答。\\n\\n再次感谢您的理解与支持！\\n\\n此致\\n敬礼\"},{\"label\":\"A1\",\"content\":\"尊敬的客户：\\n\\n感谢您一直以来对我们的信任与支持。现就本次服务交付安排向您说明：受相关情况影响，原定交付时间需要延后。新的交付日期将由我方稍后确认，当前暂无法承诺具体日期，由此给您带来的不便，我们深表歉意。\\n\\n我方正在积极推进相关工作，并将持续向您同步进展。待交付日期确认后，我们会第一时间与您沟通。如您有任何疑问，欢迎随时与我们联系。\\n\\n再次感谢您的理解与耐心。\"},{\"label\":\"B1\",\"content\":\"尊敬的客户：\\n\\n感谢您一直以来对我们的信任与支持。现就本次服务交付安排向您说明：由于当前情况变化，原定的服务交付时间需要相应延期，新的交付日期我们将在确认后第一时间另行通知您。对于此次延期给您带来的不便，我们深表歉意，并将持续跟进后续进展，及时向您同步相关信息。如您有任何疑问，欢迎随时与我们联系。感谢您的理解与配合。\"}],\"responseContract\":{\"assessments\":[{\"label\":\"匿名编号\",\"goalMet\":true,\"severeIssues\":[{\"quote\":\"具体原句\",\"reason\":\"违反哪项原始要求\",\"requiredEdit\":\"必须怎样改\"}],\"necessaryEdits\":[{\"quote\":\"必须修改的原句\",\"reason\":\"实际问题\"}],\"usefulFeatures\":[\"对目标有帮助的具体内容\"],\"usableWithoutSubstantiveEdit\":true}],\"preferenceGroups\":[[\"持平的匿名编号\"],[\"次选编号\"]],\"uncertainties\":[\"证据不足或主观取舍\"]}}"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "id": "c49bf9c8-0a4a-46d9-aaf4-6a1138bfd941",
+      "object": "chat.completion",
+      "created": 1793986424,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"assessments\":[{\"label\":\"C1\",\"goalMet\":true,\"severeIssues\":[],\"necessaryEdits\":[{\"quote\":\"关于补偿事宜，目前暂无法提供额外补偿方案，敬请谅解。\",\"reason\":\"用户只决定“不承诺额外赔偿”，并未决定主动向客户宣告“暂无法提供额外补偿方案”；把内部决定写成对外明确拒绝，超出了用户授权，且可能改变客户沟通效果。\",\"requiredEdit\":\"删除该句，或改为不涉及补偿承诺的中性表述，例如仅致歉并说明后续沟通，不主动声明不提供补偿。\"}],\"usefulFeatures\":[\"保留“新的交付日期正在确认中、待确定后同步”，符合日期未决状态\",\"未虚构具体日期或补偿方案\",\"正文结构完整、语气礼貌\"],\"usableWithoutSubstantiveEdit\":false},{\"label\":\"A1\",\"goalMet\":true,\"severeIssues\":[],\"necessaryEdits\":[],\"usefulFeatures\":[\"明确“新的交付日期将由我方稍后确认，当前暂无法承诺具体日期”，准确保留日期未决\",\"未提及补偿，未作出额外赔偿承诺，符合“不承诺额外赔偿”\",\"未虚构日期或补偿方案\",\"正文简洁完整，可直接作为延期通知使用\"],\"usableWithoutSubstantiveEdit\":true},{\"label\":\"B1\",\"goalMet\":true,\"severeIssues\":[],\"necessaryEdits\":[],\"usefulFeatures\":[\"说明交付延期且新日期确认后另行通知，保留日期未决\",\"未承诺具体日期\",\"未提及补偿，未作出额外赔偿承诺\",\"正文完整、措辞得体\"],\"usableWithoutSubstantiveEdit\":true}],\"preferenceGroups\":[[\"A1\",\"B1\"],[\"C1\"]],\"uncertainties\":[\"C1中“暂无法提供额外补偿方案”是否构成严重问题，取决于用户是否希望主动向客户披露不补偿；按原始目标“不承诺额外赔偿”而非“明确拒绝补偿”，倾向认为其超出授权但未达到严重错误。\",\"A1与B1均可用，偏好差异主要来自措辞简洁度，属于主观取舍。\"]}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 714,
+        "completion_tokens": 448,
+        "total_tokens": 1162,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 714
+      },
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    }
+  }
+}

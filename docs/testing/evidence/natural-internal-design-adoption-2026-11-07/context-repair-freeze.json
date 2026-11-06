@@ -1,0 +1,37 @@
+{
+  "frozenAt": "2026-11-06T17:10:33.065Z",
+  "callsBefore": 6,
+  "bodyCandidateChanged": false,
+  "originalGenerationRetained": "results/current_W_CODE.json",
+  "postRepairSuffix": "_contextfix",
+  "cause": "An unquoted at-path consumed adjacent Chinese task words, so the indexed target was not retrieved.",
+  "repair": "Try the full indexed path first. Only after a miss, check the script boundary of the unquoted path against the same index. Quoted and ASCII-suffixed missing paths remain unchanged.",
+  "validation": {
+    "frontendTests": 82,
+    "typecheck": "passed",
+    "regressionLog": "tmp/step78-path-red.log",
+    "afterLog": "tmp/step78-path-after.log"
+  },
+  "files": [
+    {
+      "path": "apps/web/src/features/project-index/projectPathReferences.ts",
+      "sha256": "22afd2e44cfc4eb81546a380d009968ec920b50670126c6433d6795ae1eb7aed"
+    },
+    {
+      "path": "apps/web/src/features/project-index/projectIndexer.ts",
+      "sha256": "aa89c959dd500aaa4da9943996487b988fcad5d991f52d4951e5378802e44fbc"
+    },
+    {
+      "path": "apps/web/src/features/project-index/projectIndexer.test.ts",
+      "sha256": "61b104cec3ea3c74310b5e6143b55e4b83d726a34044eef34ce3523b39fb3902"
+    },
+    {
+      "path": "docs/testing/evidence/natural-internal-design-adoption-2026-11-07/browser-contextfix.mjs",
+      "sha256": "f08b6a09fedab81a9028595d96c5533ed70dc18efd0fabc53a3176cc0d41dafd"
+    },
+    {
+      "path": "docs/testing/evidence/natural-internal-design-adoption-2026-11-07/works-contextfix.mjs",
+      "sha256": "0192398e8fb71834aabe12280ca3f5c4fae0a085777697547881423b2bc5468d"
+    }
+  ]
+}

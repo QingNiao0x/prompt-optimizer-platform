@@ -1,0 +1,48 @@
+{
+  "route": "/api/v2/optimizations/plan",
+  "input": {
+    "rawPrompt": "给客户写一则服务延期通知，只输出正文。新的交付日期和补偿方案由我决定，请先确认这两项。其他措辞由AI设计。",
+    "modelId": "deepseek:deepseek-flash",
+    "contextDescription": "",
+    "conversationHistory": [],
+    "planningContext": null
+  },
+  "status": 200,
+  "body": {
+    "requestId": "daa688d0-e61a-4aac-a063-9baafcb9481e",
+    "data": {
+      "summary": "用户委托撰写一则面向客户的服务延期通知，仅输出正文；新的交付日期和补偿方案由用户决定，并要求先确认这两项。当前尚无实际答复，因此需就这两项用户保留决定提问；其余措辞由执行者设计。",
+      "questions": [
+        {
+          "id": "newDeliveryDate",
+          "question": "新的交付日期是哪一天（或哪个明确时间点）？",
+          "hint": "该日期是通知正文的核心事实，用户明确保留由自己决定；不同答案直接改变正文中的承诺日期，执行者不能代为设定。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "compensationPlan",
+          "question": "补偿方案的具体内容是什么（如无补偿也请明确说明）？",
+          "hint": "补偿方案是通知正文的另一核心事实，用户明确保留由自己决定；不同答案决定正文是否包含补偿及如何表述。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "AUTO",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 5868,
+      "planId": "e5c06268-57dd-4160-94e9-9f237ff14553",
+      "planningContext": null,
+      "expiresAt": "2026-11-06T17:44:52.971354400Z"
+    }
+  }
+}

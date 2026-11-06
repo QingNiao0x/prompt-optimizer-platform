@@ -1,0 +1,942 @@
+{
+  "assessment": "确定性行为及交付检查，不能代替语义评阅",
+  "results": [
+    {
+      "id": "W_CODE_candidate_1",
+      "caseId": "W_CODE",
+      "arm": "candidate",
+      "delivered": true,
+      "outputSha256": "32c4473367fe3bd7244355e71f9d32f237050b669d3c8a5f942c0f22dc7001aa",
+      "passed": false,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        },
+        {
+          "name": "仅交付可定位的现有业务文件",
+          "passed": true
+        },
+        {
+          "name": "只返回实际修改的文件",
+          "passed": false,
+          "error": "返回了未修改文件 src/occupationalInfo/form.mjs"
+        },
+        {
+          "name": "语法及受限模块装载",
+          "passed": true
+        },
+        {
+          "name": "新增接受2026-11-06",
+          "passed": true
+        },
+        {
+          "name": "新增接受2026-11-07",
+          "passed": true
+        },
+        {
+          "name": "新增接受2024-02-29",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-11-08",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2027-01-01",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-02-29",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-02-30",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-13-01",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝null",
+          "passed": true
+        },
+        {
+          "name": "导入逐行反馈及正常行保留",
+          "passed": true
+        },
+        {
+          "name": "年末跨日边界",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_CODE_raw_1",
+      "caseId": "W_CODE",
+      "arm": "raw",
+      "delivered": true,
+      "outputSha256": "610076926a9e5d0c39eb6db02c4139d4c5b9fcfcf3a610944ce05907156405b4",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        },
+        {
+          "name": "仅交付可定位的现有业务文件",
+          "passed": true
+        },
+        {
+          "name": "只返回实际修改的文件",
+          "passed": true
+        },
+        {
+          "name": "语法及受限模块装载",
+          "passed": true
+        },
+        {
+          "name": "新增接受2026-11-06",
+          "passed": true
+        },
+        {
+          "name": "新增接受2026-11-07",
+          "passed": true
+        },
+        {
+          "name": "新增接受2024-02-29",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-11-08",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2027-01-01",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-02-29",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-02-30",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-13-01",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝null",
+          "passed": true
+        },
+        {
+          "name": "导入逐行反馈及正常行保留",
+          "passed": true
+        },
+        {
+          "name": "年末跨日边界",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_CODE_current_1",
+      "caseId": "W_CODE",
+      "arm": "current",
+      "delivered": true,
+      "outputSha256": "4bcbd2f5439cec33a5d1a67702f6b6f0d3d4a4c7ef97e8ed0656019e0f5f9656",
+      "passed": false,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        },
+        {
+          "name": "仅交付可定位的现有业务文件",
+          "passed": true
+        },
+        {
+          "name": "只返回实际修改的文件",
+          "passed": false,
+          "error": "返回了未修改文件 src/occupationalInfo/form.mjs"
+        },
+        {
+          "name": "语法及受限模块装载",
+          "passed": true
+        },
+        {
+          "name": "新增接受2026-11-06",
+          "passed": true
+        },
+        {
+          "name": "新增接受2026-11-07",
+          "passed": true
+        },
+        {
+          "name": "新增接受2024-02-29",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-11-08",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2027-01-01",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-02-29",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-02-30",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-13-01",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝null",
+          "passed": true
+        },
+        {
+          "name": "导入逐行反馈及正常行保留",
+          "passed": true
+        },
+        {
+          "name": "年末跨日边界",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_CODE_current_2",
+      "caseId": "W_CODE",
+      "arm": "current",
+      "delivered": true,
+      "outputSha256": "4bcbd2f5439cec33a5d1a67702f6b6f0d3d4a4c7ef97e8ed0656019e0f5f9656",
+      "passed": false,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        },
+        {
+          "name": "仅交付可定位的现有业务文件",
+          "passed": true
+        },
+        {
+          "name": "只返回实际修改的文件",
+          "passed": false,
+          "error": "返回了未修改文件 src/occupationalInfo/form.mjs"
+        },
+        {
+          "name": "语法及受限模块装载",
+          "passed": true
+        },
+        {
+          "name": "新增接受2026-11-06",
+          "passed": true
+        },
+        {
+          "name": "新增接受2026-11-07",
+          "passed": true
+        },
+        {
+          "name": "新增接受2024-02-29",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-11-08",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2027-01-01",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-02-29",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-02-30",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-13-01",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝null",
+          "passed": true
+        },
+        {
+          "name": "导入逐行反馈及正常行保留",
+          "passed": true
+        },
+        {
+          "name": "年末跨日边界",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_CODE_candidate_2",
+      "caseId": "W_CODE",
+      "arm": "candidate",
+      "delivered": true,
+      "outputSha256": "a717edbae543cfc7ec55a682f6b65d906f26269aac9d4cb3342ff5eb837a8b4e",
+      "passed": false,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        },
+        {
+          "name": "仅交付可定位的现有业务文件",
+          "passed": true
+        },
+        {
+          "name": "只返回实际修改的文件",
+          "passed": false,
+          "error": "返回了未修改文件 src/occupationalInfo/form.mjs"
+        },
+        {
+          "name": "语法及受限模块装载",
+          "passed": true
+        },
+        {
+          "name": "新增接受2026-11-06",
+          "passed": true
+        },
+        {
+          "name": "新增接受2026-11-07",
+          "passed": true
+        },
+        {
+          "name": "新增接受2024-02-29",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-11-08",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2027-01-01",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-02-29",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-02-30",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-13-01",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝null",
+          "passed": true
+        },
+        {
+          "name": "导入逐行反馈及正常行保留",
+          "passed": true
+        },
+        {
+          "name": "年末跨日边界",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_CODE_raw_2",
+      "caseId": "W_CODE",
+      "arm": "raw",
+      "delivered": true,
+      "outputSha256": "552a3c8f132d2706ce783ee694b71dc9086ba49d4395f225575dfa89f5f27734",
+      "passed": false,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        },
+        {
+          "name": "仅交付可定位的现有业务文件",
+          "passed": true
+        },
+        {
+          "name": "只返回实际修改的文件",
+          "passed": false,
+          "error": "返回了未修改文件 src/occupationalInfo/form.mjs"
+        },
+        {
+          "name": "语法及受限模块装载",
+          "passed": true
+        },
+        {
+          "name": "新增接受2026-11-06",
+          "passed": true
+        },
+        {
+          "name": "新增接受2026-11-07",
+          "passed": true
+        },
+        {
+          "name": "新增接受2024-02-29",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-11-08",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2027-01-01",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-02-29",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-02-30",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝2026-13-01",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝",
+          "passed": true
+        },
+        {
+          "name": "新增拒绝null",
+          "passed": true
+        },
+        {
+          "name": "导入逐行反馈及正常行保留",
+          "passed": true
+        },
+        {
+          "name": "年末跨日边界",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_DATA_candidate_1",
+      "caseId": "W_DATA",
+      "arm": "candidate",
+      "delivered": true,
+      "outputSha256": "4b0283d54534d6915140e9bbfab534534d552a4ac3445fe4a370fa7284f5c5d1",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_DATA_raw_1",
+      "caseId": "W_DATA",
+      "arm": "raw",
+      "delivered": true,
+      "outputSha256": "4e678562fc35b09f97c4d1225d163cbe2dcacd18aae645525088921ea9fc7b4a",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_DATA_current_1",
+      "caseId": "W_DATA",
+      "arm": "current",
+      "delivered": true,
+      "outputSha256": "c995a251372421f6f039caeb1e51938de19a559fc8e2d115f3c9d666701d1491",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_DATA_current_2",
+      "caseId": "W_DATA",
+      "arm": "current",
+      "delivered": true,
+      "outputSha256": "c8d0dd1b5d0fbc9710bafe92588c2845ec3fcb3ace823dc1f1ee231c7c0b6fab",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_DATA_candidate_2",
+      "caseId": "W_DATA",
+      "arm": "candidate",
+      "delivered": true,
+      "outputSha256": "9241a2f64ace6207a78b2df558bf83eee925cf606005a431e70e222d0fcf79ff",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_DATA_raw_2",
+      "caseId": "W_DATA",
+      "arm": "raw",
+      "delivered": true,
+      "outputSha256": "619a68237732172e8ba763a6d2f9c72cae2c021982de44c42daa7791d4fdc972",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_OFFICE_candidate_1",
+      "caseId": "W_OFFICE",
+      "arm": "candidate",
+      "delivered": true,
+      "outputSha256": "e0629e1a7afcd5191d33663891099b63ead0fc6fab67b9bbafc4da2c32be383c",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_OFFICE_raw_1",
+      "caseId": "W_OFFICE",
+      "arm": "raw",
+      "delivered": true,
+      "outputSha256": "29c81493858b42749471d4b0554cd9c5be2e14cd04c12d8a894a6cee1342b2f2",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_OFFICE_raw_2",
+      "caseId": "W_OFFICE",
+      "arm": "raw",
+      "delivered": true,
+      "outputSha256": "a858dfe872209445786d387bd70780aa31e4ca17d22f41a8ab085d968e840c4e",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_OFFICE_candidate_2",
+      "caseId": "W_OFFICE",
+      "arm": "candidate",
+      "delivered": true,
+      "outputSha256": "cc88730e3b2b4fc340058e58de1485fd84522ef001b9f1f768a6291812f07b9f",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_DESIGN_current_1",
+      "caseId": "W_DESIGN",
+      "arm": "current",
+      "delivered": true,
+      "outputSha256": "61f9b414d5e178ec5b92d92035488207584fe8f18fba2935f62c9f39745cfdbf",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_DESIGN_candidate_1",
+      "caseId": "W_DESIGN",
+      "arm": "candidate",
+      "delivered": true,
+      "outputSha256": "42b5c8bffa96be3f0acb3e0070a6277547a9a03e1a2ab28b8efddb6cd43d7ffb",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_DESIGN_raw_1",
+      "caseId": "W_DESIGN",
+      "arm": "raw",
+      "delivered": true,
+      "outputSha256": "fe670bc4c2bea933a1148d9c1f7036de31324a24cff0e34ae99b8cd608b73064",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_DESIGN_current_2",
+      "caseId": "W_DESIGN",
+      "arm": "current",
+      "delivered": true,
+      "outputSha256": "4161503c8f75d02f52d2cff03299015c22b071b94213e8d76ccf50fd34693044",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_DESIGN_raw_2",
+      "caseId": "W_DESIGN",
+      "arm": "raw",
+      "delivered": true,
+      "outputSha256": "9173603914c6ed416fb7706a4b3d5e51967ea31fef198d8201ef7a7db46bcebf",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "W_DESIGN_candidate_2",
+      "caseId": "W_DESIGN",
+      "arm": "candidate",
+      "delivered": true,
+      "outputSha256": "36926a8e530b5253884566d5631b1382121ca1a11621431b17f70256e07826b5",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "R_SUFFICIENT_current_1",
+      "caseId": "R_SUFFICIENT",
+      "arm": "current",
+      "delivered": true,
+      "outputSha256": "167ef454ccae1409eb4e146e997496a3543cf351412b761c491c9fc651e4bba2",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        },
+        {
+          "name": "80字以内",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "R_SUFFICIENT_candidate_1",
+      "caseId": "R_SUFFICIENT",
+      "arm": "candidate",
+      "delivered": true,
+      "outputSha256": "62c4881fe0e0bcfeba82d42dee75409e20951507d916852551dc3aacc4c3dddd",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        },
+        {
+          "name": "80字以内",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "R_SUFFICIENT_raw_1",
+      "caseId": "R_SUFFICIENT",
+      "arm": "raw",
+      "delivered": true,
+      "outputSha256": "6ba25eb2455848b45637acb607d5c95d731cde15c1bea6e4c2836e8def8284f1",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        },
+        {
+          "name": "80字以内",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "R_PLAN_candidate_1",
+      "caseId": "R_PLAN",
+      "arm": "candidate",
+      "delivered": true,
+      "outputSha256": "92a393de8e9286f1ce18405d3570f12574f1e55883b11421fc5c265d99f5bc06",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "R_PLAN_current_1",
+      "caseId": "R_PLAN",
+      "arm": "current",
+      "delivered": true,
+      "outputSha256": "f8879cea88764cdd5eb4de6ac19a898fd600075af77786f5e6820ee5d7309ef8",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "R_PLAN_raw_1",
+      "caseId": "R_PLAN",
+      "arm": "raw",
+      "delivered": true,
+      "outputSha256": "8bfbe0b508bd35f822996cc6ec484b28ff6d325eef265c070362941b6dad40ab",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "H1_current_1",
+      "caseId": "H1",
+      "arm": "current",
+      "delivered": true,
+      "outputSha256": "ff8bc006cddb084ca7d34c7692950feef50be6d44678ea93ce5e522e169a1cd3",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "H1_candidate_1",
+      "caseId": "H1",
+      "arm": "candidate",
+      "delivered": true,
+      "outputSha256": "0259ae124698774c5d2edbf3c99b02f2d42293fcc47c7a20a55562a2ae481606",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "H1_raw_1",
+      "caseId": "H1",
+      "arm": "raw",
+      "delivered": true,
+      "outputSha256": "bc4c60d34110c5e91fba3d69f119d16b05682041d8b2d6c426ca5925efc4d03b",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "H1_current_2",
+      "caseId": "H1",
+      "arm": "current",
+      "delivered": true,
+      "outputSha256": "179f8faf273762ac750bb4a79481af28f2c0386cc5dd76e65f779b96cd23357a",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "H1_raw_2",
+      "caseId": "H1",
+      "arm": "raw",
+      "delivered": true,
+      "outputSha256": "7828bc7a6fa8e11830f989f225e9682542c4db1f5f8e66b69ca6794bc264272f",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "H1_candidate_2",
+      "caseId": "H1",
+      "arm": "candidate",
+      "delivered": true,
+      "outputSha256": "1977b90831dc188080557ab75901a2785a88b57b92ca79b4efbc6ab9cd3253ba",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "H2_current_1",
+      "caseId": "H2",
+      "arm": "current",
+      "delivered": true,
+      "outputSha256": "3e52945a3ecd0a3d4c5d15996cb61d7756d2adde69135074c5f8e3fcd6264740",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "H2_candidate_1",
+      "caseId": "H2",
+      "arm": "candidate",
+      "delivered": true,
+      "outputSha256": "891a1078ab4dcd701f7b60efb1147f45fa4f31ab92e9ff71a567633b7a4a3bca",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "H2_raw_1",
+      "caseId": "H2",
+      "arm": "raw",
+      "delivered": true,
+      "outputSha256": "8278ac8f1b155a9a361a59eb46501c61f474b58ae4572f7b72f0bd7b7174ec5c",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "H2_current_2",
+      "caseId": "H2",
+      "arm": "current",
+      "delivered": true,
+      "outputSha256": "dbe0cc4d2581754f2b8c95df085138c8b6951025dedcd66305880d12f2aabe0d",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "H2_raw_2",
+      "caseId": "H2",
+      "arm": "raw",
+      "delivered": true,
+      "outputSha256": "5396ed352d0aa8aeff6810302f35ee1b01063c81cb2b09d28b9ff6b894fe34d6",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "H2_candidate_2",
+      "caseId": "H2",
+      "arm": "candidate",
+      "delivered": true,
+      "outputSha256": "fa5ee28fa4810a8c56c1148a25a1889fed442d9461b2e0f3bce84a543138a7d0",
+      "passed": true,
+      "checks": [
+        {
+          "name": "上游完整交付",
+          "passed": true
+        }
+      ]
+    }
+  ]
+}

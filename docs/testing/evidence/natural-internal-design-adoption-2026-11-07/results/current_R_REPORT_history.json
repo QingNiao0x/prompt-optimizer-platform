@@ -1,0 +1,52 @@
+{
+  "samePrompt": true,
+  "history": {
+    "id": "592f4b4a-171b-4043-8866-6ee9156bea47",
+    "rawPrompt": "根据附件写一份失败原因分析报告，区分已证实原因和待验证线索，只给报告，不执行修复。",
+    "optimizedPrompt": "请根据附件 log.txt 写一份失败原因分析报告，只交付报告，不执行修复。报告需区分已证实原因和待验证线索：已证实原因仅限附件明确记录的事实，即两次上传成功后保存均返回 409、服务日志记录 optimistic_version_mismatch；待验证线索包括客户端重试代码尚未读取这一未核实部分，不得将其表述为已确认原因。资料不足处如实说明，不编造来源、参数或结论。",
+    "sections": [],
+    "contextSummary": {
+      "warnings": [],
+      "redactions": [],
+      "dependencies": [],
+      "directoryTree": [
+        "log.txt"
+      ],
+      "analysisVersion": "v3",
+      "technologyStack": [],
+      "customDescription": ""
+    },
+    "ambiguities": [],
+    "appliedConstraints": [],
+    "templateCode": "GENERAL",
+    "providerName": "deepseek",
+    "modelName": "deepseek:deepseek-flash",
+    "mock": false,
+    "latencyMs": 4862,
+    "createdAt": "2026-11-06T17:14:46.610648Z",
+    "includePermissionBoundaries": true,
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "modelVersion": "DeepSeek-V4.1-Flash",
+    "promptFormat": "COMPACT",
+    "constraintGroups": {
+      "platformMandatory": [],
+      "taskSpecific": [],
+      "additionalPermissions": []
+    },
+    "resultKind": "TEXT",
+    "generationPipeline": "NATURAL",
+    "chainVersion": "core-repair-v4",
+    "framework": "APE",
+    "processing": {
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ],
+      "originalPreserved": false
+    }
+  }
+}

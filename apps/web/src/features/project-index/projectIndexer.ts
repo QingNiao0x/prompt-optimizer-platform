@@ -1,7 +1,7 @@
 import type { ContextFileInput } from '@/types/api';
 import { isSafeRelativeFilePath, isSensitiveFile as isProtectedContextFile } from '@/workers/fileReaderCore';
 
-import { extractProjectPathReferences } from './projectPathReferences';
+import { attachedTextPathReference, extractProjectPathReferences } from './projectPathReferences';
 import { ProjectIndexInterruptedError } from './projectIndexFailure';
 
 export const INDEX_CHUNK_CHARACTERS = 6_000;
@@ -761,14 +761,21 @@ export const retrieveProjectContextWithReport = async (
     preferredPaths.length > 0
       ? repository.findChunksByPaths(options.projectId, preferredPaths, candidateLimit)
       : Promise.resolve([]),
-    Promise.all(requestedReferences.map((reference) =>
-      repository.findChunksByPaths(options.projectId, [reference.path], candidateLimit))),
+    Promise.all(requestedReferences.map(async (reference) => {
+      const chunks = await repository.findChunksByPaths(options.projectId, [reference.path], candidateLimit);
+      // 真实完整路径优先，带中文的目录名同样适用；只有查无完整引用才核对相邻文字的边界。
+      const candidate = chunks.length === 0 ? attachedTextPathReference(options.query, reference) : undefined;
+      if (candidate) {
+        const resolved = await repository.findChunksByPaths(options.projectId, [candidate.path], candidateLimit);
+        if (resolved.length > 0) return { reference: candidate, chunks: resolved };
+      }
+      return { reference, chunks };
+    })),
   ]);
   // 普通文件名必须在当前索引中精确命中才收紧范围；拼错、尚未创建或URL片段不应让普通检索失效。
   // 显式@即使未命中仍保留诊断，避免拿近似模块替代用户明确目标。
-  const resolvedReferences = requestedReferences.flatMap((reference, index) =>
-    reference.indexedFileCandidate && requestedGroups[index]?.length === 0 ? []
-      : [{ reference, chunks: requestedGroups[index] ?? [] }]);
+  const resolvedReferences = requestedGroups.filter(({ reference, chunks }) =>
+    !reference.indexedFileCandidate || chunks.length > 0);
   const references = resolvedReferences.map(item => item.reference);
   const referencedGroups = resolvedReferences.map(item => item.chunks);
   const referencedChunks = referencedGroups.flat();
@@ -777,7 +784,7 @@ export const retrieveProjectContextWithReport = async (
   const terms = extractTerms(omitReferenceSpans(options.query, references));
   const matchedChunks = await repository.findCandidateChunks(options.projectId, terms, candidateLimit);
   const symbolScope: ScopedSymbolMatching | undefined = references.length > 0 ? {
-    completeTerms: new Set(extractTerms(omitReferenceSpans(options.query, requestedReferences))),
+    completeTerms: new Set(extractTerms(omitReferenceSpans(options.query, requestedGroups.map(item => item.reference)))),
     referencedSymbols: new Set(referencedChunks.flatMap(chunk => chunk.symbols ?? [])),
   } : undefined;
   for (const chunk of referencedChunks) {

@@ -1,0 +1,34 @@
+{
+  "id": "W_CODE_raw_2",
+  "response": {
+    "status": 200,
+    "body": {
+      "id": "12916eeb-032d-4062-a10a-9dfb7e437d05",
+      "object": "chat.completion",
+      "created": 1793985815,
+      "model": "deepseek-flash",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\"files\":[{\"path\":\"src/occupationalInfo/date.mjs\",\"content\":\"export function validateSurveyDate(value, today) {\\n  if (typeof value !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(value)) return '日期格式错误';\\n  const [year, month, day] = value.split('-').map(Number);\\n  const date = new Date(Date.UTC(year, month - 1, day));\\n  if (\\n    date.getUTCFullYear() !== year ||\\n    date.getUTCMonth() !== month - 1 ||\\n    date.getUTCDate() !== day\\n  ) return '日期格式错误';\\n  if (typeof today === 'string' && /^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(today) && value > today) {\\n    return '调查日期不能晚于今日';\\n  }\\n  return '';\\n}\\n\"},{\"path\":\"src/occupationalInfo/form.mjs\",\"content\":\"import { validateSurveyDate } from './date.mjs';\\nexport function submitSurvey(form, today) {\\n  const error = validateSurveyDate(form.surveyDate, today);\\n  if (error) return { ok: false, error };\\n  return { ok: true, value: { ...form } };\\n}\\n\"},{\"path\":\"src/occupationalInfo/import.mjs\",\"content\":\"import { validateSurveyDate } from './date.mjs';\\nexport function importSurveys(rows, today) {\\n  const accepted = [], errors = [];\\n  rows.forEach((row, index) => {\\n    const error = validateSurveyDate(row.surveyDate, today);\\n    if (error) errors.push({ row: index + 1, message: error });\\n    else accepted.push({ ...row });\\n  });\\n  return { accepted, errors };\\n}\\n\"}]}"
+          },
+          "logprobs": null,
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 555,
+        "completion_tokens": 445,
+        "total_tokens": 1000,
+        "prompt_tokens_details": {
+          "cached_tokens": 384
+        },
+        "prompt_cache_hit_tokens": 384,
+        "prompt_cache_miss_tokens": 171
+      },
+      "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+    }
+  }
+}

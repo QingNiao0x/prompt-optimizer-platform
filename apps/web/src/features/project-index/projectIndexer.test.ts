@@ -653,6 +653,43 @@ describe('retrieveProjectContext', () => {
     expect(result.references).toEqual([]);
   });
 
+  it('should resolve indexed at-paths followed directly by Chinese task text', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    await indexProject({ projectId: 'attached-task-text', rootName: 'sample', repository,
+      entries: sourceOf([
+        sourceFile('src/records/create.mjs', 'export function createSurvey() {}'),
+        sourceFile('src/records/import.mjs', 'export function importSurveys() {}'),
+        sourceFile('src/records-old/import.mjs', 'export const oldSurvey = true;'),
+      ]) });
+    const result = await retrieveProjectContextWithReport(repository, {
+      projectId: 'attached-task-text', query: '请在@src/records新增和导入功能限制日期，保留其他行为',
+      maxChunks: 2, maxCharacters: 4000,
+    });
+    expect(result.files.map(file => file.path)).toEqual(expect.arrayContaining([
+      'src/records/create.mjs#chunk-1', 'src/records/import.mjs#chunk-1',
+    ]));
+    expect(result.references?.[0]?.status).toBe('FOUND');
+    expect(result.references?.[0]?.reference).toBe('src/records');
+  });
+
+  it('should prefer exact Chinese paths and preserve quoted or ASCII-suffixed missing references', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    await indexProject({ projectId: 'literal-attached-path', rootName: 'sample', repository,
+      entries: sourceOf([
+        sourceFile('src/records/create.mjs', 'export const current = true;'),
+        sourceFile('src/records新增/create.mjs', 'export const namedWithChinese = true;'),
+      ]) });
+    const exact = await retrieveProjectContextWithReport(repository, {
+      projectId: 'literal-attached-path', query: '阅读 @src/records新增',
+    });
+    expect(exact.files.map(file => file.path)).toEqual(['src/records新增/create.mjs#chunk-1']);
+    for (const query of ['阅读 @"src/records缺失"', '阅读 @src/records-new新增']) {
+      const missing = await retrieveProjectContextWithReport(repository, { projectId: 'literal-attached-path', query });
+      expect(missing.files).toEqual([]);
+      expect(missing.references?.[0]?.status).toBe('NO_MATCHING_CHUNKS');
+    }
+  });
+
   it('should recall an explicit directory before generic matches exhaust the candidate budget', async () => {
     const repository = new MemoryProjectIndexRepository();
     const noise = Array.from({ length: 450 }, (_, index) => sourceFile(

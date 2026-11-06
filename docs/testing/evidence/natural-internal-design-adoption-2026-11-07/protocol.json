@@ -1,0 +1,115 @@
+{
+  "frozenAt": "2026-11-06T16:46:03.406Z",
+  "sourceCommit": "27f5ad60faf4bb10db65a6057288845345378043",
+  "totalMaximum": 200,
+  "phaseLimits": {
+    "author": 2,
+    "regression": 32,
+    "enhancement": 48,
+    "execute": 60,
+    "review": 24,
+    "workflow": 34
+  },
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "max_tokens": 10000,
+  "qualityRetries": 0,
+  "arms": {
+    "raw": "原始提示词",
+    "current": "core-repair-v4",
+    "candidate": "internal-design-v1"
+  },
+  "files": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInternalDesignInstructions.java",
+      "sha256": "7cdd2f8b4381e7e941c70d308fc1f428c02f1c4d5cfeea84122b587339e6df49"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptPlanContextInstructions.java",
+      "sha256": "0d30af2a100486f0ea0b24a5934b3cbb8fb7d6997e443196a9268aeed9eebb2f"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptCoreRepairInstructions.java",
+      "sha256": "b77a597457c20adeda4c0c00d21a8fe803476ccd8770b252cff6e87a6e52ea5b"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptStageInstructions.java",
+      "sha256": "775a5bcbb6de1c9cbdd0339905fe050296248f1d0808be786b188fd6409fb163"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "346dde542639deab8482e48917424e5bc44bf6404848f534f4371f791602fecf"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalTaskReview.java",
+      "sha256": "1cd13c802b6fb0a3cb99592dd8ab4efba2611b932158c719a27aa6e4295c9a37"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "5b7aa356532e20162e716971173544f793334aafa4ce441aa049152d16189417"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementService.java",
+      "sha256": "62d9d15a6996f7b5489baba47daaa76efc881beaefd4adebff4f177e5e1f7d89"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementSettings.java",
+      "sha256": "4d8c5eb53237ff8176cf5cf8835eb429903c9b3dca8d5f7b2cceed26a7bf46cb"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/history/service/impl/MybatisOptimizationHistoryService.java",
+      "sha256": "0afa1cf0d12305a125551328f6c58e5536368975665a82bd1b123d68f5fdb3de"
+    },
+    {
+      "path": "services/api/src/main/resources/application.yml",
+      "sha256": "9dc49c254504501a7f8f8ea8ab854a356236932487153d05c2b2bd039ca68ab4"
+    },
+    {
+      "path": "apps/web/src/features/optimization/optimizationRequest.ts",
+      "sha256": "d7b4494c1792840e5ead733125547b26e2a52a2450ddab0b50e40b4190235904"
+    },
+    {
+      "path": "apps/web/src/features/optimization/promptHandoff.ts",
+      "sha256": "1bf0a469c00e95445b88b92f9704e043af841544943272df9ef2c1fc84f2b32d"
+    },
+    {
+      "path": "apps/web/src/components/prompt/OptimizationResultPanel.vue",
+      "sha256": "0db1129f885f83032020a6331765c10fc0f60b8792fa5dadbf6addb1db6cb8b2"
+    },
+    {
+      "path": "apps/web/src/components/prompt/PromptHandoffDialog.vue",
+      "sha256": "2d3829c12134c08044d861d33ecc03330eb5066782b7ec1d33ec1c920b4ef6a1"
+    },
+    {
+      "path": "docs/testing/evidence/natural-internal-design-adoption-2026-11-07/protocol.md",
+      "sha256": "9dab107c8aab4f80419981add09851f5cf5090854e294fe102f713868a643176"
+    },
+    {
+      "path": "docs/testing/evidence/natural-internal-design-adoption-2026-11-07/cases.json",
+      "sha256": "309ec085cc71995fcf1e0c1f93bbf9e5302a220ba622d4efe41cb22fb1cdee93"
+    },
+    {
+      "path": "docs/testing/evidence/natural-internal-design-adoption-2026-11-07/evaluation.mjs",
+      "sha256": "18d2469562c4b5c3f2a2f0e7cccb9af37ec299cd95b2599fd09d7ed8e8c66531"
+    },
+    {
+      "path": "docs/testing/evidence/natural-internal-design-adoption-2026-11-07/browser.mjs",
+      "sha256": "c10a6e4125c63c02d140024b83b12d53eab8b436be39cb5e6a04a8a42bffdff4"
+    },
+    {
+      "path": "docs/testing/evidence/natural-internal-design-adoption-2026-11-07/runtime.ps1",
+      "sha256": "9cd35237db3205de8f4d3c775517265ec98dd0841fd3bf453821d88b1864a1ec"
+    },
+    {
+      "path": "docs/testing/evidence/natural-internal-design-adoption-2026-11-07/works.mjs",
+      "sha256": "08308e88d29081a13f120d688a8054afc69ba64f066ecc36b35f30a389692caa"
+    },
+    {
+      "path": "docs/testing/evidence/natural-internal-design-adoption-2026-11-07/check-works.mjs",
+      "sha256": "0abcac51043cf35ace6ab773b8743872d312728a39478b7fb0142c1dc1f71422"
+    }
+  ],
+  "externalScope": "冻结的合成材料、公开来源摘要及相应题答、提示词和作品。没有真实业务源码或凭据。",
+  "assessment": "确定性检查及内部匿名AI辅助评阅，非外部用户或专家验收。"
+}

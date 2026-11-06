@@ -1,0 +1,52 @@
+{
+  "samePrompt": true,
+  "history": {
+    "id": "f55444cf-4e54-44f5-8eda-e42f217ac035",
+    "rawPrompt": "分析附件里的销售变化，告诉我接下来最值得关注什么。",
+    "optimizedPrompt": "请分析附件 sales.csv 中的销售变化，并告诉我接下来最值得关注什么。该文件包含月份、区域、销售额元、退款额元、订单数，覆盖东区、西区、南区在8月、9月、10月的数据。请按区域和月份比较销售额、退款额和订单数的变化，并计算退款额占销售额的比例，以判断销售增长是否伴随退款压力上升；同时结合订单数变化，区分销售额变化是由单量变化还是单笔金额变化驱动。请给出基于这些数据的分析结论，并明确指出接下来最值得关注的事项及其依据。",
+    "sections": [],
+    "contextSummary": {
+      "warnings": [],
+      "redactions": [],
+      "dependencies": [],
+      "directoryTree": [
+        "sales.csv"
+      ],
+      "analysisVersion": "v3",
+      "technologyStack": [],
+      "customDescription": ""
+    },
+    "ambiguities": [],
+    "appliedConstraints": [],
+    "templateCode": "GENERAL",
+    "providerName": "deepseek",
+    "modelName": "deepseek:deepseek-flash",
+    "mock": false,
+    "latencyMs": 5820,
+    "createdAt": "2026-11-06T17:19:09.939339Z",
+    "includePermissionBoundaries": true,
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "modelVersion": "DeepSeek-V4.1-Flash",
+    "promptFormat": "COMPACT",
+    "constraintGroups": {
+      "platformMandatory": [],
+      "taskSpecific": [],
+      "additionalPermissions": []
+    },
+    "resultKind": "TEXT",
+    "generationPipeline": "NATURAL",
+    "chainVersion": "internal-design-v1",
+    "framework": "APE",
+    "processing": {
+      "completedStages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ],
+      "originalPreserved": false
+    }
+  }
+}

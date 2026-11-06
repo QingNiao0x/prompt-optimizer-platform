@@ -1,0 +1,97 @@
+{
+  "author": "Codex implementation agent",
+  "collection": "公开开发与回归题。冻结后新增题另存，不把本清单称为独立留出。",
+  "cases": [
+    {
+      "id": "W_QUERY",
+      "origin": "用户实际原始需求，执行阶段补充同一份公开来源资料包",
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "files": [],
+      "executionFiles": [{"path": "research-sources.txt", "language": "text", "content": "同信息检索资料包，检索日2026-11-07。本次执行只可访问以下已核实资料，不能声称完成额外实时检索。\nAnthropic于2025-02-10发布的首份Economic Index使用Claude.ai匿名会话分析职业任务。计算机和数学类占会话37.2%，艺术与媒体10.3%，教育与图书馆9.3%。应用集中于软件开发和技术写作，包括程序员、数据科学家等任务。57%的使用体现人机协作，43%体现自动完成。上述数字描述该平台会话分布，不能当成全球从业者采用率。来源 https://www.anthropic.com/research/the-anthropic-economic-index\nOECD于2026年1月公开的2025年企业调查汇总中，ICT企业AI采用率57.3%，专业与科学服务36.8%，为采用较高的行业。这是OECD覆盖经济体的企业指标。来源 https://www.oecd.org/en/about/news/announcements/2026/01/ai-use-by-individuals-surges-across-the-oecd-as-adoption-by-firms-continues-to-expand.html\n资料足以说明领先职业和行业、实际用途及依据，但不足以构造所有国家所有职业的单一全球排名。"}],
+      "rubric": ["实际回答职业和行业两个对象", "说明主要应用并给出可用的综合发现", "数据和引用符合资料，不把平台会话比例当从业者采用率", "口径说明服务结论，主体不能变成口径讨论或补资料问卷"],
+      "work": true,
+      "repetitions": 2
+    },
+    {
+      "id": "W_CODE",
+      "origin": "用户新增与导入日期限制故障的合成工程回归，源码不来自真实项目",
+      "rawPrompt": "请在@src/occupationalInfo新增和导入功能限制调查日期，不能晚于今日，允许填写今天。沿用现有逐行导入反馈，其他行为保持可用。只返回实际修改的文件。",
+      "files": [
+        {"path": "src/occupationalInfo/date.mjs", "language": "javascript", "purpose": "TASK_TARGET", "content": "export function validateSurveyDate(value, today) {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return '日期格式错误';\n  return '';\n}\n"},
+        {"path": "src/occupationalInfo/form.mjs", "language": "javascript", "purpose": "TASK_TARGET", "content": "import { validateSurveyDate } from './date.mjs';\nexport function submitSurvey(form, today) {\n  const error = validateSurveyDate(form.surveyDate, today);\n  if (error) return { ok: false, error };\n  return { ok: true, value: { ...form } };\n}\n"},
+        {"path": "src/occupationalInfo/import.mjs", "language": "javascript", "purpose": "TASK_TARGET", "content": "import { validateSurveyDate } from './date.mjs';\nexport function importSurveys(rows, today) {\n  const accepted = [], errors = [];\n  rows.forEach((row, index) => {\n    const error = validateSurveyDate(row.surveyDate, today);\n    if (error) errors.push({ row: index + 1, message: error });\n    else accepted.push({ ...row });\n  });\n  return { accepted, errors };\n}\n"},
+        {"path": "project-conventions.txt", "language": "text", "purpose": "FACT_REFERENCE", "content": "合成项目。today由调用方按业务时区传入合法YYYY-MM-DD日历日期。保留现有函数签名与返回类型。调查日期必须是真实公历日期，不能接受2月30日等无效日历值。下游代码交付统一JSON对象{\"files\":[{\"path\":\"实际修改的相对路径\",\"content\":\"完整文件正文\"}]}，只限三个现有mjs业务文件，不增加依赖或文件。验收脚本由评测端独立维护，不属于交付文件。"}
+      ],
+      "rubric": ["新增与导入都实际生效", "昨日今日通过、未来与无效日期拒绝", "逐行错误和原行号保留，正常行继续接受", "函数签名、输入不变性和交付文件范围保留"],
+      "work": true,
+      "repetitions": 2
+    },
+    {
+      "id": "W_DATA",
+      "origin": "合成办公分析任务，未给出唯一分析方案",
+      "rawPrompt": "分析附件里的销售变化，告诉我接下来最值得关注什么。",
+      "files": [{"path": "sales.csv", "language": "csv", "purpose": "TASK_TARGET", "content": "月份,区域,销售额元,退款额元,订单数\n8月,东区,120000,6000,100\n9月,东区,150000,18000,110\n10月,东区,160000,32000,100\n8月,西区,100000,2000,80\n9月,西区,96000,1920,80\n10月,西区,90000,1800,75\n8月,南区,80000,4000,80\n9月,南区,90000,4500,90\n10月,南区,100000,5000,100\n"}],
+      "rubric": ["实际计算变化而非交付分析模板", "能识别总额增长与东区退款上升同时存在", "能发现西区销售下滑并区分区域情况", "不编造价格、营销或客户原因，建议与可见发现关联"],
+      "work": true,
+      "repetitions": 2
+    },
+    {
+      "id": "W_OFFICE",
+      "origin": "合成会议记录与格式参考，用于检验材料角色",
+      "rawPrompt": "根据会议记录整理一份同事能直接使用的纪要，参考另一份文件的组织方式。",
+      "files": [
+        {"path": "meeting.txt", "language": "text", "purpose": "TASK_TARGET", "content": "2026-11-06合成项目评审。决定11月12日评审第一批导入，周工准备脱敏样本，李工完成现有字段对照。第二批发布日期尚未决定，陈工提议11月20日上线但未表决。客户不接受导入过程中覆盖旧数据。会议未分配自动提醒功能负责人，是否增加自动提醒留待下次评审。"},
+        {"path": "style-reference.txt", "language": "text", "purpose": "STYLE_REFERENCE", "content": "另一项目的格式样例。组织顺序为简短结论、已决定事项、行动安排、待决问题。样例业务内容为12月1日上线，赵工负责，预算30万元。这些是另一项目事实。"}
+      ],
+      "rubric": ["交付可用纪要正文", "保留11月12日、周工和李工职责", "11月20日保持建议，第二批日期与提醒负责人保持未定", "不将参考文件日期、负责人或预算当成本项目事实", "保留不得覆盖旧数据"],
+      "work": true,
+      "repetitions": 2
+    },
+    {
+      "id": "W_DESIGN",
+      "origin": "合成普通设计委托，材料没有提前给出排序方案",
+      "rawPrompt": "给这个列表加个好用的排序功能，具体交互你来设计，先写出可以交给开发者执行的需求。",
+      "files": [{"path": "list-context.txt", "language": "text", "purpose": "FACT_REFERENCE", "content": "合成资料列表。已有字段为标题、最近更新时间、文件大小。记录可能缺少大小，多条记录可能同一时间更新。当前搜索和分页可用，每页20条，用户可以进入详情再返回列表。项目使用Vue3和TypeScript。这里只要求可执行需求，不写代码。"}],
+      "rubric": ["给出可执行的排序规则和交互设计", "普通选择由AI完成，不变成用户问卷", "考虑同值、缺失值、搜索分页以及返回列表时状态", "拟议默认或方案不冒充既有产品事实", "只交需求，不扩展成代码实现或独立报告"],
+      "work": true,
+      "repetitions": 2
+    },
+    {
+      "id": "R_SUFFICIENT",
+      "origin": "合成充分需求，允许持平",
+      "rawPrompt": "给客户写一则80字以内的维护通知。维护时间为11月10日22:00至23:00，仅报表导出暂停，查询和登录正常。不承诺补偿。只输出可发送的通知正文。",
+      "files": [],
+      "rubric": ["所有时间、影响范围和正常功能保留", "80字以内，只输出通知", "不增加补偿承诺或新事实"],
+      "work": true,
+      "repetitions": 1
+    },
+    {
+      "id": "R_WAIT",
+      "origin": "已有阅读等待失败机制回归",
+      "rawPrompt": "先阅读附件并熟悉项目的模块关系，理解后等我安排具体任务，不要改文件，也不用写项目说明。",
+      "files": [{"path": "project.txt", "language": "text", "content": "合成项目包含采集、查询和导出模块。采集保存后供查询，导出读取查询结果。"}],
+      "rubric": ["保留阅读、理解、等待", "不新增报告、清单、说明或提前修改义务"],
+      "work": false
+    },
+    {
+      "id": "R_REPORT",
+      "origin": "明确报告任务的正常变体",
+      "rawPrompt": "根据附件写一份失败原因分析报告，区分已证实原因和待验证线索，只给报告，不执行修复。",
+      "files": [{"path": "log.txt", "language": "text", "content": "合成记录。两次上传成功后保存均返回409。服务日志记录optimistic_version_mismatch。尚未读取客户端重试代码。"}],
+      "rubric": ["报告义务保留", "不把409的已知版本冲突扩展成未经验证的客户端根因", "不执行修改"],
+      "work": false
+    },
+    {
+      "id": "R_PLAN",
+      "origin": "真实产品Plan流程，使用冻结的合成用户决定",
+      "rawPrompt": "给客户写一则服务延期通知，只输出正文。新的交付日期和补偿方案由我决定，请先确认这两项。其他措辞由AI设计。",
+      "files": [],
+      "plan": true,
+      "answer": "新交付日期由我稍后确认，当前不承诺具体日期。不承诺额外赔偿。",
+      "feedback": "保持全部已确认限制，只让语气更自然，适合直接发给客户。",
+      "rubric": ["只问会改变结果的日期与补偿决定", "回答后继续生成，不重复询问", "保留日期未决和不承诺赔偿", "反馈修改保留既有答案"],
+      "work": true,
+      "repetitions": 1
+    }
+  ]
+}

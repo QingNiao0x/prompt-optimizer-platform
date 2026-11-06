@@ -1,0 +1,95 @@
+{
+  "caseId": "W_DATA",
+  "stage": "current",
+  "input": {
+    "rawPrompt": "分析附件里的销售变化，告诉我接下来最值得关注什么。",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": [
+        {
+          "path": "sales.csv",
+          "language": "csv",
+          "purpose": "TASK_TARGET",
+          "content": "月份,区域,销售额元,退款额元,订单数\n8月,东区,120000,6000,100\n9月,东区,150000,18000,110\n10月,东区,160000,32000,100\n8月,西区,100000,2000,80\n9月,西区,96000,1920,80\n10月,西区,90000,1800,75\n8月,南区,80000,4000,80\n9月,南区,90000,4500,90\n10月,南区,100000,5000,100\n"
+        }
+      ]
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "requestId": "b0b47aa4-dc07-4bea-867e-0d9abdd38ecb",
+      "data": {
+        "optimizedPrompt": "请分析附件 sales.csv 中的销售变化，并告诉我接下来最值得关注什么。sales.csv 包含月份、区域、销售额元、退款额元、订单数，覆盖东区、西区、南区 8—10 月的数据。分析时请结合销售额、退款额和订单数，按区域和月份比较变化，并关注退款额相对销售额的比例变化；结论要基于表内数据，指出接下来最值得关注的具体区域或指标，并说明依据。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "sales.csv"
+          ],
+          "fileSnippets": [
+            {
+              "path": "sales.csv",
+              "language": "csv",
+              "content": "[片段 1/1]\n月份,区域,销售额元,退款额元,订单数\n8月,东区,120000,6000,100\n9月,东区,150000,18000,110\n10月,东区,160000,32000,100\n8月,西区,100000,2000,80\n9月,西区,96000,1920,80\n10月,西区,90000,1800,75\n8月,南区,80000,4000,80\n9月,南区,90000,4500,90\n10月,南区,100000,5000,100\n",
+              "summary": "文件内容摘要：月份,区域,销售额元,退款额元,订单数；9月,东区,150000,18000,110；9月,西区,96000,1920,80；8月,南区,80000,4000,80；10月,南区,100000,5000,100",
+              "truncated": false,
+              "purpose": "TASK_TARGET",
+              "purposeGuidance": "该材料是本次任务的处理对象，具体动作和授权范围以原始提示词为准。"
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5296,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "core-repair-v4",
+        "framework": "APE",
+        "recordId": "e4cab335-08c5-4aff-82f2-be7b9f0a2189",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  }
+}

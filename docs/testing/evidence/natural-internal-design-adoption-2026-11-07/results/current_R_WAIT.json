@@ -1,0 +1,92 @@
+{
+  "caseId": "R_WAIT",
+  "stage": "current",
+  "input": {
+    "rawPrompt": "先阅读附件并熟悉项目的模块关系，理解后等我安排具体任务，不要改文件，也不用写项目说明。",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": [
+        {
+          "path": "project.txt",
+          "language": "text",
+          "content": "合成项目包含采集、查询和导出模块。采集保存后供查询，导出读取查询结果。"
+        }
+      ]
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "requestId": "8a704267-6950-4ae4-a82d-a2377a710ef9",
+      "data": {
+        "optimizedPrompt": "先阅读附件 project.txt，熟悉该项目的模块关系；理解后等我安排具体任务。不要改文件，也不用写项目说明。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [
+            "project.txt"
+          ],
+          "fileSnippets": [
+            {
+              "path": "project.txt",
+              "language": "text",
+              "content": "[片段 1/1]\n合成项目包含采集、查询和导出模块。采集保存后供查询，导出读取查询结果。",
+              "summary": "文件内容摘要：合成项目包含采集、查询和导出模块。；采集保存后供查询，导出读取查询结果。",
+              "truncated": false
+            }
+          ],
+          "analysisStatus": "COMPLETE",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 2928,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "core-repair-v4",
+        "framework": "APE",
+        "recordId": "7aaa0f21-b3a5-417b-b92c-8aaa2909047d",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  }
+}
