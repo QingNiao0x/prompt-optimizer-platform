@@ -28,19 +28,25 @@ public class ContextVisualDocumentExtractor {
     private final ContextVisionProvider provider;
     private final ContextVisionModelCatalog models;
     private final ContextVisionProperties limits;
+    private final StreamingDocumentExtractor documentExtractor;
     private final SensitiveValueScanner scanner = new SensitiveValueScanner();
 
     public ContextVisualDocumentExtractor(ContextPageRasterizer rasterizer, ContextVisionProvider provider,
-                                         ContextVisionModelCatalog models, ContextVisionProperties limits) {
+                                         ContextVisionModelCatalog models, ContextVisionProperties limits,
+                                         StreamingDocumentExtractor documentExtractor) {
         this.rasterizer = rasterizer; this.provider = provider; this.models = models; this.limits = limits;
+        this.documentExtractor = documentExtractor;
     }
-    /** 本期仅为 JPEG/PNG 和 PDF 开放视觉审阅，其他类型沿用原解析链路。 */
-    public boolean supports(String language) { return Set.of("jpeg", "jpg", "png", "pdf").contains(language); }
+    /** Office 的内嵌图片复用同一视觉流程，原生文字继续本地提取。 */
+    public boolean supports(String language) {
+        return Set.of("jpeg", "jpg", "png", "pdf").contains(language) || OfficeEmbeddedImages.supports(language);
+    }
     /** 只返回公开模型目录及准入，不包含供应商密钥。 */
     public List<Model> models() { return models.models(); }
 
     /** 只做本地检查，不调用摘要、Embedding 或视觉模型，不在审阅协议中回显原始文字。 */
     public Review inspect(Path source, String language) throws IOException {
+        if (OfficeEmbeddedImages.supports(language)) return inspectOffice(source, language);
         List<PageInfo> pages = new ArrayList<>();
         if ("pdf".equals(language)) {
             try (PDDocument document = open(source)) {
@@ -72,6 +78,12 @@ public class ContextVisualDocumentExtractor {
 
     /** 私有预览只返回规范化像素；是否仍允许读取由上传会话在调用前后校验。 */
     public byte[] preview(Path source, String language, int page) throws IOException {
+        if (OfficeEmbeddedImages.supports(language)) {
+            var catalog = OfficeEmbeddedImages.inspect(source, language, limits.getMaxDocumentPages());
+            var image = catalog.images().stream().filter(item -> item.number() == page).findFirst()
+                    .orElseThrow(() -> invalid("内嵌图片编号无效。"));
+            return render(source, null, image, page, List.of());
+        }
         if ("pdf".equals(language)) {
             try (var document = open(source)) {
                 if (page < 1 || page > document.getNumberOfPages()) throw invalid("预览页码无效。");
@@ -95,7 +107,7 @@ public class ContextVisualDocumentExtractor {
         for (PageSelection selection : input.pages()) {
             if (selection == null || !seen.add(selection.page())) throw invalid("识别页码重复或无效。");
             var info = review.pages().stream().filter(page -> page.page() == selection.page()).findFirst().orElseThrow(() -> invalid("识别页码超出文档范围。"));
-            if (info.blocked()) throw invalid("所选页含疑似凭据，请先处理原文件；不能直接发送该页。");
+            if (info.blocked()) throw invalid("所选内容不能外发，请先处理原文件并重新上传。");
             List<Mask> masks = selection.masks() == null ? List.of() : selection.masks();
             if (masks.size() > 30) throw invalid("单页最多设置 30 个遮挡区域。");
             for (Mask mask : masks) {
@@ -116,7 +128,7 @@ public class ContextVisualDocumentExtractor {
         Map<Integer, PageSelection> selected = new HashMap<>();
         confirmation.pages().forEach(page -> selected.put(page.page(), page));
         List<PageCoverage> coverage = new ArrayList<>();
-        List<String> warnings = new ArrayList<>();
+        List<String> warnings = new ArrayList<>(review.warnings());
         long deadline = System.nanoTime() + limits.getDeadlineSeconds() * 1_000_000_000L;
         long[] characters = {0};
         int[] sections = {0};
@@ -126,12 +138,24 @@ public class ContextVisualDocumentExtractor {
             if (!Objects.equals(safe, value)) add(warnings, "已过滤识别或文字层中的疑似凭据；请人工核对资料。");
             if (safe != null && !safe.isBlank()) { consumer.accept(label, safe); characters[0] += safe.length(); sections[0]++; }
         };
+        Map<Integer, OfficeEmbeddedImages.ImagePart> embedded = new HashMap<>();
+        boolean nativeComplete = true;
+        if (OfficeEmbeddedImages.supports(language)) {
+            var catalog = OfficeEmbeddedImages.inspect(source, language, limits.getMaxDocumentPages());
+            catalog.images().forEach(image -> embedded.put(image.number(), image));
+            catalog.warnings().forEach(warning -> add(warnings, warning));
+            // Office 掩码作用于独立图片，文字原文继续本地提取。PDF 掩码页仍排除原文字层。
+            var nativeReport = documentExtractor.extractForVision(source, language, safeConsumer, progress);
+            nativeComplete = nativeReport.complete() && catalog.warnings().isEmpty();
+            nativeReport.warnings().forEach(warning -> add(warnings, warning));
+        }
         try (PDDocument document = "pdf".equals(language) ? open(source) : null) {
             int calls = 0;
             boolean halted = false;
             for (PageInfo page : review.pages()) {
                 checkCancelled(cancelled);
                 int number = page.page();
+                String label = page.label() == null ? "第 " + number + " 页" : page.label();
                 PageText nativeText = document == null ? new PageText("", false) : text(document, number);
                 PageSelection selection = selected.get(number);
                 if (selection == null) {
@@ -148,18 +172,17 @@ public class ContextVisualDocumentExtractor {
                 } else {
                     try {
                         models.require(confirmation.modelId());
-                        byte[] png = document == null ? rasterizer.png(() -> rasterizer.image(source), selection.masks())
-                                : rasterizer.png(() -> rasterizer.pdf(document, number), selection.masks());
+                        byte[] png = render(source, document, embedded.get(number), number, selection.masks());
                         checkCancelled(cancelled);
                         if (System.nanoTime() >= deadline) throw invalid("已达到任务时间预算。");
                         calls++;
                         Recognition result = provider.recognize(confirmation.modelId(), number, png, limits.getMaxOutputTokens());
                         checkCancelled(cancelled);
                         // 掩码页不再加入原文字层，防止被遮挡的信息经另一条输入路径重新进入上下文。
-                        safeConsumer.accept("第 " + number + " 页 · 视觉原文转录", result.text());
-                        for (String table : result.tables()) safeConsumer.accept("第 " + number + " 页 · 视觉表格转录", table);
-                        safeConsumer.accept("第 " + number + " 页 · 视觉描述（模型解释，需核对）", result.description());
-                        for (String uncertain : result.uncertain()) add(warnings, "第 " + number + " 页待核对：" + scanner.redact(uncertain));
+                        safeConsumer.accept(label + " · 视觉原文转录", result.text());
+                        for (String table : result.tables()) safeConsumer.accept(label + " · 视觉表格转录", table);
+                        safeConsumer.accept(label + " · 视觉描述（模型解释，需核对）", result.description());
+                        for (String uncertain : result.uncertain()) add(warnings, label + " 待核对：" + scanner.redact(uncertain));
                         if (result.mock()) add(warnings, "本机演示未执行真实视觉识别。");
                         coverage.add(new PageCoverage(number, PageMethod.VISION, result.complete() && !result.mock() ? PageStatus.COMPLETE : PageStatus.PARTIAL,
                                 result.complete() && !result.mock() ? "模型已返回该页结果，请人工核对" : "模型未确认完整识别，存在需核对内容"));
@@ -167,7 +190,7 @@ public class ContextVisualDocumentExtractor {
                         checkCancelled(cancelled);
                         halted = true;
                         coverage.add(new PageCoverage(number, PageMethod.VISION, PageStatus.FAILED, "该页识别失败；未自动重试"));
-                        add(warnings, "第 " + number + " 页：" + exception.getMessage());
+                        add(warnings, label + "：" + exception.getMessage());
                         if (selection.masks().isEmpty() && !nativeText.value().isBlank()) safeConsumer.accept("第 " + number + " 页 · 仅文字层回退", nativeText.value());
                     }
                 }
@@ -176,7 +199,42 @@ public class ContextVisualDocumentExtractor {
         }
         List<Integer> omitted = coverage.stream().filter(page -> page.status() != PageStatus.COMPLETE).map(PageCoverage::page).toList();
         if (!omitted.isEmpty()) add(warnings, "部分页面未完整识别：" + omitted + "；已保留其他成功内容，不代表全文已读。");
-        return new Result(new StreamingDocumentExtractor.ExtractionReport(sections[0], characters[0], omitted.isEmpty(), List.copyOf(warnings)), List.copyOf(coverage));
+        var labelledCoverage = coverage.stream().map(item -> new PageCoverage(item.page(), item.method(), item.status(), item.message(),
+                review.pages().stream().filter(page -> page.page() == item.page()).findFirst().map(PageInfo::label).orElse(null))).toList();
+        return new Result(new StreamingDocumentExtractor.ExtractionReport(sections[0], characters[0],
+                nativeComplete && omitted.isEmpty(), List.copyOf(warnings)), labelledCoverage);
+    }
+
+    /** 图片目录只是本地审阅；不支持的实际格式仍显示为阻止项，不能伪装已识别。 */
+    private Review inspectOffice(Path source, String language) throws IOException {
+        var catalog = OfficeEmbeddedImages.inspect(source, language, limits.getMaxDocumentPages());
+        var pages = new ArrayList<PageInfo>();
+        for (var image : catalog.images()) {
+            checkCancelled(() -> false);
+            String blocked = image.blockedReason();
+            if (blocked == null) {
+                try { render(source, null, image, image.number(), List.of()); }
+                catch (DocumentUploadException exception) {
+                    // 栅格化名额暂满是可重试的容量问题，不能永久标记为图片格式不支持。
+                    if (exception.getReason() != DocumentUploadException.Reason.INVALID_ARGUMENT) throw exception;
+                    blocked = exception.getMessage();
+                } catch (IllegalArgumentException | IOException exception) {
+                    blocked = "实际图片格式或尺寸不受支持，请在本机另存为 JPEG 或 PNG 后使用。";
+                }
+            }
+            pages.add(new PageInfo(image.number(), false, true, true, blocked != null,
+                    blocked == null ? "原始内嵌图片可能包含文档中被裁剪的区域，请预览并遮挡后再确认。" : blocked, image.label()));
+        }
+        return new Review(List.copyOf(pages), limits.getMaxPages(), limits.getMaxCalls(), limits.getMaxOutputTokens(),
+                limits.getDeadlineSeconds(), catalog.warnings());
+    }
+
+    /** 三种来源共享像素规范化与服务端遮挡，不接受客户端图片路径或外部地址。 */
+    private byte[] render(Path source, PDDocument document, OfficeEmbeddedImages.ImagePart embedded,
+                          int number, List<Mask> masks) throws IOException {
+        if (document != null) return rasterizer.png(() -> rasterizer.pdf(document, number), masks);
+        if (embedded != null) return rasterizer.png(() -> rasterizer.image(OfficeEmbeddedImages.bytes(source, embedded)), masks);
+        return rasterizer.png(() -> rasterizer.image(source), masks);
     }
 
     /** 拒绝超出审阅页数或无提取权限的 PDF，失败时释放 PDFBox 资源。 */

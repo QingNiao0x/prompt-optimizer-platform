@@ -538,12 +538,13 @@ export interface DocumentUploadStatus {
   expiresAt: string;
   chunkSizeBytes: number;
   visionReview?: ContextVisionReview | null;
-  pageCoverage?: { page: number; method: string; status: string; message: string }[];
+  pageCoverage?: { page: number; method: string; status: string; message: string; label?: string }[];
 }
 
 export interface ContextVisionReview {
-  pages: { page: number; readableText: boolean; hasImages: boolean; suggested: boolean; blocked: boolean; reason: string }[];
+  pages: { page: number; readableText: boolean; hasImages: boolean; suggested: boolean; blocked: boolean; reason: string; label?: string }[];
   maxPages: number; maxCalls: number; maxOutputTokens: number; deadlineSeconds: number;
+  warnings?: string[];
 }
 export interface ContextVisionMask { x: number; y: number; width: number; height: number }
 export interface ContextVisionConfirmation {

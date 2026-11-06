@@ -64,6 +64,16 @@ public class StreamingDocumentExtractor {
             SectionConsumer consumer,
             ProgressListener progressListener
     ) {
+        return extract(source, logicalPath, language, consumer, progressListener, false);
+    }
+
+    /** 组合 Office 原文与独立图片覆盖记录时使用；允许无文字文档，图片遗漏由视觉流程逐项记录。 */
+    ExtractionReport extractForVision(Path source, String language, SectionConsumer consumer, ProgressListener progress) {
+        return extract(source, "Office 文档", language, consumer, progress, true);
+    }
+
+    private ExtractionReport extract(Path source, String logicalPath, String language, SectionConsumer consumer,
+                                     ProgressListener progressListener, boolean imageCoverageTracked) {
         String normalizedLanguage = language == null ? "text" : language.toLowerCase(Locale.ROOT);
         BoundedSectionSink sink = new BoundedSectionSink(consumer);
         List<String> warnings = new ArrayList<>();
@@ -77,25 +87,25 @@ public class StreamingDocumentExtractor {
                                 || name.equals("word/endnotes.xml"),
                         "Word",
                         sink,
-                        progressListener, warnings
+                        progressListener, warnings, imageCoverageTracked
                 );
                 case "pptx" -> extractZipXml(
                         source,
                         name -> name.matches("ppt/slides/slide\\d+\\.xml"),
                         "幻灯片",
                         sink,
-                        progressListener, warnings
+                        progressListener, warnings, imageCoverageTracked
                 );
                 case "odt", "odp", "ods" -> extractZipXml(
                         source,
                         name -> name.equals("content.xml"),
                         packageLabel(normalizedLanguage),
                         sink,
-                        progressListener, warnings
+                        progressListener, warnings, imageCoverageTracked
                 );
-                case "doc" -> extractLegacyWord(source, sink, progressListener);
-                case "ppt" -> extractLegacyPresentation(source, sink, progressListener);
-                case "xls", "xlsx" -> extractSpreadsheet(source, sink, progressListener);
+                case "doc" -> extractLegacyWord(source, sink, progressListener, warnings);
+                case "ppt" -> extractLegacyPresentation(source, sink, progressListener, warnings);
+                case "xls", "xlsx" -> extractSpreadsheet(source, sink, progressListener, warnings, imageCoverageTracked);
                 case "pdf" -> extractPdf(source, sink, progressListener, warnings);
                 case "wps" -> extractWpsDocument(source, sink, progressListener, warnings);
                 case "dps" -> extractWpsPresentation(source, sink, progressListener, warnings);
@@ -115,7 +125,7 @@ public class StreamingDocumentExtractor {
                 throw new IllegalArgumentException("文件已加密，请先在本机解密后重新选择上传", exception);
             throw new IllegalArgumentException("无法解析文件，请检查文件是否损坏、扩展名是否正确，或另存为受支持的格式后重试：" + logicalPath, exception);
         }
-        if (sink.characters() == 0) {
+        if (sink.characters() == 0 && !imageCoverageTracked) {
             String message = "pdf".equals(normalizedLanguage)
                     ? "未从 PDF 文字层提取到内容，扫描版 PDF 需要 OCR"
                     : "文件中没有可提取的文本内容";
@@ -179,9 +189,13 @@ public class StreamingDocumentExtractor {
     private void extractSpreadsheet(
             Path source,
             BoundedSectionSink sink,
-            ProgressListener progressListener
+            ProgressListener progressListener,
+            List<String> warnings,
+            boolean imageCoverageTracked
     ) throws IOException {
         try (Workbook workbook = WorkbookFactory.create(source.toFile())) {
+            if (!imageCoverageTracked && !workbook.getAllPictures().isEmpty())
+                warnings.add("表格含内嵌图片，已保留单元格数据，图片画面尚未识别。");
             DataFormatter formatter = new DataFormatter();
             int sheetCount = workbook.getNumberOfSheets();
             for (int sheetIndex = 0; sheetIndex < sheetCount && !sink.limitReached(); sheetIndex++) {
@@ -217,14 +231,33 @@ public class StreamingDocumentExtractor {
     private void extractLegacyWord(
             Path source,
             BoundedSectionSink sink,
-            ProgressListener progressListener
+            ProgressListener progressListener,
+            List<String> warnings
     ) throws IOException {
         try (InputStream input = Files.newInputStream(source);
              HWPFDocument document = new HWPFDocument(input);
              WordExtractor extractor = new WordExtractor(document)) {
             String[] paragraphs = extractor.getParagraphText();
+            var range = document.getRange();
+            if (!document.getPicturesTable().getAllPictures().isEmpty())
+                warnings.add("旧版 Word 含内嵌图片，画面尚未识别。");
             for (int index = 0; index < paragraphs.length && !sink.limitReached(); index++) {
-                sink.accept("Word 段落 " + (index + 1), paragraphs[index]);
+                String text = paragraphs[index];
+                if (!text.isBlank() && index < range.numParagraphs()) {
+                    var paragraph = range.getParagraph(index);
+                    // 二进制 Word 已由 POI 解析有效属性；单位保留为 twip，首行负值表示悬挂。
+                    String alignment = switch (paragraph.getJustification()) {
+                        case 0 -> "left";
+                        case 1 -> "center";
+                        case 2 -> "right";
+                        case 3 -> "both";
+                        default -> "代码" + paragraph.getJustification();
+                    };
+                    text = "[段落格式 样式编号=" + paragraph.getStyleIndex() + "，对齐=" + alignment
+                            + "，左缩进(twip)=" + paragraph.getIndentFromLeft() + "，右缩进(twip)=" + paragraph.getIndentFromRight()
+                            + "，首行缩进(twip)=" + paragraph.getFirstLineIndent() + "] " + text;
+                }
+                sink.accept("Word 段落 " + (index + 1), text);
                 progressListener.onProgress(index + 1L, Math.max(paragraphs.length, 1));
             }
         } catch (RuntimeException exception) {
@@ -236,10 +269,12 @@ public class StreamingDocumentExtractor {
     private void extractLegacyPresentation(
             Path source,
             BoundedSectionSink sink,
-            ProgressListener progressListener
+            ProgressListener progressListener,
+            List<String> warnings
     ) throws IOException {
         try (InputStream input = Files.newInputStream(source);
              HSLFSlideShow presentation = new HSLFSlideShow(input)) {
+            if (!presentation.getPictureData().isEmpty()) warnings.add("旧版演示文稿含内嵌图片，画面尚未识别。");
             List<HSLFSlide> slides = presentation.getSlides();
             for (int index = 0; index < slides.size() && !sink.limitReached(); index++) {
                 StringBuilder text = new StringBuilder();
@@ -265,11 +300,11 @@ public class StreamingDocumentExtractor {
                     name -> name.equals("word/document.xml") || name.equals("content.xml"),
                     "WPS 文档",
                     sink,
-                    progressListener, warnings
+                    progressListener, warnings, false
             );
             return;
         }
-        extractLegacyWord(source, sink, progressListener);
+        extractLegacyWord(source, sink, progressListener, warnings);
     }
 
     /** 从 WPS 演示文稿包中提取幻灯片正文。 */
@@ -285,11 +320,11 @@ public class StreamingDocumentExtractor {
                     name -> name.matches("ppt/slides/slide\\d+\\.xml") || name.equals("content.xml"),
                     "WPS 幻灯片",
                     sink,
-                    progressListener, warnings
+                    progressListener, warnings, false
             );
             return;
         }
-        extractLegacyPresentation(source, sink, progressListener);
+        extractLegacyPresentation(source, sink, progressListener, warnings);
     }
 
     /** 从 WPS 表格包中提取工作表文本。 */
@@ -300,12 +335,12 @@ public class StreamingDocumentExtractor {
             List<String> warnings
     ) throws IOException, XMLStreamException {
         try {
-            extractSpreadsheet(source, sink, progressListener);
+            extractSpreadsheet(source, sink, progressListener, warnings, false);
         } catch (IllegalArgumentException exception) {
             if (!isZipPackage(source)) {
                 throw exception;
             }
-            extractZipXml(source, name -> name.equals("content.xml"), "WPS 表格", sink, progressListener, warnings);
+            extractZipXml(source, name -> name.equals("content.xml"), "WPS 表格", sink, progressListener, warnings, false);
         }
     }
 
@@ -333,9 +368,11 @@ public class StreamingDocumentExtractor {
             String labelPrefix,
             BoundedSectionSink sink,
             ProgressListener progressListener,
-            List<String> warnings
+            List<String> warnings,
+            boolean imageCoverageTracked
     ) throws IOException, XMLStreamException {
         try (ZipFile zipFile = new ZipFile(source.toFile(), StandardCharsets.UTF_8)) {
+            WordParagraphStyles wordStyles = WordParagraphStyles.read(zipFile);
             List<? extends ZipEntry> entries = xmlEntries(zipFile, entryFilter);
             validateArchive(entries);
             if (entries.stream().anyMatch(entry -> entry.getName().startsWith("ppt/slides/"))) {
@@ -352,7 +389,7 @@ public class StreamingDocumentExtractor {
                 if (entry.getName().startsWith("ppt/slides/")) label = "幻灯片 " + (++slideNumber);
                 else if (entry.getName().startsWith("ppt/notesSlides/")) label = "幻灯片 " + slideNumber + " · 备注";
                 try (InputStream input = zipFile.getInputStream(entry)) {
-                    extractXmlBlocks(input, label, sink, warnings);
+                    extractXmlBlocks(input, label, sink, warnings, wordStyles, imageCoverageTracked);
                 }
                 progressListener.onProgress(index + 1L, entries.size());
             }
@@ -397,13 +434,17 @@ public class StreamingDocumentExtractor {
      * 表格坐标保留行列关系，绘图等未解析对象明确提示，继续保留已读文字。
      */
     private void extractXmlBlocks(InputStream input, String label, BoundedSectionSink sink,
-                                  List<String> warnings) throws XMLStreamException, IOException {
+                                  List<String> warnings, WordParagraphStyles wordStyles,
+                                  boolean imageCoverageTracked) throws XMLStreamException, IOException {
         XMLInputFactory factory = XMLInputFactory.newFactory();
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
         factory.setProperty("javax.xml.stream.isSupportingExternalEntities", false);
         XMLStreamReader reader = factory.createXMLStreamReader(input, StandardCharsets.UTF_8.name());
         StringBuilder block = new StringBuilder();
         int blockNumber = 1, textDepth = 0, skippedDepth = 0, tableNumber = 0;
+        WordParagraphStyles.Properties paragraph = null;
+        boolean formatPending = false;
+        int paragraphProperties = 0;
         java.util.Deque<int[]> tables = new java.util.ArrayDeque<>();
         try {
             while (reader.hasNext() && !sink.limitReached()) {
@@ -418,6 +459,12 @@ public class StreamingDocumentExtractor {
                         skippedDepth = 1;
                         continue;
                     }
+                    if (word && "p".equals(name)) {
+                        paragraph = new WordParagraphStyles.Properties();
+                        formatPending = true;
+                    }
+                    if (word && "pPr".equals(name)) paragraphProperties++;
+                    if (word && paragraph != null && paragraphProperties > 0) paragraph.read(reader);
                     if (isVisibleTextElement(name, ns)) textDepth++;
                     if ("tab".equals(name)) block.append('\t');
                     if ("br".equals(name) || "cr".equals(name) || "line-break".equals(name)) block.append('\n');
@@ -438,7 +485,9 @@ public class StreamingDocumentExtractor {
                         }
                         if (word && "vMerge".equals(name)) block.append("[纵向合并单元格] ");
                     }
-                    if (List.of("blip", "imagedata", "chart", "oleObj", "OLEObject", "altChunk", "relIds", "image").contains(name)) {
+                    boolean rasterReference = List.of("blip", "imagedata", "image").contains(name);
+                    if (rasterReference && !imageCoverageTracked
+                            || List.of("chart", "oleObj", "OLEObject", "altChunk", "relIds").contains(name)) {
                         String warning = label + " 含图片、图表或嵌入对象，仅提取其可读取文字，画面内容未识别。";
                         if (!warnings.contains(warning)) warnings.add(warning);
                     }
@@ -446,6 +495,7 @@ public class StreamingDocumentExtractor {
                     if (skippedDepth > 0) { skippedDepth--; continue; }
                     String name = reader.getLocalName();
                     String ns = reader.getNamespaceURI() == null ? "" : reader.getNamespaceURI();
+                    if (ns.contains("wordprocessingml") && "pPr".equals(name)) paragraphProperties--;
                     if (isVisibleTextElement(name, ns)) textDepth--;
                     if ("p".equals(name) || "tr".equals(name) || "h".equals(name)) {
                         if (!block.isEmpty()) sink.accept(label + " · 段 " + blockNumber, block.toString());
@@ -456,6 +506,10 @@ public class StreamingDocumentExtractor {
                 } else if (skippedDepth == 0 && textDepth > 0
                         && (event == XMLStreamConstants.CHARACTERS || event == XMLStreamConstants.CDATA)) {
                     // 格式 run 和 XML 事件不代表词边界，保留中文连词及显式空格。
+                    if (formatPending && !reader.getText().isBlank()) {
+                        block.append(wordStyles.describe(paragraph, warnings));
+                        formatPending = false;
+                    }
                     block.append(reader.getText());
                     while (block.length() >= TEXT_BLOCK_CHARACTERS) {
                         sink.accept(label + " · 段 " + blockNumber, block.substring(0, TEXT_BLOCK_CHARACTERS));

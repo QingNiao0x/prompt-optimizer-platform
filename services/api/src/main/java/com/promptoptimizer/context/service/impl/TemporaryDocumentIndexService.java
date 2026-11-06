@@ -145,7 +145,7 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
         String path = normalizeAndValidatePath(request.path());
         String language = normalizeLanguage(request.language());
         if (request.visionRequested() && (visualExtractor == null || !visualExtractor.supports(language)))
-            throw invalid("该类型尚未开放视觉识别，请使用 JPEG、PNG 或 PDF。");
+            throw invalid("该类型尚未开放视觉识别，请使用 JPEG、PNG、PDF 或受支持的 Office 文档。");
         if (request.sizeBytes() > MAX_DOCUMENT_BYTES) {
             throw new DocumentUploadException(
                     DocumentUploadException.Reason.PAYLOAD_TOO_LARGE,
@@ -460,12 +460,18 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
                 synchronized (session.monitor) {
                     if (session.cancelled || Thread.currentThread().isInterrupted()) return;
                     session.review = review;
-                    session.phase = DocumentProcessingPhase.AWAITING_CONFIRMATION;
-                    session.progressPercent = 45;
-                    // 以本次运行的局部状态决定保留原件，避免确认请求把阶段改为 QUEUED 后被旧 finally 删除。
-                    awaitingReview = true;
+                    if (review.pages().isEmpty()) {
+                        // 无图片的 Office 继续本地解析，无需让用户确认空白清单，也不发起视觉调用。
+                        session.visionConfirmed = true;
+                        session.confirmation = new ContextVisionModels.Confirmation("", false, List.of());
+                    } else {
+                        session.phase = DocumentProcessingPhase.AWAITING_CONFIRMATION;
+                        session.progressPercent = 45;
+                        // 以本次运行状态保留原件，避免确认请求已排队时被旧 finally 删除。
+                        awaitingReview = true;
+                    }
                 }
-                return;
+                if (awaitingReview) return;
             }
             long extractionStartedAt = System.nanoTime();
             StreamingDocumentExtractor.ExtractionReport report;

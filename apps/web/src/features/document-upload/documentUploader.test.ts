@@ -11,6 +11,7 @@ vi.mock('@/services/documentUploadApi', () => ({
 }));
 
 import { isDeferredVisionUpload, uploadAndIndexDocument } from './documentUploader';
+import { isContextVisionLanguage, summarizeVisionPages } from './contextVisionBatch';
 import {
   completeDocumentUpload,
   createDocumentUpload,
@@ -175,6 +176,30 @@ describe('uploadAndIndexDocument', () => {
     const uploaded = await uploadAndIndexDocument(new File(['notes'], 'notes.txt'), 'notes.txt', 'text', undefined, undefined, undefined, true);
     expect(isDeferredVisionUpload(uploaded)).toBe(false);
     expect(createDocumentUpload).toHaveBeenCalledWith(expect.not.objectContaining({ visionRequested: true }), undefined);
+    vi.clearAllMocks();
+  });
+  it('parks Office embedded images for explicit consent and continues text-only Office files locally', async () => {
+    const waiting = status({ language: 'docx', path: 'reference.docx', phase: 'AWAITING_CONFIRMATION', visionReview: {
+      pages: [{ page: 1, readableText: false, hasImages: true, suggested: true, blocked: false,
+        reason: '内嵌图片', label: '内嵌图片 1 · word/media/picture.png' }],
+      maxPages: 10, maxCalls: 10, maxOutputTokens: 8000, deadlineSeconds: 180,
+    } });
+    expect(isContextVisionLanguage('docx')).toBe(true);
+    expect(summarizeVisionPages(waiting)).toContain('内嵌图片 1 · word/media/picture.png');
+    expect(summarizeVisionPages(waiting)).not.toContain('第 1 页');
+    vi.mocked(createDocumentUpload).mockResolvedValue({ requestId: 'create', data: status({ language: 'docx' }) });
+    vi.mocked(uploadDocumentChunk).mockResolvedValue({ requestId: 'chunk', data: status() });
+    vi.mocked(completeDocumentUpload).mockResolvedValue({ requestId: 'complete', data: waiting });
+    const parked = await uploadAndIndexDocument(new File(['synthetic'], 'reference.docx'), 'reference.docx', 'docx', undefined, undefined, undefined, true);
+    expect(isDeferredVisionUpload(parked)).toBe(true);
+    expect(createDocumentUpload).toHaveBeenCalledWith(expect.objectContaining({ visionRequested: true }), undefined);
+    expect(confirmContextVision).not.toHaveBeenCalled();
+    if (isDeferredVisionUpload(parked)) await parked.discard();
+    vi.clearAllMocks();
+    vi.mocked(completeDocumentUpload).mockResolvedValue({ requestId: 'complete', data: status({ language: 'docx', phase: 'READY' }) });
+    const native = await uploadAndIndexDocument(new File(['text only'], 'native.docx'), 'native.docx', 'docx', undefined, undefined, undefined, true);
+    expect(isDeferredVisionUpload(native)).toBe(false);
+    expect(confirmContextVision).not.toHaveBeenCalled();
     vi.clearAllMocks();
   });
   it('should upload fixed chunks and return only a lightweight document reference', async () => {

@@ -1,0 +1,190 @@
+{
+  "step": 4,
+  "baseCommit": "5e9c0033",
+  "backend": [
+    {
+      "suite": "StreamingDocumentExtractorTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "OfficeEmbeddedImagesTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "ContextVisualDocumentWorkflowTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "ComplexDocumentCompatibilityTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "BinaryContentExtractorTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "TemporaryDocumentIndexServiceTest",
+      "tests": 27,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "DocumentUploadControllerTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "MaterialPurposeTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "NaturalEnhancementServiceTest",
+      "tests": 39,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "PlanningSessionServiceTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "ImagePromptSourceWorkflowTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "TextPolishServiceTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "backendTotals": {
+    "tests": 151,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "frontendUnitTests": {
+    "documentUploader": 11,
+    "contextVision": 5,
+    "optimization": 20,
+    "contextTransmission": 8,
+    "total": 44
+  },
+  "frontendTypecheck": "passed",
+  "frontendBuild": "passed",
+  "buildWarning": "Existing AdminAnalyticsPage chunk exceeds 500 kB after minification.",
+  "browserUniqueCases": 18,
+  "browserCasesBySuitePerProject": {
+    "context-material-purpose": 1,
+    "context-vision": 5,
+    "document-folder-upload": 2,
+    "mixed-project-document": 1
+  },
+  "browserProjects": [
+    "desktop-chrome",
+    "mobile-chrome"
+  ],
+  "browserRuns": [
+    {
+      "label": "initial",
+      "passed": 16,
+      "failed": 2,
+      "reason": "Mixed-project fixture expected the retired source-file completion label."
+    },
+    {
+      "label": "index-label-corrected",
+      "passed": 16,
+      "failed": 2,
+      "reason": "Mixed-project fixture opened the retired shared database instead of isolated project storage."
+    },
+    {
+      "label": "affected-final",
+      "passed": 12,
+      "failed": 0,
+      "suites": [
+        "context-vision",
+        "mixed-project-document"
+      ]
+    }
+  ],
+  "initialBackendRun": {
+    "tests": 72,
+    "failures": 1,
+    "errors": 0,
+    "failure": "OfficeEmbeddedImagesTest.spreadsheetAndPresentationFollowActualDrawingRelationships:48 expected one PPT image, received zero.",
+    "fix": "Read relationship-namespace r:id separately from the ordinary slide id."
+  },
+  "environmentFailure": "One parallel compile ended with native memory allocation failure. Bounded sequential Maven execution passed.",
+  "coverage": [
+    "Word inherited paragraph styles, direct overrides, hanging indent, table-style isolation, cycles, DTD refusal and long tail",
+    "Active Office image relationships, duplicate references, unreferenced resources, external and traversal refusal, missing assets and limits",
+    "Actual DOCX image preview, explicit consent, outbound pixel masking, image-only documents, local-only and unsupported-image partial states",
+    "Existing mixed PDF and credential controls, masked PDF text exclusion, ownership and workspace isolation",
+    "Spreadsheet coordinates, merged cells, formula cache labels and tail after temporary-index retrieval",
+    "Material role propagation, Plan state, natural generation, source-to-prompt and text-polish service regressions",
+    "Temporary rasterizer capacity errors stay retryable capacity failures instead of unsupported-image labels"
+  ],
+  "modernOfficeImageFormats": [
+    "docx",
+    "pptx",
+    "xlsx",
+    "odt",
+    "odp",
+    "ods"
+  ],
+  "generatedFileFixtures": [
+    "docx",
+    "pptx",
+    "xlsx",
+    "odt"
+  ],
+  "limitations": [
+    "ODP and ODS use the common OpenDocument image path; no independent real-file validation in this step.",
+    "Legacy DOC paragraph interfaces compiled; no independent binary DOC replay.",
+    "Legacy Office embedded images, vector graphics and complex embedded objects keep omission warnings.",
+    "Browser APIs and vision responses are controlled fixtures. Recognition accuracy and downstream quality remain unevaluated.",
+    "The previously reported private-project 502 needs replay of the original request after service reload."
+  ],
+  "actualModelCalls": 0,
+  "sourceSha256": {
+    "services/api/src/main/java/com/promptoptimizer/context/service/impl/WordParagraphStyles.java": "e6d8f6f05b07b1f7bc0616a5fceaf8668f78e4dfb71f55b8a7e6ac1b73664dee",
+    "services/api/src/main/java/com/promptoptimizer/context/service/impl/OfficeEmbeddedImages.java": "70372b2aa9bd4cfb76e32279886d7f9bd75077333436d3864accf86644bf6c83",
+    "services/api/src/main/java/com/promptoptimizer/context/service/impl/StreamingDocumentExtractor.java": "bfa735c4bea71eda96d4fc75f89f1ed7ab96b7b2f7f274c251e828a400b33786",
+    "services/api/src/main/java/com/promptoptimizer/context/service/impl/ContextVisualDocumentExtractor.java": "e67f9d67fd68bc3cbc923dac7cc3ba827c2189569eb9493def4faccd63caa7f5",
+    "services/api/src/main/java/com/promptoptimizer/context/service/impl/ContextPageRasterizer.java": "0c53be528ebf8f0f95bb4e179102367bb8509e8f4b9e2fcb835919ae2d3316c3",
+    "services/api/src/main/java/com/promptoptimizer/context/service/impl/TemporaryDocumentIndexService.java": "e7634583aeae786e6aa5070dc9ffb4923dd9d03219c8d73750aa089b8bf5e5aa",
+    "apps/web/src/components/context/ContextVisionReviewDialog.vue": "4ecb08c9e19eb3e97368bcf02a7dbd310d64a2454ae10ceae05503bcf3fb1bec",
+    "apps/web/src/components/context/ContextVisionBatchDialog.vue": "1ac0d00698c94d5912ab664e2150365077f6194d98da8815d8c5fc98bff17c1d",
+    "apps/web/src/features/document-upload/contextVisionBatch.ts": "d0e685480cf330459c29a31e7baf93e7f1e8922ed878c27215c2f9418c683af6"
+  }
+}

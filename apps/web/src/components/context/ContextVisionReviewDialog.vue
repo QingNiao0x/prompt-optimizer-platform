@@ -5,6 +5,7 @@ import { useContextVisionStore } from '@/stores/contextVision';
 import { getContextPagePreview } from '@/services/documentUploadApi';
 import { getApiErrorMessage } from '@/services/http';
 import { formatModelVersion } from '@/features/models/modelVersion';
+import { visionItemLabel } from '@/features/document-upload/contextVisionBatch';
 import type { ContextVisionMask } from '@/types/api';
 
 const store = useContextVisionStore();
@@ -22,6 +23,12 @@ const exact = ref({ x: 0, y: 0, width: 25, height: 10 });
 let previewSequence = 0;
 let previewController: AbortController | undefined;
 const review = computed(() => store.status?.visionReview);
+const embedded = computed(() => review.value?.pages.some(item => item.label) ?? false);
+const unit = computed(() => embedded.value ? '项' : '页');
+const currentLabel = computed(() => {
+  const item = review.value?.pages.find(item => item.page === page.value);
+  return item ? visionItemLabel(item) : '';
+});
 const currentMasks = computed(() => masks.value[page.value] ?? []);
 const selectedModel = computed(() => store.models.find(model => model.id === store.modelId));
 const maxPages = computed(() => Math.min(review.value?.maxPages ?? 0, review.value?.maxCalls ?? 0));
@@ -97,13 +104,14 @@ onBeforeUnmount(() => { previewSequence++; previewController?.abort(); clearPrev
 </script>
 
 <template>
-  <ElDialog :model-value="store.visible" title="确认图片与 PDF 识别范围" width="min(1040px, calc(100vw - 24px))"
+  <ElDialog :model-value="store.visible" title="确认视觉识别范围" width="min(1040px, calc(100vw - 24px))"
     :close-on-click-modal="false" @update:model-value="value => { if (!value) store.cancel(); }">
     <template v-if="store.status && review">
-      <p class="file-name">{{ store.status.path }} · 共 {{ review.pages.length }} 页</p>
-      <ElAlert title="文件已上传到本平台，尚未发送给视觉模型。请检查预览、选择页码并遮挡敏感区域。" type="info" :closable="false" />
-      <p class="review-hint">仅向所选模型发送勾选页的处理后图片，按实际用量计费。本次最多 {{ maxPages }} 页；其余可读文字层仍在本地提取，未识别页面会明确标注。</p>
+      <p class="file-name">{{ store.status.path }} · 共 {{ review.pages.length }} 项</p>
+      <ElAlert title="文件已上传到本平台，尚未发送给视觉模型。请检查预览、选择内容并遮挡敏感区域。" type="info" :closable="false" />
+      <p class="review-hint">仅向所选模型发送勾选内容的处理后图片，按实际用量计费。本次最多 {{ maxPages }} {{ unit }}；可读取的文档文字继续本地提取，遗漏内容会明确标注。</p>
       <ElAlert v-if="store.error" :title="store.error" type="error" :closable="false" />
+      <ElAlert v-for="warning in review.warnings" :key="warning" :title="warning" type="warning" :closable="false" />
       <div class="vision-review-grid">
         <div class="review-options">
           <label class="field-label">识别模型</label>
@@ -112,24 +120,24 @@ onBeforeUnmount(() => { previewSequence++; previewController?.abort(); clearPrev
               :label="`${formatModelVersion(model.displayName)}${model.mock ? '（演示）' : model.vision ? '（视觉）' : '（纯文字）'}`" />
           </ElSelect>
           <p class="review-hint">与模型管理共用目录。纯文字模型不能识图；演示模型不代表真实识别。</p>
-          <h3>选择发送的页码 <ElTag size="small">{{ selected.length }} / {{ maxPages }}</ElTag></h3>
-          <ElCheckboxGroup v-model="selected" :max="maxPages" class="page-selection" aria-label="发送给视觉模型的页码">
+          <h3>选择发送的{{ embedded ? '图片' : '页码' }} <ElTag size="small">{{ selected.length }} / {{ maxPages }}</ElTag></h3>
+          <ElCheckboxGroup v-model="selected" :max="maxPages" class="page-selection" :aria-label="`发送给视觉模型的${embedded ? '图片' : '页码'}`">
             <div v-for="item in review.pages" :key="item.page" class="page-option">
-              <ElCheckbox :value="item.page" :disabled="item.blocked">第 {{ item.page }} 页</ElCheckbox>
+              <ElCheckbox :value="item.page" :disabled="item.blocked">{{ visionItemLabel(item) }}</ElCheckbox>
               <span :class="{ blocked: item.blocked }">{{ item.reason }}</span>
-              <ElButton link type="primary" @click="page = item.page">预览第 {{ item.page }} 页</ElButton>
+              <ElButton link type="primary" @click="page = item.page">预览{{ visionItemLabel(item) }}</ElButton>
             </div>
           </ElCheckboxGroup>
         </div>
         <div class="review-preview">
           <div class="preview-heading"><h3>页面预览</h3><ElSelect v-model="page" aria-label="当前预览页" class="preview-page-select">
-            <ElOption v-for="item in review.pages" :key="item.page" :value="item.page" :label="`第 ${item.page} 页`" />
+            <ElOption v-for="item in review.pages" :key="item.page" :value="item.page" :label="visionItemLabel(item)" />
           </ElSelect></div>
           <p class="review-hint">在画面上拖动可添加黑色遮挡；也可使用下方精确设置。遮挡会在服务端施加到实际外发图片。</p>
           <ElAlert v-if="previewError" :title="previewError" type="error" :closable="false" />
           <div v-loading="previewLoading" class="preview-container">
             <div v-if="preview" class="mask-surface">
-              <img :src="preview" :alt="`第 ${page} 页私有预览`" @error="previewError = '预览图片无法显示，请重试。'" />
+              <img :src="preview" :alt="`${currentLabel}私有预览`" @error="previewError = '预览图片无法显示，请重试。'" />
               <svg ref="surface" viewBox="0 0 1 1" preserveAspectRatio="none" aria-label="拖动遮挡敏感区域"
                 @pointerdown="startMask" @pointermove="moveMask" @pointerup="finishMask" @pointercancel="dragStart = undefined; dragEnd = undefined">
                 <rect v-for="(mask, index) in currentMasks" :key="index" v-bind="mask" fill="black" />
@@ -137,8 +145,8 @@ onBeforeUnmount(() => { previewSequence++; previewController?.abort(); clearPrev
               </svg>
             </div>
           </div>
-          <div class="mask-actions"><span>本页遮挡 {{ currentMasks.length }} 处</span>
-            <ElButton size="small" :disabled="!preview" @click="addMask({ x: 0, y: 0, width: 1, height: 1 })">遮挡整页</ElButton>
+          <div class="mask-actions"><span>{{ embedded ? '本图' : '本页' }}遮挡 {{ currentMasks.length }} 处</span>
+            <ElButton size="small" :disabled="!preview" @click="addMask({ x: 0, y: 0, width: 1, height: 1 })">遮挡整{{ embedded ? '图' : '页' }}</ElButton>
             <ElButton size="small" :disabled="!currentMasks.length" @click="masks = { ...masks, [page]: currentMasks.slice(0, -1) }">撤销遮挡</ElButton>
             <ElButton size="small" :disabled="!previewError" @click="loadPreview">重试预览</ElButton>
           </div>
@@ -173,11 +181,14 @@ onBeforeUnmount(() => { previewSequence++; previewController?.abort(); clearPrev
 h3 { margin: 14px 0 10px; color: var(--ink-strong); font-size: 14px; }
 .page-selection { display: grid; max-height: 400px; overflow: auto; border: 1px solid var(--line-subtle); border-radius: var(--radius-sm); }
 .page-option { display: grid; gap: 4px; padding: 10px; border-bottom: 1px solid var(--line-subtle); }
+.page-option .el-checkbox { height: auto; min-width: 0; align-items: flex-start; }
+.page-option :deep(.el-checkbox__label) { white-space: normal; overflow-wrap: anywhere; line-height: 1.6; }
+.page-option :deep(.el-checkbox__input) { margin-top: 3px; }
 .page-option > span { color: var(--ink-muted); font-size: 12px; line-height: 1.6; }
 .page-option > span.blocked { color: var(--warning); }
-.page-option .el-button { justify-self: start; }
+.page-option .el-button { justify-self: start; max-width: 100%; height: auto; white-space: normal; overflow-wrap: anywhere; line-height: 1.6; text-align: left; }
 .preview-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.preview-page-select { width: 130px; }
+.preview-page-select { width: min(360px, 60%); }
 .preview-container { min-height: 150px; max-height: 520px; overflow: auto; border: 1px solid var(--line-subtle); border-radius: var(--radius-sm); background: var(--surface-code); }
 .mask-surface { position: relative; line-height: 0; }
 .mask-surface img { display: block; width: 100%; height: auto; }

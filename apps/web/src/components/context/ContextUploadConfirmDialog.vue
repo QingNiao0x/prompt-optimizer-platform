@@ -62,10 +62,10 @@ const confirm = (): void => {
     @update:model-value="emit('update:modelValue', $event)"
   >
     <p>项目代码已在浏览器中处理。以下文档只有勾选并确认后才会发送到本项目后端解析，供 Plan Mode 和最终提示词检索使用。</p>
-    <p>图片和 PDF 默认只在本地提取，不会把页面发给视觉模型。需要识别时，先选择「我要挑选后再识别」，上传后用一张清单决定哪些文件外发。</p>
+    <p>图片、PDF 和 Office 文档默认本地解析。需要识别画面时，先选择「我要挑选后再识别」，上传后从清单选择页面或内嵌图片，检查预览与遮挡并确认外发。</p>
     <fieldset v-if="hasVisionCandidates" class="vision-policy">
-      <legend>图片与 PDF</legend>
-      <ElRadioGroup v-model="visionPolicy" aria-label="图片与 PDF 的处理方式">
+      <legend>图片、PDF 与 Office 内嵌图片</legend>
+      <ElRadioGroup v-model="visionPolicy" aria-label="视觉资料的处理方式">
         <ElRadio value="local-only">全部仅本地提取</ElRadio>
         <ElRadio value="batch-review">我要挑选后再识别</ElRadio>
       </ElRadioGroup>

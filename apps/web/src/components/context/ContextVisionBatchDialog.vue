@@ -26,7 +26,7 @@ const inspect = async (row: VisionBatchRow): Promise<void> => {
 </script>
 
 <template>
-  <ElDialog :model-value="store.batchVisible" title="选择需要视觉识别的图片与 PDF" width="min(760px, calc(100vw - 24px))"
+  <ElDialog :model-value="store.batchVisible" title="选择需要视觉识别的内容" width="min(760px, calc(100vw - 24px))"
     append-to-body :close-on-click-modal="false"
     @update:model-value="value => { if (!value && !store.status) store.cancelBatch(); }">
     <template v-if="store.batch">
@@ -43,7 +43,8 @@ const inspect = async (row: VisionBatchRow): Promise<void> => {
           <div class="batch-path">
             <strong>{{ row.status.path }}</strong>
             <span>{{ summarizeVisionPages(row.status) }}</span>
-            <span v-if="row.mode === 'recognize'">将发送 {{ row.pages.length }} 页<span v-if="row.pages.some(page => page.masks.length)">，已设置遮挡</span></span>
+            <span v-for="warning in row.status.visionReview?.warnings" :key="warning">{{ warning }}</span>
+            <span v-if="row.mode === 'recognize'">将发送 {{ row.pages.length }} 项<span v-if="row.pages.some(page => page.masks.length)">，已设置遮挡</span></span>
           </div>
           <ElRadioGroup :model-value="row.mode" :aria-label="`${row.status.path} 的处理方式`"
             @update:model-value="store.markRow(row.status.documentId, $event as VisionBatchRow['mode'])">
@@ -73,7 +74,7 @@ const inspect = async (row: VisionBatchRow): Promise<void> => {
 .batch-list li { display: grid; gap: 6px; padding: 10px; border: 1px solid var(--line-subtle); border-radius: var(--radius-sm); }
 .batch-path { display: grid; gap: 4px; min-width: 0; }
 .batch-path strong { overflow-wrap: anywhere; color: var(--ink-strong); font-weight: 600; }
-.batch-path span { color: var(--ink-muted); font-size: 12px; line-height: 1.6; }
+.batch-path span { color: var(--ink-muted); font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
 .batch-list :deep(.el-radio-group) { display: flex; flex-wrap: wrap; gap: 8px; }
 .vision-consent { margin-top: 16px; padding: 14px; border: 1px solid var(--warning); border-radius: var(--radius-sm); background: var(--orange-soft); }
 .vision-consent .el-checkbox { height: auto; white-space: normal; align-items: flex-start; }

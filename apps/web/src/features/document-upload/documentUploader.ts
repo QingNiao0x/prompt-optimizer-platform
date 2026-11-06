@@ -57,7 +57,7 @@ class VisionReviewDeferred extends Error {
 /**
  * 分片发送原始文件并等待后端完成全文解析。返回的 Pinia 数据只有临时索引引用，
  * 不会把几十 MB 的正文或 Base64 留在页面状态和后续 JSON 请求中。
- * deferVisionReview 为 true 时，图片和 PDF 停在确认阶段并返回句柄，供整批一次决定。
+ * deferVisionReview 为 true 时，支持视觉审阅的资料停在确认阶段并返回句柄，供整批一次决定。
  */
 export function uploadAndIndexDocument(
   source: File,

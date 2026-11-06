@@ -31,6 +31,12 @@ public class ContextPageRasterizer {
     public BufferedImage image(Path source) throws IOException {
         if (Files.size(source) > 10L * 1024 * 1024) throw invalid("用于视觉识别的图片不能超过 10 MiB。");
         byte[] raw = Files.readAllBytes(source);
+        return image(raw);
+    }
+
+    /** 内嵌图片与独立上传图片使用相同的实际格式、像素和方向校验。 */
+    public BufferedImage image(byte[] raw) throws IOException {
+        if (raw.length > 10L * 1024 * 1024) throw invalid("用于视觉识别的图片不能超过 10 MiB。");
         try (var input = ImageIO.createImageInputStream(new ByteArrayInputStream(raw))) {
             var readers = ImageIO.getImageReaders(input);
             if (!readers.hasNext()) throw invalid("图片实际格式不受支持。");

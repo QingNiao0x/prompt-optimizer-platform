@@ -121,6 +121,122 @@ class ContextVisualDocumentWorkflowTest {
             assertThatThrownBy(() -> fixture.service.confirmVision(id, new Confirmation("fixture", true, List.of(new PageSelection(1, List.of()))))).isInstanceOf(DocumentUploadException.class);
         }
     }
+
+    @Test void officeImagesRequireConsentAndUseActualMasksWhileNativeTextAndFormatStayIndexed() throws Exception {
+        AtomicReference<byte[]> sent = new AtomicReference<>();
+        AtomicInteger calls = new AtomicInteger();
+        try (var fixture = new Fixture((model, page, bytes, tokens) -> {
+            sent.set(bytes); calls.incrementAndGet(); return recognition("图中确认阈值为27");
+        })) {
+            String id = fixture.upload("reference.docx", "docx", OfficeContextFixtures.wordWithImage("原始正文尾部保留", png()), true);
+            var waiting = fixture.await(id, DocumentProcessingPhase.AWAITING_CONFIRMATION);
+            assertThat(waiting.visionReview().pages()).hasSize(1);
+            assertThat(waiting.visionReview().pages().getFirst().label()).contains("内嵌图片");
+            assertThat(calls).hasValue(0);
+            assertThat(fixture.service.previewPage(id, 1)).startsWith((byte) 137, (byte) 80);
+            assertThatThrownBy(() -> fixture.service.confirmVision(id, new Confirmation("fixture", false,
+                    List.of(new PageSelection(1, List.of()))))).isInstanceOf(DocumentUploadException.class);
+            fixture.service.confirmVision(id, new Confirmation("fixture", true,
+                    List.of(new PageSelection(1, List.of(new Mask(0, 0, .5, .5))))));
+            var ready = fixture.await(id, DocumentProcessingPhase.READY);
+            var pixels = ImageIO.read(new ByteArrayInputStream(sent.get()));
+            assertThat(pixels.getRGB(5, 5) & 0xffffff).isZero();
+            assertThat(pixels.getRGB(90, 90) & 0xffffff).isEqualTo(0xffffff);
+            assertThat(calls).hasValue(1);
+            assertThat(ready.pageCoverage().getFirst().label()).contains("内嵌图片");
+            assertThat(fixture.service.retrieve(id, "阈值27", 60000, 10).orElseThrow().content())
+                    .contains("原始正文尾部保留", "对齐=center", "首行缩进(twip)=480", "图中确认阈值为27");
+        }
+    }
+
+    @Test void unselectedAndUnsupportedOfficeImagesStayPartialAndKeepNativeContent() throws Exception {
+        try (var fixture = new Fixture((a, b, c, d) -> { throw new AssertionError("No image consent"); })) {
+            for (byte[] image : List.of(png(), "unsupported-vector".getBytes(java.nio.charset.StandardCharsets.UTF_8))) {
+                String id = fixture.upload("reference.docx", "docx", OfficeContextFixtures.wordWithImage("可读取原文", image), true);
+                var waiting = fixture.await(id, DocumentProcessingPhase.AWAITING_CONFIRMATION);
+                if (image.length < 30) {
+                    assertThat(waiting.visionReview().pages().getFirst().blocked()).isTrue();
+                    assertThatThrownBy(() -> fixture.service.confirmVision(id, new Confirmation("fixture", true,
+                            List.of(new PageSelection(1, List.of()))))).isInstanceOf(DocumentUploadException.class);
+                }
+                fixture.service.confirmVision(id, new Confirmation("", false, List.of()));
+                var partial = fixture.await(id, DocumentProcessingPhase.PARTIAL);
+                assertThat(partial.pageCoverage().getFirst().status()).isEqualTo(PageStatus.SKIPPED);
+                assertThat(fixture.service.retrieve(id, "原文", 60000, 10).orElseThrow().content()).contains("可读取原文");
+            }
+        }
+    }
+
+    @Test void officeWithoutImagesContinuesLocalExtractionWithoutEmptyConfirmation() throws Exception {
+        try (var fixture = new Fixture((a, b, c, d) -> { throw new AssertionError("No image exists"); })) {
+            byte[] file = OfficeContextFixtures.packageBytes(Map.of("word/document.xml", OfficeContextFixtures.xml("""
+                    <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+                    <w:p><w:r><w:t>无图片文档的完整正文</w:t></w:r></w:p></w:document>
+                    """)));
+            String id = fixture.upload("native.docx", "docx", file, true);
+            fixture.await(id, DocumentProcessingPhase.READY);
+            assertThat(fixture.service.retrieve(id, "正文", 60000, 10).orElseThrow().content()).contains("无图片文档的完整正文");
+            verifyNoInteractions(fixture.permit);
+        }
+    }
+
+    @Test void imageOnlyWordCanCompleteAfterConsentWithoutFabricatingNativeText() throws Exception {
+        try (var fixture = new Fixture((a, b, c, d) -> recognition("仅图片中的正文"))) {
+            String id = fixture.upload("image-only.docx", "docx", OfficeContextFixtures.wordWithImage("", png()), true);
+            fixture.await(id, DocumentProcessingPhase.AWAITING_CONFIRMATION);
+            fixture.service.confirmVision(id, new Confirmation("fixture", true, List.of(new PageSelection(1, List.of()))));
+            fixture.await(id, DocumentProcessingPhase.READY);
+            assertThat(fixture.service.retrieve(id, "正文", 60000, 10).orElseThrow().content()).contains("仅图片中的正文");
+        }
+    }
+
+    @Test void officeInspectionDoesNotMislabelTemporaryRasterizerCapacityAsUnsupportedFormat(
+            @org.junit.jupiter.api.io.TempDir Path directory) throws Exception {
+        var rasterizer = new ContextPageRasterizer();
+        var permits = (java.util.concurrent.Semaphore) ReflectionTestUtils.getField(rasterizer, "rendering");
+        permits.acquire(2);
+        try {
+            Path source = directory.resolve("capacity.docx");
+            Files.write(source, OfficeContextFixtures.wordWithImage("原文", png()));
+            var visual = new ContextVisualDocumentExtractor(rasterizer,
+                    (a, b, c, d) -> { throw new AssertionError("Inspection cannot invoke a model"); },
+                    mock(ContextVisionModelCatalog.class), new ContextVisionProperties(), new StreamingDocumentExtractor(new BinaryContentExtractor()));
+            assertThatThrownBy(() -> visual.inspect(source, "docx"))
+                    .isInstanceOfSatisfying(DocumentUploadException.class,
+                            failure -> assertThat(failure.getReason()).isEqualTo(DocumentUploadException.Reason.CAPACITY_EXCEEDED));
+        } finally { permits.release(2); }
+    }
+
+    @Test void maskedPdfPageNeverReintroducesItsNativeTextIntoTheIndex() throws Exception {
+        try (var fixture = new Fixture((a, b, c, d) -> recognition("遮挡后可见文字"))) {
+            String id = fixture.upload("masked.pdf", "pdf", nativePdf("NATIVE_MASKED_TEXT_MUST_BE_EXCLUDED"), true);
+            fixture.await(id, DocumentProcessingPhase.AWAITING_CONFIRMATION);
+            fixture.service.confirmVision(id, new Confirmation("fixture", true,
+                    List.of(new PageSelection(1, List.of(new Mask(0, 0, 1, 1))))));
+            fixture.await(id, DocumentProcessingPhase.READY);
+            assertThat(fixture.service.retrieve(id, "文字", 60000, 10).orElseThrow().content())
+                    .contains("遮挡后可见文字").doesNotContain("NATIVE_MASKED_TEXT_MUST_BE_EXCLUDED");
+        }
+    }
+
+    @Test void spreadsheetCoordinatesMergedCellsFormulaAndTailSurviveTemporaryIndexRetrieval() throws Exception {
+        try (var fixture = new Fixture((a, b, c, d) -> { throw new AssertionError("Local spreadsheet"); });
+             var book = new org.apache.poi.xssf.usermodel.XSSFWorkbook()) {
+            var sheet = book.createSheet("年度数据");
+            sheet.createRow(0).createCell(0).setCellValue("年度汇总");
+            sheet.addMergedRegion(new org.apache.poi.ss.util.CellRangeAddress(0, 0, 0, 2));
+            var row = sheet.createRow(1);
+            row.createCell(0).setCellValue(2015);
+            row.createCell(1).setCellValue(27);
+            row.createCell(2).setCellFormula("B2*2");
+            sheet.createRow(120).createCell(3).setCellValue("尾部特殊口径保留");
+            var output = new ByteArrayOutputStream(); book.write(output);
+            String id = fixture.upload("analysis.xlsx", "xlsx", output.toByteArray(), false);
+            fixture.await(id, DocumentProcessingPhase.READY);
+            String content = fixture.service.retrieve(id, "年度 特殊口径", 60000, 10).orElseThrow().content();
+            assertThat(content).contains("A1:C1", "B2", "C2", "B2*2", "缓存", "D121", "尾部特殊口径保留");
+        }
+    }
     private static Recognition recognition(String text) { return new Recognition(text, List.of(), "", List.of(), true, false); }
     static byte[] png() throws IOException {
         var image = new BufferedImage(100,100,BufferedImage.TYPE_INT_RGB);
@@ -154,7 +270,8 @@ class ContextVisualDocumentWorkflowTest {
         Fixture(ContextVisionProvider provider) {
             var models = mock(ContextVisionModelCatalog.class);
             when(models.require("fixture")).thenReturn(new Model("fixture", "Fixture", true, 1, "Controlled", false));
-            var visual = new ContextVisualDocumentExtractor(new ContextPageRasterizer(), provider, models, new ContextVisionProperties());
+            var visual = new ContextVisualDocumentExtractor(new ContextPageRasterizer(), provider, models, new ContextVisionProperties(),
+                    new StreamingDocumentExtractor(new BinaryContentExtractor()));
             var concurrency = mock(ModelConcurrencyLimiter.class); when(concurrency.acquireUser(actor.get().userId())).thenReturn(permit);
             var vector = new SemanticVectorIndex(inputs -> { throw new AssertionError("disabled embedding"); }, new SemanticVectorIndexOptions(false,16,48000));
             var summary = new MapReduceDocumentSummarizer(new FileContentSummarizer(), Optional.empty(), new MapReduceSummaryOptions(false,8,24,48000,1200,1800,256,32));

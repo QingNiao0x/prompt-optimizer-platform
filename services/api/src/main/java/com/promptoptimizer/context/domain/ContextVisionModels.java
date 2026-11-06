@@ -12,17 +12,36 @@ public final class ContextVisionModels {
     private ContextVisionModels() { }
 
     /** 文字层是否可读与外发拦截分开记录；建议识别不构成用户授权。 */
-    public record PageInfo(int page, boolean readableText, boolean hasImages, boolean suggested, boolean blocked, String reason) { }
+    public record PageInfo(int page, boolean readableText, boolean hasImages, boolean suggested, boolean blocked, String reason,
+                           @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL) String label) {
+        /** 兼容既有 PDF 和独立图片审阅。Office 使用 label 标明内嵌图片，page 仍是选择标识。 */
+        public PageInfo(int page, boolean readableText, boolean hasImages, boolean suggested, boolean blocked, String reason) {
+            this(page, readableText, hasImages, suggested, blocked, reason, null);
+        }
+    }
     /** 仅在等待用户确认期间提供预览；模型和页数限制来自本次运行配置。 */
-    public record Review(List<PageInfo> pages, int maxPages, int maxCalls, int maxOutputTokens, int deadlineSeconds) { }
+    public record Review(List<PageInfo> pages, int maxPages, int maxCalls, int maxOutputTokens, int deadlineSeconds,
+                         @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY) List<String> warnings) {
+        public Review { warnings = warnings == null ? List.of() : List.copyOf(warnings); }
+        /** 兼容旧审阅协议，目录遗漏在新协议的 warnings 中说明。 */
+        public Review(List<PageInfo> pages, int maxPages, int maxCalls, int maxOutputTokens, int deadlineSeconds) {
+            this(pages, maxPages, maxCalls, maxOutputTokens, deadlineSeconds, List.of());
+        }
+    }
     /** 服务端应用不透明遮挡；拒绝越界、空或非有限坐标。 */
     public record Mask(double x, double y, double width, double height) { }
-    /** 页码从 1 开始，不接受文件路径、外部 URL 或客户端声明的身份。 */
+    /** 选择标识从 1 开始，PDF 为页码，Office 为内嵌图片编号；不接受资源路径或客户端声明的身份。 */
     public record PageSelection(int page, List<Mask> masks) { }
     /** 空 pages 表示只在本地提取；非空时必须有明确模型及本次外发同意。 */
     public record Confirmation(String modelId, boolean consent, List<PageSelection> pages) { }
     /** 状态区分文字层、视觉识别、未识别及失败，不能以已有少量正文证明全文完整。 */
-    public record PageCoverage(int page, PageMethod method, PageStatus status, String message) { }
+    public record PageCoverage(int page, PageMethod method, PageStatus status, String message,
+                               @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL) String label) {
+        /** 旧页覆盖不需要额外标签。 */
+        public PageCoverage(int page, PageMethod method, PageStatus status, String message) {
+            this(page, method, status, message, null);
+        }
+    }
     /** TEXT_LAYER 是本地文字层，VISION 是已调用模型，NONE 表示没有识别正文。 */
     public enum PageMethod { TEXT_LAYER, VISION, NONE }
     /** COMPLETE 只表示处理完成；PARTIAL/SKIPPED/FAILED 不得展示为全文已读，均需保留遗漏说明。 */

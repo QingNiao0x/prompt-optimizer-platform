@@ -18,12 +18,18 @@ const fixturePaths = [
 ] as const;
 
 test.beforeEach(async ({ page }) => {
+  await page.route('**/api/**', route => route.fulfill({ status: 501,
+    json: { error: { message: '此资料与Plan夹具未登记接口' } } }));
   await mockAuthentication(page);
   // 此用例模拟后端业务接口，平台模型与统计请求也必须隔离，避免真实服务的 401 中断索引。
   await page.route('**/api/v1/analytics/events', (route) => route.fulfill({ status: 204 }));
   await page.route('**/api/v1/models', (route) => route.fulfill({ status: 200, json: {
     data: [{ id: 'mock:default', displayName: '测试模型', provider: 'Mock', defaultModel: true }],
   } }));
+  await page.route('**/api/v1/me/settings', route => route.fulfill({ json: { data: {
+    displayName: '测试用户', email: 'test@example.com', username: null, locale: 'zh-CN',
+    emailBindingAvailable: false, accountDeletionAvailable: false,
+  } } }));
 });
 
 test('本地样例项目索引与单独方案文件共同参与 Plan 和最终增强', async ({ page }) => {
@@ -172,10 +178,17 @@ test('本地样例项目索引与单独方案文件共同参与 Plan 和最终�
   await openWorkbenchPane(page, 'context');
   await page.getByRole('button', { name: '添加上下文' }).click();
   await page.getByRole('menuitem', { name: '选择文件夹' }).click();
-  await expect(page.getByText('9 个源码文件已建立本地索引')).toBeVisible();
+  await expect(page.getByText('9 个文本文件已完整建立本地索引')).toBeVisible();
   await expect(page.locator('.warning-list')).toHaveCount(0);
   const indexedPaths = await page.evaluate(async () => {
-    const request = indexedDB.open('prompt-optimizer-project-index');
+    // 按正式路由读取本次项目的独立存储，兼容支持和不支持 Storage Buckets 的浏览器。
+    const modulePath = '/src/features/project-index/projectIndexStorage.ts';
+    const storage = await import(/* @vite-ignore */ modulePath);
+    const ids = [...await storage.listIsolatedProjects('bucket'), ...await storage.listIsolatedProjects('database')];
+    if (ids.length !== 1) throw new Error('夹具应只建立一个项目索引');
+    const location = storage.projectDatabaseLocation(ids[0]);
+    const factory = await location.factory();
+    const request = factory.open(location.name);
     const database = await new Promise<IDBDatabase>((resolve, reject) => {
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
