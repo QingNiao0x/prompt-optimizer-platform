@@ -1,0 +1,74 @@
+{
+  "completedAt": "2026-11-09T09:08:53.425Z",
+  "tests": 82,
+  "actualCalls": 10,
+  "maximum": 24,
+  "remainingUnused": 14,
+  "inputTokens": 20940,
+  "outputTokens": 43541,
+  "results": [
+    {
+      "id": "W_QUERY",
+      "success": true,
+      "body": "请查询并整理全球范围内使用AI最多的职业/行业，给出可核对的排名或代表性结论。请说明“使用最多”采用的指标（如采用率、使用频率、用户规模等）、统计时间范围、数据来源和判断口径；职业与行业分别呈现，若不同来源结论不一致，请注明差异。优先采用近期权威调查或行业报告，并避免把预测、试点或单一地区数据当作全球结论；若找不到统一的全球排名，请说明数据限制，并给出有来源支持的代表性结论。",
+      "stages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ]
+    },
+    {
+      "id": "W_CODE",
+      "success": true,
+      "body": "请修改 src/occupationalInfo 下的现有业务文件，为新增调查和导入调查两类入口限制调查日期不能晚于今日（today），允许填写今天。today 由调用方按业务时区传入合法 YYYY-MM-DD 日历日期；调查日期必须是真实公历日期，不能接受 2 月 30 日等无效日历值，也不能接受晚于 today 的日期，等于 today 时通过。请在现有 validateSurveyDate 中完成格式、真实日历日期和“不晚于 today”的校验，使 form.mjs 的新增提交和 import.mjs 的逐行导入共用该结果；保留现有函数签名与返回类型。对晚于 today 或无效公历日期应返回非空错误字符串，使新增提交不返回成功、导入不进入 accepted；合法的今天和更早日期应通过。导入时继续沿用现有逐行反馈：逐行校验，错误保留该行的 1 基行号和错误信息，合法行照常进入 accepted；新增提交在合法时仍返回成功，其他行为保持可用。不要增加依赖或文件。只返回实际修改的文件，统一使用 JSON 对象 {\"files\":[{\"path\":\"实际修改的相对路径\",\"content\":\"完整文件正文\"}]}；只限 date.mjs、form.mjs、import.mjs 三个现有 mjs 业务文件，只列实际修改且内容完整的文件；验收脚本不属于交付文件，不要输出无关说明。",
+      "stages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ]
+    },
+    {
+      "id": "R_PLAN",
+      "success": true,
+      "body": "请为客户撰写一则服务延期通知，只输出通知正文，不要附加主题、说明或多余文字。已确认：新的交付日期由我稍后确认，当前不承诺具体日期；本次不承诺额外赔偿。通知中不得写出具体交付日期，也不得承诺额外赔偿；可说明新日期将在确认后另行通知。不要编造具体延期原因或未提供的事实；其他措辞由你设计。无需再次向我确认交付日期或补偿方案。",
+      "stages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ]
+    },
+    {
+      "id": "R_WAIT",
+      "success": true,
+      "body": "先阅读附件 project.txt，熟悉项目中采集、查询、导出三个模块及其依赖关系：采集保存后供查询，导出读取查询结果。理解后简要确认已熟悉，然后等待我安排具体任务；不要修改任何文件，也不要编写项目说明。",
+      "stages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ]
+    },
+    {
+      "id": "R_REPORT",
+      "success": true,
+      "body": "根据附件写一份失败原因分析报告，区分已证实原因和待验证线索，只给报告，不执行修复。报告应依据附件现有信息，至少按“已证实原因”和“待验证线索”两部分呈现，区分时以附件能直接支持的结论为限。附件现有信息为：两次上传成功后保存均返回409。服务日志记录optimistic_version_mismatch。尚未读取客户端重试代码。报告应把已记录事实与推断分开，不得把未读取的客户端重试代码所涉行为认定为已证实原因，也不要补造未提供的日志、代码或复现细节。",
+      "stages": [
+        "SCOPE_ANALYSIS",
+        "BODY_GENERATION"
+      ]
+    }
+  ],
+  "scope": "Real Provider requests, not UI deployment or downstream work comparison",
+  "modelRoute": "legacy compatibility adapter to official DeepSeek, unlike prior explicit deepseek route, no paired quality comparison claimed",
+  "checks": {
+    "queryDelivered": true,
+    "contextRetained": true,
+    "planAnswered": true,
+    "extraCompensationQualifierRetained": true,
+    "reportNotRemoved": true,
+    "waitAcknowledgementAdded": true
+  },
+  "adoption": {
+    "runtimeDefault": "core-repair-v4",
+    "newProfile": "PROTOCOL_SCOPE_REPAIR",
+    "newVersion": "core-repair-v5",
+    "defaultSwitched": false,
+    "serviceRestarted": false
+  },
+  "qualityRetries": 0
+}
