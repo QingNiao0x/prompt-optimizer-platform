@@ -1,0 +1,291 @@
+{
+  "version": "two-stage-pilot-1",
+  "modelId": "deepseek:deepseek-flash",
+  "routeKey": "deepseek",
+  "upstreamModel": "deepseek-flash",
+  "temperature": 0.2,
+  "maxTokens": 8000,
+  "jsonResponseFormat": true,
+  "qualityRetries": 0,
+  "protocolRetries": 0,
+  "minimumCalls": {
+    "pilot": 9,
+    "expand": 18
+  },
+  "requestedTotalNewCalls": 30,
+  "reviewMethod": "开发者逐项人工审阅，无独立盲评。人工语义清单不发给模型。",
+  "pilotGate": [
+    "每篇逐项检查全部人工语义条目，无独立含义遗漏或新增事实。",
+    "数字化和服务说明均有具体句子或组织收益，对话文体兑现。",
+    "自然短文可原样或少改，计为持平。",
+    "两阶段端到端时间不超过同题v3的3倍，输入输出总Token不超过3倍，任一超限不扩大。",
+    "任一失败停止此方向，保留原件，保持当前默认。"
+  ],
+  "jobs": [
+    {
+      "id": "digital-CONVERSATIONAL-v3",
+      "phase": "pilot",
+      "baseline": true,
+      "input": {
+        "sourceText": "以数字化赋能高质量发展：新时代背景下的实践路径与价值意蕴\n\n在当今快速发展的数字化时代，数字化转型已成为推动组织高质量发展的重要引擎。首先，要坚持需求导向，以用户价值为中心，持续优化业务流程，构建从感知、分析到决策、执行的闭环体系。其次，要强化数据要素赋能，打通信息孤岛，推动多维度、全链条、深层次的协同融合，不断提升资源配置效率和精细化治理水平。再次，要完善长效机制，明确目标抓手，压实主体责任，形成上下联动、内外协同、持续迭代的良好生态。\n\n与此同时，还应注重技术能力与组织能力的双向提升，既要以创新驱动增强发展动能，也要以规范治理守住安全底线，在开放合作中拓展应用场景，在实践探索中沉淀可复制、可推广的经验做法。通过场景化落地、项目化推进、清单化管理，进一步把数字化优势转化为发展优势、竞争优势和服务优势。\n\n综上所述，数字化转型不是一蹴而就的短期任务，而是一项系统性、长期性、基础性工程。唯有坚持问题导向、目标导向和结果导向相统一，持续发力、久久为功，才能不断释放数字动能，为高质量发展提供坚实支撑和有力保障。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "digital-CONVERSATIONAL-two-stage",
+      "phase": "pilot",
+      "baseline": false,
+      "input": {
+        "sourceText": "以数字化赋能高质量发展：新时代背景下的实践路径与价值意蕴\n\n在当今快速发展的数字化时代，数字化转型已成为推动组织高质量发展的重要引擎。首先，要坚持需求导向，以用户价值为中心，持续优化业务流程，构建从感知、分析到决策、执行的闭环体系。其次，要强化数据要素赋能，打通信息孤岛，推动多维度、全链条、深层次的协同融合，不断提升资源配置效率和精细化治理水平。再次，要完善长效机制，明确目标抓手，压实主体责任，形成上下联动、内外协同、持续迭代的良好生态。\n\n与此同时，还应注重技术能力与组织能力的双向提升，既要以创新驱动增强发展动能，也要以规范治理守住安全底线，在开放合作中拓展应用场景，在实践探索中沉淀可复制、可推广的经验做法。通过场景化落地、项目化推进、清单化管理，进一步把数字化优势转化为发展优势、竞争优势和服务优势。\n\n综上所述，数字化转型不是一蹴而就的短期任务，而是一项系统性、长期性、基础性工程。唯有坚持问题导向、目标导向和结果导向相统一，持续发力、久久为功，才能不断释放数字动能，为高质量发展提供坚实支撑和有力保障。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "legal-CONVERSATIONAL-v3",
+      "phase": "pilot",
+      "baseline": true,
+      "input": {
+        "sourceText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [
+          "已使用的数字内容不适用无理由退款。"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "legal-CONVERSATIONAL-two-stage",
+      "phase": "pilot",
+      "baseline": false,
+      "input": {
+        "sourceText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [
+          "已使用的数字内容不适用无理由退款。"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "clean-CONVERSATIONAL-v3",
+      "phase": "pilot",
+      "baseline": true,
+      "input": {
+        "sourceText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "clean-CONVERSATIONAL-two-stage",
+      "phase": "pilot",
+      "baseline": false,
+      "input": {
+        "sourceText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "business-FORMAL-v3",
+      "phase": "expand",
+      "baseline": true,
+      "input": {
+        "sourceText": "为了进一步提升协作效率，我们将对项目进度说明的提交方式进行统一优化。各项目负责人每周三下班前在共享文档中更新进展，内容包括已完成事项、当前问题和下周计划。部门负责人每周四集中查看，并在文档中回复需要协调的问题。这样既能减少重复汇报，也能让跨部门协作更加顺畅。我们会持续收集同事的使用反馈，逐步改进这一流程。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "business-FORMAL-two-stage",
+      "phase": "expand",
+      "baseline": false,
+      "input": {
+        "sourceText": "为了进一步提升协作效率，我们将对项目进度说明的提交方式进行统一优化。各项目负责人每周三下班前在共享文档中更新进展，内容包括已完成事项、当前问题和下周计划。部门负责人每周四集中查看，并在文档中回复需要协调的问题。这样既能减少重复汇报，也能让跨部门协作更加顺畅。我们会持续收集同事的使用反馈，逐步改进这一流程。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "business-NATURAL-v3",
+      "phase": "expand",
+      "baseline": true,
+      "input": {
+        "sourceText": "为了进一步提升协作效率，我们将对项目进度说明的提交方式进行统一优化。各项目负责人每周三下班前在共享文档中更新进展，内容包括已完成事项、当前问题和下周计划。部门负责人每周四集中查看，并在文档中回复需要协调的问题。这样既能减少重复汇报，也能让跨部门协作更加顺畅。我们会持续收集同事的使用反馈，逐步改进这一流程。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "business-NATURAL-two-stage",
+      "phase": "expand",
+      "baseline": false,
+      "input": {
+        "sourceText": "为了进一步提升协作效率，我们将对项目进度说明的提交方式进行统一优化。各项目负责人每周三下班前在共享文档中更新进展，内容包括已完成事项、当前问题和下周计划。部门负责人每周四集中查看，并在文档中回复需要协调的问题。这样既能减少重复汇报，也能让跨部门协作更加顺畅。我们会持续收集同事的使用反馈，逐步改进这一流程。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "business-CONVERSATIONAL-v3",
+      "phase": "expand",
+      "baseline": true,
+      "input": {
+        "sourceText": "为了进一步提升协作效率，我们将对项目进度说明的提交方式进行统一优化。各项目负责人每周三下班前在共享文档中更新进展，内容包括已完成事项、当前问题和下周计划。部门负责人每周四集中查看，并在文档中回复需要协调的问题。这样既能减少重复汇报，也能让跨部门协作更加顺畅。我们会持续收集同事的使用反馈，逐步改进这一流程。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "business-CONVERSATIONAL-two-stage",
+      "phase": "expand",
+      "baseline": false,
+      "input": {
+        "sourceText": "为了进一步提升协作效率，我们将对项目进度说明的提交方式进行统一优化。各项目负责人每周三下班前在共享文档中更新进展，内容包括已完成事项、当前问题和下周计划。部门负责人每周四集中查看，并在文档中回复需要协调的问题。这样既能减少重复汇报，也能让跨部门协作更加顺畅。我们会持续收集同事的使用反馈，逐步改进这一流程。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "essay-FORMAL-v3",
+      "phase": "expand",
+      "baseline": true,
+      "input": {
+        "sourceText": "下班回家，我又走进了楼下那家面馆。面还是那碗面，老板也没有突然说出什么人生道理。我只是饿了，想吃点热的。\n窗边有人在打电话，筷子碰到碗沿，叮的一声。那天工作没做完，消息也没回完，但我先把面吃完了。想到这里，我觉得在快节奏的现代生活中，我们需要适当地放慢自己的脚步，感受生活中的美好，这无疑是一件十分重要的事情。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "essay-FORMAL-two-stage",
+      "phase": "expand",
+      "baseline": false,
+      "input": {
+        "sourceText": "下班回家，我又走进了楼下那家面馆。面还是那碗面，老板也没有突然说出什么人生道理。我只是饿了，想吃点热的。\n窗边有人在打电话，筷子碰到碗沿，叮的一声。那天工作没做完，消息也没回完，但我先把面吃完了。想到这里，我觉得在快节奏的现代生活中，我们需要适当地放慢自己的脚步，感受生活中的美好，这无疑是一件十分重要的事情。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "essay-NATURAL-v3",
+      "phase": "expand",
+      "baseline": true,
+      "input": {
+        "sourceText": "下班回家，我又走进了楼下那家面馆。面还是那碗面，老板也没有突然说出什么人生道理。我只是饿了，想吃点热的。\n窗边有人在打电话，筷子碰到碗沿，叮的一声。那天工作没做完，消息也没回完，但我先把面吃完了。想到这里，我觉得在快节奏的现代生活中，我们需要适当地放慢自己的脚步，感受生活中的美好，这无疑是一件十分重要的事情。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "essay-NATURAL-two-stage",
+      "phase": "expand",
+      "baseline": false,
+      "input": {
+        "sourceText": "下班回家，我又走进了楼下那家面馆。面还是那碗面，老板也没有突然说出什么人生道理。我只是饿了，想吃点热的。\n窗边有人在打电话，筷子碰到碗沿，叮的一声。那天工作没做完，消息也没回完，但我先把面吃完了。想到这里，我觉得在快节奏的现代生活中，我们需要适当地放慢自己的脚步，感受生活中的美好，这无疑是一件十分重要的事情。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "essay-CONVERSATIONAL-v3",
+      "phase": "expand",
+      "baseline": true,
+      "input": {
+        "sourceText": "下班回家，我又走进了楼下那家面馆。面还是那碗面，老板也没有突然说出什么人生道理。我只是饿了，想吃点热的。\n窗边有人在打电话，筷子碰到碗沿，叮的一声。那天工作没做完，消息也没回完，但我先把面吃完了。想到这里，我觉得在快节奏的现代生活中，我们需要适当地放慢自己的脚步，感受生活中的美好，这无疑是一件十分重要的事情。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "essay-CONVERSATIONAL-two-stage",
+      "phase": "expand",
+      "baseline": false,
+      "input": {
+        "sourceText": "下班回家，我又走进了楼下那家面馆。面还是那碗面，老板也没有突然说出什么人生道理。我只是饿了，想吃点热的。\n窗边有人在打电话，筷子碰到碗沿，叮的一声。那天工作没做完，消息也没回完，但我先把面吃完了。想到这里，我觉得在快节奏的现代生活中，我们需要适当地放慢自己的脚步，感受生活中的美好，这无疑是一件十分重要的事情。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    }
+  ],
+  "sha256": {
+    "scripts\\evaluation\\text-polish-two-stage\\TwoStageEvaluation.java": "c104590b0f9e93242180d177874d24d0051ae0b1a6a33aa2efee90e00b3c95d8",
+    "scripts\\evaluation\\text-polish-two-stage\\prepare.py": "ac50b87c6ac78ad7a1425067b7e2c641a33073e2312ea4b5dc8298e0b442ec71",
+    "docs\\testing\\evidence\\text-polish-two-stage-2026-11-09\\samples.json": "a15331eaca33e99c44c61643a87fe8dd881875f2ec228472c788821629b4558d",
+    "docs\\testing\\evidence\\text-polish-two-stage-2026-11-09\\semantic-cards.json": "0b149109a985fc3900672ff4d7712aeb54a7ecd7d4614700d4e9babdf4c5dad5",
+    "scripts\\evaluation\\text-polish-two-stage\\run.ps1": "0e066457d7258f07b568eea71658c528b03a313b0461940129e9c81aab964fb8",
+    "scripts\\evaluation\\text-polish-two-stage\\verify.py": "7cab67f98eb1cc4160b82d9c8893afdcf07112c38d6c3622d41b217f43ce7b26",
+    "services\\api\\src\\main\\java\\com\\promptoptimizer\\textpolish\\service\\TextPolishInstructions.java": "5199f7377ee13e5670c6030425c54e465f38b260b871a097dba4ee83a2dc5cd2"
+  }
+}
