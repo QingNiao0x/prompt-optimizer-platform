@@ -97,7 +97,7 @@ app:
   enhancement:
     natural:
       # 新请求采用v4的Plan状态/来源修复；显式COMPLETION_BASIS_REPAIR可回退v3，旧历史仍沿用记录版本。
-      profile: ${NATURAL_ENHANCEMENT_PROFILE:PLAN_CONTEXT_REPAIR}
+      profile: ${NATURAL_ENHANCEMENT_PROFILE:PROTOCOL_SCOPE_REPAIR}
   context:
     vision:
       # 资料先在本机解析；只有用户确认模型、页码与隐私后才外发，每页一次尝试，不自动重试。
