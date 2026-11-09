@@ -105,6 +105,25 @@ class NaturalPlanContextProviderTest {
     }
 
     @Test
+    void duplicateTaskFieldGetsOneLocatedRepairAndKeepsAllAnswers() throws Exception {
+        var input = input(List.of(new PlanAnswer("date", "新的交付日期是什么？", "日期稍后确认，不承诺额外赔偿。")));
+        String body = RAW + "日期稍后确认，不承诺额外赔偿。";
+        expect(scope(input), input, true);
+        String valid = json.writeValueAsString(enhancement(input, body));
+        String duplicate = valid.substring(0, valid.length() - 2) + ",\"requirements\":[]}}";
+        String response = json.writeValueAsString(Map.of("choices", List.of(Map.of("finish_reason", "stop",
+                "message", Map.of("content", duplicate)))));
+        server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            String sent = ((MockClientHttpRequest)request).getBodyAsString();
+            assertThat(sent).contains("task.requirements", "每个字段只能出现一次");
+        }).andRespond(withSuccess(json.writeValueAsString(Map.of("choices", List.of(Map.of("finish_reason", "stop",
+                "message", Map.of("content", valid))))), MediaType.APPLICATION_JSON));
+        assertThat(provider.enhance(input, value -> value).optimizedPrompt()).isEqualTo(body);
+        server.verify();
+    }
+
+    @Test
     void zeroQuestionPlanUsesOnlyPlanRecord() throws Exception {
         var input = input(List.of());
         ObjectNode body = enhancement(input, RAW);

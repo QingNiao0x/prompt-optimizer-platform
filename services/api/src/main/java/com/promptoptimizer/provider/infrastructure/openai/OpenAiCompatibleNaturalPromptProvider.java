@@ -665,6 +665,10 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             NaturalPromptPhasePayloads.Enhancement payload = reader.readValue(body);
             return payload.toDraft(input, metadata);
         } catch (IOException | IllegalArgumentException failure) {
+            if (NaturalPromptPlanContextInstructions.usesProtocol(input.strategyVersion())
+                    && failure instanceof com.fasterxml.jackson.databind.JsonMappingException mapping) {
+                throw NaturalPromptJsonFailure.mapping(mapping);
+            }
             throw invalid("自然增强阶段协议无效");
         }
     }
@@ -677,6 +681,10 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             NaturalPromptPhasePayloads.Planning payload = reader.readValue(body);
             return payload.toResponse(input, metadata);
         } catch (IOException | IllegalArgumentException failure) {
+            if (NaturalPromptPlanContextInstructions.usesProtocol(input.strategyVersion())
+                    && failure instanceof com.fasterxml.jackson.databind.JsonMappingException mapping) {
+                throw NaturalPromptJsonFailure.mapping(mapping);
+            }
             throw invalid("自然Plan阶段协议无效");
         }
     }
@@ -893,7 +901,13 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                     fail(operation, selection, mapped, null, false, attempt, started);
                     throw mapped;
                 } catch (JsonProcessingException failure) {
-                    var mapped = invalid("自然链路响应JSON无效");
+                    ProviderException mapped = invalid("自然链路响应JSON无效");
+                    if (NaturalPromptPlanContextInstructions.usesProtocol(input.strategyVersion())) {
+                        var diagnostic = NaturalPromptJsonFailure.diagnose(json,
+                                invalidCandidate == null ? "" : unwrap(invalidCandidate), failure);
+                        mapped = diagnostic;
+                        repairHint = "\n修复位置 " + diagnostic.getField() + "。" + diagnostic.getReason().repairInstruction();
+                    }
                     if (boundedRepair && attempt < MAX_ATTEMPTS) {
                         attemptUser = NaturalPromptRepairContext.userMessage(json, payload, invalidCandidate, parsedCandidate, input, true);
                         repairHint = NaturalPromptBoundedRepairInstructions.REPAIR;
@@ -905,6 +919,10 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                     // 仅追加服务端生成的编号提示，不能把异常原文、上游响应或用户答案拼回system。
                     // 新阶段Plan没有正文锚点字段，只修复requirements出处；旧版正文/Plan及准备分支保留原修复契约。
                     repairHint = "";
+                    if (retry && NaturalPromptPlanContextInstructions.usesProtocol(input.strategyVersion())
+                            && failure instanceof com.promptoptimizer.provider.domain.ProviderResponseValidationException diagnostic) {
+                        repairHint = "\n修复位置 " + diagnostic.getField() + "。" + diagnostic.getReason().repairInstruction();
+                    }
                     if (retry && metadataOnlyRepair) {
                         metadataRepair = NaturalPromptMetadataRepair.inspect(payload, parsedCandidate, input).orElse(null);
                     }
@@ -1066,7 +1084,9 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
 
     private void fail(String operation, OpenAiCompatibleProperties.ModelSelection model, ProviderException failure,
             Integer status, boolean retry, int attempt, long started) {
-        if (failure instanceof NaturalTaskScopeSources.InvalidUserEvidence invalidSource) {
+        if (failure instanceof com.promptoptimizer.provider.domain.ProviderResponseValidationException diagnostic) {
+            ModelCallLogger.captureValidationFailure(diagnostic.getReason(), diagnostic.getField());
+        } else if (failure instanceof NaturalTaskScopeSources.InvalidUserEvidence invalidSource) {
             // 仅记录固定原因和程序构造的字段路径，后续定位不依赖收集用户正文或完整模型响应。
             ModelCallLogger.captureValidationFailure(
                     com.promptoptimizer.provider.domain.ProviderResponseValidationException.Reason.USER_AUTHORITY_REFERENCE_INVALID,

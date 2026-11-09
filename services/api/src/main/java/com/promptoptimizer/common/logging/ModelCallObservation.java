@@ -69,6 +69,9 @@ public record ModelCallObservation(
     /** 只保留固定协议位置；未知路径不回显，避免错误调用方将模型值写入字段位置。 */
     public static String safeValidationField(String value) {
         if (value == null || value.length() > 120) return null;
+        // 自然阶段的字段仅限固定契约名及受限数组位置，不能接受任意模型字段或用户原句。
+        String naturalFields = "(?:task|requirements|additions|openDecisions|unaskedDecisions|goal|deliverable|inputReadiness|text|dimensions|evidence|sourceId|quote|bodyQuotes|gap|benefit|issue|impact|kind)";
+        if (value.matches("task(?:\\." + naturalFields + "(?:\\[[0-9]{1,4}\\])?){0,6}")) return value;
         // 自然准备阶段最多64项；只开放来源字段及受限下标，不接受来源ID、引文或任意JSON路径。
         String index = "(?:[0-9]|[1-5][0-9]|6[0-3])";
         if (value.matches("(?:actions\\[" + index + "\\]|response)\\.(?:userEvidence|detailEvidence)(?:\\[" + index + "\\]\\.(?:sourceId|quote))?")) {
