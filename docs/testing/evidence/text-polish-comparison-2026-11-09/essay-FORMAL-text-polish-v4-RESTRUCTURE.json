@@ -1,0 +1,56 @@
+{
+  "job" : {
+    "id" : "essay-FORMAL-text-polish-v4-RESTRUCTURE",
+    "phase" : "depth",
+    "version" : "text-polish-v4",
+    "sample" : "essay",
+    "input" : {
+      "sourceText" : "下班回家，我又走进了楼下那家面馆。面还是那碗面，老板也没有突然说出什么人生道理。我只是饿了，想吃点热的。\n窗边有人在打电话，筷子碰到碗沿，叮的一声。那天工作没做完，消息也没回完，但我先把面吃完了。想到这里，我觉得在快节奏的现代生活中，我们需要适当地放慢自己的脚步，感受生活中的美好，这无疑是一件十分重要的事情。",
+      "style" : "FORMAL",
+      "depth" : "RESTRUCTURE",
+      "audience" : "",
+      "requirements" : "",
+      "lockedTexts" : [ ],
+      "modelId" : "deepseek:deepseek-flash"
+    }
+  },
+  "metadata" : {
+    "modelId" : "deepseek:deepseek-flash",
+    "displayName" : "DeepSeek-V4.1-Flash",
+    "routeKey" : "deepseek",
+    "upstreamModel" : "deepseek-flash",
+    "temperature" : 0.2,
+    "maxTokens" : 8000,
+    "jsonResponseFormat" : true,
+    "canonicalScopeVerified" : true
+  },
+  "polishedText" : "下班回家，我又走进楼下那家面馆。面还是那碗面，老板也没有突然说出什么人生道理。我只是饿了，想吃点热的。\n\n窗边有人在打电话，筷子碰到碗沿，叮的一声。那天工作没做完，消息也没回完，但我先把面吃完了。\n\n在快节奏的现代生活中，我们需要适当放慢脚步，感受生活中的美好，这十分重要。",
+  "status" : "COMPLETED",
+  "elapsedMs" : 962,
+  "observations" : [ {
+    "eventId" : "5d29641e-15d3-43a8-a121-a49f7d207d49",
+    "startedAt" : "2026-11-09T15:11:53.9466242Z",
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 951,
+    "usage" : {
+      "inputTokens" : 779,
+      "outputTokens" : 93,
+      "totalTokens" : 872,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

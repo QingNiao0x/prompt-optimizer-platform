@@ -8,6 +8,8 @@ import com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleProper
 import com.promptoptimizer.provider.service.PlatformModelCatalog.ModelEntry;
 import com.promptoptimizer.textpolish.domain.TextPolishModels.Input;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -28,12 +30,20 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
     private final ObjectMapper json;
     private final OpenAiCompatibleProperties properties;
     private final TextPolishFidelity fidelity;
+    private String strategyVersion = TextPolishInstructions.VERSION;
+
+    /** 只接受已冻结的内置版本；候选须显式配置，配置错误在启动时暴露。 */
+    @Autowired
+    void configureStrategy(@Value("${app.text-polish.strategy-version:text-polish-v3}") String version) {
+        TextPolishInstructions.system(new Input("配置检查", null, null, null, null, null, null), version);
+        strategyVersion = version;
+        org.slf4j.LoggerFactory.getLogger(getClass()).info("event=text.polish.provider.ready strategyVersion={}", version);
+    }
     public OpenAiTextPolishProvider(@Qualifier("openAiCompatibleRestClient") RestClient client, ObjectMapper json,
                                      OpenAiCompatibleProperties properties, TextPolishFidelity fidelity) {
         this.client = client; this.json = json.copy().enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS,
                 DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).enable(com.fasterxml.jackson.core.JsonParser.Feature.STRICT_DUPLICATE_DETECTION);
         this.properties = properties; this.fidelity = fidelity;
-        org.slf4j.LoggerFactory.getLogger(getClass()).info("event=text.polish.provider.ready strategyVersion={}", TextPolishInstructions.VERSION);
     }
     /** 每个真实尝试单独审计；失败日志只包含固定类别和元数据。 */
     @Override
@@ -96,7 +106,7 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
         try { user = json.writeValueAsString(input); }
         catch (JsonProcessingException failure) { throw new IllegalStateException("润色输入无法编码", failure); }
         Map<String, Object> body = new LinkedHashMap<>(); body.put("model", model.upstreamModel()); body.put("stream", false);
-        body.put("messages", List.of(Map.of("role", "system", "content", TextPolishInstructions.SYSTEM
+        body.put("messages", List.of(Map.of("role", "system", "content", TextPolishInstructions.system(input, strategyVersion)
                 + (repair ? "\n上次响应JSON协议不合法，仅修复输出协议，完整保留原文要求。" : "")), Map.of("role", "user", "content", user)));
         if ("tokenhub".equals(model.routeKey()) && "kimi-k3".equals(model.upstreamModel())) body.put("max_completion_tokens", Math.min(8000, properties.getMaxTokens()));
         else { body.put("max_tokens", Math.min(8000, properties.getMaxTokens())); body.put("temperature", properties.getTemperature()); }

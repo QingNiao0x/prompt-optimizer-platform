@@ -1,0 +1,56 @@
+{
+  "job" : {
+    "id" : "business-NATURAL-text-polish-v4-LIGHT",
+    "phase" : "strategy",
+    "version" : "text-polish-v4",
+    "sample" : "business",
+    "input" : {
+      "sourceText" : "为了进一步提升协作效率，我们将对项目进度说明的提交方式进行统一优化。各项目负责人每周三下班前在共享文档中更新进展，内容包括已完成事项、当前问题和下周计划。部门负责人每周四集中查看，并在文档中回复需要协调的问题。这样既能减少重复汇报，也能让跨部门协作更加顺畅。我们会持续收集同事的使用反馈，逐步改进这一流程。",
+      "style" : "NATURAL",
+      "depth" : "LIGHT",
+      "audience" : "",
+      "requirements" : "",
+      "lockedTexts" : [ ],
+      "modelId" : "deepseek:deepseek-flash"
+    }
+  },
+  "metadata" : {
+    "modelId" : "deepseek:deepseek-flash",
+    "displayName" : "DeepSeek-V4.1-Flash",
+    "routeKey" : "deepseek",
+    "upstreamModel" : "deepseek-flash",
+    "temperature" : 0.2,
+    "maxTokens" : 8000,
+    "jsonResponseFormat" : true,
+    "canonicalScopeVerified" : true
+  },
+  "polishedText" : "为了进一步提升协作效率，我们将统一优化项目进度说明的提交方式。各项目负责人每周三下班前在共享文档中更新进展，写明已完成事项、当前问题和下周计划。部门负责人每周四集中查看，并在文档中回复需要协调的问题。这样既能减少重复汇报，也能让跨部门协作更顺畅。我们会持续收集同事的使用反馈，逐步改进这一流程。",
+  "status" : "COMPLETED",
+  "elapsedMs" : 941,
+  "observations" : [ {
+    "eventId" : "66a6a2c5-344d-4f80-9ba0-9653186c7d29",
+    "startedAt" : "2026-11-09T15:10:28.3850034Z",
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 933,
+    "usage" : {
+      "inputTokens" : 761,
+      "outputTokens" : 85,
+      "totalTokens" : 846,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

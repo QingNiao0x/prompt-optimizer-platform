@@ -59,6 +59,29 @@ test('模型失败保留输入与上次正文', async ({page}) => {
   await expect(page.getByText('受控模型故障',{exact:true})).toBeVisible(); await pane(page,'结果'); await expect(page.getByLabel('润色正文',{exact:true})).toHaveText(state.saved().polishedText);
   await pane(page,'原文'); await expect(page.getByRole('textbox',{name:'原始文章',exact:true})).toHaveValue(input().sourceText);
 });
+test('幅度常显并传入生成请求，结果显示实际幅度与句内差异', async ({ page }, testInfo) => {
+  await setup(page);
+  await pane(page, '原文');
+  await page.getByRole('textbox', { name: '原始文章', exact: true }).fill(input().sourceText);
+  await pane(page, '设置');
+  await expect(page.getByRole('combobox', { name: '改写幅度', exact: true })).toBeVisible();
+  await page.getByRole('combobox', { name: '改写幅度', exact: true }).press('ArrowDown');
+  await page.getByRole('option', { name: '允许调整句式和段落', exact: true }).click();
+  await page.getByText('轻松交流', { exact: true }).click();
+  await page.screenshot({ path: testInfo.outputPath('polish-visible-depth.png'), fullPage: true });
+  const request = page.waitForRequest(r => r.url().endsWith('/api/v1/text-polish') && r.method() === 'POST');
+  await page.getByRole('button', { name: '开始润色', exact: true }).click();
+  expect((await request).postDataJSON().input).toMatchObject({ style: 'CONVERSATIONAL', depth: 'RESTRUCTURE' });
+  await pane(page, '结果');
+  await expect(page.getByText(/轻松交流 · 允许调整句式和段落 ·/)).toBeVisible();
+  await page.locator('.compare-toggle .el-switch').click();
+  const diff = page.getByLabel('文章差异', { exact: true });
+  await expect(diff.locator('.diff-part.same').first()).toBeVisible();
+  expect((await diff.locator('.diff-part:not(.added)').allTextContents()).join('')).toBe(input().sourceText);
+  expect((await diff.locator('.diff-part:not(.removed)').allTextContents()).join('')).toBe(document().polishedText);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath('polish-inline-diff.png'), fullPage: true });
+});
 test('模型管理统一保存文章模块可用模型和独立默认项', async ({page}) => {
   await mockAuthentication(page,true,true);
   await page.route('**/api/v1/admin/models/text-polish', async route => route.fulfill({json:{data:{enabledModelIds:['fixture'],defaultModelId:'fixture'}}}));

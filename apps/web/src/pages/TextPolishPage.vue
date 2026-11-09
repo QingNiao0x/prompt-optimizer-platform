@@ -21,6 +21,7 @@ const pane = ref('source'), showDiff = ref(false), manualCopy = ref(false);
 const diff = computed(() => result.value ? comparePolish(result.value.input.sourceText, currentText.value) : []);
 // 账号历史可能保存在数据库或服务内存；是否开放历史操作由身份而非存储介质决定。
 const accountResult = computed(() => auth.isAuthenticated);
+const depthLabel = (value: string): string => value === 'RESTRUCTURE' ? '允许调整句式和段落' : '轻度润色';
 const styleLabel = (value: string): string => polishStyles.find(s => s.value === value)?.label ?? value;
 watch(() => [auth.user?.userId, auth.user?.tenantId, auth.user?.workspaceId].join('|'), () => {
   manualCopy.value = false; showDiff.value = false; pane.value = 'source';
@@ -100,13 +101,14 @@ onMounted(async () => {
             <strong>{{ item.label }}<small v-if="item.value === 'NATURAL'">默认</small></strong><span>{{ item.description }}</span>
           </ElRadio>
         </ElRadioGroup>
+        <label class="field"><span>改写幅度</span><ElSelect v-model="depth" aria-label="改写幅度"><ElOption label="轻度润色" value="LIGHT" /><ElOption label="允许调整句式和段落" value="RESTRUCTURE" /></ElSelect></label>
+        <p class="hint">轻度润色保持段落次序，允许段内拆句和压缩重复。允许调整句式和段落可进一步重组表达，两种幅度均保留独立含义。</p>
         <label class="field"><span>润色模型</span><ElSelect v-model="modelId" aria-label="文章润色模型" :loading="loading" placeholder="选择润色模型">
           <ElOption v-for="model in capabilities?.models ?? []" :key="model.id" :value="model.id" :label="formatModelVersion(model.displayName) + (model.defaultModel ? '（默认）' : '')" />
         </ElSelect></label>
         <ElAlert v-if="capabilities && !capabilities.models.length" title="暂无可用润色模型，请由管理员在模型管理中配置。" type="warning" :closable="false" />
         <ElButton text type="primary" :loading="loading" @click="store.load">刷新模型列表</ElButton>
         <ElCollapse class="advanced"><ElCollapseItem title="高级设置" name="advanced">
-          <label class="field"><span>改写幅度</span><ElSelect v-model="depth" aria-label="改写幅度"><ElOption label="轻度润色" value="LIGHT" /><ElOption label="允许调整句式和段落" value="RESTRUCTURE" /></ElSelect></label>
           <label class="field"><span>读者（选填）</span><ElInput v-model="audience" :maxlength="300" aria-label="文章读者" placeholder="例如：团队同事、普通读者" /></label>
           <label class="field"><span>补充要求（选填）</span><ElInput v-model="requirements" type="textarea" :rows="3" :maxlength="1500" aria-label="润色补充要求" placeholder="例如：保留标题和段落，篇幅尽量接近原文。" /></label>
         </ElCollapseItem></ElCollapse>
@@ -118,13 +120,13 @@ onMounted(async () => {
         <div class="column-heading"><h2 id="polish-result-title">润色结果</h2><ElTag v-if="dirty" type="warning">编辑稿未保存</ElTag></div>
         <ElEmpty v-if="!result" :description="busy ? '正在润色文章，原文会保持在左侧。' : '输入文章并选择文体，获取完整润色正文。'" />
         <template v-else>
-          <p class="hint">{{ styleLabel(result.input.style) }} · {{ formatModelVersion(result.modelName) }} · {{ result.sourceMode === 'CURRENT' ? '基于已保存的当前稿' : '基于原文' }}</p>
+          <p class="hint">{{ styleLabel(result.input.style) }} · {{ depthLabel(result.input.depth) }} · {{ formatModelVersion(result.modelName) }} · {{ result.sourceMode === 'CURRENT' ? '基于已保存的当前稿' : '基于原文' }}</p>
           <ElAlert v-if="accountResult && !result.historySaved" title="正文已生成，历史尚未保存。请重试保存或复制正文。" type="warning" :closable="false" />
           <ElButton v-if="accountResult && !result.historySaved" :loading="saving" @click="store.save">重试保存历史</ElButton>
           <p v-if="!accountResult" class="hint">本次结果不保存到账号历史。可在当前页面编辑和复制，请及时保留正文。</p>
           <div class="compare-toggle"><span>与本次原文对照</span><ElSwitch v-model="showDiff" aria-label="显示文章差异" /></div>
           <ElInput v-if="isEditing" v-model="editDraft" type="textarea" :rows="20" :maxlength="capabilities?.maxOutputCharacters ?? 24000" show-word-limit aria-label="润色编辑稿" />
-          <div v-else-if="showDiff" class="diff-view" aria-label="文章差异"><div v-for="(line, index) in diff" :key="index" :class="['diff-line', line.kind]"><span class="diff-label">{{ line.kind === 'removed' ? '原文' : line.kind === 'added' ? '改为' : '' }}</span><span>{{ line.text || '\u00a0' }}</span></div></div>
+          <div v-else-if="showDiff" class="diff-view" aria-label="文章差异"><p class="hint diff-legend">删除文字显示删除线，新增文字显示下划线。</p><span v-for="(change, index) in diff" :key="index" :class="['diff-part', change.kind]">{{ change.text }}</span></div>
           <pre v-else class="article-text" aria-label="润色正文">{{ result.polishedText }}</pre>
           <div class="result-actions">
             <ElButton v-if="!isEditing" :disabled="accountResult && !result.historySaved" @click="isEditing = true; editDraft = result.polishedText">编辑正文</ElButton>
@@ -154,7 +156,7 @@ onMounted(async () => {
 .style-card :deep(.el-radio__label) { white-space: normal; display: grid; gap: 5px; line-height: 1.6; min-width: 0; } .style-card strong { color: var(--ink-strong); font-size: 14px; } .style-card span { color: var(--ink-muted); font-size: 12px; } .style-card small { margin-left: 8px; color: var(--accent); font-weight: 400; }
 .advanced { margin-top: 12px; } .primary-action { width: 100%; margin-top: 18px; } .compare-toggle { justify-content: flex-start; margin: 14px 0; font-size: 13px; color: var(--ink-muted); }
 .article-text, .diff-view { min-height: 260px; max-height: 700px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; line-height: 1.9; color: var(--ink-strong); margin: 0; }
-.diff-line { display: flex; gap: 8px; } .diff-line.removed { background: var(--orange-soft); } .diff-line.added { background: var(--green-soft); } .diff-label { flex: 0 0 26px; color: var(--ink-muted); font-size: 11px; user-select: none; }
+.diff-part.removed { background: var(--orange-soft); text-decoration: line-through; } .diff-part.added { background: var(--green-soft); text-decoration: underline; } .diff-legend { margin: 0 0 12px; white-space: normal; }
 .result-actions { justify-content: flex-start; flex-wrap: wrap; margin-top: 14px; } .result-actions :deep(.el-button + .el-button) { margin-left: 0; }
 .check-list { margin-top: 20px; border-top: 1px solid var(--line-subtle); font-size: 12px; color: var(--ink-muted); } .check-list strong { font-weight: 400; } .check-list span { display: block; overflow-wrap: anywhere; }
 .notice-row { flex-wrap: wrap; font-size: 13px; color: var(--ink-muted); } .history-row { display: flex; justify-content: space-between; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line-subtle); } .history-row > div { min-width: 0; } .history-row p { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; color: var(--ink-muted); } .history-row strong { overflow-wrap: anywhere; } .mobile-panes { display: none; }

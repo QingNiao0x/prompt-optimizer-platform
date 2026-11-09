@@ -1,0 +1,126 @@
+{
+  "method": "开发者逐篇知晓版本审阅，无独立盲评",
+  "rows": [
+    {
+      "sample": "digital",
+      "style": "FORMAL",
+      "verdict": "WIN_LOCAL",
+      "reason": "推进转型应坚持…接入句子主干，压缩机械序号，有局部组织收益，抽象措辞仍多。",
+      "baseline": "digital-FORMAL-text-polish-v4-LIGHT.json",
+      "candidate": "digital-FORMAL-text-polish-v4-RESTRUCTURE.json"
+    },
+    {
+      "sample": "digital",
+      "style": "NATURAL",
+      "verdict": "TIE",
+      "reason": "与LIGHT相比没有明确新增表达收益。",
+      "baseline": "digital-NATURAL-text-polish-v4-LIGHT.json",
+      "candidate": "digital-NATURAL-text-polish-v4-RESTRUCTURE.json"
+    },
+    {
+      "sample": "digital",
+      "style": "CONVERSATIONAL",
+      "verdict": "WIN_LOCAL",
+      "reason": "第一段拆为三个行动段落，技术和组织能力分句说明，阅读层次改善，仍保留抽象词组。",
+      "baseline": "digital-CONVERSATIONAL-text-polish-v4-LIGHT.json",
+      "candidate": "digital-CONVERSATIONAL-text-polish-v4-RESTRUCTURE.json"
+    },
+    {
+      "sample": "business",
+      "style": "FORMAL",
+      "verdict": "TIE",
+      "reason": "与LIGHT相比没有明确新增表达收益。",
+      "baseline": "business-FORMAL-text-polish-v4-LIGHT.json",
+      "candidate": "business-FORMAL-text-polish-v4-RESTRUCTURE.json"
+    },
+    {
+      "sample": "business",
+      "style": "NATURAL",
+      "verdict": "TIE",
+      "reason": "与LIGHT相比没有明确新增表达收益。",
+      "baseline": "business-NATURAL-text-polish-v4-LIGHT.json",
+      "candidate": "business-NATURAL-text-polish-v4-RESTRUCTURE.json"
+    },
+    {
+      "sample": "business",
+      "style": "CONVERSATIONAL",
+      "verdict": "TIE",
+      "reason": "与LIGHT相比没有明确新增表达收益。",
+      "baseline": "business-CONVERSATIONAL-text-polish-v4-LIGHT.json",
+      "candidate": "business-CONVERSATIONAL-text-polish-v4-RESTRUCTURE.json"
+    },
+    {
+      "sample": "essay",
+      "style": "FORMAL",
+      "verdict": "RISK",
+      "reason": "压缩尾句但删除想到这里，我觉得，作者感想的归属和与前文连接减弱，不计确定收益。",
+      "baseline": "essay-FORMAL-text-polish-v4-LIGHT.json",
+      "candidate": "essay-FORMAL-text-polish-v4-RESTRUCTURE.json"
+    },
+    {
+      "sample": "essay",
+      "style": "NATURAL",
+      "verdict": "RISK",
+      "reason": "吃完才觉得增加才的时间限定，泛化的我们需要放慢变成能慢下来一会儿，作者观点和发生状态有漂移风险。",
+      "baseline": "essay-NATURAL-text-polish-v4-LIGHT.json",
+      "candidate": "essay-NATURAL-text-polish-v4-RESTRUCTURE.json"
+    },
+    {
+      "sample": "essay",
+      "style": "CONVERSATIONAL",
+      "verdict": "WIN_LOCAL",
+      "reason": "独立分出感想段，压缩末句，适当放慢脚步、感受生活中的美好，确实挺重要，保留感受与评价。",
+      "baseline": "essay-CONVERSATIONAL-text-polish-v4-LIGHT.json",
+      "candidate": "essay-CONVERSATIONAL-text-polish-v4-RESTRUCTURE.json"
+    },
+    {
+      "sample": "legal",
+      "style": "FORMAL",
+      "verdict": "WIN_LOCAL",
+      "reason": "按复核、时限、权利及服务承诺分段，数字、条件、目的和服务体验均保留，条款可读性改善。",
+      "baseline": "legal-FORMAL-text-polish-v4-LIGHT.json",
+      "candidate": "legal-FORMAL-text-polish-v4-RESTRUCTURE.json"
+    },
+    {
+      "sample": "legal",
+      "style": "NATURAL",
+      "verdict": "WIN_LOCAL",
+      "reason": "按复核、时限、权利及服务承诺分段，数字、条件、目的和服务体验均保留，条款可读性改善。",
+      "baseline": "legal-NATURAL-text-polish-v4-LIGHT.json",
+      "candidate": "legal-NATURAL-text-polish-v4-RESTRUCTURE.json"
+    },
+    {
+      "sample": "legal",
+      "style": "CONVERSATIONAL",
+      "verdict": "FAIL",
+      "reason": "末句改为我们还会继续优化服务流程，更好地保障用户权益，遗漏为用户提供更优质服务体验的独立目标。应在3个工作日内改为会在，规范义务表达发生变化。前者单独足以阻断对应候选采用。",
+      "baseline": "legal-CONVERSATIONAL-text-polish-v4-LIGHT.json",
+      "candidate": "legal-CONVERSATIONAL-text-polish-v4-RESTRUCTURE.json"
+    },
+    {
+      "sample": "clean",
+      "style": "FORMAL",
+      "verdict": "TIE",
+      "reason": "保持细节和顺序，原样或一个量词变化，计为保真持平。",
+      "baseline": "clean-FORMAL-text-polish-v4-LIGHT.json",
+      "candidate": "clean-FORMAL-text-polish-v4-RESTRUCTURE.json"
+    },
+    {
+      "sample": "clean",
+      "style": "NATURAL",
+      "verdict": "TIE",
+      "reason": "保持细节和顺序，原样或一个量词变化，计为保真持平。",
+      "baseline": "clean-NATURAL-text-polish-v4-LIGHT.json",
+      "candidate": "clean-NATURAL-text-polish-v4-RESTRUCTURE.json"
+    },
+    {
+      "sample": "clean",
+      "style": "CONVERSATIONAL",
+      "verdict": "TIE",
+      "reason": "保持细节和顺序，原样或一个量词变化，计为保真持平。",
+      "baseline": "clean-CONVERSATIONAL-text-polish-v4-LIGHT.json",
+      "candidate": "clean-CONVERSATIONAL-text-polish-v4-RESTRUCTURE.json"
+    }
+  ],
+  "changeDefaultDepth": false
+}

@@ -132,7 +132,7 @@ test('详情对照原文与当前正文，保留生成快照，复制降级和�
     value: { writeText: () => Promise.reject(new Error('controlled clipboard denial')) } }));
   await detail.getByRole('button', { name: '复制正文', exact: true }).click();
   await expect(page.getByRole('textbox', { name: '手动复制历史润色正文', exact: true })).toHaveValue(state.records[0]!.polishedText);
-  await page.getByRole('dialog', { name: '手动复制文章', exact: true }).getByRole('button', { name: 'Close this dialog' }).click();
+  await page.getByRole('dialog', { name: '手动复制文章', exact: true }).getByRole('button', { name: '关闭此对话框' }).click();
   await expect(page.getByRole('dialog', { name: '手动复制文章', exact: true, includeHidden: true })).not.toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('text-polish-history-detail.png'), fullPage: true, animations: 'disabled' });
   await detail.getByRole('button', { name: '载入文章工作台', exact: true }).click();

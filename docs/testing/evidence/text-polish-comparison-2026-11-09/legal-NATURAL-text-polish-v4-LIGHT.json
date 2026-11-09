@@ -1,0 +1,56 @@
+{
+  "job" : {
+    "id" : "legal-NATURAL-text-polish-v4-LIGHT",
+    "phase" : "strategy",
+    "version" : "text-polish-v4",
+    "sample" : "legal",
+    "input" : {
+      "sourceText" : "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+      "style" : "NATURAL",
+      "depth" : "LIGHT",
+      "audience" : "",
+      "requirements" : "",
+      "lockedTexts" : [ "已使用的数字内容不适用无理由退款。" ],
+      "modelId" : "deepseek:deepseek-flash"
+    }
+  },
+  "metadata" : {
+    "modelId" : "deepseek:deepseek-flash",
+    "displayName" : "DeepSeek-V4.1-Flash",
+    "routeKey" : "deepseek",
+    "upstreamModel" : "deepseek-flash",
+    "temperature" : 0.2,
+    "maxTokens" : 8000,
+    "jsonResponseFormat" : true,
+    "canonicalScopeVerified" : true
+  },
+  "polishedText" : "服务说明\n订单完成后7日内，用户可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；材料齐全后，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能获得退款。为进一步保障用户权益，我们将持续优化服务流程，提供更优质的服务体验。",
+  "status" : "COMPLETED",
+  "elapsedMs" : 1233,
+  "observations" : [ {
+    "eventId" : "0e0ea702-95f4-4f5f-aff4-f6fadcd54a85",
+    "startedAt" : "2026-11-09T15:10:44.043629Z",
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1227,
+    "usage" : {
+      "inputTokens" : 780,
+      "outputTokens" : 91,
+      "totalTokens" : 871,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}
