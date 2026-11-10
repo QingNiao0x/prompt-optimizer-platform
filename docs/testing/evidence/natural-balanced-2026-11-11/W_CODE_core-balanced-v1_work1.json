@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "6d182b56-0324-49a1-97b5-83d4689c93f5",
+    "object": "chat.completion",
+    "created": 1794335178,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"files\":[{\"path\":\"src/occupationalInfo/date.mjs\",\"content\":\"function isLeapYear(year) {\\n  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;\\n}\\n\\nfunction daysInMonth(year, month) {\\n  const days = [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];\\n  return days[month - 1];\\n}\\n\\nfunction isValidCalendarDate(value) {\\n  const year = Number(value.slice(0, 4));\\n  const month = Number(value.slice(5, 7));\\n  const day = Number(value.slice(8, 10));\\n  if (month < 1 || month > 12) return false;\\n  if (day < 1 || day > daysInMonth(year, month)) return false;\\n  return true;\\n}\\n\\nexport function validateSurveyDate(value, today) {\\n  if (typeof value !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(value)) return '日期格式错误';\\n  if (!isValidCalendarDate(value)) return '日期无效';\\n  if (value > today) return '调查日期不能晚于今日';\\n  return '';\\n}\\n\"},{\"path\":\"src/occupationalInfo/form.mjs\",\"content\":\"import { validateSurveyDate } from './date.mjs';\\nexport function submitSurvey(form, today) {\\n  const error = validateSurveyDate(form.surveyDate, today);\\n  if (error) return { ok: false, error };\\n  return { ok: true, value: { ...form } };\\n}\\n\"},{\"path\":\"src/occupationalInfo/import.mjs\",\"content\":\"import { validateSurveyDate } from './date.mjs';\\nexport function importSurveys(rows, today) {\\n  const accepted = [], errors = [];\\n  rows.forEach((row, index) => {\\n    const error = validateSurveyDate(row.surveyDate, today);\\n    if (error) errors.push({ row: index + 1, message: error });\\n    else accepted.push({ ...row });\\n  });\\n  return { accepted, errors };\\n}\\n\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1201,
+      "completion_tokens": 550,
+      "total_tokens": 1751,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 1201
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

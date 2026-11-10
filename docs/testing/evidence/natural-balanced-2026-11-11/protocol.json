@@ -1,0 +1,32 @@
+{
+  "maximum": 100,
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "thinking": "disabled",
+  "qualityRetries": 0,
+  "scope": "已授权合成案例，Provider增强及同信息作品。没有真实业务源码。",
+  "arms": [
+    "raw",
+    "simple",
+    "core-repair-v5",
+    "core-balanced-v1"
+  ],
+  "works": [
+    "W_CODE",
+    "R_PLAN",
+    "R_REPORT"
+  ],
+  "repetitions": 2,
+  "acceptance": "工程故障与正文收益分开。来源/题答/覆盖不能丢失。作品无新增严重错误且必要修改减少才采用正文策略。充分需求持平可接受。内部审阅不冒充真人评阅。",
+  "sources": [
+    {
+      "name": "NaturalPromptBalancedInstructions.java",
+      "sha256": "35df782ef713d6b6d826af958c670c83e304f66c11a58413a6ddbb6a8db5f763"
+    },
+    {
+      "name": "NaturalPromptProtocolRepairInstructions.java",
+      "sha256": "85c21bd6383603e775e1b2f2332a976f4a46f45a5e0321bd12436b24b8f785c4"
+    }
+  ]
+}

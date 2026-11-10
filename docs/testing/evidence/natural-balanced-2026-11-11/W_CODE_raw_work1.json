@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "2dd1ac24-7426-4550-94dd-7f371aaa06ac",
+    "object": "chat.completion",
+    "created": 1794335173,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"files\":[{\"path\":\"src/occupationalInfo/date.mjs\",\"content\":\"export function validateSurveyDate(value, today) {\\n  if (typeof value !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(value)) return '日期格式错误';\\n  const [year, month, day] = value.split('-').map(Number);\\n  const date = new Date(Date.UTC(year, month - 1, day));\\n  if (\\n    date.getUTCFullYear() !== year ||\\n    date.getUTCMonth() !== month - 1 ||\\n    date.getUTCDate() !== day\\n  ) {\\n    return '日期无效';\\n  }\\n  if (value > today) return '调查日期不能晚于今日';\\n  return '';\\n}\\n\"},{\"path\":\"src/occupationalInfo/form.mjs\",\"content\":\"import { validateSurveyDate } from './date.mjs';\\nexport function submitSurvey(form, today) {\\n  const error = validateSurveyDate(form.surveyDate, today);\\n  if (error) return { ok: false, error };\\n  return { ok: true, value: { ...form } };\\n}\\n\"},{\"path\":\"src/occupationalInfo/import.mjs\",\"content\":\"import { validateSurveyDate } from './date.mjs';\\nexport function importSurveys(rows, today) {\\n  const accepted = [], errors = [];\\n  rows.forEach((row, index) => {\\n    const error = validateSurveyDate(row.surveyDate, today);\\n    if (error) errors.push({ row: index + 1, message: error });\\n    else accepted.push({ ...row });\\n  });\\n  return { accepted, errors };\\n}\\n\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1077,
+      "completion_tokens": 414,
+      "total_tokens": 1491,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 1077
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

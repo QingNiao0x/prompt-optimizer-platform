@@ -1,0 +1,44 @@
+{
+  "actualCalls": 49,
+  "maximum": 100,
+  "unused": 51,
+  "stages": {
+    "productEnhancement": 20,
+    "simpleRewrite": 5,
+    "downstreamWorks": 24
+  },
+  "model": "deepseek-flash",
+  "thinking": "disabled",
+  "temperature": 0.2,
+  "qualityRetries": 0,
+  "usage": {
+    "prompt_tokens": 55856,
+    "completion_tokens": 19214,
+    "total_tokens": 75070
+  },
+  "engineering": "implemented and targeted regression verified",
+  "qualityAdoption": false,
+  "default": "core-repair-v5",
+  "candidate": "core-balanced-v1",
+  "productionDeployed": false,
+  "limitations": [
+    "Provider路径，非本轮工作台闭环",
+    "已见合成案例，无独立留出或真人评阅",
+    "查询候选未实质补全，故未继续该题作品调用",
+    "最终增加的用户目标归属保护已用五份真实首稿离线回放，未新增真实调用"
+  ],
+  "finalSourceHashes": [
+    {
+      "path": "services\\api\\src\\main\\java\\com\\promptoptimizer\\provider\\domain\\NaturalPromptBalancedInstructions.java",
+      "sha256": "35df782ef713d6b6d826af958c670c83e304f66c11a58413a6ddbb6a8db5f763"
+    },
+    {
+      "path": "services\\api\\src\\main\\java\\com\\promptoptimizer\\provider\\infrastructure\\openai\\NaturalPromptDiagnosticProjection.java",
+      "sha256": "d6c643b8a50741c7d69bfad3c65316b2ec3d3b60988a8ad643129731fd8ddb8e"
+    },
+    {
+      "path": "services\\api\\src\\main\\java\\com\\promptoptimizer\\provider\\infrastructure\\openai\\OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "c2236880130cf64cba391c16dd88e5808ca981c659c200b7a3a7fe7aee291ac1"
+    }
+  ]
+}

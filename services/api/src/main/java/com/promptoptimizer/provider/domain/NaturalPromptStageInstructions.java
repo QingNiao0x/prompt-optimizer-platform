@@ -88,6 +88,7 @@ public final class NaturalPromptStageInstructions {
 
     /** 旧版本维持各自契约；22/23及精简指导的框架仅为非关键诊断，不作为正文交付条件。 */
     public static boolean requiresFramework(String version) {
+        if (NaturalPromptBalancedInstructions.VERSION.equals(version)) return false;
         // 35只保留组织参考；未选择框架不阻断合法正文，旧版本必填契约不变。
         if (NaturalPromptMaterialInstructions.VERSION.equals(version)
                 || NaturalPromptPreparationRoutingInstructions.VERSION.equals(version)

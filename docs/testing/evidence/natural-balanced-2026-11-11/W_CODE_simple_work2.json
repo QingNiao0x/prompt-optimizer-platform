@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "1ae99d77-d89d-4a10-8742-fedac9900cff",
+    "object": "chat.completion",
+    "created": 1794335185,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"files\":[{\"path\":\"src/occupationalInfo/date.mjs\",\"content\":\"export function validateSurveyDate(value, today) {\\n  if (typeof value !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(value)) return '日期格式错误';\\n\\n  const [year, month, day] = value.split('-').map(Number);\\n  const date = new Date(Date.UTC(year, month - 1, day));\\n  if (\\n    date.getUTCFullYear() !== year ||\\n    date.getUTCMonth() !== month - 1 ||\\n    date.getUTCDate() !== day\\n  ) {\\n    return '无效日期';\\n  }\\n\\n  if (value > today) return '调查日期不能晚于今日';\\n\\n  return '';\\n}\\n\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1481,
+      "completion_tokens": 197,
+      "total_tokens": 1678,
+      "prompt_tokens_details": {
+        "cached_tokens": 1280
+      },
+      "prompt_cache_hit_tokens": 1280,
+      "prompt_cache_miss_tokens": 201
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

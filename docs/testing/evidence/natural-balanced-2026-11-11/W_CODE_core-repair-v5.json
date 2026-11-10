@@ -1,0 +1,6 @@
+{
+  "id" : "W_CODE",
+  "success" : true,
+  "body" : "请在 src/occupationalInfo 的新增和导入功能中限制调查日期不能晚于今日，允许填写今天。today 由调用方按业务时区传入合法 YYYY-MM-DD 日历日期；调查日期必须是真实公历日期，不能接受 2 月 30 日等无效日历值。沿用现有逐行导入反馈，其他行为保持可用，保留现有函数签名与返回类型。只返回实际修改的文件，交付统一 JSON 对象 {\"files\":[{\"path\":\"实际修改的相对路径\",\"content\":\"完整文件正文\"}]}，只限三个现有 mjs 业务文件，不增加依赖或文件。",
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

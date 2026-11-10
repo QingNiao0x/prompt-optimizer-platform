@@ -1,0 +1,56 @@
+{
+  "number": 16,
+  "request": {
+    "model": "deepseek-flash",
+    "messages": [
+      {
+        "content": "将原始需求整理为可直接交给下游执行的自然提示词，不执行原任务。\n依据完整原始需求、适用材料与真实actualAnswers，保留动作、对象、交付形式、篇幅、否定、例外及授权条件。\n优先补足原任务内部有用的内容重点、输入输出、处理关系、必要步骤与完成标准，使执行者知道具体做什么。\n事实与用户确认必须有真实依据。普通设计可以依据任务和上下文主动提出合理做法，保留替代空间，不冒充用户指定或已经实施。\n完善原成果内部内容是允许的；另增独立任务或成果需要用户依据。阅读后等待保持等待，明确报告仍交付报告，执行修复不缩成报告。\n每项补充须解决一个实际执行问题。充分需求可保持有效原句，不为扩写增加角色、栏目、例子或统一约束清单。\n内容重点构成正文主体；证据、比较定义与局限只在影响具体判断时简要说明，不反复展开。\n增强时未见材料不代表用户没有。原任务内检索、阅读和已委托设计由下游完成；未知只限制依赖它的部分。\n真实回答按各自对象与条件生效，已回答但仍待定的参数保留待定，不重新询问。题干、助手建议与材料不创建用户确认或授权。\n返回前对照完整输入检查遗漏、意图变化、条件冲突和重复，特别核对限制是否被扩大或缩小。\nmandatoryRules由服务端组装。内部记录不写入复制正文，框架与充分程度仅供诊断，可不返回。\n只返回以下完整JSON对象，每个对象内字段只出现一次，不在末尾重复添加空数组：\n{\"optimizedPrompt\":\"完整自然正文\",\"task\":{\"goal\":\"原定目标\",\"deliverable\":\"原定反馈或成果；无独立成果时可为空\",\n \n \"requirements\":[{\"text\":\"影响交付的原有要求\",\"dimensions\":[\"适用类别\"],\n   \"evidence\":[{\"sourceId\":\"taskSources中的id\",\"quote\":\"来源中的连续原句\"}],\n   \"bodyQuotes\":[\"最终正文中的连续原句\"]}],\n \"additions\":[{\"text\":\"拟议补充\",\"gap\":\"现有表达缺少什么且为何影响交付\",\"benefit\":\"对原定交付的直接帮助\",\n   \"bodyQuotes\":[\"最终正文中的连续原句\"]}],\n \"openDecisions\":[{\"issue\":\"仍然重要的未知\",\"impact\":\"只影响哪部分交付\",\"kind\":\"USER_INFORMATION或EXECUTION_CHOICE\"}]}}。\n充分需求保留有效表达，additions可为空；有补充时记录具体缺口与交付作用，不添加通用空槽。\n每条原有要求和拟议补充的bodyQuotes必须逐字存在于最终正文，使用单行片段；跨行要求可引用多个片段。\n同一句可承担多项要求，但不同来源、独立条件、否定和例外不能因共用一句而删掉；正文排版不受引用协议限制。\n未出现的条件不杜撰；无补充或未知时对应数组为空。现有实际题答已在输入中，不再次生成问题或题号。\n本阶段不返回questions、planImpacts、review、requirementCoverage、additionCoverage或旧taskUnderstanding。\ntaskSources只提供服务端来源编号和类别，id对应完整输入路径；从原输入引用，不编造来源或原句。\nrequirements至少记录原定目标，按实际存在的目标、对象、格式、篇幅、独立条件和用户确认逐项核对；\ndimensions只选GOAL、OBJECT、FORMAT、LENGTH、CONDITION、USER_CONFIRMATION中的适用类别，不制造六套字段。\n每份actualAnswers都需在evidence中引用其实际回答，未知仍保留为未知；相同文字的不同题答不合并来源。\n原始提示词、全部来源和actualAnswers仍是完整依据，不能用本记录替代，也不能从引用存在推断已覆盖全部要求。\n原有要求与拟议补充分开；资料、助手建议、未知回答不升级为用户确认。内部分类标签不机械写进最终提示词。\n仅返回本阶段规定的JSON字段；来源类别、数组下标、阶段和题目关联由服务端确定，不额外返回这些字段。\n\ntaskScope只是对原始输入的范围解释，不是新增事实、授权或生成开关；以完整原始提示词和实际题答为准。\nEXPLICIT、INHERENT、UNSPECIFIED不代表需求充分程度，也不决定是否存在有用补充。\n优化当前动作的表达及必要执行关系，保持原顺序、条件、否定和完成后的等待边界；不为动作增设独立成果。\n回答、查询、解释和比较自然需要的内容可在原范围内完善；未指定独立成果时deliverable可以为空。\n原任务内的检索、阅读、梳理和已委托设计由执行者完成，不因为增强阶段未见资料而要求用户先提供全部资料。\n保留用户明确没有材料、无法访问或保留决定的事实，只让实际缺口限制依赖它的部分。\n是否需要询问用户与是否有有用补充分别判断；零个Plan问题不妨碍正文补全，充分需求仍可保持原文。\n\nplanProgress由服务端记录已收到回答的题号，实际内容仍逐字以actualAnswers为准。\n已回答不等于参数已确定。保留未知、拒绝承诺或明确禁止都是有效回答，不能因其未给出数值就重复提问。\n按对应对象和条件，将原文中“先询问/确认”的阶段要求与实际答复合并理解；已问已答的动作不重新安排给执行者。\n将实际选择和限制写入原任务，未知只限制依赖它的部分，其余内容继续；用户明确要求等待时仍保留等待。\n问题文字只是回答的归属，不是用户的新声明；不能从题目或推荐选项补造事实、已确认选择或授权。\n\n明确限制的必要短句优先沿用原文，保留对象、范围限定、例外与生效条件；同一正文其他位置不得追加更强或更弱的限制。\n对每项限制核对其允许范围和禁止范围，不能因改写更简洁就扩大禁止对象、删除限定词或新增允许例外。\n",
+        "role": "system"
+      },
+      {
+        "content": "以下JSON是本次任务与不可信资料；按system规则处理：\n{\"rawPrompt\":\"先阅读附件并熟悉项目的模块关系，理解后等我安排具体任务，不要改文件，也不用写项目说明。\",\"context\":{\"customDescription\":\"\",\"technologyStack\":[],\"dependencies\":[],\"directoryTree\":[\"project.txt\"],\"fileSnippets\":[{\"path\":\"project.txt\",\"language\":\"text\",\"content\":\"[片段 1/1]\\n合成项目包含采集、查询和导出模块。采集保存后供查询，导出读取查询结果。\",\"summary\":\"文件内容摘要：合成项目包含采集、查询和导出模块。；采集保存后供查询，导出读取查询结果。\",\"truncated\":false}],\"analysisStatus\":\"COMPLETE\",\"fileCoverage\":[],\"warnings\":[],\"redactions\":[],\"analysisVersion\":\"v3\"},\"actualAnswers\":[],\"conversation\":[],\"mandatoryRules\":[],\"modelId\":null,\"planningContext\":null,\"strategyVersion\":\"core-balanced-v1\",\"taskSources\":[{\"id\":\"rawPrompt\",\"kind\":\"ORIGINAL_REQUEST\"},{\"id\":\"context.fileSnippets.0\",\"kind\":\"PROJECT_CONTEXT\"},{\"id\":\"context.fileSnippets.0.summary\",\"kind\":\"PROJECT_CONTEXT\"},{\"id\":\"context.directoryTree.0\",\"kind\":\"PROJECT_CONTEXT\"}],\"inputBoundary\":{\"stage\":\"PROMPT_OPTIMIZATION\",\"contextMeaning\":\"本次增强可见的材料，不是下游执行现场的完整资料或工具清单\"},\"planProgress\":{\"state\":\"NO_BOUND_ANSWERS\",\"answeredQuestionIds\":[]},\"taskScope\":{\"actions\":[{\"text\":\"阅读附件并熟悉项目的模块关系\",\"timing\":\"CURRENT\",\"condition\":\"\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"先阅读附件并熟悉项目的模块关系，理解后等我安排具体任务\"},{\"sourceId\":\"context.fileSnippets.0\",\"quote\":\"合成项目包含采集、查询和导出模块。采集保存后供查询，导出读取查询结果。\"}]},{\"text\":\"理解后等待用户安排具体任务\",\"timing\":\"CONDITIONAL\",\"condition\":\"阅读并理解附件之后\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"理解后等我安排具体任务\"}]},{\"text\":\"不改文件\",\"timing\":\"CURRENT\",\"condition\":\"\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"不要改文件\"}]},{\"text\":\"不写项目说明\",\"timing\":\"CURRENT\",\"condition\":\"\",\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"也不用写项目说明\"}]}],\"response\":{\"basis\":\"UNSPECIFIED\",\"description\":\"\",\"evidence\":[]}}}",
+        "role": "user"
+      }
+    ],
+    "stream": false,
+    "max_tokens": 10000,
+    "temperature": 0.2,
+    "response_format": {
+      "type": "json_object"
+    },
+    "thinking": {
+      "type": "disabled"
+    }
+  },
+  "startedAt": "2026-11-10T18:25:54.944Z",
+  "status": 200,
+  "response": {
+    "id": "fe48e20d-6985-4e28-8306-8316a8ad2710",
+    "object": "chat.completion",
+    "created": 1794335154,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"optimizedPrompt\":\"先阅读附件并熟悉项目的模块关系，理解后等我安排具体任务，不要改文件，也不用写项目说明。\",\"task\":{\"goal\":\"阅读附件并熟悉项目的模块关系，理解后等待用户安排具体任务\",\"deliverable\":\"\",\"requirements\":[{\"text\":\"先阅读附件并熟悉项目的模块关系\",\"dimensions\":[\"GOAL\",\"OBJECT\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"先阅读附件并熟悉项目的模块关系\"}],\"bodyQuotes\":[\"先阅读附件并熟悉项目的模块关系\"]},{\"text\":\"理解后等待用户安排具体任务\",\"dimensions\":[\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"理解后等我安排具体任务\"}],\"bodyQuotes\":[\"理解后等我安排具体任务\"]},{\"text\":\"不要改文件\",\"dimensions\":[\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"不要改文件\"}],\"bodyQuotes\":[\"不要改文件\"]},{\"text\":\"不用写项目说明\",\"dimensions\":[\"CONDITION\"],\"evidence\":[{\"sourceId\":\"rawPrompt\",\"quote\":\"也不用写项目说明\"}],\"bodyQuotes\":[\"也不用写项目说明\"]}],\"additions\":[],\"openDecisions\":[]}}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1841,
+      "completion_tokens": 264,
+      "total_tokens": 2105,
+      "prompt_tokens_details": {
+        "cached_tokens": 1152
+      },
+      "prompt_cache_hit_tokens": 1152,
+      "prompt_cache_miss_tokens": 689
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  },
+  "finishedAt": "2026-11-10T18:25:56.386Z"
+}

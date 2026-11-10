@@ -662,8 +662,15 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         try {
             ObjectReader reader = NaturalPromptStageInstructions.acceptsDiagnosticFields(input.strategyVersion())
                     ? diagnosticEnhancementReader : enhancementPhaseReader;
-            NaturalPromptPhasePayloads.Enhancement payload = reader.readValue(body);
-            return payload.toDraft(input, metadata);
+            NaturalPromptPhasePayloads.Enhancement payload = reader.readValue(
+                    NaturalPromptBalancedInstructions.VERSION.equals(input.strategyVersion())
+                            ? NaturalPromptDiagnosticProjection.normalize(body) : body);
+            var draft = payload.toDraft(input, metadata);
+            // 候选复用用户目标归属检查，材料维度误标可补正，不能借诊断减负创建授权。
+            if (NaturalPromptBalancedInstructions.VERSION.equals(input.strategyVersion())) {
+                NaturalPromptRequirementsOnlyPreparation.validateUserGoals(draft.taskUnderstanding());
+            }
+            return draft;
         } catch (IOException | IllegalArgumentException failure) {
             if (NaturalPromptPlanContextInstructions.usesProtocol(input.strategyVersion())
                     && failure instanceof com.fasterxml.jackson.databind.JsonMappingException mapping) {
@@ -678,7 +685,9 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         try {
             ObjectReader reader = NaturalPromptStageInstructions.acceptsDiagnosticFields(input.strategyVersion())
                     ? diagnosticPlanningReader : planningPhaseReader;
-            NaturalPromptPhasePayloads.Planning payload = reader.readValue(body);
+            NaturalPromptPhasePayloads.Planning payload = reader.readValue(
+                    NaturalPromptBalancedInstructions.VERSION.equals(input.strategyVersion())
+                            ? NaturalPromptDiagnosticProjection.normalize(body) : body);
             return payload.toResponse(input, metadata);
         } catch (IOException | IllegalArgumentException failure) {
             if (NaturalPromptPlanContextInstructions.usesProtocol(input.strategyVersion())
@@ -831,7 +840,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         boolean recordOnly = NaturalPromptBodyFirstInstructions.supports(input.strategyVersion()) && fidelityDraft != null;
         boolean metadataOnlyRepair = (NaturalPromptSinglePassInstructions.METADATA_REPAIR_VERSION.equals(input.strategyVersion())
                 || NaturalPromptSinglePassInstructions.INPUT_ROLES_VERSION.equals(input.strategyVersion())
-                || NaturalPromptSinglePassInstructions.RESPONSIBILITY_VERSION.equals(input.strategyVersion()) || recordOnly)
+                || NaturalPromptSinglePassInstructions.RESPONSIBILITY_VERSION.equals(input.strategyVersion())
+                || NaturalPromptBalancedInstructions.VERSION.equals(input.strategyVersion()) || recordOnly)
                 && "prompt.optimize".equals(operation);
         // 48只改变已经完成范围准备的正文修复；Plan、准备及旧版本保留逐字既有请求契约。
         boolean boundedRepair = NaturalPromptBoundedRepairInstructions.VERSION.equals(input.strategyVersion())

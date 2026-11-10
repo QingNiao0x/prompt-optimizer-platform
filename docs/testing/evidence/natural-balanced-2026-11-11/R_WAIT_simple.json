@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "6c4e83bb-fc0b-4070-a17f-edfdc058ac24",
+    "object": "chat.completion",
+    "created": 1794335171,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "请先阅读附件 project.txt，熟悉合成项目的模块关系。当前已知：项目包含采集、查询和导出三个模块；采集模块保存数据后供查询模块使用，导出模块读取查询结果。请先理解上述模块关系，然后等待我安排具体任务。在此期间不要修改任何文件，也不需要编写项目说明。"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 285,
+      "completion_tokens": 67,
+      "total_tokens": 352,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 285
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

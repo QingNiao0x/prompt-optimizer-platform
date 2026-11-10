@@ -1,0 +1,113 @@
+/** 冻结的确定性作品检查。只核对可确定的行为，开放语义另行匿名审阅。 */
+import assert from 'node:assert/strict';
+import { createContext, runInContext } from 'node:vm';
+import { createRequire } from 'node:module';
+import { resolve } from 'node:path';
+import { readFile, writeFile, readdir, access } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+const root = process.cwd();
+const directory = resolve(process.argv[2]);
+const readJson = async path => JSON.parse((await readFile(path, 'utf8')).replace(/^\uFEFF/, ''));
+const save = async (path, value) => writeFile(path, JSON.stringify(value, null, 2), {flag:'wx'});
+const exists = async path => access(path).then(() => true, () => false);
+const digest = text => createHash('sha256').update(text).digest('hex');
+
+const require = createRequire(resolve(root, 'apps/web/package.json'));
+const ts = require('typescript');
+const names = (await readdir(directory)).filter(name => /_work[12]\.json$/.test(name));
+const plan = {jobs: names.map(name => ({id:name.slice(0,-5), caseId:name.startsWith('W_CODE') ? 'W_CODE' : name.startsWith('R_PLAN') ? 'R_PLAN' : 'R_REPORT', file:name}))};
+const samples = (await readJson(resolve(directory, 'cases.json'))).map(sample => ({...sample, files:sample.input.context.fileSnippets.map(file=>({...file,content:file.content.replace(/^\[片段 \d+\/\d+\]\r?\n/u,''),path:file.path.replace(/#chunk-\d+$/,'' )}))}));
+const results = [];
+for (const job of plan.jobs) {
+  const checks = [];
+  const check = (name, fn) => {
+    try { fn(); checks.push({ name, passed: true }); }
+    catch (error) { checks.push({ name, passed: false, error: error.message }); }
+  };
+  const path = resolve(directory, job.file);
+  if (!await exists(path)) { results.push({ id: job.id, delivered: false, checks: [] }); continue; }
+  const value = await readJson(path);
+  const text = value.body?.choices?.[0]?.message?.content ?? '';
+  check('上游完整交付', () => {
+    assert.equal(value.status, 200);
+    assert.equal(value.body.choices[0].finish_reason, 'stop');
+    assert(text.trim());
+  });
+  if (job.caseId === 'W_CODE' && text.trim()) {
+    let files;
+    check('仅交付可定位的现有业务文件', () => {
+      const content = JSON.parse(text);
+      assert.deepEqual(Object.keys(content), ['files']);
+      assert(Array.isArray(content.files) && content.files.length >= 1 && content.files.length <= 3);
+      const allowed = ['src/occupationalInfo/date.mjs', 'src/occupationalInfo/form.mjs', 'src/occupationalInfo/import.mjs'];
+      files = new Map();
+      for (const file of content.files) {
+        const name = file.path.replace(/^SyntheticSurvey\//, '');
+        assert(allowed.includes(name) && !files.has(name));
+        assert.equal(typeof file.content, 'string');
+        const original = samples.find(sample => sample.id === 'W_CODE').files.find(file => file.path === name);
+        check('只返回实际修改文件' + name, () => assert.notEqual(file.content, original?.content));
+        files.set(name, file.content);
+      }
+      for (const file of samples.find(sample => sample.id === 'W_CODE').files.filter(file => file.path.endsWith('.mjs'))) {
+        if (!files.has(file.path)) files.set(file.path, file.content);
+      }
+    });
+    if (files) {
+      // 执行前限制模块和能力，再使用有界VM检查纯业务函数，不授予文件或网络接口。
+      const modules = new Map();
+      let load;
+      check('语法及受限模块装载', () => {
+        for (const [name, source] of files) {
+          assert.doesNotMatch(source, /\b(?:process|globalThis|fetch|eval|Function|WebAssembly)\b/);
+          const tree = ts.createSourceFile(name, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS);
+          for (const node of tree.statements) if (ts.isImportDeclaration(node)) assert.equal(node.moduleSpecifier.text, './date.mjs');
+        }
+        load = name => {
+          if (modules.has(name)) return modules.get(name);
+          assert(files.has(name));
+          const module = { exports: {} };
+          modules.set(name, module.exports);
+          const sandbox = createContext({ module, exports: module.exports,
+            require: specifier => { assert.equal(specifier, './date.mjs'); return load('src/occupationalInfo/date.mjs'); } },
+          { codeGeneration: { strings: false, wasm: false } });
+          const compiled = ts.transpileModule(files.get(name), { compilerOptions: {
+            module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022,
+          } }).outputText;
+          runInContext(compiled, sandbox, { timeout: 1000 });
+          return module.exports;
+        };
+        for (const name of files.keys()) load(name);
+      });
+      if (load && modules.size === 3) {
+        const submit = modules.get('src/occupationalInfo/form.mjs').submitSurvey;
+        const batch = modules.get('src/occupationalInfo/import.mjs').importSurveys;
+        const today = '2026-11-07';
+        for (const date of ['2026-11-06', '2026-11-07', '2024-02-29']) check(`新增接受${date}`, () => assert.equal(submit({ surveyDate: date }, today).ok, true));
+        for (const date of ['2026-11-08', '2027-01-01', '2026-02-29', '2026-02-30', '2026-13-01', '', null]) {
+          check(`新增拒绝${date}`, () => assert.equal(submit({ surveyDate: date }, today).ok, false));
+        }
+        check('导入逐行反馈及正常行保留', () => {
+          const input = [{ id: 1, surveyDate: today }, { id: 2, surveyDate: '2026-11-08' },
+            { id: 3, surveyDate: '2026-02-30' }, { id: 4, surveyDate: '2026-11-06' }];
+          const before = JSON.stringify(input);
+          const result = batch(input, today);
+          assert.equal(JSON.stringify(result.accepted.map(row => row.id)), '[1,4]');
+          assert.equal(JSON.stringify(result.errors.map(error => error.row)), '[2,3]');
+          assert(result.errors.every(error => typeof error.message === 'string' && error.message.trim()));
+          assert.equal(JSON.stringify(input), before);
+        });
+        check('年末跨日边界', () => {
+          assert.equal(submit({ surveyDate: '2026-12-31' }, '2026-12-31').ok, true);
+          assert.equal(submit({ surveyDate: '2027-01-01' }, '2026-12-31').ok, false);
+        });
+      }
+    }
+  }
+  if (job.caseId === 'R_SUFFICIENT') check('80字以内', () => assert([...text.replace(/\s/gu, '')].length <= 80));
+  results.push({ id: job.id, caseId: job.caseId, arm: job.arm, delivered: Boolean(text.trim()),
+    outputSha256: digest(text), passed: checks.every(item => item.passed), checks });
+}
+await save(resolve(directory, 'work-checks-v2.json'), { assessment: '确定性行为及交付检查，不能代替语义评阅', results });
+console.log(JSON.stringify(results.map(item => ({ id: item.id, passed: item.passed,
+  failures: item.checks.filter(check => !check.passed) })), null, 2));

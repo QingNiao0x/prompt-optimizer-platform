@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "5b8b686e-4221-4b17-9546-3e1ee517624e",
+    "object": "chat.completion",
+    "created": 1794335172,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "根据附件 log.txt 写一份失败原因分析报告，要求：\n1. 只输出报告正文，不执行修复、不给出修复步骤。\n2. 报告需明确区分“已证实原因”和“待验证线索”，并分别列出依据。\n3. 基于现有材料可确认：两次上传成功后保存均返回 409；服务日志记录 optimistic_version_mismatch；尚未读取客户端重试代码。\n4. 对“待验证线索”说明需要进一步查看哪些信息（如客户端重试逻辑、版本号生成与传递、并发保存时序等），但不要展开修复方案。\n5. 报告结构建议包含：背景/现象、已证实原因、待验证线索、结论与影响范围、后续验证建议（仅验证，不修复）。\n6. 语言清楚、自然、可执行，避免臆测；材料未覆盖的内容标注为“待验证”。"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 302,
+      "completion_tokens": 187,
+      "total_tokens": 489,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 302
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}
