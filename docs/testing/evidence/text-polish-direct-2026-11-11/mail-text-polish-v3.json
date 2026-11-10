@@ -1,0 +1,52 @@
+{
+  "job" : {
+    "id" : "mail-text-polish-v3",
+    "phase" : "pilot",
+    "strategy" : "text-polish-v3",
+    "sample" : "mail",
+    "input" : {
+      "sourceText" : "李老师您好，关于下周交流会的材料，我这边已经完成初稿整理。但案例部分还需要核对，所以暂时不能发最终版。我计划周三下午发您审阅，如果数据没能按时确认，会先发不含案例的版本。感谢您在百忙之中给予支持和帮助。",
+      "style" : "NATURAL",
+      "depth" : "LIGHT",
+      "audience" : "",
+      "requirements" : "简洁得体，保留计划状态",
+      "lockedTexts" : [ ],
+      "modelId" : "deepseek:deepseek-flash"
+    }
+  },
+  "model" : {
+    "displayName" : "DeepSeek-V4.1-Flash",
+    "modelId" : "deepseek:deepseek-flash",
+    "upstreamModel" : "deepseek-flash",
+    "routeKey" : "deepseek"
+  },
+  "polishedText" : "李老师您好，关于下周交流会的材料，我这边已完成初稿整理。案例部分还需要核对，因此暂时无法发送最终版。我计划周三下午发给您审阅；如果数据没能按时确认，我会先发不含案例的版本。感谢您在百忙之中给予支持和帮助。",
+  "status" : "COMPLETED",
+  "elapsedMs" : 778,
+  "observations" : [ {
+    "eventId" : "50379ad9-8ea0-4265-92f9-e75dc14c56e6",
+    "startedAt" : "2026-11-10T17:58:36.7144292Z",
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 777,
+    "usage" : {
+      "inputTokens" : 654,
+      "outputTokens" : 67,
+      "totalTokens" : 721,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

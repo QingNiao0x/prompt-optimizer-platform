@@ -1,0 +1,52 @@
+{
+  "job" : {
+    "id" : "invite-text-polish-direct-v1",
+    "phase" : "pilot",
+    "strategy" : "text-polish-direct-v1",
+    "sample" : "invite",
+    "input" : {
+      "sourceText" : "这周日我们打算去河边散步，下午三点在南门集合。如果下雨就取消，我会在上午十点前发消息。你要是有空就来，不用专门带吃的。上次说要一起走走，一直没凑上时间，这回终于定下来了。",
+      "style" : "CONVERSATIONAL",
+      "depth" : "RESTRUCTURE",
+      "audience" : "",
+      "requirements" : "说得自然，保留时间和取消条件",
+      "lockedTexts" : [ ],
+      "modelId" : "deepseek:deepseek-flash"
+    }
+  },
+  "model" : {
+    "displayName" : "DeepSeek-V4.1-Flash",
+    "modelId" : "deepseek:deepseek-flash",
+    "upstreamModel" : "deepseek-flash",
+    "routeKey" : "deepseek"
+  },
+  "polishedText" : "这周日我们打算去河边散步，下午三点在南门集合。上次说好一起走走，一直没凑上时间，这回终于定下来了。如果下雨就取消，我会在上午十点前发消息。你要是有空就来，不用专门带吃的。",
+  "status" : "COMPLETED",
+  "elapsedMs" : 750,
+  "observations" : [ {
+    "eventId" : "35bdc02e-f523-466d-99ac-e5f296aa8c15",
+    "startedAt" : "2026-11-10T17:58:51.7368739Z",
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 750,
+    "usage" : {
+      "inputTokens" : 447,
+      "outputTokens" : 61,
+      "totalTokens" : 508,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

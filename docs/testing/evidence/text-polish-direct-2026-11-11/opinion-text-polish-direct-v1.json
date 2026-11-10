@@ -1,0 +1,52 @@
+{
+  "job" : {
+    "id" : "opinion-text-polish-direct-v1",
+    "phase" : "pilot",
+    "strategy" : "text-polish-direct-v1",
+    "sample" : "opinion",
+    "input" : {
+      "sourceText" : "我并不反对开会，但我觉得有些会确实可以少开一点。每个人都把周报念一遍，听的人很难记住，讲的人也累。我的想法是先把进度发在群里，会上只讨论需要大家决定的事。这样不是为了省掉沟通，而是想把讨论的时间用在真正需要讨论的问题上。",
+      "style" : "CONVERSATIONAL",
+      "depth" : "LIGHT",
+      "audience" : "",
+      "requirements" : "",
+      "lockedTexts" : [ ],
+      "modelId" : "deepseek:deepseek-flash"
+    }
+  },
+  "model" : {
+    "displayName" : "DeepSeek-V4.1-Flash",
+    "modelId" : "deepseek:deepseek-flash",
+    "upstreamModel" : "deepseek-flash",
+    "routeKey" : "deepseek"
+  },
+  "polishedText" : "我不反对开会，但有些会确实可以少开一点。每个人都把周报念一遍，听的人很难记住，讲的人也累。我的想法是，先把进度发在群里，会上只讨论需要大家决定的事。这不是为了省掉沟通，而是想把讨论的时间用在真正需要讨论的问题上。",
+  "status" : "COMPLETED",
+  "elapsedMs" : 705,
+  "observations" : [ {
+    "eventId" : "200e249d-917e-493c-acd4-cd80501ba486",
+    "startedAt" : "2026-11-10T17:58:45.9923126Z",
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 704,
+    "usage" : {
+      "inputTokens" : 455,
+      "outputTokens" : 70,
+      "totalTokens" : 525,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

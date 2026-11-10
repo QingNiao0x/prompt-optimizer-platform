@@ -1,0 +1,52 @@
+{
+  "job" : {
+    "id" : "clean-new-text-polish-v3",
+    "phase" : "pilot",
+    "strategy" : "text-polish-v3",
+    "sample" : "clean-new",
+    "input" : {
+      "sourceText" : "地铁到站时，我刚好读完这一页。我把书签夹好，跟着人群下车。出口的风有点凉，路边卖红薯的摊子还亮着灯。",
+      "style" : "NATURAL",
+      "depth" : "LIGHT",
+      "audience" : "",
+      "requirements" : "",
+      "lockedTexts" : [ ],
+      "modelId" : "deepseek:deepseek-flash"
+    }
+  },
+  "model" : {
+    "displayName" : "DeepSeek-V4.1-Flash",
+    "modelId" : "deepseek:deepseek-flash",
+    "upstreamModel" : "deepseek-flash",
+    "routeKey" : "deepseek"
+  },
+  "polishedText" : "地铁到站时，我刚好读完这一页。夹好书签，我跟着人群下车。出口的风有点凉，路边卖红薯的摊子还亮着灯。",
+  "status" : "COMPLETED",
+  "elapsedMs" : 742,
+  "observations" : [ {
+    "eventId" : "3110f221-7868-4974-a17f-d6aa03e1dcaf",
+    "startedAt" : "2026-11-10T17:58:48.9169124Z",
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 741,
+    "usage" : {
+      "inputTokens" : 622,
+      "outputTokens" : 42,
+      "totalTokens" : 664,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

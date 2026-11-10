@@ -1,0 +1,52 @@
+{
+  "job" : {
+    "id" : "long-notice-text-polish-v3",
+    "phase" : "pilot",
+    "sample" : "long-notice",
+    "strategy" : "text-polish-v3",
+    "input" : {
+      "sourceText" : "社区旧物交换活动说明\n\n为了进一步推动闲置物品的有效流转，让更多居民在日常生活中感受到邻里互助带来的便利，我们计划于本周日上午9点至11点在社区活动室举办旧物交换活动。活动面向本社区居民开放，无需提前报名。希望参加的居民可以携带自己不再使用、但仍能正常使用的书籍、玩具和小型生活用品到现场进行交换。\n\n考虑到活动空间和现场管理的实际情况，每户最多携带5件物品。工作人员将在入口检查物品是否完整，检查仅确认外观及能否正常使用，不为物品质量作担保。药品、食品、贴身衣物和带电池的大型设备不接受入场。参与者应自行说明已知瑕疵，双方确认后再进行交换，不收取费用。\n\n活动室内没有保管柜，贵重物品请自行保管。儿童可以参加，但须由监护人陪同。如遇活动室临时停用，活动顺延一周，社区会在周六18点前通过公告栏和居民群同步通知。活动结束后未交换的物品须由原持有人带回，现场不接收捐赠。\n\n我们希望通过这次活动减少闲置浪费，也让平时不常见面的邻居有机会认识彼此。后续是否继续举办，将结合场地使用情况和居民反馈决定。",
+      "style" : "FORMAL",
+      "depth" : "RESTRUCTURE",
+      "requirements" : "让居民快速看清参加方式、时间和限制，保留全部安排",
+      "audience" : "",
+      "lockedTexts" : [ ],
+      "modelId" : "deepseek:deepseek-flash"
+    }
+  },
+  "model" : {
+    "modelId" : "deepseek:deepseek-flash",
+    "displayName" : "DeepSeek-V4.1-Flash",
+    "routeKey" : "deepseek",
+    "upstreamModel" : "deepseek-flash"
+  },
+  "polishedText" : "社区旧物交换活动说明\n\n为促进闲置物品流转，方便居民在日常生活中感受邻里互助，社区定于本周日上午9点至11点在社区活动室举办旧物交换活动。活动面向本社区居民开放，无需提前报名。有意参加的居民可携带不再使用但仍能正常使用的书籍、玩具和小型生活用品到现场交换。\n\n受活动空间和现场管理条件限制，每户最多携带5件物品。工作人员将在入口检查物品是否完整，检查仅确认外观及能否正常使用，不为物品质量作担保。药品、食品、贴身衣物和带电池的大型设备不得入场。参与者应自行说明已知瑕疵，双方确认后再进行交换，活动不收取费用。\n\n活动室内不设保管柜，贵重物品请自行保管。儿童可以参加，但须由监护人陪同。如活动室临时停用，活动顺延一周，社区将在周六18点前通过公告栏和居民群同步通知。活动结束后，未交换的物品须由原持有人带回，现场不接收捐赠。\n\n希望通过这次活动减少闲置浪费，也让平时不常见面的邻居有机会认识彼此。后续是否继续举办，将结合场地使用情况和居民反馈决定。",
+  "status" : "COMPLETED",
+  "elapsedMs" : 2760,
+  "observations" : [ {
+    "eventId" : "be3f7b2a-b867-4ff7-b3bf-253e66ae7dd6",
+    "startedAt" : "2026-11-10T18:01:20.0064705Z",
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 2757,
+    "usage" : {
+      "inputTokens" : 857,
+      "outputTokens" : 257,
+      "totalTokens" : 1114,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

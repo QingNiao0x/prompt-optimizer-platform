@@ -65,13 +65,16 @@ test('幅度常显并传入生成请求，结果显示实际幅度与句内差�
   await page.getByRole('textbox', { name: '原始文章', exact: true }).fill(input().sourceText);
   await pane(page, '设置');
   await expect(page.getByRole('combobox', { name: '改写幅度', exact: true })).toBeVisible();
+  const requirements = page.getByRole('textbox', { name: '润色补充要求', exact: true });
+  await expect(requirements).toBeVisible();
+  await requirements.fill('给非专业读者看，减少宣传腔，保留叙事口吻');
   await page.getByRole('combobox', { name: '改写幅度', exact: true }).press('ArrowDown');
   await page.getByRole('option', { name: '允许调整句式和段落', exact: true }).click();
   await page.getByText('轻松交流', { exact: true }).click();
   await page.screenshot({ path: testInfo.outputPath('polish-visible-depth.png'), fullPage: true });
   const request = page.waitForRequest(r => r.url().endsWith('/api/v1/text-polish') && r.method() === 'POST');
   await page.getByRole('button', { name: '开始润色', exact: true }).click();
-  expect((await request).postDataJSON().input).toMatchObject({ style: 'CONVERSATIONAL', depth: 'RESTRUCTURE' });
+  expect((await request).postDataJSON().input).toMatchObject({ style: 'CONVERSATIONAL', depth: 'RESTRUCTURE', requirements: '给非专业读者看，减少宣传腔，保留叙事口吻' });
   await pane(page, '结果');
   await expect(page.getByText(/轻松交流 · 允许调整句式和段落 ·/)).toBeVisible();
   await page.locator('.compare-toggle .el-switch').click();

@@ -81,6 +81,31 @@ class OpenAiTextPolishProviderTest {
         assertThat(calls).hasSize(6).allSatisfy(call -> assertThat(call.successful()).isTrue());
         assertThatThrownBy(() -> provider.configureStrategy("unknown")).isInstanceOf(IllegalArgumentException.class);
     }
+    @Test void directEditingCarriesEveryStyleAndDepthThroughTheNormalHttpEntry() throws Exception {
+        provider.configureStrategy(TextPolishInstructions.DIRECT_VERSION);
+        for (Style style : Style.values()) {
+            for (Depth depth : Depth.values()) {
+                var in = new Input("保护原句。", style, depth, "", "", List.of("保护原句。"), "fixture");
+                server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+                    var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+                    String system = body.path("messages").get(0).path("content").asText();
+                    assertThat(system).contains("自然、清楚、好读", "目的", "承诺", "lockedTexts", "requirements");
+                    var actual = json.readTree(body.path("messages").get(1).path("content").asText());
+                    assertThat(actual.path("style").asText()).isEqualTo(style.name());
+                    assertThat(actual.path("depth").asText()).isEqualTo(depth.name());
+                    assertThat(body.path("messages").size()).isEqualTo(2);
+                }).andRespond(withSuccess(envelope("{\"polishedText\":\"保护原句。\"}", "stop"), MediaType.APPLICATION_JSON));
+            }
+        }
+        for (Style style : Style.values()) {
+            for (Depth depth : Depth.values()) {
+                provider.polish(new Input("保护原句。", style, depth, "", "", List.of("保护原句。"), "fixture"), model);
+            }
+        }
+        server.verify();
+        assertThat(calls).hasSize(6).allSatisfy(call -> assertThat(call.successful()).isTrue());
+        assertThatThrownBy(() -> provider.configureStrategy("unknown")).isInstanceOf(IllegalArgumentException.class);
+    }
     @Test void lockedViolationDoesNotTriggerUnboundedQualityRetries() throws Exception {
         server.expect(requestTo(ENDPOINT)).andRespond(withSuccess(envelope("{\"polishedText\":\"已改动锁定内容\"}","stop"), MediaType.APPLICATION_JSON));
         assertThatThrownBy(() -> provider.polish(input(),model)).isInstanceOf(TextPolishException.class); server.verify();

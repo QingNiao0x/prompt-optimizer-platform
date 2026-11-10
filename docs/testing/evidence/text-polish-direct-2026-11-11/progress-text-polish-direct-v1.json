@@ -1,0 +1,52 @@
+{
+  "job" : {
+    "id" : "progress-text-polish-direct-v1",
+    "phase" : "pilot",
+    "strategy" : "text-polish-direct-v1",
+    "sample" : "progress",
+    "input" : {
+      "sourceText" : "本月项目整体取得了积极进展，各项工作正在稳步推进。接口联调已经完成，移动端仍有两处兼容问题未解决。测试计划在下周二开始，前提是兼容问题在周一前修复。如果未能修复，测试时间将重新安排。我们将继续跟进问题，及时同步变化，以便相关团队安排后续工作。",
+      "style" : "FORMAL",
+      "depth" : "RESTRUCTURE",
+      "audience" : "",
+      "requirements" : "让同事快速看懂进展和风险",
+      "lockedTexts" : [ ],
+      "modelId" : "deepseek:deepseek-flash"
+    }
+  },
+  "model" : {
+    "displayName" : "DeepSeek-V4.1-Flash",
+    "modelId" : "deepseek:deepseek-flash",
+    "upstreamModel" : "deepseek-flash",
+    "routeKey" : "deepseek"
+  },
+  "polishedText" : "本月项目整体进展积极，各项工作稳步推进。接口联调已完成；移动端仍有两处兼容问题未解决。测试计划下周二开始，前提是兼容问题在周一前修复；若未能修复，测试时间将重新安排。我们将继续跟进问题并及时同步变化，便于相关团队安排后续工作。",
+  "status" : "COMPLETED",
+  "elapsedMs" : 1210,
+  "observations" : [ {
+    "eventId" : "eebcd1f9-582a-468d-b859-04e2b191702b",
+    "startedAt" : "2026-11-10T17:58:47.7006599Z",
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1209,
+    "usage" : {
+      "inputTokens" : 460,
+      "outputTokens" : 71,
+      "totalTokens" : 531,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

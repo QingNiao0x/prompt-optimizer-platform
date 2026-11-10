@@ -1,0 +1,52 @@
+{
+  "job" : {
+    "id" : "memory-text-polish-direct-v1",
+    "phase" : "pilot",
+    "strategy" : "text-polish-direct-v1",
+    "sample" : "memory",
+    "input" : {
+      "sourceText" : "父亲修好了那把旧椅子。他把椅子翻过来，拿小刀削了削松动的木榫，又在接缝里抹了一点胶。我问还要多久，他说等胶干。那天下午我总往阳台跑，想看看椅子能不能坐了。多年以后想起这件事，我仍然记得阳台上的木屑。",
+      "style" : "NATURAL",
+      "depth" : "LIGHT",
+      "audience" : "",
+      "requirements" : "保留叙事口吻",
+      "lockedTexts" : [ ],
+      "modelId" : "deepseek:deepseek-flash"
+    }
+  },
+  "model" : {
+    "displayName" : "DeepSeek-V4.1-Flash",
+    "modelId" : "deepseek:deepseek-flash",
+    "upstreamModel" : "deepseek-flash",
+    "routeKey" : "deepseek"
+  },
+  "polishedText" : "父亲修好了那把旧椅子。他把椅子翻过来，用小刀削了削松动的木榫，又在接缝里抹了一点胶。我问还要多久，他说等胶干。那天下午我总往阳台跑，想看看椅子能不能坐了。多年以后想起这件事，我仍然记得阳台上的木屑。",
+  "status" : "COMPLETED",
+  "elapsedMs" : 819,
+  "observations" : [ {
+    "eventId" : "a5b790aa-fca1-4f40-89d4-1f117f9dce75",
+    "startedAt" : "2026-11-10T17:58:42.0411149Z",
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 818,
+    "usage" : {
+      "inputTokens" : 460,
+      "outputTokens" : 73,
+      "totalTokens" : 533,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

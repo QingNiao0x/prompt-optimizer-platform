@@ -1,0 +1,52 @@
+{
+  "job" : {
+    "id" : "notice-text-polish-direct-v1",
+    "phase" : "pilot",
+    "strategy" : "text-polish-direct-v1",
+    "sample" : "notice",
+    "input" : {
+      "sourceText" : "由于设备维护工作的开展，图书馆将于周六9点至12点暂停自助借还服务。在此期间，人工服务台正常开放，读者可以到服务台办理借还。电子资源访问不受影响。如维护提前完成，自助服务将提前恢复。",
+      "style" : "FORMAL",
+      "depth" : "LIGHT",
+      "audience" : "",
+      "requirements" : "减少重复，把安排说清楚",
+      "lockedTexts" : [ ],
+      "modelId" : "deepseek:deepseek-flash"
+    }
+  },
+  "model" : {
+    "displayName" : "DeepSeek-V4.1-Flash",
+    "modelId" : "deepseek:deepseek-flash",
+    "upstreamModel" : "deepseek-flash",
+    "routeKey" : "deepseek"
+  },
+  "polishedText" : "因设备维护，图书馆将于周六9点至12点暂停自助借还服务。期间人工服务台正常开放，读者可前往办理借还。电子资源访问不受影响。如维护提前完成，自助服务将提前恢复。",
+  "status" : "COMPLETED",
+  "elapsedMs" : 1040,
+  "observations" : [ {
+    "eventId" : "5b6373e1-6eb6-4125-8495-1e98375552c3",
+    "startedAt" : "2026-11-10T17:58:35.6568806Z",
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1040,
+    "usage" : {
+      "inputTokens" : 450,
+      "outputTokens" : 55,
+      "totalTokens" : 505,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

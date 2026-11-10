@@ -101,6 +101,8 @@ onMounted(async () => {
             <strong>{{ item.label }}<small v-if="item.value === 'NATURAL'">默认</small></strong><span>{{ item.description }}</span>
           </ElRadio>
         </ElRadioGroup>
+        <label class="field"><span>你想怎样修改（选填）</span><ElInput v-model="requirements" type="textarea" :rows="3" :maxlength="1500" aria-label="润色补充要求" placeholder="例如：给非专业读者看、减少宣传腔，或保留叙事口吻。" /></label>
+        <p class="hint">留空时，会结合原文判断需要改善的表达。</p>
         <label class="field"><span>改写幅度</span><ElSelect v-model="depth" aria-label="改写幅度"><ElOption label="轻度润色" value="LIGHT" /><ElOption label="允许调整句式和段落" value="RESTRUCTURE" /></ElSelect></label>
         <p class="hint">轻度润色保持段落次序，允许段内拆句和压缩重复。允许调整句式和段落可进一步重组表达，两种幅度均保留独立含义。</p>
         <label class="field"><span>润色模型</span><ElSelect v-model="modelId" aria-label="文章润色模型" :loading="loading" placeholder="选择润色模型">
@@ -110,7 +112,6 @@ onMounted(async () => {
         <ElButton text type="primary" :loading="loading" @click="store.load">刷新模型列表</ElButton>
         <ElCollapse class="advanced"><ElCollapseItem title="高级设置" name="advanced">
           <label class="field"><span>读者（选填）</span><ElInput v-model="audience" :maxlength="300" aria-label="文章读者" placeholder="例如：团队同事、普通读者" /></label>
-          <label class="field"><span>补充要求（选填）</span><ElInput v-model="requirements" type="textarea" :rows="3" :maxlength="1500" aria-label="润色补充要求" placeholder="例如：保留标题和段落，篇幅尽量接近原文。" /></label>
         </ElCollapseItem></ElCollapse>
         <ElButton type="primary" class="primary-action" :loading="busy" :disabled="!canGenerate || !!pendingResult" @click="generate()">{{ result ? '基于原文重新生成' : '开始润色' }}</ElButton>
         <p v-if="dirty" class="hint">当前编辑稿尚未保存，请先保存或取消编辑。</p>

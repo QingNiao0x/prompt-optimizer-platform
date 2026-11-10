@@ -1,0 +1,101 @@
+{
+  "maxActualCalls": 76,
+  "phaseCaps": {
+    "pilot": 8
+  },
+  "jobs": [
+    {
+      "id": "long-notice-text-polish-v3",
+      "phase": "pilot",
+      "sample": "long-notice",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "社区旧物交换活动说明\n\n为了进一步推动闲置物品的有效流转，让更多居民在日常生活中感受到邻里互助带来的便利，我们计划于本周日上午9点至11点在社区活动室举办旧物交换活动。活动面向本社区居民开放，无需提前报名。希望参加的居民可以携带自己不再使用、但仍能正常使用的书籍、玩具和小型生活用品到现场进行交换。\n\n考虑到活动空间和现场管理的实际情况，每户最多携带5件物品。工作人员将在入口检查物品是否完整，检查仅确认外观及能否正常使用，不为物品质量作担保。药品、食品、贴身衣物和带电池的大型设备不接受入场。参与者应自行说明已知瑕疵，双方确认后再进行交换，不收取费用。\n\n活动室内没有保管柜，贵重物品请自行保管。儿童可以参加，但须由监护人陪同。如遇活动室临时停用，活动顺延一周，社区会在周六18点前通过公告栏和居民群同步通知。活动结束后未交换的物品须由原持有人带回，现场不接收捐赠。\n\n我们希望通过这次活动减少闲置浪费，也让平时不常见面的邻居有机会认识彼此。后续是否继续举办，将结合场地使用情况和居民反馈决定。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "requirements": "让居民快速看清参加方式、时间和限制，保留全部安排",
+        "audience": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "long-notice-text-polish-direct-v1",
+      "phase": "pilot",
+      "sample": "long-notice",
+      "strategy": "text-polish-direct-v1",
+      "input": {
+        "sourceText": "社区旧物交换活动说明\n\n为了进一步推动闲置物品的有效流转，让更多居民在日常生活中感受到邻里互助带来的便利，我们计划于本周日上午9点至11点在社区活动室举办旧物交换活动。活动面向本社区居民开放，无需提前报名。希望参加的居民可以携带自己不再使用、但仍能正常使用的书籍、玩具和小型生活用品到现场进行交换。\n\n考虑到活动空间和现场管理的实际情况，每户最多携带5件物品。工作人员将在入口检查物品是否完整，检查仅确认外观及能否正常使用，不为物品质量作担保。药品、食品、贴身衣物和带电池的大型设备不接受入场。参与者应自行说明已知瑕疵，双方确认后再进行交换，不收取费用。\n\n活动室内没有保管柜，贵重物品请自行保管。儿童可以参加，但须由监护人陪同。如遇活动室临时停用，活动顺延一周，社区会在周六18点前通过公告栏和居民群同步通知。活动结束后未交换的物品须由原持有人带回，现场不接收捐赠。\n\n我们希望通过这次活动减少闲置浪费，也让平时不常见面的邻居有机会认识彼此。后续是否继续举办，将结合场地使用情况和居民反馈决定。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "requirements": "让居民快速看清参加方式、时间和限制，保留全部安排",
+        "audience": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "long-story-text-polish-v3",
+      "phase": "pilot",
+      "sample": "long-story",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "那天我到车站时，离发车还有四十分钟。我原本想找个位置坐下，却发现候车室几乎坐满了人。靠窗的位置放着一个蓝色布袋，旁边是一位正在看报纸的老人。我问这里有没有人，他把布袋拿到脚边，说可以坐。\n\n坐下之后，我发现手机快没电了。充电线装在行李箱最下面，我不想当着那么多人翻箱子，就把屏幕关了。过了一会儿，老人问我几点发车。我报了时间，他点点头，说他的车还要再晚一个小时。我不知道该接什么话，只说那还得等一阵。我们又各自安静下来。\n\n广播响了两次，都不是我的车。我有些着急，担心自己听漏了检票通知，于是一直盯着上方的屏幕。老人看见我抬头，把报纸折起来，说屏幕右边还有一块小牌子，也能看车次。我以前没有注意过那块牌子，这才发现它离我们坐的位置更近，不必一直仰着头。\n\n轮到我检票时，我拖着箱子起身，差点把椅子上的围巾落下。老人喊住我，把围巾递过来。我道了谢，他摆摆手，又展开报纸。我跟着队伍走到检票口，回头看了一眼，只看到那只蓝色布袋还放在他的脚边。\n\n后来我坐了很多次那趟车，却再没遇到他。现在想起那四十分钟，我记得的并不是广播声有多吵，也不是候车室有多挤，而是他挪开布袋时给我留下的那个位置。那只是一个很小的动作，但那天我确实因此轻松了一点。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "requirements": "保留第一人称的平实叙事，减少重复解释，保留段落次序",
+        "audience": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "long-story-text-polish-direct-v1",
+      "phase": "pilot",
+      "sample": "long-story",
+      "strategy": "text-polish-direct-v1",
+      "input": {
+        "sourceText": "那天我到车站时，离发车还有四十分钟。我原本想找个位置坐下，却发现候车室几乎坐满了人。靠窗的位置放着一个蓝色布袋，旁边是一位正在看报纸的老人。我问这里有没有人，他把布袋拿到脚边，说可以坐。\n\n坐下之后，我发现手机快没电了。充电线装在行李箱最下面，我不想当着那么多人翻箱子，就把屏幕关了。过了一会儿，老人问我几点发车。我报了时间，他点点头，说他的车还要再晚一个小时。我不知道该接什么话，只说那还得等一阵。我们又各自安静下来。\n\n广播响了两次，都不是我的车。我有些着急，担心自己听漏了检票通知，于是一直盯着上方的屏幕。老人看见我抬头，把报纸折起来，说屏幕右边还有一块小牌子，也能看车次。我以前没有注意过那块牌子，这才发现它离我们坐的位置更近，不必一直仰着头。\n\n轮到我检票时，我拖着箱子起身，差点把椅子上的围巾落下。老人喊住我，把围巾递过来。我道了谢，他摆摆手，又展开报纸。我跟着队伍走到检票口，回头看了一眼，只看到那只蓝色布袋还放在他的脚边。\n\n后来我坐了很多次那趟车，却再没遇到他。现在想起那四十分钟，我记得的并不是广播声有多吵，也不是候车室有多挤，而是他挪开布袋时给我留下的那个位置。那只是一个很小的动作，但那天我确实因此轻松了一点。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "requirements": "保留第一人称的平实叙事，减少重复解释，保留段落次序",
+        "audience": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    }
+  ],
+  "samples": [
+    {
+      "id": "long-notice",
+      "group": "holdout",
+      "style": "FORMAL",
+      "depth": "RESTRUCTURE",
+      "requirements": "让居民快速看清参加方式、时间和限制，保留全部安排",
+      "locked": [],
+      "text": "社区旧物交换活动说明\n\n为了进一步推动闲置物品的有效流转，让更多居民在日常生活中感受到邻里互助带来的便利，我们计划于本周日上午9点至11点在社区活动室举办旧物交换活动。活动面向本社区居民开放，无需提前报名。希望参加的居民可以携带自己不再使用、但仍能正常使用的书籍、玩具和小型生活用品到现场进行交换。\n\n考虑到活动空间和现场管理的实际情况，每户最多携带5件物品。工作人员将在入口检查物品是否完整，检查仅确认外观及能否正常使用，不为物品质量作担保。药品、食品、贴身衣物和带电池的大型设备不接受入场。参与者应自行说明已知瑕疵，双方确认后再进行交换，不收取费用。\n\n活动室内没有保管柜，贵重物品请自行保管。儿童可以参加，但须由监护人陪同。如遇活动室临时停用，活动顺延一周，社区会在周六18点前通过公告栏和居民群同步通知。活动结束后未交换的物品须由原持有人带回，现场不接收捐赠。\n\n我们希望通过这次活动减少闲置浪费，也让平时不常见面的邻居有机会认识彼此。后续是否继续举办，将结合场地使用情况和居民反馈决定。"
+    },
+    {
+      "id": "long-story",
+      "group": "holdout",
+      "style": "NATURAL",
+      "depth": "LIGHT",
+      "requirements": "保留第一人称的平实叙事，减少重复解释，保留段落次序",
+      "locked": [],
+      "text": "那天我到车站时，离发车还有四十分钟。我原本想找个位置坐下，却发现候车室几乎坐满了人。靠窗的位置放着一个蓝色布袋，旁边是一位正在看报纸的老人。我问这里有没有人，他把布袋拿到脚边，说可以坐。\n\n坐下之后，我发现手机快没电了。充电线装在行李箱最下面，我不想当着那么多人翻箱子，就把屏幕关了。过了一会儿，老人问我几点发车。我报了时间，他点点头，说他的车还要再晚一个小时。我不知道该接什么话，只说那还得等一阵。我们又各自安静下来。\n\n广播响了两次，都不是我的车。我有些着急，担心自己听漏了检票通知，于是一直盯着上方的屏幕。老人看见我抬头，把报纸折起来，说屏幕右边还有一块小牌子，也能看车次。我以前没有注意过那块牌子，这才发现它离我们坐的位置更近，不必一直仰着头。\n\n轮到我检票时，我拖着箱子起身，差点把椅子上的围巾落下。老人喊住我，把围巾递过来。我道了谢，他摆摆手，又展开报纸。我跟着队伍走到检票口，回头看了一眼，只看到那只蓝色布袋还放在他的脚边。\n\n后来我坐了很多次那趟车，却再没遇到他。现在想起那四十分钟，我记得的并不是广播声有多吵，也不是候车室有多挤，而是他挪开布袋时给我留下的那个位置。那只是一个很小的动作，但那天我确实因此轻松了一点。"
+    }
+  ],
+  "sourceSha256": {
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishInstructions.java": "2c56ec7f0cd6245ac68de61030d98360958c4811f1e2e7be1c9d071037935ad9",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/OpenAiTextPolishProvider.java": "2478de10309df9cc63e3f57ec2469812b2f548dd8aeb538769c9abfa81b843c3",
+    "scripts/evaluation/text-polish-direct/DirectComparison.java": "4bdd05e1a7ba8d284738c7d706972d136b7a9bbd079e881c2d42af8ba1d51b38"
+  },
+  "criteria": {
+    "adoption": "holdout wins exceed losses, at least 3 clear wins across at least 2 uses, no new critical semantic error in holdout or regression; disputed interpretation reviewed separately; natural text may tie",
+    "critical": "wrong facts/numbers/conditions/negation/commitments or clearly missing independent meaning",
+    "latency": "No confirmed absolute product SLA; disclose measurements without invented latency multiplier gate",
+    "review": "Randomized A/B packets without version/model identifiers; same developer reviewer, no human reader preference claim",
+    "freeze": "New samples authored before calls and never used to tune this candidate. No subsequent tuning or quality retries in this batch."
+  },
+  "supplement": "Same unchanged candidate; independently frozen longer holdouts after short-text review, no retuning. Combined task maximum 100 including original 24."
+}

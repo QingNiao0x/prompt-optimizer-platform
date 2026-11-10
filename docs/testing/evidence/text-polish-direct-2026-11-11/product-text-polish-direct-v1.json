@@ -1,0 +1,52 @@
+{
+  "job" : {
+    "id" : "product-text-polish-direct-v1",
+    "phase" : "pilot",
+    "strategy" : "text-polish-direct-v1",
+    "sample" : "product",
+    "input" : {
+      "sourceText" : "这款保温杯通过采用双层结构的设计，为日常饮水提供便利。容量为450毫升，杯盖可以拆开清洗。杯身不适用于微波炉，也不建议放进洗碗机。本次购买赠送杯刷，赠品数量有限，送完即止。我们希望以实用的设计改善日常使用体验。",
+      "style" : "FORMAL",
+      "depth" : "RESTRUCTURE",
+      "audience" : "",
+      "requirements" : "减少宣传腔，保留使用限制和赠品条件",
+      "lockedTexts" : [ ],
+      "modelId" : "deepseek:deepseek-flash"
+    }
+  },
+  "model" : {
+    "displayName" : "DeepSeek-V4.1-Flash",
+    "modelId" : "deepseek:deepseek-flash",
+    "upstreamModel" : "deepseek-flash",
+    "routeKey" : "deepseek"
+  },
+  "polishedText" : "这款保温杯采用双层结构设计，容量450毫升，杯盖可拆开清洗，方便日常饮水。杯身不适用于微波炉，也不建议放入洗碗机。本次购买赠送杯刷，赠品数量有限，送完即止。我们希望以实用的设计改善日常使用体验。",
+  "status" : "COMPLETED",
+  "elapsedMs" : 1079,
+  "observations" : [ {
+    "eventId" : "4ae75ee1-a107-49ed-a0f1-7484f21fc303",
+    "startedAt" : "2026-11-10T17:58:43.8200005Z",
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1079,
+    "usage" : {
+      "inputTokens" : 460,
+      "outputTokens" : 67,
+      "totalTokens" : 527,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

@@ -1,0 +1,52 @@
+{
+  "job" : {
+    "id" : "explain-text-polish-direct-v1",
+    "phase" : "pilot",
+    "strategy" : "text-polish-direct-v1",
+    "sample" : "explain",
+    "input" : {
+      "sourceText" : "缓存可以被理解为一种对于重复获取过程进行优化的机制。当程序第一次获取数据时，会把结果暂时保存下来。在保存结果仍然有效的情况下，后续请求可以直接使用它，从而减少重复读取。但是，如果原始数据已经发生变化，而缓存尚未更新，就可能读到旧结果。",
+      "style" : "CONVERSATIONAL",
+      "depth" : "RESTRUCTURE",
+      "audience" : "",
+      "requirements" : "给非专业读者看，不新增例子",
+      "lockedTexts" : [ ],
+      "modelId" : "deepseek:deepseek-flash"
+    }
+  },
+  "model" : {
+    "displayName" : "DeepSeek-V4.1-Flash",
+    "modelId" : "deepseek:deepseek-flash",
+    "upstreamModel" : "deepseek-flash",
+    "routeKey" : "deepseek"
+  },
+  "polishedText" : "缓存可以理解为一种优化机制，用来减少重复获取数据的过程。程序第一次获取数据时，会先把结果暂时保存下来。只要保存的结果还有效，后续请求就能直接使用它，不必再重复读取。但如果原始数据已经变了，缓存却还没更新，就可能读到旧的结果。",
+  "status" : "COMPLETED",
+  "elapsedMs" : 967,
+  "observations" : [ {
+    "eventId" : "b66f3022-2205-416d-bf21-ad9bcdb72e7c",
+    "startedAt" : "2026-11-10T17:58:39.8372969Z",
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 967,
+    "usage" : {
+      "inputTokens" : 456,
+      "outputTokens" : 67,
+      "totalTokens" : 523,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

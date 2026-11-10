@@ -1,0 +1,52 @@
+{
+  "job" : {
+    "id" : "long-story-text-polish-direct-v1",
+    "phase" : "pilot",
+    "sample" : "long-story",
+    "strategy" : "text-polish-direct-v1",
+    "input" : {
+      "sourceText" : "那天我到车站时，离发车还有四十分钟。我原本想找个位置坐下，却发现候车室几乎坐满了人。靠窗的位置放着一个蓝色布袋，旁边是一位正在看报纸的老人。我问这里有没有人，他把布袋拿到脚边，说可以坐。\n\n坐下之后，我发现手机快没电了。充电线装在行李箱最下面，我不想当着那么多人翻箱子，就把屏幕关了。过了一会儿，老人问我几点发车。我报了时间，他点点头，说他的车还要再晚一个小时。我不知道该接什么话，只说那还得等一阵。我们又各自安静下来。\n\n广播响了两次，都不是我的车。我有些着急，担心自己听漏了检票通知，于是一直盯着上方的屏幕。老人看见我抬头，把报纸折起来，说屏幕右边还有一块小牌子，也能看车次。我以前没有注意过那块牌子，这才发现它离我们坐的位置更近，不必一直仰着头。\n\n轮到我检票时，我拖着箱子起身，差点把椅子上的围巾落下。老人喊住我，把围巾递过来。我道了谢，他摆摆手，又展开报纸。我跟着队伍走到检票口，回头看了一眼，只看到那只蓝色布袋还放在他的脚边。\n\n后来我坐了很多次那趟车，却再没遇到他。现在想起那四十分钟，我记得的并不是广播声有多吵，也不是候车室有多挤，而是他挪开布袋时给我留下的那个位置。那只是一个很小的动作，但那天我确实因此轻松了一点。",
+      "style" : "NATURAL",
+      "depth" : "LIGHT",
+      "requirements" : "保留第一人称的平实叙事，减少重复解释，保留段落次序",
+      "audience" : "",
+      "lockedTexts" : [ ],
+      "modelId" : "deepseek:deepseek-flash"
+    }
+  },
+  "model" : {
+    "modelId" : "deepseek:deepseek-flash",
+    "displayName" : "DeepSeek-V4.1-Flash",
+    "routeKey" : "deepseek",
+    "upstreamModel" : "deepseek-flash"
+  },
+  "polishedText" : "那天我到车站时，离发车还有四十分钟。我本想找个位置坐下，却发现候车室几乎坐满了人。靠窗的位置放着一个蓝色布袋，旁边是一位正在看报纸的老人。我问这里有没有人，他把布袋拿到脚边，说可以坐。\n\n坐下后，我发现手机快没电了。充电线装在行李箱最下面，我不想当着那么多人翻箱子，就把屏幕关了。过了一会儿，老人问我几点发车。我报了时间，他点点头，说他的车还要再晚一个小时。我不知道该接什么话，只说那还得等一阵。我们又各自安静下来。\n\n广播响了两次，都不是我的车。我有些着急，担心自己听漏了检票通知，于是一直盯着上方的屏幕。老人看见我抬头，把报纸折起来，说屏幕右边还有一块小牌子，也能看车次。我以前没注意过那块牌子，这才发现它离我们坐的位置更近，不必一直仰着头。\n\n轮到我检票时，我拖着箱子起身，差点把椅子上的围巾落下。老人喊住我，把围巾递过来。我道了谢，他摆摆手，又展开报纸。我跟着队伍走到检票口，回头看了一眼，只看到那只蓝色布袋还放在他脚边。\n\n后来我坐了很多次那趟车，却再没遇到他。现在想起那四十分钟，我记得的并不是广播声有多吵，也不是候车室有多挤，而是他挪开布袋时给我留下的那个位置。那只是一个很小的动作，但那天我确实因此轻松了一点。",
+  "status" : "COMPLETED",
+  "elapsedMs" : 2223,
+  "observations" : [ {
+    "eventId" : "e6312826-4771-4b66-9345-791dce8dbb74",
+    "startedAt" : "2026-11-10T18:01:26.4751564Z",
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 2222,
+    "usage" : {
+      "inputTokens" : 739,
+      "outputTokens" : 341,
+      "totalTokens" : 1080,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}
