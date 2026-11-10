@@ -1,0 +1,363 @@
+{
+  "frozenAt": "2026-11-09T17:05:14.304545+00:00",
+  "authorization": "用户本轮明确授权最多200次真实调用。与先前闭批分开计数，失败、协议修复、付费评审均计数。",
+  "maxActualCalls": 200,
+  "phaseCaps": {
+    "pilot": 12,
+    "expand": 24
+  },
+  "plannedGenerationCalls": {
+    "pilot": 6,
+    "expand": 12
+  },
+  "models": [
+    {
+      "modelId": "deepseek:deepseek-flash",
+      "displayName": "DeepSeek-V4.1-Flash",
+      "routeKey": "deepseek",
+      "upstreamModel": "deepseek-flash"
+    },
+    {
+      "modelId": "deepseek:deepseek-v4-pro",
+      "displayName": "DeepSeek-V4-Pro-0813",
+      "routeKey": "deepseek",
+      "upstreamModel": "deepseek-v4-pro"
+    }
+  ],
+  "parameters": {
+    "strategy": "text-polish-v3",
+    "temperature": 0.2,
+    "maxTokens": 8000,
+    "stream": false,
+    "response_format": "json_object",
+    "thinking": "disabled",
+    "depth": "RESTRUCTURE",
+    "qualityRetry": 0,
+    "maxProtocolRepair": 1
+  },
+  "samples": [
+    {
+      "id": "digital",
+      "category": "用户本次截图文章的冻结转录",
+      "text": "以数字化赋能高质量发展：新时代背景下的实践路径与价值意蕴\n\n在当今快速发展的数字化时代，数字化转型已成为推动组织高质量发展的重要引擎。首先，要坚持需求导向，以用户价值为中心，持续优化业务流程，构建从感知、分析到决策、执行的闭环体系。其次，要强化数据要素赋能，打通信息孤岛，推动多维度、全链条、深层次的协同融合，不断提升资源配置效率和精细化治理水平。再次，要完善长效机制，明确目标抓手，压实主体责任，形成上下联动、内外协同、持续迭代的良好生态。\n\n与此同时，还应注重技术能力与组织能力的双向提升，既要以创新驱动增强发展动能，也要以规范治理守住安全底线，在开放合作中拓展应用场景，在实践探索中沉淀可复制、可推广的经验做法。通过场景化落地、项目化推进、清单化管理，进一步把数字化优势转化为发展优势、竞争优势和服务优势。\n\n综上所述，数字化转型不是一蹴而就的短期任务，而是一项系统性、长期性、基础性工程。唯有坚持问题导向、目标导向和结果导向相统一，持续发力、久久为功，才能不断释放数字动能，为高质量发展提供坚实支撑和有力保障。",
+      "locked": []
+    },
+    {
+      "id": "legal",
+      "category": "否定例外与责任强度",
+      "text": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+      "locked": [
+        "已使用的数字内容不适用无理由退款。"
+      ]
+    },
+    {
+      "id": "clean",
+      "category": "已经自然应少改",
+      "text": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+      "locked": []
+    }
+  ],
+  "jobs": [
+    {
+      "id": "digital-CONVERSATIONAL-current",
+      "phase": "pilot",
+      "sample": "digital",
+      "role": "current",
+      "input": {
+        "sourceText": "以数字化赋能高质量发展：新时代背景下的实践路径与价值意蕴\n\n在当今快速发展的数字化时代，数字化转型已成为推动组织高质量发展的重要引擎。首先，要坚持需求导向，以用户价值为中心，持续优化业务流程，构建从感知、分析到决策、执行的闭环体系。其次，要强化数据要素赋能，打通信息孤岛，推动多维度、全链条、深层次的协同融合，不断提升资源配置效率和精细化治理水平。再次，要完善长效机制，明确目标抓手，压实主体责任，形成上下联动、内外协同、持续迭代的良好生态。\n\n与此同时，还应注重技术能力与组织能力的双向提升，既要以创新驱动增强发展动能，也要以规范治理守住安全底线，在开放合作中拓展应用场景，在实践探索中沉淀可复制、可推广的经验做法。通过场景化落地、项目化推进、清单化管理，进一步把数字化优势转化为发展优势、竞争优势和服务优势。\n\n综上所述，数字化转型不是一蹴而就的短期任务，而是一项系统性、长期性、基础性工程。唯有坚持问题导向、目标导向和结果导向相统一，持续发力、久久为功，才能不断释放数字动能，为高质量发展提供坚实支撑和有力保障。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "digital-CONVERSATIONAL-comparison",
+      "phase": "pilot",
+      "sample": "digital",
+      "role": "comparison",
+      "input": {
+        "sourceText": "以数字化赋能高质量发展：新时代背景下的实践路径与价值意蕴\n\n在当今快速发展的数字化时代，数字化转型已成为推动组织高质量发展的重要引擎。首先，要坚持需求导向，以用户价值为中心，持续优化业务流程，构建从感知、分析到决策、执行的闭环体系。其次，要强化数据要素赋能，打通信息孤岛，推动多维度、全链条、深层次的协同融合，不断提升资源配置效率和精细化治理水平。再次，要完善长效机制，明确目标抓手，压实主体责任，形成上下联动、内外协同、持续迭代的良好生态。\n\n与此同时，还应注重技术能力与组织能力的双向提升，既要以创新驱动增强发展动能，也要以规范治理守住安全底线，在开放合作中拓展应用场景，在实践探索中沉淀可复制、可推广的经验做法。通过场景化落地、项目化推进、清单化管理，进一步把数字化优势转化为发展优势、竞争优势和服务优势。\n\n综上所述，数字化转型不是一蹴而就的短期任务，而是一项系统性、长期性、基础性工程。唯有坚持问题导向、目标导向和结果导向相统一，持续发力、久久为功，才能不断释放数字动能，为高质量发展提供坚实支撑和有力保障。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-v4-pro"
+      }
+    },
+    {
+      "id": "legal-CONVERSATIONAL-current",
+      "phase": "pilot",
+      "sample": "legal",
+      "role": "current",
+      "input": {
+        "sourceText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [
+          "已使用的数字内容不适用无理由退款。"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "legal-CONVERSATIONAL-comparison",
+      "phase": "pilot",
+      "sample": "legal",
+      "role": "comparison",
+      "input": {
+        "sourceText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [
+          "已使用的数字内容不适用无理由退款。"
+        ],
+        "modelId": "deepseek:deepseek-v4-pro"
+      }
+    },
+    {
+      "id": "clean-CONVERSATIONAL-current",
+      "phase": "pilot",
+      "sample": "clean",
+      "role": "current",
+      "input": {
+        "sourceText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "clean-CONVERSATIONAL-comparison",
+      "phase": "pilot",
+      "sample": "clean",
+      "role": "comparison",
+      "input": {
+        "sourceText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-v4-pro"
+      }
+    },
+    {
+      "id": "digital-FORMAL-current",
+      "phase": "expand",
+      "sample": "digital",
+      "role": "current",
+      "input": {
+        "sourceText": "以数字化赋能高质量发展：新时代背景下的实践路径与价值意蕴\n\n在当今快速发展的数字化时代，数字化转型已成为推动组织高质量发展的重要引擎。首先，要坚持需求导向，以用户价值为中心，持续优化业务流程，构建从感知、分析到决策、执行的闭环体系。其次，要强化数据要素赋能，打通信息孤岛，推动多维度、全链条、深层次的协同融合，不断提升资源配置效率和精细化治理水平。再次，要完善长效机制，明确目标抓手，压实主体责任，形成上下联动、内外协同、持续迭代的良好生态。\n\n与此同时，还应注重技术能力与组织能力的双向提升，既要以创新驱动增强发展动能，也要以规范治理守住安全底线，在开放合作中拓展应用场景，在实践探索中沉淀可复制、可推广的经验做法。通过场景化落地、项目化推进、清单化管理，进一步把数字化优势转化为发展优势、竞争优势和服务优势。\n\n综上所述，数字化转型不是一蹴而就的短期任务，而是一项系统性、长期性、基础性工程。唯有坚持问题导向、目标导向和结果导向相统一，持续发力、久久为功，才能不断释放数字动能，为高质量发展提供坚实支撑和有力保障。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "digital-FORMAL-comparison",
+      "phase": "expand",
+      "sample": "digital",
+      "role": "comparison",
+      "input": {
+        "sourceText": "以数字化赋能高质量发展：新时代背景下的实践路径与价值意蕴\n\n在当今快速发展的数字化时代，数字化转型已成为推动组织高质量发展的重要引擎。首先，要坚持需求导向，以用户价值为中心，持续优化业务流程，构建从感知、分析到决策、执行的闭环体系。其次，要强化数据要素赋能，打通信息孤岛，推动多维度、全链条、深层次的协同融合，不断提升资源配置效率和精细化治理水平。再次，要完善长效机制，明确目标抓手，压实主体责任，形成上下联动、内外协同、持续迭代的良好生态。\n\n与此同时，还应注重技术能力与组织能力的双向提升，既要以创新驱动增强发展动能，也要以规范治理守住安全底线，在开放合作中拓展应用场景，在实践探索中沉淀可复制、可推广的经验做法。通过场景化落地、项目化推进、清单化管理，进一步把数字化优势转化为发展优势、竞争优势和服务优势。\n\n综上所述，数字化转型不是一蹴而就的短期任务，而是一项系统性、长期性、基础性工程。唯有坚持问题导向、目标导向和结果导向相统一，持续发力、久久为功，才能不断释放数字动能，为高质量发展提供坚实支撑和有力保障。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-v4-pro"
+      }
+    },
+    {
+      "id": "digital-NATURAL-current",
+      "phase": "expand",
+      "sample": "digital",
+      "role": "current",
+      "input": {
+        "sourceText": "以数字化赋能高质量发展：新时代背景下的实践路径与价值意蕴\n\n在当今快速发展的数字化时代，数字化转型已成为推动组织高质量发展的重要引擎。首先，要坚持需求导向，以用户价值为中心，持续优化业务流程，构建从感知、分析到决策、执行的闭环体系。其次，要强化数据要素赋能，打通信息孤岛，推动多维度、全链条、深层次的协同融合，不断提升资源配置效率和精细化治理水平。再次，要完善长效机制，明确目标抓手，压实主体责任，形成上下联动、内外协同、持续迭代的良好生态。\n\n与此同时，还应注重技术能力与组织能力的双向提升，既要以创新驱动增强发展动能，也要以规范治理守住安全底线，在开放合作中拓展应用场景，在实践探索中沉淀可复制、可推广的经验做法。通过场景化落地、项目化推进、清单化管理，进一步把数字化优势转化为发展优势、竞争优势和服务优势。\n\n综上所述，数字化转型不是一蹴而就的短期任务，而是一项系统性、长期性、基础性工程。唯有坚持问题导向、目标导向和结果导向相统一，持续发力、久久为功，才能不断释放数字动能，为高质量发展提供坚实支撑和有力保障。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "digital-NATURAL-comparison",
+      "phase": "expand",
+      "sample": "digital",
+      "role": "comparison",
+      "input": {
+        "sourceText": "以数字化赋能高质量发展：新时代背景下的实践路径与价值意蕴\n\n在当今快速发展的数字化时代，数字化转型已成为推动组织高质量发展的重要引擎。首先，要坚持需求导向，以用户价值为中心，持续优化业务流程，构建从感知、分析到决策、执行的闭环体系。其次，要强化数据要素赋能，打通信息孤岛，推动多维度、全链条、深层次的协同融合，不断提升资源配置效率和精细化治理水平。再次，要完善长效机制，明确目标抓手，压实主体责任，形成上下联动、内外协同、持续迭代的良好生态。\n\n与此同时，还应注重技术能力与组织能力的双向提升，既要以创新驱动增强发展动能，也要以规范治理守住安全底线，在开放合作中拓展应用场景，在实践探索中沉淀可复制、可推广的经验做法。通过场景化落地、项目化推进、清单化管理，进一步把数字化优势转化为发展优势、竞争优势和服务优势。\n\n综上所述，数字化转型不是一蹴而就的短期任务，而是一项系统性、长期性、基础性工程。唯有坚持问题导向、目标导向和结果导向相统一，持续发力、久久为功，才能不断释放数字动能，为高质量发展提供坚实支撑和有力保障。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-v4-pro"
+      }
+    },
+    {
+      "id": "legal-FORMAL-current",
+      "phase": "expand",
+      "sample": "legal",
+      "role": "current",
+      "input": {
+        "sourceText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [
+          "已使用的数字内容不适用无理由退款。"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "legal-FORMAL-comparison",
+      "phase": "expand",
+      "sample": "legal",
+      "role": "comparison",
+      "input": {
+        "sourceText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [
+          "已使用的数字内容不适用无理由退款。"
+        ],
+        "modelId": "deepseek:deepseek-v4-pro"
+      }
+    },
+    {
+      "id": "legal-NATURAL-current",
+      "phase": "expand",
+      "sample": "legal",
+      "role": "current",
+      "input": {
+        "sourceText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [
+          "已使用的数字内容不适用无理由退款。"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "legal-NATURAL-comparison",
+      "phase": "expand",
+      "sample": "legal",
+      "role": "comparison",
+      "input": {
+        "sourceText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [
+          "已使用的数字内容不适用无理由退款。"
+        ],
+        "modelId": "deepseek:deepseek-v4-pro"
+      }
+    },
+    {
+      "id": "clean-FORMAL-current",
+      "phase": "expand",
+      "sample": "clean",
+      "role": "current",
+      "input": {
+        "sourceText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "clean-FORMAL-comparison",
+      "phase": "expand",
+      "sample": "clean",
+      "role": "comparison",
+      "input": {
+        "sourceText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-v4-pro"
+      }
+    },
+    {
+      "id": "clean-NATURAL-current",
+      "phase": "expand",
+      "sample": "clean",
+      "role": "current",
+      "input": {
+        "sourceText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "clean-NATURAL-comparison",
+      "phase": "expand",
+      "sample": "clean",
+      "role": "comparison",
+      "input": {
+        "sourceText": "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-v4-pro"
+      }
+    }
+  ],
+  "reviewMethod": "本会话开发代理知晓模型身份逐项评阅，非独立盲评。人工语义清单不进入模型请求。",
+  "pilotGate": [
+    "数字化正文较当前模型有明确句子和组织收益，对话文体可观察，不能仅换连接词。",
+    "服务说明全部独立条件、目的、承诺和义务保留，至少质量不退步且有可读性收益。",
+    "数字化及自然短文无新增事实或独立含义遗漏，自然负对照可持平。",
+    "任一不满足则不扩大，不调整模块模型配置。耗时和Token用量披露，不预设无用户依据的固定倍数硬门槛。"
+  ],
+  "expansionGate": [
+    "仅pilot通过后比较其他两种文体。",
+    "拟议模型默认切换必须所有样本和三文体无新增严重退步，至少数字化自然及对话稿有明确收益，服务说明各文体完整保留。",
+    "若收益只在局部，保留当前默认并注明适用范围。"
+  ],
+  "sourceSha256": {
+    "scripts\\evaluation\\text-polish-model-comparison\\ModelComparison.java": "6b48b8e7322ccb3b3454ee2154bb16410b7dd90de0b6f3cb6ffbf8f4fda15125",
+    "scripts\\evaluation\\text-polish-model-comparison\\run.ps1": "3472974b8e328fe0e311de0487aa0f6a926bea4d3ca7e52c64d5eda6b3afc6f7",
+    "services\\api\\src\\main\\java\\com\\promptoptimizer\\textpolish\\service\\TextPolishInstructions.java": "5199f7377ee13e5670c6030425c54e465f38b260b871a097dba4ee83a2dc5cd2",
+    "services\\api\\src\\main\\java\\com\\promptoptimizer\\textpolish\\service\\OpenAiTextPolishProvider.java": "2478de10309df9cc63e3f57ec2469812b2f548dd8aeb538769c9abfa81b843c3",
+    "docs\\testing\\evidence\\text-polish-model-comparison-2026-11-10\\semantic-cards.json": "0b149109a985fc3900672ff4d7712aeb54a7ecd7d4614700d4e9babdf4c5dad5"
+  }
+}

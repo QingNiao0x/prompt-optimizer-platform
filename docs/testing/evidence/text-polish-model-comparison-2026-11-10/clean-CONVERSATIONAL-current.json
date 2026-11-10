@@ -1,0 +1,52 @@
+{
+  "job" : {
+    "id" : "clean-CONVERSATIONAL-current",
+    "phase" : "pilot",
+    "sample" : "clean",
+    "role" : "current",
+    "input" : {
+      "sourceText" : "今晚回家时，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我把伞放在玄关，先去厨房热了一碗汤。",
+      "style" : "CONVERSATIONAL",
+      "depth" : "RESTRUCTURE",
+      "audience" : "",
+      "requirements" : "",
+      "lockedTexts" : [ ],
+      "modelId" : "deepseek:deepseek-flash"
+    }
+  },
+  "model" : {
+    "modelId" : "deepseek:deepseek-flash",
+    "displayName" : "DeepSeek-V4.1-Flash",
+    "routeKey" : "deepseek",
+    "upstreamModel" : "deepseek-flash"
+  },
+  "polishedText" : "今晚回家的时候，雨已经停了。路灯照着门口那棵树，叶尖还挂着水。我先把伞放在玄关，然后去厨房热了一碗汤。",
+  "status" : "COMPLETED",
+  "elapsedMs" : 1198,
+  "observations" : [ {
+    "eventId" : "8be0a574-ffd5-4302-9bd5-313e5247e83d",
+    "startedAt" : "2026-11-09T17:05:41.7537192Z",
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1197,
+    "usage" : {
+      "inputTokens" : 622,
+      "outputTokens" : 41,
+      "totalTokens" : 663,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}
