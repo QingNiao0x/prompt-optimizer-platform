@@ -1,0 +1,1167 @@
+{
+  "schemaVersion": 1,
+  "createdOn": "2026-11-14",
+  "purpose": "自然增强意图、表达及补全的开发与回归清单",
+  "status": "review_materials_only",
+  "caseCount": 19,
+  "sourceDocument": {
+    "localPath": "C:\\Users\\Administrator\\Desktop\\Qoder增强.docx",
+    "sha256": "17ace56d4941fa0c2d313ec33269655810bb8dbccf7a1cab3724ad4b131bc5e4",
+    "paragraphExtraction": "按document.xml正文段落顺序提取w:t，可读文本不含自动编号和图片文字。"
+  },
+  "cases": [
+    {
+      "id": "Q01",
+      "title": "地址编码来源与配置",
+      "origin": "user_document",
+      "collection": "development",
+      "seen": true,
+      "source": {
+        "document": "Qoder增强.docx",
+        "documentSha256": "17ace56d4941fa0c2d313ec33269655810bb8dbccf7a1cab3724ad4b131bc5e4",
+        "originalParagraphRange": [
+          2,
+          5
+        ]
+      },
+      "rawPrompt": "在表单设计配置中的地址编码是取用的哪里的地址编码, 这些编码应该怎样配置, 如上图现在只能配置地址信息的名称和字段",
+      "actualMaterials": [
+        {
+          "kind": "image",
+          "source": {
+            "entry": "word/media/image1.png",
+            "sha256": "496582385bdc82a0d07f217f3ff30e426ca79bb2b3f040a448f32de13c77e3ec"
+          },
+          "available": "requires_original_docx",
+          "localPath": null
+        },
+        {
+          "kind": "project_or_document",
+          "available": "not_supplied",
+          "description": "原文提及的业务源码或模板未随案例包提供，路径仅是定位线索。"
+        }
+      ],
+      "mustPreserve": [
+        "解释地址编码从哪里获取",
+        "解释编码应怎样配置",
+        "回应界面只能设置名称和字段的现状"
+      ],
+      "allowedDesign": [
+        "按实际代码梳理组件、接口和字典关联",
+        "给出适用的配置建议"
+      ],
+      "openDecisions": [
+        "真实数据来源和具体文件实现未提供，应由执行阶段查阅"
+      ],
+      "reviewChecks": [
+        {
+          "id": "Q01-R1",
+          "check": "解释地址编码从哪里获取",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q01-R2",
+          "check": "解释编码应怎样配置",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q01-R3",
+          "check": "回应界面只能设置名称和字段的现状",
+          "basis": "rawPrompt"
+        }
+      ],
+      "referenceOutput": {
+        "text": "请分析表单设计器中“地址选择”组件（如 ​addressPicker.js​ 和 ​formDesignerMeta.ts​）的地址编码配置逻辑：\n1. **数据来源**：当前系统中，地址选择组件（如现住址、户籍地址等）的地区编码（zoneCode）具体是从哪里获取的？是本地预设、后端接口动态加载，还是通过其他数据源组件（如 ​Zonecode.vue​ 或 ​j-area-linkage​）关联的？\n2. **配置方式**：在当前的表单设计器界面中，仅能配置地址信息的“显示名称”和“字段标识”，但无法直接配置地区编码。请问：\n   - 地区编码是如何与这些地址字段关联的？\n   - 如果需要修改或扩展支持的地区范围（如新增区县），应如何配置？是否需要修改后端代码、数据库字典表，或通过远程数据源（如 ​presetDataDefaults.json​）进行配置？\n3. **相关代码位置**：请结合以下文件说明地址编码的配置链路：\n   - ​btew-iefs-vue3\\src\\views\\znld\\template\\components\\FcDesigner3.3.0\\config\\rule\\addressPicker.js​\n   - ​btew-iefs-vue3\\src\\utils\\formCreate\\addressPickerUtils.ts​\n   - ​btew-iefs-vue3\\src\\views\\znld\\template\\formDesignerMeta.ts​\n4. **改进建议**：如果当前系统不支持灵活配置地区编码，请提供可行的优化方案，例如支持从后端动态加载行政区划树，或在表单设计器中增加地区编码映射配置入口。",
+        "status": "observed_reference_not_gold",
+        "reviewNotes": "截图是地区选择界面，不能据此证明后端数据表。参考结果新增代码路径需要实际项目支持。"
+      },
+      "evaluationStatus": "not_run"
+    },
+    {
+      "id": "Q02",
+      "title": "多选查询表单展示",
+      "origin": "user_document",
+      "collection": "development",
+      "seen": true,
+      "source": {
+        "document": "Qoder增强.docx",
+        "documentSha256": "17ace56d4941fa0c2d313ec33269655810bb8dbccf7a1cab3724ad4b131bc5e4",
+        "originalParagraphRange": [
+          28,
+          31
+        ]
+      },
+      "rawPrompt": "如上图在轨迹分析模块的查询框中如果选择过多的任务、调查表、病例名称、身份证号则会占用很大的空间导致页面非常不美观, 请问是否可以优化一下轨迹分析页面的查询框, 在选择的数据非常多的情况下也可以良好的展示",
+      "actualMaterials": [
+        {
+          "kind": "image",
+          "source": {
+            "entry": "word/media/image2.png",
+            "sha256": "978eb5bea72b21ee6539208efb80d6b5ab40dfb7be35ab8da5797427b6825f3a"
+          },
+          "available": "requires_original_docx",
+          "localPath": null
+        },
+        {
+          "kind": "project_or_document",
+          "available": "not_supplied",
+          "description": "原文提及的业务源码或模板未随案例包提供，路径仅是定位线索。"
+        }
+      ],
+      "mustPreserve": [
+        "优化轨迹分析查询框",
+        "覆盖任务、调查表、病例名称、身份证号大量选择",
+        "大量选择时保持良好展示"
+      ],
+      "allowedDesign": [
+        "可比较标签折叠、搜索或独立滚动等方案",
+        "沿用项目现有组件并保持查询语义"
+      ],
+      "openDecisions": [
+        "现有组件和响应式要求需要材料支持"
+      ],
+      "reviewChecks": [
+        {
+          "id": "Q02-R1",
+          "check": "优化轨迹分析查询框",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q02-R2",
+          "check": "覆盖任务、调查表、病例名称、身份证号大量选择",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q02-R3",
+          "check": "大量选择时保持良好展示",
+          "basis": "rawPrompt"
+        }
+      ],
+      "referenceOutput": {
+        "text": "在轨迹分析模块的查询页面（参考代码文件 ​trajectoryAnalysisList.vue​ 和 ​spatiotemporalIntersection.api.ts​），当前的查询表单在设计上存在空间占用过大的问题。当用户选择大量数据（如多个任务、调查表、病例名称或身份证号）时，会导致页面布局拥挤、不美观且影响用户体验。\n请针对此问题优化查询框的交互设计，确保在数据量较大时仍能保持良好的展示效果。建议方案包括但不限于：\n1. 将长列表的下拉选择改为支持搜索过滤的组件（如 Ant Design Vue 的 Select with search），避免展开时占据过多垂直空间。\n2. 考虑使用折叠面板（Collapse）或多行标签式布局来紧凑展示已选条件。\n3. 对输入字段增加合理的最大宽度限制，并启用自动换行或滚动条。\n4. 如果涉及多条件筛选，可考虑引入“高级筛选”模式，默认隐藏部分选项，点击后展开。\n请结合现有代码结构（如 ​CrossAnalysisQueryForm.vue​ 中的表单设计参考）提出具体实现建议，并确保优化后的界面在移动端和桌面端均表现良好。@btew-iefs-vue3/src/views/znld/report/statistics/regular/graphic/trajectoryAnalysis.vue ",
+        "status": "observed_reference_not_gold",
+        "reviewNotes": "参考结果给出多种方案，但最终措辞偏实现建议，需核对是否仍满足实际优化动作。"
+      },
+      "evaluationStatus": "not_run"
+    },
+    {
+      "id": "Q03",
+      "title": "专家库附件上传限制",
+      "origin": "user_document",
+      "collection": "development",
+      "seen": true,
+      "source": {
+        "document": "Qoder增强.docx",
+        "documentSha256": "17ace56d4941fa0c2d313ec33269655810bb8dbccf7a1cab3724ad4b131bc5e4",
+        "originalParagraphRange": [
+          49,
+          50
+        ]
+      },
+      "rawPrompt": "在专家库模块@btew-iefs-vue3/src/views/ieis/expert中在附件上传功能中进行限制, 限制用户只能上传图片和PDF可以上传多个最大限制为10MB, 如果上传不符合格式的文件给出友好提示",
+      "actualMaterials": [
+        {
+          "kind": "project_or_document",
+          "available": "not_supplied",
+          "description": "原文提及的业务源码或模板未随案例包提供，路径仅是定位线索。"
+        }
+      ],
+      "mustPreserve": [
+        "保留专家库目标目录",
+        "仅允许图片和PDF",
+        "允许多文件上传",
+        "保留10MB限制",
+        "格式不符时友好提示"
+      ],
+      "allowedDesign": [
+        "结合上传链路设计校验和清晰反馈",
+        "依据现有能力建议必要的服务端校验"
+      ],
+      "openDecisions": [
+        "10MB指单文件还是总大小会改变实现，材料未明确时保留歧义或在Plan询问",
+        "图片具体格式及文件数量上限未指定"
+      ],
+      "reviewChecks": [
+        {
+          "id": "Q03-R1",
+          "check": "保留专家库目标目录",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q03-R2",
+          "check": "仅允许图片和PDF",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q03-R3",
+          "check": "允许多文件上传",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q03-R4",
+          "check": "保留10MB限制",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q03-R5",
+          "check": "格式不符时友好提示",
+          "basis": "rawPrompt"
+        }
+      ],
+      "referenceOutput": {
+        "text": "请修改专家库模块 `btew-iefs-vue3/src/views/ieis/expert` 中的附件上传功能（参考文件：​IeisExpertForm.vue​）。\n具体要求如下：\n1. **格式限制**：仅允许用户上传图片（支持 jpg, jpeg, png, gif, bmp, webp）和 PDF 文件。\n2. **大小限制**：单个附件的大小不得超过 10MB。\n3. **多文件支持**：允许一次性选择并上传多个符合条件的文件。\n4. **交互反馈**：如果用户尝试上传不符合上述格式或大小要求的文件，前端应拦截并弹出友好的错误提示信息（使用 `createMessage.warning`），告知用户具体的限制条件。\n请确保逻辑与现有的图片上传校验保持一致，并在后端接口处也同步增加相应的校验逻辑以防止非法数据入库。",
+        "status": "observed_reference_not_gold",
+        "reviewNotes": "参考结果自行写为单个附件10MB，图片格式清单是新增设计。均需核查依据和措辞。"
+      },
+      "evaluationStatus": "not_run"
+    },
+    {
+      "id": "Q04",
+      "title": "协查函模板格式",
+      "origin": "user_document",
+      "collection": "development",
+      "seen": true,
+      "source": {
+        "document": "Qoder增强.docx",
+        "documentSha256": "17ace56d4941fa0c2d313ec33269655810bb8dbccf7a1cab3724ad4b131bc5e4",
+        "originalParagraphRange": [
+          67,
+          69
+        ]
+      },
+      "rawPrompt": "请查看\"E:\\Company\\中科软\\二期智慧化项目\\智能流调\\业务模板\\协查函.doc\"的格式, 在协查函模块中下载的协查函的格式应该与这个模板一致, 例如: 内容第一行:  \"   年    月   日，我单位接到/\" 前面要加两个空格,  以及 \"专此函达。\" 前要添加两个空格 等",
+      "actualMaterials": [
+        {
+          "kind": "project_or_document",
+          "available": "not_supplied",
+          "description": "原文提及的业务源码或模板未随案例包提供，路径仅是定位线索。"
+        }
+      ],
+      "mustPreserve": [
+        "按原文指定模板路径核对导出文档",
+        "第一行日期内容前两个空格",
+        "专此函达前两个空格",
+        "保持与模板一致"
+      ],
+      "allowedDesign": [
+        "按实际段落结构处理缩进并比对导出"
+      ],
+      "openDecisions": [
+        "空格宽度、其他排版以实际模板为依据，模板文件未随本包提供"
+      ],
+      "reviewChecks": [
+        {
+          "id": "Q04-R1",
+          "check": "按原文指定模板路径核对导出文档",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q04-R2",
+          "check": "第一行日期内容前两个空格",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q04-R3",
+          "check": "专此函达前两个空格",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q04-R4",
+          "check": "保持与模板一致",
+          "basis": "rawPrompt"
+        }
+      ],
+      "referenceOutput": {
+        "text": "请仔细参考项目根目录下的模板文件 \"​协查函.doc​\" 的排版格式，确保协查函模块中生成的 Word 文档（通过 \"导出 Word\" 功能）与其完全一致。\n具体需要修正的代码逻辑位于 `AssistanceLetterServiceImpl.java` 中的文档生成部分，重点调整以下细节：\n1. **日期行缩进**：正文第一行内容 \"年 月 日，我单位接到/\" 之前必须添加两个全角空格作为首行缩进。\n2. **结语缩进**：\"专此函达。\" 这一句之前也必须添加两个全角空格作为首行缩进。\n3. **其他格式**：检查附件标题、落款机构名称及日期等位置是否也遵循相同的缩进规范（如落款通常右对齐或特定缩进）。\n请在 `addLine` 方法或相关段落构建逻辑中，确保所有文本行都正确应用了这些空格缩进，以符合公文标准格式。",
+        "status": "observed_reference_not_gold",
+        "reviewNotes": "参考结果改写为项目根目录模板，并指定全角空格与代码方法。这些细节不能由原文直接确定。"
+      },
+      "evaluationStatus": "not_run"
+    },
+    {
+      "id": "Q05",
+      "title": "上传后保存异常修复",
+      "origin": "user_document",
+      "collection": "development",
+      "seen": true,
+      "source": {
+        "document": "Qoder增强.docx",
+        "documentSha256": "17ace56d4941fa0c2d313ec33269655810bb8dbccf7a1cab3724ad4b131bc5e4",
+        "originalParagraphRange": [
+          85,
+          90
+        ]
+      },
+      "rawPrompt": "在专家库上传附件之后点击保存时依旧显示: 操作失败，null\n后端报错: java.lang.reflect.UndeclaredThrowableException: null\nCaused by: java.io.FileNotFoundException: MultipartFile resource [attachmentFiles] cannot be resolved to absolute file path\n请解决这个问题",
+      "actualMaterials": [
+        {
+          "kind": "project_or_document",
+          "available": "not_supplied",
+          "description": "原文提及的业务源码或模板未随案例包提供，路径仅是定位线索。"
+        }
+      ],
+      "mustPreserve": [
+        "保留上传后点击保存报错的触发过程",
+        "保留操作失败null与两条异常信息",
+        "排查并解决保存失败"
+      ],
+      "allowedDesign": [
+        "跟踪上传、参数绑定及文件读取链路",
+        "定位后修复并验证保存成功"
+      ],
+      "openDecisions": [
+        "异常原因与涉及类方法需读代码验证"
+      ],
+      "reviewChecks": [
+        {
+          "id": "Q05-R1",
+          "check": "保留上传后点击保存报错的触发过程",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q05-R2",
+          "check": "保留操作失败null与两条异常信息",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q05-R3",
+          "check": "排查并解决保存失败",
+          "basis": "rawPrompt"
+        }
+      ],
+      "referenceOutput": {
+        "text": "请排查并修复专家库模块中“上传附件后点击保存报错”的问题。\n**问题现象：**\n在 `btew-iefs` 项目中，当用户在专家库页面上传了附件（Attachment）并点击保存时，前端提示：`操作失败，null`。\n**后端报错日志：**\n```text\njava.lang.reflect.UndeclaredThrowableException: null\nCaused by: java.io.FileNotFoundException: MultipartFile resource [attachmentFiles] cannot be resolved to absolute file path\n```\n**分析线索：**\n1. **核心原因**：错误明确指向 `MultipartFile resource [attachmentFiles]` 无法解析为绝对文件路径。这通常发生在处理 multipart/form-data 请求时，如果使用了自定义的序列化/反序列化机制（如 Jackson），或者某些特定的 Servlet 容器配置下，`MultipartFile` 对象可能无法正确绑定或已被释放。\n2. **代码位置**：请重点检查以下文件的实现逻辑：\n- `btew-iefs/src/main/java/org/jeecg/modules/ieis/expert/service/impl/IeisExpertServiceImpl.java`：特别是 `applyAttachments` 方法中遍历 `images.getAttachmentFiles()` 的部分。\n- `btew-iefs/src/main/java/org/jeecg/modules/ieis/expert/dto/ExpertImageCommand.java`：检查 DTO 定义及是否被特殊拦截器处理。\n- `btew-iefs/src/main/java/org/jeecg/modules/ieis/expert/controller/IeisExpertController.java`：检查 Controller 接收参数的注解和方式。\n**任务要求：**\n1. 定位导致 `FileNotFoundException` 的具体代码行。\n2. 解释为什么 `attachmentFiles` 会报出该异常（是 Spring MVC 配置问题、Jackson 序列化问题，还是文件流已关闭？）。\n3. 提供修复方案。建议方案包括但不限于：\n- 确保使用正确的参数接收方式（如直接接收 `@RequestParam` 或使用支持 Multipart 的反序列化配置）。\n- 如果必须通过 DTO 传递，确保 DTO 不被意外序列化为 JSON 导致 MultipartFile 丢失。\n- 优化 `applyAttachments` 方法的健壮性，增加对空文件或无效流的防御性检查。\n4. 修改相关代码以彻底解决该问题，确保保存成功。",
+        "status": "observed_reference_not_gold",
+        "reviewNotes": "参考结果保留修复动作，序列化、绑定或流关闭均只能作排查线索。"
+      },
+      "evaluationStatus": "not_run"
+    },
+    {
+      "id": "Q06",
+      "title": "单位属性与数据源交互双任务",
+      "origin": "user_document",
+      "collection": "development",
+      "seen": true,
+      "source": {
+        "document": "Qoder增强.docx",
+        "documentSha256": "17ace56d4941fa0c2d313ec33269655810bb8dbccf7a1cab3724ad4b131bc5e4",
+        "originalParagraphRange": [
+          123,
+          128
+        ]
+      },
+      "rawPrompt": "1. 如上图现在在表单创建- btew-iefs-vue3\\src\\views\\znld\\template有中可以配置现住址属性(请改为地区属性)其中有现住址、户籍地址、工作地址等虽然字段名不一样但是后端绑定的都是Zonecode组件,  我现在需要在表单中配置单位属性, 请帮我新增该模块; 以及现在系统中如果有单位数据例如: 调查单位661101001, 在进行配置单位组件之后系统中现有的单位编码数据是否可以自动转换为文字 \n2. 在配置远程数据源时, 如果左侧数据源较多时中间, 在新增新的远程数据源配置数据源编码和数据名称时, 滑动左侧的数据源时在右侧中间的据源编码和数据名称也会同步下滑; 还需要滑到最上方才可以进行配置据源编码和数据名称, 以及在点击保存时还需滑到最下方才可以点击保存; 再次进行新增据源编码和数据名称时有需要滑道最上方, 导致无法正常进行配置具体的据源编码和数据名称, 并且新增的数据源在左侧降序排序(新增的在最上方显示)",
+      "actualMaterials": [
+        {
+          "kind": "image",
+          "source": {
+            "entry": "word/media/image3.png",
+            "sha256": "09b784626fcd2f757551baa545c4c91a6c0066deb36da4c516962d7e139f1155"
+          },
+          "available": "requires_original_docx",
+          "localPath": null
+        },
+        {
+          "kind": "project_or_document",
+          "available": "not_supplied",
+          "description": "原文提及的业务源码或模板未随案例包提供，路径仅是定位线索。"
+        }
+      ],
+      "mustPreserve": [
+        "把现住址属性改为地区属性",
+        "新增单位属性模块",
+        "核查已有单位编码661101001能否转为文字",
+        "改善左列表滚动带动输入区域和保存按钮的问题",
+        "新增数据源在左列表最上方显示"
+      ],
+      "allowedDesign": [
+        "复用实际组件及编码映射",
+        "可设计独立滚动或固定操作区"
+      ],
+      "openDecisions": [
+        "Orgcode组件是否存在及具体映射接口未获证实"
+      ],
+      "reviewChecks": [
+        {
+          "id": "Q06-R1",
+          "check": "把现住址属性改为地区属性",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q06-R2",
+          "check": "新增单位属性模块",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q06-R3",
+          "check": "核查已有单位编码661101001能否转为文字",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q06-R4",
+          "check": "改善左列表滚动带动输入区域和保存按钮的问题",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q06-R5",
+          "check": "新增数据源在左列表最上方显示",
+          "basis": "rawPrompt"
+        }
+      ],
+      "referenceOutput": {
+        "text": "请协助我完成以下两个功能优化与开发任务：\n**1. 新增“单位地址属性”配置模块**\n*   **背景分析**：当前在 `btew-iefs-vue3\\src\\views\\znld\\template` 目录下的表单设计器中，已存在“现住址属性”（建议更名为“地区属性”）的配置项，包含现住址、户籍地址、工作地址等选项。虽然这些选项的字段名不同，但后端均绑定为 `Zonecode` 组件。\n*   **具体需求**：\n    *   **新增配置项**：请在现有的属性配置列表中新增一个名为“单位属性”的模块，其底层组件类型关联 `Orgcode` 组件。\n    *   **数据兼容性处理**：检查系统中是否已存在类似“调查单位661101001”这样的纯编码数据。在新增该配置后，需确认系统是否能将这些现有的单位编码自动转换为对应的文字名称（如通过字典映射或接口查询），以确保历史数据的可读性。\n**2. 修复远程数据源配置的交互体验问题**\n*   **问题描述**：在配置远程数据源时，当左侧列表的数据源较多导致出现滚动条，用户在滑动左侧列表选择不同数据源时，右侧中间的“数据源编码”和“数据名称”输入框区域也会随之同步滚动。这导致用户需要反复上下滑动才能定位到顶部的输入框进行配置，且保存按钮位于底部，操作极不方便。\n*   **具体需求**：\n    *   **布局优化**：调整布局结构，使右侧的“数据源编码/名称”输入区域和底部的“保存”按钮固定在可视区域内（Sticky/Fixed），不随左侧列表的滚动而移动。确保用户在浏览左侧长列表时，始终能方便地在顶部填写信息并在底部点击保存。\n    *   **排序优化**：修改新增数据源的默认排序逻辑，将新添加的数据源显示在左侧列表的最上方（降序排列），提升高频操作的效率。",
+        "status": "observed_reference_not_gold",
+        "reviewNotes": "参考结果把必须改名弱化为建议，新增单位地址称呼和Orgcode也需核实。"
+      },
+      "evaluationStatus": "not_run"
+    },
+    {
+      "id": "Q07",
+      "title": "绑定组件展示与地区范围设计",
+      "origin": "user_document",
+      "collection": "development",
+      "seen": true,
+      "source": {
+        "document": "Qoder增强.docx",
+        "documentSha256": "17ace56d4941fa0c2d313ec33269655810bb8dbccf7a1cab3724ad4b131bc5e4",
+        "originalParagraphRange": [
+          149,
+          152
+        ]
+      },
+      "rawPrompt": "如上图在现住址属性和单位属性中只能配置显示名称和字段标识, 无法看到或者进行设置绑定的地区组件(以及地区组件怎样弄得查询的哪个数据库表等), 请问你是否可以帮我进行设计一下以及页面怎样进行设计, 并且需要在添加一项功能需要在地区属性中进行配置 例如: 现住址、 户籍地址、工作地址我现在需要设置现住址字段在用户选择时只能选择建设兵团的地区, 如果不这样进行配置字段那么默认用户可以选择全国的地区",
+      "actualMaterials": [
+        {
+          "kind": "image",
+          "source": {
+            "entry": "word/media/image4.png",
+            "sha256": "56140bcd2e2d8f59c9c1a8a7aa2f0dac3f1dd4c35aef699c35b5bc53a6b24fac"
+          },
+          "available": "requires_original_docx",
+          "localPath": null
+        },
+        {
+          "kind": "image",
+          "source": {
+            "entry": "word/media/image5.png",
+            "sha256": "4f82756efc6bdc9d620d95cebe3e16ec00beefca7bcff63d3c74f8d1efed5d91"
+          },
+          "available": "requires_original_docx",
+          "localPath": null
+        },
+        {
+          "kind": "project_or_document",
+          "available": "not_supplied",
+          "description": "原文提及的业务源码或模板未随案例包提供，路径仅是定位线索。"
+        }
+      ],
+      "mustPreserve": [
+        "设计绑定地区组件及数据来源的可见配置",
+        "覆盖现住址属性和单位属性相关配置问题",
+        "支持按字段限制仅选择建设兵团地区",
+        "未配置时默认全国可选"
+      ],
+      "allowedDesign": [
+        "提出可配置范围和适合现有页面的交互方案",
+        "根据实际接口追踪数据来源"
+      ],
+      "openDecisions": [
+        "原文请求设计，是否同时授权实现需结合会话确认",
+        "精确地区集合及组件实现需项目依据"
+      ],
+      "reviewChecks": [
+        {
+          "id": "Q07-R1",
+          "check": "设计绑定地区组件及数据来源的可见配置",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q07-R2",
+          "check": "覆盖现住址属性和单位属性相关配置问题",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q07-R3",
+          "check": "支持按字段限制仅选择建设兵团地区",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q07-R4",
+          "check": "未配置时默认全国可选",
+          "basis": "rawPrompt"
+        }
+      ],
+      "referenceOutput": {
+        "text": "请基于现有代码结构（参考 ​formDesignerMeta.ts​ 和 ​FormDesignerMetaPage.vue​），为我设计并实现以下两个功能增强：\n1. **优化表单元数据配置页面**：\n   - 当前 ​FormDesignerMetaPage.vue​ 中的“属性名称”、“地区属性”等标签页仅允许配置显示名称和字段标识。\n   - 请扩展该页面，使其能够更清晰地展示和管理与这些属性绑定的组件类型（如地区选择组件）。\n   - 需要明确展示：\n     - 每个属性（如现住址、户籍地址）对应绑定的具体组件类型（例如 `fc-zonecode` 或 `fc-area-linkage`）。\n     - 该组件的数据来源逻辑（即查询哪个数据库表或接口，参考 ​ISysZoneCodeService.java​ 中的 `queryChildrenByParent` 等方法）。\n     - 如何区分全国范围与特定范围（如新疆建设兵团）的配置项。\n2. **新增地区选择范围限制功能**：\n   - 在“地区属性”标签页（如 ​zoneFieldNames​ 配置中）增加一个可配置的“范围限制”选项。\n   - 具体需求：\n     - 对于特定字段（如“现住址”），管理员可以勾选“仅限建设兵团”。\n     - 若未进行此配置，默认允许用户选择全国所有地区。\n   - 后端逻辑需支持根据此配置过滤地区树节点（参考 ​SysZoneCodeServiceImpl.java​ 中关于兵团/自治区的特殊处理逻辑）。\n   - 前端组件需根据配置动态加载对应的地区数据源（参考 ​addressPickerUtils.ts​ 中的数据源解析逻辑）。\n请提供详细的设计方案，包括：\n- 数据库表结构或配置字段的修改建议（如需新增字段）。\n- 前后端交互流程及 API 接口定义。\n- UI 页面的具体设计方案（可在 ​FormDesignerMetaPage.vue​ 基础上扩展）。",
+        "status": "observed_reference_not_gold",
+        "reviewNotes": "参考结果首句扩大为设计并实现。设计与执行授权需分别核对。"
+      },
+      "evaluationStatus": "not_run"
+    },
+    {
+      "id": "Q08",
+      "title": "审计字段填充与身份核查",
+      "origin": "user_document",
+      "collection": "development",
+      "seen": true,
+      "source": {
+        "document": "Qoder增强.docx",
+        "documentSha256": "17ace56d4941fa0c2d313ec33269655810bb8dbccf7a1cab3724ad4b131bc5e4",
+        "originalParagraphRange": [
+          182,
+          185
+        ]
+      },
+      "rawPrompt": "1. 请帮我排查一下这个系统中所有的模块中每次录入数据或者修改数据之后是否会将create_by、create_time、update_by、update_time在做相关操作时是否会自动存储\n2. 排查当前系统中create_by是否存的是当前操作用户的真实姓名, 以及update_by修改人的姓名实际存储的是不是当前修改用户",
+      "actualMaterials": [
+        {
+          "kind": "project_or_document",
+          "available": "not_supplied",
+          "description": "原文提及的业务源码或模板未随案例包提供，路径仅是定位线索。"
+        }
+      ],
+      "mustPreserve": [
+        "排查所有模块新增和修改时四个审计字段的存储",
+        "核查create_by是账号还是真实姓名",
+        "核查update_by是否对应当前修改用户"
+      ],
+      "allowedDesign": [
+        "追踪自动填充、手工写入及绕过入口",
+        "按实际类方法给出证据"
+      ],
+      "openDecisions": [
+        "真实填充机制与存储值待代码核查"
+      ],
+      "reviewChecks": [
+        {
+          "id": "Q08-R1",
+          "check": "排查所有模块新增和修改时四个审计字段的存储",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q08-R2",
+          "check": "核查create_by是账号还是真实姓名",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q08-R3",
+          "check": "核查update_by是否对应当前修改用户",
+          "basis": "rawPrompt"
+        }
+      ],
+      "referenceOutput": {
+        "text": "请基于当前项目代码库，帮我深入排查以下两个核心问题：\n1. **自动字段填充机制排查**：\n   分析系统中所有业务模块（特别是涉及数据录入和修改的场景），检查在 `INSERT`（新增）和 `UPDATE`（更新）操作时，是否会自动处理以下四个审计字段：\n   - `create_by` (创建人)\n   - `create_time` (创建时间)\n   - `update_by` (更新人)\n   - `update_time` (更新时间)\n   请重点查找 MyBatis Interceptor、AOP切面或实体基类（如 `JeecgEntity`）中的实现逻辑，确认这些字段是自动注入还是手动赋值。\n2. **存储内容准确性验证**：\n   针对上述自动填充机制，进一步验证实际存储的内容是否符合预期：\n   - 确认 `create_by` 和 `update_by` 字段存储的是用户的**登录账号（username）**还是**真实姓名（realname）**？\n   - 结合 `LoginUser` 对象和数据库实体（如 `SysDataLog`、`BruCaseSurveyEntity` 等），追踪数据流转路径，确保“创建人”和“修改人”记录的是当前操作用户的真实身份，而非其他标识符。\n请提供具体的代码位置（类名、方法名）以及字段映射关系的分析结论。",
+        "status": "observed_reference_not_gold",
+        "reviewNotes": "参考结果提供技术排查方向，其具名实体是否相关需核对，身份准确不能代替姓名存储问题。"
+      },
+      "evaluationStatus": "not_run"
+    },
+    {
+      "id": "Q09",
+      "title": "按病种字典配置与统计兼容",
+      "origin": "user_document",
+      "collection": "development",
+      "seen": true,
+      "source": {
+        "document": "Qoder增强.docx",
+        "documentSha256": "17ace56d4941fa0c2d313ec33269655810bb8dbccf7a1cab3724ad4b131bc5e4",
+        "originalParagraphRange": [
+          208,
+          209
+        ]
+      },
+      "rawPrompt": "关于表单定制我现在有个问题: 系统里面有很多种病的个案调查表, 例如: 布病、流行性感冒、水痘、不明原因肺炎、脑脊髓膜炎等, 我在配置远程数据源时是否可以根据每个病种的表单来配置一份远程数据源,每个病种都有对应的独立系统里面远程数据源的字典值需要和单病种系统中的字典值对应上;  例如: 布病调查表配置的数据源: 布病-症状、布病-高风险职业、布病-可能传染源、布病-可疑接触史等.  流行性感冒调查表在配置一份远程数据源: 流行性感冒-症状、流行性感冒-高风险职业、流行性感冒-可能传染源、流行性感冒-可疑接触史等, 我在定制表单时布病表单的远程数据源只绑定 布病- 开头的数据源, 流行性感冒表单只绑定流行性感冒-的数据源, 请问如果这样的话是否可以在统计模块中是否可以正常将数据统计出来",
+      "actualMaterials": [
+        {
+          "kind": "project_or_document",
+          "available": "not_supplied",
+          "description": "原文提及的业务源码或模板未随案例包提供，路径仅是定位线索。"
+        }
+      ],
+      "mustPreserve": [
+        "每病种独立远程数据源方案",
+        "字典值与对应单病种系统字典值对齐",
+        "各表单只绑定本病种前缀数据源",
+        "评估统计模块能否正常统计"
+      ],
+      "allowedDesign": [
+        "分析数据源命名、存储值和统计映射的关系",
+        "提出兼容性检查与必要建议"
+      ],
+      "openDecisions": [
+        "统计按名称、编码还是存储值关联需读实现"
+      ],
+      "reviewChecks": [
+        {
+          "id": "Q09-R1",
+          "check": "每病种独立远程数据源方案",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q09-R2",
+          "check": "字典值与对应单病种系统字典值对齐",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q09-R3",
+          "check": "各表单只绑定本病种前缀数据源",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q09-R4",
+          "check": "评估统计模块能否正常统计",
+          "basis": "rawPrompt"
+        }
+      ],
+      "referenceOutput": {
+        "text": "在“智能流调”项目中，针对表单定制与远程数据源（字典）配置存在以下技术疑问：\n**1. 背景现状：**\n系统包含多种病种的个案调查表（如布病、流行性感冒、水痘、不明原因肺炎、脑脊髓膜炎等）。目前计划为每个病种独立配置一套远程数据源（字典），以实现数据隔离和个性化。\n**2. 拟定方案：**\n- **布病表单**：仅绑定前缀为 `布病-` 的远程数据源（例如：`布病-症状`、`布病-高风险职业`、`布病-可能传染源`、`布病-可疑接触史`）。\n- **流感表单**：仅绑定前缀为 `流行性感冒-` 的远程数据源（例如：`流行性感冒-症状`、`流行性感冒-高风险职业` 等）。\n- **其他病种**：同理，各病种表单只绑定对应前缀的数据源。\n**3. 核心问题：**\n如果采用上述“按病种前缀隔离数据源”的配置方式，请评估在系统的【统计模块】中是否仍能正常聚合和统计出各病种的数据？\n- 是否存在因数据源名称不同或字段映射不一致导致的统计偏差？\n- 后端统计逻辑是否需要针对这种命名规范进行特殊适配？\n- 该方案是否符合 ​btew-iefs-vue3​ 前端框架及 ​btew-iefs​ 后端架构的设计规范？\n请结合项目代码结构（特别是 ​AssistanceLetter.api.ts​ 中的 API 定义模式以及 ​BruSurveyTaskCreateService.java​ 中的数据处理逻辑）给出可行性分析和建议。",
+        "status": "observed_reference_not_gold",
+        "reviewNotes": "参考结果组织更清楚，但未明确保留字典值与单病种系统对应，属于要求覆盖风险。"
+      },
+      "evaluationStatus": "not_run"
+    },
+    {
+      "id": "Q10",
+      "title": "报告后补充截图附件",
+      "origin": "user_document",
+      "collection": "development",
+      "seen": true,
+      "source": {
+        "document": "Qoder增强.docx",
+        "documentSha256": "17ace56d4941fa0c2d313ec33269655810bb8dbccf7a1cab3724ad4b131bc5e4",
+        "originalParagraphRange": [
+          231,
+          233
+        ]
+      },
+      "rawPrompt": "非常好! 请问是否可以在\"十、下一步工作建议\"下面添加上图中的内容, 如果对应的调查表中没有对应的内容或者数据, 请给出友好提示",
+      "actualMaterials": [
+        {
+          "kind": "image",
+          "source": {
+            "entry": "word/media/image6.png",
+            "sha256": "1654e95a4742ac675aa8871fc17a5d3d3d6886fd865d2ae51e88f17059b17ae8"
+          },
+          "available": "in_package",
+          "localPath": "materials/report-appendices.png"
+        },
+        {
+          "kind": "project_or_document",
+          "available": "not_supplied",
+          "description": "原文提及的业务源码或模板未随案例包提供，路径仅是定位线索。"
+        }
+      ],
+      "mustPreserve": [
+        "在十、下一步工作建议下方添加截图内容",
+        "包含病例一览表、密切接触者人员表、病例发病时间轴、传播关系图",
+        "对应调查表缺内容或数据时友好提示"
+      ],
+      "allowedDesign": [
+        "按截图栏目明确附件与数据关系",
+        "缺失部分提示，已有部分按真实数据正常呈现"
+      ],
+      "openDecisions": [
+        "实际调查数据与现有报告生成代码未提供",
+        "是否原样复制署名日期位置需结合现有报告版式"
+      ],
+      "reviewChecks": [
+        {
+          "id": "Q10-R1",
+          "check": "在十、下一步工作建议下方添加截图内容",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "Q10-R2",
+          "check": "包含病例一览表、密切接触者人员表、病例发病时间轴、传播关系图",
+          "basis": "rawPrompt及截图"
+        },
+        {
+          "id": "Q10-R3",
+          "check": "对应调查表缺内容或数据时友好提示",
+          "basis": "rawPrompt"
+        }
+      ],
+      "referenceOutput": {
+        "text": "非常好！请在“十、下一步工作建议”章节下方，补充上图所示的内容。在添加内容时，请严格核对对应的调查表：如果调查表中存在相关数据或信息，请直接引用并填充；如果调查表中缺少对应内容或数据，请务必显示一条友好的提示信息（例如：“当前调查表中暂无相关数据可供参考”），切勿编造数据。请确保整体格式清晰、逻辑连贯。",
+        "status": "observed_reference_not_gold",
+        "reviewNotes": "参考结果明确有数据填充、无数据提示，但仍依赖上图指代，跨工具交接需携带图片或明确内容。"
+      },
+      "evaluationStatus": "not_run"
+    },
+    {
+      "id": "H_W_QUERY",
+      "title": "W_QUERY",
+      "origin": "historical_synthetic_evaluation",
+      "collection": "regression",
+      "seen": true,
+      "source": {
+        "path": "../../evidence/natural-balanced-2026-11-11/cases.json",
+        "caseId": "W_QUERY",
+        "sha256": "b0e368515bd2af1ecd2697c41f9ffb7af97a42935be6557cef47fb8df7d554fa"
+      },
+      "rawPrompt": "请帮我查询全球使用AI最多的职业/行业",
+      "actualMaterials": [
+        {
+          "kind": "frozen_input",
+          "available": "in_repository",
+          "path": "../../evidence/natural-balanced-2026-11-11/cases.json",
+          "caseId": "W_QUERY",
+          "includes": [
+            "context",
+            "actualAnswers",
+            "planningContext"
+          ],
+          "note": "逐字读取对应input，真实题答与问题分别保留，勿用本清单代替完整材料。"
+        }
+      ],
+      "mustPreserve": [
+        "保留全球、职业与行业、查询AI使用情况的目标"
+      ],
+      "allowedDesign": [
+        "组织主要发现、典型应用及横向比较",
+        "用相关证据支持结论"
+      ],
+      "openDecisions": [
+        "使用最多的衡量方式可说明解释依据，原文未要求穷尽所有口径"
+      ],
+      "reviewChecks": [
+        {
+          "id": "H_W_QUERY-R1",
+          "check": "保留全球、职业与行业、查询AI使用情况的目标",
+          "basis": "冻结input及actualAnswers"
+        }
+      ],
+      "historicalObservation": {
+        "path": "../../evidence/natural-balanced-2026-11-11/review.json",
+        "note": "候选原样返回与口径主导的历史问题均为开发线索。"
+      },
+      "evaluationStatus": "not_rerun"
+    },
+    {
+      "id": "H_W_CODE",
+      "title": "W_CODE",
+      "origin": "historical_synthetic_evaluation",
+      "collection": "regression",
+      "seen": true,
+      "source": {
+        "path": "../../evidence/natural-balanced-2026-11-11/cases.json",
+        "caseId": "W_CODE",
+        "sha256": "b0e368515bd2af1ecd2697c41f9ffb7af97a42935be6557cef47fb8df7d554fa"
+      },
+      "rawPrompt": "请在@src/occupationalInfo新增和导入功能限制调查日期，不能晚于今日，允许填写今天。沿用现有逐行导入反馈，其他行为保持可用。只返回实际修改的文件。",
+      "actualMaterials": [
+        {
+          "kind": "frozen_input",
+          "available": "in_repository",
+          "path": "../../evidence/natural-balanced-2026-11-11/cases.json",
+          "caseId": "W_CODE",
+          "includes": [
+            "context",
+            "actualAnswers",
+            "planningContext"
+          ],
+          "note": "逐字读取对应input，真实题答与问题分别保留，勿用本清单代替完整材料。"
+        }
+      ],
+      "mustPreserve": [
+        "新增与导入都受日期限制且今天允许",
+        "保留逐行反馈",
+        "只返回实际修改文件及材料约定范围"
+      ],
+      "allowedDesign": [
+        "复用共享日期校验并考虑有效日历值"
+      ],
+      "openDecisions": [
+        "today的业务时区已由合成材料说明"
+      ],
+      "reviewChecks": [
+        {
+          "id": "H_W_CODE-R1",
+          "check": "新增与导入都受日期限制且今天允许",
+          "basis": "冻结input及actualAnswers"
+        },
+        {
+          "id": "H_W_CODE-R2",
+          "check": "保留逐行反馈",
+          "basis": "冻结input及actualAnswers"
+        },
+        {
+          "id": "H_W_CODE-R3",
+          "check": "只返回实际修改文件及材料约定范围",
+          "basis": "冻结input及actualAnswers"
+        }
+      ],
+      "historicalObservation": {
+        "path": "../../evidence/natural-balanced-2026-11-11/review.json",
+        "note": "合成代码材料完整保存在旧cases.json。此前功能通过但部分作品多交未改文件，结论保留。"
+      },
+      "evaluationStatus": "not_rerun"
+    },
+    {
+      "id": "H_R_PLAN",
+      "title": "R_PLAN",
+      "origin": "historical_synthetic_evaluation",
+      "collection": "regression",
+      "seen": true,
+      "source": {
+        "path": "../../evidence/natural-balanced-2026-11-11/cases.json",
+        "caseId": "R_PLAN",
+        "sha256": "b0e368515bd2af1ecd2697c41f9ffb7af97a42935be6557cef47fb8df7d554fa"
+      },
+      "rawPrompt": "给客户写一则服务延期通知，只输出正文。新的交付日期和补偿方案由我决定，请先确认这两项。其他措辞由AI设计。",
+      "actualMaterials": [
+        {
+          "kind": "frozen_input",
+          "available": "in_repository",
+          "path": "../../evidence/natural-balanced-2026-11-11/cases.json",
+          "caseId": "R_PLAN",
+          "includes": [
+            "context",
+            "actualAnswers",
+            "planningContext"
+          ],
+          "note": "逐字读取对应input，真实题答与问题分别保留，勿用本清单代替完整材料。"
+        }
+      ],
+      "mustPreserve": [
+        "实际回答保留日期稍后确认及不承诺具体日期",
+        "保留不承诺额外赔偿的语义",
+        "只输出通知正文，措辞由AI设计"
+      ],
+      "allowedDesign": [
+        "设计自然礼貌的通知表达"
+      ],
+      "openDecisions": [
+        "日期待定是已回答的状态，应按该状态生成"
+      ],
+      "reviewChecks": [
+        {
+          "id": "H_R_PLAN-R1",
+          "check": "实际回答保留日期稍后确认及不承诺具体日期",
+          "basis": "冻结input及actualAnswers"
+        },
+        {
+          "id": "H_R_PLAN-R2",
+          "check": "保留不承诺额外赔偿的语义",
+          "basis": "冻结input及actualAnswers"
+        },
+        {
+          "id": "H_R_PLAN-R3",
+          "check": "只输出通知正文，措辞由AI设计",
+          "basis": "冻结input及actualAnswers"
+        }
+      ],
+      "historicalObservation": {
+        "path": "../../evidence/natural-balanced-2026-11-11/review.json",
+        "note": "不承诺赔偿、没有赔偿和禁止任何补偿需要区分。"
+      },
+      "evaluationStatus": "not_rerun"
+    },
+    {
+      "id": "H_R_WAIT",
+      "title": "R_WAIT",
+      "origin": "historical_synthetic_evaluation",
+      "collection": "regression",
+      "seen": true,
+      "source": {
+        "path": "../../evidence/natural-balanced-2026-11-11/cases.json",
+        "caseId": "R_WAIT",
+        "sha256": "b0e368515bd2af1ecd2697c41f9ffb7af97a42935be6557cef47fb8df7d554fa"
+      },
+      "rawPrompt": "先阅读附件并熟悉项目的模块关系，理解后等我安排具体任务，不要改文件，也不用写项目说明。",
+      "actualMaterials": [
+        {
+          "kind": "frozen_input",
+          "available": "in_repository",
+          "path": "../../evidence/natural-balanced-2026-11-11/cases.json",
+          "caseId": "R_WAIT",
+          "includes": [
+            "context",
+            "actualAnswers",
+            "planningContext"
+          ],
+          "note": "逐字读取对应input，真实题答与问题分别保留，勿用本清单代替完整材料。"
+        }
+      ],
+      "mustPreserve": [
+        "阅读理解模块关系后等待",
+        "不改文件",
+        "不用写项目说明"
+      ],
+      "allowedDesign": [
+        "明确采集、查询、导出的阅读重点"
+      ],
+      "openDecisions": [],
+      "reviewChecks": [
+        {
+          "id": "H_R_WAIT-R1",
+          "check": "阅读理解模块关系后等待",
+          "basis": "冻结input及actualAnswers"
+        },
+        {
+          "id": "H_R_WAIT-R2",
+          "check": "不改文件",
+          "basis": "冻结input及actualAnswers"
+        },
+        {
+          "id": "H_R_WAIT-R3",
+          "check": "不用写项目说明",
+          "basis": "冻结input及actualAnswers"
+        }
+      ],
+      "historicalObservation": {
+        "path": "../../evidence/natural-balanced-2026-11-11/review.json",
+        "note": "正确保留允许少改，不增加报告或交付物。"
+      },
+      "evaluationStatus": "not_rerun"
+    },
+    {
+      "id": "H_R_REPORT",
+      "title": "R_REPORT",
+      "origin": "historical_synthetic_evaluation",
+      "collection": "regression",
+      "seen": true,
+      "source": {
+        "path": "../../evidence/natural-balanced-2026-11-11/cases.json",
+        "caseId": "R_REPORT",
+        "sha256": "b0e368515bd2af1ecd2697c41f9ffb7af97a42935be6557cef47fb8df7d554fa"
+      },
+      "rawPrompt": "根据附件写一份失败原因分析报告，区分已证实原因和待验证线索，只给报告，不执行修复。",
+      "actualMaterials": [
+        {
+          "kind": "frozen_input",
+          "available": "in_repository",
+          "path": "../../evidence/natural-balanced-2026-11-11/cases.json",
+          "caseId": "R_REPORT",
+          "includes": [
+            "context",
+            "actualAnswers",
+            "planningContext"
+          ],
+          "note": "逐字读取对应input，真实题答与问题分别保留，勿用本清单代替完整材料。"
+        }
+      ],
+      "mustPreserve": [
+        "按附件写失败原因分析报告",
+        "区分已证实与待验证",
+        "只给报告且不执行修复"
+      ],
+      "allowedDesign": [
+        "组织证据和待验证线索"
+      ],
+      "openDecisions": [
+        "客户端代码尚未读取，不等于原因已确定"
+      ],
+      "reviewChecks": [
+        {
+          "id": "H_R_REPORT-R1",
+          "check": "按附件写失败原因分析报告",
+          "basis": "冻结input及actualAnswers"
+        },
+        {
+          "id": "H_R_REPORT-R2",
+          "check": "区分已证实与待验证",
+          "basis": "冻结input及actualAnswers"
+        },
+        {
+          "id": "H_R_REPORT-R3",
+          "check": "只给报告且不执行修复",
+          "basis": "冻结input及actualAnswers"
+        }
+      ],
+      "historicalObservation": {
+        "path": "../../evidence/natural-balanced-2026-11-11/review.json",
+        "note": "不执行修复不能自动变成禁止报告中出现修复建议，两次日志不证明稳定复现。"
+      },
+      "evaluationStatus": "not_rerun"
+    },
+    {
+      "id": "H_USER_DATE",
+      "title": "用户真实日期限制反馈",
+      "origin": "user_conversation_feedback",
+      "collection": "regression",
+      "seen": true,
+      "source": {
+        "description": "本会话用户报告原文，区别于H_W_CODE中已明确允许今天的合成复现。",
+        "report": "../../自然增强源码承载与检索修复验收-2026-10-27.md"
+      },
+      "rawPrompt": "非常好! 请在重点人群模块@btpt-Brucella-vue3/src/views/brucella/occupationalInfo 新增和导入功能增加调查时间录入的限制, 在导入时和新增时\"调查时间\"只能填写当前当日之前的日期, 调查时间不可以填写超过当前(也就是今日)的日期",
+      "actualMaterials": [
+        {
+          "kind": "private_project",
+          "available": "not_in_package",
+          "description": "原反馈含大型业务源码材料，本包只保留需求与故障记录引用。实际源码未作为可回放材料提供。"
+        }
+      ],
+      "mustPreserve": [
+        "保留明确目标目录与调查时间字段",
+        "同时覆盖新增和导入入口",
+        "保留原文对未来日期的限制",
+        "识别当日之前与不超过今日的边界歧义"
+      ],
+      "allowedDesign": [
+        "引导执行者定位新增与导入链路并复用现有校验",
+        "根据实际实现设计边界检查和导入反馈"
+      ],
+      "openDecisions": [
+        "今天是否允许会实质改变两个入口的结果，原文同时有两种表达，应结合上下文或Plan确认。"
+      ],
+      "reviewChecks": [
+        {
+          "id": "H_USER_DATE-R1",
+          "check": "保留明确目标目录与调查时间字段",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "H_USER_DATE-R2",
+          "check": "同时覆盖新增和导入入口",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "H_USER_DATE-R3",
+          "check": "保留原文对未来日期的限制",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "H_USER_DATE-R4",
+          "check": "识别当日之前与不超过今日的边界歧义",
+          "basis": "rawPrompt"
+        }
+      ],
+      "historicalObservation": {
+        "path": "../../自然增强源码承载与检索修复验收-2026-10-27.md",
+        "note": "历史存在跳过正文并堆贴源码的问题，合成复现与真实私有项目验证分别记录。"
+      },
+      "evaluationStatus": "not_rerun"
+    },
+    {
+      "id": "S_WRITING",
+      "title": "短文写作",
+      "origin": "assistant_authored_synthetic",
+      "collection": "development",
+      "seen": true,
+      "source": {
+        "description": "2026-11-14由开发助手补充的合成表达变体，非真实用户原件或独立留出。"
+      },
+      "rawPrompt": "帮我写篇介绍社区图书交换活动的短文，给附近居民看，语气亲切，300字以内，日期和地址用我提供的信息，别自己编。",
+      "actualMaterials": [
+        {
+          "kind": "inline_text",
+          "available": "in_prompt",
+          "description": "仅原始提示词，无附件或额外题答。"
+        }
+      ],
+      "mustPreserve": [
+        "面向附近居民，亲切，300字以内",
+        "日期地址依据用户提供信息"
+      ],
+      "allowedDesign": [
+        "设计活动介绍、参与方式的自然组织"
+      ],
+      "openDecisions": [
+        "日期地址本题未提供，只影响相应细节，不能写成活动未确定"
+      ],
+      "reviewChecks": [
+        {
+          "id": "S_WRITING-R1",
+          "check": "面向附近居民，亲切，300字以内",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "S_WRITING-R2",
+          "check": "日期地址依据用户提供信息",
+          "basis": "rawPrompt"
+        }
+      ],
+      "evaluationStatus": "not_run"
+    },
+    {
+      "id": "S_OFFICE",
+      "title": "会议记录整理",
+      "origin": "assistant_authored_synthetic",
+      "collection": "development",
+      "seen": true,
+      "source": {
+        "description": "2026-11-14由开发助手补充的合成表达变体，非真实用户原件或独立留出。"
+      },
+      "rawPrompt": "把这段会议记录整理成待办，别给大家加任务：小林说周三发测试包；小陈说拿到包再验收，具体哪天还没定。只输出表格。",
+      "actualMaterials": [
+        {
+          "kind": "inline_text",
+          "available": "in_prompt",
+          "description": "仅原始提示词，无附件或额外题答。"
+        }
+      ],
+      "mustPreserve": [
+        "小林周三发测试包",
+        "小陈拿到包后验收且日期待定",
+        "只输出表格，保持任务归属"
+      ],
+      "allowedDesign": [
+        "用负责人、事项、时间或依赖列组织"
+      ],
+      "openDecisions": [
+        "小陈的日期待定应保留，不能自动承诺周四"
+      ],
+      "reviewChecks": [
+        {
+          "id": "S_OFFICE-R1",
+          "check": "小林周三发测试包",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "S_OFFICE-R2",
+          "check": "小陈拿到包后验收且日期待定",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "S_OFFICE-R3",
+          "check": "只输出表格，保持任务归属",
+          "basis": "rawPrompt"
+        }
+      ],
+      "evaluationStatus": "not_run"
+    },
+    {
+      "id": "S_QUERY",
+      "title": "工具比较查询",
+      "origin": "assistant_authored_synthetic",
+      "collection": "development",
+      "seen": true,
+      "source": {
+        "description": "2026-11-14由开发助手补充的合成表达变体，非真实用户原件或独立留出。"
+      },
+      "rawPrompt": "帮我比较几种适合小团队一起写文档的工具，我想知道各有什么长处、怎么协作，最后给点选择建议。",
+      "actualMaterials": [
+        {
+          "kind": "inline_text",
+          "available": "in_prompt",
+          "description": "仅原始提示词，无附件或额外题答。"
+        }
+      ],
+      "mustPreserve": [
+        "比较多人文档工具的长处和协作方式",
+        "提供适合小团队的选择建议"
+      ],
+      "allowedDesign": [
+        "设计有帮助的对照维度并说明适用情况"
+      ],
+      "openDecisions": [
+        "预算、人数未提供，可用条件化建议，重要保留决定按Plan规则判断"
+      ],
+      "reviewChecks": [
+        {
+          "id": "S_QUERY-R1",
+          "check": "比较多人文档工具的长处和协作方式",
+          "basis": "rawPrompt"
+        },
+        {
+          "id": "S_QUERY-R2",
+          "check": "提供适合小团队的选择建议",
+          "basis": "rawPrompt"
+        }
+      ],
+      "evaluationStatus": "not_run"
+    }
+  ]
+}
