@@ -8,6 +8,8 @@ import com.promptoptimizer.provider.service.PlatformModelCatalog;
 import java.net.URI;
 import java.util.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
@@ -77,8 +79,9 @@ class NaturalBalancedProviderTest {
         assertThat(result.questions()).isEmpty(); server.verify();
     }
 
-    @Test
-    void historicalMetadataFailuresReplayThroughCandidateWithoutChangingFirstDraft() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"core-balanced-v1", "core-expression-v1"})
+    void historicalMetadataFailuresReplayThroughCandidateWithoutChangingFirstDraft(String version) throws Exception {
         var mapper = new ObjectMapper().findAndRegisterModules().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         try (var stream = getClass().getResourceAsStream("/natural-metadata-repair/real-first-drafts-and-patches.json")) {
             for (var fixture : mapper.readTree(stream)) {
@@ -87,7 +90,7 @@ class NaturalBalancedProviderTest {
                 ObjectNode data = (ObjectNode)mapper.readTree(user.substring(user.indexOf('{')));
                 data.remove(List.of("taskSources", "inputBoundary"));
                 data.putNull("modelId"); // 历史模型身份不决定本机受控传输的模拟端点。
-                var input = mapper.treeToValue(data, NaturalPromptInput.class).withStrategyVersion(NaturalPromptBalancedInstructions.VERSION);
+                var input = mapper.treeToValue(data, NaturalPromptInput.class).withStrategyVersion(version);
                 var builder = RestClient.builder(); var server = MockRestServiceServer.bindTo(builder).build();
                 var evidence = List.of(Map.of("sourceId", "rawPrompt", "quote", input.rawPrompt()));
                 expect(server, mapper.valueToTree(Map.of("actions", List.of(Map.of("text", input.rawPrompt(), "timing", "CURRENT", "condition", "", "userEvidence", evidence, "detailEvidence", List.of())),

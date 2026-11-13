@@ -4,13 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.promptoptimizer.provider.domain.NaturalPromptInput;
+import com.promptoptimizer.provider.domain.NaturalPromptExpressionInstructions;
 import com.promptoptimizer.provider.domain.NaturalPromptPlanContextInstructions;
 import com.promptoptimizer.provider.domain.NaturalTaskSource;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * v4准备阶段把服务端来源编号放在对应上下文材料旁，降低长文件列表与独立编号目录错配。
+ * 把服务端来源编号放在对应上下文材料旁，降低长文件列表与独立编号目录错配。
+ * v4系列仅在准备阶段标注，表达路径贯穿准备、正文与Plan，当前和此前资料分别编号。
  * 只给模型输入副本添加元数据，不修改来源正文、持久化上下文或最终校验目录。
  *
  * @author QingNiao
@@ -19,9 +21,10 @@ import java.util.stream.Collectors;
 final class NaturalPromptPreparationSourceLabels {
     private NaturalPromptPreparationSourceLabels() { }
 
-    /** 共用v4协议的范围准备调用就近携带来源编号，正文与Plan结果继续使用原输入结构。 */
+    /** v4范围准备就近标注；表达路径在后续正文和Plan也携带同一服务端来源编号。 */
     static void annotate(String version, boolean scopePreparation, JsonNode payload, NaturalPromptInput input) {
-        if (!NaturalPromptPlanContextInstructions.usesProtocol(version) || !scopePreparation
+        if (!NaturalPromptPlanContextInstructions.usesProtocol(version)
+                || (!scopePreparation && !NaturalPromptExpressionInstructions.VERSION.equals(version))
                 || !(payload instanceof ObjectNode root)) return;
         Set<String> sourceIds = input.taskSources().stream().map(NaturalTaskSource::id).collect(Collectors.toSet());
         annotateSnapshot(root.get("context"), "context", sourceIds);

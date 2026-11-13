@@ -450,7 +450,9 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
 
     /** 按显式版本识别范围并逐次计量；精简协议保留v3准备字节及建议性质，不新增阶段。 */
     private ScopePreparation prepareScope(NaturalPromptInput input, String operation) {
-        String instruction = NaturalPromptPlanContextInstructions.usesProtocol(input.strategyVersion())
+        String instruction = NaturalPromptExpressionInstructions.VERSION.equals(input.strategyVersion())
+                ? NaturalPromptExpressionInstructions.PREPARE
+                : NaturalPromptPlanContextInstructions.usesProtocol(input.strategyVersion())
                 ? NaturalPromptPlanContextInstructions.PREPARE
                 : NaturalPromptSimplifiedInstructions.VERSION.equals(input.strategyVersion())
                 ? NaturalPromptSimplifiedInstructions.PREPARE
@@ -667,7 +669,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                             ? NaturalPromptDiagnosticProjection.normalize(body) : body);
             var draft = payload.toDraft(input, metadata);
             // 候选复用用户目标归属检查，材料维度误标可补正，不能借诊断减负创建授权。
-            if (NaturalPromptBalancedInstructions.VERSION.equals(input.strategyVersion())) {
+            if (NaturalPromptBalancedInstructions.VERSION.equals(input.strategyVersion())
+                    || NaturalPromptExpressionInstructions.VERSION.equals(input.strategyVersion())) {
                 NaturalPromptRequirementsOnlyPreparation.validateUserGoals(draft.taskUnderstanding());
             }
             return draft;
@@ -841,7 +844,8 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
         boolean metadataOnlyRepair = (NaturalPromptSinglePassInstructions.METADATA_REPAIR_VERSION.equals(input.strategyVersion())
                 || NaturalPromptSinglePassInstructions.INPUT_ROLES_VERSION.equals(input.strategyVersion())
                 || NaturalPromptSinglePassInstructions.RESPONSIBILITY_VERSION.equals(input.strategyVersion())
-                || NaturalPromptBalancedInstructions.VERSION.equals(input.strategyVersion()) || recordOnly)
+                || NaturalPromptBalancedInstructions.VERSION.equals(input.strategyVersion())
+                || NaturalPromptExpressionInstructions.VERSION.equals(input.strategyVersion()) || recordOnly)
                 && "prompt.optimize".equals(operation);
         // 48只改变已经完成范围准备的正文修复；Plan、准备及旧版本保留逐字既有请求契约。
         boolean boundedRepair = NaturalPromptBoundedRepairInstructions.VERSION.equals(input.strategyVersion())

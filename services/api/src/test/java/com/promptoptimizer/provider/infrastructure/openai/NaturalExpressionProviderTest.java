@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.promptoptimizer.context.domain.ContextSnapshot;
+import com.promptoptimizer.context.domain.FileSnippet;
+import com.promptoptimizer.context.domain.MaterialPurpose;
 import com.promptoptimizer.enhancement.domain.NaturalProcessing;
+import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import com.promptoptimizer.provider.domain.*;
 import com.promptoptimizer.provider.service.PlatformModelCatalog;
 import java.net.URI;
@@ -35,7 +38,7 @@ class NaturalExpressionProviderTest {
         assertThat(current).contains("明确指代、先后顺序和条件归属", "作为拟议做法表达")
                 .doesNotContain("不能另设要向用户展示或交付的内容");
         assertThat(NaturalPromptInstructions.planningInstruction(NaturalPromptExpressionInstructions.VERSION))
-                .isEqualTo(NaturalPromptProtocolRepairInstructions.PLAN);
+                .isEqualTo(NaturalPromptExpressionInstructions.PLAN);
     }
 
     @ParameterizedTest
@@ -44,7 +47,7 @@ class NaturalExpressionProviderTest {
         var input = input(raw);
         var builder = RestClient.builder();
         var server = MockRestServiceServer.bindTo(builder).build();
-        expect(server, scope(input), input, NaturalPromptPlanContextInstructions.PREPARE);
+        expect(server, scope(input), input, NaturalPromptExpressionInstructions.PREPARE);
         expect(server, enhancement(input, raw), input, NaturalPromptExpressionInstructions.ENHANCE);
         var result = provider(builder.build()).enhance(input, draft -> {
             draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
@@ -60,7 +63,7 @@ class NaturalExpressionProviderTest {
         var input = input("写一则通知，保留例外条件。");
         var builder = RestClient.builder();
         var server = MockRestServiceServer.bindTo(builder).build();
-        expect(server, scope(input), input, NaturalPromptPlanContextInstructions.PREPARE);
+        expect(server, scope(input), input, NaturalPromptExpressionInstructions.PREPARE);
         var invalid = enhancement(input, input.rawPrompt());
         ((ObjectNode) invalid.at("/task/requirements/0")).putArray("bodyQuotes").add("正文没有这句话");
         expect(server, invalid, input, null);
@@ -70,6 +73,115 @@ class NaturalExpressionProviderTest {
             return draft;
         })).isInstanceOf(ProviderException.class);
         server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"日期稍后确认，不承诺额外赔偿。", "没有相关资料，按现有信息继续。", "无权访问该系统，请保留这个限制。"})
+    void currentAndPlanningMaterialsAndActualAnswersReachBothStages(String answer) throws Exception {
+        var input = materialInput(answer);
+        var builder = RestClient.builder();
+        var server = MockRestServiceServer.bindTo(builder).build();
+        expect(server, scope(input), input, NaturalPromptExpressionInstructions.PREPARE);
+        String body = input.rawPrompt() + answer;
+        expect(server, enhancement(input, body), input, NaturalPromptExpressionInstructions.ENHANCE);
+        var result = provider(builder.build()).enhance(input, draft -> {
+            draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
+            return draft;
+        });
+        assertThat(result.optimizedPrompt()).isEqualTo(body);
+        assertThat(input.context().fileSnippets().getFirst().content()).isEqualTo("病例一览表、密切接触者人员表、病例发病时间轴、传播关系图。");
+        server.verify();
+    }
+
+    @Test
+    void realAnswerMustHaveItsOwnCoverageEvenWhenAnotherAnswerHasTheSameText() throws Exception {
+        var input = materialInput("日期稍后确认，不承诺额外赔偿。");
+        var builder = RestClient.builder();
+        var server = MockRestServiceServer.bindTo(builder).build();
+        expect(server, scope(input), input, NaturalPromptExpressionInstructions.PREPARE);
+        var invalid = enhancement(input, input.rawPrompt() + input.actualAnswers().getFirst().answer());
+        ((com.fasterxml.jackson.databind.node.ArrayNode) invalid.at("/task/requirements")).remove(2);
+        expect(server, invalid, input, null);
+        expect(server, invalid, input, null);
+        assertThatThrownBy(() -> provider(builder.build()).enhance(input, draft -> draft)).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"日期稍后确认，不承诺额外赔偿。", ""})
+    void planSupportsNoQuestionAndAnImportantUserDecision(String answer) throws Exception {
+        var input = answer.isEmpty() ? input("附件可多选，最大10MB，请先确认大小限制的含义。") : materialInput(answer);
+        var builder = RestClient.builder();
+        var server = MockRestServiceServer.bindTo(builder).build();
+        expect(server, scope(input), input, NaturalPromptExpressionInstructions.PREPARE);
+        ObjectNode plan = enhancement(input, input.rawPrompt());
+        plan.remove(List.of("optimizedPrompt", "framework"));
+        plan.put("summary", "整理原任务及需要用户决定的边界");
+        var task = (ObjectNode) plan.get("task");
+        task.remove(List.of("additions", "openDecisions"));
+        task.putArray("unaskedDecisions");
+        task.path("requirements").forEach(item -> ((ObjectNode) item).remove("bodyQuotes"));
+        var questions = plan.putArray("questions");
+        if (answer.isEmpty()) {
+            var question = questions.addObject().put("id", "sizeLimit").put("question", "10MB限制单文件还是总大小？")
+                    .put("hint", "影响多文件校验结果").put("type", "FREE_TEXT").put("allowCustomAnswer", true);
+            question.putArray("options");
+            question.putArray("examples");
+            question.putArray("decisionBasis").addObject().put("issue", "大小限制对象").put("kind", "USER_INFORMATION")
+                    .put("whyAsk", "需要用户明确业务限制对象").put("answerDifference", "决定按单文件或文件总量拒绝上传");
+        }
+        expect(server, plan, input, NaturalPromptExpressionInstructions.PLAN);
+        var result = provider(builder.build()).plan(input, value -> value);
+        assertThat(result.questions()).hasSize(answer.isEmpty() ? 1 : 0);
+        server.verify();
+    }
+
+    @Test
+    void metadataPatchKeepsBodyAndRejectsARewrittenBody() throws Exception {
+        var input = input("保留原条件，整理这则通知。");
+        for (boolean rewrite : List.of(false, true)) {
+            var builder = RestClient.builder();
+            var server = MockRestServiceServer.bindTo(builder).build();
+            expect(server, scope(input), input, NaturalPromptExpressionInstructions.PREPARE);
+            var invalid = enhancement(input, input.rawPrompt());
+            ((ObjectNode) invalid.at("/task/requirements/0/evidence/0")).put("quote", "不存在的引文");
+            expect(server, invalid, input, null);
+            var patch = json.createObjectNode();
+            var change = patch.putArray("changes").addObject().put("path", rewrite ? "/optimizedPrompt" : "/task/requirements/0/evidence");
+            if (rewrite) change.put("value", "改写正文");
+            else change.set("value", json.valueToTree(List.of(Map.of("sourceId", "rawPrompt", "quote", input.rawPrompt()))));
+            expect(server, patch, input, null);
+            if (rewrite) assertThatThrownBy(() -> provider(builder.build()).enhance(input, draft -> draft)).isInstanceOf(ProviderException.class);
+            else assertThat(provider(builder.build()).enhance(input, draft -> draft).optimizedPrompt()).isEqualTo(input.rawPrompt());
+            server.verify();
+        }
+    }
+
+    @Test
+    void projectMaterialCannotSupplyTheOnlyUserGoal() throws Exception {
+        var input = materialInput("日期待定。");
+        var builder = RestClient.builder();
+        var server = MockRestServiceServer.bindTo(builder).build();
+        expect(server, scope(input), input, NaturalPromptExpressionInstructions.PREPARE);
+        var invalid = enhancement(input, input.rawPrompt() + input.actualAnswers().getFirst().answer());
+        var requirement = (ObjectNode) invalid.at("/task/requirements/0");
+        requirement.putArray("evidence").addObject().put("sourceId", "context.fileSnippets.0")
+                .put("quote", input.context().fileSnippets().getFirst().content());
+        expect(server, invalid, input, null);
+        expect(server, invalid, input, null);
+        assertThatThrownBy(() -> provider(builder.build()).enhance(input, draft -> draft)).isInstanceOf(ProviderException.class);
+        server.verify();
+    }
+
+    private NaturalPromptInput materialInput(String answer) {
+        var current = new ContextSnapshot("按当前资料整理原任务", List.of(), List.of(), List.of(), List.of(new FileSnippet(
+                "appendix.md", "text", "病例一览表、密切接触者人员表、病例发病时间轴、传播关系图。", "附件栏目示意", false, MaterialPurpose.STYLE_REFERENCE)),
+                List.of(), List.of(), "fixture");
+        var planning = new ContextSnapshot("此前的材料", List.of(), List.of(), List.of(), List.of(new FileSnippet(
+                "earlier.md", "text", "旧草案日期仅供核对。", "旧草案", false, MaterialPurpose.FACT_REFERENCE)), List.of(), List.of(), "fixture");
+        return new NaturalPromptInput("按附件整理现有内容，保留我的实际回答。", current,
+                List.of(new PlanAnswer("date", "日期何时确定？", answer), new PlanAnswer("scope", "有哪些限制？", answer)),
+                List.of(), List.of(), null, planning).withStrategyVersion(NaturalPromptExpressionInstructions.VERSION);
     }
 
     private NaturalPromptInput input(String raw) {
@@ -99,6 +211,13 @@ class NaturalExpressionProviderTest {
         item.putArray("dimensions").add("GOAL");
         item.putArray("evidence").addObject().put("sourceId", "rawPrompt").put("quote", input.rawPrompt());
         item.putArray("bodyQuotes").add(body);
+        for (int i = 0; i < input.actualAnswers().size(); i++) {
+            var answer = input.actualAnswers().get(i);
+            var requirement = task.withArray("requirements").addObject().put("text", answer.answer());
+            requirement.putArray("dimensions").add("USER_CONFIRMATION");
+            requirement.putArray("evidence").addObject().put("sourceId", "actualAnswers." + i).put("quote", answer.answer());
+            requirement.putArray("bodyQuotes").add(body);
+        }
         task.putArray("additions");
         task.putArray("openDecisions");
         return root;
@@ -113,7 +232,17 @@ class NaturalExpressionProviderTest {
             if (instruction != null) assertThat(sent.at("/messages/0/content").asText()).isEqualTo(instruction);
             String user = sent.at("/messages/1/content").asText();
             var payload = json.readTree(user.substring(user.indexOf('{')));
-            assertThat(payload.path("rawPrompt").asText()).isEqualTo(input.rawPrompt());
+            if (payload.has("rawPrompt")) {
+                assertThat(payload.path("rawPrompt").asText()).isEqualTo(input.rawPrompt());
+                assertThat(payload.path("actualAnswers")).isEqualTo(json.valueToTree(input.actualAnswers()));
+                if (input.planningContext() != null) {
+                    assertThat(payload.at("/context/fileSnippets/0/sourceId").asText()).isEqualTo("context.fileSnippets.0");
+                    assertThat(payload.at("/planningContext/fileSnippets/0/sourceId").asText()).isEqualTo("planningContext.fileSnippets.0");
+                    assertThat(payload.at("/context/fileSnippets/0/content").asText()).isEqualTo(input.context().fileSnippets().getFirst().content());
+                    assertThat(payload.at("/context/fileSnippets/0/purpose").asText()).isEqualTo("STYLE_REFERENCE");
+                    assertThat(payload.at("/planProgress/state").asText()).isEqualTo("ANSWERS_RECEIVED");
+                }
+            }
         }).andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
     }
 }
