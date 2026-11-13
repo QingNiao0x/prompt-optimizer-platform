@@ -28,7 +28,8 @@ public class NaturalEnhancementSettings {
         /** 精简正文指导尚未证明作品收益，仅供显式对照，不随工程修复默认采用。 */ SIMPLIFIED,
         /** 仅调整原任务内部设计补全的候选，实际作品验收后再决定采用。 */ INTERNAL_DESIGN,
         /** 修复自然协议定位及明确限制的范围表达，复用v4来源与题答保护。 */ PROTOCOL_SCOPE_REPAIR,
-        /** 正文指导与诊断减负候选，需同信息作品验证后采用。 */ BALANCED
+        /** 正文指导与诊断减负候选，需同信息作品验证后采用。 */ BALANCED,
+        /** 需求表达指导，按表达质量及受影响执行风险验证后采用。 */ EXPRESSION
     }
 
     @NotNull
@@ -43,6 +44,7 @@ public class NaturalEnhancementSettings {
     /** 新请求、访客增强与Plan使用一致的策略；保存历史的调用方仍显式指定原版本。 */
     public String strategyVersion() {
         return switch (profile) {
+            case EXPRESSION -> com.promptoptimizer.provider.domain.NaturalPromptExpressionInstructions.VERSION;
             case BALANCED -> com.promptoptimizer.provider.domain.NaturalPromptBalancedInstructions.VERSION;
             case STABLE -> NaturalPromptInstructions.CURRENT_VERSION;
             case CORE_REPAIR -> NaturalPromptCoreRepairInstructions.VERSION;

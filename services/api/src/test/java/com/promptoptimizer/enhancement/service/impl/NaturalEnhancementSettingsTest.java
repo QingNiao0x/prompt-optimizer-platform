@@ -13,6 +13,12 @@ class NaturalEnhancementSettingsTest {
             .withUserConfiguration(NaturalEnhancementSettings.class);
 
     @Test
+    void expressionGuidanceBindsThroughTheNormalServiceSetting() {
+        runner.withPropertyValues("app.enhancement.natural.profile=EXPRESSION").run(context ->
+                assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-expression-v1"));
+    }
+
+    @Test
     void newRequestsDefaultToTheValidatedEngineeringRepair() {
         runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v5"));
     }
