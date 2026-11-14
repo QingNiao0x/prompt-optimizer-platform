@@ -1,0 +1,269 @@
+{
+  "caseId": "R_PLAN",
+  "stage": "candidate",
+  "responses": [
+    {
+      "route": "/api/v2/optimizations/plan",
+      "input": {
+        "rawPrompt": "给客户写一则服务延期通知，只输出正文。新的交付日期和补偿方案由我决定，请先确认这两项。其他措辞由AI设计。",
+        "modelId": "deepseek:deepseek-flash",
+        "contextDescription": "",
+        "conversationHistory": [],
+        "planningContext": null
+      },
+      "status": 200,
+      "body": {
+        "requestId": "4c6558fb-b3be-4bae-ba6e-b0d3a989c81a",
+        "data": {
+          "summary": "用户需要一封给客户的服务延期通知，只输出正文；新的交付日期和补偿方案必须由用户决定，需先确认这两项，其他措辞由AI设计。当前两项关键信息均未提供。",
+          "questions": [
+            {
+              "id": "newDeliveryDate",
+              "question": "新的交付日期是哪一天？",
+              "hint": "该日期是通知的核心事实，必须由您确定，AI不能代为设定。",
+              "type": "FREE_TEXT",
+              "options": [],
+              "examples": [
+                "2025年6月30日"
+              ],
+              "allowCustomAnswer": true
+            },
+            {
+              "id": "compensationPlan",
+              "question": "补偿方案的具体内容是什么？",
+              "hint": "补偿方案由您决定，直接影响通知中对客户的承诺表述。",
+              "type": "FREE_TEXT",
+              "options": [],
+              "examples": [
+                "延长服务期一个月并减免本期费用10%"
+              ],
+              "allowCustomAnswer": true
+            }
+          ],
+          "templateCode": "AUTO",
+          "provider": {
+            "provider": "deepseek",
+            "model": "deepseek:deepseek-flash",
+            "mock": false,
+            "modelVersion": "DeepSeek-V4.1-Flash"
+          },
+          "latencyMs": 5250,
+          "planId": "5c4e5e46-ad6b-4b86-83cf-15dc8c15a5f1",
+          "planningContext": null,
+          "expiresAt": "2026-11-14T02:49:37.307428300Z"
+        }
+      }
+    },
+    {
+      "route": "/api/v2/optimizations",
+      "input": {
+        "rawPrompt": "给客户写一则服务延期通知，只输出正文。新的交付日期和补偿方案由我决定，请先确认这两项。其他措辞由AI设计。",
+        "modelId": "deepseek:deepseek-flash",
+        "context": {
+          "customDescription": "",
+          "files": []
+        },
+        "enhancement": {
+          "templateCode": "AUTO",
+          "includeConversationHistory": false,
+          "includePermissionBoundaries": true,
+          "promptFormat": "COMPACT"
+        },
+        "conversationHistory": [],
+        "permissionPolicy": {
+          "protectedPaths": [],
+          "requireConfirmationFor": []
+        },
+        "planConfirmation": {
+          "planId": "5c4e5e46-ad6b-4b86-83cf-15dc8c15a5f1",
+          "planningContext": null,
+          "answers": [
+            {
+              "questionId": "newDeliveryDate",
+              "question": "新的交付日期是哪一天？",
+              "answer": "新交付日期由我稍后确认，当前不承诺具体日期。不承诺额外赔偿。"
+            },
+            {
+              "questionId": "compensationPlan",
+              "question": "补偿方案的具体内容是什么？",
+              "answer": "新交付日期由我稍后确认，当前不承诺具体日期。不承诺额外赔偿。"
+            }
+          ]
+        }
+      },
+      "status": 200,
+      "body": {
+        "requestId": "e3fe7e90-fc52-48a1-8f8c-e006915bc63a",
+        "data": {
+          "optimizedPrompt": "请给客户写一则服务延期通知，只输出通知正文，不要附加标题、说明或其他内容。\n\n关于新的交付日期和补偿方案：新交付日期由我稍后确认，当前不承诺具体日期；也不承诺额外赔偿。通知中不要编造或承诺具体的新交付日期，不要承诺任何额外赔偿。\n\n除上述两项外，其余措辞由你设计。",
+          "resultKind": "TEXT",
+          "contextReport": {
+            "customDescription": "",
+            "technologyStack": [],
+            "dependencies": [],
+            "directoryTree": [],
+            "fileSnippets": [],
+            "analysisStatus": "EMPTY",
+            "fileCoverage": [],
+            "warnings": [],
+            "redactions": [],
+            "analysisVersion": "v3"
+          },
+          "ambiguities": [],
+          "appliedConstraints": [],
+          "templateCode": "GENERAL",
+          "provider": {
+            "provider": "deepseek",
+            "model": "deepseek:deepseek-flash",
+            "mock": false,
+            "modelVersion": "DeepSeek-V4.1-Flash"
+          },
+          "latencyMs": 5230,
+          "warnings": [],
+          "evidenceCards": [],
+          "promptFormat": "COMPACT",
+          "constraintGroups": {
+            "platformMandatory": [],
+            "taskSpecific": [],
+            "additionalPermissions": []
+          },
+          "generationPipeline": "NATURAL",
+          "chainVersion": "core-expression-v1",
+          "framework": "RACE",
+          "recordId": "5c0d00ad-1fad-48d7-8ff0-5b82ac9efbcc",
+          "editRevision": 0,
+          "processing": {
+            "completedStages": [
+              "SCOPE_ANALYSIS",
+              "BODY_GENERATION"
+            ],
+            "originalPreserved": false
+          }
+        }
+      }
+    }
+  ],
+  "input": {
+    "rawPrompt": "给客户写一则服务延期通知，只输出正文。新的交付日期和补偿方案由我决定，请先确认这两项。其他措辞由AI设计。",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": {
+      "planId": "5c4e5e46-ad6b-4b86-83cf-15dc8c15a5f1",
+      "planningContext": null,
+      "answers": [
+        {
+          "questionId": "newDeliveryDate",
+          "question": "新的交付日期是哪一天？",
+          "answer": "新交付日期由我稍后确认，当前不承诺具体日期。不承诺额外赔偿。"
+        },
+        {
+          "questionId": "compensationPlan",
+          "question": "补偿方案的具体内容是什么？",
+          "answer": "新交付日期由我稍后确认，当前不承诺具体日期。不承诺额外赔偿。"
+        }
+      ]
+    }
+  },
+  "response": {
+    "route": "/api/v2/optimizations",
+    "input": {
+      "rawPrompt": "给客户写一则服务延期通知，只输出正文。新的交付日期和补偿方案由我决定，请先确认这两项。其他措辞由AI设计。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": {
+        "planId": "5c4e5e46-ad6b-4b86-83cf-15dc8c15a5f1",
+        "planningContext": null,
+        "answers": [
+          {
+            "questionId": "newDeliveryDate",
+            "question": "新的交付日期是哪一天？",
+            "answer": "新交付日期由我稍后确认，当前不承诺具体日期。不承诺额外赔偿。"
+          },
+          {
+            "questionId": "compensationPlan",
+            "question": "补偿方案的具体内容是什么？",
+            "answer": "新交付日期由我稍后确认，当前不承诺具体日期。不承诺额外赔偿。"
+          }
+        ]
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "e3fe7e90-fc52-48a1-8f8c-e006915bc63a",
+      "data": {
+        "optimizedPrompt": "请给客户写一则服务延期通知，只输出通知正文，不要附加标题、说明或其他内容。\n\n关于新的交付日期和补偿方案：新交付日期由我稍后确认，当前不承诺具体日期；也不承诺额外赔偿。通知中不要编造或承诺具体的新交付日期，不要承诺任何额外赔偿。\n\n除上述两项外，其余措辞由你设计。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 5230,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "core-expression-v1",
+        "framework": "RACE",
+        "recordId": "5c0d00ad-1fad-48d7-8ff0-5b82ac9efbcc",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  }
+}

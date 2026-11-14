@@ -1,0 +1,52 @@
+{
+  "route": "/api/v2/optimizations/plan",
+  "input": {
+    "rawPrompt": "给客户写一则服务延期通知，只输出正文。新的交付日期和补偿方案由我决定，请先确认这两项。其他措辞由AI设计。",
+    "modelId": "deepseek:deepseek-flash",
+    "contextDescription": "",
+    "conversationHistory": [],
+    "planningContext": null
+  },
+  "status": 200,
+  "body": {
+    "requestId": "4c6558fb-b3be-4bae-ba6e-b0d3a989c81a",
+    "data": {
+      "summary": "用户需要一封给客户的服务延期通知，只输出正文；新的交付日期和补偿方案必须由用户决定，需先确认这两项，其他措辞由AI设计。当前两项关键信息均未提供。",
+      "questions": [
+        {
+          "id": "newDeliveryDate",
+          "question": "新的交付日期是哪一天？",
+          "hint": "该日期是通知的核心事实，必须由您确定，AI不能代为设定。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "2025年6月30日"
+          ],
+          "allowCustomAnswer": true
+        },
+        {
+          "id": "compensationPlan",
+          "question": "补偿方案的具体内容是什么？",
+          "hint": "补偿方案由您决定，直接影响通知中对客户的承诺表述。",
+          "type": "FREE_TEXT",
+          "options": [],
+          "examples": [
+            "延长服务期一个月并减免本期费用10%"
+          ],
+          "allowCustomAnswer": true
+        }
+      ],
+      "templateCode": "AUTO",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 5250,
+      "planId": "5c4e5e46-ad6b-4b86-83cf-15dc8c15a5f1",
+      "planningContext": null,
+      "expiresAt": "2026-11-14T02:49:37.307428300Z"
+    }
+  }
+}

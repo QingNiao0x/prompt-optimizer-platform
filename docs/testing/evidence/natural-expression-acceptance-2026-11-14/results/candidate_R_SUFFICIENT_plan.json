@@ -1,0 +1,29 @@
+{
+  "route": "/api/v2/optimizations/plan",
+  "input": {
+    "rawPrompt": "请写一则80字以内的通知，说明今晚22:00至23:00暂停服务，提醒提前保存工作。只输出通知正文。",
+    "modelId": "deepseek:deepseek-flash",
+    "contextDescription": "",
+    "conversationHistory": [],
+    "planningContext": null
+  },
+  "status": 200,
+  "body": {
+    "requestId": "06aa0b29-3229-4190-844a-9472a3fae22d",
+    "data": {
+      "summary": "用户要求写一则80字以内的通知，说明今晚22:00至23:00暂停服务，并提醒提前保存工作，只输出通知正文。现有信息已足够完成该任务，无需用户补充决定。",
+      "questions": [],
+      "templateCode": "AUTO",
+      "provider": {
+        "provider": "deepseek",
+        "model": "deepseek:deepseek-flash",
+        "mock": false,
+        "modelVersion": "DeepSeek-V4.1-Flash"
+      },
+      "latencyMs": 3690,
+      "planId": "8ee61269-d680-4834-8a18-833f7f4656db",
+      "planningContext": null,
+      "expiresAt": "2026-11-14T02:49:56.043617900Z"
+    }
+  }
+}

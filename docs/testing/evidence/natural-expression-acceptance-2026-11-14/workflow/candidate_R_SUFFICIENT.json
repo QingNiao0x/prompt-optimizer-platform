@@ -1,0 +1,213 @@
+{
+  "caseId": "R_SUFFICIENT",
+  "stage": "candidate",
+  "responses": [
+    {
+      "route": "/api/v2/optimizations/plan",
+      "input": {
+        "rawPrompt": "请写一则80字以内的通知，说明今晚22:00至23:00暂停服务，提醒提前保存工作。只输出通知正文。",
+        "modelId": "deepseek:deepseek-flash",
+        "contextDescription": "",
+        "conversationHistory": [],
+        "planningContext": null
+      },
+      "status": 200,
+      "body": {
+        "requestId": "06aa0b29-3229-4190-844a-9472a3fae22d",
+        "data": {
+          "summary": "用户要求写一则80字以内的通知，说明今晚22:00至23:00暂停服务，并提醒提前保存工作，只输出通知正文。现有信息已足够完成该任务，无需用户补充决定。",
+          "questions": [],
+          "templateCode": "AUTO",
+          "provider": {
+            "provider": "deepseek",
+            "model": "deepseek:deepseek-flash",
+            "mock": false,
+            "modelVersion": "DeepSeek-V4.1-Flash"
+          },
+          "latencyMs": 3690,
+          "planId": "8ee61269-d680-4834-8a18-833f7f4656db",
+          "planningContext": null,
+          "expiresAt": "2026-11-14T02:49:56.043617900Z"
+        }
+      }
+    },
+    {
+      "route": "/api/v2/optimizations",
+      "input": {
+        "rawPrompt": "请写一则80字以内的通知，说明今晚22:00至23:00暂停服务，提醒提前保存工作。只输出通知正文。",
+        "modelId": "deepseek:deepseek-flash",
+        "context": {
+          "customDescription": "",
+          "files": []
+        },
+        "enhancement": {
+          "templateCode": "AUTO",
+          "includeConversationHistory": false,
+          "includePermissionBoundaries": true,
+          "promptFormat": "COMPACT"
+        },
+        "conversationHistory": [],
+        "permissionPolicy": {
+          "protectedPaths": [],
+          "requireConfirmationFor": []
+        },
+        "planConfirmation": {
+          "planId": "8ee61269-d680-4834-8a18-833f7f4656db",
+          "planningContext": null,
+          "answers": []
+        }
+      },
+      "status": 200,
+      "body": {
+        "requestId": "7124fd6a-bba3-4dbf-8604-789d719fb3b9",
+        "data": {
+          "optimizedPrompt": "请写一则通知，说明今晚22:00至23:00暂停服务，并提醒用户提前保存工作。通知正文须在80字以内，只输出通知正文，不要附加其他内容。",
+          "resultKind": "TEXT",
+          "contextReport": {
+            "customDescription": "",
+            "technologyStack": [],
+            "dependencies": [],
+            "directoryTree": [],
+            "fileSnippets": [],
+            "analysisStatus": "EMPTY",
+            "fileCoverage": [],
+            "warnings": [],
+            "redactions": [],
+            "analysisVersion": "v3"
+          },
+          "ambiguities": [],
+          "appliedConstraints": [],
+          "templateCode": "GENERAL",
+          "provider": {
+            "provider": "deepseek",
+            "model": "deepseek:deepseek-flash",
+            "mock": false,
+            "modelVersion": "DeepSeek-V4.1-Flash"
+          },
+          "latencyMs": 3413,
+          "warnings": [],
+          "evidenceCards": [],
+          "promptFormat": "COMPACT",
+          "constraintGroups": {
+            "platformMandatory": [],
+            "taskSpecific": [],
+            "additionalPermissions": []
+          },
+          "generationPipeline": "NATURAL",
+          "chainVersion": "core-expression-v1",
+          "framework": "TAG",
+          "recordId": "0f9c9818-e2a8-4a2f-ba9b-962755aac283",
+          "editRevision": 0,
+          "processing": {
+            "completedStages": [
+              "SCOPE_ANALYSIS",
+              "BODY_GENERATION"
+            ],
+            "originalPreserved": false
+          }
+        }
+      }
+    }
+  ],
+  "input": {
+    "rawPrompt": "请写一则80字以内的通知，说明今晚22:00至23:00暂停服务，提醒提前保存工作。只输出通知正文。",
+    "modelId": "deepseek:deepseek-flash",
+    "context": {
+      "customDescription": "",
+      "files": []
+    },
+    "enhancement": {
+      "templateCode": "AUTO",
+      "includeConversationHistory": false,
+      "includePermissionBoundaries": true,
+      "promptFormat": "COMPACT"
+    },
+    "conversationHistory": [],
+    "permissionPolicy": {
+      "protectedPaths": [],
+      "requireConfirmationFor": []
+    },
+    "planConfirmation": {
+      "planId": "8ee61269-d680-4834-8a18-833f7f4656db",
+      "planningContext": null,
+      "answers": []
+    }
+  },
+  "response": {
+    "route": "/api/v2/optimizations",
+    "input": {
+      "rawPrompt": "请写一则80字以内的通知，说明今晚22:00至23:00暂停服务，提醒提前保存工作。只输出通知正文。",
+      "modelId": "deepseek:deepseek-flash",
+      "context": {
+        "customDescription": "",
+        "files": []
+      },
+      "enhancement": {
+        "templateCode": "AUTO",
+        "includeConversationHistory": false,
+        "includePermissionBoundaries": true,
+        "promptFormat": "COMPACT"
+      },
+      "conversationHistory": [],
+      "permissionPolicy": {
+        "protectedPaths": [],
+        "requireConfirmationFor": []
+      },
+      "planConfirmation": {
+        "planId": "8ee61269-d680-4834-8a18-833f7f4656db",
+        "planningContext": null,
+        "answers": []
+      }
+    },
+    "status": 200,
+    "body": {
+      "requestId": "7124fd6a-bba3-4dbf-8604-789d719fb3b9",
+      "data": {
+        "optimizedPrompt": "请写一则通知，说明今晚22:00至23:00暂停服务，并提醒用户提前保存工作。通知正文须在80字以内，只输出通知正文，不要附加其他内容。",
+        "resultKind": "TEXT",
+        "contextReport": {
+          "customDescription": "",
+          "technologyStack": [],
+          "dependencies": [],
+          "directoryTree": [],
+          "fileSnippets": [],
+          "analysisStatus": "EMPTY",
+          "fileCoverage": [],
+          "warnings": [],
+          "redactions": [],
+          "analysisVersion": "v3"
+        },
+        "ambiguities": [],
+        "appliedConstraints": [],
+        "templateCode": "GENERAL",
+        "provider": {
+          "provider": "deepseek",
+          "model": "deepseek:deepseek-flash",
+          "mock": false,
+          "modelVersion": "DeepSeek-V4.1-Flash"
+        },
+        "latencyMs": 3413,
+        "warnings": [],
+        "evidenceCards": [],
+        "promptFormat": "COMPACT",
+        "constraintGroups": {
+          "platformMandatory": [],
+          "taskSpecific": [],
+          "additionalPermissions": []
+        },
+        "generationPipeline": "NATURAL",
+        "chainVersion": "core-expression-v1",
+        "framework": "TAG",
+        "recordId": "0f9c9818-e2a8-4a2f-ba9b-962755aac283",
+        "editRevision": 0,
+        "processing": {
+          "completedStages": [
+            "SCOPE_ANALYSIS",
+            "BODY_GENERATION"
+          ],
+          "originalPreserved": false
+        }
+      }
+    }
+  }
+}
