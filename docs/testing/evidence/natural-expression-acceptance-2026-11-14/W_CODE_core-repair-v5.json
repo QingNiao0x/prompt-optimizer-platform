@@ -1,0 +1,97 @@
+{
+  "id" : "W_CODE",
+  "success" : true,
+  "body" : "请在 src/occupationalInfo 的新增和导入功能中限制调查日期：调查日期不能晚于今日，允许填写今天。today 由调用方按业务时区传入合法 YYYY-MM-DD 日历日期；调查日期必须是真实公历日期，不能接受 2 月 30 日等无效日历值。沿用现有逐行导入反馈（错误仍按行号与消息记录），其他行为保持可用，保留现有函数签名与返回类型，不增加依赖或文件。只返回实际修改的文件，交付统一 JSON 对象 {\"files\":[{\"path\":\"实际修改的相对路径\",\"content\":\"完整文件正文\"}]}，且只限三个现有 mjs 业务文件。",
+  "task" : {
+    "goal" : "在 src/occupationalInfo 的新增和导入功能中限制调查日期不能晚于今日且允许今天，同时保持逐行导入反馈和其他行为可用",
+    "deliverable" : "统一 JSON 对象 {\"files\":[{\"path\":\"实际修改的相对路径\",\"content\":\"完整文件正文\"}]}，仅包含实际修改的文件",
+    "requirements" : [ {
+      "text" : "在新增和导入功能中限制调查日期不能晚于今日，允许填写今天",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请在@src/occupationalInfo新增和导入功能限制调查日期，不能晚于今日，允许填写今天。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "CONDITION" ]
+    }, {
+      "text" : "today 由调用方按业务时区传入合法 YYYY-MM-DD 日历日期",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "today由调用方按业务时区传入合法YYYY-MM-DD日历日期。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "调查日期必须是真实公历日期，不能接受 2 月 30 日等无效日历值",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "调查日期必须是真实公历日期，不能接受2月30日等无效日历值。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "沿用现有逐行导入反馈，其他行为保持可用",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "沿用现有逐行导入反馈，其他行为保持可用。",
+        "origin" : "ORIGINAL_REQUEST"
+      }, {
+        "sourceId" : "context.fileSnippets.3",
+        "quote" : "if (error) errors.push({ row: index + 1, message: error });",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "保留现有函数签名与返回类型，不增加依赖或文件",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "保留现有函数签名与返回类型。",
+        "origin" : "PROJECT_CONTEXT"
+      }, {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "只限三个现有mjs业务文件，不增加依赖或文件。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "只返回实际修改的文件，交付统一 JSON 对象，仅限三个现有 mjs 业务文件",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "只返回实际修改的文件。",
+        "origin" : "ORIGINAL_REQUEST"
+      }, {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "下游代码交付统一JSON对象{\"files\":[{\"path\":\"实际修改的相对路径\",\"content\":\"完整文件正文\"}]}，只限三个现有mjs业务文件，不增加依赖或文件。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "FORMAT" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请在 src/occupationalInfo 的新增和导入功能中限制调查日期：调查日期不能晚于今日，允许填写今天。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "today 由调用方按业务时区传入合法 YYYY-MM-DD 日历日期；" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "调查日期必须是真实公历日期，不能接受 2 月 30 日等无效日历值。" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "沿用现有逐行导入反馈（错误仍按行号与消息记录），其他行为保持可用，" ]
+      }, {
+        "index" : 4,
+        "quotes" : [ "保留现有函数签名与返回类型，不增加依赖或文件。" ]
+      }, {
+        "index" : 5,
+        "quotes" : [ "只返回实际修改的文件，交付统一 JSON 对象 {\"files\":[{\"path\":\"实际修改的相对路径\",\"content\":\"完整文件正文\"}]}，且只限三个现有 mjs 业务文件。" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

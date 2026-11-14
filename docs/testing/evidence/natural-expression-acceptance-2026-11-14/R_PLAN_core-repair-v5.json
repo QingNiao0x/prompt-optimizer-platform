@@ -1,0 +1,81 @@
+{
+  "id" : "R_PLAN",
+  "success" : true,
+  "body" : "请给客户写一则服务延期通知，只输出通知正文，不要附加标题说明、解释或其他内容。通知中不要承诺具体的新交付日期，可表述为新交付日期将在稍后确认；也不要承诺任何额外赔偿或补偿。除这两项外，其余措辞由你设计。",
+  "task" : {
+    "goal" : "给客户写一则服务延期通知，只输出正文",
+    "deliverable" : "服务延期通知正文（仅正文，不含其他内容）",
+    "requirements" : [ {
+      "text" : "给客户写一则服务延期通知，只输出正文",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "给客户写一则服务延期通知，只输出正文。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT", "FORMAT" ]
+    }, {
+      "text" : "新的交付日期由用户决定，当前不承诺具体日期",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "新的交付日期和补偿方案由我决定，请先确认这两项。",
+        "origin" : "ORIGINAL_REQUEST"
+      }, {
+        "sourceId" : "actualAnswers.0",
+        "quote" : "新交付日期由我稍后确认，当前不承诺具体日期。不承诺额外赔偿。",
+        "origin" : "BOUND_PLAN_ANSWER"
+      } ],
+      "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+    }, {
+      "text" : "补偿方案由用户决定，当前不承诺额外赔偿",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "新的交付日期和补偿方案由我决定，请先确认这两项。",
+        "origin" : "ORIGINAL_REQUEST"
+      }, {
+        "sourceId" : "actualAnswers.1",
+        "quote" : "新交付日期由我稍后确认，当前不承诺具体日期。不承诺额外赔偿。",
+        "origin" : "BOUND_PLAN_ANSWER"
+      } ],
+      "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+    }, {
+      "text" : "其他措辞由AI设计",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "其他措辞由AI设计。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ {
+      "issue" : "具体的新交付日期",
+      "impact" : "仅影响通知中交付日期的具体表述，当前按稍后确认处理",
+      "questionId" : "",
+      "kind" : "USER_INFORMATION"
+    }, {
+      "issue" : "具体补偿方案",
+      "impact" : "仅影响通知中补偿内容的表述，当前按不承诺额外赔偿处理",
+      "questionId" : "",
+      "kind" : "USER_INFORMATION"
+    } ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请给客户写一则服务延期通知，只输出通知正文，不要附加标题说明、解释或其他内容。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "通知中不要承诺具体的新交付日期，可表述为新交付日期将在稍后确认；" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "也不要承诺任何额外赔偿或补偿。" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "除这两项外，其余措辞由你设计。" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

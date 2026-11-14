@@ -1,0 +1,44 @@
+{
+  "id" : "W_QUERY",
+  "success" : true,
+  "body" : "请查询全球使用AI最多的职业/行业，并给出查询结果。结果应说明哪些职业或行业在全球范围内使用AI最多，并尽量提供支撑该判断的数据来源、统计口径和时间范围；若不同来源的排名或口径存在差异，请说明差异及各自依据。",
+  "task" : {
+    "goal" : "查询全球使用AI最多的职业/行业",
+    "deliverable" : "全球使用AI最多的职业/行业的查询结果",
+    "requirements" : [ {
+      "text" : "查询全球使用AI最多的职业/行业",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请帮我查询全球使用AI最多的职业/行业",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    } ],
+    "additions" : [ {
+      "text" : "结果应说明哪些职业或行业在全球范围内使用AI最多，并尽量提供支撑该判断的数据来源、统计口径和时间范围",
+      "benefit" : "使查询结果可核对、可比较，直接支撑原定查询交付",
+      "gap" : "原请求未说明结果需包含哪些可核对信息，导致“使用最多”的判断缺少来源与口径依据"
+    }, {
+      "text" : "若不同来源的排名或口径存在差异，请说明差异及各自依据",
+      "benefit" : "避免单一排名掩盖口径差异，使查询结果更完整可靠",
+      "gap" : "“使用最多”可能因统计口径不同而结论不一，原请求未要求处理来源差异"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请查询全球使用AI最多的职业/行业，并给出查询结果。" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "结果应说明哪些职业或行业在全球范围内使用AI最多，并尽量提供支撑该判断的数据来源、统计口径和时间范围" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "若不同来源的排名或口径存在差异，请说明差异及各自依据" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

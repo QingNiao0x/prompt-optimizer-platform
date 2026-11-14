@@ -1,0 +1,75 @@
+{
+  "id" : "S_WRITING",
+  "success" : true,
+  "body" : "帮我写一篇介绍社区图书交换活动的短文，面向附近居民，语气亲切，300字以内。日期和地址必须使用我提供的信息，不要自行编造；我尚未提供日期和地址，这两项先留空或标注为待补充，其余内容照常完成。",
+  "task" : {
+    "goal" : "写一篇面向附近居民的社区图书交换活动介绍短文",
+    "deliverable" : "语气亲切、300字以内的社区图书交换活动介绍短文，日期和地址使用用户提供的信息",
+    "requirements" : [ {
+      "text" : "写一篇介绍社区图书交换活动的短文，给附近居民看",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "帮我写篇介绍社区图书交换活动的短文，给附近居民看",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    }, {
+      "text" : "语气亲切",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "语气亲切，300字以内，日期和地址用我提供的信息，别自己编。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "300字以内",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "语气亲切，300字以内，日期和地址用我提供的信息，别自己编。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "LENGTH" ]
+    }, {
+      "text" : "日期和地址使用用户提供的信息，不得自行编造",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "语气亲切，300字以内，日期和地址用我提供的信息，别自己编。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "用户尚未提供日期和地址，这两项先留空或标注为待补充，其余内容照常完成",
+      "benefit" : "在不编造信息的前提下仍完成短文其余内容，并明确日期和地址的待补状态",
+      "gap" : "原文要求日期和地址使用用户提供的信息，但实际题答为空，未给出具体日期和地址；若不说明，执行者可能自行编造或停滞不写"
+    } ],
+    "openDecisions" : [ {
+      "issue" : "活动的具体日期和地址",
+      "impact" : "只影响短文中日期和地址两处内容，其余介绍内容可照常完成",
+      "questionId" : "",
+      "kind" : "USER_INFORMATION"
+    } ],
+    "review" : {
+      "inputReadiness" : "NEEDS_COMPLETION",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "帮我写一篇介绍社区图书交换活动的短文，面向附近居民" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "语气亲切" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "300字以内" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "日期和地址必须使用我提供的信息，不要自行编造" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "我尚未提供日期和地址，这两项先留空或标注为待补充，其余内容照常完成" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

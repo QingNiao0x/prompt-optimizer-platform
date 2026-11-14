@@ -1,0 +1,59 @@
+{
+  "id" : "S_OFFICE",
+  "success" : true,
+  "body" : "把下面这段会议记录整理成待办事项，只依据记录中已经明确说出的内容，不要给大家增加记录里没有的新任务。记录如下：小林说周三发测试包；小陈说拿到包再验收，具体哪天还没定。整理时，小陈的验收事项要保留“拿到测试包后再验收”这一前置条件，并如实注明验收的具体日期尚未确定，不要替其补定日期。只输出表格，不要输出表格以外的说明文字。",
+  "task" : {
+    "goal" : "把给定会议记录整理成待办事项，且不给大家增加记录之外的任务",
+    "deliverable" : "仅以表格形式呈现的待办事项",
+    "requirements" : [ {
+      "text" : "把这段会议记录整理成待办",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "把这段会议记录整理成待办",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    }, {
+      "text" : "别给大家加任务",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "别给大家加任务",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "只输出表格",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "只输出表格。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT" ]
+    } ],
+    "additions" : [ {
+      "text" : "小陈的验收事项保留“拿到测试包后再验收”的前置条件，并注明具体日期尚未确定",
+      "benefit" : "使表格中的待办准确反映记录中的条件与未定事项，避免擅自加任务或补日期",
+      "gap" : "原文含“拿到包再验收”的条件和“具体哪天还没定”的未知状态，若不明确写入待办，执行者可能补定日期或忽略前置条件"
+    } ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "把下面这段会议记录整理成待办事项" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "不要给大家增加记录里没有的新任务" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "只输出表格，不要输出表格以外的说明文字。" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "小陈的验收事项要保留“拿到测试包后再验收”这一前置条件，并如实注明验收的具体日期尚未确定，不要替其补定日期。" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

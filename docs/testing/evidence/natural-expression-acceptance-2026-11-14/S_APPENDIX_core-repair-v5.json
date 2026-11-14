@@ -1,0 +1,67 @@
+{
+  "id" : "S_APPENDIX",
+  "success" : true,
+  "body" : "请整理一份需求说明：在现有说明末尾增加附件区，附件区按参考材料 appendix-reference.md 的栏目及顺序组织，依次为项目清单、参与人员表、实施时间轴、依赖关系图。该参考材料只提供格式参考，其中的示例项目名和日期不能当作本次事实。附件区有实际数据就填充，没有数据的部分给出友好提示。只整理需求，不执行文档生成。",
+  "task" : {
+    "goal" : "整理需求说明，在现有说明末尾增加按参考材料栏目组织的附件区，有实际数据就填充、无数据部分友好提示，且不执行文档生成",
+    "deliverable" : "整理后的需求说明",
+    "requirements" : [ {
+      "text" : "在现有说明末尾增加附件区，并按参考材料的栏目组织",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请在现有说明末尾增加附件区，按参考材料的栏目组织。",
+        "origin" : "ORIGINAL_REQUEST"
+      }, {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "附件区依次包括：项目清单、参与人员表、实施时间轴、依赖关系图。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    }, {
+      "text" : "参考材料只是格式参考，示例项目名和日期不能当作本次事实",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "这里只是格式参考，示例项目名和日期不能当作本次事实。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "附件区有实际数据就填充，没有数据的部分友好提示",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "有实际数据就填充，没有数据的部分友好提示。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "只整理需求，不执行文档生成",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "只整理需求，不执行文档生成。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "在现有说明末尾增加附件区，附件区按参考材料 appendix-reference.md 的栏目及顺序组织，依次为项目清单、参与人员表、实施时间轴、依赖关系图。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "该参考材料只提供格式参考，其中的示例项目名和日期不能当作本次事实。" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "附件区有实际数据就填充，没有数据的部分给出友好提示。" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "只整理需求，不执行文档生成。" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

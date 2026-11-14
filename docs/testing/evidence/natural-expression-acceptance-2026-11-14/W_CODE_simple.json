@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "86680beb-864d-493c-be67-082ccd18befa",
+    "object": "chat.completion",
+    "created": 1794620662,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "请在 `src/occupationalInfo` 中为调查日期增加“不得晚于今日、允许填写今日”的校验，并确保新增与导入功能都生效。\n\n要求：\n1. 修改 `src/occupationalInfo/date.mjs` 中的 `validateSurveyDate(value, today)`：\n   - 保留现有函数签名与返回类型。\n   - 继续校验 `value` 必须是 `YYYY-MM-DD` 格式字符串。\n   - 必须校验 `value` 是真实公历日期，不能接受 `2024-02-30` 等无效日历值。\n   - 当 `value` 晚于 `today` 时返回明确错误信息；`value` 等于 `today` 时允许通过。\n   - `today` 由调用方按业务时区传入合法 `YYYY-MM-DD` 日历日期，函数内直接使用，不自行获取当前时间。\n2. `src/occupationalInfo/form.mjs` 的新增提交逻辑继续调用 `validateSurveyDate`，日期晚于今日时返回 `{ ok: false, error }`，其他行为保持不变。\n3. `src/occupationalInfo/import.mjs` 的逐行导入继续沿用现有反馈结构：日期不合法的行进入 `errors`，包含行号与错误信息；合法行进入 `accepted`。不得因单行日期错误中断其他行导入，其他行为保持可用。\n4. 不增加依赖或文件，只修改 `src/occupationalInfo/date.mjs`、`src/occupationalInfo/form.mjs`、`src/occupationalInfo/import.mjs` 中实际需要修改的文件。\n5. 只返回实际修改的文件，交付统一 JSON 对象：`{\"files\":[{\"path\":\"实际修改的相对路径\",\"content\":\"完整文件正文\"}]}`。"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1120,
+      "completion_tokens": 392,
+      "total_tokens": 1512,
+      "prompt_tokens_details": {
+        "cached_tokens": 896
+      },
+      "prompt_cache_hit_tokens": 896,
+      "prompt_cache_miss_tokens": 224
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

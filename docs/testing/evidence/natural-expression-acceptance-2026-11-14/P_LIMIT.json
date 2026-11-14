@@ -1,0 +1,32 @@
+{
+  "success" : true,
+  "plan" : {
+    "summary" : "用户要求设计附件多选上传，并明确要求先确认10MB限制是按单个文件还是所有文件合计计算；该关键规则尚未回答，需先向用户确认。",
+    "questions" : [ {
+      "id" : "sizeLimitScope",
+      "question" : "10MB大小限制是按单个文件计算，还是按所有已选文件合计计算？",
+      "hint" : "该口径决定多选附件的校验规则与超限提示方式，是用户明确要求先确认的事项。",
+      "type" : "SINGLE_CHOICE",
+      "options" : [ {
+        "id" : "perFile",
+        "label" : "按单文件计算",
+        "description" : "每个附件文件各自不超过10MB，多选时合计可超过10MB",
+        "answer" : "10MB限制按单个文件计算：每个文件各自不超过10MB，多选合计可超过10MB",
+        "recommended" : false,
+        "recommendationReason" : ""
+      }, {
+        "id" : "total",
+        "label" : "按所有文件合计计算",
+        "description" : "所有已选附件文件大小总和不超过10MB",
+        "answer" : "10MB限制按所有已选文件合计计算：全部附件大小总和不超过10MB",
+        "recommended" : false,
+        "recommendationReason" : ""
+      } ],
+      "examples" : [ ],
+      "allowCustomAnswer" : true
+    } ],
+    "provider" : "legacy",
+    "model" : "deepseek-flash",
+    "mock" : false
+  }
+}

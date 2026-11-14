@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "d86cf295-7650-48bf-ab8c-d0012f54180e",
+    "object": "chat.completion",
+    "created": 1794620676,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "请在现有说明的末尾新增一个“附件区”，并严格按照参考材料中的栏目及顺序组织：项目清单、参与人员表、实施时间轴、依赖关系图。\n\n要求：\n1. 仅整理和补充需求说明，不执行文档生成，不创建实际附件内容。\n2. 附件区只保留上述四个栏目，顺序不得调整。\n3. 对每个栏目：\n   - 若已有实际数据，按对应栏目填入；\n   - 若没有实际数据，给出友好、明确的提示，说明该栏目待补充，不要编造数据。\n4. 参考材料仅用于格式和栏目顺序参考，其中示例项目名、日期等不得作为本次事实使用。\n5. 输出应清楚、自然、可执行，便于后续按此需求生成文档。"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 257,
+      "completion_tokens": 165,
+      "total_tokens": 422,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 257
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "668c4bc0-f5fe-4509-9222-839c6c3f03c2",
+    "object": "chat.completion",
+    "created": 1794620665,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "请帮我起草一则面向客户的服务延期通知，只输出通知正文，不要标题、称呼、落款或其他额外说明。\n\n写作前请先确认以下两项信息，并严格以我确认后的内容为准：\n1. 新的交付日期：目前我尚未确定，请不要自行编造或承诺具体日期。正文中请用“新的交付日期将另行确认”或类似表述处理，不要出现任何具体日期或时间点。\n2. 补偿方案：目前我不承诺额外赔偿。正文中请明确说明“本次延期不涉及额外补偿”或语义一致的表述，不要虚构折扣、赠品、减免、积分等补偿内容。\n\n其他要求：\n- 语气正式、诚恳、简洁，体现对客户的尊重和歉意，但不过度承诺。\n- 说明服务延期的事实，表达歉意，告知新交付日期将另行确认，并明确不承诺额外赔偿。\n- 可补充有用的内容：说明我会持续同步进展、客户如有疑问可随时联系我，以及感谢客户的理解与耐心。\n- 不要编造延期原因、具体时间、赔偿金额或任何未经我确认的信息。\n- 正文控制在自然可执行的篇幅内，直接可发送给客户。"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 278,
+      "completion_tokens": 248,
+      "total_tokens": 526,
+      "prompt_tokens_details": {
+        "cached_tokens": 128
+      },
+      "prompt_cache_hit_tokens": 128,
+      "prompt_cache_miss_tokens": 150
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "id" : "W_QUERY",
+  "success" : true,
+  "body" : "请查询全球使用AI最多的职业或行业，并给出查询结果。结果应说明哪些职业或行业在全球范围内使用AI最多，并尽量提供支持该判断的数据或来源依据。",
+  "task" : {
+    "goal" : "查询全球使用AI最多的职业/行业",
+    "deliverable" : "全球使用AI最多的职业/行业的查询结果",
+    "requirements" : [ {
+      "text" : "查询全球使用AI最多的职业/行业",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请帮我查询全球使用AI最多的职业/行业",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    } ],
+    "additions" : [ {
+      "text" : "结果应说明哪些职业或行业在全球范围内使用AI最多，并尽量提供支持该判断的数据或来源依据",
+      "benefit" : "帮助执行者交付可核验、可直接使用的查询结果",
+      "gap" : "原文只说明查询对象，未说明结果需包含哪些判断依据，可能影响结果的可核验性"
+    } ],
+    "openDecisions" : [ {
+      "issue" : "“使用AI最多”的衡量口径（如使用率、使用人数、使用频次或投入规模）未指定",
+      "impact" : "只影响结果排序与数据选择的具体呈现方式，不影响查询动作本身",
+      "questionId" : "",
+      "kind" : "USER_INFORMATION"
+    } ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请查询全球使用AI最多的职业或行业，并给出查询结果。" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "结果应说明哪些职业或行业在全球范围内使用AI最多，并尽量提供支持该判断的数据或来源依据。" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

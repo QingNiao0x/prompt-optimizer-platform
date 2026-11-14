@@ -1,0 +1,53 @@
+{
+  "date": "2026-11-14",
+  "maximum": 100,
+  "phaseLimits": {
+    "generation": 52,
+    "works": 24,
+    "holdout": 8,
+    "workflow": 16
+  },
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "thinking": "disabled",
+  "maxTokens": 10000,
+  "arms": [
+    "raw",
+    "simple",
+    "core-repair-v5",
+    "core-expression-v1"
+  ],
+  "qualityRetries": 0,
+  "works": [
+    "W_CODE",
+    "R_PLAN",
+    "S_APPENDIX"
+  ],
+  "repetitions": 2,
+  "review": "开发助手逐项审阅提示词，未进行真人或专家评阅。先查要求、事实、条件与授权，再指出表达改善和有用补全。严重错误按对应能力阻断。执行作品按风险抽查，允许充分需求正确保留。",
+  "adoption": "在已验证范围内有具体表达改善或有用补全，相关回归及风险抽查无新增严重退步，方可采用。未证明执行收益须明确说明。若不能采用，核实当前默认工作台并记录原因。",
+  "outboundScope": "既有及本次列出的合成需求、合成材料、真实合成题答和派生结果，不含真实业务源码或凭据。",
+  "files": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptExpressionInstructions.java",
+      "sha256": "7069f3b960aade8d9aa04263034664c33a13c65e91284b00ef9e1092e99fa843"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptProtocolRepairInstructions.java",
+      "sha256": "85c21bd6383603e775e1b2f2332a976f4a46f45a5e0321bd12436b24b8f785c4"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "22c8a67a36c88211c8987e9e7b36cd1ab68e1a0f0ec8fde13c24103541701def"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/NaturalPromptPreparationSourceLabels.java",
+      "sha256": "9fc0c6af3c8011c2e486d9fcc9b7cde6571e4f006bbbe30ef4e4fa959d8732e5"
+    },
+    {
+      "path": "docs/testing/cases/natural-intent-2026-11-14/cases.json",
+      "sha256": "53388bf5d7ce4aa889b3a63a7510da693a9e3412bcde6d028522fc23fab440b7"
+    }
+  ]
+}

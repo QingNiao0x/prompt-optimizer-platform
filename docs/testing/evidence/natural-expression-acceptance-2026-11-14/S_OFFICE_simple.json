@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "56348d4a-3dc8-4ff9-89e2-53478200bc6e",
+    "object": "chat.completion",
+    "created": 1794620673,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "把下面这段会议记录整理成待办事项表格，只输出表格，不要添加任何额外任务或自行补充负责人、截止时间。\n\n会议记录：\n小林说周三发测试包；小陈说拿到包再验收，具体哪天还没定。\n\n要求：\n1. 只输出表格，不要输出表格以外的说明文字。\n2. 表格列建议为：待办事项、负责人、时间/依赖条件、备注。\n3. 严格保留原意：小林负责周三发测试包；小陈负责在拿到测试包后验收，验收具体日期未定。\n4. 不要给大家加任务，不要新增原记录中没有的事项、负责人或时间承诺。\n5. 对“具体哪天还没定”的情况，在时间/依赖条件或备注中如实写明“待定”或“拿到测试包后再定”。"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 187,
+      "completion_tokens": 174,
+      "total_tokens": 361,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 187
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

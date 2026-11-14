@@ -1,0 +1,74 @@
+{
+  "id" : "S_APPENDIX",
+  "success" : true,
+  "body" : "请在现有说明末尾增加附件区，并按参考材料中的栏目及顺序组织：项目清单、参与人员表、实施时间轴、依赖关系图。附件区中，有实际数据的内容就填充；没有数据的部分给出友好提示。参考材料仅用于格式参考，其中的示例项目名和日期不能当作本次事实。只整理上述需求，不执行文档生成。",
+  "task" : {
+    "goal" : "整理在现有说明末尾增加附件区的需求，明确栏目组织、数据填充与缺失提示规则，不执行文档生成。",
+    "deliverable" : "整理出的需求说明",
+    "requirements" : [ {
+      "text" : "在现有说明末尾增加附件区，按参考材料的栏目组织。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "请在现有说明末尾增加附件区，按参考材料的栏目组织。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT", "CONDITION" ]
+    }, {
+      "text" : "附件区依次包括项目清单、参与人员表、实施时间轴、依赖关系图。",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "附件区依次包括：项目清单、参与人员表、实施时间轴、依赖关系图。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "OBJECT", "FORMAT" ]
+    }, {
+      "text" : "有实际数据就填充，没有数据的部分友好提示。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "有实际数据就填充，没有数据的部分友好提示。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION", "FORMAT" ]
+    }, {
+      "text" : "参考材料只是格式参考，示例项目名和日期不能当作本次事实。",
+      "evidence" : [ {
+        "sourceId" : "context.fileSnippets.0",
+        "quote" : "这里只是格式参考，示例项目名和日期不能当作本次事实。",
+        "origin" : "PROJECT_CONTEXT"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "只整理需求，不执行文档生成。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "只整理需求，不执行文档生成。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请在现有说明末尾增加附件区，并按参考材料中的栏目及顺序组织" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "项目清单、参与人员表、实施时间轴、依赖关系图" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "有实际数据的内容就填充；没有数据的部分给出友好提示" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "参考材料仅用于格式参考，其中的示例项目名和日期不能当作本次事实" ]
+      }, {
+        "index" : 4,
+        "quotes" : [ "只整理上述需求，不执行文档生成" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

@@ -1,0 +1,18 @@
+{
+  "success" : true,
+  "plan" : {
+    "summary" : "用户要求把“这段文字”整理清楚并保留原意，措辞和顺序由AI设计；但当前输入未包含待整理的文字本身，需确认该材料。",
+    "questions" : [ {
+      "id" : "sourceText",
+      "question" : "请提供需要整理的那段文字原文。",
+      "hint" : "当前输入只有整理要求，没有待整理的正文，缺少原文无法产出保留原意的整理结果。",
+      "type" : "FREE_TEXT",
+      "options" : [ ],
+      "examples" : [ ],
+      "allowCustomAnswer" : true
+    } ],
+    "provider" : "legacy",
+    "model" : "deepseek-flash",
+    "mock" : false
+  }
+}

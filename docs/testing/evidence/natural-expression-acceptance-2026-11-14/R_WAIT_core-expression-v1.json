@@ -1,0 +1,63 @@
+{
+  "id" : "R_WAIT",
+  "success" : true,
+  "body" : "请先阅读附件 project.txt，熟悉该项目的模块关系；根据现有材料，项目包含采集、查询和导出模块，采集保存后供查询，导出读取查询结果。理解后请等我安排具体任务，不要修改文件，也不用写项目说明。",
+  "task" : {
+    "goal" : "阅读附件并熟悉项目的模块关系，理解后等待用户安排具体任务",
+    "deliverable" : "",
+    "requirements" : [ {
+      "text" : "先阅读附件并熟悉项目的模块关系",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "先阅读附件并熟悉项目的模块关系，理解后等我安排具体任务",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    }, {
+      "text" : "理解后等待用户安排具体任务",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "理解后等我安排具体任务",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "不要改文件",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "不要改文件",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "不用写项目说明",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "也不用写项目说明",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请先阅读附件 project.txt，熟悉该项目的模块关系" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "理解后请等我安排具体任务" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "不要修改文件" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "也不用写项目说明" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

@@ -1,0 +1,68 @@
+{
+  "id" : "S_OFFICE",
+  "success" : true,
+  "body" : "把下面这段会议记录整理成待办事项，只输出表格，不要输出表格以外的任何内容。整理时不要给大家增加记录中没有的任务。记录内容：小林说周三发测试包；小陈说拿到包再验收，具体哪天还没定。",
+  "task" : {
+    "goal" : "把会议记录整理成待办，且不给大家增加任务",
+    "deliverable" : "仅包含待办事项的表格",
+    "requirements" : [ {
+      "text" : "把这段会议记录整理成待办",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "把这段会议记录整理成待办",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL" ]
+    }, {
+      "text" : "别给大家加任务",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "别给大家加任务",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    }, {
+      "text" : "只输出表格",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "只输出表格",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT" ]
+    }, {
+      "text" : "保留记录中的事实：小林周三发测试包；小陈拿到包再验收，验收具体日期未定",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "小林说周三发测试包；小陈说拿到包再验收，具体哪天还没定",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "OBJECT", "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ {
+      "issue" : "小陈验收的具体日期尚未确定",
+      "impact" : "仅影响验收待办的时间栏，可标注为未定，不影响其余待办整理",
+      "questionId" : "",
+      "kind" : "USER_INFORMATION"
+    } ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "把下面这段会议记录整理成待办事项" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "不要给大家增加记录中没有的任务" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "只输出表格，不要输出表格以外的任何内容" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "小林说周三发测试包；小陈说拿到包再验收，具体哪天还没定" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

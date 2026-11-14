@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "23e8228c-dbf5-4823-b9f1-4670530faba1",
+    "object": "chat.completion",
+    "created": 1794621202,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "{\"files\":[{\"path\":\"src/occupationalInfo/date.mjs\",\"content\":\"function isValidCalendarDate(value) {\\n  const [year, month, day] = value.split('-').map(Number);\\n  if (month < 1 || month > 12) return false;\\n  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();\\n  return day >= 1 && day <= daysInMonth;\\n}\\n\\nexport function validateSurveyDate(value, today) {\\n  if (typeof value !== 'string' || !/^\\\\d{4}-\\\\d{2}-\\\\d{2}$/.test(value)) return '日期格式错误';\\n  if (!isValidCalendarDate(value)) return '日期无效';\\n  if (value > today) return '调查日期不能晚于今日';\\n  return '';\\n}\\n\"}]}"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1067,
+      "completion_tokens": 201,
+      "total_tokens": 1268,
+      "prompt_tokens_details": {
+        "cached_tokens": 896
+      },
+      "prompt_cache_hit_tokens": 896,
+      "prompt_cache_miss_tokens": 171
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

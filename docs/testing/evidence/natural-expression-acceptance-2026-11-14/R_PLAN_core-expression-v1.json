@@ -1,0 +1,80 @@
+{
+  "id" : "R_PLAN",
+  "success" : true,
+  "body" : "请给客户写一则服务延期通知，只输出通知正文，不要附加标题说明、解释或其他内容。\n\n关于新的交付日期和补偿方案：新交付日期由我稍后确认，当前不承诺具体日期；不承诺额外赔偿。通知中不要编造或承诺具体交付日期，也不要承诺任何额外赔偿。\n\n除上述两项外，其余措辞由你设计。",
+  "task" : {
+    "goal" : "给客户写一则服务延期通知，只输出正文。",
+    "deliverable" : "服务延期通知正文（仅正文）。",
+    "requirements" : [ {
+      "text" : "给客户写一则服务延期通知，只输出正文。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "给客户写一则服务延期通知，只输出正文。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT", "FORMAT" ]
+    }, {
+      "text" : "新的交付日期由用户稍后确认，当前不承诺具体日期。",
+      "evidence" : [ {
+        "sourceId" : "actualAnswers.0",
+        "quote" : "新交付日期由我稍后确认，当前不承诺具体日期。不承诺额外赔偿。",
+        "origin" : "BOUND_PLAN_ANSWER"
+      } ],
+      "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+    }, {
+      "text" : "不承诺额外赔偿。",
+      "evidence" : [ {
+        "sourceId" : "actualAnswers.1",
+        "quote" : "新交付日期由我稍后确认，当前不承诺具体日期。不承诺额外赔偿。",
+        "origin" : "BOUND_PLAN_ANSWER"
+      } ],
+      "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+    }, {
+      "text" : "其他措辞由AI设计。",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "其他措辞由AI设计。",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION" ]
+    } ],
+    "additions" : [ {
+      "text" : "通知中不要编造或承诺具体交付日期，也不要承诺任何额外赔偿。",
+      "benefit" : "确保正文不出现未经用户确认的交付日期或赔偿承诺，避免对客户作出越权承诺。",
+      "gap" : "原回答只说明当前不承诺，未明确禁止在正文中自行填入日期或赔偿内容，存在执行者补造承诺的风险。"
+    } ],
+    "openDecisions" : [ {
+      "issue" : "新的交付日期具体是哪一天",
+      "impact" : "仅影响通知中交付日期相关表述；当前正文应不承诺具体日期。",
+      "questionId" : "",
+      "kind" : "USER_INFORMATION"
+    }, {
+      "issue" : "补偿方案的具体内容",
+      "impact" : "仅影响通知中补偿相关表述；当前正文应不承诺额外赔偿。",
+      "questionId" : "",
+      "kind" : "USER_INFORMATION"
+    } ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请给客户写一则服务延期通知，只输出通知正文，不要附加标题说明、解释或其他内容。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "新交付日期由我稍后确认，当前不承诺具体日期；不承诺额外赔偿。" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "新交付日期由我稍后确认，当前不承诺具体日期；不承诺额外赔偿。" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "除上述两项外，其余措辞由你设计。" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "通知中不要编造或承诺具体交付日期，也不要承诺任何额外赔偿。" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

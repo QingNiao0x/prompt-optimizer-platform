@@ -1,0 +1,31 @@
+{
+  "status": 200,
+  "body": {
+    "id": "24738a2c-f209-4937-b1f8-1c3c34876b57",
+    "object": "chat.completion",
+    "created": 1794620668,
+    "model": "deepseek-flash",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "根据附件 log.txt 编写一份失败原因分析报告，要求如下：\n\n1. 只输出报告正文，不执行任何修复操作，也不提供修复代码或命令。\n2. 报告需明确区分“已证实原因”和“待验证线索”两个部分。\n3. 已证实原因应基于附件中可直接确认的事实，例如：两次上传成功后保存均返回 409；服务日志记录 optimistic_version_mismatch。\n4. 待验证线索应列出尚未确认、需要进一步排查的方向，例如：客户端重试代码尚未读取，无法判断重试行为是否导致版本冲突；409 与 optimistic_version_mismatch 的具体触发条件尚未完全定位；上传成功与保存失败之间的时序关系需进一步核实。\n5. 报告结构建议包含：背景/现象描述、已证实原因、待验证线索、结论或下一步排查建议（仅建议排查方向，不执行修复）。\n6. 语言清楚、自然、可执行，避免空泛表述；所有判断需与附件内容一致，不臆造未提供的信息。"
+        },
+        "logprobs": null,
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 302,
+      "completion_tokens": 221,
+      "total_tokens": 523,
+      "prompt_tokens_details": {
+        "cached_tokens": 128
+      },
+      "prompt_cache_hit_tokens": 128,
+      "prompt_cache_miss_tokens": 174
+    },
+    "system_fingerprint": "bc19ba97cbe016479903222bb1578db6"
+  }
+}

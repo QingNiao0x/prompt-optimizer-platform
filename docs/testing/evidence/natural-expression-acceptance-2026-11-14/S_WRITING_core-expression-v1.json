@@ -1,0 +1,75 @@
+{
+  "id" : "S_WRITING",
+  "success" : true,
+  "body" : "帮我写一篇介绍社区图书交换活动的短文，面向附近居民阅读。语气要亲切，全文控制在300字以内。活动日期和地址必须使用我提供的信息，不要自行编造；如果我尚未提供日期或地址，请先向我确认，不要用虚构内容代替。",
+  "task" : {
+    "goal" : "写一篇面向附近居民的社区图书交换活动介绍短文",
+    "deliverable" : "语气亲切、300字以内的社区图书交换活动介绍短文",
+    "requirements" : [ {
+      "text" : "写一篇介绍社区图书交换活动的短文，给附近居民看",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "帮我写篇介绍社区图书交换活动的短文，给附近居民看",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    }, {
+      "text" : "语气亲切",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "语气亲切",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "FORMAT" ]
+    }, {
+      "text" : "300字以内",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "300字以内",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "LENGTH" ]
+    }, {
+      "text" : "日期和地址用用户提供的信息，别自己编",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "日期和地址用我提供的信息，别自己编",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "CONDITION", "USER_CONFIRMATION" ]
+    } ],
+    "additions" : [ {
+      "text" : "若用户尚未提供日期或地址，先向用户确认，不以虚构内容代替",
+      "benefit" : "避免执行者自行编造日期或地址，确保短文中的关键信息真实可用",
+      "gap" : "原文要求日期和地址使用用户提供的信息且不得编造，但本次输入未包含具体日期和地址，缺少对信息缺失时如何处理的动作说明"
+    } ],
+    "openDecisions" : [ {
+      "issue" : "活动的具体日期和地址尚未提供",
+      "impact" : "只影响短文中日期和地址两处内容的填写，其余介绍内容可正常撰写",
+      "questionId" : "",
+      "kind" : "USER_INFORMATION"
+    } ],
+    "review" : {
+      "inputReadiness" : "NEEDS_COMPLETION",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "帮我写一篇介绍社区图书交换活动的短文，面向附近居民阅读。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "语气要亲切" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "全文控制在300字以内" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "活动日期和地址必须使用我提供的信息，不要自行编造", "如果我尚未提供日期或地址，请先向我确认，不要用虚构内容代替。" ]
+      } ],
+      "additionCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "如果我尚未提供日期或地址，请先向我确认，不要用虚构内容代替。" ]
+      } ],
+      "planImpacts" : [ ]
+    }
+  },
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

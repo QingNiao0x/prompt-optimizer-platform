@@ -1,0 +1,63 @@
+{
+  "id" : "S_QUERY",
+  "success" : true,
+  "body" : "请帮我比较几种适合小团队一起写文档的工具。对每种工具，说明它的长处，以及团队成员如何通过它协作写文档；最后在比较的基础上给出选择建议。",
+  "task" : {
+    "goal" : "比较几种适合小团队一起写文档的工具，说明各自的长处和协作方式，并给出选择建议",
+    "deliverable" : "几种适合小团队协作写文档的工具比较，包含各自长处、协作方式和最终选择建议",
+    "requirements" : [ {
+      "text" : "比较几种适合小团队一起写文档的工具",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "帮我比较几种适合小团队一起写文档的工具",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "OBJECT" ]
+    }, {
+      "text" : "说明各工具的长处",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "我想知道各有什么长处",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL" ]
+    }, {
+      "text" : "说明各工具的协作方式",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "怎么协作",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL" ]
+    }, {
+      "text" : "最后给出选择建议",
+      "evidence" : [ {
+        "sourceId" : "rawPrompt",
+        "quote" : "最后给点选择建议",
+        "origin" : "ORIGINAL_REQUEST"
+      } ],
+      "dimensions" : [ "GOAL", "CONDITION" ]
+    } ],
+    "additions" : [ ],
+    "openDecisions" : [ ],
+    "review" : {
+      "inputReadiness" : "SUFFICIENT",
+      "requirementCoverage" : [ {
+        "index" : 0,
+        "quotes" : [ "请帮我比较几种适合小团队一起写文档的工具。" ]
+      }, {
+        "index" : 1,
+        "quotes" : [ "说明它的长处" ]
+      }, {
+        "index" : 2,
+        "quotes" : [ "以及团队成员如何通过它协作写文档" ]
+      }, {
+        "index" : 3,
+        "quotes" : [ "最后在比较的基础上给出选择建议。" ]
+      } ],
+      "additionCoverage" : [ ],
+      "planImpacts" : [ ]
+    }
+  },
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

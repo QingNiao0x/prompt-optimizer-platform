@@ -1,0 +1,88 @@
+{
+  "reviewer": "开发助手基于原始输入与完整输出审阅，非独立真人评阅",
+  "results": [
+    {
+      "caseId": "W_QUERY",
+      "outcome": "正确保留",
+      "quote": "请查询全球使用AI最多的职业或行业，并给出查询结果。",
+      "reason": "保留目标并减少口径展开，未增加应用、发现或比较内容。",
+      "limitations": "原需求完整；补全收益未证明。",
+      "candidateFile": "W_QUERY_core-expression-v1.json",
+      "baselineFile": "W_QUERY_core-repair-v5.json"
+    },
+    {
+      "caseId": "W_CODE",
+      "outcome": "有用补全",
+      "quote": "today 由调用方按业务时区传入合法 YYYY-MM-DD 日历日期",
+      "reason": "来源材料中真实日历、调用约定与导入范围进入正文。",
+      "limitations": "作品两次功能通过但多交未修改文件，增加交付负担。",
+      "candidateFile": "W_CODE_core-expression-v1.json",
+      "baselineFile": "W_CODE_core-repair-v5.json"
+    },
+    {
+      "caseId": "R_PLAN",
+      "outcome": "表达改善",
+      "quote": "新交付日期由我稍后确认，当前不承诺具体日期；不承诺额外赔偿。",
+      "reason": "原文先确认要求与真实回答合并，不再次安排提问。",
+      "limitations": "候选下游两次将不承诺写为无法提供，并新增延期原因或评估事实。",
+      "candidateFile": "R_PLAN_core-expression-v1.json",
+      "baselineFile": "R_PLAN_core-repair-v5.json"
+    },
+    {
+      "caseId": "R_WAIT",
+      "outcome": "有用补全",
+      "quote": "采集保存后供查询，导出读取查询结果",
+      "reason": "融合真实材料关系并保留阅读等待、不改文件、不写说明。",
+      "limitations": "仅提示词审阅，未执行等待任务。",
+      "candidateFile": "R_WAIT_core-expression-v1.json",
+      "baselineFile": "R_WAIT_core-repair-v5.json"
+    },
+    {
+      "caseId": "R_REPORT",
+      "outcome": "表达改善",
+      "quote": "现有记录显示：两次上传成功后，保存均返回 409",
+      "reason": "事实和待验证线索分清，保留明确报告与不执行修复。",
+      "limitations": "只呈现分析结论可能缩窄报告表达，实际作品未抽查。",
+      "candidateFile": "R_REPORT_core-expression-v1.json",
+      "baselineFile": "R_REPORT_core-repair-v5.json"
+    },
+    {
+      "caseId": "S_WRITING",
+      "outcome": "退步",
+      "quote": "如果我尚未提供日期或地址，请先向我确认",
+      "reason": "新增先确认步骤把局部未知转为先决条件。",
+      "limitations": "相同输入两份作品都只追问，无短文。v5另有把未提供写成已确定缺失的独立错误。",
+      "candidateFile": "S_WRITING_core-expression-v1.json",
+      "baselineFile": "S_WRITING_core-repair-v5.json"
+    },
+    {
+      "caseId": "S_OFFICE",
+      "outcome": "表达改善",
+      "quote": "保留“拿到测试包后再验收”这一前置条件",
+      "reason": "原有依赖和待定日期得到突出，表格和任务归属保留。",
+      "limitations": "未安排该题作品调用。",
+      "candidateFile": "S_OFFICE_core-expression-v1.json",
+      "baselineFile": "S_OFFICE_core-repair-v5.json"
+    },
+    {
+      "caseId": "S_QUERY",
+      "outcome": "正确保留",
+      "quote": "对每种工具，说明它的长处，以及团队成员如何通过它协作写文档",
+      "reason": "表达更整齐，具体补充有限。",
+      "limitations": "原始目标已有，不能据此宣称实质补全。",
+      "candidateFile": "S_QUERY_core-expression-v1.json",
+      "baselineFile": "S_QUERY_core-repair-v5.json"
+    },
+    {
+      "caseId": "S_APPENDIX",
+      "outcome": "有用补全",
+      "quote": "项目清单、参与人员表、实施时间轴、依赖关系图",
+      "reason": "四项栏目顺序、格式参考身份及局部缺数据分支明确。",
+      "limitations": "此题明确只整理需求，没有验证生成最终附件。",
+      "candidateFile": "S_APPENDIX_core-expression-v1.json",
+      "baselineFile": "S_APPENDIX_core-repair-v5.json"
+    }
+  ],
+  "decision": "不采用core-expression-v1为默认；写作先决条件错误有对应作品退步，工程与表达改善分别保留。",
+  "planCaseCorrection": "P_CLEAR缺少待整理正文，追问原文有合理依据，不作为零问题Plan失败。普通工作台使用材料完整的新题核实零问题路径。"
+}
