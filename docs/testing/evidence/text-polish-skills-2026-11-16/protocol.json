@@ -1,0 +1,820 @@
+{
+  "maxActualCalls": 60,
+  "phaseCaps": {
+    "pilot": 16,
+    "expand": 44
+  },
+  "jobs": [
+    {
+      "id": "p-zh-digital-text-polish-auto-v1",
+      "phase": "pilot",
+      "sample": "p-zh-digital",
+      "language": "ZH",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "以数字化赋能高质量发展：新时代背景下的实践路径与价值意蕴\n\n在当今快速发展的数字化时代，数字化转型已成为推动组织高质量发展的重要引擎。首先，要坚持需求导向，以用户价值为中心，持续优化业务流程，构建从感知、分析到决策、执行的闭环体系。其次，要强化数据要素赋能，打通信息孤岛，推动多维度、全链条、深层次的协同融合，不断提升资源配置效率和精细化治理水平。再次，要完善长效机制，明确目标抓手，压实主体责任，形成上下联动、内外协同、持续迭代的良好生态。\n\n与此同时，还应注重技术能力与组织能力的双向提升，既要以创新驱动增强发展动能，也要以规范治理守住安全底线，在开放合作中拓展应用场景，在实践探索中沉淀可复制、可推广的经验做法。通过场景化落地、项目化推进、清单化管理，进一步把数字化优势转化为发展优势、竞争优势和服务优势。\n\n综上所述，数字化转型不是一蹴而就的短期任务，而是一项系统性、长期性、基础性工程。唯有坚持问题导向、目标导向和结果导向相统一，持续发力、久久为功，才能不断释放数字动能，为高质量发展提供坚实支撑和有力保障。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "面向非专业读者，减少套话，保留标题、三段结构、全部核心观点及逻辑顺序。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "p-zh-digital-text-polish-v3",
+      "phase": "pilot",
+      "sample": "p-zh-digital",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "以数字化赋能高质量发展：新时代背景下的实践路径与价值意蕴\n\n在当今快速发展的数字化时代，数字化转型已成为推动组织高质量发展的重要引擎。首先，要坚持需求导向，以用户价值为中心，持续优化业务流程，构建从感知、分析到决策、执行的闭环体系。其次，要强化数据要素赋能，打通信息孤岛，推动多维度、全链条、深层次的协同融合，不断提升资源配置效率和精细化治理水平。再次，要完善长效机制，明确目标抓手，压实主体责任，形成上下联动、内外协同、持续迭代的良好生态。\n\n与此同时，还应注重技术能力与组织能力的双向提升，既要以创新驱动增强发展动能，也要以规范治理守住安全底线，在开放合作中拓展应用场景，在实践探索中沉淀可复制、可推广的经验做法。通过场景化落地、项目化推进、清单化管理，进一步把数字化优势转化为发展优势、竞争优势和服务优势。\n\n综上所述，数字化转型不是一蹴而就的短期任务，而是一项系统性、长期性、基础性工程。唯有坚持问题导向、目标导向和结果导向相统一，持续发力、久久为功，才能不断释放数字动能，为高质量发展提供坚实支撑和有力保障。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "面向非专业读者，减少套话，保留标题、三段结构、全部核心观点及逻辑顺序。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "p-zh-service-text-polish-v3",
+      "phase": "pilot",
+      "sample": "p-zh-service",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "p-zh-service-text-polish-auto-v1",
+      "phase": "pilot",
+      "sample": "p-zh-service",
+      "language": "ZH",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "p-en-conditions-text-polish-auto-v1",
+      "phase": "pilot",
+      "sample": "p-en-conditions",
+      "language": "EN",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "Service update\n\nIn order to protect your account and make the support process easier to use, we plan to introduce an optional recovery check in June. The check may be offered only after you confirm your contact address. Staff should respond within two business days, but a response does not guarantee that access will be restored. Accounts under review remain excluded. We will continue to improve the process to reduce repeated requests and improve the support experience.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "p-en-conditions-text-polish-v3",
+      "phase": "pilot",
+      "sample": "p-en-conditions",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "Service update\n\nIn order to protect your account and make the support process easier to use, we plan to introduce an optional recovery check in June. The check may be offered only after you confirm your contact address. Staff should respond within two business days, but a response does not guarantee that access will be restored. Accounts under review remain excluded. We will continue to improve the process to reduce repeated requests and improve the support experience.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "p-en-natural-text-polish-auto-v1",
+      "phase": "pilot",
+      "sample": "p-en-natural",
+      "language": "EN",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "I left the cup on the windowsill. By the time I came back, the tea was cold and the street had gone quiet. I drank it anyway.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Keep the understated personal voice.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "p-en-natural-text-polish-v3",
+      "phase": "pilot",
+      "sample": "p-en-natural",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "I left the cup on the windowsill. By the time I came back, the tea was cold and the street had gone quiet. I drank it anyway.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Keep the understated personal voice.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "p-mixed-technical-text-polish-auto-v1",
+      "phase": "pilot",
+      "sample": "p-mixed-technical",
+      "language": "MIXED",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "发布说明\n\n本次测试仅覆盖内部工作区，尚未部署到生产环境。我们计划下周检查导出流程，目的是减少重复操作，并让错误信息更容易理解。\n\nThe export check is optional. It may run only after the owner confirms the workspace. A completed check does not mean that every export will succeed. We will keep the existing manual review for failed items.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保留双语段落，解释清楚，不补充技术实现。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "p-mixed-technical-text-polish-v3",
+      "phase": "pilot",
+      "sample": "p-mixed-technical",
+      "language": "MIXED",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "发布说明\n\n本次测试仅覆盖内部工作区，尚未部署到生产环境。我们计划下周检查导出流程，目的是减少重复操作，并让错误信息更容易理解。\n\nThe export check is optional. It may run only after the owner confirms the workspace. A completed check does not mean that every export will succeed. We will keep the existing manual review for failed items.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保留双语段落，解释清楚，不补充技术实现。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "p-mixed-natural-text-polish-v3",
+      "phase": "pilot",
+      "sample": "p-mixed-natural",
+      "language": "MIXED",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "我把车停在桥边，等风小一点再走。河对岸有人关上了窗。\n\nI stayed there until the lights came on. Then I put my gloves back on and rode home.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留叙事口吻和语言切换。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "p-mixed-natural-text-polish-auto-v1",
+      "phase": "pilot",
+      "sample": "p-mixed-natural",
+      "language": "MIXED",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "我把车停在桥边，等风小一点再走。河对岸有人关上了窗。\n\nI stayed there until the lights came on. Then I put my gloves back on and rode home.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留叙事口吻和语言切换。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-mail-text-polish-v3",
+      "phase": "expand",
+      "sample": "zh-mail",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "项目材料确认\n\n为进一步提高沟通效率，现就材料整理工作做如下说明。我们已收到设计稿，但预算表仍待财务确认。请在周四中午前只核对目录中的链接是否可用，不需要补写正文。如链接失效，请在同一张表里标记；预算未确认不影响本轮链接检查。我们计划周五汇总问题，是否安排下一轮评审要等负责人确认。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "写成清楚简洁的同事邮件。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-mail-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "zh-mail",
+      "language": "ZH",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "项目材料确认\n\n为进一步提高沟通效率，现就材料整理工作做如下说明。我们已收到设计稿，但预算表仍待财务确认。请在周四中午前只核对目录中的链接是否可用，不需要补写正文。如链接失效，请在同一张表里标记；预算未确认不影响本轮链接检查。我们计划周五汇总问题，是否安排下一轮评审要等负责人确认。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "写成清楚简洁的同事邮件。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-story-text-polish-v3",
+      "phase": "expand",
+      "sample": "zh-story",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "父亲第一次学着用手机买车票，连着退回了三次。第四次，他把手机递给我，说你看我是不是又按错了。我指了指右下角的小字，没替他按。车票买成后，他把那页留在屏幕上，过一会儿又点亮看看。回家路上，他忽然问我，下回是不是就不用麻烦你了。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留克制的叙事，避免添加情绪总结。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-story-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "zh-story",
+      "language": "ZH",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "父亲第一次学着用手机买车票，连着退回了三次。第四次，他把手机递给我，说你看我是不是又按错了。我指了指右下角的小字，没替他按。车票买成后，他把那页留在屏幕上，过一会儿又点亮看看。回家路上，他忽然问我，下回是不是就不用麻烦你了。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留克制的叙事，避免添加情绪总结。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-library-text-polish-v3",
+      "phase": "expand",
+      "sample": "zh-library",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "借阅通知\n\n为了更好地营造全民阅读的浓厚氛围，本馆拟于下月试行延长周六开放时间。试行期间，成人阅览室开放至晚上八点，少儿区仍按原时间关闭。读者可在服务台反馈意见，也可以使用线上表单；两种方式均不要求留下手机号。试行是否继续，将结合到馆人数和工作人员排班情况决定，目前尚未形成最终安排。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "减少宣传腔，便于居民理解。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-library-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "zh-library",
+      "language": "ZH",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "借阅通知\n\n为了更好地营造全民阅读的浓厚氛围，本馆拟于下月试行延长周六开放时间。试行期间，成人阅览室开放至晚上八点，少儿区仍按原时间关闭。读者可在服务台反馈意见，也可以使用线上表单；两种方式均不要求留下手机号。试行是否继续，将结合到馆人数和工作人员排班情况决定，目前尚未形成最终安排。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "减少宣传腔，便于居民理解。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-research-text-polish-v3",
+      "phase": "expand",
+      "sample": "zh-research",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "这次走访涉及两条街道的十二家小店，不能代表整个城区。八位店主提到雨天客流减少，但我们没有收集同期销售额，因此还无法判断营业收入的变化。有人建议统一延长营业时间，也有人担心电费和人手不足。下一步可以先观察不同天气下的到店人数，再讨论是否试行延时；即使人数上升，也不能直接认定是营业时间调整带来的效果。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留研究限定和分歧。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-research-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "zh-research",
+      "language": "ZH",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "这次走访涉及两条街道的十二家小店，不能代表整个城区。八位店主提到雨天客流减少，但我们没有收集同期销售额，因此还无法判断营业收入的变化。有人建议统一延长营业时间，也有人担心电费和人手不足。下一步可以先观察不同天气下的到店人数，再讨论是否试行延时；即使人数上升，也不能直接认定是营业时间调整带来的效果。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留研究限定和分歧。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-clean-text-polish-v3",
+      "phase": "expand",
+      "sample": "zh-clean",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "昨晚收衣服时，我在袖口摸到一粒稻谷。可能是上周去田里时留下的。我把它放进抽屉，想着哪天还给那片地。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留原有口吻。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-clean-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "zh-clean",
+      "language": "ZH",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "昨晚收衣服时，我在袖口摸到一粒稻谷。可能是上周去田里时留下的。我把它放进抽屉，想着哪天还给那片地。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留原有口吻。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-long-text-polish-v3",
+      "phase": "expand",
+      "sample": "zh-long",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "社区修理桌\n\n我们打算在旧阅览室试办一个月的周末修理桌，让居民能就近处理一些小故障，也让愿意分享手艺的人有机会认识邻居。这里提供的是共同检查和简单修理，不接收需要专业资质的电器维修。能否修好，要看物件情况和当班志愿者的经验。\n\n报名表只记录姓名、到场时段和物件类别，联系电话选填。居民也可以直接到场，但预约者在自己预约的时段优先。超过时段到场的预约者按现场顺序等待，不能要求别人让位。一次只登记一件物品，零件需要自行购买；志愿者可以说明需要什么，但不会替居民垫付。尚未确定来源或规格的零件，先停下检查。\n\n工具由社区提供，参加者应在使用前听取说明。儿童可以围观，使用工具时须由监护人在旁陪同。对于带有电池、明显漏液或破损的物件，是否接收要由当班负责人判断。这些安排是为了减少风险，不能据此保证物品安全或修理一定成功。\n\n试办期间每周记录到场人数和未完成的主要原因，意见可以当面提出，也可匿名放入纸盒。结束后再与志愿者讨论是否继续。人数多不等于一定继续，还要考虑场地、工具损耗和志愿者是否愿意承担后续安排。我们希望修理桌能减少物品过早丢弃，也希望它成为邻里交流的机会；这两个目标都需要在试办后检视。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保留所有条件、例外和两个目的，重组表达方便居民阅读。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-long-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "zh-long",
+      "language": "ZH",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "社区修理桌\n\n我们打算在旧阅览室试办一个月的周末修理桌，让居民能就近处理一些小故障，也让愿意分享手艺的人有机会认识邻居。这里提供的是共同检查和简单修理，不接收需要专业资质的电器维修。能否修好，要看物件情况和当班志愿者的经验。\n\n报名表只记录姓名、到场时段和物件类别，联系电话选填。居民也可以直接到场，但预约者在自己预约的时段优先。超过时段到场的预约者按现场顺序等待，不能要求别人让位。一次只登记一件物品，零件需要自行购买；志愿者可以说明需要什么，但不会替居民垫付。尚未确定来源或规格的零件，先停下检查。\n\n工具由社区提供，参加者应在使用前听取说明。儿童可以围观，使用工具时须由监护人在旁陪同。对于带有电池、明显漏液或破损的物件，是否接收要由当班负责人判断。这些安排是为了减少风险，不能据此保证物品安全或修理一定成功。\n\n试办期间每周记录到场人数和未完成的主要原因，意见可以当面提出，也可匿名放入纸盒。结束后再与志愿者讨论是否继续。人数多不等于一定继续，还要考虑场地、工具损耗和志愿者是否愿意承担后续安排。我们希望修理桌能减少物品过早丢弃，也希望它成为邻里交流的机会；这两个目标都需要在试办后检视。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保留所有条件、例外和两个目的，重组表达方便居民阅读。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-mail-text-polish-v3",
+      "phase": "expand",
+      "sample": "en-mail",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "Subject: Review scope\n\nI am writing to ask whether you could review the links in the draft by Thursday noon. We have received the illustrations, but the cost estimate is still awaiting approval. Please check only whether the links open; there is no need to edit the copy. If a link is broken, mark it in the shared sheet. We plan to collect the results on Friday, although the date of the next review has not been agreed.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Make the email direct and courteous.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-mail-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "en-mail",
+      "language": "EN",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "Subject: Review scope\n\nI am writing to ask whether you could review the links in the draft by Thursday noon. We have received the illustrations, but the cost estimate is still awaiting approval. Please check only whether the links open; there is no need to edit the copy. If a link is broken, mark it in the shared sheet. We plan to collect the results on Friday, although the date of the next review has not been agreed.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Make the email direct and courteous.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-story-text-polish-v3",
+      "phase": "expand",
+      "sample": "en-story",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "Dad tried to book the ticket three times before he handed me the phone. I pointed to the small line at the bottom and let him tap it himself. When the booking went through, he kept the page open. On the walk home he asked whether, next time, he could do it without me.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Keep the restrained personal voice.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-story-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "en-story",
+      "language": "EN",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "Dad tried to book the ticket three times before he handed me the phone. I pointed to the small line at the bottom and let him tap it himself. When the booking went through, he kept the page open. On the walk home he asked whether, next time, he could do it without me.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Keep the restrained personal voice.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-notice-text-polish-v3",
+      "phase": "expand",
+      "sample": "en-notice",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "Weekend access\n\nIn an effort to enhance the experience of all library users, we are considering a one-month trial of later Saturday opening. During the trial, the adult reading room would stay open until 8 pm, while the children's room would close at its usual time. Readers could comment at the desk or through the online form. Neither option requires a phone number. Whether the trial continues would depend on attendance and staff availability; no final schedule has been approved.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Make this easy for residents to read, preserving tentative status.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-notice-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "en-notice",
+      "language": "EN",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "Weekend access\n\nIn an effort to enhance the experience of all library users, we are considering a one-month trial of later Saturday opening. During the trial, the adult reading room would stay open until 8 pm, while the children's room would close at its usual time. Readers could comment at the desk or through the online form. Neither option requires a phone number. Whether the trial continues would depend on attendance and staff availability; no final schedule has been approved.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Make this easy for residents to read, preserving tentative status.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-research-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "en-research",
+      "language": "EN",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "We spoke to twelve shop owners on two streets. The interviews do not represent the whole district. Eight owners said foot traffic fell on rainy days, but we collected no sales figures for those periods. We therefore cannot tell whether revenue changed. Some favored longer opening hours; others were concerned about electricity costs and staffing. Counting visitors in different weather could be a useful next step before discussing a trial. A later increase in visits would not, by itself, establish that longer hours caused it.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Improve flow without removing research qualifications.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-research-text-polish-v3",
+      "phase": "expand",
+      "sample": "en-research",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "We spoke to twelve shop owners on two streets. The interviews do not represent the whole district. Eight owners said foot traffic fell on rainy days, but we collected no sales figures for those periods. We therefore cannot tell whether revenue changed. Some favored longer opening hours; others were concerned about electricity costs and staffing. Counting visitors in different weather could be a useful next step before discussing a trial. A later increase in visits would not, by itself, establish that longer hours caused it.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Improve flow without removing research qualifications.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-clean-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "en-clean",
+      "language": "EN",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "On the bus, a little girl counted the red cars until we reached the bridge. Then she fell asleep against her mother. I lost count somewhere near the station.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Keep the personal voice.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-clean-text-polish-v3",
+      "phase": "expand",
+      "sample": "en-clean",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "On the bus, a little girl counted the red cars until we reached the bridge. Then she fell asleep against her mother. I lost count somewhere near the station.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Keep the personal voice.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-long-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "en-long",
+      "language": "EN",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "The repair table\n\nWe plan to run a weekend repair table in the old reading room for one month. We hope it will help residents deal with small faults nearby and give people who share practical skills a chance to meet their neighbors. Volunteers will inspect items together with their owners and attempt simple repairs. The table will not accept electrical work that requires a professional qualification. Success depends on the item and the experience of the volunteers on duty.\n\nThe sign-up form asks for a name, a time slot and the type of item. A phone number is optional. Walk-ins are welcome, but people with bookings have priority during their booked slot. Anyone arriving after that slot joins the walk-in queue. Each person may register one item. Owners must buy any parts they need; volunteers can explain what is required but will not pay on an owner's behalf. If a part's specification or source is uncertain, the inspection should pause.\n\nThe community center will supply the tools. Participants should listen to the instructions before using them. Children may watch, and a guardian must stay beside a child who uses a tool. The volunteer in charge will decide whether to accept items with batteries, visible leaks or damage. These arrangements aim to reduce risk, but do not guarantee safety or a successful repair.\n\nDuring the trial we will record attendance and the main reasons for unfinished work each week. Residents may comment in person or leave an anonymous note. After the month, volunteers will discuss whether to continue. Attendance alone will not decide the outcome: space, tool wear and volunteers' willingness also matter. We will review both aims, reducing early disposal and creating opportunities for neighbors to talk.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Make the notice easier to scan. Keep all conditions, purposes and obligations.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-long-text-polish-v3",
+      "phase": "expand",
+      "sample": "en-long",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "The repair table\n\nWe plan to run a weekend repair table in the old reading room for one month. We hope it will help residents deal with small faults nearby and give people who share practical skills a chance to meet their neighbors. Volunteers will inspect items together with their owners and attempt simple repairs. The table will not accept electrical work that requires a professional qualification. Success depends on the item and the experience of the volunteers on duty.\n\nThe sign-up form asks for a name, a time slot and the type of item. A phone number is optional. Walk-ins are welcome, but people with bookings have priority during their booked slot. Anyone arriving after that slot joins the walk-in queue. Each person may register one item. Owners must buy any parts they need; volunteers can explain what is required but will not pay on an owner's behalf. If a part's specification or source is uncertain, the inspection should pause.\n\nThe community center will supply the tools. Participants should listen to the instructions before using them. Children may watch, and a guardian must stay beside a child who uses a tool. The volunteer in charge will decide whether to accept items with batteries, visible leaks or damage. These arrangements aim to reduce risk, but do not guarantee safety or a successful repair.\n\nDuring the trial we will record attendance and the main reasons for unfinished work each week. Residents may comment in person or leave an anonymous note. After the month, volunteers will discuss whether to continue. Attendance alone will not decide the outcome: space, tool wear and volunteers' willingness also matter. We will review both aims, reducing early disposal and creating opportunities for neighbors to talk.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Make the notice easier to scan. Keep all conditions, purposes and obligations.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "mx-mail-text-polish-v3",
+      "phase": "expand",
+      "sample": "mx-mail",
+      "language": "MIXED",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "请先检查目录链接，预算表仍待财务确认。预算未确认不影响本轮检查。\n\nPlease mark broken links in the shared sheet by Thursday noon. We plan to review the sheet on Friday, but the next meeting date is still undecided.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留双语，减少重复铺垫。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "mx-mail-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "mx-mail",
+      "language": "MIXED",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "请先检查目录链接，预算表仍待财务确认。预算未确认不影响本轮检查。\n\nPlease mark broken links in the shared sheet by Thursday noon. We plan to review the sheet on Friday, but the next meeting date is still undecided.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留双语，减少重复铺垫。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "mx-story-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "mx-story",
+      "language": "MIXED",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "父亲买成车票后，把那页留在屏幕上。走到桥边时，他又点亮手机看了一眼。\n\nI did not ask what he was checking. We walked the rest of the way without talking.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留语言切换和克制的叙事。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "mx-story-text-polish-v3",
+      "phase": "expand",
+      "sample": "mx-story",
+      "language": "MIXED",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "父亲买成车票后，把那页留在屏幕上。走到桥边时，他又点亮手机看了一眼。\n\nI did not ask what he was checking. We walked the rest of the way without talking.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留语言切换和克制的叙事。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "mx-notice-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "mx-notice",
+      "language": "MIXED",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "为了方便读者使用，本馆考虑延长周六开放时间，目前尚未批准最终安排。成人阅览室可能开放至晚上八点，少儿区仍按原时间关闭。\n\nReaders may leave feedback at the desk or through the form. Neither option requires a phone number. A decision on continuing the trial would depend on attendance and staff availability.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保持中文和英文分别成段。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "mx-notice-text-polish-v3",
+      "phase": "expand",
+      "sample": "mx-notice",
+      "language": "MIXED",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "为了方便读者使用，本馆考虑延长周六开放时间，目前尚未批准最终安排。成人阅览室可能开放至晚上八点，少儿区仍按原时间关闭。\n\nReaders may leave feedback at the desk or through the form. Neither option requires a phone number. A decision on continuing the trial would depend on attendance and staff availability.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保持中文和英文分别成段。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "mx-research-text-polish-v3",
+      "phase": "expand",
+      "sample": "mx-research",
+      "language": "MIXED",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "我们走访了两条街的十二家小店，不能代表整个城区。八位店主说雨天客流较少，但没有收集同期销售额。\n\nThe interviews do not establish a change in revenue. Some owners favored longer opening hours; others raised concerns about staffing. Counting visitors in different weather could help before discussing a trial.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留中英文各自承载的独立信息。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "mx-research-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "mx-research",
+      "language": "MIXED",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "我们走访了两条街的十二家小店，不能代表整个城区。八位店主说雨天客流较少，但没有收集同期销售额。\n\nThe interviews do not establish a change in revenue. Some owners favored longer opening hours; others raised concerns about staffing. Counting visitors in different weather could help before discussing a trial.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留中英文各自承载的独立信息。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "mx-clean-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "mx-clean",
+      "language": "MIXED",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "我在窗边等水烧开。楼下的小店开始搬出椅子。\n\nThe first customer sat down before the owner had finished wiping the table. I poured the tea and went back to my desk.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留双语叙事口吻。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "mx-clean-text-polish-v3",
+      "phase": "expand",
+      "sample": "mx-clean",
+      "language": "MIXED",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "我在窗边等水烧开。楼下的小店开始搬出椅子。\n\nThe first customer sat down before the owner had finished wiping the table. I poured the tea and went back to my desk.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留双语叙事口吻。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "mx-long-text-polish-v3",
+      "phase": "expand",
+      "sample": "mx-long",
+      "language": "MIXED",
+      "strategy": "text-polish-v3",
+      "input": {
+        "sourceText": "修理桌试办\n\n我们计划在旧阅览室试办一个月的周末修理桌，帮助居民就近处理小故障，也为邻里交流创造机会。志愿者提供共同检查和简单修理，不接收需要专业资质的电器维修。能否修好，取决于物件和当班志愿者经验。\n\nThe form asks for your name, time slot and item type. Your phone number is optional. Walk-ins are welcome, but bookings have priority during the booked slot. Late arrivals join the walk-in queue. Each person may register one item. Owners must buy any parts; volunteers will not advance the money.\n\n社区提供工具，参加者使用前应听取说明。儿童可以围观，使用工具须有监护人在旁。电池、漏液或破损物件是否接收，由当班负责人判断。以上安排旨在减少风险，不保证安全或修理成功。\n\nWe will record attendance and unfinished work each week. Residents may comment in person or anonymously. At the end of the month, volunteers will discuss whether to continue. Attendance alone will not decide it: space, tool wear and volunteers' willingness also matter. We will review both goals, reducing early disposal and helping neighbors meet.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保留双语结构、全部条件及两个目的，重组句子方便阅读。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "mx-long-text-polish-auto-v1",
+      "phase": "expand",
+      "sample": "mx-long",
+      "language": "MIXED",
+      "strategy": "text-polish-auto-v1",
+      "input": {
+        "sourceText": "修理桌试办\n\n我们计划在旧阅览室试办一个月的周末修理桌，帮助居民就近处理小故障，也为邻里交流创造机会。志愿者提供共同检查和简单修理，不接收需要专业资质的电器维修。能否修好，取决于物件和当班志愿者经验。\n\nThe form asks for your name, time slot and item type. Your phone number is optional. Walk-ins are welcome, but bookings have priority during the booked slot. Late arrivals join the walk-in queue. Each person may register one item. Owners must buy any parts; volunteers will not advance the money.\n\n社区提供工具，参加者使用前应听取说明。儿童可以围观，使用工具须有监护人在旁。电池、漏液或破损物件是否接收，由当班负责人判断。以上安排旨在减少风险，不保证安全或修理成功。\n\nWe will record attendance and unfinished work each week. Residents may comment in person or anonymously. At the end of the month, volunteers will discuss whether to continue. Attendance alone will not decide it: space, tool wear and volunteers' willingness also matter. We will review both goals, reducing early disposal and helping neighbors meet.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保留双语结构、全部条件及两个目的，重组句子方便阅读。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    }
+  ],
+  "model": "deepseek:deepseek-flash",
+  "temperature": 0.2,
+  "maxTokens": 8000,
+  "thinking": "disabled",
+  "scope": "单一当前模型，中文/英文/混合各自决定，开发模型内部匿名评阅，人工复核待完成",
+  "pilotCriteria": "每语言至少一篇有具体阅读收益，自然文本允许持平，新增严重语义错误阻断该语言扩展。",
+  "adoptionCriteria": "每语言留出至少两篇在两种用途有明确收益，胜多于负，且无新增严重事实、条件、承诺或独立含义错误。争议释义单列复核。",
+  "latencyCriteria": "尚无产品绝对SLA，披露逐篇延迟和Token，不用开发代理自定倍数阻断。",
+  "stop": "同机制两个候选出现相同严重失败则停止，本轮仅一个冻结候选，不做质量重试。",
+  "sourceSha256": {
+    "services/api/src/main/java/com/promptoptimizer/textpolish/controller/TextPolishAdminController.java": "9e1c7813df465622160b41656aaccff7f87cdf0772a8d288355db90a17b532a6",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/controller/TextPolishController.java": "6c22bfbcfa9c31270208e2349974fb0d443180571c30091db25c98635ef54dca",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/controller/TextPolishExceptionHandler.java": "acfb94d2db08154587017e551a848b4465a81fef3def47e8f2e13dbe728bc169",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/domain/TextPolishModels.java": "00b9804c272a5252e188764b8616c4d2cbd81fe8f7b9f2782ebfb9d79c3433f1",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/domain/TextPolishRecordRow.java": "caa30a2bc8e779bde2b4aeec7888fb1609bf3e38f73ec2575de74a922cb03a24",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/mapper/TextPolishMapper.java": "03fccaea42775a06c2b51d1c604ff0021e5f89ee7c9eaf0f83045f0609514323",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/MockTextPolishProvider.java": "64f2ff4815c09051dd6233dad1ab1aed912a6362737d076b2b4c5f0580cdae3b",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/OpenAiTextPolishProvider.java": "c62f022896dbee163c594445c18af040c434c25f1e0b2ec9fa6252a6209bc23b",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/PreparedTextPolish.java": "d1321dd06d6274d0bab9e1fcf096f0d24be237720fc6a544e4bd045a866c7d80",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishException.java": "77a49a2fd02336cdec0a70497501061a55a5dad8a480f346f16a9b506ed7e741",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishFidelity.java": "dbf60cb64d9fdf890924113bdb4cebb637686ef9cf2e1a370a31e2c712ad4ed4",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishHistoryService.java": "cae69f81139cf51c4f358636fd89b18a30d1ce7e513f9730998fe37e8abbd5a9",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishInstructions.java": "37cbad977b8116531871ffe1a1ddc462fd0a247f440ed2e041a54b192283a729",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishModelService.java": "35d6a1dae9e39d3482a30c25a5d78fae57e463f68e635659bf289f9d4c31f340",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishProvider.java": "f7c60ee00a1253af921e2e5915e90fc3aeb0907be57023b6497d905485767478",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishService.java": "a1989e5557ddae1a7821673fbb06b8aacc85f65e483c53333e2feb23f2e0279c",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishSkills.java": "45d64693edb58d7803c3d5dde8d98522da6dc9d13ff7d234e141b80071b09240",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishStateStore.java": "79bd97cae42d98fbb6706bec4af875c5184ff77b80e1774b758aca1cf7c525a9",
+    "services/api/src/main/resources/textpolish/THIRD_PARTY_NOTICES.md": "0cbfdb5eec2a416181c82617e6e83b3ae3af77a3c5a1bcb5ad38e1201f46e762",
+    "services/api/src/main/resources/textpolish/skills/common-v1/SKILL.md": "31bcc927ea673eb6ab60a0a8ea2941ff5fbfd7d8e58a1ca4a91183b5c288ecaa",
+    "services/api/src/main/resources/textpolish/skills/general-v1/SKILL.md": "7683f99a4b530ca411aa3de1b5238c7c103026a7229ef758a9a6dc5fdce44c14",
+    "services/api/src/main/resources/textpolish/skills/humanizer-en-adapted-v1/SKILL.md": "ee0c0d040f38fffe64461ec29f6dd4e0dae5e0f0919f8784dfcf5cf69a958e82",
+    "services/api/src/main/resources/textpolish/skills/humanizer-mixed-v1/SKILL.md": "58cef8531007b08b80aaf2f83454bd4850cc62e793b62d396141bde77c7c976c",
+    "services/api/src/main/resources/textpolish/skills/humanizer-zh-adapted-v1/SKILL.md": "cc27c0f6f3a1b90ea41b7892810b00b2e760554b225c1ea6bb4f449e81ee780a",
+    "services/api/src/main/resources/textpolish/skills/text-polish-v3/SKILL.md": "9f283575f5a6fc8b9ad06f9546955ef9026025759514a43923af86769df10f08",
+    "scripts/evaluation/text-polish-skills/blind.py": "33f7eb6b014b400eb644d84c5ac60b20c8b1914d621795423269fef287b72070",
+    "scripts/evaluation/text-polish-skills/prepare.py": "1605808c45ceeb00d6fe496137951249b2da206674c0a58aed4015177f1a9128",
+    "scripts/evaluation/text-polish-skills/run.ps1": "b26662a80fdc97ccdd014cc7c8485d7be07e913a4c1c015b9cafc872c32d1ec2",
+    "scripts/evaluation/text-polish-skills/SkillComparison.java": "394baf2672cb6628fce4ed79613e06f5aa8c5c34ed77a7e5c3354bcc29823d41",
+    "scripts/evaluation/text-polish-skills/verify.py": "c58a3ea98de798b525bef49b6c744db5ae02967e75e1255ef739f89a44530551",
+    "docs/testing/evidence/text-polish-skills-2026-11-16/samples.json": "0b884673b4cac6cfbe42d03b825e5e4bda70d380754f82ed747cb6907f24782e",
+    "docs/testing/evidence/text-polish-skills-2026-11-16/metadata.json": "c89b64a41f59f02e8c0db92e44d856143fcd539fb0609efc90ae18cd9785e4af"
+  }
+}
