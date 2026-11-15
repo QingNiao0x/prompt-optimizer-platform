@@ -20,7 +20,7 @@ class NaturalEnhancementSettingsTest {
 
     @Test
     void newRequestsDefaultToTheValidatedEngineeringRepair() {
-        runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v5"));
+        runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v6"));
     }
 
     @Test
@@ -65,13 +65,19 @@ class NaturalEnhancementSettingsTest {
     }
 
     @Test
-    void applicationDefaultUsesV5AndExplicitPlanRepairCanSelectV4() throws Exception {
+    void applicationDefaultUsesV6AndExplicitPlanRepairCanSelectV4() throws Exception {
         try (var input = getClass().getResourceAsStream("/application.yml")) {
             assertThat(input).isNotNull();
             assertThat(new String(input.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8))
-                    .contains("profile: ${NATURAL_ENHANCEMENT_PROFILE:PROTOCOL_SCOPE_REPAIR}");
+                    .contains("profile: ${NATURAL_ENHANCEMENT_PROFILE:MATERIAL_HANDOFF_REPAIR}");
         }
         runner.withPropertyValues("app.enhancement.natural.profile=PLAN_CONTEXT_REPAIR").run(context ->
                 assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v4"));
+    }
+
+    @Test
+    void v5RemainsAnExplicitRollback() {
+        runner.withPropertyValues("app.enhancement.natural.profile=PROTOCOL_SCOPE_REPAIR").run(context ->
+                assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v5"));
     }
 }

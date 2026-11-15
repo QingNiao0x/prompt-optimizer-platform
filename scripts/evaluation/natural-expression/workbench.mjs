@@ -30,6 +30,7 @@ const browser = await chromium.launch({ channel: 'chrome', headless: true });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 },
   permissions: ['clipboard-read', 'clipboard-write'], locale: 'zh-CN' });
 const page = await context.newPage();
+page.on('pageerror', error => console.log(JSON.stringify({ event: 'BROWSER_ERROR', type: error.name, message: error.message })));
 const lines = createInterface({ input: process.stdin, output: process.stdout, terminal: false });
 const original = await readJson(resolve(directory,'cases.json'));
 const samples = original.map(x=>({id:x.id,rawPrompt:x.input.rawPrompt,files:x.input.context.fileSnippets.map(f=>({...f,content:f.content.replace(/^\[片段 \d+\/\d+\]\r?\n/u,'')})),plan:x.id==='R_PLAN',answer:x.input.actualAnswers[0]?.answer,feedback:x.id==='R_PLAN'?'保留已确认条件，将语言改得更简洁。':undefined}));
@@ -126,12 +127,17 @@ async function prepareFiles(sample) {
         for(const part of parts.slice(0,-1)) current=await current.getDirectoryHandle(part,{create:true});
         const handle=await current.getFileHandle(parts.at(-1),{create:true});const writable=await handle.createWritable();await writable.write(file.content);await writable.close();
       }
-      Object.defineProperty(window,'showDirectoryPicker',{configurable:true,value:async()=>selected});
+      Object.defineProperty(window,'showDirectoryPicker',{configurable:true,value:async()=>{
+        window.__evaluationDirectorySelected = true;
+        return selected;
+      }});
     },fixtureFiles);
+    await expect.poll(() => page.evaluate(() => typeof window.showDirectoryPicker)).toBe('function');
     await page.getByRole('button',{name:'添加上下文',exact:true}).click();
     await page.getByText('选择文件夹',{exact:true}).click();
+    assert(await page.evaluate(() => window.__evaluationDirectorySelected === true), '页面未调用受控目录选择器');
     await expect(page.getByRole('button', { name: '暂停索引', exact: true })).toHaveCount(0);
-    await expect(page.getByText(/27 个源码文件已建立本地索引/)).toBeVisible({ timeout: 40_000 });
+    await expect(page.getByText(/27 个文本文件已完整建立本地索引/)).toBeVisible({ timeout: 40_000 });
     const conventions = sample.files.filter(file => !file.path.endsWith('.mjs'));
     await page.getByTestId('context-file-input').setInputFiles(conventions.map(file => ({
       name: file.path, mimeType: 'text/plain', buffer: Buffer.from(file.content),
@@ -155,6 +161,12 @@ async function generateUi(sample, workflowOnly = false) {
   await page.addInitScript(plan => {
     localStorage.setItem('prompt-optimizer.plan-mode.v1', JSON.stringify({ enabled: plan, introSeen: true }));
   }, Boolean(sample.plan));
+  // 在应用检测浏览器能力前声明受控选择器，随后仍由正常目录入口启动真实索引。
+  if (sample.id === 'W_CODE') await page.addInitScript(() => {
+    Object.defineProperty(window, 'showDirectoryPicker', { configurable: true, value: async () => {
+      throw new Error('合成目录尚未准备完成');
+    } });
+  });
   await page.goto(frontend + '/workbench');
   await expect(page.getByLabel('原始提示词', { exact: true })).toBeVisible({ timeout: 30_000 });
   await prepareFiles(sample);
@@ -256,7 +268,9 @@ async function generateUi(sample, workflowOnly = false) {
 
 try {
   await login();
-  for (const id of (stage==='candidate' ? ['W_CODE','R_PLAN','R_SUFFICIENT'] : ['S_OFFICE'])) await generateUi(samples.find(sample=>sample.id===id),true);
+  const selectedCases = stage === 'candidate' ? ['W_CODE', 'R_PLAN', 'R_SUFFICIENT']
+    : stage === 'engineering' ? ['W_CODE', 'R_PLAN'] : ['S_OFFICE'];
+  for (const id of selectedCases) await generateUi(samples.find(sample=>sample.id===id),true);
   console.log(JSON.stringify({ event: 'BROWSER_STAGE_COMPLETE', stage }));
 } catch (error) {
   await save(resolve(runtime, `${runId}-failure.json`), { type: error.name, message: error.message });

@@ -30,6 +30,16 @@ class NaturalExpressionProviderTest {
     private final ObjectMapper json = new ObjectMapper();
 
     @Test
+    void engineeringAdoptionRetainsTheExactV5WritingAndPlanInstructions() {
+        assertThat(NaturalPromptInstructions.enhancementInstruction(NaturalPromptMaterialHandoffInstructions.VERSION))
+                .isEqualTo(NaturalPromptProtocolRepairInstructions.ENHANCE);
+        assertThat(NaturalPromptInstructions.planningInstruction(NaturalPromptMaterialHandoffInstructions.VERSION))
+                .isEqualTo(NaturalPromptProtocolRepairInstructions.PLAN);
+        assertThat(NaturalPromptMaterialHandoffInstructions.PREPARE).isEqualTo(NaturalPromptPlanContextInstructions.PREPARE);
+        assertThat(NaturalPromptInstructions.requiresTaskReview(NaturalPromptMaterialHandoffInstructions.VERSION)).isTrue();
+    }
+
+    @Test
     void replacesWritingGuidanceWhileKeepingTheV5WireContract() {
         String marker = "只返回以下完整JSON对象";
         String previous = NaturalPromptProtocolRepairInstructions.ENHANCE;
@@ -78,19 +88,22 @@ class NaturalExpressionProviderTest {
     @ParameterizedTest
     @ValueSource(strings = {"日期稍后确认，不承诺额外赔偿。", "没有相关资料，按现有信息继续。", "无权访问该系统，请保留这个限制。"})
     void currentAndPlanningMaterialsAndActualAnswersReachBothStages(String answer) throws Exception {
-        var input = materialInput(answer);
-        var builder = RestClient.builder();
-        var server = MockRestServiceServer.bindTo(builder).build();
-        expect(server, scope(input), input, NaturalPromptExpressionInstructions.PREPARE);
-        String body = input.rawPrompt() + answer;
-        expect(server, enhancement(input, body), input, NaturalPromptExpressionInstructions.ENHANCE);
-        var result = provider(builder.build()).enhance(input, draft -> {
-            draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
-            return draft;
-        });
-        assertThat(result.optimizedPrompt()).isEqualTo(body);
-        assertThat(input.context().fileSnippets().getFirst().content()).isEqualTo("病例一览表、密切接触者人员表、病例发病时间轴、传播关系图。");
-        server.verify();
+        for (String version : List.of(NaturalPromptExpressionInstructions.VERSION, NaturalPromptMaterialHandoffInstructions.VERSION)) {
+            var input = materialInput(answer).withStrategyVersion(version);
+            var builder = RestClient.builder();
+            var server = MockRestServiceServer.bindTo(builder).build();
+            expect(server, scope(input), input, NaturalPromptMaterialHandoffInstructions.VERSION.equals(version)
+                    ? NaturalPromptMaterialHandoffInstructions.PREPARE : NaturalPromptExpressionInstructions.PREPARE);
+            String body = input.rawPrompt() + answer;
+            expect(server, enhancement(input, body), input, NaturalPromptInstructions.enhancementInstruction(version));
+            var result = provider(builder.build()).enhance(input, draft -> {
+                draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
+                return draft;
+            });
+            assertThat(result.optimizedPrompt()).isEqualTo(body);
+            assertThat(input.context().fileSnippets().getFirst().content()).isEqualTo("病例一览表、密切接触者人员表、病例发病时间轴、传播关系图。");
+            server.verify();
+        }
     }
 
     @Test

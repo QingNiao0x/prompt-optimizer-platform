@@ -1,0 +1,64 @@
+{
+  "date": "2026-11-14",
+  "taskMaximum": 100,
+  "previousActualCalls": 88,
+  "previousClosure": "docs/testing/evidence/natural-expression-acceptance-2026-11-14/closure.json",
+  "maximum": 12,
+  "phaseLimits": {
+    "workflow": 8,
+    "direct": 4
+  },
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "thinking": "disabled",
+  "maxTokens": 10000,
+  "qualityRetries": 0,
+  "version": "core-repair-v6",
+  "scope": "工程独立采用，正文和Plan逐字复用v5，验证来源标注和固定正文记录修复及普通工作台闭环。",
+  "cases": [
+    "W_CODE",
+    "R_PLAN",
+    "S_OFFICE"
+  ],
+  "outboundScope": "沿用已授权冻结合成题及其材料和派生结果，无真实业务源码或凭据。",
+  "files": [
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptMaterialHandoffInstructions.java",
+      "sha256": "d0c897c1881d8db400f887462aaa61881b5a817c91ba841d565e59bd76ba4b7a"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptInstructions.java",
+      "sha256": "180f5717187586c1a6a1bea2164e2b5fc28ea6c6c1f2a600e271c48a9f8472f9"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/domain/NaturalPromptPlanContextInstructions.java",
+      "sha256": "3ea8c09f4b978690b593431900c6959bf5937285c533155c1c951218815e301a"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/NaturalPromptPreparationSourceLabels.java",
+      "sha256": "0ba35790243ab32ad1a6d8c498b50c300dbbc95ea1e6dec999dc53912e60ea1d"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/provider/infrastructure/openai/OpenAiCompatibleNaturalPromptProvider.java",
+      "sha256": "2a4f5565284c18c4d0c291fd44119d3b9f47e7165c94f3312c7f86b6d7bd96fd"
+    },
+    {
+      "path": "services/api/src/main/java/com/promptoptimizer/enhancement/service/impl/NaturalEnhancementSettings.java",
+      "sha256": "2d4fa094276a464f9c6627ed9140a9995d59c50cf2843c4adf72cd27350d2149"
+    },
+    {
+      "path": "services/api/src/main/resources/application.yml",
+      "sha256": "bfb201659bb8a355628e28559894a95b0025e0aebc5508cd7681c09a2ba56cae"
+    },
+    {
+      "path": "scripts/evaluation/natural-expression/workbench.mjs",
+      "sha256": "d157872156c1db245947faa1d8ac127583abc21b08f3e1cb95aa54f2e60d9e1f"
+    },
+    {
+      "path": "docs/testing/evidence/natural-material-handoff-adoption-2026-11-14/cases.json",
+      "sha256": "90a6850b614770cde1ef729dba629240554910f814327f86bce221943004a97e"
+    }
+  ],
+  "preCallHarnessFailure": "三次目录状态等待超时，模型0次。根因为脚本仍等待旧文案“源码文件已建立”，当前界面为“文本文件已完整建立”。更新状态定位，保留初始化前受控选择器声明及调用断言，不改应用和题目。"
+}

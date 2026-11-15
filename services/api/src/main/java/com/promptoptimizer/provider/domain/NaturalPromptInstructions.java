@@ -59,6 +59,7 @@ public final class NaturalPromptInstructions {
             case NaturalPromptProtocolRepairInstructions.VERSION -> NaturalPromptProtocolRepairInstructions.ENHANCE;
             case NaturalPromptBalancedInstructions.VERSION -> NaturalPromptBalancedInstructions.ENHANCE;
             case NaturalPromptExpressionInstructions.VERSION -> NaturalPromptExpressionInstructions.ENHANCE;
+            case NaturalPromptMaterialHandoffInstructions.VERSION -> NaturalPromptMaterialHandoffInstructions.ENHANCE;
             case NaturalPromptInternalDesignInstructions.VERSION -> NaturalPromptInternalDesignInstructions.ENHANCE;
             case NaturalPromptSimplifiedInstructions.VERSION -> NaturalPromptSimplifiedInstructions.ENHANCE;
             case NaturalPromptContentQualityInstructions.VERSION -> NaturalPromptContentQualityInstructions.ENHANCE;
@@ -133,6 +134,7 @@ public final class NaturalPromptInstructions {
             case NaturalPromptProtocolRepairInstructions.VERSION -> NaturalPromptProtocolRepairInstructions.PLAN;
             case NaturalPromptBalancedInstructions.VERSION -> NaturalPromptBalancedInstructions.PLAN;
             case NaturalPromptExpressionInstructions.VERSION -> NaturalPromptExpressionInstructions.PLAN;
+            case NaturalPromptMaterialHandoffInstructions.VERSION -> NaturalPromptMaterialHandoffInstructions.PLAN;
             case NaturalPromptInternalDesignInstructions.VERSION -> NaturalPromptPlanContextInstructions.PLAN;
             case NaturalPromptSimplifiedInstructions.VERSION -> NaturalPromptSimplifiedInstructions.PLAN;
             case NaturalPromptContextualRewriteInstructions.VERSION -> NaturalPromptContextualRewriteInstructions.PLAN;

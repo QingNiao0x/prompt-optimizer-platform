@@ -21,7 +21,7 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties(prefix = "app.enhancement.natural")
 public class NaturalEnhancementSettings {
-    /** 默认采用用户确认的v5协议及范围修复；显式配置和历史按各自版本处理。 */
+    /** 默认采用材料来源与记录修复的工程版本；正文及Plan沿用v5，显式配置和历史按各自版本处理。 */
     public enum Profile {
         STABLE, CORE_REPAIR, ACTION_BOUNDARY_REPAIR, COMPLETION_BASIS_REPAIR,
         /** 采用已验证的阶段协议、已答状态及来源关联修复，继续沿用v3正文补全原则。 */ PLAN_CONTEXT_REPAIR,
@@ -29,11 +29,12 @@ public class NaturalEnhancementSettings {
         /** 仅调整原任务内部设计补全的候选，实际作品验收后再决定采用。 */ INTERNAL_DESIGN,
         /** 修复自然协议定位及明确限制的范围表达，复用v4来源与题答保护。 */ PROTOCOL_SCOPE_REPAIR,
         /** 正文指导与诊断减负候选，需同信息作品验证后采用。 */ BALANCED,
-        /** 需求表达指导，按表达质量及受影响执行风险验证后采用。 */ EXPRESSION
+        /** 需求表达指导，按表达质量及受影响执行风险验证后采用。 */ EXPRESSION,
+        /** 独立采用跨阶段材料来源与固定首稿记录修复，正文和Plan逐字复用v5。 */ MATERIAL_HANDOFF_REPAIR
     }
 
     @NotNull
-    private Profile profile = Profile.PROTOCOL_SCOPE_REPAIR;
+    private Profile profile = Profile.MATERIAL_HANDOFF_REPAIR;
 
     /** 读取服务端配置，不从模型输出或用户任务文本推断采用策略。 */
     public Profile getProfile() { return profile; }
@@ -44,6 +45,7 @@ public class NaturalEnhancementSettings {
     /** 新请求、访客增强与Plan使用一致的策略；保存历史的调用方仍显式指定原版本。 */
     public String strategyVersion() {
         return switch (profile) {
+            case MATERIAL_HANDOFF_REPAIR -> com.promptoptimizer.provider.domain.NaturalPromptMaterialHandoffInstructions.VERSION;
             case EXPRESSION -> com.promptoptimizer.provider.domain.NaturalPromptExpressionInstructions.VERSION;
             case BALANCED -> com.promptoptimizer.provider.domain.NaturalPromptBalancedInstructions.VERSION;
             case STABLE -> NaturalPromptInstructions.CURRENT_VERSION;
