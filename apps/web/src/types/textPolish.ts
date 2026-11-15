@@ -6,9 +6,19 @@ export interface PolishInput {
   requirements: string; lockedTexts: string[]; modelId: string;
 }
 export interface PolishCheck { code: string; message: string; before: string; after: string }
+/** 服务端实际执行快照。旧历史可能缺失，null字段表示未配置或未知。 */
+export interface PolishExecutionMetadata {
+  strategyVersion: string; skillVersion: string | null; resourceHash: string | null;
+  repairInstructionHash: string | null; routeKey: string; upstreamModel: string; attemptCount: number;
+  parameters: {
+    maxTokens: number | null; maxCompletionTokens: number | null; temperature: number | null;
+    stream: boolean; responseFormat: string | null; thinking: string | null;
+  } | null;
+}
 export interface PolishDocument {
   id: string; input: PolishInput; generatedText: string; polishedText: string; sourceRecordId: string | null;
   sourceMode: PolishSource; modelId: string; modelName: string; mock: boolean; editRevision: number;
+  executionMetadata?: PolishExecutionMetadata | null;
   checks: PolishCheck[]; historySaved: boolean; persistentHistory: boolean; createdAt: string;
 }
 export interface PolishModel { id: string; displayName: string; defaultModel: boolean; mock: boolean }

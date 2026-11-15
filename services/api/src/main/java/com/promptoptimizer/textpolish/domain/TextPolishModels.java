@@ -54,19 +54,40 @@ public final class TextPolishModels {
     public record Edit(@NotBlank @Size(max = 24000) String polishedText, @Min(0) long expectedRevision) { }
     /** 局部差异线索，无评分或语义正确性承诺；before/after为有限长度的可查看片段。 */
     public record Check(String code, String message, String before, String after) { }
+    /** 实际发送的传输参数；null表示未发送，thinking为null时供应商默认行为未知。 */
+    public record ExecutionParameters(Integer maxTokens, Integer maxCompletionTokens, Double temperature,
+                                      boolean stream, String responseFormat, String thinking) { }
+    /**
+     * 服务端生成的执行快照，随text_polish_record.payload持久化，继承记录的用户/租户/工作区范围。
+     * resourceHash为基础system指令UTF-8的SHA-256；repairInstructionHash仅在协议修复时记录。
+     * skillVersion为空表示未加载Skill；旧记录整体为null，不能推定使用当前策略。路由只存标识，不存端点或密钥。
+     * parameters记录实际发送值，供应商未显式配置的默认行为不作推断；attemptCount包含协议修复。
+     */
+    public record ExecutionMetadata(String strategyVersion, String skillVersion, String resourceHash,
+                                    String repairInstructionHash, String routeKey, String upstreamModel,
+                                    ExecutionParameters parameters, int attemptCount) { }
+    /** Provider返回正文及与该次实际请求绑定的元数据；兼容适配器的元数据可以未知。 */
+    public record Generation(String text, ExecutionMetadata executionMetadata) { }
     /** text_polish_record.payload的不可变生成快照；正文和修订读取时由独立列覆盖。 */
     public record Document(UUID id, Input input, String generatedText, String polishedText, UUID sourceRecordId,
                            SourceMode sourceMode, String modelId, String modelName, boolean mock, long editRevision,
-                           List<Check> checks, boolean historySaved, boolean persistentHistory, Instant createdAt) {
+                           List<Check> checks, boolean historySaved, boolean persistentHistory, Instant createdAt, ExecutionMetadata executionMetadata) {
+        /** 兼容既有调用方；历史缺少执行信息时保留未知。 */
+        public Document(UUID id, Input input, String generatedText, String polishedText, UUID sourceRecordId,
+                        SourceMode sourceMode, String modelId, String modelName, boolean mock, long editRevision,
+                        List<Check> checks, boolean historySaved, boolean persistentHistory, Instant createdAt) {
+            this(id, input, generatedText, polishedText, sourceRecordId, sourceMode, modelId, modelName, mock,
+                    editRevision, checks, historySaved, persistentHistory, createdAt, null);
+        }
         /** 手动编辑不改写生成原件、输入或来源。 */
         public Document edited(String text, long revision, List<Check> findings) {
             return new Document(id, input, generatedText, text, sourceRecordId, sourceMode, modelId, modelName,
-                    mock, revision, findings, historySaved, persistentHistory, createdAt);
+                    mock, revision, findings, historySaved, persistentHistory, createdAt, executionMetadata);
         }
         /** 历史存储确认后更新状态，失败时调用方仍可持有正文。 */
         public Document saved(boolean persistent) {
             return new Document(id, input, generatedText, polishedText, sourceRecordId, sourceMode, modelId, modelName,
-                    mock, editRevision, checks, true, persistent, createdAt);
+                    mock, editRevision, checks, true, persistent, createdAt, executionMetadata);
         }
     }
     /** SQL分页结果，不把所有用户记录载入浏览器。 */

@@ -6,7 +6,9 @@ import com.promptoptimizer.common.logging.ModelCallLogger;
 import com.promptoptimizer.provider.domain.*;
 import com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleProperties;
 import com.promptoptimizer.provider.service.PlatformModelCatalog.ModelEntry;
-import com.promptoptimizer.textpolish.domain.TextPolishModels.Input;
+import com.promptoptimizer.textpolish.domain.TextPolishModels.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +32,8 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
     private final ObjectMapper json;
     private final OpenAiCompatibleProperties properties;
     private final TextPolishFidelity fidelity;
-    private String strategyVersion = TextPolishInstructions.VERSION;
+    private static final String REPAIR_INSTRUCTION = "\n上次响应JSON协议不合法，仅修复输出协议，完整保留原文要求。";
+    private volatile String strategyVersion = TextPolishInstructions.VERSION;
 
     /** 只接受已冻结的内置版本；候选须显式配置，配置错误在启动时暴露。 */
     @Autowired
@@ -48,13 +51,31 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
     /** 每个真实尝试单独审计；失败日志只包含固定类别和元数据。 */
     @Override
     public String polish(Input input, ModelEntry model) {
+        return generate(input, model).text();
+    }
+    /** 首次请求前冻结指令、路由与参数；协议修复只追加固定协议提示，不重读可变配置。 */
+    @Override
+    public Generation generate(Input input, ModelEntry model) {
         var route = properties.getConfiguredRoutes().stream().filter(r -> r.key().equals(model.routeKey())).findFirst()
                 .orElseThrow(() -> new ProviderException(ProviderFailureType.CONFIGURATION, "润色模型路由不可用。", false));
+        String version = strategyVersion;
+        String instruction = TextPolishInstructions.system(input, version);
+        Map<String, Object> frozen = request(input, model, instruction);
+        var parameters = new ExecutionParameters((Integer) frozen.get("max_tokens"),
+                (Integer) frozen.get("max_completion_tokens"), (Double) frozen.get("temperature"), false,
+                frozen.containsKey("response_format") ? "json_object" : null,
+                frozen.containsKey("thinking") ? "disabled" : null);
+        String resourceHash = hash(instruction);
         for (int attempt = 1; attempt <= 2; attempt++) {
             long started = System.nanoTime(); Integer status = null; boolean protocolFailure = false;
             try (var audit = ModelCallLogger.beginAttempt()) {
                 try {
-                    Map<String, Object> body = request(input, model, attempt > 1);
+                    Map<String, Object> body = frozen;
+                    if (attempt > 1) {
+                        body = new LinkedHashMap<>(frozen);
+                        body.put("messages", List.of(Map.of("role", "system", "content", instruction + REPAIR_INSTRUCTION),
+                                ((List<?>) frozen.get("messages")).get(1)));
+                    }
                     Raw response = client.post().uri(route.endpoint()).header(HttpHeaders.AUTHORIZATION, "Bearer " + route.apiKey())
                             .contentType(MediaType.APPLICATION_JSON).body(body).exchange((req, upstream) -> {
                                 byte[] bytes = upstream.getBody().readNBytes(256 * 1024 + 1);
@@ -84,7 +105,9 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
                     } catch (JsonProcessingException | IllegalArgumentException failure) { protocolFailure = true; throw invalid("润色正文JSON协议无效。"); }
                     fidelity.check(input, output);
                     ModelCallLogger.completed("text.polish", route.key(), model.publicId(), "PLATFORM_CATALOG", false, attempt, 1, elapsed(started), usage(envelope));
-                    return output;
+                    return new Generation(output, new ExecutionMetadata(version, null, resourceHash,
+                            attempt > 1 ? hash(instruction + REPAIR_INSTRUCTION) : null,
+                            route.key(), model.upstreamModel(), parameters, attempt));
                 } catch (TextPolishException failure) {
                     ModelCallLogger.failed("text.polish", route.key(), model.publicId(), "PLATFORM_CATALOG", "INVALID_RESPONSE", false, status, false, attempt, 1, elapsed(started));
                     throw failure;
@@ -101,19 +124,26 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
         throw invalid("润色响应协议修复失败。");
     }
     /** 平台已有路由兼容规则仅影响传输参数，不增加文体专属提示词或模型阶段。 */
-    private Map<String, Object> request(Input input, ModelEntry model, boolean repair) {
+    private Map<String, Object> request(Input input, ModelEntry model, String instruction) {
         String user;
         try { user = json.writeValueAsString(input); }
         catch (JsonProcessingException failure) { throw new IllegalStateException("润色输入无法编码", failure); }
         Map<String, Object> body = new LinkedHashMap<>(); body.put("model", model.upstreamModel()); body.put("stream", false);
-        body.put("messages", List.of(Map.of("role", "system", "content", TextPolishInstructions.system(input, strategyVersion)
-                + (repair ? "\n上次响应JSON协议不合法，仅修复输出协议，完整保留原文要求。" : "")), Map.of("role", "user", "content", user)));
+        body.put("messages", List.of(Map.of("role", "system", "content", instruction), Map.of("role", "user", "content", user)));
         if ("tokenhub".equals(model.routeKey()) && "kimi-k3".equals(model.upstreamModel())) body.put("max_completion_tokens", Math.min(8000, properties.getMaxTokens()));
         else { body.put("max_tokens", Math.min(8000, properties.getMaxTokens())); body.put("temperature", properties.getTemperature()); }
         if (properties.isJsonResponseFormatEnabled()) body.put("response_format", Map.of("type", "json_object"));
         if (model.upstreamModel().startsWith("deepseek-v4-") || "deepseek-flash".equals(model.upstreamModel()) || "minimax-m3".equals(model.upstreamModel()))
             body.put("thinking", Map.of("type", "disabled"));
-        return body;
+        return Map.copyOf(body);
+    }
+    /** 仅摘要可信指令资源，不将用户正文或供应商凭据写入执行元数据。 */
+    private String hash(String instruction) {
+        try {
+            return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(instruction.getBytes(StandardCharsets.UTF_8)));
+        } catch (NoSuchAlgorithmException failure) {
+            throw new IllegalStateException("无法计算润色指令摘要", failure);
+        }
     }
     private String unwrap(String text) { String value = text.strip(); return value.startsWith("```json\n") && value.endsWith("```") ? value.substring(8, value.length() - 3).strip() : value; }
     private ModelCallLogger.TokenUsage usage(JsonNode envelope) { var u = envelope.path("usage"); return new ModelCallLogger.TokenUsage(number(u.path("prompt_tokens")), number(u.path("completion_tokens")), number(u.path("total_tokens"))); }

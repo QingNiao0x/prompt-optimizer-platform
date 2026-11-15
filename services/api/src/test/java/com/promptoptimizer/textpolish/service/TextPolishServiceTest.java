@@ -20,11 +20,11 @@ class TextPolishServiceTest {
     private final ModelEntry model = new ModelEntry(new UUID(0,4), "fixture", "mock", "fixture", "测试模型", true, true, 0);
     private final TextPolishFidelity fidelity = new TextPolishFidelity();
     private final AnalyticsEventService analytics = mock(AnalyticsEventService.class);
-    private CurrentActor current; private TextPolishProvider provider; private TextPolishHistoryService history; private TextPolishService service;
+    private CurrentActor current; private TextPolishModelService models; private TextPolishProvider provider; private TextPolishHistoryService history; private TextPolishService service;
     @BeforeEach @SuppressWarnings("unchecked") void setup() {
         current = mock(CurrentActor.class); when(current.require()).thenReturn(a);
-        provider = mock(TextPolishProvider.class); when(provider.polish(any(), any())).thenAnswer(i -> ((Input)i.getArgument(0)).sourceText());
-        var models = mock(TextPolishModelService.class); when(models.require(any())).thenReturn(model);
+        provider = mock(TextPolishProvider.class); when(provider.generate(any(), any())).thenCallRealMethod(); when(provider.polish(any(), any())).thenAnswer(i -> ((Input)i.getArgument(0)).sourceText());
+        models = mock(TextPolishModelService.class); when(models.require(any())).thenReturn(model);
         history = spy(new TextPolishHistoryService(mock(ObjectProvider.class), json, fidelity, false));
         var states = new TextPolishStateStore(mock(ObjectProvider.class), json, "MEMORY");
         service = new TextPolishService(current, models, provider, history, states, fidelity, json, analytics);
@@ -51,6 +51,36 @@ class TextPolishServiceTest {
         verify(analytics).recordToolOperation(TEXT_POLISH_SUBMITTED, request.requestId());
         verify(analytics).recordToolOperation(TEXT_POLISH_GENERATED, request.requestId());
         verifyNoMoreInteractions(analytics);
+    }
+    @Test void completedRequestWithDefaultModelReturnsOriginalAfterModelConfigurationChanges() {
+        var request = new Generate(UUID.randomUUID(), new Input("原始文章。", null, null, "", "", List.of(), ""), null, null, null);
+        var original = service.generate(request);
+        when(models.require(any())).thenThrow(TextPolishException.invalid("模型已停用"));
+        assertThat(service.generate(request)).isEqualTo(original);
+        verify(provider, times(1)).generate(any(), any());
+        assertThatThrownBy(() -> service.generate(new Generate(UUID.randomUUID(), request.input(), null, null, null)))
+                .isInstanceOf(TextPolishException.class);
+    }
+    @Test void executionMetadataSurvivesReplayEditsRecoveryAndLegacyJson() throws Exception {
+        var metadata = new ExecutionMetadata("frozen-v1", null, "hash", null, "fixture-route", "fixture-model",
+                new ExecutionParameters(8000, null, 0.2, false, "json_object", "disabled"), 1);
+        doAnswer(i -> new Generation(((Input)i.getArgument(0)).sourceText(), metadata)).when(provider).generate(any(), any());
+        var request = first("原始文章。");
+        doThrow(new org.springframework.dao.DataAccessResourceFailureException("fixture offline"))
+                .doCallRealMethod().when(history).save(any(), any());
+        var result = service.generate(request);
+        assertThat(result.historySaved()).isFalse();
+        doThrow(new AssertionError("重放不得调用模型")).when(provider).generate(any(), any());
+        assertThat(service.generate(request).executionMetadata()).isEqualTo(metadata);
+        var saved = service.save(result.id());
+        assertThat(saved.executionMetadata()).isEqualTo(metadata);
+        var edited = history.edit(a, result.id(), "编辑后的正文。", 0);
+        assertThat(edited.executionMetadata()).isEqualTo(metadata);
+        assertThat(service.operation(result.id()).document().executionMetadata()).isEqualTo(metadata);
+        assertThat(json.readValue(json.writeValueAsString(edited), Document.class).executionMetadata()).isEqualTo(metadata);
+        var legacy = json.valueToTree(edited);
+        ((com.fasterxml.jackson.databind.node.ObjectNode)legacy).remove("executionMetadata");
+        assertThat(json.treeToValue(legacy, Document.class).executionMetadata()).isNull();
     }
     @Test void originalAndCurrentUseServerSourceInsteadOfClientClaimedTextAndKeepGeneratedSnapshot() {
         var original = service.generate(first("原始文章。"));

@@ -56,6 +56,46 @@ class OpenAiTextPolishProviderTest {
         assertThat(calls).extracting(ModelCallObservation::willRetry).containsExactly(true, false);
         assertThat(calls.get(0).usage()).isNull(); assertThat(calls.get(1).usage().totalTokens()).isEqualTo(15);
     }
+    @Test void repairFreezesStrategyAndParametersAndRecordsActualInstructionHashes() throws Exception {
+        var properties = new OpenAiCompatibleProperties();
+        properties.setEndpoint(URI.create(ENDPOINT)); properties.setApiKey("fixture-key");
+        properties.setTemperature(0.2); properties.setMaxTokens(9000);
+        var builder = RestClient.builder(); server = MockRestServiceServer.bindTo(builder).build();
+        provider = new OpenAiTextPolishProvider(builder.build(), json, properties, new TextPolishFidelity());
+        model = new ModelEntry(UUID.randomUUID(), "fixture", properties.getConfiguredRoutes().getFirst().key(),
+                "deepseek-flash", "测试模型", true, true, 0);
+        List<com.fasterxml.jackson.databind.JsonNode> requests = new ArrayList<>();
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            requests.add(json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest)request).getBodyAsString()));
+            provider.configureStrategy(TextPolishInstructions.DIRECT_VERSION);
+            properties.setTemperature(0.9); properties.setMaxTokens(100);
+        }).andRespond(withSuccess("null", MediaType.APPLICATION_JSON));
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            requests.add(json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest)request).getBodyAsString()));
+        }).andRespond(withSuccess(envelope(json.writeValueAsString(Map.of("polishedText", input().sourceText())), "stop"), MediaType.APPLICATION_JSON));
+        var result = provider.generate(input(), model);
+        var metadata = result.executionMetadata();
+        assertThat(metadata.strategyVersion()).isEqualTo(TextPolishInstructions.VERSION);
+        assertThat(metadata.skillVersion()).isNull();
+        assertThat(metadata.attemptCount()).isEqualTo(2);
+        assertThat(metadata.upstreamModel()).isEqualTo("deepseek-flash");
+        assertThat(metadata.routeKey()).isEqualTo(model.routeKey());
+        assertThat(metadata.parameters().temperature()).isEqualTo(0.2);
+        assertThat(metadata.parameters().maxTokens()).isEqualTo(8000);
+        assertThat(metadata.parameters().thinking()).isEqualTo("disabled");
+        for (var body : requests) {
+            assertThat(body.path("temperature").doubleValue()).isEqualTo(0.2);
+            assertThat(body.path("max_tokens").intValue()).isEqualTo(8000);
+            assertThat(body.path("thinking").path("type").asText()).isEqualTo("disabled");
+        }
+        var digest = java.security.MessageDigest.getInstance("SHA-256");
+        assertThat(metadata.resourceHash()).isEqualTo(HexFormat.of().formatHex(digest.digest(
+                requests.get(0).path("messages").get(0).path("content").asText().getBytes(java.nio.charset.StandardCharsets.UTF_8))));
+        assertThat(metadata.repairInstructionHash()).isEqualTo(HexFormat.of().formatHex(digest.digest(
+                requests.get(1).path("messages").get(0).path("content").asText().getBytes(java.nio.charset.StandardCharsets.UTF_8))));
+        assertThat(json.writeValueAsString(metadata)).doesNotContain("fixture-key", ENDPOINT, input().sourceText());
+        server.verify();
+    }
     @Test void candidateCarriesEveryStyleAndDepthThroughTheNormalHttpEntry() throws Exception {
         provider.configureStrategy(TextPolishInstructions.CANDIDATE_VERSION);
         for (Style style : Style.values()) {

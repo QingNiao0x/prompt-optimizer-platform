@@ -1,7 +1,7 @@
 package com.promptoptimizer.textpolish.service;
 
 import com.promptoptimizer.common.logging.ModelCallLogger;
-import com.promptoptimizer.textpolish.domain.TextPolishModels.Input;
+import com.promptoptimizer.textpolish.domain.TextPolishModels.*;
 import com.promptoptimizer.provider.service.PlatformModelCatalog.ModelEntry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -14,6 +14,12 @@ import org.springframework.stereotype.Component;
 @Component
 @ConditionalOnProperty(prefix = "app.provider", name = "mode", havingValue = "mock", matchIfMissing = true)
 public class MockTextPolishProvider implements TextPolishProvider {
+    /** 演示回显没有模型指令或传输参数，版本标明mock，实际调用次数为0。 */
+    @Override
+    public Generation generate(Input input, ModelEntry model) {
+        return new Generation(polish(input, model), new ExecutionMetadata("mock-echo-v1", null, null, null,
+                "mock", model.upstreamModel(), null, 0));
+    }
     /** 不产生外部调用、事实或改写效果。 */
     @Override
     public String polish(Input input, ModelEntry model) {

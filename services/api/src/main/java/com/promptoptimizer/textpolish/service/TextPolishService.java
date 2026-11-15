@@ -53,9 +53,10 @@ public class TextPolishService {
         var model = models.require(request.input().modelId());
         Input in = request.input();
         Input input = new Input(in.sourceText(), in.style(), in.depth(), in.audience(), in.requirements(), in.lockedTexts(), model.publicId());
-        String text = provider.polish(input, model);
+        var generation = provider.generate(input, model);
+        String text = generation.text();
         return new Document(request.requestId(), input, text, text, null, SourceMode.RAW, model.publicId(), model.displayName(),
-                model.routeKey().equals("mock"), 0, fidelity.check(input, text), false, false, Instant.now());
+                model.routeKey().equals("mock"), 0, fidelity.check(input, text), false, false, Instant.now(), generation.executionMetadata());
     }
 
     /** 提交前冻结来源；并发编辑或删除发生在模型期间时拒绝把迟到响应关联到旧版本。 */
@@ -66,10 +67,18 @@ public class TextPolishService {
         if (source != null) in = new Input(request.sourceMode() == SourceMode.ORIGINAL ? source.input().sourceText() : source.polishedText(),
                 in.style(), in.depth(), in.audience(), in.requirements(), in.lockedTexts(), in.modelId());
         fidelity.validateInput(in);
+        // 已完成请求使用当时解析出的模型身份核对输入，管理员切换默认模型后仍返回原结果。
+        var previous = states.get(actor, request.requestId().toString(), Operation.class);
+        if (previous != null && previous.document() != null && previous.status().equals("COMPLETED")) {
+            String priorModel = in.modelId().isBlank() ? previous.document().modelId() : in.modelId();
+            Input priorInput = new Input(in.sourceText(), in.style(), in.depth(), in.audience(), in.requirements(), in.lockedTexts(), priorModel);
+            if (!previous.fingerprint().equals(requestFingerprint(priorInput, request)))
+                throw TextPolishException.conflict("请求标识已用于其他输入，请使用新的生成操作。");
+            return operation(request.requestId()).document();
+        }
         var model = models.require(in.modelId());
         Input input = new Input(in.sourceText(), in.style(), in.depth(), in.audience(), in.requirements(), in.lockedTexts(), model.publicId());
-        String fingerprint = fingerprint(List.of(input, request.sourceRecordId() == null ? "" : request.sourceRecordId(),
-                request.expectedRevision() == null ? -1 : request.expectedRevision(), request.sourceMode()));
+        String fingerprint = requestFingerprint(input, request);
         Operation pending = new Operation("RUNNING", fingerprint, null, Instant.now());
         if (!states.claim(actor, request.requestId().toString(), pending, TTL)) {
             var existing = operation(request.requestId());
@@ -80,12 +89,13 @@ public class TextPolishService {
         try (var correlation = LogCorrelation.bindWorkflow("text-polish", request.requestId().toString())) {
             // 幂等预留和服务端来源/模型校验通过后才计提交；模型失败保留尝试，不记成功结果。
             analytics.recordToolOperation(AnalyticsEventType.TEXT_POLISH_SUBMITTED, request.requestId());
-            String text = provider.polish(input, model);
+            var generation = provider.generate(input, model);
+            String text = generation.text();
             var checks = fidelity.check(input, text);
             if (source != null && history.find(actor, source.id()).editRevision() != source.editRevision())
                 throw TextPolishException.conflict("来源稿在生成期间已修改，已保留当前稿，请重新核对后生成。");
             var doc = new Document(request.requestId(), input, text, text, request.sourceRecordId(), request.sourceMode(),
-                    model.publicId(), model.displayName(), model.routeKey().equals("mock"), 0, checks, false, history.persistent(), Instant.now());
+                    model.publicId(), model.displayName(), model.routeKey().equals("mock"), 0, checks, false, history.persistent(), Instant.now(), generation.executionMetadata());
             // 已经生成的结果落库失败时留在私有短期状态中，重试保存不触发新模型调用。
             try { doc = history.save(actor, doc); }
             catch (DataAccessException failure) { /* 返回可恢复正文，页面明确显示历史未保存。 */ }
@@ -128,6 +138,11 @@ public class TextPolishService {
         var doc = history.find(actor, request.sourceRecordId());
         if (doc.editRevision() != request.expectedRevision()) throw TextPolishException.conflict("来源记录已更新，请保留编辑稿并重新读取。");
         return doc;
+    }
+    /** 幂等指纹只绑定用户请求及首次解析模型，不绑定后来变化的执行配置。 */
+    private String requestFingerprint(Input input, Generate request) {
+        return fingerprint(List.of(input, request.sourceRecordId() == null ? "" : request.sourceRecordId(),
+                request.expectedRevision() == null ? -1 : request.expectedRevision(), request.sourceMode()));
     }
     /** 指纹只用于等价判断，不写入技术日志，不接受模型自报身份或确认状态。 */
     private String fingerprint(Object input) {
