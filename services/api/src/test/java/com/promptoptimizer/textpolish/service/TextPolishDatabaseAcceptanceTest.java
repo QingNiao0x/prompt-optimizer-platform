@@ -32,11 +32,15 @@ class TextPolishDatabaseAcceptanceTest {
     }
     private Document document() {
         var input = new Input("最多3次，保护原句。", Style.NATURAL, Depth.LIGHT,"","",List.of("保护原句。"),"fixture");
-        return new Document(UUID.randomUUID(),input,"最多3次，保护原句。","最多3次，保护原句。",null,SourceMode.RAW,"fixture","受控模型",true,0,List.of(),false,true,Instant.now());
+        var prepared = TextPolishSkills.prepare(input, TextPolishSkills.AUTO_VERSION);
+        var execution = new ExecutionMetadata(TextPolishSkills.AUTO_VERSION, prepared.resources().getLast().version(), "system-hash",
+                null, "fixture", "fixture", null, 1, prepared.selection(), prepared.resources());
+        return new Document(UUID.randomUUID(),input,"最多3次，保护原句。","最多3次，保护原句。",null,SourceMode.RAW,"fixture","受控模型",true,0,List.of(),false,true,Instant.now(), execution);
     }
     @Test void jsonSnapshotCurrentDraftAndCasRemainConsistentAfterDeletion() {
         var saved = history.save(actor, document());
         var edited = history.edit(actor, saved.id(), "当前最多3次，保护原句。",0);
+        assertThat(history.find(actor, saved.id()).executionMetadata()).isEqualTo(saved.executionMetadata());
         assertThat(edited.generatedText()).isEqualTo(saved.generatedText()); assertThat(edited.editRevision()).isEqualTo(1);
         assertThatThrownBy(() -> history.edit(actor,saved.id(),"旧稿，保护原句。",0)).isInstanceOf(TextPolishException.class);
         assertThat(history.save(actor,saved).polishedText()).isEqualTo(edited.polishedText());
