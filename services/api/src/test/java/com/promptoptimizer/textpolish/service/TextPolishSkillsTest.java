@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleProperties;
 import com.promptoptimizer.provider.service.PlatformModelCatalog.ModelEntry;
 import com.promptoptimizer.textpolish.domain.TextPolishModels.*;
-import com.promptoptimizer.textpolish.service.PreparedTextPolish.Language;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.*;

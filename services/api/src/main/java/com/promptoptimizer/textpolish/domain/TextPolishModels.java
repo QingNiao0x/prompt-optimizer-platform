@@ -57,15 +57,33 @@ public final class TextPolishModels {
     /** 实际发送的传输参数；null表示未发送，thinking为null时供应商默认行为未知。 */
     public record ExecutionParameters(Integer maxTokens, Integer maxCompletionTokens, Double temperature,
                                       boolean stream, String responseFormat, String thinking) { }
+    /** 正文语言；UNKNOWN表示证据不足或当前无专门资源的语言。 */
+    public enum Language { ZH, EN, MIXED, UNKNOWN }
+    /** 服务端选择快照；GENERAL表示用途由编辑模型结合全文判断，reason为有限依据代码。 */
+    public record Selection(String selectorVersion, Language language, String profile, String reason) { }
+    /** 内置资源身份；sha256为实际加载的规范化UTF-8正文哈希，不含文件头。 */
+    public record Resource(String id, String version, String sha256) { }
     /**
      * 服务端生成的执行快照，随text_polish_record.payload持久化，继承记录的用户/租户/工作区范围。
      * resourceHash为基础system指令UTF-8的SHA-256；repairInstructionHash仅在协议修复时记录。
      * skillVersion为空表示未加载Skill；旧记录整体为null，不能推定使用当前策略。路由只存标识，不存端点或密钥。
      * parameters记录实际发送值，供应商未显式配置的默认行为不作推断；attemptCount包含协议修复。
+     * selection与resources来自首次冻结的装配结果；旧记录缺失时为null，禁止按当前配置补算。
      */
     public record ExecutionMetadata(String strategyVersion, String skillVersion, String resourceHash,
                                     String repairInstructionHash, String routeKey, String upstreamModel,
-                                    ExecutionParameters parameters, int attemptCount) { }
+                                    ExecutionParameters parameters, int attemptCount,
+                                    Selection selection, List<Resource> resources) {
+        /** 资源清单冻结为不可变副本；null保留旧记录的未知状态。 */
+        public ExecutionMetadata { resources = resources == null ? null : List.copyOf(resources); }
+        /** 兼容旧适配器及历史夹具，未采集的选择信息保持未知。 */
+        public ExecutionMetadata(String strategyVersion, String skillVersion, String resourceHash,
+                                 String repairInstructionHash, String routeKey, String upstreamModel,
+                                 ExecutionParameters parameters, int attemptCount) {
+            this(strategyVersion, skillVersion, resourceHash, repairInstructionHash, routeKey, upstreamModel,
+                    parameters, attemptCount, null, null);
+        }
+    }
     /** Provider返回正文及与该次实际请求绑定的元数据；兼容适配器的元数据可以未知。 */
     public record Generation(String text, ExecutionMetadata executionMetadata) { }
     /** text_polish_record.payload的不可变生成快照；正文和修订读取时由独立列覆盖。 */

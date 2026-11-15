@@ -109,7 +109,7 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
                     ModelCallLogger.completed("text.polish", route.key(), model.publicId(), "PLATFORM_CATALOG", false, attempt, 1, elapsed(started), usage(envelope));
                     return new Generation(output, new ExecutionMetadata(version, skillVersion, resourceHash,
                             attempt > 1 ? hash(instruction + REPAIR_INSTRUCTION) : null,
-                            route.key(), model.upstreamModel(), parameters, attempt));
+                            route.key(), model.upstreamModel(), parameters, attempt, prepared.selection(), prepared.resources()));
                 } catch (TextPolishException failure) {
                     ModelCallLogger.failed("text.polish", route.key(), model.publicId(), "PLATFORM_CATALOG", "INVALID_RESPONSE", false, status, false, attempt, 1, elapsed(started));
                     throw failure;

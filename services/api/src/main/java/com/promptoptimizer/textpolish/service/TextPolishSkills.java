@@ -1,7 +1,7 @@
 package com.promptoptimizer.textpolish.service;
 
 import com.promptoptimizer.textpolish.domain.TextPolishModels.Input;
-import com.promptoptimizer.textpolish.service.PreparedTextPolish.*;
+import com.promptoptimizer.textpolish.domain.TextPolishModels.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

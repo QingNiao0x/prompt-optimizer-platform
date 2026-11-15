@@ -63,7 +63,9 @@ class TextPolishServiceTest {
     }
     @Test void executionMetadataSurvivesReplayEditsRecoveryAndLegacyJson() throws Exception {
         var metadata = new ExecutionMetadata("frozen-v1", null, "hash", null, "fixture-route", "fixture-model",
-                new ExecutionParameters(8000, null, 0.2, false, "json_object", "disabled"), 1);
+                new ExecutionParameters(8000, null, 0.2, false, "json_object", "disabled"), 1,
+                new Selection("selector-v1", Language.EN, "GENERAL", "SOURCE_LANGUAGE_EVIDENCE"),
+                List.of(new Resource("english-v1", "v1", "resource-hash")));
         doAnswer(i -> new Generation(((Input)i.getArgument(0)).sourceText(), metadata)).when(provider).generate(any(), any());
         var request = first("原始文章。");
         doThrow(new org.springframework.dao.DataAccessResourceFailureException("fixture offline"))
@@ -78,9 +80,30 @@ class TextPolishServiceTest {
         assertThat(edited.executionMetadata()).isEqualTo(metadata);
         assertThat(service.operation(result.id()).document().executionMetadata()).isEqualTo(metadata);
         assertThat(json.readValue(json.writeValueAsString(edited), Document.class).executionMetadata()).isEqualTo(metadata);
+        var oldMetadata = json.valueToTree(edited);
+        ((com.fasterxml.jackson.databind.node.ObjectNode)oldMetadata.path("executionMetadata")).remove(List.of("selection", "resources"));
+        var old = json.treeToValue(oldMetadata, Document.class).executionMetadata();
+        assertThat(old.selection()).isNull();
+        assertThat(old.resources()).isNull();
+        assertThat(old.strategyVersion()).isEqualTo("frozen-v1");
         var legacy = json.valueToTree(edited);
         ((com.fasterxml.jackson.databind.node.ObjectNode)legacy).remove("executionMetadata");
         assertThat(json.treeToValue(legacy, Document.class).executionMetadata()).isNull();
+    }
+    @Test void continuationSelectsFromSavedCurrentTextAndPreservesPreviousSnapshot() {
+        doAnswer(call -> {
+            Input input = call.getArgument(0);
+            var prepared = TextPolishSkills.prepare(input, TextPolishSkills.AUTO_VERSION);
+            return new Generation(input.sourceText(), new ExecutionMetadata(TextPolishSkills.AUTO_VERSION,
+                    prepared.resources().getLast().version(), "frozen-system-hash", null, "fixture", "fixture", null, 1,
+                    prepared.selection(), prepared.resources()));
+        }).when(provider).generate(any(), any());
+        var original = service.generate(first("我们计划整理资料目录，让同事更方便地找到资料。"));
+        assertThat(original.executionMetadata().selection().language()).isEqualTo(Language.ZH);
+        history.edit(a, original.id(), "We plan to add a link so the readers can find our guide.", 0);
+        var next = service.generate(new Generate(UUID.randomUUID(), input("客户端声称的中文正文。"), original.id(), 1L, SourceMode.CURRENT));
+        assertThat(next.executionMetadata().selection().language()).isEqualTo(Language.EN);
+        assertThat(history.find(a, original.id()).executionMetadata()).isEqualTo(original.executionMetadata());
     }
     @Test void originalAndCurrentUseServerSourceInsteadOfClientClaimedTextAndKeepGeneratedSnapshot() {
         var original = service.generate(first("原始文章。"));

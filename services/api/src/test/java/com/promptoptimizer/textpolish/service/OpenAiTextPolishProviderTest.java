@@ -81,6 +81,8 @@ class OpenAiTextPolishProviderTest {
         var metadata = result.executionMetadata();
         assertThat(metadata.strategyVersion()).isEqualTo(version);
         assertThat(metadata.skillVersion()).isEqualTo(prepared.resources().getLast().version());
+        assertThat(metadata.selection()).isEqualTo(prepared.selection());
+        assertThat(metadata.resources()).isEqualTo(prepared.resources());
         assertThat(metadata.attemptCount()).isEqualTo(2);
         assertThat(metadata.upstreamModel()).isEqualTo("deepseek-flash");
         assertThat(metadata.routeKey()).isEqualTo(model.routeKey());
