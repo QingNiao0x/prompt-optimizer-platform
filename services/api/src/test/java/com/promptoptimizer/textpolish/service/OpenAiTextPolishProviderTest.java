@@ -76,7 +76,7 @@ class OpenAiTextPolishProviderTest {
         var result = provider.generate(input(), model);
         var metadata = result.executionMetadata();
         assertThat(metadata.strategyVersion()).isEqualTo(TextPolishInstructions.VERSION);
-        assertThat(metadata.skillVersion()).isNull();
+        assertThat(metadata.skillVersion()).isEqualTo(TextPolishInstructions.VERSION);
         assertThat(metadata.attemptCount()).isEqualTo(2);
         assertThat(metadata.upstreamModel()).isEqualTo("deepseek-flash");
         assertThat(metadata.routeKey()).isEqualTo(model.routeKey());
@@ -114,7 +114,8 @@ class OpenAiTextPolishProviderTest {
         }
         for (Style style : Style.values()) {
             for (Depth depth : Depth.values()) {
-                provider.polish(new Input("保护原句。", style, depth, "", "", List.of("保护原句。"), "fixture"), model);
+                assertThat(provider.generate(new Input("保护原句。", style, depth, "", "", List.of("保护原句。"), "fixture"), model)
+                        .executionMetadata().skillVersion()).isNull();
             }
         }
         server.verify();
@@ -139,7 +140,8 @@ class OpenAiTextPolishProviderTest {
         }
         for (Style style : Style.values()) {
             for (Depth depth : Depth.values()) {
-                provider.polish(new Input("保护原句。", style, depth, "", "", List.of("保护原句。"), "fixture"), model);
+                assertThat(provider.generate(new Input("保护原句。", style, depth, "", "", List.of("保护原句。"), "fixture"), model)
+                        .executionMetadata().skillVersion()).isNull();
             }
         }
         server.verify();

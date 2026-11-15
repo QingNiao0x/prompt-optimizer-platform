@@ -60,6 +60,7 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
                 .orElseThrow(() -> new ProviderException(ProviderFailureType.CONFIGURATION, "润色模型路由不可用。", false));
         String version = strategyVersion;
         String instruction = TextPolishInstructions.system(input, version);
+        String skillVersion = TextPolishInstructions.skillVersion(version);
         Map<String, Object> frozen = request(input, model, instruction);
         var parameters = new ExecutionParameters((Integer) frozen.get("max_tokens"),
                 (Integer) frozen.get("max_completion_tokens"), (Double) frozen.get("temperature"), false,
@@ -105,7 +106,7 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
                     } catch (JsonProcessingException | IllegalArgumentException failure) { protocolFailure = true; throw invalid("润色正文JSON协议无效。"); }
                     fidelity.check(input, output);
                     ModelCallLogger.completed("text.polish", route.key(), model.publicId(), "PLATFORM_CATALOG", false, attempt, 1, elapsed(started), usage(envelope));
-                    return new Generation(output, new ExecutionMetadata(version, null, resourceHash,
+                    return new Generation(output, new ExecutionMetadata(version, skillVersion, resourceHash,
                             attempt > 1 ? hash(instruction + REPAIR_INSTRUCTION) : null,
                             route.key(), model.upstreamModel(), parameters, attempt));
                 } catch (TextPolishException failure) {
