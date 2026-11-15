@@ -59,8 +59,9 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
         var route = properties.getConfiguredRoutes().stream().filter(r -> r.key().equals(model.routeKey())).findFirst()
                 .orElseThrow(() -> new ProviderException(ProviderFailureType.CONFIGURATION, "润色模型路由不可用。", false));
         String version = strategyVersion;
-        String instruction = TextPolishInstructions.system(input, version);
-        String skillVersion = TextPolishInstructions.skillVersion(version);
+        var prepared = TextPolishSkills.prepare(input, version);
+        String instruction = prepared.instruction();
+        String skillVersion = prepared.resources().isEmpty() ? null : prepared.resources().getLast().version();
         Map<String, Object> frozen = request(input, model, instruction);
         var parameters = new ExecutionParameters((Integer) frozen.get("max_tokens"),
                 (Integer) frozen.get("max_completion_tokens"), (Double) frozen.get("temperature"), false,

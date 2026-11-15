@@ -44,10 +44,11 @@ public final class TextPolishInstructions {
     }
 
     /**
-     * 装配单次润色指导。v3加载内置Skill，v4与direct保留各自的服务端配置选择入口。
+     * 装配单次润色指导。auto按正文语言选资源，v3、v4与direct保留原配置入口。
      * 文体只控制表达，幅度控制组织调整范围，两者均服从语义和用户锁定要求。
      */
     public static String system(Input input, String version) {
+        if (TextPolishSkills.AUTO_VERSION.equals(version)) return TextPolishSkills.prepare(input, version).instruction();
         if (VERSION.equals(version)) return SYSTEM;
         if (DIRECT_VERSION.equals(version)) return direct(input);
         if (!CANDIDATE_VERSION.equals(version)) throw new IllegalArgumentException("未知文章润色策略版本");

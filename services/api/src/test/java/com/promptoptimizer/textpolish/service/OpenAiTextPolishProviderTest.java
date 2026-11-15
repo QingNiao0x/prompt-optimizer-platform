@@ -56,12 +56,16 @@ class OpenAiTextPolishProviderTest {
         assertThat(calls).extracting(ModelCallObservation::willRetry).containsExactly(true, false);
         assertThat(calls.get(0).usage()).isNull(); assertThat(calls.get(1).usage().totalTokens()).isEqualTo(15);
     }
-    @Test void repairFreezesStrategyAndParametersAndRecordsActualInstructionHashes() throws Exception {
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {"text-polish-v3", "text-polish-auto-v1"})
+    void repairFreezesStrategyAndParametersAndRecordsActualInstructionHashes(String version) throws Exception {
         var properties = new OpenAiCompatibleProperties();
         properties.setEndpoint(URI.create(ENDPOINT)); properties.setApiKey("fixture-key");
         properties.setTemperature(0.2); properties.setMaxTokens(9000);
         var builder = RestClient.builder(); server = MockRestServiceServer.bindTo(builder).build();
         provider = new OpenAiTextPolishProvider(builder.build(), json, properties, new TextPolishFidelity());
+        provider.configureStrategy(version);
+        var prepared = TextPolishSkills.prepare(input(), version);
         model = new ModelEntry(UUID.randomUUID(), "fixture", properties.getConfiguredRoutes().getFirst().key(),
                 "deepseek-flash", "测试模型", true, true, 0);
         List<com.fasterxml.jackson.databind.JsonNode> requests = new ArrayList<>();
@@ -75,8 +79,8 @@ class OpenAiTextPolishProviderTest {
         }).andRespond(withSuccess(envelope(json.writeValueAsString(Map.of("polishedText", input().sourceText())), "stop"), MediaType.APPLICATION_JSON));
         var result = provider.generate(input(), model);
         var metadata = result.executionMetadata();
-        assertThat(metadata.strategyVersion()).isEqualTo(TextPolishInstructions.VERSION);
-        assertThat(metadata.skillVersion()).isEqualTo(TextPolishInstructions.VERSION);
+        assertThat(metadata.strategyVersion()).isEqualTo(version);
+        assertThat(metadata.skillVersion()).isEqualTo(prepared.resources().getLast().version());
         assertThat(metadata.attemptCount()).isEqualTo(2);
         assertThat(metadata.upstreamModel()).isEqualTo("deepseek-flash");
         assertThat(metadata.routeKey()).isEqualTo(model.routeKey());
