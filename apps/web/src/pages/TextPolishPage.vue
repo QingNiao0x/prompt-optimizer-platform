@@ -8,7 +8,8 @@ import { useTextPolishStore } from '@/stores/textPolish';
 import { useAuthStore } from '@/stores/auth';
 import { useTrialStore } from '@/stores/trial';
 import GuestTrialBanner from '@/components/auth/GuestTrialBanner.vue';
-import { polishStyles } from '@/types/textPolish';
+import { polishStyles, polishEditingLabel } from '@/types/textPolish';
+import TextPolishExecutionDetails from '@/components/textpolish/TextPolishExecutionDetails.vue';
 import { comparePolish } from '@/features/textpolish/diff';
 import { formatModelVersion } from '@/features/models/modelVersion';
 
@@ -85,7 +86,7 @@ onMounted(async () => {
     <div class="workbench-grid polish-grid" :data-pane="pane">
       <section class="glass-panel polish-column" data-column="source" aria-labelledby="polish-source-title">
         <div class="column-heading"><h2 id="polish-source-title">原始文本</h2><ElTag effect="plain">{{ sourceText.length }} 字符</ElTag></div>
-        <p class="hint">粘贴已有文章、邮件或说明。事实、条件和引用会随原文保留。</p>
+        <p class="hint">支持中文、英文和中英混合文章，默认保持原文语言。事实、条件和引用会随原文保留。</p>
         <ElInput v-model="sourceText" type="textarea" :rows="20"
           resize="vertical" aria-label="原始文章" placeholder="在这里粘贴需要润色的正文…" />
         <ElAlert v-if="sourceText.length > (capabilities?.maxInputCharacters ?? 12000)" :title="`原文超过 ${capabilities?.maxInputCharacters ?? 12000} 字符，请精简后再润色。已粘贴的内容完整保留。`" type="warning" :closable="false" />
@@ -101,7 +102,7 @@ onMounted(async () => {
             <strong>{{ item.label }}<small v-if="item.value === 'NATURAL'">默认</small></strong><span>{{ item.description }}</span>
           </ElRadio>
         </ElRadioGroup>
-        <label class="field"><span>你想怎样修改（选填）</span><ElInput v-model="requirements" type="textarea" :rows="3" :maxlength="1500" aria-label="润色补充要求" placeholder="例如：给非专业读者看、减少宣传腔，或保留叙事口吻。" /></label>
+        <label class="field"><span>你想怎样修改（选填）</span><ElInput v-model="requirements" type="textarea" :rows="3" :maxlength="1500" aria-label="润色补充要求" placeholder="例如：给非专业读者看、减少销售腔，或保留英文原稿的个人叙述口吻。" /></label>
         <p class="hint">留空时，会结合原文判断需要改善的表达。</p>
         <label class="field"><span>改写幅度</span><ElSelect v-model="depth" aria-label="改写幅度"><ElOption label="轻度润色" value="LIGHT" /><ElOption label="允许调整句式和段落" value="RESTRUCTURE" /></ElSelect></label>
         <p class="hint">轻度润色保持段落次序，允许段内拆句和压缩重复。允许调整句式和段落可进一步重组表达，两种幅度均保留独立含义。</p>
@@ -122,6 +123,7 @@ onMounted(async () => {
         <ElEmpty v-if="!result" :description="busy ? '正在润色文章，原文会保持在左侧。' : '输入文章并选择文体，获取完整润色正文。'" />
         <template v-else>
           <p class="hint">{{ styleLabel(result.input.style) }} · {{ depthLabel(result.input.depth) }} · {{ formatModelVersion(result.modelName) }} · {{ result.sourceMode === 'CURRENT' ? '基于已保存的当前稿' : '基于原文' }}</p>
+          <p class="hint">{{ polishEditingLabel(result.executionMetadata) }}</p>
           <ElAlert v-if="accountResult && !result.historySaved" title="正文已生成，历史尚未保存。请重试保存或复制正文。" type="warning" :closable="false" />
           <ElButton v-if="accountResult && !result.historySaved" :loading="saving" @click="store.save">重试保存历史</ElButton>
           <p v-if="!accountResult" class="hint">本次结果不保存到账号历史。可在当前页面编辑和复制，请及时保留正文。</p>
@@ -139,6 +141,7 @@ onMounted(async () => {
           <p v-if="isEditing" class="hint">{{ accountResult ? '差异和检查提示以已保存正文为准，保存后更新。复制当前稿不会自动保存。' : '修改只保留在本页，不写入账号历史；本地修改后请自行核对原文和当前稿。' }}</p>
           <div v-if="result.checks.length" class="check-list"><p v-for="check in result.checks" :key="check.code"><strong>{{ check.message }}</strong><span v-if="check.before">原文：{{ check.before }}<br />当前：{{ check.after }}</span></p></div>
           <p class="hint">请结合原文核对对象、数值、条件和引用。差异提示不代表完整语义检查。</p>
+          <TextPolishExecutionDetails :key="result.id" :metadata="result.executionMetadata" />
         </template>
       </section>
     </div>

@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { mockAuthentication } from './authFixture';
+import { executionFixture } from './textPolishExecutionFixture';
 import type { PolishDocument } from '../src/types/textPolish';
 
 const model = { id: 'polish-history-fixture', displayName: '历史文章模型', defaultModel: true, mock: false };
@@ -14,6 +15,27 @@ const record = (index: number): PolishDocument => ({
   createdAt: new Date(Date.UTC(2026, 9, 25, 12, 0, -index)).toISOString(),
 });
 const rows = (page: Page) => page.locator('.polish-history-table:visible .el-table__row, .polish-history-cards:visible .polish-history-card');
+
+test('历史展示已存执行快照，旧记录保持未知并可载入', async ({ page }) => {
+  const state = await setup(page, 2);
+  state.records[0]!.executionMetadata = executionFixture;
+  await page.goto('/history?type=text-polish');
+  await rows(page).first().getByRole('button', { name: '查看', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: '文章润色记录详情', exact: true });
+  await expect(dialog.getByText('英文编辑', { exact: true }).first()).toBeVisible();
+  await dialog.getByText('本次执行信息', { exact: true }).click();
+  await expect(dialog.getByText('source-language-v1', { exact: true })).toBeVisible();
+  await expect(dialog.getByText('a'.repeat(64), { exact: true })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+  await dialog.getByRole('button', { name: '关闭此对话框' }).click();
+  await rows(page).nth(1).getByRole('button', { name: '查看', exact: true }).click();
+  await expect(dialog.getByText('编辑匹配未知', { exact: true })).toBeVisible();
+  await dialog.getByText('本次执行信息', { exact: true }).click();
+  await expect(dialog.getByText('执行信息未知', { exact: true })).toBeVisible();
+  await dialog.getByRole('button', { name: '载入文章工作台', exact: true }).click();
+  await expect(page.getByText('编辑匹配未知', { exact: true })).toBeVisible();
+  expect(state.paidCalls).toBe(0);
+});
 async function pane(page: Page, label: '原文' | '设置' | '结果') {
   const nav = page.locator('nav.mobile-panes'); await nav.waitFor({ state: 'attached' });
   if (await nav.isVisible()) await nav.getByRole('button', { name: label, exact: true }).click();

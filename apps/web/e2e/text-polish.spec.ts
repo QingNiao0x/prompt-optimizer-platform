@@ -1,11 +1,13 @@
 import { expect, test, type Page } from '@playwright/test';
 import { mockAuthentication } from './authFixture';
+import { executionFixture } from './textPolishExecutionFixture';
 import type { PolishDocument, PolishInput } from '../src/types/textPolish';
 
 const input = (): PolishInput => ({ sourceText: '这是一段需要润色的文章。', style: 'NATURAL', depth: 'LIGHT', audience: '', requirements: '', lockedTexts: [], modelId: 'fixture' });
 const document = (task = input()): PolishDocument => ({ id: 'record', input: task, generatedText: '这段文章表达清楚，细节完整。', polishedText: '这段文章表达清楚，细节完整。', sourceRecordId: null, sourceMode: 'RAW', modelId: 'fixture', modelName: '受控文章模型', mock: false, editRevision: 0, checks: [], historySaved: true, persistentHistory: true, createdAt: '2026-10-25T00:00:00Z' });
 async function pane(page: Page, name: '原文' | '设置' | '结果') { const nav = page.locator('nav.mobile-panes'); await nav.waitFor({state:'attached'}); if (await nav.isVisible()) await nav.getByRole('button', { name, exact: true }).click(); }
 async function setup(page: Page) {
+  await page.route('**/api/**', route => route.fulfill({ status: 501, json: { error: { message: '未登记的页面测试请求' } } }));
   await mockAuthentication(page); let saved = document(), calls = 0, fail = false;
   await page.route('**/api/v1/text-polish**', async route => {
     const path = new URL(route.request().url()).pathname, method = route.request().method();
@@ -23,6 +25,28 @@ async function setup(page: Page) {
   });
   await page.goto('/text-polish'); return { calls: () => calls, fail: () => { fail = true; }, saved: () => saved };
 }
+
+test('结果按服务端快照显示编辑匹配和执行信息，复制仅含正文', async ({ page, context }) => {
+  const state = await setup(page);
+  await page.route('**/api/v1/text-polish', route => route.fulfill({ json: { data: {
+    ...document(route.request().postDataJSON().input), executionMetadata: executionFixture,
+  } } }));
+  await pane(page, '原文');
+  await expect(page.getByText(/支持中文、英文和中英混合文章/)).toBeVisible();
+  await page.getByRole('textbox', { name: '原始文章', exact: true }).fill(input().sourceText);
+  await pane(page, '设置');
+  await page.getByRole('button', { name: '开始润色', exact: true }).click();
+  await pane(page, '结果');
+  await expect(page.getByText('英文编辑', { exact: true }).first()).toBeVisible();
+  await page.getByText('本次执行信息', { exact: true }).click();
+  await expect(page.getByText('source-language-v1', { exact: true })).toBeVisible();
+  await expect(page.getByText('a'.repeat(64), { exact: true })).toBeVisible();
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.getByRole('button', { name: '复制正文', exact: true }).click();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(document().polishedText);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+  expect(state.calls()).toBe(0);
+});
 test('三档说明常显，默认自然流畅，切档不生成，沿用主题且无横向溢出', async ({ page }, testInfo) => {
   const state = await setup(page); await pane(page,'设置');
   await expect(page.getByRole('radio', { name: /自然流畅/ })).toBeChecked();
@@ -86,6 +110,7 @@ test('幅度常显并传入生成请求，结果显示实际幅度与句内差�
   await page.screenshot({ path: testInfo.outputPath('polish-inline-diff.png'), fullPage: true });
 });
 test('模型管理统一保存文章模块可用模型和独立默认项', async ({page}) => {
+  await page.route('**/api/**', route => route.fulfill({ status: 501, json: { error: { message: '未登记的模型测试请求' } } }));
   await mockAuthentication(page,true,true);
   await page.route('**/api/v1/admin/models/text-polish', async route => route.fulfill({json:{data:{enabledModelIds:['fixture'],defaultModelId:'fixture'}}}));
   await page.route('**/api/v1/admin/models', async route => route.fulfill({json:{data:[{id:'fixture-id',publicId:'fixture',routeKey:'mock',upstreamModel:'fixture',displayName:'受控文章模型',enabled:true,defaultModel:true,sortOrder:0}]}}));

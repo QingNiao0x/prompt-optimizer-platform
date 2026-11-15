@@ -8,6 +8,8 @@ export interface PolishInput {
 export interface PolishCheck { code: string; message: string; before: string; after: string }
 /** 服务端实际执行快照。旧历史可能缺失，null字段表示未配置或未知。 */
 export interface PolishExecutionMetadata {
+  selection?: { selectorVersion: string; language: 'ZH' | 'EN' | 'MIXED' | 'UNKNOWN'; profile: string; reason: string } | null;
+  resources?: { id: string; version: string; sha256: string }[] | null;
   strategyVersion: string; skillVersion: string | null; resourceHash: string | null;
   repairInstructionHash: string | null; routeKey: string; upstreamModel: string; attemptCount: number;
   parameters: {
@@ -15,6 +17,11 @@ export interface PolishExecutionMetadata {
     stream: boolean; responseFormat: string | null; thinking: string | null;
   } | null;
 }
+/** 仅使用本次服务端快照显示匹配，不从原文或当前设置反推旧记录。 */
+export const polishEditingLabel = (metadata?: PolishExecutionMetadata | null): string => {
+  const labels = { ZH: '中文编辑', EN: '英文编辑', MIXED: '中英混合编辑', UNKNOWN: '通用编辑' };
+  return metadata?.selection ? labels[metadata.selection.language] ?? '编辑匹配未知' : '编辑匹配未知';
+};
 export interface PolishDocument {
   id: string; input: PolishInput; generatedText: string; polishedText: string; sourceRecordId: string | null;
   sourceMode: PolishSource; modelId: string; modelName: string; mock: boolean; editRevision: number;

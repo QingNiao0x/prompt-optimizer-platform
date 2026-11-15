@@ -9,7 +9,8 @@ import { useTextPolishStore } from '@/stores/textPolish';
 import { textPolishApi } from '@/services/textPolishApi';
 import { getApiErrorMessage } from '@/services/http';
 import { formatModelVersion } from '@/features/models/modelVersion';
-import { polishStyles, type PolishDocument } from '@/types/textPolish';
+import { polishStyles, polishEditingLabel, type PolishDocument } from '@/types/textPolish';
+import TextPolishExecutionDetails from './TextPolishExecutionDetails.vue';
 
 const router = useRouter(), auth = useAuthStore(), store = useTextPolishStore();
 const records = ref<PolishDocument[]>([]), currentPage = ref(1), pageSize = ref(10), total = ref(0);
@@ -169,6 +170,7 @@ onBeforeUnmount(() => { active = false; epoch++; listSequence++; detailSequence+
         <template v-if="detail">
           <div class="record-meta"><ElTag effect="plain">{{ styleLabel(detail.input.style) }}</ElTag><span>{{ formatModelVersion(detail.modelName) }}</span><time>{{ formatDate(detail.createdAt) }}</time></div>
           <p class="detail-note">{{ detail.input.depth === 'LIGHT' ? '轻度润色' : '允许调整句式和段落' }} · {{ sourceLabel(detail) }}<template v-if="detail.editRevision"> · 已保存编辑 {{ detail.editRevision }} 次</template></p>
+          <p class="detail-note">{{ polishEditingLabel(detail.executionMetadata) }}</p>
           <ElAlert v-if="detail.mock" title="演示模型回传结果，不代表真实润色效果。" type="info" :closable="false" />
           <div class="article-comparison">
             <section class="detail-block"><h3>原始文本</h3><pre>{{ detail.input.sourceText }}</pre></section>
@@ -182,6 +184,7 @@ onBeforeUnmount(() => { active = false; epoch++; listSequence++; detailSequence+
               <template v-if="detail.input.lockedTexts.length"><p>保持原样的文字：</p><pre v-for="(text, index) in detail.input.lockedTexts" :key="index" class="saved-text">{{ text }}</pre></template>
             </ElCollapseItem>
           </ElCollapse>
+          <TextPolishExecutionDetails :key="detail.id" :metadata="detail.executionMetadata" />
         </template>
       </div>
     </ElDialog>
