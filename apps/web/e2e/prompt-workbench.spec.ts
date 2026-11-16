@@ -865,6 +865,7 @@ test('用户可以通过 File System Access API 建立本地项目索引', async
   await openWorkbenchPane(page, 'context');
   await page.getByRole('button', { name: '添加上下文' }).click();
   await page.getByRole('menuitem', { name: '选择文件夹' }).click();
+  await page.getByRole('button', { name: '开始处理 1 个文件夹' }).click();
 
   await expect(page.getByText('2 个文本文件已完整建立本地索引')).toBeVisible();
   await expect(page.getByText(/2 个文本片段/)).toBeVisible();
@@ -940,6 +941,7 @@ test('用户可以暂停并继续本地项目索引', async ({ page }) => {
   });
   await page.getByRole('button', { name: '添加上下文' }).click();
   await page.getByRole('menuitem', { name: '选择文件夹' }).click();
+  await page.getByRole('button', { name: '开始处理 1 个文件夹' }).click();
 
   await expect(page.getByText(/已暂停，检查点位于/)).toBeVisible();
   await page.getByRole('button', { name: '继续索引' }).click();

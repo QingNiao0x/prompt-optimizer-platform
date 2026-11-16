@@ -32,6 +32,7 @@ test('旧库准备期间显示真实阶段，取消后不复活任务，再次�
   const chooseFolder = async () => {
     await page.getByRole('button', { name: '添加上下文' }).click();
     await page.getByRole('menuitem', { name: '选择文件夹' }).click();
+    await page.getByRole('button', { name: '开始处理 1 个文件夹' }).click();
   };
   await chooseFolder();
   await expect(page.locator('.reading-meta').filter({ hasText: '正在准备本项目的独立索引' })).toBeVisible();

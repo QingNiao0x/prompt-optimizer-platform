@@ -32,6 +32,7 @@ type WorkerResponse =
 
 interface WorkerRequest {
   files: File[];
+  paths: string[];
 }
 
 const readFilesInWorker = (
@@ -71,7 +72,9 @@ const readFilesInWorker = (
       stop();
       reject(new Error(event.message || '文件读取线程启动失败'));
     };
-    worker.postMessage({ files } satisfies WorkerRequest);
+    // File 的自定义 webkitRelativePath 不会随结构化克隆传递；单独携带逻辑路径，
+    // 避免多目录同名文件在 Worker 返回后恢复旧路径并相互覆盖。
+    worker.postMessage({ files, paths: files.map(getProjectFilePath) } satisfies WorkerRequest);
   });
 
 const MAX_DOCUMENTS_PER_SELECTION = 100;

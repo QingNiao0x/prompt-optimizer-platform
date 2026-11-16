@@ -529,7 +529,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
       let classification: FileClassification;
       try {
         if (prepared.error) throw prepared.error;
-        classification = await classifyFile(entry.path, source, limits.maxIndexableFileBytes);
+        classification = await classifyFile(entry.path, source, limits.maxIndexableFileBytes, prepared.bytes);
       } catch {
         // 采样或小文件读取失败不能中止整批，也不能在增量刷新中继续复用过期正文。
         summary.failedFiles += 1;
@@ -593,6 +593,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
           source,
           classification.language,
           (bytesRead) => report('INDEXING', entry.path, bytesRead, entry.file.size),
+          prepared.bytes,
         )) {
           const codeMetadata = extractCodeMetadata(content, classification.language);
           codeMetadata.symbols.forEach((symbol) => fileSymbols.add(symbol));
@@ -893,13 +894,14 @@ export const getChunkSelectionLimit = (reasons: readonly string[]): number => {
 };
 
 /**
- * 最多预读六个小文件（合计不超过 384 KiB）；采样与分块复用同一内存 Blob。
+ * 最多预读六个小文件（合计不超过 384 KiB）；分类采样与正文解码复用同一份字节。
+ * 避免把已读字节再包装为 Blob 后重复异步读取；二进制识别、UTF-8 解码和分块规则保持一致。
  * 大文件仍流式读取，增量未变化及受保护的路径在预读前跳过；写入保持原有单队列顺序。
  */
 const prepareSourceFiles = async function* (
   entries: Extract<ProjectSourceEntry, { kind: 'file' }>[],
   existing: Map<string, IndexedProjectFile>,
-): AsyncGenerator<{ entry: Extract<ProjectSourceEntry, { kind: 'file' }>; source: Blob; error?: unknown }> {
+): AsyncGenerator<{ entry: Extract<ProjectSourceEntry, { kind: 'file' }>; source: Blob; bytes?: Uint8Array; error?: unknown }> {
   for (let offset = 0; offset < entries.length; offset += FILE_READ_CONCURRENCY) {
     const prepared = await Promise.all(entries.slice(offset, offset + FILE_READ_CONCURRENCY).map(async (entry) => {
       const path = entry.path.replace(/\\/g, '/');
@@ -909,7 +911,7 @@ const prepareSourceFiles = async function* (
         return { entry, source: entry.file };
       }
       try {
-        return { entry, source: new Blob([await entry.file.arrayBuffer()]) };
+        return { entry, source: entry.file, bytes: new Uint8Array(await entry.file.arrayBuffer()) };
       } catch (error) {
         return { entry, source: entry.file, error };
       }
@@ -926,21 +928,19 @@ const classifyFile = async (
   path: string,
   file: Blob,
   maxIndexableFileBytes: number,
+  bytes?: Uint8Array,
 ): Promise<FileClassification> => {
   const normalizedPath = path.replace(/\\/g, '/').toLowerCase();
   const fileName = normalizedPath.slice(normalizedPath.lastIndexOf('/') + 1);
   if (isSensitiveFile(fileName) || isIgnoredFile(normalizedPath)) {
     return { action: 'IGNORE', language: 'binary', priority: 100 };
   }
-  if (fileName === '.npmrc' && await containsSensitiveConfiguration(file)) {
+  if (fileName === '.npmrc' && await containsSensitiveConfiguration(file, bytes)) {
     return { action: 'IGNORE', language: 'sensitive', priority: 100 };
   }
 
   const language = languageOf(fileName);
-  if (!language && !(await looksLikeText(file))) {
-    return { action: 'IGNORE', language: 'binary', priority: 100 };
-  }
-  if (language && !(await looksLikeText(file))) {
+  if (!(await looksLikeText(file, bytes))) {
     return { action: 'IGNORE', language: 'binary', priority: 100 };
   }
   if (file.size > maxIndexableFileBytes && !language) {
@@ -1045,11 +1045,12 @@ const priorityOf = (fileName: string): number => {
   return languageOf(fileName) ? 10 : 20;
 };
 
-const looksLikeText = async (file: Blob): Promise<boolean> => {
+const looksLikeText = async (file: Blob, bytes?: Uint8Array): Promise<boolean> => {
   if (file.size === 0) {
     return true;
   }
-  const sample = new Uint8Array(await file.slice(0, TEXT_SAMPLE_BYTES).arrayBuffer());
+  const sample = bytes?.subarray(0, TEXT_SAMPLE_BYTES)
+    ?? new Uint8Array(await file.slice(0, TEXT_SAMPLE_BYTES).arrayBuffer());
   let suspiciousBytes = 0;
   for (const byte of sample) {
     if (byte === 0) {
@@ -1062,8 +1063,8 @@ const looksLikeText = async (file: Blob): Promise<boolean> => {
   return suspiciousBytes / sample.length < 0.08;
 };
 
-const containsSensitiveConfiguration = async (file: Blob): Promise<boolean> => {
-  const sample = await file.slice(0, 64 * 1024).text();
+const containsSensitiveConfiguration = async (file: Blob, bytes?: Uint8Array): Promise<boolean> => {
+  const sample = bytes ? new TextDecoder().decode(bytes.subarray(0, 64 * 1024)) : await file.slice(0, 64 * 1024).text();
   return SENSITIVE_NPMRC_PATTERN.test(sample);
 };
 
@@ -1083,8 +1084,8 @@ const streamTextChunks = async function* (
   file: Blob,
   language: string,
   onBytesRead?: (bytesRead: number) => void,
+  bytes?: Uint8Array,
 ): AsyncGenerator<string> {
-  const reader = file.stream().getReader();
   const decoder = new TextDecoder('utf-8', { fatal: false });
   let buffer = '';
   let chunk = '';
@@ -1118,25 +1119,30 @@ const streamTextChunks = async function* (
     }
   };
 
+  for await (const part of readSourceBytes(file, bytes)) {
+    bytesRead += part.byteLength;
+    onBytesRead?.(bytesRead);
+    buffer += decoder.decode(part, { stream: true });
+    yield* flushAtLineBoundary();
+  }
+  buffer += decoder.decode();
+  chunk += buffer;
+  if (chunk.length > 0) {
+    yield chunk;
+  }
+};
+
+/** 小文件消费有界预读结果；大文件保持浏览器流和提前退出时释放锁的行为。 */
+const readSourceBytes = async function* (file: Blob, bytes?: Uint8Array): AsyncGenerator<Uint8Array> {
+  if (bytes) { yield bytes; return; }
+  const reader = file.stream().getReader();
   try {
     while (true) {
       const result = await reader.read();
-      if (result.done) {
-        break;
-      }
-      bytesRead += result.value.byteLength;
-      onBytesRead?.(bytesRead);
-      buffer += decoder.decode(result.value, { stream: true });
-      yield* flushAtLineBoundary();
+      if (result.done) return;
+      yield result.value;
     }
-    buffer += decoder.decode();
-    chunk += buffer;
-    if (chunk.length > 0) {
-      yield chunk;
-    }
-  } finally {
-    reader.releaseLock();
-  }
+  } finally { reader.releaseLock(); }
 };
 
 /** 不在 UTF-16 代理对中间截断，保留中文之外的补充字符。 */

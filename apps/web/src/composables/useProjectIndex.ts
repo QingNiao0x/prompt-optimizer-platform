@@ -9,6 +9,7 @@ import {
   supportsFileSystemAccess,
   type DirectoryHandleLike,
 } from '@/features/project-index/fileSystemDirectorySource';
+import { directoryRoots, type ProjectDirectorySource } from '@/features/project-index/projectDirectorySelection';
 import { projectIndexRepository } from '@/features/project-index/indexedDbProjectIndexRepository';
 import { createIsolatedProjectId, isIsolatedProject } from '@/features/project-index/projectIndexStorage';
 import { indexFailureMessage } from '@/features/project-index/projectIndexFailure';
@@ -35,7 +36,7 @@ type WorkerResponse =
 interface WorkerStartRequest {
   type: 'start';
   projectId: string;
-  rootHandle: DirectoryHandleLike;
+  rootHandle: ProjectDirectorySource;
   limits: EffectiveProjectIndexLimits;
   retention: ProjectIndexRetention;
   sessionId: string;
@@ -67,22 +68,23 @@ export const useProjectIndex = () => {
   let activeWorker: Worker | undefined;
   let activeWorkerReject: ((reason: Error) => void) | undefined;
   let activeProjectId = '';
-  let currentRootHandle: DirectoryHandleLike | undefined;
+  let currentRootHandle: ProjectDirectorySource | undefined;
   let operationVersion = 0;
   let activeProjectHasData = false;
   let disposePreparation: (() => void) | undefined;
 
   const indexDirectory = async (
     options: ProjectIndexStartOptions,
+    selectedSource?: ProjectDirectorySource,
   ): Promise<ProjectIndexSummary | undefined> => {
     if (isSelecting.value || isIndexing.value) return undefined;
     const selectionId = ++operationVersion;
     isSelecting.value = true;
     errorMessage.value = '';
-    let rootHandle: DirectoryHandleLike;
+    let rootHandle: ProjectDirectorySource;
     try {
       // 目录选择器必须直接位于点击事件的调用链中，前面不能插入异步等待。
-      rootHandle = await pickProjectDirectory();
+      rootHandle = selectedSource ?? await pickProjectDirectory();
     } catch (error) {
       if (isUserCancellation(error)) {
         return undefined;
@@ -122,7 +124,11 @@ export const useProjectIndex = () => {
       if (!rootHandle) {
         throw new Error('未找到项目目录授权，请重新选择项目文件夹');
       }
-      await ensureReadPermission(rootHandle);
+      // 多根逐个恢复授权；取消或离页后不得继续弹出下一根的权限请求。
+      const isPreparationActive = (): boolean => preparationId === operationVersion;
+      for (const root of directoryRoots(rootHandle)) {
+        if (!isPreparationActive() || !await ensureReadPermission(root.handle, isPreparationActive)) return undefined;
+      }
       if (preparationId !== operationVersion) return undefined;
       currentRootHandle = rootHandle;
       isSelecting.value = false;
@@ -134,7 +140,7 @@ export const useProjectIndex = () => {
 
   const runIndex = async (
     projectId: string,
-    rootHandle: DirectoryHandleLike,
+    rootHandle: ProjectDirectorySource,
     options: ProjectIndexStartOptions,
     mode: ProjectIndexMode,
   ): Promise<ProjectIndexSummary | undefined> => {
@@ -217,7 +223,7 @@ export const useProjectIndex = () => {
 
   const indexInWorker = (
     projectId: string,
-    rootHandle: DirectoryHandleLike,
+    rootHandle: ProjectDirectorySource,
     options: Omit<WorkerStartRequest, 'type' | 'projectId' | 'rootHandle'>,
   ): Promise<WorkerIndexResult> =>
     new Promise((resolve, reject) => {
@@ -375,14 +381,23 @@ const createProjectId = (): string => {
   return `project-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 };
 
-const ensureReadPermission = async (rootHandle: DirectoryHandleLike): Promise<void> => {
-  const permission = await rootHandle.queryPermission?.({ mode: 'read' });
-  if (permission === undefined || permission === 'granted') {
-    return;
-  }
-  const requested = await rootHandle.requestPermission?.({ mode: 'read' });
-  if (requested !== 'granted') {
-    throw new Error('项目目录读取权限已失效，请重新授权');
+/** 授权接口无法主动中断；每次等待结束都核对任务，过期结果不触发新提示或覆盖当前状态。 */
+const ensureReadPermission = async (
+  rootHandle: DirectoryHandleLike,
+  isOperationActive: () => boolean,
+): Promise<boolean> => {
+  try {
+    if (!isOperationActive()) return false;
+    const permission = await rootHandle.queryPermission?.({ mode: 'read' });
+    if (!isOperationActive()) return false;
+    if (permission === undefined || permission === 'granted') return true;
+    const requested = await rootHandle.requestPermission?.({ mode: 'read' });
+    if (!isOperationActive()) return false;
+    if (requested !== 'granted') throw new Error('项目目录读取权限已失效，请重新授权');
+    return true;
+  } catch (error) {
+    if (!isOperationActive()) return false;
+    throw error;
   }
 };
 

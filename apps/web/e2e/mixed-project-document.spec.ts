@@ -180,6 +180,7 @@ test('本地样例项目索引与单独方案文件共同参与 Plan 和最终�
   await openWorkbenchPane(page, 'context');
   await page.getByRole('button', { name: '添加上下文' }).click();
   await page.getByRole('menuitem', { name: '选择文件夹' }).click();
+  await page.getByRole('button', { name: '开始处理 1 个文件夹' }).click();
   await expect(page.getByText('9 个文本文件已完整建立本地索引')).toBeVisible();
   await expect(page.locator('.warning-list')).toHaveCount(0);
   const indexedPaths = await page.evaluate(async () => {

@@ -75,6 +75,7 @@ test('真实 Worker 的空配额异常有可读提示，点击继续后完成剩
   });
   await page.getByRole('button', { name: '添加上下文' }).click();
   await page.getByRole('menuitem', { name: '选择文件夹' }).click();
+  await page.getByRole('button', { name: '开始处理 1 个文件夹' }).click();
   await expect(page.locator('.warning-list')).toContainText('浏览器存储空间不足', { timeout: 30_000 });
   await expect(page.getByTestId('resume-index')).toBeVisible();
   await expect(page.getByText('索引已中断，以下为最后成功提交的文件检查点；继续时会校验并补建。')).toBeVisible();

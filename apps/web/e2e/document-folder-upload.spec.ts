@@ -94,6 +94,7 @@ test('文档文件夹保留嵌套路径并完整上传中等大小 TXT 与办公
   await page.getByRole('button', { name: '添加上下文' }).click();
   await page.getByRole('menuitem', { name: '选择文件夹' }).click();
   await (await chooser).setFiles(folder);
+  await page.getByRole('button', { name: '开始处理 1 个文件夹' }).click();
   const uploadConfirm = page.getByRole('dialog', { name: '确认上传需要解析的文档' });
   await expect(uploadConfirm).toBeVisible();
   expect(sessions.size).toBe(0);
@@ -102,6 +103,7 @@ test('文档文件夹保留嵌套路径并完整上传中等大小 TXT 与办公
   await page.getByRole('button', { name: '添加上下文' }).click();
   await page.getByRole('menuitem', { name: '选择文件夹' }).click();
   await (await chooserAgain).setFiles(folder);
+  await page.getByRole('button', { name: '开始处理 1 个文件夹' }).click();
   await expect(uploadConfirm).toBeVisible();
   await uploadConfirm.getByRole('button', { name: '确认上传所选文档' }).click();
   await expect(page.getByText('资料/子目录/说明.docx', { exact: true })).toBeVisible();
@@ -174,6 +176,7 @@ test('一次选择混合文件夹会索引源码，并在确认后才上传办�
   await openWorkbenchPane(page, 'context');
   await page.getByRole('button', { name: '添加上下文' }).click();
   await page.getByRole('menuitem', { name: '选择文件夹' }).click();
+  await page.getByRole('button', { name: '开始处理 1 个文件夹' }).click();
   await expect(page.getByText('1 个文本文件已完整建立本地索引')).toBeVisible();
   const dialog = page.getByRole('dialog', { name: '确认上传需要解析的文档' });
   await expect(dialog.getByText('docs/方案.docx')).toBeVisible();
@@ -184,6 +187,7 @@ test('一次选择混合文件夹会索引源码，并在确认后才上传办�
   expect(uploads).toBe(0);
   await page.getByRole('button', { name: '添加上下文' }).click();
   await page.getByRole('menuitem', { name: '选择文件夹' }).click();
+  await page.getByRole('button', { name: '开始处理 1 个文件夹' }).click();
   await expect(dialog.getByText('docs/方案.docx')).toBeVisible();
   await dialog.getByRole('button', { name: '确认上传所选文档' }).click();
   await expect(page.getByText('docs/方案.docx', { exact: true })).toBeVisible();

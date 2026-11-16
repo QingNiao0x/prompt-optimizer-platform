@@ -21,6 +21,7 @@ import { useAuthStore } from '@/stores/auth';
 import { useTrialStore } from '@/stores/trial';
 import { withRelativePath, type DroppedFileCollection } from '@/composables/fileDrop';
 import { usePlanModePreference } from '@/composables/usePlanModePreference';
+import type { ProjectDirectorySource } from '@/features/project-index/projectDirectorySelection';
 import { useProjectIndex } from '@/composables/useProjectIndex';
 import { useProjectFiles } from '@/composables/useProjectFiles';
 import { loadSelectedFileScopes } from '@/features/project-index/projectFileScope';
@@ -186,8 +187,8 @@ const workbenchStage = computed<WorkbenchStage>(() => {
   return 'context';
 });
 
-const handleIndexProject = async (): Promise<void> => {
-  await runProjectIndexOperation('FULL');
+const handleIndexProject = async (source?: ProjectDirectorySource): Promise<void> => {
+  await runProjectIndexOperation('FULL', source);
 };
 
 const handleResumeProject = async (): Promise<void> => {
@@ -200,6 +201,7 @@ const handleRefreshProject = async (): Promise<void> => {
 
 const runProjectIndexOperation = async (
   mode: 'FULL' | 'INCREMENTAL' | 'RESUME',
+  source?: ProjectDirectorySource,
 ): Promise<void> => {
   const currentLifecycle = pageLifecycleVersion;
   uploadCandidates.value = [];
@@ -224,7 +226,7 @@ const runProjectIndexOperation = async (
       },
     };
     const summary = mode === 'FULL'
-      ? await indexDirectory(options)
+      ? await indexDirectory(options, source)
       : mode === 'RESUME'
         ? await resumeIndexing(options)
         : await refreshIndex(options);
@@ -381,7 +383,7 @@ const addSelectedFiles = async (
   if (added < selectedFiles.length) ElMessage.warning('上下文文件数量已达上限，部分文件未加入。');
 };
 
-const handleFilesSelected = (fileList: FileList | null): Promise<void> =>
+const handleFilesSelected = (fileList: FileList | File[] | null): Promise<void> =>
   handleSelectedContextFiles(Array.from(fileList ?? []));
 
 const handleDocumentsSelected = (fileList: FileList | null): Promise<void> =>

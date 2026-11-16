@@ -1,5 +1,5 @@
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import type { OptimizationRequest, OptimizationResult } from '../src/types/api';
 import { mockAuthentication } from './authFixture';
 import { openWorkbenchPane } from './workbenchPanes';
@@ -23,6 +23,8 @@ const setup = async (page: Page) => {
     await route.fulfill({ status: 400, json: { error: { message: '受控浏览器验收未授权此接口' } } });
   });
   await mockAuthentication(page);
+  await page.route('**/api/v1/me/settings', route => route.fulfill({ status: 503,
+    json: { error: { message: '受控偏好不可用' } } }));
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.route('**/api/v1/models', (route) => route.fulfill({ json: { data: [
     { id: 'deepseek:deepseek-flash', displayName: '受控链路模型目录', provider: 'DeepSeek', defaultModel: true },
@@ -85,7 +87,8 @@ const selectSyntheticDirectory = async (page: Page) => {
   await openWorkbenchPane(page, 'context');
   await page.getByRole('button', { name: '添加上下文', exact: true }).click();
   await page.getByRole('menuitem', { name: '选择文件夹', exact: true }).click();
-  await expect(page.getByText(`${fixture.files.length} 个源码文件已建立本地索引`, { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '开始处理 1 个文件夹' }).click();
+  await expect(page.getByText(`${fixture.files.length} 个文本文件已完整建立本地索引`, { exact: true })).toBeVisible();
   return fixture;
 };
 
@@ -93,20 +96,16 @@ test('自然增强从真实项目索引召回指定目录，显示复制与历�
   test.slow();
   const state = await setup(page);
   const fixture = await selectSyntheticDirectory(page);
-  const indexedPaths = await page.evaluate(async () => {
-    const request = indexedDB.open('prompt-optimizer-project-index');
-    const database = await new Promise<IDBDatabase>((resolve, reject) => {
-      request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error);
-    });
-    const transaction = database.transaction('files', 'readonly');
-    const all = transaction.objectStore('files').getAll();
-    const paths = await new Promise<string[]>((resolve, reject) => {
-      all.onsuccess = () => resolve((all.result as Array<{ path: string }>).map(({ path }) => path));
-      all.onerror = () => reject(all.error);
-    });
-    database.close();
-    return paths.sort();
-  });
+  const indexedPaths = await page.evaluate(async (expectedPaths) => {
+    const storagePath = '/src/features/project-index/projectIndexStorage.ts';
+    const { listIsolatedProjects } = await import(storagePath);
+    const repositoryPath = '/src/features/project-index/indexedDbProjectIndexRepository.ts';
+    const { projectIndexRepository: repo } = await import(repositoryPath);
+    const ids = [...await listIsolatedProjects('bucket'), ...await listIsolatedProjects('database')];
+    if (ids.length !== 1) throw new Error('预期单个独立测试项目');
+    const files = await repo.findFiles(ids[0], expectedPaths);
+    return files.map((file: { path: string }) => file.path).sort();
+  }, fixture.files.map(({ path }) => path));
   // 全部噪声仍被索引；目标优先不能靠删减索引范围取得。
   expect(indexedPaths).toEqual(fixture.files.map(({ path }) => path).sort());
   await openWorkbenchPane(page, 'intent');
@@ -132,9 +131,8 @@ test('自然增强从真实项目索引召回指定目录，显示复制与历�
   expect(basePaths.some((path) => path.startsWith('src/views/records-old/'))).toBe(false);
   expect(basePaths.some((path) => path.startsWith('src/views/records-archive'))).toBe(false);
   expect(request.context.files.length).toBeLessThan(fixture.files.length);
-  const captureDirectory = new URL('../../../docs/testing/evidence/natural-context-rewrite-2026-10-27/browser-capture/', import.meta.url);
-  await mkdir(captureDirectory, { recursive: true });
-  await writeFile(new URL('input.json', captureDirectory), `${JSON.stringify(request, null, 2)}\n`, 'utf8');
+  // 回归只写本轮产物，不能覆盖已经冻结的历史评测原件。
+  await captureJson(testInfo, 'input.json', request);
   await openWorkbenchPane(page, 'result');
   await expect(page.getByTestId('compact-prompt')).toHaveText(body);
   // 受控结果必须如实标为Mock；实际生成阶段由独立真实模型验收核对。
@@ -177,8 +175,6 @@ test('冻结后的内部新题通过同一真实项目索引定位导入文件�
   expect(paths).toContain('src/views/records/dateRules.js');
   expect(paths.some((path) => path.startsWith('src/views/records-old/'))).toBe(false);
   expect(paths.some((path) => path.startsWith('src/views/records-archive'))).toBe(false);
-  const captureDirectory = new URL('../../../docs/testing/evidence/natural-context-rewrite-2026-10-27/browser-capture/', import.meta.url);
-  await mkdir(captureDirectory, { recursive: true });
-  await writeFile(new URL('input-new-case.json', captureDirectory), `${JSON.stringify(request, null, 2)}\n`, 'utf8');
+  await captureJson(testInfo, 'input-new-case.json', request);
   expect(state.unexpected).toEqual([]);
 });

@@ -5,7 +5,7 @@ import type {
   ProjectIndexSummary,
   ProjectIndexPreparationProgress,
 } from './projectIndexer';
-import type { DirectoryHandleLike } from './fileSystemDirectorySource';
+import type { ProjectDirectorySource } from './projectDirectorySelection';
 import { referencedPathVariants } from './projectPathReferences';
 import {
   deleteIsolatedStorage, isIsolatedProject, listIsolatedProjects,
@@ -25,7 +25,7 @@ const SOURCE_STORE = 'sources';
 
 interface ProjectSourceRecord {
   projectId: string;
-  rootHandle: DirectoryHandleLike;
+  rootHandle: ProjectDirectorySource;
 }
 
 /**
@@ -280,14 +280,14 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     }
   }
 
-  async saveProjectSource(projectId: string, rootHandle: DirectoryHandleLike): Promise<void> {
+  async saveProjectSource(projectId: string, rootHandle: ProjectDirectorySource): Promise<void> {
     const transaction = await this.createTransaction(SOURCE_STORE, 'readwrite');
     const completion = transactionComplete(transaction);
     transaction.objectStore(SOURCE_STORE).put({ projectId, rootHandle } satisfies ProjectSourceRecord);
     await completion;
   }
 
-  async findProjectSource(projectId: string): Promise<DirectoryHandleLike | undefined> {
+  async findProjectSource(projectId: string): Promise<ProjectDirectorySource | undefined> {
     const transaction = await this.createTransaction(SOURCE_STORE, 'readonly');
     const completion = transactionComplete(transaction);
     const source = await requestResult<ProjectSourceRecord | undefined>(
@@ -664,8 +664,8 @@ export class RoutedProjectIndexRepository implements ProjectIndexRepository {
   findChunksByPaths(id: string, paths: string[], limit: number): Promise<IndexedProjectChunk[]> {
     return this.repository(id).findChunksByPaths(id, paths, limit);
   }
-  saveProjectSource(id: string, handle: DirectoryHandleLike): Promise<void> { return this.repository(id).saveProjectSource(id, handle); }
-  findProjectSource(id: string): Promise<DirectoryHandleLike | undefined> { return this.repository(id).findProjectSource(id); }
+  saveProjectSource(id: string, handle: ProjectDirectorySource): Promise<void> { return this.repository(id).saveProjectSource(id, handle); }
+  findProjectSource(id: string): Promise<ProjectDirectorySource | undefined> { return this.repository(id).findProjectSource(id); }
   findProject(id: string): Promise<ProjectIndexSummary | undefined> { return this.repository(id).findProject(id); }
 
   async deleteProject(id: string): Promise<void> {

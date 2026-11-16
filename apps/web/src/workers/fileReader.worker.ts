@@ -3,9 +3,11 @@ import {
   type FileProcessingProgress,
   type ProjectFileSelection,
 } from './fileReaderCore';
+import { withRelativePath } from '@/composables/fileDrop';
 
 interface WorkerRequest {
   files: File[];
+  paths: string[];
 }
 
 type WorkerResponse =
@@ -24,7 +26,11 @@ const scope = self as unknown as {
  */
 scope.onmessage = async (event: MessageEvent<WorkerRequest>): Promise<void> => {
   try {
-    const selection = await readProjectFiles(event.data.files, (progress) => {
+    const { files, paths } = event.data;
+    if (paths.length !== files.length) throw new Error('文件与路径数量不一致，请重新选择。');
+    // 恢复主线程已经确认的目录前缀；解析核心仍逐项执行路径与敏感内容校验。
+    const sources = files.map((file, index) => withRelativePath(file, paths[index]!));
+    const selection = await readProjectFiles(sources, (progress) => {
       scope.postMessage({ type: 'progress', progress });
     });
     scope.postMessage({ type: 'done', files: selection.files, warnings: selection.warnings });

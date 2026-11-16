@@ -41,6 +41,7 @@ test('真实 Worker 显示百分比和互斥计数，项目忽略规则可以关
   });
   await page.getByRole('button', { name: '添加上下文' }).click();
   await page.getByRole('menuitem', { name: '选择文件夹' }).click();
+  await page.getByRole('button', { name: '开始处理 1 个文件夹' }).click();
   await expect(page.locator('.read-progress .el-progress__text')).toContainText('%');
   await page.locator('.folder-dropzone').screenshot({ path: testInfo.outputPath('index-progress.png') });
   // 等待真实存储提交；5 秒通用断言预算不是目录导入性能验收线，保留明确的完成上限。

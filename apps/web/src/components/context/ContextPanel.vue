@@ -23,6 +23,9 @@ import {
 } from 'element-plus';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
+import ContextFolderSelectionDialog from '@/components/context/ContextFolderSelectionDialog.vue';
+import type { ProjectDirectorySource } from '@/features/project-index/projectDirectorySelection';
+import type { DirectoryHandleLike } from '@/features/project-index/fileSystemDirectorySource';
 import ContextAnalysisSummary from '@/components/context/ContextAnalysisSummary.vue';
 import ContextTransmissionSummary from '@/components/context/ContextTransmissionSummary.vue';
 import type { ContextTransmissionReport } from '@/features/context-analysis/contextTransmission';
@@ -62,7 +65,7 @@ interface Props {
 interface Emits {
   (event: 'update:respect-project-ignore', value: boolean): void;
   (event: 'update:custom-description', value: string): void;
-  (event: 'files-selected', value: FileList | null): void;
+  (event: 'files-selected', value: FileList | File[] | null): void;
   (event: 'documents-selected', value: FileList | null): void;
   (event: 'files-dropped', value: DroppedFileCollection): void;
   (event: 'add-manual-file', value: ContextFileInput): void;
@@ -70,7 +73,7 @@ interface Emits {
   (event: 'file-purpose-changed', path: string, purpose: ContextFileInput['purpose']): void;
   (event: 'clear-files'): void;
   (event: 'analyze'): void;
-  (event: 'index-project'): void;
+  (event: 'index-project', source?: ProjectDirectorySource): void;
   (event: 'pause-index'): void;
   (event: 'resume-index'): void;
   (event: 'refresh-index'): void;
@@ -80,13 +83,14 @@ interface Emits {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-const folderInput = ref<HTMLInputElement>();
+const folderSelection = ref<InstanceType<typeof ContextFolderSelectionDialog>>();
 const documentInput = ref<HTMLInputElement>();
 const selecting = ref(false);
 const manualPath = ref('src/example.ts');
 const manualLanguage = ref('typescript');
 const manualContent = ref('');
 const isDragActive = ref(false);
+let isDisposed = false;
 
 const descriptionModel = computed({
   get: (): string => props.customDescription,
@@ -208,26 +212,7 @@ const formatBytes = (bytes: number): string => {
   return `${value >= 10 || unitIndex === 0 ? value.toFixed(0) : value.toFixed(1)} ${units[unitIndex]}`;
 };
 
-const openFolderPicker = (): void => {
-  if (props.supportsDirectoryPicker) {
-    emit('index-project');
-    return;
-  }
-  selecting.value = true;
-  folderInput.value?.click();
-};
-
-const handleFolderChange = (event: Event): void => {
-  selecting.value = false;
-  const input = event.target as HTMLInputElement;
-  emit('files-selected', input.files);
-  // 页面监听器已同步复制 FileList；清空选择值允许取消上传后再次选择同一目录。
-  input.value = '';
-};
-
-const handleFolderCancel = (): void => {
-  selecting.value = false;
-};
+const openFolderPicker = (): void => { folderSelection.value?.open(); };
 
 const openDocumentPicker = (): void => {
   documentInput.value?.click();
@@ -288,9 +273,28 @@ const handleDrop = async (event: DragEvent): Promise<void> => {
     return;
   }
   try {
-    emit('files-dropped', await collectDroppedFiles(event.dataTransfer));
+    // 句柄必须在 drop 事件期间请求；纯目录拖入走完整索引，文件与混合拖入保持既有确认链路。
+    const directoryItems = Array.from(event.dataTransfer.items).filter(item => item.kind === 'file');
+    if (props.supportsDirectoryPicker && directoryItems.length && directoryItems.every(item => item.webkitGetAsEntry?.()?.isDirectory)) {
+      const requests = directoryItems.map(item => (item as DataTransferItem & { getAsFileSystemHandle?: () => Promise<DirectoryHandleLike | null> }).getAsFileSystemHandle?.());
+      if (requests.every(request => request !== undefined)) {
+        selecting.value = true;
+        try {
+          const handles = await Promise.all(requests);
+          if (isDisposed) return;
+          if (!handles.every((handle): handle is DirectoryHandleLike => handle?.kind === 'directory')) {
+            throw new Error('目录句柄不可用');
+          }
+          folderSelection.value?.openDirectories(handles);
+        }
+        finally { selecting.value = false; }
+        return;
+      }
+    }
+    const collection = await collectDroppedFiles(event.dataTransfer);
+    if (!isDisposed) emit('files-dropped', collection);
   } catch {
-    ElMessage.error('拖拽文件读取失败，请改用选择文件或文件夹。');
+    if (!isDisposed) ElMessage.error('拖拽文件读取失败，请改用选择文件或文件夹。');
   }
 };
 
@@ -306,6 +310,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  isDisposed = true;
   window.removeEventListener('dragover', preventFileNavigation);
   window.removeEventListener('drop', preventFileNavigation);
 });
@@ -369,15 +374,8 @@ const addManualFile = (): void => {
         </ElButton>
       </div>
 
-      <input
-        ref="folderInput"
-        class="visually-hidden"
-        type="file"
-        multiple
-        webkitdirectory
-        @change="handleFolderChange"
-        @cancel="handleFolderCancel"
-      />
+      <ContextFolderSelectionDialog ref="folderSelection" :native-picker="supportsDirectoryPicker"
+        @directories-selected="emit('index-project', $event)" @files-selected="emit('files-selected', $event)" />
       <input
         ref="documentInput"
         data-testid="context-file-input"

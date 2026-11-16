@@ -16,6 +16,7 @@ export interface DirectoryHandleLike {
   getFileHandle?(name: string): Promise<FileHandleLike>;
   queryPermission?(options?: { mode?: 'read' }): Promise<PermissionState>;
   requestPermission?(options?: { mode?: 'read' }): Promise<PermissionState>;
+  isSameEntry?(other: DirectoryHandleLike): Promise<boolean>;
 }
 
 export type FileSystemHandleLike = FileHandleLike | DirectoryHandleLike;

@@ -370,6 +370,25 @@ describe('indexProject', () => {
     expect(matches[0]?.content).toContain('超过五万元需要财务复核');
   });
 
+  it('小文件预读只读取一次字节，同时保留二进制识别、敏感配置过滤和完整正文', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    const content = '\ufeffexport const greeting = "中文😀";\r\n'.repeat(200) + 'TAIL_BYTE_REUSE';
+    const entries = [sourceFile('src/hello.ts', content), sourceFile('src/binary.ts', 'abc\0def'),
+      sourceFile('.npmrc', '//registry.example.test/:_authToken=synthetic_fixture_token'),
+      sourceFile('rules.unknown', '非标准扩展名也保留全文\n末尾条件')];
+    const read = vi.spyOn(Blob.prototype, 'arrayBuffer');
+    const stream = vi.spyOn(Blob.prototype, 'stream');
+    try {
+      const summary = await indexProject({ projectId: 'byte-reuse', rootName: 'fixture', repository, entries: sourceOf(entries) });
+      expect(summary.indexedFiles).toBe(2);
+      expect(summary.ignoredFiles).toBe(2);
+      expect(repository.chunks.filter(c => c.path === 'src/hello.ts').map(c => c.content).join('')).toBe(content.slice(1));
+      expect(repository.chunks.some(c => c.path === 'rules.unknown' && c.content.endsWith('末尾条件'))).toBe(true);
+      expect(read).toHaveBeenCalledTimes(4);
+      expect(stream).not.toHaveBeenCalled();
+    } finally { read.mockRestore(); stream.mockRestore(); }
+  });
+
   it('should index unknown text and exclude logs while recording ignored directories', async () => {
     const repository = new MemoryProjectIndexRepository();
     const entries: ProjectSourceEntry[] = [

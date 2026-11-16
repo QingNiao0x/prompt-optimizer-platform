@@ -1,9 +1,4 @@
-import {
-  streamDirectoryEntries,
-  countDirectoryEntries,
-  loadProjectFileScope,
-  type DirectoryHandleLike,
-} from '@/features/project-index/fileSystemDirectorySource';
+import { prepareDirectoryRoots, countSelectedDirectories, streamSelectedDirectories, type ProjectDirectorySource } from '@/features/project-index/projectDirectorySelection';
 import { projectIndexRepository } from '@/features/project-index/indexedDbProjectIndexRepository';
 import { indexFailureMessage, ProjectIndexInterruptedError } from '@/features/project-index/projectIndexFailure';
 import {
@@ -29,7 +24,7 @@ export interface DiscoveredDocument {
 interface StartProjectIndexRequest {
   type: 'start';
   projectId: string;
-  rootHandle: DirectoryHandleLike;
+  rootHandle: ProjectDirectorySource;
   limits: ProjectIndexLimits;
   retention: 'SESSION' | 'PERSISTENT';
   sessionId: string;
@@ -78,9 +73,9 @@ scope.onmessage = async (event: MessageEvent<ProjectIndexWorkerRequest>): Promis
       failedFiles: 0, addedFiles: 0, updatedFiles: 0, unchangedFiles: 0, chunkCount: 0,
       indexedCharacters: 0, filesPerSecond: 0, elapsedMs: 0,
     } });
-    const fileScope = await loadProjectFileScope(rootHandle, respectGitignore);
+    const roots = await prepareDirectoryRoots(rootHandle, respectGitignore);
     // 为真实百分比仅预枚举句柄，不读取正文、不保存全项目 File 数组。统计与索引共用冻结的规则。
-    const counted = await countDirectoryEntries(rootHandle, (count) => scope.postMessage({
+    const counted = await countSelectedDirectories(roots, (count) => scope.postMessage({
       type: 'progress', progress: {
         phase: 'SCANNING', currentPath: count.currentPath, processedFiles: 0,
         discoveredFiles: count.discoveredFiles, indexedFiles: 0, eligibleFiles: 0,
@@ -88,13 +83,13 @@ scope.onmessage = async (event: MessageEvent<ProjectIndexWorkerRequest>): Promis
         addedFiles: 0, updatedFiles: 0, unchangedFiles: 0, chunkCount: 0, indexedCharacters: 0,
         filesPerSecond: 0, elapsedMs: performance.now() - startedAt,
       },
-    }), fileScope, () => pauseRequested, limits.maxScanFiles + 1);
+    }), () => pauseRequested, limits.maxScanFiles + 1);
     const documents: DiscoveredDocument[] = [];
     let omittedDocuments = 0;
     // 附件与正文共用处理遍历；预统计不调用 getFile，办公文档仍需随后单独确认上传。
     const entries = async function* (): AsyncGenerator<ProjectSourceEntry> {
       if (pauseRequested) return;
-      for await (const entry of streamDirectoryEntries(rootHandle, fileScope)) {
+      for await (const entry of streamSelectedDirectories(roots)) {
         if (entry.kind === 'file' && isBinaryDocumentFile(entry.file)) {
           if (!isSafeRelativeFilePath(entry.path) || isSensitiveFile(entry.path)
               || entry.file.size > MAX_DOCUMENT_FILE_BYTES || documents.length >= 100) {
