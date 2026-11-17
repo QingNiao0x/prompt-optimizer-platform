@@ -183,6 +183,18 @@ describe('indexProject', () => {
     expect(repository.files.every(f => f.imports.includes('tail'))).toBe(true);
   });
 
+  it('records stage measurements without changing indexed content', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    const summary = await indexProject({ projectId: 'measure', rootName: 'demo', repository,
+      entries: sourceOf([sourceFile('demo.ts', 'export const tail = 1;')]) });
+    expect(summary.diagnostics).toMatchObject({ readBytes: 22, writes: expect.any(Number) });
+    expect(summary.diagnostics!.writes).toBeGreaterThan(0);
+    expect(summary.diagnostics!.firstCommitMs).toBeGreaterThanOrEqual(0);
+    expect(summary.diagnostics!.termReferences).toBe(repository.chunks[0]!.searchTerms.length);
+    expect(summary.diagnostics!.peakPendingBytes).toBeGreaterThan(0);
+    expect(repository.chunks.map(chunk => chunk.content).join('')).toBe('export const tail = 1;');
+  });
+
   it('counts failures and empty files separately and never finishes progress before saving', async () => {
     const repository = new MemoryProjectIndexRepository();
     const file = new File(['unreadable'], 'broken.ts');

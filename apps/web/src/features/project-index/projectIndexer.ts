@@ -117,6 +117,38 @@ export type ProjectSourceEntry =
   | { kind: 'file'; path: string; file: File }
   | { kind: 'ignored-directory'; path: string };
 
+/** 性能观测按本次运行计数；毫秒为活动耗时，缓冲字节为估算峰值。 */
+export interface ProjectIndexDiagnostics {
+  sourceWaitMs: number;
+  lookupMs: number;
+  readMs: number;
+  classifyMs: number;
+  decodeMs: number;
+  termsMs: number;
+  finalizeMs: number;
+  writes: number;
+  maxWriteMs: number;
+  firstCommitMs?: number;
+  peakPendingBytes: number;
+  peakPendingTerms: number;
+  readBytes: number;
+  termReferences: number;
+}
+
+/** 仅计量迭代器 next 等待，不包含调用方消费片段的时间。 */
+const measuredEntries = async function* <T>(source: AsyncIterable<T>, record: (ms: number) => void): AsyncGenerator<T> {
+  const iterator = source[Symbol.asyncIterator]();
+  try {
+    for (;;) {
+      const started = performance.now();
+      const result = await iterator.next();
+      record(performance.now() - started);
+      if (result.done) return;
+      yield result.value;
+    }
+  } finally { await iterator.return?.(); }
+};
+
 export interface ProjectIndexSummary {
   id: string;
   rootName: string;
@@ -129,6 +161,8 @@ export interface ProjectIndexSummary {
   scopeExcludedFiles?: number;
   excludedDirectorySamples?: string[];
   timings?: { scanMs: number; processingMs: number; writeMs: number; totalMs: number };
+  /** 各阶段累计活动时间可重叠，不能相加当作总耗时；不保存源码或文件路径。 */
+  diagnostics?: ProjectIndexDiagnostics;
   metadataOnlyFiles: number;
   failedFiles: number;
   addedFiles: number;
@@ -377,6 +411,12 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
   let lastReportedPath = '';
   const indexingStartedAt = performance.now();
   let writeMs = 0;
+  const diagnostics: ProjectIndexDiagnostics = {
+    sourceWaitMs: 0, lookupMs: 0, readMs: 0, classifyMs: 0, decodeMs: 0, termsMs: 0,
+    finalizeMs: 0, writes: 0, maxWriteMs: 0, peakPendingBytes: 0, peakPendingTerms: 0,
+    readBytes: 0, termReferences: 0,
+  };
+  summary.diagnostics = diagnostics;
   let batchScale = 1;
   let slowWriteStreak = 0;
 
@@ -384,6 +424,8 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
     if (!checkpoint && pendingFiles.length === 0 && pendingChunks.length === 0 && replacedPaths.size === 0) {
       return;
     }
+    diagnostics.peakPendingBytes = Math.max(diagnostics.peakPendingBytes, pendingBatchBytes);
+    diagnostics.peakPendingTerms = Math.max(diagnostics.peakPendingTerms, pendingTermReferences);
     const hasPayload = pendingFiles.length > 0 || pendingChunks.length > 0 || replacedPaths.size > 0;
     const writeStartedAt = performance.now();
     // 完整文件批次的检查点与数据原子提交；大文件中途批次只保存不可复用的部分记录。
@@ -398,6 +440,11 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
     }
     const elapsed = performance.now() - writeStartedAt;
     writeMs += elapsed;
+    diagnostics.writes++;
+    diagnostics.maxWriteMs = Math.max(diagnostics.maxWriteMs, elapsed);
+    if (hasPayload && diagnostics.firstCommitMs === undefined) {
+      diagnostics.firstCommitMs = performance.now() - indexingStartedAt + (options.scanDurationMs ?? 0);
+    }
     // 只有数据批次参与调节，空检查点的快速提交不能抵消上一批慢写入的反馈。
     if (hasPayload) {
       // 连续两次超过一秒才缩小，避免一次系统抖动把正常批次拆成大量小事务。
@@ -511,15 +558,17 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
     }
     const batch = sourceBatch;
     sourceBatch = [];
+    const lookupStarted = performance.now();
     const existingFiles = mode === 'FULL'
       ? []
       : await options.repository.findFiles(
           options.projectId,
           batch.map((entry) => entry.path),
         );
+    diagnostics.lookupMs += performance.now() - lookupStarted;
     const existingByPath = new Map(existingFiles.map((file) => [file.path, file]));
 
-    for await (const prepared of prepareSourceFiles(batch, existingByPath, shouldPause)) {
+    for await (const prepared of prepareSourceFiles(batch, existingByPath, shouldPause, diagnostics)) {
       // 大组字节已在内存时，Promise 连续消费可能推迟 Worker 的暂停消息；定期让出任务队列。
       if (summary.discoveredFiles > 0 && summary.discoveredFiles % PROGRESS_FILE_INTERVAL === 0) {
         await new Promise<void>(resolve => setTimeout(resolve, 0));
@@ -564,7 +613,9 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
       let classification: FileClassification;
       try {
         if (prepared.error) throw prepared.error;
+        const classifyStarted = performance.now();
         classification = await classifyFile(entry.path, source, limits.maxIndexableFileBytes, prepared.bytes);
+        diagnostics.classifyMs += performance.now() - classifyStarted;
       } catch {
         // 采样或小文件读取失败不能中止整批，也不能在增量刷新中继续复用过期正文。
         summary.failedFiles += 1;
@@ -624,16 +675,19 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
         let limitedByStorage = false;
         const fileSymbols = new Set<string>();
         const fileImports = new Set<string>();
-        for await (const content of streamTextChunks(
+        for await (const content of measuredEntries(streamTextChunks(
           source,
           classification.language,
           (bytesRead) => report('INDEXING', entry.path, bytesRead, entry.file.size),
           prepared.bytes,
-        )) {
+        ), ms => { diagnostics.decodeMs += ms; })) {
+          const termsStarted = performance.now();
           const codeMetadata = extractCodeMetadata(content, classification.language);
           codeMetadata.symbols.forEach((symbol) => fileSymbols.add(symbol));
           codeMetadata.imports.forEach((reference) => fileImports.add(reference));
           const searchTerms = buildSearchTerms(options.projectId, entry.path, content);
+          diagnostics.termsMs += performance.now() - termsStarted;
+          diagnostics.termReferences += searchTerms.length;
           const estimatedChunkBytes = estimateChunkBytes(
             content,
             searchTerms,
@@ -725,7 +779,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
   report(options.totalFiles === undefined ? 'SCANNING' : 'INDEXING', '');
 
   try {
-    for await (const entry of options.entries) {
+    for await (const entry of measuredEntries(options.entries, ms => { diagnostics.sourceWaitMs += ms; })) {
       if (entry.kind === 'ignored-directory') {
         summary.ignoredDirectories += 1;
         report(options.totalFiles === undefined ? 'SCANNING' : 'INDEXING', entry.path);
@@ -748,10 +802,12 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
     if (await processSourceBatch()) {
       return summary;
     }
+    const finalizeStarted = performance.now();
     // 达到扫描上限并不表示未遍历文件已被删除；只有完整扫描才清理旧记录。
     if (!summary.scanLimitReached) {
       summary.removedFiles = await options.repository.removeUnseenFiles(options.projectId, scanId);
     }
+    diagnostics.finalizeMs += performance.now() - finalizeStarted;
     summary.status = 'READY';
     summary.completedAt = new Date().toISOString();
     const processingMs = performance.now() - indexingStartedAt;
@@ -941,6 +997,7 @@ const prepareSourceFiles = async function* (
   entries: Extract<ProjectSourceEntry, { kind: 'file' }>[],
   existing: Map<string, IndexedProjectFile>,
   shouldStop?: () => boolean,
+  diagnostics?: ProjectIndexDiagnostics,
 ): AsyncGenerator<{ entry: Extract<ProjectSourceEntry, { kind: 'file' }>; source: Blob; bytes?: Uint8Array; error?: unknown }> {
   // Promise 中的逐文件错误转为结果，丢弃预取也不会留下未处理的拒绝。
   const prepare = async (offset: number) => {
@@ -957,7 +1014,11 @@ const prepareSourceFiles = async function* (
           || isProtectedContextFile(path) || isIgnoredFile(path.toLowerCase())
           || canReuseIndexedFile(existing.get(entry.path), fingerprintOf(entry.file))) continue;
         try {
-          prepared[index]!.bytes = new Uint8Array(await entry.file.arrayBuffer());
+          const started = performance.now();
+          try {
+            prepared[index]!.bytes = new Uint8Array(await entry.file.arrayBuffer());
+            if (diagnostics) diagnostics.readBytes += entry.file.size;
+          } finally { if (diagnostics) diagnostics.readMs += performance.now() - started; }
         } catch (error) {
           prepared[index]!.error = error;
         }
