@@ -1,0 +1,20 @@
+{
+  "baselineCommit": "50c8347e",
+  "manifest": "../folder-selection-index-2026-11-16/manifest.json",
+  "verification": "12 rounds; 622/622 full text and tails; identical full chunk, term, symbol and import digest",
+  "scope": "in-memory File objects; production indexer and real browser database; excludes native folder traversal and disk reads",
+  "initial": "single >500ms halves batch; rejected as too sensitive; 8 ABBA rounds",
+  "final": "two consecutive >1000ms halves batch; <250ms slowly restores; Chrome before-after, Edge after-before; 4 rounds",
+  "cleanup": "Chrome deletes each project after verification. Final Edge retains isolated projects until closing disposable browser. Compare within each browser only.",
+  "hashEncoding": "SHA-256 of UTF-8 files after CRLF to LF normalization",
+  "hashes": {
+    "final/after.js": "fe813de0a3ceb42863e717d41b433d02f642c39e02d460d8f837c3d6563d6bb8",
+    "final/before.js": "4ef786064e4c2b0317b5cbe333d16ee5ef3b2f07f131269ffded2b67f5ba0431",
+    "initial/after.js": "0646d774563aa7bfe344e5b33f6694f79e5008560fc62c17f5a46a6e8460a386",
+    "initial/before.js": "bd084b2cc9315085b60b5f6558ccc4c8b437841c013ee86aeb8f40b12de62f72"
+  },
+  "sourceHashes": {
+    "apps/web/src/features/project-index/projectIndexer.ts": "1972757fa43598f4b86f26c663b42992234c55acf57143c33331fdf2971bf09b",
+    "apps/web/src/features/project-index/projectIndexer.test.ts": "320f68044c995291dcf2665057c7f9c424ab8d1e6bfb6101a98afff1361c66fd"
+  }
+}

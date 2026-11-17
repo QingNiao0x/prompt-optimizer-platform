@@ -331,7 +331,7 @@ describe('indexProject', () => {
     expect(repository.files).toHaveLength(1_205);
   });
 
-  it('should report indexing progress before a small batch has completely finished', async () => {
+  it('reports discovery before a small batch finishes and counts completion only after commit', async () => {
     const repository = new MemoryProjectIndexRepository();
     const progress: number[] = [];
     const entries = Array.from({ length: 100 }, (_, index) =>
@@ -344,7 +344,8 @@ describe('indexProject', () => {
       repository,
       onProgress: (snapshot) => {
         if (snapshot.phase === 'INDEXING') {
-          progress.push(snapshot.processedFiles);
+          progress.push(snapshot.discoveredFiles);
+          expect(snapshot.processedFiles).toBe(repository.files.length);
         }
       },
     });
@@ -560,17 +561,13 @@ describe('indexProject', () => {
     const repository = new MemoryProjectIndexRepository();
     const entries = Array.from({ length: 450 }, (_, index) =>
       versionedSourceFile(`src/file-${index}.ts`, `export const value${index} = ${index};`, 1));
-    let pauseChecks = 0;
 
     const paused = await indexProject({
       projectId: 'project-resume',
       rootName: 'resume-project',
       entries: sourceOf(entries),
       repository,
-      shouldPause: () => {
-        pauseChecks += 1;
-        return pauseChecks === 1;
-      },
+      shouldPause: () => repository.files.length >= 200,
     });
 
     expect(paused.status).toBe('PAUSED');
@@ -961,4 +958,80 @@ it('高密度词表按关联数量分批且保留全文、词表与完成状态'
   expect(repository.chunks).toHaveLength(100);
   expect(repository.chunks.every(chunk => chunk.content === content && chunk.searchTerms.includes('dense-terms:vrr'))).toBe(true);
   expect(repository.summary?.status).toBe('READY');
+});
+
+
+it('写入等待期间预取下一小批，暂停后丢弃预取且不提前报告完成', async () => {
+  const repository = new MemoryProjectIndexRepository();
+  const content = Array.from({ length: 1000 }, (_, i) => `v${i.toString(36)}`).join(' ');
+  let reads = 0, writing = false, pause = false, concurrent = 0, maxConcurrent = 0;
+  let releaseReads!: () => void;
+  const writeStarted = new Promise<void>(resolve => { releaseReads = resolve; });
+  let completedDuringWrite = 0;
+  const entries = Array.from({ length: 100 }, (_, i) => {
+    const entry = sourceFile(`src/dense${i}.txt`, content) as Extract<ProjectSourceEntry, { kind: 'file' }>;
+    const read = entry.file.arrayBuffer.bind(entry.file);
+    entry.file.arrayBuffer = async () => {
+      reads++; concurrent++; maxConcurrent = Math.max(maxConcurrent, concurrent);
+      // 第一批在约 64 个高密度文件时提交；后续六份读取等待写入开始，锁定真实重叠路径。
+      if (i >= 66 && i < 72) await writeStarted;
+      const bytes = await read();
+      if (writing && !pause) completedDuringWrite++;
+      concurrent--; return bytes;
+    };
+    return entry;
+  });
+  const write = repository.writeBatch.bind(repository);
+  let ahead = 0;
+  repository.writeBatch = async (files, chunks, replaced, checkpoint) => {
+    if (!writing && chunks.length > 0) {
+      writing = true;
+      releaseReads();
+      await new Promise(resolve => setTimeout(resolve, 10));
+      ahead = reads - files.length;
+      pause = true;
+    }
+    await write(files, chunks, replaced, checkpoint);
+  };
+  const summary = await indexProject({ projectId: 'overlap', rootName: 'overlap', repository,
+    entries: sourceOf(entries), shouldPause: () => pause,
+    onProgress: progress => expect(progress.processedFiles).toBeLessThanOrEqual(repository.files.length) });
+  expect(summary.status).toBe('PAUSED');
+  expect(completedDuringWrite).toBeGreaterThan(0);
+  expect(ahead).toBeGreaterThan(0);
+  expect(ahead).toBeLessThanOrEqual(12);
+  expect(maxConcurrent).toBeLessThanOrEqual(6);
+  const committed = repository.files.length;
+  await new Promise(resolve => setTimeout(resolve, 10));
+  expect(repository.files.length).toBe(committed);
+  const resumed = await indexProject({ projectId: 'overlap', rootName: 'overlap', repository,
+    mode: 'RESUME', entries: sourceOf(entries) });
+  expect(resumed.indexedFiles).toBe(100);
+  expect(resumed.unchangedFiles).toBe(committed);
+  expect(repository.chunks.every(chunk => chunk.content === content)).toBe(true);
+});
+
+it('慢提交缩小后续批次并在快速提交后逐步恢复，始终串行写入', async () => {
+  const repository = new MemoryProjectIndexRepository();
+  let clock = 0, activeWrites = 0, maxWrites = 0;
+  const sizes: number[] = [];
+  const now = vi.spyOn(performance, 'now').mockImplementation(() => clock);
+  const write = repository.writeBatch.bind(repository);
+  repository.writeBatch = async (files, chunks, replaced, checkpoint) => {
+    activeWrites++; maxWrites = Math.max(maxWrites, activeWrites);
+    if (files.length) { sizes.push(files.length); clock += sizes.length <= 2 ? 1100 : 10; }
+    await write(files, chunks, replaced, checkpoint);
+    activeWrites--;
+  };
+  try {
+    const summary = await indexProject({ projectId: 'adaptive', rootName: 'adaptive', repository,
+      entries: sourceOf(Array.from({ length: 800 }, (_, i) => sourceFile(`src/f${i}.txt`, '完整正文'))) });
+    expect(sizes[0]).toBe(200);
+    expect(sizes[1]).toBe(200);
+    expect(sizes[2]).toBe(100);
+    expect(sizes.some(size => size > 100 && size < 200)).toBe(true);
+    expect(maxWrites).toBe(1);
+    expect(summary.indexedFiles).toBe(800);
+    expect(repository.chunks.every(chunk => chunk.content === '完整正文')).toBe(true);
+  } finally { now.mockRestore(); }
 });

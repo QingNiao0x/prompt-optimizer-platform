@@ -20,6 +20,9 @@ const CHUNK_BATCH_SIZE = 300;
 // 多值词索引的写入成本取决于关联数；与正文大小共同限流，不裁剪任何检索词。
 const MAX_PENDING_TERM_REFERENCES = 64_000;
 const MAX_PENDING_BATCH_BYTES = 4 * 1024 * 1024;
+// 慢提交缩小后续事务，快速提交逐步恢复；上下限控制内存与暂停响应，不改变索引内容。
+const TARGET_WRITE_MS = 500;
+const MIN_BATCH_SCALE = 0.25;
 const TEXT_SAMPLE_BYTES = 8_192;
 const SMALL_FILE_BYTES = 64 * 1024;
 const FILE_READ_CONCURRENCY = 6;
@@ -322,6 +325,12 @@ interface ScopedSymbolMatching {
 export const indexProject = async (options: IndexProjectOptions): Promise<ProjectIndexSummary> => {
   const limits = options.limits ?? DEFAULT_INDEX_LIMITS;
   const mode = options.mode ?? 'FULL';
+  let pauseRequested = false;
+  // 暂停一旦观察到就持续生效，预取完成后的迟到结果不能重新启动处理。
+  const shouldPause = (): boolean => {
+    pauseRequested = pauseRequested || Boolean(options.shouldPause?.());
+    return pauseRequested;
+  };
   const scanId = createScanId();
   const summary: ProjectIndexSummary = {
     id: options.projectId,
@@ -366,11 +375,14 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
   let lastReportedPath = '';
   const indexingStartedAt = performance.now();
   let writeMs = 0;
+  let batchScale = 1;
+  let slowWriteStreak = 0;
 
   const flush = async (checkpoint?: ProjectIndexSummary): Promise<void> => {
     if (!checkpoint && pendingFiles.length === 0 && pendingChunks.length === 0 && replacedPaths.size === 0) {
       return;
     }
+    const hasPayload = pendingFiles.length > 0 || pendingChunks.length > 0 || replacedPaths.size > 0;
     const writeStartedAt = performance.now();
     // 完整文件批次的检查点与数据原子提交；大文件中途批次只保存不可复用的部分记录。
     const snapshot = checkpoint ? structuredClone(checkpoint) : undefined;
@@ -382,7 +394,17 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
     } catch (error) {
       throw new ProjectIndexInterruptedError(error, committedSummary, 'WRITING');
     }
-    writeMs += performance.now() - writeStartedAt;
+    const elapsed = performance.now() - writeStartedAt;
+    writeMs += elapsed;
+    // 只有数据批次参与调节，空检查点的快速提交不能抵消上一批慢写入的反馈。
+    if (hasPayload) {
+      // 连续两次超过一秒才缩小，避免一次系统抖动把正常批次拆成大量小事务。
+      slowWriteStreak = elapsed > TARGET_WRITE_MS * 2 ? slowWriteStreak + 1 : 0;
+      if (slowWriteStreak >= 2) {
+        batchScale = Math.max(MIN_BATCH_SCALE, batchScale / 2);
+        slowWriteStreak = 0;
+      } else if (elapsed < TARGET_WRITE_MS / 2) batchScale = Math.min(1, batchScale + 0.125);
+    }
     replacedPaths.clear();
     pendingBatchBytes = 0;
     pendingTermReferences = 0;
@@ -390,10 +412,10 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
 
   const flushIfNeeded = async (): Promise<void> => {
     if (
-      pendingFiles.length >= FILE_BATCH_SIZE
-      || pendingChunks.length >= CHUNK_BATCH_SIZE
-      || pendingTermReferences >= MAX_PENDING_TERM_REFERENCES
-      || pendingBatchBytes >= MAX_PENDING_BATCH_BYTES
+      pendingFiles.length >= Math.floor(FILE_BATCH_SIZE * batchScale)
+      || pendingChunks.length >= Math.floor(CHUNK_BATCH_SIZE * batchScale)
+      || pendingTermReferences >= Math.floor(MAX_PENDING_TERM_REFERENCES * batchScale)
+      || pendingBatchBytes >= MAX_PENDING_BATCH_BYTES * batchScale
     ) {
       await flush(summary);
     }
@@ -407,8 +429,9 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
   ): void => {
     const now = performance.now();
     const progressUnits = summary.discoveredFiles + summary.ignoredDirectories;
-    // 已发现当前文件不等于已处理；只累计互斥的最终处理结果。
-    const processedFiles = summary.indexedFiles + summary.metadataOnlyFiles + summary.ignoredFiles + summary.failedFiles;
+    // 已读取的文件可能尚未提交；完成数量只使用成功提交的检查点，写入等待时不提前增长。
+    const visible = phase === 'COMPLETED' || phase === 'PAUSED' ? summary : committedSummary;
+    const processedFiles = visible.indexedFiles + visible.metadataOnlyFiles + visible.ignoredFiles + visible.failedFiles;
     const samePath = currentPath === lastReportedPath;
     const advancedBytes = samePath && currentFileBytesRead !== undefined
       ? currentFileBytesRead - lastReportedFileBytes
@@ -454,25 +477,25 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
       currentFileBytesRead,
       currentFileSize,
       discoveredFiles: summary.discoveredFiles,
-      eligibleFiles: summary.eligibleFiles,
-      indexedFiles: summary.indexedFiles,
-      ignoredFiles: summary.ignoredFiles,
+      eligibleFiles: visible.eligibleFiles,
+      indexedFiles: visible.indexedFiles,
+      ignoredFiles: visible.ignoredFiles,
       ignoredDirectories: summary.ignoredDirectories,
-      metadataOnlyFiles: summary.metadataOnlyFiles,
-      failedFiles: summary.failedFiles,
-      addedFiles: summary.addedFiles,
-      updatedFiles: summary.updatedFiles,
-      unchangedFiles: summary.unchangedFiles,
-      chunkCount: summary.chunkCount,
-      indexedCharacters: summary.indexedCharacters,
+      metadataOnlyFiles: visible.metadataOnlyFiles,
+      failedFiles: visible.failedFiles,
+      addedFiles: visible.addedFiles,
+      updatedFiles: visible.updatedFiles,
+      unchangedFiles: visible.unchangedFiles,
+      chunkCount: visible.chunkCount,
+      indexedCharacters: visible.indexedCharacters,
     });
   };
 
   const pauseIfRequested = async (): Promise<boolean> => {
-    if (!options.shouldPause?.()) {
+    if (!shouldPause()) {
       return false;
     }
-    await flush();
+    await flush(summary);
     summary.status = 'PAUSED';
     summary.pausedAt = new Date().toISOString();
     await options.repository.pauseProject(summary);
@@ -494,7 +517,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
         );
     const existingByPath = new Map(existingFiles.map((file) => [file.path, file]));
 
-    for await (const prepared of prepareSourceFiles(batch, existingByPath)) {
+    for await (const prepared of prepareSourceFiles(batch, existingByPath, shouldPause)) {
       const { entry, source } = prepared;
       summary.discoveredFiles += 1;
       summary.lastCheckpointPath = entry.path;
@@ -633,9 +656,9 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
           chunkCount += 1;
           fileCharacters += content.length;
           fileEstimatedBytes += estimatedChunkBytes;
-          if (pendingChunks.length >= CHUNK_BATCH_SIZE
-            || pendingTermReferences >= MAX_PENDING_TERM_REFERENCES
-            || pendingBatchBytes >= MAX_PENDING_BATCH_BYTES) {
+          if (pendingChunks.length >= Math.floor(CHUNK_BATCH_SIZE * batchScale)
+            || pendingTermReferences >= Math.floor(MAX_PENDING_TERM_REFERENCES * batchScale)
+            || pendingBatchBytes >= MAX_PENDING_BATCH_BYTES * batchScale) {
             // 大文件也按预算写入；未读完的指纹不可复用，避免中断后把残缺正文视为完整索引。
             pendingFiles.push(createFileRecord(options.projectId, entry, classification, chunkCount, true,
               `incomplete:${fingerprint}`, scanId, fileCharacters, fileEstimatedBytes,
@@ -902,29 +925,41 @@ export const getChunkSelectionLimit = (reasons: readonly string[]): number => {
 };
 
 /**
- * 最多预读六个小文件（合计不超过 384 KiB）；分类采样与正文解码复用同一份字节。
+ * 小文件分类采样与正文解码复用同一份字节。
  * 避免把已读字节再包装为 Blob 后重复异步读取；二进制识别、UTF-8 解码和分块规则保持一致。
- * 大文件仍流式读取，增量未变化及受保护的路径在预读前跳过；写入保持原有单队列顺序。
+ * 一批最多六份小文件（384 KiB），处理当前批时提前读取下一批，最多同时保留两批（768 KiB）。
+ * 大文件仍流式读取，增量未变化及受保护的路径在预读前跳过；暂停时丢弃预取结果，写入顺序由调用方串行保证。
  */
 const prepareSourceFiles = async function* (
   entries: Extract<ProjectSourceEntry, { kind: 'file' }>[],
   existing: Map<string, IndexedProjectFile>,
+  shouldStop?: () => boolean,
 ): AsyncGenerator<{ entry: Extract<ProjectSourceEntry, { kind: 'file' }>; source: Blob; bytes?: Uint8Array; error?: unknown }> {
+  // Promise 中的逐文件错误转为结果，丢弃预取也不会留下未处理的拒绝。
+  const prepare = (offset: number) => Promise.all(entries.slice(offset, offset + FILE_READ_CONCURRENCY).map(async (entry) => {
+    const path = entry.path.replace(/\\/g, '/');
+    if (shouldStop?.() || entry.file.size > SMALL_FILE_BYTES || !isSafeRelativeFilePath(path)
+      || isProtectedContextFile(path) || isIgnoredFile(path.toLowerCase())
+      || canReuseIndexedFile(existing.get(entry.path), fingerprintOf(entry.file))) {
+      return { entry, source: entry.file, bytes: undefined, error: undefined };
+    }
+    try {
+      return { entry, source: entry.file, bytes: new Uint8Array(await entry.file.arrayBuffer()), error: undefined };
+    } catch (error) {
+      return { entry, source: entry.file, bytes: undefined, error };
+    }
+  }));
+  let pending = prepare(0);
   for (let offset = 0; offset < entries.length; offset += FILE_READ_CONCURRENCY) {
-    const prepared = await Promise.all(entries.slice(offset, offset + FILE_READ_CONCURRENCY).map(async (entry) => {
-      const path = entry.path.replace(/\\/g, '/');
-      if (entry.file.size > SMALL_FILE_BYTES || !isSafeRelativeFilePath(path)
-        || isProtectedContextFile(path) || isIgnoredFile(path.toLowerCase())
-        || canReuseIndexedFile(existing.get(entry.path), fingerprintOf(entry.file))) {
-        return { entry, source: entry.file };
-      }
-      try {
-        return { entry, source: entry.file, bytes: new Uint8Array(await entry.file.arrayBuffer()) };
-      } catch (error) {
-        return { entry, source: entry.file, error };
-      }
-    }));
-    yield* prepared;
+    const prepared = await pending;
+    if (shouldStop?.()) return;
+    // 只提前一批；消费方在写入时等待，下一批读取可在等待期间完成。
+    pending = offset + FILE_READ_CONCURRENCY < entries.length && !shouldStop?.()
+      ? prepare(offset + FILE_READ_CONCURRENCY) : Promise.resolve([]);
+    for (const file of prepared) {
+      if (shouldStop?.()) return;
+      yield file;
+    }
   }
 };
 
