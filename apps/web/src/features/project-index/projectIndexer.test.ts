@@ -942,3 +942,23 @@ describe('retrieveProjectContext', () => {
     expect(result.selections[1]?.reasons).toContain('最近变更文件');
   });
 });
+
+
+it('高密度词表按关联数量分批且保留全文、词表与完成状态', async () => {
+  const repository = new MemoryProjectIndexRepository();
+  const write = vi.spyOn(repository, 'writeBatch');
+  const content = Array.from({ length: 1000 }, (_, i) => `v${i.toString(36)}`).join(' ') + ' 完整尾部';
+  const summary = await indexProject({ projectId: 'dense-terms', rootName: 'dense', repository,
+    entries: sourceOf(Array.from({ length: 100 }, (_, i) => sourceFile(`src/file${i}.txt`, content))) });
+  const contentBatches = write.mock.calls.map(call => call[1]).filter(chunks => chunks.length > 0);
+  expect(contentBatches.length).toBeGreaterThan(1);
+  for (const chunks of contentBatches) {
+    const terms = chunks.reduce((total, chunk) => total + chunk.searchTerms.length, 0);
+    expect(terms).toBeLessThanOrEqual(64_000 + Math.max(...chunks.map(chunk => chunk.searchTerms.length)));
+  }
+  expect(summary.indexedFiles).toBe(100);
+  expect(summary.failedFiles).toBe(0);
+  expect(repository.chunks).toHaveLength(100);
+  expect(repository.chunks.every(chunk => chunk.content === content && chunk.searchTerms.includes('dense-terms:vrr'))).toBe(true);
+  expect(repository.summary?.status).toBe('READY');
+});

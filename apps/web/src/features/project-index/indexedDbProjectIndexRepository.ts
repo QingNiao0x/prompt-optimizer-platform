@@ -13,7 +13,7 @@ import {
 } from './projectIndexStorage';
 import {
   SEARCH_STORE, SEARCH_KEY_STORE, createSearchStores, migrateChunkSearch, chunkBodyRecord,
-  lookupSearchChunkIds, removeSearchFiles, removeProjectSearch, upsertSearchIndex,
+  lookupSearchChunkIds, removeSearchFiles, removeProjectSearch, replaceSearchIndex,
 } from './projectIndexSearchIndex';
 
 const DATABASE_NAME = 'prompt-optimizer-project-index';
@@ -77,25 +77,24 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     if (!checkpoint && files.length === 0 && chunks.length === 0 && replacedPaths.length === 0) {
       return;
     }
-    const transaction = await this.createTransaction(
-      [FILE_STORE, CHUNK_STORE, SEARCH_STORE, SEARCH_KEY_STORE, PROJECT_STORE], 'readwrite',
-    );
+    const writesContent = chunks.length > 0 || replacedPaths.length > 0;
+    // 未变化文件仅更新扫描状态；只锁定本批真正使用的存储，检查点仍与文件状态原子提交。
+    const stores = writesContent ? [FILE_STORE, CHUNK_STORE, SEARCH_STORE, SEARCH_KEY_STORE] : [FILE_STORE];
+    if (checkpoint) stores.push(PROJECT_STORE);
+    const transaction = await this.createTransaction(stores, 'readwrite');
     const completion = transactionComplete(transaction);
     // 下方等待索引请求时事务可能先失败；仍由最后的 await 传播原始事务异常。
     void completion.catch(() => undefined);
     const fileStore = transaction.objectStore(FILE_STORE);
-    const chunkStore = transaction.objectStore(CHUNK_STORE);
-    const projectId = files[0]?.projectId ?? chunks[0]?.projectId;
+    const projectId = checkpoint?.id ?? files[0]?.projectId ?? chunks[0]?.projectId;
     try {
-      if (projectId) {
-        await removeSearchFiles(transaction, projectId, replacedPaths);
-        for (const path of replacedPaths) {
-          chunkStore.delete(chunkIdRange(projectId, path));
-        }
+      if (writesContent && projectId) {
+        const chunkStore = transaction.objectStore(CHUNK_STORE);
+        for (const path of replacedPaths) chunkStore.delete(chunkIdRange(projectId, path));
+        for (const chunk of chunks) chunkStore.put(chunkBodyRecord(chunk));
+        await replaceSearchIndex(transaction, projectId, replacedPaths, chunks);
       }
       for (const file of files) fileStore.put(file);
-      for (const chunk of chunks) chunkStore.put(chunkBodyRecord(chunk));
-      await upsertSearchIndex(transaction, chunks);
       if (checkpoint) transaction.objectStore(PROJECT_STORE).put(checkpoint);
       await completion;
     } catch (error) {

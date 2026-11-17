@@ -17,6 +17,8 @@ const DEFAULT_INDEX_LIMITS: ProjectIndexLimits = {
 
 const FILE_BATCH_SIZE = 200;
 const CHUNK_BATCH_SIZE = 300;
+// 多值词索引的写入成本取决于关联数；与正文大小共同限流，不裁剪任何检索词。
+const MAX_PENDING_TERM_REFERENCES = 64_000;
 const MAX_PENDING_BATCH_BYTES = 4 * 1024 * 1024;
 const TEXT_SAMPLE_BYTES = 8_192;
 const SMALL_FILE_BYTES = 64 * 1024;
@@ -357,6 +359,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
   const replacedPaths = new Set<string>();
   let sourceBatch: Extract<ProjectSourceEntry, { kind: 'file' }>[] = [];
   let pendingBatchBytes = 0;
+  let pendingTermReferences = 0;
   let lastReportedFiles = -1;
   let lastReportedAt = 0;
   let lastReportedFileBytes = 0;
@@ -382,12 +385,14 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
     writeMs += performance.now() - writeStartedAt;
     replacedPaths.clear();
     pendingBatchBytes = 0;
+    pendingTermReferences = 0;
   };
 
   const flushIfNeeded = async (): Promise<void> => {
     if (
       pendingFiles.length >= FILE_BATCH_SIZE
       || pendingChunks.length >= CHUNK_BATCH_SIZE
+      || pendingTermReferences >= MAX_PENDING_TERM_REFERENCES
       || pendingBatchBytes >= MAX_PENDING_BATCH_BYTES
     ) {
       await flush(summary);
@@ -624,10 +629,13 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
             imports: codeMetadata.imports,
           });
           pendingBatchBytes += estimatedChunkBytes;
+          pendingTermReferences += searchTerms.length;
           chunkCount += 1;
           fileCharacters += content.length;
           fileEstimatedBytes += estimatedChunkBytes;
-          if (pendingChunks.length >= CHUNK_BATCH_SIZE || pendingBatchBytes >= MAX_PENDING_BATCH_BYTES) {
+          if (pendingChunks.length >= CHUNK_BATCH_SIZE
+            || pendingTermReferences >= MAX_PENDING_TERM_REFERENCES
+            || pendingBatchBytes >= MAX_PENDING_BATCH_BYTES) {
             // 大文件也按预算写入；未读完的指纹不可复用，避免中断后把残缺正文视为完整索引。
             pendingFiles.push(createFileRecord(options.projectId, entry, classification, chunkCount, true,
               `incomplete:${fingerprint}`, scanId, fileCharacters, fileEstimatedBytes,

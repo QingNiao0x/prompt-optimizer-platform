@@ -27,28 +27,68 @@ export const chunkBodyRecord = (chunk: IndexedProjectChunk): Omit<IndexedProject
   return body;
 };
 
-/** 同 ID 覆盖沿用数字键，词索引、映射与正文在调用方的同一事务中提交或回滚。 */
-export const upsertSearchIndex = async (transaction: IDBTransaction, chunks: IndexedProjectChunk[]): Promise<void> => {
+/** 同 ID 覆盖保留数字键；按文件范围查询已有键，空范围直接插入，旧库迁移继续适用。 */
+export const upsertSearchIndex = async (
+  transaction: IDBTransaction, chunks: IndexedProjectChunk[], removed: number[] = [], clearedPaths: Set<string> = new Set(),
+): Promise<void> => {
   const store = transaction.objectStore(SEARCH_STORE);
   const unique = new Map(chunks.map((chunk) => [chunk.id, chunk]));
+  const ranges = new Map<string, string[]>();
+  for (const chunk of unique.values()) {
+    if (clearedPaths.has(`${chunk.projectId}\0${chunk.path}`)) continue;
+    const path = `${chunk.projectId}\0${chunk.path}`;
+    const ids = ranges.get(path) ?? [];
+    ids.push(chunk.id);
+    ranges.set(path, ids);
+  }
+  const existing = new Map<string, number>();
+  await Promise.all(Array.from(ranges.values(), (ids) => new Promise<void>((resolve, reject) => {
+    ids.sort();
+    // 只遍历本批片段所在范围的键，不读取正文或完整词表，也不依据 FULL 模式推断为空。
+    let offset = 0;
+    const request = store.index('chunkId').openKeyCursor(IDBKeyRange.bound(ids[0], ids[ids.length - 1]));
+    request.onsuccess = () => {
+      const cursor = request.result;
+      if (!cursor) { resolve(); return; }
+      const id = cursor.key as string;
+      while (offset < ids.length && ids[offset]! < id) offset++;
+      if (ids[offset] === id) {
+        existing.set(id, cursor.primaryKey as number);
+        offset++;
+      }
+      // 大文件片段编号按字符串排序，跳过本批不涉及的旧键，避免遍历整个文件的其他片段。
+      if (offset < ids.length) cursor.continue(ids[offset]);
+      else resolve();
+    };
+    request.onerror = () => reject(request.error);
+  })));
   const pairs = await Promise.all(Array.from(unique.values(), async (chunk): Promise<[number, string]> => {
-    const existing = await readRequest(store.index('chunkId').getKey(chunk.id));
+    const key = existing.get(chunk.id);
     const value = { id: chunk.id, searchTerms: chunk.searchTerms };
-    const key = await readRequest(store.put(existing === undefined ? value : { ...value, key: existing }));
-    return [key as number, chunk.id];
+    const saved = await readRequest(key === undefined ? store.add(value) : store.put({ ...value, key }));
+    return [saved as number, chunk.id];
   }));
-  await updateKeyBlocks(transaction, pairs, []);
+  await updateKeyBlocks(transaction, pairs, removed);
 };
 
-/** 文件覆盖和增量删除只移除该路径的关联，不影响同一个映射块中的其他文件或项目。 */
+/** 批次内合并文件删除与插入的映射更新；大范围删除每 4096 个键刷新，限制临时内存。 */
+export const replaceSearchIndex = async (
+  transaction: IDBTransaction, projectId: string, paths: string[], chunks: IndexedProjectChunk[],
+): Promise<void> => {
+  const removed: number[] = [];
+  const uniquePaths = new Set(paths);
+  for (const path of uniquePaths) {
+    const prefix = `${projectId}\0${path}\0`;
+    await removeSearchRange(transaction, IDBKeyRange.bound(prefix, `${prefix}\uffff`), removed);
+  }
+  await upsertSearchIndex(transaction, chunks, removed,
+    new Set(Array.from(uniquePaths, (path) => `${projectId}\0${path}`)));
+};
+
+/** 文件覆盖和增量删除只移除该路径的关联，保留同块内其他文件或项目。 */
 export const removeSearchFiles = async (
   transaction: IDBTransaction, projectId: string, paths: string[],
-): Promise<void> => {
-  for (const path of new Set(paths)) {
-    const prefix = `${projectId}\0${path}\0`;
-    await removeSearchRange(transaction, IDBKeyRange.bound(prefix, `${prefix}\uffff`));
-  }
-};
+): Promise<void> => replaceSearchIndex(transaction, projectId, paths, []);
 
 /** 按项目 ID 范围分批删除词关联，避免删除整个站点或一次读回全部项目正文。 */
 export const removeProjectSearch = async (transaction: IDBTransaction, projectId: string): Promise<void> => {
@@ -116,13 +156,16 @@ export const migrateChunkSearch = (
 };
 
 /** 删除后重复读取范围内下一批；数字键和对应映射同步移除，不扫描其他项目正文。 */
-const removeSearchRange = async (transaction: IDBTransaction, range: IDBKeyRange): Promise<void> => {
+const removeSearchRange = async (transaction: IDBTransaction, range: IDBKeyRange, deferred?: number[]): Promise<void> => {
   const store = transaction.objectStore(SEARCH_STORE);
   for (;;) {
     const keys = await readRequest(store.index('chunkId').getAllKeys(range, KEY_BLOCK_SIZE)) as number[];
     if (keys.length === 0) return;
     for (const key of keys) store.delete(key);
-    await updateKeyBlocks(transaction, [], keys);
+    if (deferred) {
+      deferred.push(...keys);
+      if (deferred.length >= 4096) await updateKeyBlocks(transaction, [], deferred.splice(0));
+    } else await updateKeyBlocks(transaction, [], keys);
   }
 };
 

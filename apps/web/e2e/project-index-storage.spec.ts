@@ -174,3 +174,119 @@ test('旧索引升级保留全部关联，更新删除与回滚不污染其他�
     newTermFound: true, rolledBack: true, replacementCount: 1, removed: 2,
     cleanedIds: ['p\u00000-new.txt\u00000', 'p\0keep.txt\u00000', 'q\0a.txt\u00000'], noStalePostings: true, isolated: true });
 });
+
+/** 观察真实 IndexedDB 请求，约束新增与覆盖的写放大，同时验证元数据检查点和重复提交。 */
+test('批次减少旧键查询与映射更新，重复提交和元数据事务保持一致', async ({ page }) => {
+  await page.route('**/__write_batch_fixture', route => route.fulfill({
+    contentType: 'text/html', body: '<!doctype html><title>索引批次回归</title>',
+  }));
+  await page.goto('/__write_batch_fixture');
+  const result = await page.evaluate(async () => {
+    const modulePath = '/src/features/project-index/indexedDbProjectIndexRepository.ts';
+    const { IndexedDbProjectIndexRepository } = await import(modulePath) as
+      typeof import('../src/features/project-index/indexedDbProjectIndexRepository');
+    type Chunk = import('../src/features/project-index/projectIndexer').IndexedProjectChunk;
+    type Summary = import('../src/features/project-index/projectIndexer').ProjectIndexSummary;
+    const repo = new IndexedDbProjectIndexRepository();
+    let oldKeyReads = 0, rangeReads = 0, mapWrites = 0;
+    const scopes: string[][] = [];
+    const getKey = IDBIndex.prototype.getKey, cursor = IDBIndex.prototype.openKeyCursor;
+    const put = IDBObjectStore.prototype.put, transaction = IDBDatabase.prototype.transaction;
+    IDBIndex.prototype.getKey = function (...args) {
+      if (this.objectStore.name === 'chunkSearch') oldKeyReads++;
+      return getKey.apply(this, args);
+    };
+    IDBIndex.prototype.openKeyCursor = function (...args) {
+      if (this.objectStore.name === 'chunkSearch') rangeReads++;
+      return cursor.apply(this, args);
+    };
+    IDBObjectStore.prototype.put = function (...args) {
+      if (this.name === 'chunkSearchKeys') mapWrites++;
+      return put.apply(this, args);
+    };
+    IDBDatabase.prototype.transaction = function (names, ...args) {
+      scopes.push(typeof names === 'string' ? [names] : Array.from(names));
+      return transaction.call(this, names, ...args);
+    };
+    const chunk = (path: string, i: number, term: string): Chunk => ({
+      id: `batch\0${path}\0${i}`, projectId: 'batch', path, chunkIndex: i,
+      content: `${path}-${i}-尾部`, language: 'text', priority: 10, symbols: [], imports: [],
+      searchTerms: [`batch:${term}`],
+    });
+    const originals = ['a.txt', 'b.txt', 'keep.txt'].flatMap(path =>
+      Array.from({ length: 20 }, (_, i) => chunk(path, i, 'old')));
+    try {
+      await repo.writeBatch([], originals);
+      const first = { oldKeyReads, rangeReads };
+      const mapBefore = mapWrites;
+      const replacement = [chunk('a.txt', 0, 'new'), chunk('b.txt', 0, 'new')];
+      await repo.writeBatch([], replacement, ['a.txt', 'b.txt']);
+      const replacementMapWrites = mapWrites - mapBefore;
+      await repo.writeBatch([], replacement); // 未指定替换范围的重复提交也保持原数字键和条数。
+      const newHits = await repo.findCandidateChunks('batch', ['new'], 100);
+      const oldHits = await repo.findCandidateChunks('batch', ['old'], 100);
+      const checkpoint = { id: 'batch', status: 'PAUSED' } as Summary;
+      await repo.writeBatch([], [], [], checkpoint);
+      const metadataScopes = scopes[scopes.length - 1];
+      const saved = await repo.findProject('batch');
+      return { first, replacementMapWrites, newCount: newHits.length, keepCount: oldHits.length,
+        intact: oldHits.every(c => c.path === 'keep.txt' && c.content.endsWith('尾部')),
+        metadataScopes, checkpoint: saved?.status };
+    } finally {
+      IDBIndex.prototype.getKey = getKey;
+      IDBIndex.prototype.openKeyCursor = cursor;
+      IDBObjectStore.prototype.put = put;
+      IDBDatabase.prototype.transaction = transaction;
+      await repo.deleteProject('batch');
+    }
+  });
+  expect(result).toEqual({ first: { oldKeyReads: 0, rangeReads: 3 }, replacementMapWrites: 1,
+    newCount: 2, keepCount: 20, intact: true, metadataScopes: ['files', 'projects'], checkpoint: 'PAUSED' });
+});
+
+
+/** 删除超过暂存上限时仍保留同块其他文件，索引更新后发生异常须连同检查点一起回滚。 */
+test('大文件有界删除、稀疏覆盖与提交失败回滚保持完整', async ({ page }) => {
+  await page.route('**/__large_write_fixture', route => route.fulfill({
+    contentType: 'text/html', body: '<!doctype html><title>大文件写入回归</title>',
+  }));
+  await page.goto('/__large_write_fixture');
+  const result = await page.evaluate(async () => {
+    const path = '/src/features/project-index/indexedDbProjectIndexRepository.ts';
+    const { IndexedDbProjectIndexRepository } = await import(path) as
+      typeof import('../src/features/project-index/indexedDbProjectIndexRepository');
+    type Chunk = import('../src/features/project-index/projectIndexer').IndexedProjectChunk;
+    type Summary = import('../src/features/project-index/projectIndexer').ProjectIndexSummary;
+    const repo = new IndexedDbProjectIndexRepository();
+    const chunk = (file: string, i: number, term = 'old'): Chunk => ({
+      id: `large\0${file}\0${i}`, projectId: 'large', path: file, chunkIndex: i,
+      content: `${file}-${i}-尾部`, language: 'text', priority: 10, symbols: [], imports: [],
+      searchTerms: [`large:${term}`],
+    });
+    try {
+      const original = Array.from({ length: 4200 }, (_, i) => chunk('large.txt', i));
+      await repo.writeBatch([{ id: 'large\0large.txt', projectId: 'large', path: 'large.txt',
+        size: 4200, lastModified: 1, fingerprint: 'complete', lastSeenScanId: 'scan',
+        chunkCount: 4200, indexedCharacters: 4200, estimatedIndexBytes: 4200,
+        metadataOnly: false, language: 'text', priority: 10, symbols: [], imports: [] }],
+        [...original, chunk('keep.txt', 0, 'keep')]);
+      await repo.writeBatch([], [chunk('large.txt', 0, 'sparse'), chunk('large.txt', 4199, 'sparse')]);
+      const sparse = await repo.findCandidateChunks('large', ['sparse'], 10);
+      let failed = false;
+      try {
+        await repo.writeBatch([], [chunk('large.txt', 0, 'new')], ['large.txt'],
+          { id: 'large', status: 'READY', bad: () => undefined } as unknown as Summary);
+      } catch { failed = true; }
+      const afterFailure = await repo.findChunksByPaths('large', ['large.txt'], 5000);
+      const newAfterFailure = await repo.findCandidateChunks('large', ['new'], 10);
+      await repo.writeBatch([], [chunk('large.txt', 0, 'new')], ['large.txt']);
+      const remaining = await repo.findChunksByPaths('large', ['large.txt'], 5000);
+      const old = await repo.findCandidateChunks('large', ['old', 'sparse'], 5000);
+      const keep = await repo.findCandidateChunks('large', ['keep'], 1);
+      return { sparse: sparse.length, failed, restored: afterFailure.length, newAfterFailure: newAfterFailure.filter(c => c.searchTerms.includes('large:new')).length,
+        remaining: remaining.length, old: old.filter(c => c.searchTerms.some(t => t === 'large:old' || t === 'large:sparse')).length, keep: keep[0]?.content };
+    } finally { await repo.deleteProject('large'); }
+  });
+  expect(result).toEqual({ sparse: 2, failed: true, restored: 4200, newAfterFailure: 0,
+    remaining: 1, old: 0, keep: 'keep.txt-0-尾部' });
+});
