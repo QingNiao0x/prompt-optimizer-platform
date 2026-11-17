@@ -26,6 +26,8 @@ const MIN_BATCH_SCALE = 0.25;
 const TEXT_SAMPLE_BYTES = 8_192;
 const SMALL_FILE_BYTES = 64 * 1024;
 const FILE_READ_CONCURRENCY = 6;
+// 预取容量独立于磁盘读取并发；24 × 64 KiB 限制下一组字节缓冲为 1.5 MiB。
+const FILE_PREFETCH_COUNT = 24;
 const MAX_RECORDED_CHANGED_PATHS = 500;
 const PROGRESS_FILE_INTERVAL = 32;
 const PROGRESS_TIME_INTERVAL_MS = 150;
@@ -927,7 +929,7 @@ export const getChunkSelectionLimit = (reasons: readonly string[]): number => {
 /**
  * 小文件分类采样与正文解码复用同一份字节。
  * 避免把已读字节再包装为 Blob 后重复异步读取；二进制识别、UTF-8 解码和分块规则保持一致。
- * 一批最多六份小文件（384 KiB），处理当前批时提前读取下一批，最多同时保留两批（768 KiB）。
+ * 一组最多 24 份小文件（1.5 MiB），六路读取；处理当前组时预取下一组，两组字节最多 3 MiB。
  * 大文件仍流式读取，增量未变化及受保护的路径在预读前跳过；暂停时丢弃预取结果，写入顺序由调用方串行保证。
  */
 const prepareSourceFiles = async function* (
@@ -936,26 +938,35 @@ const prepareSourceFiles = async function* (
   shouldStop?: () => boolean,
 ): AsyncGenerator<{ entry: Extract<ProjectSourceEntry, { kind: 'file' }>; source: Blob; bytes?: Uint8Array; error?: unknown }> {
   // Promise 中的逐文件错误转为结果，丢弃预取也不会留下未处理的拒绝。
-  const prepare = (offset: number) => Promise.all(entries.slice(offset, offset + FILE_READ_CONCURRENCY).map(async (entry) => {
-    const path = entry.path.replace(/\\/g, '/');
-    if (shouldStop?.() || entry.file.size > SMALL_FILE_BYTES || !isSafeRelativeFilePath(path)
-      || isProtectedContextFile(path) || isIgnoredFile(path.toLowerCase())
-      || canReuseIndexedFile(existing.get(entry.path), fingerprintOf(entry.file))) {
-      return { entry, source: entry.file, bytes: undefined, error: undefined };
-    }
-    try {
-      return { entry, source: entry.file, bytes: new Uint8Array(await entry.file.arrayBuffer()), error: undefined };
-    } catch (error) {
-      return { entry, source: entry.file, bytes: undefined, error };
-    }
-  }));
+  const prepare = async (offset: number) => {
+    const batch = entries.slice(offset, offset + FILE_PREFETCH_COUNT);
+    const prepared = batch.map(entry => ({ entry, source: entry.file, bytes: undefined as Uint8Array | undefined, error: undefined as unknown }));
+    let next = 0;
+    // 以固定六个读取者填充 24 个槽位，保持来源顺序并限制同时进行的 arrayBuffer 调用。
+    await Promise.all(Array.from({ length: Math.min(FILE_READ_CONCURRENCY, batch.length) }, async () => {
+      while (next < batch.length && !shouldStop?.()) {
+        const index = next++;
+        const entry = batch[index]!;
+        const path = entry.path.replace(/\\/g, '/');
+        if (entry.file.size > SMALL_FILE_BYTES || !isSafeRelativeFilePath(path)
+          || isProtectedContextFile(path) || isIgnoredFile(path.toLowerCase())
+          || canReuseIndexedFile(existing.get(entry.path), fingerprintOf(entry.file))) continue;
+        try {
+          prepared[index]!.bytes = new Uint8Array(await entry.file.arrayBuffer());
+        } catch (error) {
+          prepared[index]!.error = error;
+        }
+      }
+    }));
+    return prepared;
+  };
   let pending = prepare(0);
-  for (let offset = 0; offset < entries.length; offset += FILE_READ_CONCURRENCY) {
+  for (let offset = 0; offset < entries.length; offset += FILE_PREFETCH_COUNT) {
     const prepared = await pending;
     if (shouldStop?.()) return;
     // 只提前一批；消费方在写入时等待，下一批读取可在等待期间完成。
-    pending = offset + FILE_READ_CONCURRENCY < entries.length && !shouldStop?.()
-      ? prepare(offset + FILE_READ_CONCURRENCY) : Promise.resolve([]);
+    pending = offset + FILE_PREFETCH_COUNT < entries.length && !shouldStop?.()
+      ? prepare(offset + FILE_PREFETCH_COUNT) : Promise.resolve([]);
     for (const file of prepared) {
       if (shouldStop?.()) return;
       yield file;

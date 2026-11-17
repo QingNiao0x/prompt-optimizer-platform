@@ -1,0 +1,31 @@
+{
+  "baselineCommit": "b99e8fae",
+  "testRoot": "E:\\MyProject\\prompt-optimizer-platform",
+  "files": 23470,
+  "bytes": 545131997,
+  "inputIdentity": "3b6b8efe7cbea70b36d64f5d29be243b843b43e02967f2d83c0079b3d8ad3e8a",
+  "sourceUnchanged": true,
+  "implementation": {
+    "prefetch": 24,
+    "readConcurrency": 6,
+    "fileBytes": 65536,
+    "prefetchBytes": 1572864
+  },
+  "candidateSourceHashes": {
+    "apps/web/src/features/project-index/projectIndexer.ts": "892232cb3ad4fe2af7d838e56bc47a006bafd056523ff3ed165695f892c9d340",
+    "apps/web/src/features/project-index/projectIndexer.test.ts": "be81b93e497c9541371580a794c9e7e255a6bc19998663c147a984ef28ce3606"
+  },
+  "limits": {
+    "maxScanFiles": 1000000,
+    "maxIndexBytes": 2147483648,
+    "maxIndexableFileBytes": 52428800
+  },
+  "qualityPassed": false,
+  "stableImprovement": false,
+  "notes": [
+    "两轮实际目录处理均触及估算容量上限，完整文件集合不一致",
+    "基线上午、完成候选晚上执行，未获得连续同轮稳定性对照",
+    "原生目录句柄、生产Worker、真实浏览器数据库，无模型调用",
+    "基线索引结果保留后恢复六路并行全文核验；中断候选不计有效轮次"
+  ]
+}

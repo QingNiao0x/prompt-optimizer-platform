@@ -1,0 +1,50 @@
+{
+  "startedAt": "2026-11-17T04:50:05.487Z",
+  "root": "E:\\MyProject\\prompt-optimizer-platform",
+  "channel": "msedge",
+  "baseline": "b99e8fae",
+  "rounds": [
+    {
+      "number": 1,
+      "variant": "before",
+      "startedAt": "2026-11-17T04:50:10.805Z",
+      "progress": [],
+      "failure": "page.waitForFunction: Timeout 30000ms exceeded.",
+      "complete": false
+    },
+    {
+      "number": 2,
+      "variant": "after",
+      "startedAt": "2026-11-17T04:50:43.411Z",
+      "progress": [],
+      "failure": "page.waitForFunction: Timeout 30000ms exceeded.",
+      "complete": false
+    }
+  ],
+  "criteria": {
+    "order": [
+      "before",
+      "after",
+      "after",
+      "before"
+    ],
+    "medianImprovement": 0.05,
+    "maxCandidateRegression": 0.1,
+    "fullContentRequired": true
+  },
+  "modelCalls": 0,
+  "manifest": {
+    "files": 23470,
+    "bytes": 545131997,
+    "sha256": "3b6b8efe7cbea70b36d64f5d29be243b843b43e02967f2d83c0079b3d8ad3e8a"
+  },
+  "stopped": "连续两轮完整性门槛失败，停止重复采样并保留原因",
+  "sourceUnchanged": true,
+  "result": {
+    "beforeMs": null,
+    "afterMs": null,
+    "qualityPassed": false,
+    "stableImprovement": false
+  },
+  "finishedAt": "2026-11-17T04:51:17.439Z"
+}

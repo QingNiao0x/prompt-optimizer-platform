@@ -974,7 +974,7 @@ it('写入等待期间预取下一小批，暂停后丢弃预取且不提前报�
     entry.file.arrayBuffer = async () => {
       reads++; concurrent++; maxConcurrent = Math.max(maxConcurrent, concurrent);
       // 第一批在约 64 个高密度文件时提交；后续六份读取等待写入开始，锁定真实重叠路径。
-      if (i >= 66 && i < 72) await writeStarted;
+      if (i >= 72 && i < 78) await writeStarted;
       const bytes = await read();
       if (writing && !pause) completedDuringWrite++;
       concurrent--; return bytes;
@@ -999,7 +999,8 @@ it('写入等待期间预取下一小批，暂停后丢弃预取且不提前报�
   expect(summary.status).toBe('PAUSED');
   expect(completedDuringWrite).toBeGreaterThan(0);
   expect(ahead).toBeGreaterThan(0);
-  expect(ahead).toBeLessThanOrEqual(12);
+  expect(ahead).toBeGreaterThan(12);
+  expect(ahead).toBeLessThanOrEqual(48);
   expect(maxConcurrent).toBeLessThanOrEqual(6);
   const committed = repository.files.length;
   await new Promise(resolve => setTimeout(resolve, 10));
