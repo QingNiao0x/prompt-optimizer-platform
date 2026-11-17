@@ -26,8 +26,8 @@ const MIN_BATCH_SCALE = 0.25;
 const TEXT_SAMPLE_BYTES = 8_192;
 const SMALL_FILE_BYTES = 64 * 1024;
 const FILE_READ_CONCURRENCY = 6;
-// 预取容量独立于磁盘读取并发；24 × 64 KiB 限制下一组字节缓冲为 1.5 MiB。
-const FILE_PREFETCH_COUNT = 24;
+// 单组上限与来源批次一致，200 × 64 KiB 为 12.5 MiB；读取并发仍独立限制为六路。
+const FILE_PREFETCH_COUNT = 200;
 const MAX_RECORDED_CHANGED_PATHS = 500;
 const PROGRESS_FILE_INTERVAL = 32;
 const PROGRESS_TIME_INTERVAL_MS = 150;
@@ -520,6 +520,11 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
     const existingByPath = new Map(existingFiles.map((file) => [file.path, file]));
 
     for await (const prepared of prepareSourceFiles(batch, existingByPath, shouldPause)) {
+      // 大组字节已在内存时，Promise 连续消费可能推迟 Worker 的暂停消息；定期让出任务队列。
+      if (summary.discoveredFiles > 0 && summary.discoveredFiles % PROGRESS_FILE_INTERVAL === 0) {
+        await new Promise<void>(resolve => setTimeout(resolve, 0));
+        if (shouldPause()) break;
+      }
       const { entry, source } = prepared;
       summary.discoveredFiles += 1;
       summary.lastCheckpointPath = entry.path;
@@ -929,7 +934,7 @@ export const getChunkSelectionLimit = (reasons: readonly string[]): number => {
 /**
  * 小文件分类采样与正文解码复用同一份字节。
  * 避免把已读字节再包装为 Blob 后重复异步读取；二进制识别、UTF-8 解码和分块规则保持一致。
- * 一组最多 24 份小文件（1.5 MiB），六路读取；处理当前组时预取下一组，两组字节最多 3 MiB。
+ * 一组最多 200 份小文件（12.5 MiB），六路读取。当前来源批次同为 200，整组准备后才消费。
  * 大文件仍流式读取，增量未变化及受保护的路径在预读前跳过；暂停时丢弃预取结果，写入顺序由调用方串行保证。
  */
 const prepareSourceFiles = async function* (
@@ -942,7 +947,7 @@ const prepareSourceFiles = async function* (
     const batch = entries.slice(offset, offset + FILE_PREFETCH_COUNT);
     const prepared = batch.map(entry => ({ entry, source: entry.file, bytes: undefined as Uint8Array | undefined, error: undefined as unknown }));
     let next = 0;
-    // 以固定六个读取者填充 24 个槽位，保持来源顺序并限制同时进行的 arrayBuffer 调用。
+    // 以固定六个读取者填充 200 个槽位，保持来源顺序并限制同时进行的 arrayBuffer 调用。
     await Promise.all(Array.from({ length: Math.min(FILE_READ_CONCURRENCY, batch.length) }, async () => {
       while (next < batch.length && !shouldStop?.()) {
         const index = next++;
@@ -964,7 +969,7 @@ const prepareSourceFiles = async function* (
   for (let offset = 0; offset < entries.length; offset += FILE_PREFETCH_COUNT) {
     const prepared = await pending;
     if (shouldStop?.()) return;
-    // 只提前一批；消费方在写入时等待，下一批读取可在等待期间完成。
+    // 后续组存在时才预取；当前 200 个来源的批次在整组准备完成后消费。
     pending = offset + FILE_PREFETCH_COUNT < entries.length && !shouldStop?.()
       ? prepare(offset + FILE_PREFETCH_COUNT) : Promise.resolve([]);
     for (const file of prepared) {

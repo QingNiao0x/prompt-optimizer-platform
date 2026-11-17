@@ -961,22 +961,17 @@ it('高密度词表按关联数量分批且保留全文、词表与完成状态'
 });
 
 
-it('写入等待期间预取下一小批，暂停后丢弃预取且不提前报告完成', async () => {
+it('200文件整组预读保持六路并发，暂停丢弃未消费结果并可恢复', async () => {
   const repository = new MemoryProjectIndexRepository();
   const content = Array.from({ length: 1000 }, (_, i) => `v${i.toString(36)}`).join(' ');
   let reads = 0, writing = false, pause = false, concurrent = 0, maxConcurrent = 0;
-  let releaseReads!: () => void;
-  const writeStarted = new Promise<void>(resolve => { releaseReads = resolve; });
-  let completedDuringWrite = 0;
-  const entries = Array.from({ length: 100 }, (_, i) => {
+  let firstWriteReads = 0;
+  const entries = Array.from({ length: 450 }, (_, i) => {
     const entry = sourceFile(`src/dense${i}.txt`, content) as Extract<ProjectSourceEntry, { kind: 'file' }>;
     const read = entry.file.arrayBuffer.bind(entry.file);
     entry.file.arrayBuffer = async () => {
       reads++; concurrent++; maxConcurrent = Math.max(maxConcurrent, concurrent);
-      // 第一批在约 64 个高密度文件时提交；后续六份读取等待写入开始，锁定真实重叠路径。
-      if (i >= 72 && i < 78) await writeStarted;
       const bytes = await read();
-      if (writing && !pause) completedDuringWrite++;
       concurrent--; return bytes;
     };
     return entry;
@@ -986,7 +981,7 @@ it('写入等待期间预取下一小批，暂停后丢弃预取且不提前报�
   repository.writeBatch = async (files, chunks, replaced, checkpoint) => {
     if (!writing && chunks.length > 0) {
       writing = true;
-      releaseReads();
+      firstWriteReads = reads;
       await new Promise(resolve => setTimeout(resolve, 10));
       ahead = reads - files.length;
       pause = true;
@@ -997,17 +992,16 @@ it('写入等待期间预取下一小批，暂停后丢弃预取且不提前报�
     entries: sourceOf(entries), shouldPause: () => pause,
     onProgress: progress => expect(progress.processedFiles).toBeLessThanOrEqual(repository.files.length) });
   expect(summary.status).toBe('PAUSED');
-  expect(completedDuringWrite).toBeGreaterThan(0);
+  expect(firstWriteReads).toBe(200);
   expect(ahead).toBeGreaterThan(0);
-  expect(ahead).toBeGreaterThan(12);
-  expect(ahead).toBeLessThanOrEqual(48);
+  expect(ahead).toBeLessThanOrEqual(200);
   expect(maxConcurrent).toBeLessThanOrEqual(6);
   const committed = repository.files.length;
   await new Promise(resolve => setTimeout(resolve, 10));
   expect(repository.files.length).toBe(committed);
   const resumed = await indexProject({ projectId: 'overlap', rootName: 'overlap', repository,
     mode: 'RESUME', entries: sourceOf(entries) });
-  expect(resumed.indexedFiles).toBe(100);
+  expect(resumed.indexedFiles).toBe(450);
   expect(resumed.unchangedFiles).toBe(committed);
   expect(repository.chunks.every(chunk => chunk.content === content)).toBe(true);
 });
