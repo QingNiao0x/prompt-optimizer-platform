@@ -34,6 +34,17 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
     private final TextPolishFidelity fidelity;
     private static final String REPAIR_INSTRUCTION = "\n上次响应JSON协议不合法，仅修复输出协议，完整保留原文要求。";
     private volatile String strategyVersion = TextPolishInstructions.VERSION;
+    /** 文章专属配置，默认关闭；每次生成时从实际请求冻结已发送状态。 */
+    private volatile Thinking thinking = Thinking.DISABLED;
+
+    /** ENABLED仅用于已支持thinking协议的DeepSeek型号；未知型号显式拒绝，避免静默忽略。 */
+    enum Thinking { DISABLED, ENABLED }
+
+    /** 配置由服务端控制，非法值在启动绑定时失败。 */
+    @Autowired
+    void configureThinking(@Value("${app.text-polish.thinking:DISABLED}") Thinking value) {
+        thinking = java.util.Objects.requireNonNull(value);
+    }
 
     /** 只接受已冻结的内置版本；候选须显式配置，配置错误在启动时暴露。 */
     @Autowired
@@ -66,7 +77,7 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
         var parameters = new ExecutionParameters((Integer) frozen.get("max_tokens"),
                 (Integer) frozen.get("max_completion_tokens"), (Double) frozen.get("temperature"), false,
                 frozen.containsKey("response_format") ? "json_object" : null,
-                frozen.containsKey("thinking") ? "disabled" : null);
+                frozen.containsKey("thinking") ? String.valueOf(((Map<?, ?>) frozen.get("thinking")).get("type")) : null);
         String resourceHash = hash(instruction);
         for (int attempt = 1; attempt <= 2; attempt++) {
             long started = System.nanoTime(); Integer status = null; boolean protocolFailure = false;
@@ -135,8 +146,14 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
         if ("tokenhub".equals(model.routeKey()) && "kimi-k3".equals(model.upstreamModel())) body.put("max_completion_tokens", Math.min(8000, properties.getMaxTokens()));
         else { body.put("max_tokens", Math.min(8000, properties.getMaxTokens())); body.put("temperature", properties.getTemperature()); }
         if (properties.isJsonResponseFormatEnabled()) body.put("response_format", Map.of("type", "json_object"));
-        if (model.upstreamModel().startsWith("deepseek-v4-") || "deepseek-flash".equals(model.upstreamModel()) || "minimax-m3".equals(model.upstreamModel()))
-            body.put("thinking", Map.of("type", "disabled"));
+        Thinking requested = thinking;
+        boolean deepSeek = model.upstreamModel().startsWith("deepseek-v4-") || "deepseek-flash".equals(model.upstreamModel());
+        if (requested == Thinking.ENABLED && !deepSeek) {
+            throw new ProviderException(ProviderFailureType.CONFIGURATION, "所选文章模型尚未支持开启思考，请调整文章推理配置或模型。", false);
+        }
+        if (deepSeek || "minimax-m3".equals(model.upstreamModel())) {
+            body.put("thinking", Map.of("type", requested.name().toLowerCase(java.util.Locale.ROOT)));
+        }
         return Map.copyOf(body);
     }
     /** 仅摘要可信指令资源，不将用户正文或供应商凭据写入执行元数据。 */

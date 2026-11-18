@@ -94,6 +94,9 @@ logging:
   config: classpath:logback-spring.xml
 
 app:
+  text-polish:
+    # 文章独立推理开关，ENABLED仅支持已核实thinking协议的DeepSeek型号。
+    thinking: ${TEXT_POLISH_THINKING:DISABLED}
   enhancement:
     natural:
       # 新请求采用v4的Plan状态/来源修复；显式COMPLETION_BASIS_REPAIR可回退v3，旧历史仍沿用记录版本。

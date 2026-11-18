@@ -65,6 +65,7 @@ class OpenAiTextPolishProviderTest {
         var builder = RestClient.builder(); server = MockRestServiceServer.bindTo(builder).build();
         provider = new OpenAiTextPolishProvider(builder.build(), json, properties, new TextPolishFidelity());
         provider.configureStrategy(version);
+        provider.configureThinking(OpenAiTextPolishProvider.Thinking.ENABLED);
         var prepared = TextPolishSkills.prepare(input(), version);
         model = new ModelEntry(UUID.randomUUID(), "fixture", properties.getConfiguredRoutes().getFirst().key(),
                 "deepseek-flash", "测试模型", true, true, 0);
@@ -73,6 +74,7 @@ class OpenAiTextPolishProviderTest {
             requests.add(json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest)request).getBodyAsString()));
             provider.configureStrategy(TextPolishInstructions.DIRECT_VERSION);
             properties.setTemperature(0.9); properties.setMaxTokens(100);
+            provider.configureThinking(OpenAiTextPolishProvider.Thinking.DISABLED);
         }).andRespond(withSuccess("null", MediaType.APPLICATION_JSON));
         server.expect(requestTo(ENDPOINT)).andExpect(request -> {
             requests.add(json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest)request).getBodyAsString()));
@@ -88,11 +90,11 @@ class OpenAiTextPolishProviderTest {
         assertThat(metadata.routeKey()).isEqualTo(model.routeKey());
         assertThat(metadata.parameters().temperature()).isEqualTo(0.2);
         assertThat(metadata.parameters().maxTokens()).isEqualTo(8000);
-        assertThat(metadata.parameters().thinking()).isEqualTo("disabled");
+        assertThat(metadata.parameters().thinking()).isEqualTo("enabled");
         for (var body : requests) {
             assertThat(body.path("temperature").doubleValue()).isEqualTo(0.2);
             assertThat(body.path("max_tokens").intValue()).isEqualTo(8000);
-            assertThat(body.path("thinking").path("type").asText()).isEqualTo("disabled");
+            assertThat(body.path("thinking").path("type").asText()).isEqualTo("enabled");
         }
         var digest = java.security.MessageDigest.getInstance("SHA-256");
         assertThat(metadata.resourceHash()).isEqualTo(HexFormat.of().formatHex(digest.digest(
@@ -102,6 +104,23 @@ class OpenAiTextPolishProviderTest {
         assertThat(json.writeValueAsString(metadata)).doesNotContain("fixture-key", ENDPOINT, input().sourceText());
         server.verify();
     }
+    @Test void unsupportedThinkingFailsBeforeModelCall() {
+        provider.configureThinking(OpenAiTextPolishProvider.Thinking.ENABLED);
+        assertThatThrownBy(() -> provider.generate(input(), model)).isInstanceOf(ProviderException.class);
+        assertThat(calls).isEmpty();
+        server.verify();
+    }
+
+    @Test void defaultThinkingRemainsDisabledForDeepSeek() throws Exception {
+        model = new ModelEntry(UUID.randomUUID(), "fixture", model.routeKey(), "deepseek-flash", "测试模型", true, true, 0);
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            assertThat(body.path("thinking").path("type").asText()).isEqualTo("disabled");
+        }).andRespond(withSuccess(envelope(json.writeValueAsString(Map.of("polishedText", input().sourceText())), "stop"), MediaType.APPLICATION_JSON));
+        assertThat(provider.generate(input(), model).executionMetadata().parameters().thinking()).isEqualTo("disabled");
+        server.verify();
+    }
+
     @Test void candidateCarriesEveryStyleAndDepthThroughTheNormalHttpEntry() throws Exception {
         provider.configureStrategy(TextPolishInstructions.CANDIDATE_VERSION);
         for (Style style : Style.values()) {
