@@ -77,7 +77,7 @@ scope.onmessage = async (event: MessageEvent<ProjectIndexWorkerRequest>): Promis
     // 为真实百分比仅预枚举句柄，不读取正文、不保存全项目 File 数组。统计与索引共用冻结的规则。
     const selected = rootHandle.kind === 'file-selection' ? await selectedFileEntries(rootHandle, respectGitignore) : undefined;
     const counted = selected ? { totalFiles: selected.length, ignoredDirectories: 0,
-      scopeExcludedFiles: rootHandle.kind === 'file-selection' ? rootHandle.files.length - selected.length : 0, excludedDirectorySamples: [] }
+      scopeExcludedFiles: rootHandle.kind === 'file-selection' ? rootHandle.files.length - selected.length + (rootHandle.excludedFiles ?? 0) : 0, excludedDirectorySamples: [] }
       : await countSelectedDirectories(roots, (count) => scope.postMessage({
       type: 'progress', progress: {
         phase: 'SCANNING', currentPath: count.currentPath, processedFiles: 0,

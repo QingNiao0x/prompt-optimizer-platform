@@ -1,3 +1,4 @@
+import { mockAuthentication } from './authFixture';
 import { expect, test } from '@playwright/test';
 
 /** 文件选择与目录共用生产 Worker、持久化和全文分块。 */
@@ -47,4 +48,20 @@ test('多选源码突破旧数量及长度限制并恢复逻辑路径', async ({
   expect(result.summary.contentComplete).toBe(true);
   expect(result.paths.sort()).toEqual(['1.ts', '1.ts (2)']);
   expect(result.restored).toBe('file-selection');
+});
+
+/** 普通工作台选择入口也必须进入全文索引。 */
+test('工作台选择文件建立本地全文索引', async ({ page }) => {
+  await mockAuthentication(page);
+  await page.route('**/api/v1/me/settings', route => route.fulfill({ status: 503, json: {} }));
+  await page.route('**/api/v1/analytics/events', route => route.fulfill({ status: 204 }));
+  await page.route('**/api/v1/models', route => route.fulfill({ json: { data: [] } }));
+  await page.goto('/workbench');
+  await page.getByTestId('context-file-input').setInputFiles([
+    { name: 'example.ts', mimeType: 'text/plain', buffer: Buffer.from('export const value = 1;\n'.repeat(5000)+'TAIL_UI') },
+    { name: '.npmrc', mimeType: 'text/plain', buffer: Buffer.from('_authToken=synthetic-test') },
+    { name: '.env', mimeType: 'text/plain', buffer: Buffer.from('synthetic-test') },
+    { name: 'other.ts', mimeType: 'text/plain', buffer: Buffer.from('export const other = 2;') },
+  ]);
+  await expect(page.getByText('2 个文本文件已完整建立本地索引')).toBeVisible({ timeout: 30000 });
 });

@@ -94,6 +94,19 @@ export const useProjectIndex = () => {
       if (selectionId === operationVersion) isSelecting.value = false;
     }
     if (selectionId !== operationVersion) return undefined;
+    // 文件快照会进入本地来源存储，含凭据的 npm 配置须在持久化前排除。
+    if (rootHandle.kind === 'file-selection') {
+      const files = [];
+      for (const item of rootHandle.files) {
+        if (item.file.name.toLowerCase() === '.npmrc') {
+          const sample = await item.file.slice(0, 64 * 1024).text();
+          if (/^\s*(?:_auth|_authToken|password|username)\s*=|:_authToken\s*=/im.test(sample)) continue;
+        }
+        files.push(item);
+      }
+      if (selectionId !== operationVersion) return undefined;
+      rootHandle = { ...rootHandle, files, excludedFiles: (rootHandle.excludedFiles ?? 0) + rootHandle.files.length - files.length };
+    }
     const projectId = createIsolatedProjectId();
     currentRootHandle = rootHandle;
     return runIndex(projectId, rootHandle, options, 'FULL');

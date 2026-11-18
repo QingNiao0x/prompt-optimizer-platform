@@ -976,7 +976,7 @@ it('高密度词表按关联数量分批且保留全文、词表与完成状态'
 });
 
 
-it('200文件整组预读保持六路并发，暂停丢弃未消费结果并可恢复', async () => {
+it('连续预读与写入重叠，暂停丢弃未消费结果并可恢复', async () => {
   const repository = new MemoryProjectIndexRepository();
   const content = Array.from({ length: 1000 }, (_, i) => `v${i.toString(36)}`).join(' ');
   let reads = 0, writing = false, pause = false, concurrent = 0, maxConcurrent = 0;
@@ -986,6 +986,7 @@ it('200文件整组预读保持六路并发，暂停丢弃未消费结果并可�
     const read = entry.file.arrayBuffer.bind(entry.file);
     entry.file.arrayBuffer = async () => {
       reads++; concurrent++; maxConcurrent = Math.max(maxConcurrent, concurrent);
+      await new Promise(resolve => setTimeout(resolve, 1));
       const bytes = await read();
       concurrent--; return bytes;
     };
@@ -998,6 +999,7 @@ it('200文件整组预读保持六路并发，暂停丢弃未消费结果并可�
       writing = true;
       firstWriteReads = reads;
       await new Promise(resolve => setTimeout(resolve, 10));
+      expect(reads).toBeGreaterThan(firstWriteReads);
       ahead = reads - files.length;
       pause = true;
     }
@@ -1007,7 +1009,10 @@ it('200文件整组预读保持六路并发，暂停丢弃未消费结果并可�
     entries: sourceOf(entries), shouldPause: () => pause,
     onProgress: progress => expect(progress.processedFiles).toBeLessThanOrEqual(repository.files.length) });
   expect(summary.status).toBe('PAUSED');
-  expect(firstWriteReads).toBe(200);
+  expect(summary.diagnostics!.peakPrefetchFiles).toBeLessThanOrEqual(200);
+  expect(summary.diagnostics!.peakPrefetchBytes).toBeLessThanOrEqual(4 * 1024 * 1024);
+  expect(firstWriteReads).toBeLessThan(200);
+  expect(firstWriteReads).toBeGreaterThan(0);
   expect(ahead).toBeGreaterThan(0);
   expect(ahead).toBeLessThanOrEqual(200);
   expect(maxConcurrent).toBeLessThanOrEqual(6);
@@ -1044,4 +1049,18 @@ it('慢提交缩小后续批次并在快速提交后逐步恢复，始终串行�
     expect(summary.indexedFiles).toBe(800);
     expect(repository.chunks.every(chunk => chunk.content === '完整正文')).toBe(true);
   } finally { now.mockRestore(); }
+});
+
+
+it('接近64KiB的小文件遵守预读字节背压且全文无遗漏', async () => {
+  const repository = new MemoryProjectIndexRepository();
+  const body = 'export const value = 1;\n'.repeat(2500);
+  const summary = await indexProject({ projectId: 'byte-pressure', rootName: 'bytes', repository,
+    entries: sourceOf(Array.from({ length: 140 }, (_, i) => sourceFile(`${i}.ts`, body))) });
+  expect(summary.indexedFiles).toBe(140);
+  expect(summary.diagnostics!.peakPrefetchBytes).toBeLessThanOrEqual(4 * 1024 * 1024);
+  expect(summary.diagnostics!.peakPrefetchFiles).toBeLessThanOrEqual(200);
+  for (let i = 0; i < 140; i++) {
+    expect(repository.chunks.filter(chunk => chunk.path === `${i}.ts`).map(chunk => chunk.content).join('')).toBe(body);
+  }
 });

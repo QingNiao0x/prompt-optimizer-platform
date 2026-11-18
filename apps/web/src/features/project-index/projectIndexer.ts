@@ -26,7 +26,7 @@ const MIN_BATCH_SCALE = 0.25;
 const TEXT_SAMPLE_BYTES = 8_192;
 const SMALL_FILE_BYTES = 64 * 1024;
 const FILE_READ_CONCURRENCY = 6;
-// 单组上限与来源批次一致，200 × 64 KiB 为 12.5 MiB；读取并发仍独立限制为六路。
+// 队列最多 200 个槽位，字节与读取并发另有限制。
 const FILE_PREFETCH_COUNT = 200;
 const MAX_RECORDED_CHANGED_PATHS = 500;
 const PROGRESS_FILE_INTERVAL = 32;
@@ -129,6 +129,8 @@ export interface ProjectIndexDiagnostics {
   writes: number;
   maxWriteMs: number;
   firstCommitMs?: number;
+  peakPrefetchFiles?: number;
+  peakPrefetchBytes?: number;
   peakPendingBytes: number;
   peakPendingTerms: number;
   readBytes: number;
@@ -1005,10 +1007,8 @@ export const getChunkSelectionLimit = (reasons: readonly string[]): number => {
 };
 
 /**
- * 小文件分类采样与正文解码复用同一份字节。
- * 避免把已读字节再包装为 Blob 后重复异步读取；二进制识别、UTF-8 解码和分块规则保持一致。
- * 一组最多 200 份小文件（12.5 MiB），六路读取。当前来源批次同为 200，整组准备后才消费。
- * 大文件仍流式读取，增量未变化及受保护的路径在预读前跳过；暂停时丢弃预取结果，写入顺序由调用方串行保证。
+ * 最多 200 个未消费槽位、4 MiB 预读字节、六路读取，按来源顺序消费。
+ * 消费期间继续补充读取；写入慢时队列停止补充，暂停后只等待在途读取结束。
  */
 const prepareSourceFiles = async function* (
   entries: Extract<ProjectSourceEntry, { kind: 'file' }>[],
@@ -1016,44 +1016,57 @@ const prepareSourceFiles = async function* (
   shouldStop?: () => boolean,
   diagnostics?: ProjectIndexDiagnostics,
 ): AsyncGenerator<{ entry: Extract<ProjectSourceEntry, { kind: 'file' }>; source: Blob; bytes?: Uint8Array; error?: unknown }> {
-  // Promise 中的逐文件错误转为结果，丢弃预取也不会留下未处理的拒绝。
-  const prepare = async (offset: number) => {
-    const batch = entries.slice(offset, offset + FILE_PREFETCH_COUNT);
-    const prepared = batch.map(entry => ({ entry, source: entry.file, bytes: undefined as Uint8Array | undefined, error: undefined as unknown }));
-    let next = 0;
-    // 以固定六个读取者填充 200 个槽位，保持来源顺序并限制同时进行的 arrayBuffer 调用。
-    await Promise.all(Array.from({ length: Math.min(FILE_READ_CONCURRENCY, batch.length) }, async () => {
-      while (next < batch.length && !shouldStop?.()) {
-        const index = next++;
-        const entry = batch[index]!;
-        const path = entry.path.replace(/\\/g, '/');
-        if (entry.file.size > SMALL_FILE_BYTES || !isSafeRelativeFilePath(path)
-          || isProtectedContextFile(path) || isIgnoredFile(path.toLowerCase())
-          || canReuseIndexedFile(existing.get(entry.path), fingerprintOf(entry.file))) continue;
+  type Prepared = { entry: typeof entries[number]; source: Blob; bytes?: Uint8Array; error?: unknown };
+  const slots = new Map<number, Promise<Prepared>>();
+  const reserved = new Map<number, number>();
+  let next = 0, active = 0, bufferedBytes = 0, stopped = false;
+  const pump = (): void => {
+    while (!stopped && !shouldStop?.() && active < FILE_READ_CONCURRENCY
+      && next < entries.length && slots.size < FILE_PREFETCH_COUNT) {
+      const entry = entries[next]!;
+      const path = entry.path.replace(/\\/g, '/');
+      const read = entry.file.size <= SMALL_FILE_BYTES && isSafeRelativeFilePath(path)
+        && !isProtectedContextFile(path) && !isIgnoredFile(path.toLowerCase())
+        && !canReuseIndexedFile(existing.get(entry.path), fingerprintOf(entry.file));
+      const bytes = read ? entry.file.size : 0;
+      if (bufferedBytes + bytes > MAX_PENDING_BATCH_BYTES) break;
+      const index = next++;
+      bufferedBytes += bytes;
+      reserved.set(index, bytes);
+      active++;
+      // 槽位先登记，完成回调再补读，所有成功/失败结果均受同一数量与字节背压约束。
+      const pending = Promise.resolve().then(async (): Promise<Prepared> => {
+        const result: Prepared = { entry, source: entry.file };
+        if (!read) return result;
+        const started = performance.now();
         try {
-          const started = performance.now();
-          try {
-            prepared[index]!.bytes = new Uint8Array(await entry.file.arrayBuffer());
-            if (diagnostics) diagnostics.readBytes += entry.file.size;
-          } finally { if (diagnostics) diagnostics.readMs += performance.now() - started; }
-        } catch (error) {
-          prepared[index]!.error = error;
-        }
+          result.bytes = new Uint8Array(await entry.file.arrayBuffer());
+          if (diagnostics) diagnostics.readBytes += result.bytes.byteLength;
+        } catch (error) { result.error = error; }
+        finally { if (diagnostics) diagnostics.readMs += performance.now() - started; }
+        return result;
+      }).finally(() => { active--; pump(); });
+      slots.set(index, pending);
+      if (diagnostics) {
+        diagnostics.peakPrefetchFiles = Math.max(diagnostics.peakPrefetchFiles ?? 0, slots.size);
+        diagnostics.peakPrefetchBytes = Math.max(diagnostics.peakPrefetchBytes ?? 0, bufferedBytes);
       }
-    }));
-    return prepared;
-  };
-  let pending = prepare(0);
-  for (let offset = 0; offset < entries.length; offset += FILE_PREFETCH_COUNT) {
-    const prepared = await pending;
-    if (shouldStop?.()) return;
-    // 后续组存在时才预取；当前 200 个来源的批次在整组准备完成后消费。
-    pending = offset + FILE_PREFETCH_COUNT < entries.length && !shouldStop?.()
-      ? prepare(offset + FILE_PREFETCH_COUNT) : Promise.resolve([]);
-    for (const file of prepared) {
-      if (shouldStop?.()) return;
-      yield file;
     }
+  };
+  pump();
+  try {
+    for (let index = 0; index < entries.length && !shouldStop?.(); index++) {
+      const result = await slots.get(index)!;
+      if (shouldStop?.()) return;
+      yield result;
+      bufferedBytes -= reserved.get(index) ?? 0;
+      reserved.delete(index);
+      slots.delete(index);
+      pump();
+    }
+  } finally {
+    stopped = true;
+    await Promise.all(slots.values());
   }
 };
 

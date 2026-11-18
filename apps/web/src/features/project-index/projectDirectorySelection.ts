@@ -1,5 +1,5 @@
 import { withRelativePath } from '@/composables/fileDrop';
-import { getProjectFilePath } from '@/workers/fileReaderCore';
+import { getProjectFilePath, isSensitiveFile, isSafeRelativeFilePath } from '@/workers/fileReaderCore';
 import { loadSelectedFileScopes } from './projectFileScope';
 import { countDirectoryEntries, loadProjectFileScope, streamDirectoryEntries,
   type DirectoryHandleLike, type DirectoryCountProgress, type DirectoryCountSummary } from './fileSystemDirectorySource';
@@ -15,13 +15,16 @@ export type ProjectDirectorySource = SelectedProjectFiles | DirectoryHandleLike 
 export interface SelectedProjectFiles {
   kind: 'file-selection';
   name: string;
+  excludedFiles?: number;
   files: { path: string; file: File }[];
 }
 
 /** 同名输入显式分配唯一逻辑路径，不让后选内容覆盖先选内容。 */
 export const createFileSelection = (files: readonly File[]): SelectedProjectFiles => {
   const used: string[] = [];
-  return { kind: 'file-selection', name: `${files.length} 个文件`, files: files.map(file => {
+  const safe = files.filter(file => isSafeRelativeFilePath(getProjectFilePath(file))
+    && !isSensitiveFile(getProjectFilePath(file)));
+  return { kind: 'file-selection', name: `${files.length} 个文件`, excludedFiles: files.length - safe.length, files: safe.map(file => {
     const path = uniqueDirectoryPrefix(getProjectFilePath(file), used);
     used.push(path);
     return { path, file };
