@@ -1,0 +1,42 @@
+{
+  "actualCalls": 16,
+  "failures": 0,
+  "repairs": 0,
+  "paidJudges": 0,
+  "disabledMs": 11087,
+  "enabledMs": 40676,
+  "disabledTokens": 6340,
+  "enabledTokens": 10055,
+  "timeRatio": 3.668801298818436,
+  "tokenRatio": 1.58596214511041,
+  "defaultThinking": "DISABLED",
+  "defaultStrategy": "text-polish-v3",
+  "scopeDecisions": [
+    {
+      "language": "ZH",
+      "depth": "LIGHT",
+      "adopt": false,
+      "reason": "No clear relative benefit on new samples"
+    },
+    {
+      "language": "ZH",
+      "depth": "RESTRUCTURE",
+      "adopt": false,
+      "reason": "No clear relative benefit on new samples"
+    },
+    {
+      "language": "EN",
+      "depth": "LIGHT",
+      "adopt": false,
+      "reason": "No clear relative benefit on new samples"
+    },
+    {
+      "language": "EN",
+      "depth": "RESTRUCTURE",
+      "adopt": false,
+      "reason": "One new article local gain only; 4.27x latency on that pair, no broad preference evidence"
+    }
+  ],
+  "newStrategyCreated": false,
+  "newStrategyReason": "No isolated instruction conflict demonstrated by paired outputs; common low rewrite strength persists with thinking enabled. Avoid another synonym candidate."
+}
