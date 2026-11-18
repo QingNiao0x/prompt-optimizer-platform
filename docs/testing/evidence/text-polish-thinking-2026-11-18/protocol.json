@@ -1,0 +1,313 @@
+{
+  "maxActualCalls": 200,
+  "phaseCaps": {
+    "pilot": 32,
+    "expand": 0
+  },
+  "jobs": [
+    {
+      "id": "en-guide-enabled",
+      "phase": "pilot",
+      "sample": "en-guide",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "ENABLED",
+      "input": {
+        "sourceText": "In the context of our ongoing efforts to facilitate a more accessible learning experience, we are planning to offer a downloadable version of the course guide in September. Participants can request it by email. A request will be processed only after enrollment has been confirmed, and the guide does not include recordings. We aim to reduce the time spent searching for instructions and help people with unreliable internet access. The online version will remain available.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Write for non-specialist readers. Reduce promotional framing and keep every condition and purpose.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-review-enabled",
+      "phase": "pilot",
+      "sample": "en-review",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "ENABLED",
+      "input": {
+        "sourceText": "To ensure effective alignment across the team, I would like to provide an overview of the proposed review process. We plan to collect comments on Friday and publish a revised draft on Tuesday, provided the legal review is complete. If that review is still pending, the publication date will move. Contributors should identify the section they are commenting on. This process is intended both to reduce duplicate feedback and to make disagreements easier to resolve; it does not require everyone to agree.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Keep the first-person perspective and make this suitable for a team email.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "p-zh-service-disabled",
+      "phase": "pilot",
+      "sample": "p-zh-service",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-library-disabled",
+      "phase": "pilot",
+      "sample": "zh-library",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "为进一步提升资料利用效率，我馆拟于12月试行预约取书服务。读者可提前选择书目，工作人员核对馆藏后通知取书。只有收到确认短信，预约才算成功；未收到短信请勿直接到馆。试行期间每人最多预约3册，周一闭馆日不办理取书。我们希望通过这一安排减少排队，也让行动不便的读者更方便地借书。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "写给普通读者，减少行政腔，保留计划状态及全部条件。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-natural-enabled",
+      "phase": "pilot",
+      "sample": "zh-natural",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "ENABLED",
+      "input": {
+        "sourceText": "我把伞放在门边，才发现袖口湿了一截。厨房里还有半壶温水。我倒了一杯，坐着听楼下的车经过，暂时不想开灯。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留个人叙述口吻。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-review-disabled",
+      "phase": "pilot",
+      "sample": "en-review",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "To ensure effective alignment across the team, I would like to provide an overview of the proposed review process. We plan to collect comments on Friday and publish a revised draft on Tuesday, provided the legal review is complete. If that review is still pending, the publication date will move. Contributors should identify the section they are commenting on. This process is intended both to reduce duplicate feedback and to make disagreements easier to resolve; it does not require everyone to agree.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Keep the first-person perspective and make this suitable for a team email.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-guide-disabled",
+      "phase": "pilot",
+      "sample": "en-guide",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "In the context of our ongoing efforts to facilitate a more accessible learning experience, we are planning to offer a downloadable version of the course guide in September. Participants can request it by email. A request will be processed only after enrollment has been confirmed, and the guide does not include recordings. We aim to reduce the time spent searching for instructions and help people with unreliable internet access. The online version will remain available.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Write for non-specialist readers. Reduce promotional framing and keep every condition and purpose.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-team-enabled",
+      "phase": "pilot",
+      "sample": "zh-team",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "ENABLED",
+      "input": {
+        "sourceText": "关于测试环境资源申请事宜，现作如下说明。为保障关键测试的连续开展，同时降低闲置资源占用，我们计划在下月实施按周确认机制。负责人应于每周四18点前确认下一周需求，未确认的资源可能在周一释放。紧急故障排查不受此确认时限限制，但使用后须补登记。本机制不意味着资源一定能够获批。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "让说明简洁好读，保留所有目的、条件及承诺强度。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-natural-disabled",
+      "phase": "pilot",
+      "sample": "en-natural",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "I left the notebook on the kitchen table. By morning, a ring from my mug had dried across the corner. I turned the page and started again, leaving the window open just enough to hear the rain.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Preserve the personal narrative voice.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-natural-enabled",
+      "phase": "pilot",
+      "sample": "en-natural",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "ENABLED",
+      "input": {
+        "sourceText": "I left the notebook on the kitchen table. By morning, a ring from my mug had dried across the corner. I turned the page and started again, leaving the window open just enough to hear the rain.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Preserve the personal narrative voice.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "p-zh-service-enabled",
+      "phase": "pilot",
+      "sample": "p-zh-service",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "ENABLED",
+      "input": {
+        "sourceText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-natural-disabled",
+      "phase": "pilot",
+      "sample": "zh-natural",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "我把伞放在门边，才发现袖口湿了一截。厨房里还有半壶温水。我倒了一杯，坐着听楼下的车经过，暂时不想开灯。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留个人叙述口吻。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "p-zh-digital-disabled",
+      "phase": "pilot",
+      "sample": "p-zh-digital",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "以数字化赋能高质量发展：新时代背景下的实践路径与价值意蕴\n\n在当今快速发展的数字化时代，数字化转型已成为推动组织高质量发展的重要引擎。首先，要坚持需求导向，以用户价值为中心，持续优化业务流程，构建从感知、分析到决策、执行的闭环体系。其次，要强化数据要素赋能，打通信息孤岛，推动多维度、全链条、深层次的协同融合，不断提升资源配置效率和精细化治理水平。再次，要完善长效机制，明确目标抓手，压实主体责任，形成上下联动、内外协同、持续迭代的良好生态。\n\n与此同时，还应注重技术能力与组织能力的双向提升，既要以创新驱动增强发展动能，也要以规范治理守住安全底线，在开放合作中拓展应用场景，在实践探索中沉淀可复制、可推广的经验做法。通过场景化落地、项目化推进、清单化管理，进一步把数字化优势转化为发展优势、竞争优势和服务优势。\n\n综上所述，数字化转型不是一蹴而就的短期任务，而是一项系统性、长期性、基础性工程。唯有坚持问题导向、目标导向和结果导向相统一，持续发力、久久为功，才能不断释放数字动能，为高质量发展提供坚实支撑和有力保障。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "面向非专业读者，减少套话，保留标题、三段结构、全部核心观点及逻辑顺序。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "p-zh-digital-enabled",
+      "phase": "pilot",
+      "sample": "p-zh-digital",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "ENABLED",
+      "input": {
+        "sourceText": "以数字化赋能高质量发展：新时代背景下的实践路径与价值意蕴\n\n在当今快速发展的数字化时代，数字化转型已成为推动组织高质量发展的重要引擎。首先，要坚持需求导向，以用户价值为中心，持续优化业务流程，构建从感知、分析到决策、执行的闭环体系。其次，要强化数据要素赋能，打通信息孤岛，推动多维度、全链条、深层次的协同融合，不断提升资源配置效率和精细化治理水平。再次，要完善长效机制，明确目标抓手，压实主体责任，形成上下联动、内外协同、持续迭代的良好生态。\n\n与此同时，还应注重技术能力与组织能力的双向提升，既要以创新驱动增强发展动能，也要以规范治理守住安全底线，在开放合作中拓展应用场景，在实践探索中沉淀可复制、可推广的经验做法。通过场景化落地、项目化推进、清单化管理，进一步把数字化优势转化为发展优势、竞争优势和服务优势。\n\n综上所述，数字化转型不是一蹴而就的短期任务，而是一项系统性、长期性、基础性工程。唯有坚持问题导向、目标导向和结果导向相统一，持续发力、久久为功，才能不断释放数字动能，为高质量发展提供坚实支撑和有力保障。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "面向非专业读者，减少套话，保留标题、三段结构、全部核心观点及逻辑顺序。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-library-enabled",
+      "phase": "pilot",
+      "sample": "zh-library",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "ENABLED",
+      "input": {
+        "sourceText": "为进一步提升资料利用效率，我馆拟于12月试行预约取书服务。读者可提前选择书目，工作人员核对馆藏后通知取书。只有收到确认短信，预约才算成功；未收到短信请勿直接到馆。试行期间每人最多预约3册，周一闭馆日不办理取书。我们希望通过这一安排减少排队，也让行动不便的读者更方便地借书。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "写给普通读者，减少行政腔，保留计划状态及全部条件。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-team-disabled",
+      "phase": "pilot",
+      "sample": "zh-team",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "关于测试环境资源申请事宜，现作如下说明。为保障关键测试的连续开展，同时降低闲置资源占用，我们计划在下月实施按周确认机制。负责人应于每周四18点前确认下一周需求，未确认的资源可能在周一释放。紧急故障排查不受此确认时限限制，但使用后须补登记。本机制不意味着资源一定能够获批。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "让说明简洁好读，保留所有目的、条件及承诺强度。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    }
+  ],
+  "sourceSha256": {
+    "services/api/src/main/java/com/promptoptimizer/textpolish/controller/TextPolishAdminController.java": "9e1c7813df465622160b41656aaccff7f87cdf0772a8d288355db90a17b532a6",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/controller/TextPolishController.java": "6c22bfbcfa9c31270208e2349974fb0d443180571c30091db25c98635ef54dca",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/controller/TextPolishExceptionHandler.java": "acfb94d2db08154587017e551a848b4465a81fef3def47e8f2e13dbe728bc169",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/domain/TextPolishModels.java": "00b9804c272a5252e188764b8616c4d2cbd81fe8f7b9f2782ebfb9d79c3433f1",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/domain/TextPolishRecordRow.java": "caa30a2bc8e779bde2b4aeec7888fb1609bf3e38f73ec2575de74a922cb03a24",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/mapper/TextPolishMapper.java": "03fccaea42775a06c2b51d1c604ff0021e5f89ee7c9eaf0f83045f0609514323",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/MockTextPolishProvider.java": "64f2ff4815c09051dd6233dad1ab1aed912a6362737d076b2b4c5f0580cdae3b",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/OpenAiTextPolishProvider.java": "231b3b8e8b76af3ec266881a990fc732739eaffb79968564f11c7eafd9c526d3",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/PreparedTextPolish.java": "d1321dd06d6274d0bab9e1fcf096f0d24be237720fc6a544e4bd045a866c7d80",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishException.java": "77a49a2fd02336cdec0a70497501061a55a5dad8a480f346f16a9b506ed7e741",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishFidelity.java": "dbf60cb64d9fdf890924113bdb4cebb637686ef9cf2e1a370a31e2c712ad4ed4",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishHistoryService.java": "cae69f81139cf51c4f358636fd89b18a30d1ce7e513f9730998fe37e8abbd5a9",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishInstructions.java": "37cbad977b8116531871ffe1a1ddc462fd0a247f440ed2e041a54b192283a729",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishModelService.java": "35d6a1dae9e39d3482a30c25a5d78fae57e463f68e635659bf289f9d4c31f340",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishProvider.java": "f7c60ee00a1253af921e2e5915e90fc3aeb0907be57023b6497d905485767478",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishService.java": "a1989e5557ddae1a7821673fbb06b8aacc85f65e483c53333e2feb23f2e0279c",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishSkills.java": "45d64693edb58d7803c3d5dde8d98522da6dc9d13ff7d234e141b80071b09240",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishStateStore.java": "79bd97cae42d98fbb6706bec4af875c5184ff77b80e1774b758aca1cf7c525a9",
+    "services/api/src/main/resources/textpolish/THIRD_PARTY_NOTICES.md": "0cbfdb5eec2a416181c82617e6e83b3ae3af77a3c5a1bcb5ad38e1201f46e762",
+    "services/api/src/main/resources/textpolish/skills/common-v1/SKILL.md": "31bcc927ea673eb6ab60a0a8ea2941ff5fbfd7d8e58a1ca4a91183b5c288ecaa",
+    "services/api/src/main/resources/textpolish/skills/general-v1/SKILL.md": "7683f99a4b530ca411aa3de1b5238c7c103026a7229ef758a9a6dc5fdce44c14",
+    "services/api/src/main/resources/textpolish/skills/humanizer-en-adapted-v1/SKILL.md": "ee0c0d040f38fffe64461ec29f6dd4e0dae5e0f0919f8784dfcf5cf69a958e82",
+    "services/api/src/main/resources/textpolish/skills/humanizer-mixed-v1/SKILL.md": "58cef8531007b08b80aaf2f83454bd4850cc62e793b62d396141bde77c7c976c",
+    "services/api/src/main/resources/textpolish/skills/humanizer-zh-adapted-v1/SKILL.md": "cc27c0f6f3a1b90ea41b7892810b00b2e760554b225c1ea6bb4f449e81ee780a",
+    "services/api/src/main/resources/textpolish/skills/text-polish-v3/SKILL.md": "9f283575f5a6fc8b9ad06f9546955ef9026025759514a43923af86769df10f08",
+    "scripts/evaluation/text-polish-thinking/run.ps1": "583a7bc59ada5c7689fed6a1d61f12d26ce0bbacc58eb9ec4802b44b73b87625",
+    "scripts/evaluation/text-polish-thinking/ThinkingComparison.java": "2f6f904e160cc131531c1085b68c5af38a21e79cc937d90c5cd8a945f6b16459",
+    "docs/testing/evidence/text-polish-thinking-2026-11-18/samples.json": "f4ee715a8dcae36894f7f16e848ff4fcbffa2830624769d82ffcc150a1d881fc"
+  },
+  "acceptance": "Each language/depth requires specific reading benefit on new material and no serious independent-meaning, fact, condition or commitment loss. Natural prose may tie. One observation per text cannot support universal adoption. No quality retries.",
+  "samplingCaveat": "Same submitted temperature 0.2, vendor may ignore or clamp in thinking mode; compare vendor thinking mode configuration as a whole. Reasoning effort is vendor default, not independently controlled."
+}
