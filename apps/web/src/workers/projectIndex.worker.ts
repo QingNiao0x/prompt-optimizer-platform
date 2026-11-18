@@ -1,4 +1,4 @@
-import { prepareDirectoryRoots, countSelectedDirectories, streamSelectedDirectories, type ProjectDirectorySource } from '@/features/project-index/projectDirectorySelection';
+import { selectedFileEntries, prepareDirectoryRoots, countSelectedDirectories, streamSelectedDirectories, type ProjectDirectorySource } from '@/features/project-index/projectDirectorySelection';
 import { projectIndexRepository } from '@/features/project-index/indexedDbProjectIndexRepository';
 import { indexFailureMessage, ProjectIndexInterruptedError } from '@/features/project-index/projectIndexFailure';
 import {
@@ -75,7 +75,10 @@ scope.onmessage = async (event: MessageEvent<ProjectIndexWorkerRequest>): Promis
     } });
     const roots = await prepareDirectoryRoots(rootHandle, respectGitignore);
     // 为真实百分比仅预枚举句柄，不读取正文、不保存全项目 File 数组。统计与索引共用冻结的规则。
-    const counted = await countSelectedDirectories(roots, (count) => scope.postMessage({
+    const selected = rootHandle.kind === 'file-selection' ? await selectedFileEntries(rootHandle, respectGitignore) : undefined;
+    const counted = selected ? { totalFiles: selected.length, ignoredDirectories: 0,
+      scopeExcludedFiles: rootHandle.kind === 'file-selection' ? rootHandle.files.length - selected.length : 0, excludedDirectorySamples: [] }
+      : await countSelectedDirectories(roots, (count) => scope.postMessage({
       type: 'progress', progress: {
         phase: 'SCANNING', currentPath: count.currentPath, processedFiles: 0,
         discoveredFiles: count.discoveredFiles, indexedFiles: 0, eligibleFiles: 0,
@@ -89,7 +92,7 @@ scope.onmessage = async (event: MessageEvent<ProjectIndexWorkerRequest>): Promis
     // 附件与正文共用处理遍历；预统计不调用 getFile，办公文档仍需随后单独确认上传。
     const entries = async function* (): AsyncGenerator<ProjectSourceEntry> {
       if (pauseRequested) return;
-      for await (const entry of streamSelectedDirectories(roots)) {
+      for await (const entry of selected ? selected.map(item => ({ kind: 'file' as const, ...item })) : streamSelectedDirectories(roots)) {
         if (entry.kind === 'file' && isBinaryDocumentFile(entry.file)) {
           if (!isSafeRelativeFilePath(entry.path) || isSensitiveFile(entry.path)
               || entry.file.size > MAX_DOCUMENT_FILE_BYTES || documents.length >= 100) {

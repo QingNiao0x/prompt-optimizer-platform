@@ -21,7 +21,7 @@ import { useAuthStore } from '@/stores/auth';
 import { useTrialStore } from '@/stores/trial';
 import { withRelativePath, type DroppedFileCollection } from '@/composables/fileDrop';
 import { usePlanModePreference } from '@/composables/usePlanModePreference';
-import type { ProjectDirectorySource } from '@/features/project-index/projectDirectorySelection';
+import { createFileSelection, type ProjectDirectorySource } from '@/features/project-index/projectDirectorySelection';
 import { useProjectIndex } from '@/composables/useProjectIndex';
 import { useProjectFiles } from '@/composables/useProjectFiles';
 import { loadSelectedFileScopes } from '@/features/project-index/projectFileScope';
@@ -32,6 +32,7 @@ import { useProjectContextSettingsStore } from '@/stores/projectContextSettings'
 import type { ContextFileInput, PlanConfirmation, PromptSection } from '@/types/api';
 import {
   collectCandidateFiles,
+  isBinaryDocumentFile,
   getProjectFilePath,
   MAX_FILES,
   MAX_READ_CHARS_PER_FILE,
@@ -315,6 +316,11 @@ const handleClearContextFiles = async (): Promise<void> => {
 /** 所有文件选择与拖入共用安全预检；后一次选择会取消尚未完成的前一次，确认后的上传不受影响。需后端解析的文件在确认前绝不上传。 */
 const handleSelectedContextFiles = async (selected: readonly File[]): Promise<void> => {
   if (selected.length === 0) return;
+  // 源码及混合材料复用全文索引；办公文档由 Worker 收集后进入既有上传确认。
+  if (selected.some(file => !isBinaryDocumentFile(file))) {
+    await handleIndexProject(createFileSelection(selected));
+    return;
+  }
   const currentLifecycle = pageLifecycleVersion;
   const selectionVersion = ++contextSelectionVersion;
   const isCurrentSelection = (): boolean =>
