@@ -591,7 +591,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
         report('INDEXING', entry.path);
         continue;
       }
-      const fingerprint = prepared.fingerprint ?? fingerprintOf(entry.file);
+      const fingerprint = `${prepared.fingerprint ?? fingerprintOf(entry.file)}:${limits.maxIndexableFileBytes}`;
       const existing = existingByPath.get(entry.path);
       if (canReuseIndexedFile(existing, fingerprint)) {
         const restoredCharacters = existing.indexedCharacters ?? 0;
@@ -1038,6 +1038,8 @@ const prepareSourceFiles = async function* (
         if (!eligible) return result;
         const started = performance.now();
         try {
+          // 大型二进制只按既有采样规则识别，避免为不会索引的正文计算全文件摘要。
+          if (!read && !await looksLikeText(entry.file)) return result;
           if (read) result.bytes = new Uint8Array(await entry.file.arrayBuffer());
           result.fingerprint = `${fingerprintOf(entry.file)}:${await contentFingerprint(entry.file, result.bytes)}`;
           if (diagnostics) diagnostics.readBytes += entry.file.size;
@@ -1159,7 +1161,7 @@ const createFileRecord = (
 
 /**
  * 浏览器提供的大小和修改时间无需读取正文，适合作为增量扫描的第一层快速指纹。
- * 后续如需识别“大小与时间均未变化但内容变化”的极端情况，可再增加按需内容哈希。
+ * 实际复用另附内容摘要与单文件限制，大小和时间只构成元数据部分。
  */
 const fingerprintOf = (file: File): string =>
   `${INDEX_FORMAT_VERSION}:${file.size}:${file.lastModified}`;

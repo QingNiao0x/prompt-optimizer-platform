@@ -864,7 +864,9 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
                     session.expiresAt,
                     UPLOAD_CHUNK_BYTES,
                     session.phase == DocumentProcessingPhase.AWAITING_CONFIRMATION ? session.review : null,
-                    session.pageCoverage
+                    session.pageCoverage,
+                    // 仅在拥有者已验证的状态中公开确认分片编号，用于断线后的幂等补传。
+                    session.receivedChunks.stream().boxed().toList()
             );
         }
     }

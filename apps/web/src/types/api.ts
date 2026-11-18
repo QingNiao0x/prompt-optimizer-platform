@@ -537,6 +537,8 @@ export interface DocumentUploadStatus {
   errorMessage: string;
   expiresAt: string;
   chunkSizeBytes: number;
+  /** 服务端已完整写入的分片编号，旧版响应可以省略。 */
+  receivedChunks?: number[];
   visionReview?: ContextVisionReview | null;
   pageCoverage?: { page: number; method: string; status: string; message: string; label?: string }[];
 }

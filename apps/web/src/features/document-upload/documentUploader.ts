@@ -93,7 +93,18 @@ export async function uploadAndIndexDocument(
       ...(visionRequested ? { visionRequested: true } : {}) }, signal);
     documentId = created.data.documentId;
     const chunkSize = created.data.chunkSizeBytes;
-    await uploadChunks(source, documentId, chunkSize, onProgress, signal);
+    try {
+      await uploadChunks(source, documentId, chunkSize, onProgress, signal);
+    } catch (failure) {
+      // 兄弟分片已停止且请求已结束，查询同一会话的落盘结果，仅进行一次有界补传。
+      throwIfAborted(signal);
+      if (!isTransientTransport(failure)) throw failure;
+      const observed = (await retryTransport(() => getDocumentUploadStatus(documentId, signal), signal)).data;
+      if (observed.phase !== 'UPLOADING' || !observed.receivedChunks
+        || observed.fileSizeBytes !== source.size || observed.chunkSizeBytes !== chunkSize || observed.path !== path) throw failure;
+      onProgress?.(toProgress(observed));
+      await uploadChunks(source, documentId, chunkSize, onProgress, signal, observed.receivedChunks);
+    }
 
     // 后端按同一文档幂等完成；丢失响应可以重发，但创建和视觉确认不能盲目重放。
     let status = (await retryTransport(() => completeDocumentUpload(documentId, signal), signal)).data;
@@ -106,6 +117,10 @@ export async function uploadAndIndexDocument(
     }
     if (documentId) {
       await deleteDocumentUpload(documentId).catch(() => undefined);
+    }
+    if (isTransientTransport(error)) {
+      const failure = new Error('文档传输多次重试仍未成功，请检查网络后重新选择文件重试。');
+      throw Object.assign(failure, { cause: error });
     }
     throw error;
   }
@@ -210,10 +225,15 @@ const deferVisionUpload = (
 
 /** 有界流水上传：只保留三片在途数据；失败先停止并等待兄弟请求结束，再允许清理会话。 */
 const uploadChunks = async (source: File, documentId: string, chunkSize: number,
-  onProgress?: (progress: DocumentUploadProgress) => void, signal?: AbortSignal): Promise<void> => {
+  onProgress?: (progress: DocumentUploadProgress) => void, signal?: AbortSignal, receivedChunks: readonly number[] = []): Promise<void> => {
   if (!Number.isSafeInteger(chunkSize) || chunkSize <= 0) throw new Error('服务端返回了无效的上传分片大小。');
   const chunkCount = Math.ceil(source.size / chunkSize);
-  const loaded = new Array<number>(chunkCount).fill(0);
+  const confirmed = new Set(receivedChunks);
+  if (receivedChunks.some(index => !Number.isSafeInteger(index) || index < 0 || index >= chunkCount)) {
+    throw new Error('服务端返回的已接收分片范围无效，请重试上传。');
+  }
+  const loaded = Array.from({ length: chunkCount }, (_, index) => confirmed.has(index)
+    ? Math.min(chunkSize, source.size - index * chunkSize) : 0);
   const controller = new AbortController();
   const abort = (): void => controller.abort();
   signal?.addEventListener('abort', abort, { once: true });
@@ -234,6 +254,7 @@ const uploadChunks = async (source: File, documentId: string, chunkSize: number,
       while (nextIndex < chunkCount) {
         throwIfAborted(controller.signal);
         const index = nextIndex++;
+        if (confirmed.has(index)) continue;
         const start = index * chunkSize;
         const chunk = source.slice(start, Math.min(source.size, start + chunkSize));
         await uploadChunkWithRetry(documentId, index, chunk, controller.signal, bytes => report(index, bytes));
@@ -258,14 +279,40 @@ const uploadChunkWithRetry = async (
   signal: AbortSignal | undefined,
   onProgress: (loaded: number) => void,
 ): Promise<void> => {
-  await retryTransport(() => uploadDocumentChunk(
+  await retryTransport(() => withUploadSlot(() => uploadDocumentChunk(
         documentId,
         chunkIndex,
         chunk,
         (event) => onProgress(Math.min(chunk.size, event.loaded)),
         signal,
-      ), signal);
+      ), signal), signal);
 };
+
+/** 同一页面的所有文档共用三路分片许可，退避期间释放，取消可移除排队请求。 */
+let activeUploads = 0;
+const waitingUploads: (() => void)[] = [];
+const withUploadSlot = async <T>(operation: () => Promise<T>, signal?: AbortSignal): Promise<T> => {
+  throwIfAborted(signal);
+  await new Promise<void>((resolve, reject) => {
+    const start = (): void => {
+      signal?.removeEventListener('abort', cancel);
+      activeUploads++;
+      resolve();
+    };
+    const cancel = (): void => {
+      const index = waitingUploads.indexOf(start);
+      if (index >= 0) waitingUploads.splice(index, 1);
+      reject(new DOMException('文档上传已取消', 'AbortError'));
+    };
+    if (activeUploads < MAX_PARALLEL_CHUNKS) start();
+    else { waitingUploads.push(start); signal?.addEventListener('abort', cancel, { once: true }); }
+  });
+  try { throwIfAborted(signal); return await operation(); }
+  finally { activeUploads--; waitingUploads.shift()?.(); }
+};
+
+const isTransientTransport = (error: unknown): boolean => isAxiosError(error) && error.code !== 'ERR_CANCELED'
+  && (!error.response || [408, 502, 503, 504].includes(error.response.status));
 
 /** 仅重试传输故障和暂时不可用；身份、格式、容量和业务冲突不靠重复请求解决。 */
 const retryTransport = async <T>(operation: () => Promise<T>, signal?: AbortSignal): Promise<T> => {
@@ -274,8 +321,7 @@ const retryTransport = async <T>(operation: () => Promise<T>, signal?: AbortSign
     try { return await operation(); }
     catch (error: unknown) {
       throwIfAborted(signal);
-      const transient = isAxiosError(error) && error.code !== 'ERR_CANCELED'
-        && (!error.response || [408, 502, 503, 504].includes(error.response.status));
+      const transient = isTransientTransport(error);
       if (!transient || attempt >= MAX_CHUNK_RETRIES) throw error;
       await delay(500 * 2 ** attempt, signal);
     }

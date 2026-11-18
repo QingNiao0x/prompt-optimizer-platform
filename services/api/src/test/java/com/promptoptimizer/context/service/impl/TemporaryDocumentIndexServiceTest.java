@@ -56,6 +56,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TemporaryDocumentIndexServiceTest {
 
     @Test
+    void statusReportsOnlyAcknowledgedChunksForRecovery() throws Exception {
+        try (var cleanup = new ServiceCleanup(createService())) {
+            var service = cleanup.service();
+            var created = service.create(new DocumentUploadCreateRequest("recovery.txt", "text",
+                    (long) TemporaryDocumentIndexService.UPLOAD_CHUNK_BYTES + 1));
+            assertThat(service.getStatus(created.documentId()).receivedChunks()).isEmpty();
+            service.appendChunk(created.documentId(), 1, new byte[] { 65 });
+            assertThat(service.getStatus(created.documentId()).receivedChunks()).containsExactly(1);
+            service.appendChunk(created.documentId(), 1, new byte[] { 65 });
+            assertThat(service.getStatus(created.documentId()).uploadedBytes()).isEqualTo(1);
+        }
+    }
+
+    @Test
     void completingTheSameUploadAgainDoesNotRestartExtraction() throws Exception {
         try (var cleanup = new ServiceCleanup(createService())) {
             var service = cleanup.service();

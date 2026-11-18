@@ -77,6 +77,41 @@ describe('uploadAndIndexDocument', () => {
     expect(deleteDocumentUpload).not.toHaveBeenCalled();
   });
 
+  it('重试耗尽后查询已落盘分片，只补传缺失部分', async () => {
+    vi.useFakeTimers();
+    const uploaded = status({ documentId: 'resume', path: 'sample.txt', fileSizeBytes: 8, chunkSizeBytes: 4 });
+    vi.mocked(createDocumentUpload).mockResolvedValue({ requestId: 'create', data: uploaded });
+    let failures = 0;
+    vi.mocked(uploadDocumentChunk).mockImplementation(async (_id, index) => {
+      if (index === 1 && failures++ < 3) throw new AxiosError('network', 'ERR_NETWORK');
+      return { requestId: 'chunk', data: uploaded };
+    });
+    vi.mocked(getDocumentUploadStatus).mockResolvedValue({ requestId: 'status', data: { ...uploaded, receivedChunks: [0], uploadedBytes: 4 } });
+    vi.mocked(completeDocumentUpload).mockResolvedValue({ requestId: 'done', data: { ...uploaded, phase: 'READY' } });
+    const operation = uploadAndIndexDocument(new File(['01234567'], 'sample.txt'), 'sample.txt', 'text');
+    await vi.runAllTimersAsync();
+    expect((await operation).status.phase).toBe('READY');
+    expect(vi.mocked(uploadDocumentChunk).mock.calls.filter(call => call[1] === 0)).toHaveLength(1);
+    expect(vi.mocked(uploadDocumentChunk).mock.calls.filter(call => call[1] === 1)).toHaveLength(4);
+    expect(createDocumentUpload).toHaveBeenCalledOnce();
+    expect(deleteDocumentUpload).not.toHaveBeenCalled();
+  });
+
+  it('多个文档共享三路分片请求上限', async () => {
+    vi.mocked(createDocumentUpload).mockResolvedValue({ requestId: 'create', data: status({ chunkSizeBytes: 4 }) });
+    vi.mocked(completeDocumentUpload).mockResolvedValue({ requestId: 'ready', data: status({ phase: 'READY' }) });
+    let active = 0, peak = 0;
+    vi.mocked(uploadDocumentChunk).mockImplementation(async () => {
+      active++; peak = Math.max(peak, active);
+      await new Promise(resolve => setTimeout(resolve, 2));
+      active--;
+      return { requestId: 'chunk', data: status() };
+    });
+    await Promise.all(Array.from({ length: 4 }, () => uploadAndIndexDocument(new File(['0123456789abcdef'], 'sample.txt'), 'sample.txt', 'text')));
+    expect(peak).toBe(3);
+    expect(active).toBe(0);
+  });
+
   it('does not retry a rejected upload authorization', async () => {
     vi.useFakeTimers();
     vi.mocked(createDocumentUpload).mockResolvedValue({ requestId: 'create', data: status({ chunkSizeBytes: 4 }) });

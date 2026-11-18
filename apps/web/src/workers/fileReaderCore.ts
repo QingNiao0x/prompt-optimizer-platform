@@ -67,6 +67,12 @@ const PRIORITY_FILE_NAMES = new Set([
 
 const SOURCE_EXTENSION_PATTERN = /\.(ts|tsx|mts|cts|js|jsx|mjs|cjs|vue|svelte|astro|java|kt|kts|jsp|tag|ftl|vm|py|pyi|pyx|go|rs|c|cc|cpp|cxx|h|hh|hpp|hxx|cs|razor|cshtml|rb|erb|php|phtml|swift|scala|dart|sh|ps1|ex|exs|clj|hs|ml|fs)$/i;
 
+/** 源码和工程配置使用项目全文索引，参考文档保留独立材料用途与上传确认。 */
+export const isProjectSourceFile = (file: File): boolean => SOURCE_EXTENSION_PATTERN.test(file.name)
+  || /\.(?:json|xml|ya?ml|toml|ini|properties|gradle)$/i.test(file.name)
+  || /^(?:dockerfile|makefile|pom\.xml)$/i.test(file.name);
+
+
 // 大型前端项目里这些目录往往包含海量第三方或构建产物，默认跳过可显著提升可用文件的命中率。
 export const IGNORED_PATH_SEGMENTS = PROJECT_GENERATED_DIRECTORIES;
 

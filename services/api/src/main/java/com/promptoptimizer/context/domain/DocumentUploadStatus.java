@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * 临时文档上传、识别与索引状态；审阅阶段才提供 visionReview，pageCoverage 说明逐页处理方式与遗漏。
+ * receivedChunks 为同一拥有者会话中已写入的零起始分片编号快照，允许乱序且不重复计数。
  * READY 表示本次处理完成，不保证视觉转录无误；PARTIAL 仍可分析，必须保留警告。
  * @author QingNiao
  * @since 0.1.0
@@ -25,10 +26,12 @@ public record DocumentUploadStatus(
         Instant expiresAt,
         int chunkSizeBytes,
         ContextVisionModels.Review visionReview,
-        List<ContextVisionModels.PageCoverage> pageCoverage
+        List<ContextVisionModels.PageCoverage> pageCoverage,
+        List<Integer> receivedChunks
 ) {
 
     public DocumentUploadStatus {
+        receivedChunks = receivedChunks == null ? List.of() : List.copyOf(receivedChunks);
         warnings = warnings == null ? List.of() : List.copyOf(warnings);
         summary = summary == null ? "" : summary;
         errorMessage = errorMessage == null ? "" : errorMessage;
@@ -41,7 +44,7 @@ public record DocumentUploadStatus(
                                 int chunkCount, String summary, List<String> warnings, String errorMessage,
                                 Instant expiresAt, int chunkSizeBytes) {
         this(documentId, path, language, phase, fileSizeBytes, uploadedBytes, progressPercent, extractedCharacters,
-                chunkCount, summary, warnings, errorMessage, expiresAt, chunkSizeBytes, null, List.of());
+                chunkCount, summary, warnings, errorMessage, expiresAt, chunkSizeBytes, null, List.of(), List.of());
     }
 
     /** READY 与 PARTIAL 均可供分析；PARTIAL 的遗漏仍需通过警告告知用户。 */
