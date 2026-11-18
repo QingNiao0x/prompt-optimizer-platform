@@ -184,12 +184,8 @@ const planningContextResponse: ApiResponse<PlanningContextPreparation> = {
   },
 };
 
-const confirmContextTransmission = async (page: Page, operationName: string): Promise<void> => {
-  const dialog = page.getByRole('dialog', { name: '确认发送上下文' }).filter({
-    hasText: operationName,
-  });
-  await expect(dialog).toBeVisible();
-  await dialog.getByRole('button', { name: '确认发送' }).click();
+const confirmContextTransmission = async (_page: Page, _operationName: string): Promise<void> => {
+  // 发送上下文不再二次确认；保留调用点，避免各流程在增强前停住。
 };
 
 const directPlanResponse: ApiResponse<OptimizationPlan> = {

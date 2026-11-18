@@ -217,16 +217,10 @@ test('本地样例项目索引与单独方案文件共同参与 Plan 和最终�
   await openWorkbenchPane(page, 'intent');
   await page.getByLabel('原始提示词').fill('按审批方案在样例项目开发订单接口');
   await page.getByRole('button', { name: '先确认并增强' }).click();
-  const firstSend = page.getByRole('dialog', { name: '确认发送上下文' });
-  await expect(firstSend).toContainText('生成确认问题前分析上下文');
-  await firstSend.getByRole('button', { name: '确认发送' }).click();
   const planDialog = page.getByRole('dialog', { name: '确认关键细节' });
   await expect(planDialog.getByText('财务复核不通过时，接口应如何返回？')).toBeVisible();
   await planDialog.getByLabel('填写回答').fill('返回 409 状态与审批失败原因。');
   await planDialog.getByRole('button', { name: '生成最终提示词' }).click();
-  const finalSend = page.getByRole('dialog', { name: '确认发送上下文' });
-  await expect(finalSend).toContainText('生成最终提示词');
-  await finalSend.getByRole('button', { name: '确认发送' }).click();
   await openWorkbenchPane(page, 'result');
   await expect(page.getByText('复核失败时返回 409 与失败原因。')).toBeVisible();
   expect(requestOrder).toEqual(['context', 'plan', 'final']);

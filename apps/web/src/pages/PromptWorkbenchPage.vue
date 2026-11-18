@@ -436,8 +436,6 @@ const handleAddManualFile = (file: ContextFileInput): void => {
 const handleAnalyze = async (): Promise<void> => {
   const contextFiles = await prepareContextTransmission(
     `${PROJECT_OVERVIEW_RETRIEVAL_QUERY} ${customDescription.value}`,
-    '分析上下文资料',
-    false,
   );
   if (contextFiles === undefined) {
     return;
@@ -455,12 +453,12 @@ const handleOptimize = async (): Promise<void> => {
   await continueEnhancement();
 };
 
-/** 定向修改复用当前材料选择与发送确认；准备期间切换任务时不把意见提交给另一结果。 */
+/** 定向修改复用当前材料选择；准备期间切换任务时不把意见提交给另一结果。 */
 const handleRevise = async (feedback: string, complete: (saved: boolean, message?: string) => void): Promise<void> => {
   const source = result.value;
   const lease = store.captureContext();
   if (!source?.recordId) { complete(false); return; }
-  const contextFiles = await prepareContextTransmission(`${rawPrompt.value}\n${feedback}`, '按意见修改', true);
+  const contextFiles = await prepareContextTransmission(`${rawPrompt.value}\n${feedback}`);
   if (!contextFiles || !store.isCurrentContext(lease) || result.value !== source) { complete(false); return; }
   const saved = await store.reviseResult(feedback, contextFiles, source.recordId);
   complete(saved, store.errorMessage);
@@ -560,11 +558,7 @@ const runPlannedEnhancement = async (): Promise<void> => {
 };
 
 const runDirectEnhancement = async (): Promise<void> => {
-  const contextFiles = await prepareContextTransmission(
-    pendingPrompt.value,
-    '直接增强提示词',
-    true,
-  );
+  const contextFiles = await prepareContextTransmission(pendingPrompt.value);
   if (contextFiles === undefined) {
     return;
   }
@@ -587,9 +581,6 @@ const prepareContextForPlan = async (sourcePrompt: string): Promise<boolean> => 
   }
   const contextFiles = await prepareContextTransmission(
     `${sourcePrompt}\n${PROJECT_OVERVIEW_RETRIEVAL_QUERY}`,
-    '生成确认问题前分析上下文',
-    true,
-    true,
   );
   if (contextFiles === undefined) {
     return false;
@@ -600,8 +591,6 @@ const prepareContextForPlan = async (sourcePrompt: string): Promise<boolean> => 
 const generateFinalPrompt = async (confirmation: PlanConfirmation): Promise<void> => {
   const contextFiles = await prepareContextTransmission(
     buildRefinedContextQuery(pendingPrompt.value, confirmation),
-    '生成最终提示词',
-    true,
   );
   if (contextFiles === undefined) {
     return;
@@ -658,9 +647,6 @@ const handleSaveResult = async (
 
 const prepareContextTransmission = async (
   query: string,
-  operationName: string,
-  willCallModel: boolean,
-  planningDigestOnly = false,
 ): Promise<ContextFileInput[] | undefined> => {
   // 临时索引只有处理完成才加入文件集合，提前提交会静默遗漏正在识别的材料。
   if (isReading.value) {
@@ -673,48 +659,15 @@ const prepareContextTransmission = async (
   try {
     const contextFiles = await store.prepareContextFiles(query);
     if (!store.isCurrentContext(lease)) return undefined;
-    if (!projectContextSettings.value.confirmBeforeSendingCode || contextFiles.length === 0) {
-      return contextFiles;
-    }
-    const characters = contextFiles.reduce((total, file) => total + file.content.length, 0);
-    const indexedDocuments = contextFiles.filter((file) => file.documentId);
-    const indexedDocumentBytes = indexedDocuments.reduce(
-      (total, file) => total + (file.sizeBytes ?? 0),
-      0,
-    );
-    const destination = planningDigestOnly
-      ? '本项目后端进行安全分析，并仅将裁剪后的上下文摘要提供给当前配置的大模型服务'
-      : willCallModel
-      ? '本项目后端，并由后端转发给当前配置的大模型服务'
-      : '本项目 Spring Boot 后端进行上下文分析';
-    await ElMessageBox.confirm(
-      `${operationName}将发送 ${contextFiles.length} 项上下文到${destination}：${characters.toLocaleString('zh-CN')} 个内联字符${indexedDocuments.length > 0
-        ? `，另引用 ${indexedDocuments.length} 份已解析文档（原文件共 ${formatBytes(indexedDocumentBytes)}）`
-        : ''}。项目的完整浏览器本地索引不会上传；已解析文档只会选取与本次任务相关的片段。`,
-      '确认发送上下文',
-      {
-        type: 'warning',
-        confirmButtonText: '确认发送',
-        cancelButtonText: '暂不发送',
-      },
-    );
-    return store.isCurrentContext(lease) ? contextFiles : undefined;
+    // 已在上下文栏选择的资料直接随本次增强或分析发送，不再弹出二次确认。
+    return contextFiles;
   } catch (error: unknown) {
     if (!store.isCurrentContext(lease)) return undefined;
-    if (error === 'cancel' || error === 'close') {
-      return undefined;
-    }
     ElMessage.error(error instanceof Error ? error.message : '读取本地上下文失败。');
     return undefined;
   } finally {
     if (store.isCurrentContext(lease)) store.isPreparingContext = false;
   }
-};
-
-const formatBytes = (bytes: number): string => {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 };
 
 /** 取消选择与上传回调；已添加的独立资料仍由 Store 管理。 */

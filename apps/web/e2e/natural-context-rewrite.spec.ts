@@ -111,9 +111,6 @@ test('自然增强从真实项目索引召回指定目录，显示复制与历�
   await openWorkbenchPane(page, 'intent');
   await page.getByLabel('原始提示词', { exact: true }).fill(fixture.rawPrompt);
   await page.getByRole('button', { name: '直接增强提示词', exact: true }).click();
-  const confirmation = page.getByRole('dialog', { name: '确认发送上下文', exact: true });
-  await expect(confirmation).toBeVisible();
-  await confirmation.getByRole('button', { name: '确认发送', exact: true }).click();
   await expect.poll(() => state.requests.length).toBe(1);
   const request = state.requests[0]!;
   const basePaths = request.context.files.map(({ path }) => path.split('#chunk-')[0]);
@@ -162,9 +159,6 @@ test('冻结后的内部新题通过同一真实项目索引定位导入文件�
   await openWorkbenchPane(page, 'intent');
   await page.getByLabel('原始提示词', { exact: true }).fill(newCase.rawPrompt);
   await page.getByRole('button', { name: '直接增强提示词', exact: true }).click();
-  const confirmation = page.getByRole('dialog', { name: '确认发送上下文', exact: true });
-  await expect(confirmation).toBeVisible();
-  await confirmation.getByRole('button', { name: '确认发送', exact: true }).click();
   await expect.poll(() => state.requests.length).toBe(1);
   const request = state.requests[0]!;
   const paths = request.context.files.map(({ path }) => path.split('#chunk-')[0]);

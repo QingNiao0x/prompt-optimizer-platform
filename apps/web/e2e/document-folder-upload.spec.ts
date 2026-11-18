@@ -196,8 +196,6 @@ test('一次选择混合文件夹会索引源码，并在确认后才上传办�
   // 独立上下文分析使用项目说明检索；不要求无关源码绕过相关性选择自动发送。
   await page.getByLabel('自定义项目描述').fill('结合 Example.java 与方案说明审批规则');
   await page.getByRole('button', { name: '分析上下文资料', exact: true }).click();
-  const transmission = page.getByRole('dialog', { name: '确认发送上下文' });
-  await transmission.getByRole('button', { name: '确认发送', exact: true }).click();
   await expect.poll(() => analyzedPaths).toContain('docs/方案.docx');
   expect(analyzedPaths.some((path) => path.startsWith('Example.java#chunk-'))).toBe(true);
 });

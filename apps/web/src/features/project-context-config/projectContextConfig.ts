@@ -104,7 +104,7 @@ export const DEFAULT_PROJECT_CONTEXT_SETTINGS: ProjectContextSettings = {
   profile: 'WEB_STANDARD',
   retention: 'SESSION',
   autoCleanupDays: 7,
-  confirmBeforeSendingCode: true,
+  confirmBeforeSendingCode: false,
 };
 
 /**
@@ -199,8 +199,7 @@ const normalizeSettings = (value: unknown): ProjectContextSettings => {
     profile,
     retention,
     autoCleanupDays,
-    confirmBeforeSendingCode: typeof source.confirmBeforeSendingCode === 'boolean'
-      ? source.confirmBeforeSendingCode
-      : DEFAULT_PROJECT_CONTEXT_SETTINGS.confirmBeforeSendingCode,
+    // 发送前确认弹窗已关闭。旧配置里的 true 不再恢复，避免每次增强再次拦截。
+    confirmBeforeSendingCode: false,
   };
 };

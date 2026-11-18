@@ -9,7 +9,6 @@ import {
   ElRadioButton,
   ElRadioGroup,
   ElSelect,
-  ElSwitch,
   ElTag,
 } from 'element-plus';
 import { storeToRefs } from 'pinia';
@@ -166,13 +165,6 @@ onMounted(() => {
             <ElOption label="30 天" :value="30" />
           </ElSelect>
         </label>
-        <div class="switch-setting">
-          <div>
-            <span class="setting-label">发送代码前确认</span>
-            <small>分析或增强前，显示将发送的片段数量与字符数。</small>
-          </div>
-          <ElSwitch v-model="contextSettings.confirmBeforeSendingCode" />
-        </div>
       </div>
 
       <div class="storage-status">
