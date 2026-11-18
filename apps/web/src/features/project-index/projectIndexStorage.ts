@@ -13,6 +13,8 @@ export interface ProjectStorageBucketManager {
 
 export interface ProjectIndexDatabaseLocation {
   name: string;
+  /** 仅由独立项目路由提供，启用项目内紧凑词编码并校验归属。 */
+  projectId?: string;
   factory: () => Promise<IDBFactory>;
 }
 
@@ -35,6 +37,7 @@ export const projectDatabaseLocation = (projectId: string): ProjectIndexDatabase
   if (!match) return undefined;
   return {
     name: `${DATABASE_PREFIX}${projectId}`,
+    projectId,
     factory: async () => {
       if (match[1] === 'd') return indexedDB;
       const manager = storageBuckets();

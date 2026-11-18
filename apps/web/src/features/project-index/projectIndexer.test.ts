@@ -222,11 +222,14 @@ describe('indexProject', () => {
     const first = await indexProject({ projectId: 'partial', rootName: 'demo', repository, entries: sourceOf(entries),
       limits: { maxScanFiles: 10, maxIndexBytes: 20_000, maxIndexableFileBytes: 1_000_000 } });
     expect(first.storageLimitReached).toBe(true);
+    expect(first.contentComplete).toBe(false);
+    expect(first.incompleteReasons).toEqual(['LOGICAL_BUDGET']);
     expect(first.indexedFiles).toBe(0);
     expect(first.metadataOnlyFiles).toBe(1);
     expect(repository.files[0]?.fingerprint).toMatch(/^incomplete:/);
     const second = await indexProject({ projectId: 'partial', rootName: 'demo', repository, entries: sourceOf(entries), mode: 'INCREMENTAL' });
     expect(second.indexedFiles).toBe(1);
+    expect(second.contentComplete).toBe(true);
     expect(second.unchangedFiles).toBe(0);
     expect(repository.chunks.map(c => c.content).join('')).toContain('重要尾部规则');
   });

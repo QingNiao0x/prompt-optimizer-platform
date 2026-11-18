@@ -163,6 +163,9 @@ export interface ProjectIndexSummary {
   timings?: { scanMs: number; processingMs: number; writeMs: number; totalMs: number };
   /** 各阶段累计活动时间可重叠，不能相加当作总耗时；不保存源码或文件路径。 */
   diagnostics?: ProjectIndexDiagnostics;
+  /** READY 表示处理结束，完整性单独记录，兼容旧历史状态。 */
+  contentComplete?: boolean;
+  incompleteReasons?: readonly ('LOGICAL_BUDGET' | 'SCAN_LIMIT' | 'FILE_LIMIT' | 'READ_FAILURE')[];
   metadataOnlyFiles: number;
   failedFiles: number;
   addedFiles: number;
@@ -252,6 +255,8 @@ export interface IndexedProjectChunk {
 }
 
 export interface ProjectIndexRepository {
+  /** 仓库返回实际编码后的词表逻辑字节；未实现时沿用旧格式。 */
+  searchTermStorageBytes?(projectId: string, terms: string[]): number;
   beginProject(summary: ProjectIndexSummary): Promise<void>;
   findFiles(projectId: string, paths: string[]): Promise<IndexedProjectFile[]>;
   writeBatch(
@@ -410,6 +415,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
   let lastReportedFileBytes = 0;
   let lastReportedPath = '';
   const indexingStartedAt = performance.now();
+  let fileLimitReached = false;
   let writeMs = 0;
   const diagnostics: ProjectIndexDiagnostics = {
     sourceWaitMs: 0, lookupMs: 0, readMs: 0, classifyMs: 0, decodeMs: 0, termsMs: 0,
@@ -645,6 +651,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
       }
 
       const metadataBytes = estimateFileMetadataBytes(entry.path);
+      if (classification.action === 'METADATA_ONLY') fileLimitReached = true;
       if (classification.action === 'METADATA_ONLY' || summary.storageLimitReached) {
         summary.metadataOnlyFiles += 1;
         pendingFiles.push(createFileRecord(
@@ -694,7 +701,10 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
             codeMetadata.symbols,
             codeMetadata.imports,
           );
-          if (summary.estimatedIndexBytes + fileEstimatedBytes + estimatedChunkBytes
+          const storedChunkBytes = estimatedChunkBytes - searchTerms.reduce((sum, term) => sum + term.length * 2, 0)
+            + (options.repository.searchTermStorageBytes?.(options.projectId, searchTerms)
+              ?? searchTerms.reduce((sum, term) => sum + term.length * 2, 0));
+          if (summary.estimatedIndexBytes + fileEstimatedBytes + storedChunkBytes
             > limits.maxIndexBytes) {
             summary.storageLimitReached = true;
             limitedByStorage = true;
@@ -716,7 +726,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
           pendingTermReferences += searchTerms.length;
           chunkCount += 1;
           fileCharacters += content.length;
-          fileEstimatedBytes += estimatedChunkBytes;
+          fileEstimatedBytes += storedChunkBytes;
           if (pendingChunks.length >= Math.floor(CHUNK_BATCH_SIZE * batchScale)
             || pendingTermReferences >= Math.floor(MAX_PENDING_TERM_REFERENCES * batchScale)
             || pendingBatchBytes >= MAX_PENDING_BATCH_BYTES * batchScale) {
@@ -808,6 +818,13 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
       summary.removedFiles = await options.repository.removeUnseenFiles(options.projectId, scanId);
     }
     diagnostics.finalizeMs += performance.now() - finalizeStarted;
+    const incompleteReasons: NonNullable<ProjectIndexSummary['incompleteReasons']>[number][] = [];
+    if (summary.storageLimitReached) incompleteReasons.push('LOGICAL_BUDGET');
+    if (summary.scanLimitReached) incompleteReasons.push('SCAN_LIMIT');
+    if (summary.failedFiles) incompleteReasons.push('READ_FAILURE');
+    if (fileLimitReached) incompleteReasons.push('FILE_LIMIT');
+    summary.incompleteReasons = incompleteReasons;
+    summary.contentComplete = incompleteReasons.length === 0;
     summary.status = 'READY';
     summary.completedAt = new Date().toISOString();
     const processingMs = performance.now() - indexingStartedAt;

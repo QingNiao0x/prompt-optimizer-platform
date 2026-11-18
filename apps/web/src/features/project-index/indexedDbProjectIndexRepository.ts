@@ -77,6 +77,13 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     if (!checkpoint && files.length === 0 && chunks.length === 0 && replacedPaths.length === 0) {
       return;
     }
+    const expectedProject = this.location?.projectId;
+    if (expectedProject && (files.some(file => file.projectId !== expectedProject)
+      || chunks.some(chunk => chunk.projectId !== expectedProject
+        || chunk.searchTerms.some(term => !term.startsWith(`${expectedProject}:`)))
+      || (checkpoint && checkpoint.id !== expectedProject))) {
+      throw new Error('索引记录与独立项目存储归属不一致');
+    }
     const writesContent = chunks.length > 0 || replacedPaths.length > 0;
     // 未变化文件仅更新扫描状态；只锁定本批真正使用的存储，检查点仍与文件状态原子提交。
     const stores = writesContent ? [FILE_STORE, CHUNK_STORE, SEARCH_STORE, SEARCH_KEY_STORE] : [FILE_STORE];
@@ -92,7 +99,7 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
         const chunkStore = transaction.objectStore(CHUNK_STORE);
         for (const path of replacedPaths) chunkStore.delete(chunkIdRange(projectId, path));
         for (const chunk of chunks) chunkStore.put(chunkBodyRecord(chunk));
-        await replaceSearchIndex(transaction, projectId, replacedPaths, chunks);
+        await replaceSearchIndex(transaction, projectId, replacedPaths, chunks, expectedProject);
       }
       for (const file of files) fileStore.put(file);
       if (checkpoint) transaction.objectStore(PROJECT_STORE).put(checkpoint);
@@ -373,7 +380,10 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     const transaction = await this.createTransaction([CHUNK_STORE, SEARCH_STORE, SEARCH_KEY_STORE], 'readonly');
     const completion = transactionComplete(transaction);
     void completion.catch(() => undefined);
-    const ids = await lookupSearchChunkIds(transaction, searchTerm, limit);
+    // 独立库兼容旧前缀词和新版短词，合并后沿用原字符串顺序和候选限额。
+    const terms = this.location?.projectId ? [searchTerm, searchTerm.slice(this.location.projectId.length + 1)] : [searchTerm];
+    const groups = await Promise.all(terms.map(term => lookupSearchChunkIds(transaction, term, limit)));
+    const ids = Array.from(new Set(groups.flat())).sort().slice(0, limit);
     const chunks = await Promise.all(ids.map((id) => requestResult<IndexedProjectChunk | undefined>(
       transaction.objectStore(CHUNK_STORE).get(id),
     )));
@@ -592,9 +602,10 @@ const normalizeChunk = (chunk: IndexedProjectChunk): IndexedProjectChunk => ({
 const hydrateChunkTerms = async (transaction: IDBTransaction, chunks: IndexedProjectChunk[]): Promise<IndexedProjectChunk[]> => {
   const index = transaction.objectStore(SEARCH_STORE).index('chunkId');
   return Promise.all(chunks.map(async (chunk) => {
-    const search = await requestResult<{ searchTerms: string[] } | undefined>(index.get(chunk.id));
+    const search = await requestResult<{ searchTerms: string[]; formatVersion?: number } | undefined>(index.get(chunk.id));
     if (!search) throw new Error('本地全文词表不完整，请重新建立项目索引');
-    return normalizeChunk({ ...chunk, searchTerms: search.searchTerms });
+    return normalizeChunk({ ...chunk, searchTerms: search.formatVersion === 2
+      ? search.searchTerms.map(term => `${chunk.projectId}:${term}`) : search.searchTerms });
   }));
 };
 
@@ -641,6 +652,12 @@ export class RoutedProjectIndexRepository implements ProjectIndexRepository {
 
   observePreparation(listener: (progress: ProjectIndexPreparationProgress) => void, projectId: string): () => void {
     return this.repository(projectId).observePreparation(listener);
+  }
+
+  /** 紧凑编码仅在固定独立路由中生效，逻辑容量扣除实际不再存储的重复前缀。 */
+  searchTermStorageBytes(projectId: string, terms: string[]): number {
+    const prefixLength = projectDatabaseLocation(projectId)?.projectId ? projectId.length + 1 : 0;
+    return terms.reduce((sum, term) => sum + (term.length - prefixLength) * 2, 0);
   }
 
   beginProject(summary: ProjectIndexSummary): Promise<void> { return this.repository(summary.id).beginProject(summary); }

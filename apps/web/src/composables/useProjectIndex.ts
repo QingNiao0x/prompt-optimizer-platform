@@ -196,6 +196,10 @@ export const useProjectIndex = () => {
       });
       assertOperationActive(operationId, operationVersion);
       summary.value = result.summary;
+      canRetry.value = result.summary.contentComplete === false;
+      if (canRetry.value) errorMessage.value = result.summary.storageLimitReached
+        ? '项目逻辑索引容量达到上限，部分正文未完成。已提交内容保留，可调整索引额度后继续。'
+        : '部分文件尚未完整索引，请检查文件限制或失败原因后继续。';
       options.onDocumentsDiscovered?.(result.documents, result.omittedDocuments);
       if (result.summary.status === 'READY') projectIndexRepository.scheduleCleanup();
       return result.summary;

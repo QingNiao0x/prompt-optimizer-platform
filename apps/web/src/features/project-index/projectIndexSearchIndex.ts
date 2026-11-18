@@ -29,7 +29,7 @@ export const chunkBodyRecord = (chunk: IndexedProjectChunk): Omit<IndexedProject
 
 /** 同 ID 覆盖保留数字键；按文件范围查询已有键，空范围直接插入，旧库迁移继续适用。 */
 export const upsertSearchIndex = async (
-  transaction: IDBTransaction, chunks: IndexedProjectChunk[], removed: number[] = [], clearedPaths: Set<string> = new Set(),
+  transaction: IDBTransaction, chunks: IndexedProjectChunk[], removed: number[] = [], clearedPaths: Set<string> = new Set(), compactProjectId?: string,
 ): Promise<void> => {
   const store = transaction.objectStore(SEARCH_STORE);
   const unique = new Map(chunks.map((chunk) => [chunk.id, chunk]));
@@ -64,7 +64,10 @@ export const upsertSearchIndex = async (
   })));
   const pairs = await Promise.all(Array.from(unique.values(), async (chunk): Promise<[number, string]> => {
     const key = existing.get(chunk.id);
-    const value = { id: chunk.id, searchTerms: chunk.searchTerms };
+    // 每条记录显式保存编码版本，旧词表可与新词表共存，不依赖猜测字符串格式。
+    const value = compactProjectId
+      ? { id: chunk.id, formatVersion: 2, searchTerms: chunk.searchTerms.map(term => term.slice(compactProjectId.length + 1)) }
+      : { id: chunk.id, searchTerms: chunk.searchTerms };
     const saved = await readRequest(key === undefined ? store.add(value) : store.put({ ...value, key }));
     return [saved as number, chunk.id];
   }));
@@ -73,7 +76,7 @@ export const upsertSearchIndex = async (
 
 /** 批次内合并文件删除与插入的映射更新；大范围删除每 4096 个键刷新，限制临时内存。 */
 export const replaceSearchIndex = async (
-  transaction: IDBTransaction, projectId: string, paths: string[], chunks: IndexedProjectChunk[],
+  transaction: IDBTransaction, projectId: string, paths: string[], chunks: IndexedProjectChunk[], compactProjectId?: string,
 ): Promise<void> => {
   const removed: number[] = [];
   const uniquePaths = new Set(paths);
@@ -82,7 +85,7 @@ export const replaceSearchIndex = async (
     await removeSearchRange(transaction, IDBKeyRange.bound(prefix, `${prefix}\uffff`), removed);
   }
   await upsertSearchIndex(transaction, chunks, removed,
-    new Set(Array.from(uniquePaths, (path) => `${projectId}\0${path}`)));
+    new Set(Array.from(uniquePaths, (path) => `${projectId}\0${path}`)), compactProjectId);
 };
 
 /** 文件覆盖和增量删除只移除该路径的关联，保留同块内其他文件或项目。 */

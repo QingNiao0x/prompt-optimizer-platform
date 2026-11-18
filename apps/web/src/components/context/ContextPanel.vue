@@ -537,6 +537,7 @@ const addManualFile = (): void => {
         <span v-else-if="projectIndex.status === 'FAILED'">
           索引已中断，以下为最后成功提交的文件检查点；继续时会校验并补建。
         </span>
+        <span v-else-if="projectIndex.contentComplete === false">索引处理已结束，部分正文尚未完整索引</span>
         <span v-else>{{ projectIndex.indexedFiles }} 个文本文件已完整建立本地索引</span>
         <small>
           范围内处理 {{ projectIndex.discoveredFiles }} 个文件：完整 {{ projectIndex.indexedFiles }} ·
