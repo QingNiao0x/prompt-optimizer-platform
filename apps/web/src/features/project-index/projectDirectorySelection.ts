@@ -2,7 +2,7 @@ import { withRelativePath } from '@/composables/fileDrop';
 import { getProjectFilePath, isSensitiveFile, isSafeRelativeFilePath } from '@/workers/fileReaderCore';
 import { loadSelectedFileScopes } from './projectFileScope';
 import { countDirectoryEntries, loadProjectFileScope, streamDirectoryEntries,
-  type DirectoryHandleLike, type DirectoryCountProgress, type DirectoryCountSummary } from './fileSystemDirectorySource';
+  type DirectoryScanSnapshot, type DirectoryHandleLike, type DirectoryCountProgress, type DirectoryCountSummary } from './fileSystemDirectorySource';
 import type { ProjectSourceEntry } from './projectIndexer';
 import type { ProjectFileScope } from './projectFileScope';
 
@@ -58,7 +58,7 @@ export const createDirectorySelection = (handles: readonly DirectoryHandleLike[]
 export const directoryRoots = (source: ProjectDirectorySource): { prefix: string; handle: DirectoryHandleLike }[] =>
   source.kind === 'file-selection' ? [] : source.kind === 'directory-selection' ? source.roots : [{ prefix: '', handle: source }];
 
-export interface PreparedDirectoryRoot { prefix: string; handle: DirectoryHandleLike; scope: ProjectFileScope }
+export interface PreparedDirectoryRoot { prefix: string; handle: DirectoryHandleLike; scope: ProjectFileScope; snapshot?: DirectoryScanSnapshot }
 
 /** 每个根的忽略规则只作用于本根；前缀在过滤之后添加，避免 A 根规则误删 B 根资料。 */
 export const prepareDirectoryRoots = async (source: ProjectDirectorySource, respectGitignore = true): Promise<PreparedDirectoryRoot[]> => {
@@ -75,13 +75,16 @@ export const countSelectedDirectories = async (
   shouldStop: () => boolean, maxFiles: number,
 ): Promise<DirectoryCountSummary> => {
   const total: DirectoryCountSummary = { totalFiles: 0, ignoredDirectories: 0, scopeExcludedFiles: 0, excludedDirectorySamples: [] };
+  let remainingHandles = 50_000;
   for (const root of roots) {
     if (shouldStop() || total.totalFiles >= maxFiles) break;
+    root.snapshot = { entries: [], complete: false, overflow: false, limit: remainingHandles };
     const count = await countDirectoryEntries(root.handle, progress => onProgress({
       ...progress, currentPath: prefixed(root.prefix, progress.currentPath),
       discoveredFiles: total.totalFiles + progress.discoveredFiles,
       ignoredDirectories: total.ignoredDirectories + progress.ignoredDirectories,
-    }), root.scope, shouldStop, maxFiles - total.totalFiles);
+    }), root.scope, shouldStop, maxFiles - total.totalFiles, root.snapshot);
+    remainingHandles -= root.snapshot.entries.length;
     total.totalFiles += count.totalFiles;
     total.ignoredDirectories += count.ignoredDirectories;
     total.scopeExcludedFiles += count.scopeExcludedFiles;
@@ -93,7 +96,7 @@ export const countSelectedDirectories = async (
 
 /** 复用完整文件流与批次背压，不为多选构建全目录正文数组。 */
 export const streamSelectedDirectories = async function* (roots: PreparedDirectoryRoot[]): AsyncGenerator<ProjectSourceEntry> {
-  for (const root of roots) for await (const entry of streamDirectoryEntries(root.handle, root.scope)) {
+  for (const root of roots) for await (const entry of streamDirectoryEntries(root.handle, root.scope, root.snapshot)) {
     yield { ...entry, path: prefixed(root.prefix, entry.path) };
   }
 };

@@ -21,7 +21,7 @@ export interface DirectoryHandleLike {
 
 export type FileSystemHandleLike = FileHandleLike | DirectoryHandleLike;
 
-interface PendingFileHandle {
+export interface PendingFileHandle {
   path: string;
   handle: FileHandleLike;
 }
@@ -82,9 +82,30 @@ export const pickProjectDirectory = async (): Promise<DirectoryHandleLike> => {
 export const streamDirectoryEntries = async function* (
   root: DirectoryHandleLike,
   scope: ProjectFileScope = createProjectFileScope(),
+  snapshot?: DirectoryScanSnapshot,
 ): AsyncGenerator<ProjectSourceEntry> {
+  if (snapshot?.complete) {
+    for (let offset = 0; offset < snapshot.entries.length; offset += FILE_HANDLE_BATCH_SIZE) {
+      const group = await mapWithConcurrency(snapshot.entries.slice(offset, offset + FILE_HANDLE_BATCH_SIZE),
+        FILE_METADATA_CONCURRENCY, async entry => entry.kind === 'file'
+          ? { kind: 'file' as const, path: entry.path, file: await entry.handle.getFile() }
+          : entry);
+      yield* group;
+    }
+    snapshot.entries.length = 0;
+    snapshot.complete = false;
+    return;
+  }
   yield* walkDirectory(root, '', scope);
 };
+
+/** 每次扫描独立的有界句柄清单；超限丢弃，回退流式遍历，避免百万文件常驻内存。 */
+export interface DirectoryScanSnapshot {
+  entries: ({ kind: 'file'; path: string; handle: FileHandleLike } | { kind: 'ignored-directory'; path: string })[];
+  complete: boolean;
+  overflow: boolean;
+  limit?: number;
+}
 
 /**
  * 预先统计可遍历文件数量，为索引阶段提供真实百分比。这里只枚举句柄，不读取文件正文。
@@ -95,6 +116,7 @@ export const countDirectoryEntries = async (
   scope: ProjectFileScope = createProjectFileScope(),
   shouldStop: () => boolean = () => false,
   maxFiles = Number.MAX_SAFE_INTEGER,
+  snapshot?: DirectoryScanSnapshot,
 ): Promise<DirectoryCountSummary> => {
   const summary: DirectoryCountSummary = { totalFiles: 0, ignoredDirectories: 0,
     scopeExcludedFiles: 0, excludedDirectorySamples: [] };
@@ -118,6 +140,11 @@ export const countDirectoryEntries = async (
     onProgress?.({ currentPath, discoveredFiles: summary.totalFiles, ...summary });
   };
 
+  const remember = (entry: DirectoryScanSnapshot['entries'][number]): void => {
+    if (!snapshot || snapshot.overflow) return;
+    if (snapshot.entries.length >= (snapshot.limit ?? 50_000)) { snapshot.entries.length = 0; snapshot.overflow = true; return; }
+    snapshot.entries.push(entry);
+  };
   const countDirectory = async (directory: DirectoryHandleLike, parentPath: string): Promise<void> => {
     report(parentPath || root.name);
     for await (const handle of directory.values()) {
@@ -126,6 +153,7 @@ export const countDirectoryEntries = async (
       if (handle.kind === 'directory') {
         if (scope.excludes(path, true)) {
           summary.ignoredDirectories += 1;
+          remember({ kind: 'ignored-directory', path });
           if (summary.excludedDirectorySamples.length < 20) summary.excludedDirectorySamples.push(path);
           report(path);
           continue;
@@ -133,7 +161,7 @@ export const countDirectoryEntries = async (
         await countDirectory(handle, path);
         continue;
       }
-      if (!scope.excludes(path)) summary.totalFiles += 1;
+      if (!scope.excludes(path)) { summary.totalFiles += 1; remember({ kind: 'file', path, handle }); }
       else summary.scopeExcludedFiles += 1;
       report(path);
     }
@@ -144,6 +172,7 @@ export const countDirectoryEntries = async (
   const heartbeat = onProgress ? setInterval(() => report(currentLocation, true), 1000) : undefined;
   try {
     await countDirectory(root, '');
+    if (snapshot) snapshot.complete = !snapshot.overflow && !shouldStop() && summary.totalFiles < maxFiles;
     report(root.name, true);
     return summary;
   } finally { if (heartbeat !== undefined) clearInterval(heartbeat); }

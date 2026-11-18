@@ -1064,3 +1064,15 @@ it('接近64KiB的小文件遵守预读字节背压且全文无遗漏', async ()
     expect(repository.chunks.filter(chunk => chunk.path === `${i}.ts`).map(chunk => chunk.content).join('')).toBe(body);
   }
 });
+
+
+it('同大小同修改时间的正文变化仍更新缓存，旧格式记录重新验证', async () => {
+  const repository = new MemoryProjectIndexRepository();
+  const options = { projectId: 'hash-test', rootName: 'hash', repository };
+  await indexProject({ ...options, entries: sourceOf([versionedSourceFile('a.ts', 'export const a = 1;', 1)]) });
+  const second = await indexProject({ ...options, mode: 'INCREMENTAL', entries: sourceOf([versionedSourceFile('a.ts', 'export const a = 2;', 1)]) });
+  expect(second.updatedFiles).toBe(1);
+  expect(repository.chunks[0]!.content).toBe('export const a = 2;');
+  const third = await indexProject({ ...options, mode: 'INCREMENTAL', entries: sourceOf([versionedSourceFile('a.ts', 'export const a = 2;', 1)]) });
+  expect(third.unchangedFiles).toBe(1);
+});

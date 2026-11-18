@@ -1,5 +1,5 @@
 import type { ContextFileInput } from '@/types/api';
-import { isSafeRelativeFilePath, isSensitiveFile as isProtectedContextFile } from '@/workers/fileReaderCore';
+import { isSafeRelativeFilePath, isSensitiveFile as isProtectedContextFile, isBinaryDocumentFile } from '@/workers/fileReaderCore';
 
 import { attachedTextPathReference, extractProjectPathReferences } from './projectPathReferences';
 import { ProjectIndexInterruptedError } from './projectIndexFailure';
@@ -7,7 +7,7 @@ import { ProjectIndexInterruptedError } from './projectIndexFailure';
 export const INDEX_CHUNK_CHARACTERS = 6_000;
 export const MAX_INDEXABLE_FILE_BYTES = 50 * 1024 * 1024;
 export const DEFAULT_CONTEXT_CHARACTERS = 120_000;
-const INDEX_FORMAT_VERSION = 4;
+const INDEX_FORMAT_VERSION = 5;
 
 const DEFAULT_INDEX_LIMITS: ProjectIndexLimits = {
   maxScanFiles: 1_000_000,
@@ -576,7 +576,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
     diagnostics.lookupMs += performance.now() - lookupStarted;
     const existingByPath = new Map(existingFiles.map((file) => [file.path, file]));
 
-    for await (const prepared of prepareSourceFiles(batch, existingByPath, shouldPause, diagnostics)) {
+    for await (const prepared of prepareSourceFiles(batch, shouldPause, diagnostics)) {
       // 大组字节已在内存时，Promise 连续消费可能推迟 Worker 的暂停消息；定期让出任务队列。
       if (summary.discoveredFiles > 0 && summary.discoveredFiles % PROGRESS_FILE_INTERVAL === 0) {
         await new Promise<void>(resolve => setTimeout(resolve, 0));
@@ -591,7 +591,7 @@ export const indexProject = async (options: IndexProjectOptions): Promise<Projec
         report('INDEXING', entry.path);
         continue;
       }
-      const fingerprint = fingerprintOf(entry.file);
+      const fingerprint = prepared.fingerprint ?? fingerprintOf(entry.file);
       const existing = existingByPath.get(entry.path);
       if (canReuseIndexedFile(existing, fingerprint)) {
         const restoredCharacters = existing.indexedCharacters ?? 0;
@@ -1012,11 +1012,10 @@ export const getChunkSelectionLimit = (reasons: readonly string[]): number => {
  */
 const prepareSourceFiles = async function* (
   entries: Extract<ProjectSourceEntry, { kind: 'file' }>[],
-  existing: Map<string, IndexedProjectFile>,
   shouldStop?: () => boolean,
   diagnostics?: ProjectIndexDiagnostics,
-): AsyncGenerator<{ entry: Extract<ProjectSourceEntry, { kind: 'file' }>; source: Blob; bytes?: Uint8Array; error?: unknown }> {
-  type Prepared = { entry: typeof entries[number]; source: Blob; bytes?: Uint8Array; error?: unknown };
+): AsyncGenerator<{ entry: Extract<ProjectSourceEntry, { kind: 'file' }>; source: Blob; bytes?: Uint8Array; fingerprint?: string; error?: unknown }> {
+  type Prepared = { entry: typeof entries[number]; source: Blob; bytes?: Uint8Array; fingerprint?: string; error?: unknown };
   const slots = new Map<number, Promise<Prepared>>();
   const reserved = new Map<number, number>();
   let next = 0, active = 0, bufferedBytes = 0, stopped = false;
@@ -1025,9 +1024,8 @@ const prepareSourceFiles = async function* (
       && next < entries.length && slots.size < FILE_PREFETCH_COUNT) {
       const entry = entries[next]!;
       const path = entry.path.replace(/\\/g, '/');
-      const read = entry.file.size <= SMALL_FILE_BYTES && isSafeRelativeFilePath(path)
-        && !isProtectedContextFile(path) && !isIgnoredFile(path.toLowerCase())
-        && !canReuseIndexedFile(existing.get(entry.path), fingerprintOf(entry.file));
+      const eligible = isSafeRelativeFilePath(path) && !isProtectedContextFile(path) && !isIgnoredFile(path.toLowerCase()) && !isBinaryDocumentFile(entry.file);
+      const read = eligible && entry.file.size <= SMALL_FILE_BYTES;
       const bytes = read ? entry.file.size : 0;
       if (bufferedBytes + bytes > MAX_PENDING_BATCH_BYTES) break;
       const index = next++;
@@ -1037,11 +1035,12 @@ const prepareSourceFiles = async function* (
       // 槽位先登记，完成回调再补读，所有成功/失败结果均受同一数量与字节背压约束。
       const pending = Promise.resolve().then(async (): Promise<Prepared> => {
         const result: Prepared = { entry, source: entry.file };
-        if (!read) return result;
+        if (!eligible) return result;
         const started = performance.now();
         try {
-          result.bytes = new Uint8Array(await entry.file.arrayBuffer());
-          if (diagnostics) diagnostics.readBytes += result.bytes.byteLength;
+          if (read) result.bytes = new Uint8Array(await entry.file.arrayBuffer());
+          result.fingerprint = `${fingerprintOf(entry.file)}:${await contentFingerprint(entry.file, result.bytes)}`;
+          if (diagnostics) diagnostics.readBytes += entry.file.size;
         } catch (error) { result.error = error; }
         finally { if (diagnostics) diagnostics.readMs += performance.now() - started; }
         return result;
@@ -1068,6 +1067,17 @@ const prepareSourceFiles = async function* (
     stopped = true;
     await Promise.all(slots.values());
   }
+};
+
+/** 固定256KiB分段摘要再汇总，结果与流分片无关，保持有界内存；大文件额外读一次以验证缓存。 */
+const contentFingerprint = async (file: Blob, bytes?: Uint8Array): Promise<string> => {
+  const encode = (value: ArrayBuffer): string => Array.from(new Uint8Array(value), byte => byte.toString(16).padStart(2, '0')).join('');
+  if (bytes) return encode(await crypto.subtle.digest('SHA-256', bytes));
+  const parts: string[] = [];
+  for (let offset = 0; offset < file.size; offset += 256 * 1024) {
+    parts.push(encode(await crypto.subtle.digest('SHA-256', await file.slice(offset, offset + 256 * 1024).arrayBuffer())));
+  }
+  return encode(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(parts.join(''))));
 };
 
 /** 旧版部分记录也可能带完整指纹；非空的元数据记录须重试，不能继续把缺失正文当完整复用。 */

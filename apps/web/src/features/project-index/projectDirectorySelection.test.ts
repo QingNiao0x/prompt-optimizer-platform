@@ -59,3 +59,18 @@ describe('多文件夹完整索引来源', () => {
       .rejects.toMatchObject({ name: 'NotAllowedError' });
   });
 });
+
+
+it('统计后的完整句柄清单复用一次目录枚举，消费后释放', async () => {
+  const handle = root('snapshot', { 'a.ts': 'export const a = 1;' });
+  const values = handle.values.bind(handle);
+  let enumerations = 0;
+  handle.values = () => { enumerations++; return values(); };
+  const roots = await prepareDirectoryRoots(handle);
+  await countSelectedDirectories(roots, () => {}, () => false, 100);
+  const entries = [];
+  for await (const entry of streamSelectedDirectories(roots)) entries.push(entry);
+  expect(enumerations).toBe(1);
+  expect(entries).toHaveLength(1);
+  expect(roots[0]!.snapshot!.entries).toHaveLength(0);
+});
