@@ -448,19 +448,21 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 || NaturalPromptContentScopeInstructions.VERSION.equals(version);
     }
 
+    /** 先选择各版本独有的准备指导，再复用协议族的通用指导，确保历史按原版本重放。 */
+    private static String scopeInstruction(String version) {
+        if (NaturalPromptProjectTaskInstructions.VERSION.equals(version)) return NaturalPromptProjectTaskInstructions.PREPARE;
+        if (NaturalPromptExpressionInstructions.VERSION.equals(version)) return NaturalPromptExpressionInstructions.PREPARE;
+        if (NaturalPromptPlanContextInstructions.usesProtocol(version)) return NaturalPromptPlanContextInstructions.PREPARE;
+        if (NaturalPromptSimplifiedInstructions.VERSION.equals(version)) return NaturalPromptSimplifiedInstructions.PREPARE;
+        if (NaturalPromptCoreRepairInstructions.usesActionBoundary(version)) return NaturalPromptCoreRepairInstructions.PREPARE;
+        if (usesAdvisoryScope(version)) return NaturalPromptPreparationRoutingInstructions.PREPARE;
+        if (NaturalPromptExecutionBoundaryInstructions.VERSION.equals(version)) return NaturalPromptExecutionBoundaryInstructions.PREPARE;
+        return NaturalPromptScopedInstructions.PREPARE;
+    }
+
     /** 按显式版本识别范围并逐次计量；精简协议保留v3准备字节及建议性质，不新增阶段。 */
     private ScopePreparation prepareScope(NaturalPromptInput input, String operation) {
-        String instruction = NaturalPromptExpressionInstructions.VERSION.equals(input.strategyVersion())
-                ? NaturalPromptExpressionInstructions.PREPARE
-                : NaturalPromptPlanContextInstructions.usesProtocol(input.strategyVersion())
-                ? NaturalPromptPlanContextInstructions.PREPARE
-                : NaturalPromptSimplifiedInstructions.VERSION.equals(input.strategyVersion())
-                ? NaturalPromptSimplifiedInstructions.PREPARE
-                : NaturalPromptCoreRepairInstructions.usesActionBoundary(input.strategyVersion())
-                ? NaturalPromptCoreRepairInstructions.PREPARE : usesAdvisoryScope(input.strategyVersion())
-                ? NaturalPromptPreparationRoutingInstructions.PREPARE
-                : NaturalPromptExecutionBoundaryInstructions.VERSION.equals(input.strategyVersion())
-                        ? NaturalPromptExecutionBoundaryInstructions.PREPARE : NaturalPromptScopedInstructions.PREPARE;
+        String instruction = scopeInstruction(input.strategyVersion());
         return invoke(input, instruction, operation, (body, metadata) -> {
             try {
                 if (NaturalPromptPlanContextInstructions.usesProtocol(input.strategyVersion())) {
@@ -670,8 +672,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             var draft = payload.toDraft(input, metadata);
             // v6工程采用与候选均核对目标归属；材料提供细节，用户任务和实际回答提供授权。
             if (NaturalPromptBalancedInstructions.VERSION.equals(input.strategyVersion())
-                    || NaturalPromptMaterialHandoffInstructions.VERSION.equals(input.strategyVersion())
-                    || NaturalPromptExpressionInstructions.VERSION.equals(input.strategyVersion())) {
+                    || NaturalPromptMaterialHandoffInstructions.usesMaterialHandoff(input.strategyVersion())) {
                 NaturalPromptRequirementsOnlyPreparation.validateUserGoals(draft.taskUnderstanding());
             }
             return draft;
@@ -846,8 +847,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
                 || NaturalPromptSinglePassInstructions.INPUT_ROLES_VERSION.equals(input.strategyVersion())
                 || NaturalPromptSinglePassInstructions.RESPONSIBILITY_VERSION.equals(input.strategyVersion())
                 || NaturalPromptBalancedInstructions.VERSION.equals(input.strategyVersion())
-                || NaturalPromptMaterialHandoffInstructions.VERSION.equals(input.strategyVersion())
-                || NaturalPromptExpressionInstructions.VERSION.equals(input.strategyVersion()) || recordOnly)
+                || NaturalPromptMaterialHandoffInstructions.usesMaterialHandoff(input.strategyVersion()) || recordOnly)
                 && "prompt.optimize".equals(operation);
         // 48只改变已经完成范围准备的正文修复；Plan、准备及旧版本保留逐字既有请求契约。
         boolean boundedRepair = NaturalPromptBoundedRepairInstructions.VERSION.equals(input.strategyVersion())

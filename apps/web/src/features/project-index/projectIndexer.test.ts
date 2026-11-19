@@ -604,6 +604,31 @@ describe('indexProject', () => {
 });
 
 describe('retrieveProjectContext', () => {
+  it('keeps an exact API call ahead of a copied long notice while retaining explicit document requests', async () => {
+    const repository = new MemoryProjectIndexRepository();
+    const notice = '请查看以下短信我是否需要修改。号码认证短信认证服务已下线历史赠送签名，'
+      + '请检查业务中调用短信认证 API（SendSmsVerifyCode）的签名入参，尽快替换为最新可用签名。'
+      + '为保障业务稳定请提前主动更换传值，若已完成修改请忽略。';
+    await indexProject({ projectId: 'notice-and-code', rootName: 'demo', repository,
+      entries: sourceOf([
+        sourceFile('docs/testing/evidence/previous.md', notice),
+        sourceFile('src/infrastructure/NotificationClient.java',
+          'public class NotificationClient { public void send() { request.setAction("SendSmsVerifyCode"); } }'),
+      ]) });
+    const result = await retrieveProjectContextWithReport(repository, {
+      projectId: 'notice-and-code', query: notice, maxChunks: 1,
+    });
+    expect(result.selections.map(item => item.path)).toEqual(['src/infrastructure/NotificationClient.java']);
+    const document = await retrieveProjectContextWithReport(repository, {
+      projectId: 'notice-and-code', query: '请分析 @docs/testing/evidence/previous.md 中的 SendSmsVerifyCode 通知', maxChunks: 1,
+    });
+    expect(document.selections.map(item => item.path)).toEqual(['docs/testing/evidence/previous.md']);
+    const explanation = await retrieveProjectContextWithReport(repository, {
+      projectId: 'notice-and-code', query: `请解释 SendSmsVerifyCode 的迁移文档。${notice}`, maxChunks: 1,
+    });
+    expect(explanation.selections.map(item => item.path)).toEqual(['docs/testing/evidence/previous.md']);
+  });
+
   it('should not expand an explicit directory from file names repeated in the delivery scope', async () => {
     const repository = new MemoryProjectIndexRepository();
     await indexProject({ projectId: 'delivery-path-terms', rootName: 'sample', repository,

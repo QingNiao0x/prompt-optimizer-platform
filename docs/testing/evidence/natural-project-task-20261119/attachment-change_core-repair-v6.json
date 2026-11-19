@@ -1,0 +1,7 @@
+{
+  "case" : "attachment-change",
+  "version" : "core-repair-v6",
+  "success" : true,
+  "body" : "请修改项目文档维护页的附件选择逻辑：仅改 web/pages/DocumentEdit.vue，在表单中将附件选择改为支持多选，并确保每个文件最大10MB。用户一次选择多个文件时，超过10MB的文件要当场提示，其他合法文件继续加入，不因单个超限文件中断整批选择。不要只把 `multiple` 改掉，还要处理多选后的文件列表与现有提交逻辑，使多选附件能正常提交。修改范围限定在 web/pages/DocumentEdit.vue，不要改动 web/pages/Profile.vue；若 AttachmentPicker 为共享组件，应保证其单选用法不受影响。保留并验证已有附件的打开能力：表单提交后，已有附件仍能正常打开，不能因这次多选改造破坏原有展示/打开链路。完成后请返回修改后的代码或补丁，并简要说明改动文件和验证结果（多选、10MB超限即时提示且合法文件继续、提交后已有附件可打开）。",
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

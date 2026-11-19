@@ -275,6 +275,7 @@ export interface ProjectIndexRepository {
     projectId: string,
     searchTerms: string[],
     limit: number,
+    identifierTerms?: readonly string[],
   ): Promise<IndexedProjectChunk[]>;
   findChunksByPaths(
     projectId: string,
@@ -895,8 +896,13 @@ export const retrieveProjectContextWithReport = async (
   const referencedChunks = referencedGroups.flat();
   // 仅移除已解析文件及显式@的原始片段。普通路径尚未命中时仍可提供常规语义线索，
   // 但不标记为FOUND；引用过的文件名也不能伪装成正文明确点名的函数。
-  const terms = extractTerms(omitReferenceSpans(options.query, references));
-  const matchedChunks = await repository.findCandidateChunks(options.projectId, terms, candidateLimit);
+  const taskText = omitReferenceSpans(options.query, references);
+  const terms = extractTerms(taskText);
+  // 保留原大小写识别 API/类/字段名；路径由上面的精确路径入口处理，普通英文单词不扩大为前缀查询。
+  const identifierTerms = requestsDocumentExplanation(taskText) ? []
+    : Array.from(new Set(Array.from(taskText.matchAll(/[A-Za-z_$][\w$]{5,63}/g), match => match[0])
+      .filter(term => /[a-z\d][A-Z]|[A-Za-z]_[A-Za-z]/.test(term)).map(term => term.toLowerCase()))).slice(0, 16);
+  const matchedChunks = await repository.findCandidateChunks(options.projectId, terms, candidateLimit, identifierTerms);
   const symbolScope: ScopedSymbolMatching | undefined = references.length > 0 ? {
     completeTerms: new Set(extractTerms(omitReferenceSpans(options.query, requestedGroups.map(item => item.reference)))),
     referencedSymbols: new Set(referencedChunks.flatMap(chunk => chunk.symbols ?? [])),
@@ -908,7 +914,7 @@ export const retrieveProjectContextWithReport = async (
     pathHints.set(path, reasons);
   }
   const candidates = uniqueChunks([...matchedChunks, ...preferredChunks, ...referencedChunks]);
-  const seedChunks = rankChunks(candidates, terms, pathHints, new Set(), undefined, symbolScope)
+  const seedChunks = rankChunks(candidates, terms, pathHints, new Set(), undefined, symbolScope, identifierTerms)
     .filter((item) => hasTaskRelevance(item.reasons)
       && hasScopedRelevance(item.reasons, references.length > 0))
     .slice(0, Math.min(8, maxChunks));
@@ -928,7 +934,7 @@ export const retrieveProjectContextWithReport = async (
   }
 
   const ranked = prioritizeReferencedFiles(rankChunks(candidates, terms, pathHints, dependencyTerms,
-    references.length > 0 ? new Set(Array.from(dependencyPaths, normalizePath)) : undefined, symbolScope));
+    references.length > 0 ? new Set(Array.from(dependencyPaths, normalizePath)) : undefined, symbolScope, identifierTerms));
 
   const selected: ContextFileInput[] = [];
   const selections: ProjectContextSelection[] = [];
@@ -1437,15 +1443,19 @@ const rankChunks = (
   dependencyTerms: Set<string>,
   dependencyPaths?: Set<string>,
   symbolScope?: ScopedSymbolMatching,
+  identifierTerms: readonly string[] = [],
 ): RankedChunk[] => {
   const items = Array.from(chunks.values());
   // 共享路径片段（例如所有候选的 src）不具有定位能力，不靠它们填满上下文。
   const discriminatingPathTerms = new Set(terms.filter((term) => items.length < 5
     || items.filter((chunk) => chunk.path.toLowerCase().includes(term)).length / items.length < 0.7));
   return items
-  .map((chunk) => scoreChunk(chunk, terms, pathHints, dependencyTerms, discriminatingPathTerms, dependencyPaths, symbolScope))
+  .map((chunk) => scoreChunk(chunk, terms, pathHints, dependencyTerms, discriminatingPathTerms, dependencyPaths, symbolScope, identifierTerms))
   .sort((left, right) =>
-    right.score - left.score
+    // 已指定的路径/打开文件优先；未限定路径时，精确工程标识符优先于长通知中的通用词累计命中。
+    retrievalEvidencePriority(right, Boolean(symbolScope) || identifierTerms.length === 0)
+      - retrievalEvidencePriority(left, Boolean(symbolScope) || identifierTerms.length === 0)
+    || right.score - left.score
     || left.chunk.priority - right.chunk.priority
     || left.chunk.path.localeCompare(right.chunk.path)
     || left.chunk.chunkIndex - right.chunk.chunkIndex);
@@ -1459,11 +1469,18 @@ const scoreChunk = (
   discriminatingPathTerms: Set<string>,
   dependencyPaths?: Set<string>,
   symbolScope?: ScopedSymbolMatching,
+  identifierTerms: readonly string[] = [],
 ): RankedChunk => {
   const path = chunk.path.toLowerCase();
   const content = chunk.content.toLowerCase();
   const symbols = chunk.symbols ?? [];
   const reasons = [...(pathHints.get(normalizePath(chunk.path)) ?? [])];
+  if (SOURCE_CODE_LANGUAGES.has(chunk.language) && identifierTerms.length > 0
+    && Array.from(chunk.content.matchAll(/[A-Za-z_$][\w$]*/g), match => match[0]).some(token =>
+      identifierTerms.some(term => token.toLowerCase() === term
+        || (token.toLowerCase().startsWith(term) && /[A-Z]/.test(token.charAt(term.length)))))) {
+    addReason(reasons, '源码包含任务标识符');
+  }
   let score = Math.max(0, 30 - chunk.priority);
   if (reasons.includes('用户明确引用路径')) score += RETRIEVAL_SCORE.referencedPath;
   if (reasons.includes('当前打开文件')) {
@@ -1515,6 +1532,23 @@ const scoreChunk = (
   return { chunk, score, reasons };
 };
 
+/** 显式文件范围沿用原评分；普通查询优先保留 API/字段定位证据，仍保留文档候选供后续选取。 */
+const retrievalEvidencePriority = (item: RankedChunk, scoped: boolean): number => {
+  if (scoped) return 0;
+  if (item.reasons.some(reason => ['用户明确引用路径', '当前打开文件', '用户固定文件'].includes(reason))) return 2;
+  return item.reasons.includes('源码包含任务标识符') ? 1 : 0;
+};
+
+/** 复用索引器语言识别，供有界词表召回优先选取源码路径，不依赖项目目录名称。 */
+export const isSourceCodePath = (path: string): boolean =>
+  SOURCE_CODE_LANGUAGES.has(languageOf(path.split('/').at(-1)?.toLowerCase() ?? '') ?? '');
+
+/** 明确要求阅读解释资料时沿用普通相关性，API 名称不能自动把资料请求变成源码排查。 */
+const requestsDocumentExplanation = (query: string): boolean =>
+  /(?:解释|解读|总结|概括|翻译|阅读|查阅|查找|查看|分析)[^。！？\n]{0,80}(?:文档|手册|指南|教程|说明书)/.test(query)
+  || /(?:解释|解读|总结|概括|翻译)[^。！？\n]{0,80}(?:通知|短信)/.test(query)
+  || /\b(?:explain|summari[sz]e|translate|read|find)\b[^.!?\n]{0,100}\b(?:documentation|docs|manual|guide|notice)\b/i.test(query);
+
 const hasTaskRelevance = (reasons: readonly string[]): boolean => reasons.some((reason) =>
   !['关键工程配置', '项目索引候选'].includes(reason));
 
@@ -1557,7 +1591,7 @@ const hasScopedRelevance = (reasons: readonly string[], hasExplicitReference: bo
   !hasExplicitReference || reasons.some((reason) => ![
     // 首次全量索引也会把文件记为changed；该状态不能推翻用户本次明确的模块范围。
     '关键工程配置', '项目索引候选', '内容与任务匹配', '最近变更文件',
-    '路径与任务匹配', '任务中的符号',
+    '路径与任务匹配', '任务中的符号', '源码包含任务标识符',
   ].includes(reason));
 
 /** 明确目录先覆盖各个已召回文件，再增加同文件片段；单文件引用仍按相关性选择。 */

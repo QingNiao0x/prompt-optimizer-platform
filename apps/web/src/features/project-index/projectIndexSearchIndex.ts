@@ -103,9 +103,11 @@ export const removeProjectSearch = async (transaction: IDBTransaction, projectId
  * 只读取数字键及有界映射块，按原字符串主键归并后取限额，保持旧查询的候选范围。
  */
 export const lookupSearchChunkIds = async (
-  transaction: IDBTransaction, term: string, limit: number,
+  transaction: IDBTransaction, term: string | IDBKeyRange, limit: number,
+  compareIds?: (left: string, right: string) => number,
+  maxKeys?: number,
 ): Promise<string[]> => {
-  const keys = await readRequest(transaction.objectStore(SEARCH_STORE).index('searchTerms').getAllKeys(term)) as number[];
+  const keys = await readRequest(transaction.objectStore(SEARCH_STORE).index('searchTerms').getAllKeys(term, maxKeys)) as number[];
   const blocks = transaction.objectStore(SEARCH_KEY_STORE);
   let selected: string[] = [];
   for (let offset = 0; offset < keys.length; offset += KEY_BLOCK_SIZE) {
@@ -118,7 +120,7 @@ export const lookupSearchChunkIds = async (
       if (id === undefined) throw new Error('本地索引映射不完整，请重新建立项目索引');
       return id;
     });
-    selected = Array.from(new Set([...selected, ...ids])).sort().slice(0, limit);
+    selected = Array.from(new Set([...selected, ...ids])).sort(compareIds).slice(0, limit);
   }
   return selected;
 };

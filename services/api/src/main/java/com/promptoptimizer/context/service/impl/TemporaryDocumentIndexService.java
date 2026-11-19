@@ -66,7 +66,10 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
     public static final long MAX_DOCUMENT_BYTES = 50L * 1024 * 1024;
 
     private static final long MAX_ACTIVE_SOURCE_BYTES = 512L * 1024 * 1024;
-    private static final int MAX_ACTIVE_DOCUMENTS = 100;
+    // 单人一批最多 100 个文档。500 个名额大约容纳 5 个同等规模的项目同时上传，解析线程仍只有 2 到 4 个。
+    private static final int MAX_ACTIVE_DOCUMENTS = 500;
+    private static final String ACTIVE_CAPACITY_MESSAGE =
+            "当前同时处理的文档已满（最多 500 个、合计 512 MB）。请等现有文档处理完再上传；同一时间大约只能接收 5 个同等规模的项目。";
     private static final int INDEX_CHUNK_CHARACTERS = 6_000;
     private static final int INDEX_CHUNK_OVERLAP = 400;
     private static final Duration DOCUMENT_TTL = Duration.ofHours(2);
@@ -157,7 +160,7 @@ public class TemporaryDocumentIndexService implements DocumentUploadService, Doc
             if (sessions.size() >= MAX_ACTIVE_DOCUMENTS || activeSourceBytes() + request.sizeBytes() > MAX_ACTIVE_SOURCE_BYTES) {
                 throw new DocumentUploadException(
                         DocumentUploadException.Reason.CAPACITY_EXCEEDED,
-                        "当前正在处理的文档较多，请稍后重试"
+                        ACTIVE_CAPACITY_MESSAGE
                 );
             }
 

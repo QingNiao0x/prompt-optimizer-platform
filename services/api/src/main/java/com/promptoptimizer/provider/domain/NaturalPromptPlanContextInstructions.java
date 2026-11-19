@@ -36,8 +36,7 @@ public final class NaturalPromptPlanContextInstructions {
 
     /** v4及仅调整正文补全的候选共用阶段协议、来源编号与已答状态，历史版本不在此扩大兼容。 */
     public static boolean usesProtocol(String version) {
-        return NaturalPromptMaterialHandoffInstructions.VERSION.equals(version)
-                || NaturalPromptExpressionInstructions.VERSION.equals(version)
+        return NaturalPromptMaterialHandoffInstructions.usesMaterialHandoff(version)
                 || NaturalPromptBalancedInstructions.VERSION.equals(version) || NaturalPromptProtocolRepairInstructions.VERSION.equals(version) || VERSION.equals(version) || NaturalPromptInternalDesignInstructions.VERSION.equals(version);
     }
 

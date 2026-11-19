@@ -93,6 +93,15 @@ const {
 } = useProjectFiles({ respectGitignore: () => respectProjectIgnore.value,
   visionPolicy: () => pendingVisionPolicy,
   settleVisionBatch: (pending, signal) => contextVision.settleBatch(pending, store.selectedModelId, signal) });
+// 名额用尽时除列表外再弹出一次，避免提示停在上下文栏底部。
+watch(warnings, (items) => {
+  const notice = items.find((item) => item.includes('当前同时处理的文档已满'));
+  if (notice) ElMessage.warning({ message: notice, duration: 8000, showClose: true, grouping: true });
+});
+watch(errorMessage, (message) => {
+  if (!message?.includes('人数已达上限') && !message?.includes('个模型相关请求正在处理')) return;
+  ElMessage.warning({ message, duration: 8000, showClose: true, grouping: true });
+});
 const {
   isSupported: supportsDirectoryPicker,
   isSelecting: isSelectingDirectory,

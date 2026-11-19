@@ -19,6 +19,12 @@ class NaturalEnhancementSettingsTest {
     }
 
     @Test
+    void projectTaskBindsThroughTheNormalServiceSetting() {
+        runner.withPropertyValues("app.enhancement.natural.profile=PROJECT_TASK").run(context ->
+                assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v7"));
+    }
+
+    @Test
     void newRequestsDefaultToTheValidatedEngineeringRepair() {
         runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v6"));
     }

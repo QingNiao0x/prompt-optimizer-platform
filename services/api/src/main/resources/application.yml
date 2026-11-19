@@ -99,7 +99,7 @@ app:
     thinking: ${TEXT_POLISH_THINKING:DISABLED}
   enhancement:
     natural:
-      # 新请求采用v4的Plan状态/来源修复；显式COMPLETION_BASIS_REPAIR可回退v3，旧历史仍沿用记录版本。
+      # 默认使用 v6 材料传递，PROJECT_TASK 可选择新的任务理解指导，历史增强沿用记录版本。
       profile: ${NATURAL_ENHANCEMENT_PROFILE:MATERIAL_HANDOFF_REPAIR}
   context:
     vision:

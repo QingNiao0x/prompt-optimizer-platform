@@ -13,8 +13,10 @@ import com.promptoptimizer.provider.service.PlatformModelCatalog;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.http.client.MockClientHttpRequest;
@@ -85,6 +87,37 @@ class NaturalExpressionProviderTest {
         server.verify();
     }
 
+    @Test
+    void noticeReviewPassesTheCallSiteAndCheckedScopeToTheWriter() throws Exception {
+        var callSite = new FileSnippet("src/MessageClient.java", "java", "request.setSignName(settings.getSignName());",
+                "调用使用配置传入的签名", false, MaterialPurpose.TASK_TARGET);
+        var reference = new FileSnippet("fixtures/migration.md", "text", "历史测试使用旧签名。", "",
+                false, MaterialPurpose.DIAGNOSTIC_REFERENCE);
+        var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(reference, callSite), List.of(), List.of(), "fixture");
+        var input = new NaturalPromptInput("请查看下面的短信，我是否需要修改？通知称旧签名停用。", context,
+                List.of(), List.of(), List.of(), null).withStrategyVersion(NaturalPromptProjectTaskInstructions.VERSION);
+        var scope = scope(input);
+        ((ObjectNode) scope.at("/actions/0")).putArray("detailEvidence").addObject()
+                .put("sourceId", "context.fileSnippets.1").put("quote", "request.setSignName");
+        var builder = RestClient.builder();
+        var server = MockRestServiceServer.bindTo(builder).build();
+        expect(server, scope, input, NaturalPromptProjectTaskInstructions.PREPARE);
+        String body = "沿 src/MessageClient.java 的签名传参追踪生效配置。对照通知判断是否需要修改并说明依据。";
+        expect(server, enhancement(input, body), input, NaturalPromptProjectTaskInstructions.ENHANCE, payload -> {
+            var links = payload.at("/taskScope/actions/0/evidence");
+            assertThat(links).hasSize(2);
+            assertThat(links.get(0).path("sourceId").asText()).isEqualTo("rawPrompt");
+            assertThat(links.get(1).path("sourceId").asText()).isEqualTo("context.fileSnippets.1");
+        });
+        var draft = provider(builder.build()).enhance(input, result -> {
+            result.taskUnderstanding().resolve(input).review().validateEnhancement(result.taskUnderstanding(), result.optimizedPrompt());
+            return result;
+        });
+        assertThat(draft.optimizedPrompt()).isEqualTo(body);
+        assertThat(draft.completedStages()).containsExactly(NaturalProcessing.Stage.SCOPE_ANALYSIS, NaturalProcessing.Stage.BODY_GENERATION);
+        server.verify();
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"日期稍后确认，不承诺额外赔偿。", "没有相关资料，按现有信息继续。", "无权访问该系统，请保留这个限制。"})
     void currentAndPlanningMaterialsAndActualAnswersReachBothStages(String answer) throws Exception {
@@ -121,12 +154,15 @@ class NaturalExpressionProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"日期稍后确认，不承诺额外赔偿。", ""})
-    void planSupportsNoQuestionAndAnImportantUserDecision(String answer) throws Exception {
-        var input = answer.isEmpty() ? input("附件可多选，最大10MB，请先确认大小限制的含义。") : materialInput(answer);
+    @CsvSource({"core-expression-v1,日期稍后确认，不承诺额外赔偿。", "core-expression-v1,''",
+            "core-repair-v7,日期稍后确认，不承诺额外赔偿。", "core-repair-v7,''"})
+    void planSupportsNoQuestionAndAnImportantUserDecision(String version, String answer) throws Exception {
+        var input = (answer.isEmpty() ? input("附件可多选，最大10MB，请先确认大小限制的含义。") : materialInput(answer))
+                .withStrategyVersion(version);
         var builder = RestClient.builder();
         var server = MockRestServiceServer.bindTo(builder).build();
-        expect(server, scope(input), input, NaturalPromptExpressionInstructions.PREPARE);
+        expect(server, scope(input), input, NaturalPromptProjectTaskInstructions.VERSION.equals(version)
+                ? NaturalPromptProjectTaskInstructions.PREPARE : NaturalPromptExpressionInstructions.PREPARE);
         ObjectNode plan = enhancement(input, input.rawPrompt());
         plan.remove(List.of("optimizedPrompt", "framework"));
         plan.put("summary", "整理原任务及需要用户决定的边界");
@@ -143,7 +179,7 @@ class NaturalExpressionProviderTest {
             question.putArray("decisionBasis").addObject().put("issue", "大小限制对象").put("kind", "USER_INFORMATION")
                     .put("whyAsk", "需要用户明确业务限制对象").put("answerDifference", "决定按单文件或文件总量拒绝上传");
         }
-        expect(server, plan, input, NaturalPromptExpressionInstructions.PLAN);
+        expect(server, plan, input, NaturalPromptInstructions.planningInstruction(version));
         var result = provider(builder.build()).plan(input, value -> value);
         assertThat(result.questions()).hasSize(answer.isEmpty() ? 1 : 0);
         server.verify();
@@ -238,6 +274,11 @@ class NaturalExpressionProviderTest {
 
     /** 核对实际发出的system与完整原始提示词，响应经真实DTO与覆盖读取器。 */
     private void expect(MockRestServiceServer server, JsonNode content, NaturalPromptInput input, String instruction) throws Exception {
+        expect(server, content, input, instruction, payload -> { });
+    }
+
+    private void expect(MockRestServiceServer server, JsonNode content, NaturalPromptInput input, String instruction,
+            Consumer<JsonNode> verifyPayload) throws Exception {
         String response = json.writeValueAsString(Map.of("choices", List.of(Map.of("finish_reason", "stop", "message",
                 Map.of("content", json.writeValueAsString(content))))));
         server.expect(requestTo(URL)).andExpect(request -> {
@@ -245,9 +286,20 @@ class NaturalExpressionProviderTest {
             if (instruction != null) assertThat(sent.at("/messages/0/content").asText()).isEqualTo(instruction);
             String user = sent.at("/messages/1/content").asText();
             var payload = json.readTree(user.substring(user.indexOf('{')));
+            verifyPayload.accept(payload);
             if (payload.has("rawPrompt")) {
                 assertThat(payload.path("rawPrompt").asText()).isEqualTo(input.rawPrompt());
                 assertThat(payload.path("actualAnswers")).isEqualTo(json.valueToTree(input.actualAnswers()));
+                if (NaturalPromptProjectTaskInstructions.VERSION.equals(input.strategyVersion())) {
+                    for (int i = 0; i < input.context().fileSnippets().size(); i++) {
+                        var snippet = input.context().fileSnippets().get(i);
+                        var sentFile = payload.at("/context/fileSnippets/" + i);
+                        assertThat(sentFile.path("sourceId").asText()).isEqualTo("context.fileSnippets." + i);
+                        assertThat(sentFile.path("path").asText()).isEqualTo(snippet.path());
+                        assertThat(sentFile.path("content").asText()).isEqualTo(snippet.content());
+                        assertThat(sentFile.path("purpose").asText()).isEqualTo(snippet.purpose().name());
+                    }
+                }
                 if (input.planningContext() != null) {
                     assertThat(payload.at("/context/fileSnippets/0/sourceId").asText()).isEqualTo("context.fileSnippets.0");
                     assertThat(payload.at("/planningContext/fileSnippets/0/sourceId").asText()).isEqualTo("planningContext.fileSnippets.0");

@@ -1,0 +1,33 @@
+{
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "maxTokens": 10000,
+  "maximumProviderRequestsIncludingRetries": 24,
+  "candidate": "core-repair-v7",
+  "baseline": "core-repair-v6",
+  "scope": "自然直接增强。每个版本、每个合成样例各运行一次。查验优化提示词本身，未运行下游任务。",
+  "cases": [
+    {
+      "id": "notice-project",
+      "rawPrompt": "帮我看看这条短信我是否需要修改？通知：8月31日停用两款旧签名“青禾”和“秋声”。11月30日起 SendDemoCode 的签名参数若仍为旧值，服务端会自动替换。可用签名为“晨钟”和“夜航”。如果已改过请忽略。",
+      "files": [
+        {"path":"docs/testing/evidence/legacy/demo.txt","content":"历史演练样例，曾以 夜航 调用 SendDemoCode。"},
+        {"path":"src/notify/DemoGateway.java","content":"void send() { gateway.SendDemoCode(settings.senderLabel()); }"},
+        {"path":"config/notify.properties","content":"sender.label=${APP_SENDER_LABEL:青禾}"}
+      ],
+      "checks":["通知的规则与当前项目有效签名作比较","追踪真实调用点及配置来源并利用至少一个给定路径或标识","区分默认值、环境覆盖和演练记录","受影响时给出位置和建议，证据不足时只限制相应结论","不擅改代码、不按列表顺序映射、不捏造年份"]
+    },
+    {
+      "id":"notice-explain-only",
+      "rawPrompt":"下面通知只需用两句大白话解释给非技术同事，不用检查项目或提出修改建议。通知：SendDemoCode 将于11月30日起自动替换仍在使用的历史签名。",
+      "files":[{"path":"src/notify/DemoGateway.java","content":"void send() { gateway.SendDemoCode(settings.senderLabel()); }"}],
+      "checks":["保持两句、通俗、解释通知的交付","不因出现工程资料而增加代码审查、改动或修改建议"]
+    },
+    {
+      "id":"attachment-change",
+      "rawPrompt":"帮我把项目里的附件选择改成支持多选，每个文件最大10MB，超过的文件当场提示，其他合法文件继续。只改文档维护页，在表单提交后已有附件仍能打开。",
+      "files":[{"path":"web/pages/DocumentEdit.vue","content":"<AttachmentPicker :multiple=\"false\" @pick=\"addFile\" />"},{"path":"web/pages/Profile.vue","content":"<AttachmentPicker :multiple=\"false\" @pick=\"addAvatar\" />"}],
+      "checks":["明确实际改动、当前页面与控件的关系","逐文件10MB，拒绝超限、保留合法文件","保留已有附件可打开、有可检查行为","未把改动扩展到其他页面、所有控件或新增无依据的格式限制"]
+    }
+  ]
+}

@@ -14,5 +14,11 @@ public final class NaturalPromptMaterialHandoffInstructions {
     public static final String ENHANCE = NaturalPromptProtocolRepairInstructions.ENHANCE;
     public static final String PLAN = NaturalPromptProtocolRepairInstructions.PLAN;
 
+    /** 使用跨阶段材料来源编号、用户目标校验和固定正文修复的版本，共用同一传递协议。 */
+    public static boolean usesMaterialHandoff(String version) {
+        return VERSION.equals(version) || NaturalPromptExpressionInstructions.VERSION.equals(version)
+                || NaturalPromptProjectTaskInstructions.VERSION.equals(version);
+    }
+
     private NaturalPromptMaterialHandoffInstructions() { }
 }

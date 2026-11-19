@@ -3,6 +3,7 @@ import { nextTick, readonly, ref } from 'vue';
 import { uploadAndIndexDocument, type DeferredVisionUpload } from '@/features/document-upload/documentUploader';
 import { isContextVisionLanguage, isDeferredVisionUpload } from '@/features/document-upload/contextVisionBatch';
 import { deleteDocumentUpload } from '@/services/documentUploadApi';
+import { getApiErrorCode, getApiErrorMessage } from '@/services/http';
 import { loadSelectedFileScopes } from '@/features/project-index/projectFileScope';
 import type { ContextFileInput, ContextVisionConfirmation, DocumentProcessingPhase, DocumentUploadStatus } from '@/types/api';
 import {
@@ -308,6 +309,16 @@ export const useProjectFiles = (options?: {
 
       const documentWarnings: string[] = [];
       let failedDocuments = 0;
+      const reportDocumentFailure = (path: string, error: unknown): void => {
+        failedDocuments += 1;
+        const message = getApiErrorMessage(error);
+        // 名额用尽时每个文件都会失败，页面只保留一条说明。
+        if (getApiErrorCode(error) === 'DOCUMENT_CAPACITY_EXCEEDED') {
+          if (!documentWarnings.includes(message)) documentWarnings.push(message);
+          return;
+        }
+        documentWarnings.push(`${path}：${message}`);
+      };
       const deferredVision: DeferredVisionUpload[] = [];
       const documentOrder = new Map(documentCandidates.map((file, index) => [getProjectFilePath(file), index]));
       // 本地提取不请求视觉审阅，因此可以恢复两路上传。逐文件弹窗仍保持串行，避免两张确认叠在一起。
@@ -362,9 +373,7 @@ export const useProjectFiles = (options?: {
           if (abortController.signal.aborted || !isCurrentOperation()) {
             return;
           }
-          const message = error instanceof Error ? error.message : '解析失败';
-          failedDocuments += 1;
-          documentWarnings.push(`${getProjectFilePath(candidate)}：${message}`);
+          reportDocumentFailure(getProjectFilePath(candidate), error);
         } finally {
           activeProgress.delete(index);
           publishProgress();
@@ -397,8 +406,7 @@ export const useProjectFiles = (options?: {
                 rememberDocument(uploaded.file, uploaded.status.warnings);
               } catch (error: unknown) {
                 if (abortController.signal.aborted || !isCurrentOperation()) break;
-                failedDocuments += 1;
-                documentWarnings.push(`${item.status.path}：${error instanceof Error ? error.message : '解析失败'}`);
+                reportDocumentFailure(item.status.path, error);
               }
             }
           }

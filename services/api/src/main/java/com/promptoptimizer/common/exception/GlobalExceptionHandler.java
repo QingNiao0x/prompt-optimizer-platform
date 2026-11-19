@@ -370,7 +370,9 @@ public class GlobalExceptionHandler {
         return buildResponse(
                 request,
                 status,
-                "DOCUMENT_PROCESSING_ERROR",
+                exception.getReason() == DocumentUploadException.Reason.CAPACITY_EXCEEDED
+                        ? "DOCUMENT_CAPACITY_EXCEEDED"
+                        : "DOCUMENT_PROCESSING_ERROR",
                 exception.getMessage(),
                 exception.getReason() == DocumentUploadException.Reason.CONFLICT
                         || exception.getReason() == DocumentUploadException.Reason.CAPACITY_EXCEEDED,

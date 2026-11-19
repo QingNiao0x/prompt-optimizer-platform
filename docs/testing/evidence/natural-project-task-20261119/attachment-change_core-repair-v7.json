@@ -1,0 +1,7 @@
+{
+  "case" : "attachment-change",
+  "version" : "core-repair-v7",
+  "success" : true,
+  "body" : "请直接修改当前项目中文档维护页的附件选择实现，范围以 web/pages/DocumentEdit.vue 及其实际调用的附件选择/上传/提交链路为准。把附件选择改成多选；逐个文件校验大小，单个文件超过 10MB 时在用户选择后当场提示并排除该文件，其他合法文件继续保留并可正常提交。不要只把 :multiple 改成 true，先追踪 AttachmentPicker 的 multiple、pick/上传、提交和附件展示的实际生效值及来源，再按页面实际结构落实校验。只改文档维护页：不要改动 Profile.vue，也不要通过修改共享 AttachmentPicker 的全局默认行为使其他页面同时变为多选；如需页面级配置，保留其他页面现状。确保表单提交后已有附件仍能正常打开；若提交或展示依赖现有接口，沿用并核对其实际行为，不编造接口能力。完成后用可复现的检查验证：多选合法文件、混入超限文件时超限项即时提示且合法项继续、文档提交后已保存附件可打开、Profile.vue 行为未受影响；反馈实际修改位置、关键差异和验证结果。",
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

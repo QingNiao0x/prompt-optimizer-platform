@@ -14,7 +14,7 @@ public class ModelConcurrencyException extends RuntimeException {
     public ModelConcurrencyException(Reason reason, int limit, Throwable cause) {
         super(switch (reason) {
             case USER_LIMIT -> "你的账号已有 " + limit + " 个模型相关请求正在处理，请等待其中一个完成后重试。";
-            case GLOBAL_LIMIT -> "当前模型服务繁忙，请稍后重试。";
+            case GLOBAL_LIMIT -> "同时使用提示词增强的人数已达上限（最多 " + limit + " 路）。请稍后再试，进行中的增强完成后即可继续。";
             case STORE_UNAVAILABLE -> "模型并发控制服务暂时不可用，请稍后重试。";
         }, cause);
         this.reason = reason;

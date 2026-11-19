@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.promptoptimizer.provider.domain.NaturalPromptInput;
-import com.promptoptimizer.provider.domain.NaturalPromptExpressionInstructions;
 import com.promptoptimizer.provider.domain.NaturalPromptMaterialHandoffInstructions;
 import com.promptoptimizer.provider.domain.NaturalPromptPlanContextInstructions;
 import com.promptoptimizer.provider.domain.NaturalTaskSource;
@@ -25,8 +24,7 @@ final class NaturalPromptPreparationSourceLabels {
     /** 工程采用及表达路径在后续正文和Plan也携带同一服务端来源编号，原v4/v5按历史行为重放。 */
     static void annotate(String version, boolean scopePreparation, JsonNode payload, NaturalPromptInput input) {
         if (!NaturalPromptPlanContextInstructions.usesProtocol(version)
-                || (!scopePreparation && !NaturalPromptExpressionInstructions.VERSION.equals(version)
-                    && !NaturalPromptMaterialHandoffInstructions.VERSION.equals(version))
+                || (!scopePreparation && !NaturalPromptMaterialHandoffInstructions.usesMaterialHandoff(version))
                 || !(payload instanceof ObjectNode root)) return;
         Set<String> sourceIds = input.taskSources().stream().map(NaturalTaskSource::id).collect(Collectors.toSet());
         annotateSnapshot(root.get("context"), "context", sourceIds);

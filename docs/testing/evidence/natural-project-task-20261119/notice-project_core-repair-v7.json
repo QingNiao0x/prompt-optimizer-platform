@@ -1,0 +1,7 @@
+{
+  "case" : "notice-project",
+  "version" : "core-repair-v7",
+  "success" : true,
+  "body" : "请结合我贴的这条通知，判断当前项目是否还需要修改签名配置或调用，并给出明确结论和依据。判断的对象是“当前项目是否需要因这条通知做改动”，不是改写通知文案本身；如果通知在表述上会影响执行（比如自动替换只覆盖 SendDemoCode、而且要到 11 月 30 日才生效），请在理由里点出。\n\n通知内容：8月31日停用旧签名“青禾”和“秋声”；11月30日起 SendDemoCode 的签名参数若仍为旧值，服务端会自动替换；可用签名为“晨钟”和“夜航”；已改过可忽略。\n\n核查时请以当前实现为准：查看 config/notify.properties 中 sender.label=${APP_SENDER_LABEL:青禾} 的默认值，以及 src/notify/DemoGateway.java 里 void send() { gateway.SendDemoCode(settings.senderLabel()); } 的取值链路，确认真实生效的签名来自哪里、是不是旧值。APP_SENDER_LABEL 的运行时实际值如果查不到，就说明这一点及其影响，不要臆断线上状态。docs/testing/evidence/legacy/demo.txt 只是历史演练样例（曾以“夜航”调用），不能当作当前已改过的证据。如果还能搜索到其他发送通道或签名配置项，也一并核对，因为它们不在自动替换范围内。\n\n结论要区分时间线：8月31日旧签名停用后立即不可用，11月30日起的自动替换只对 SendDemoCode 的旧值生效，两者之间旧签名仍会失败。请回答“需要修改/不需要修改”，说明依据（引用具体文件路径和符号）；需要修改时给出具体改法（改默认值或设置环境变量成“晨钟”/“夜航”中的哪一个由我定），并列出能验证改后生效的检查项。只做判断和建议，未经确认不要实际改动配置或代码。",
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

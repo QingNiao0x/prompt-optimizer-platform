@@ -1,0 +1,7 @@
+{
+  "case" : "notice-project",
+  "version" : "core-repair-v6",
+  "success" : true,
+  "body" : "请检查下面这条通知短信本身是否需要修改，并给出明确结论和依据，不要实际修改短信、配置或代码。\n\n短信原文：通知：8月31日停用两款旧签名“青禾”和“秋声”。11月30日起 SendDemoCode 的签名参数若仍为旧值，服务端会自动替换。可用签名为“晨钟”和“夜航”。如果已改过请忽略。\n\n请结合提供的项目片段核对通知内容与当前状态：config/notify.properties 中 sender.label=${APP_SENDER_LABEL:青禾}，即默认仍为旧签名“青禾”；src/notify/DemoGateway.java 调用 gateway.SendDemoCode(settings.senderLabel())，签名参数取自该配置；历史演练样例曾以“夜航”调用 SendDemoCode。重点检查停用旧签名的日期、自动替换的生效日期和“如果已改过请忽略”的条件是否清楚，尤其核对 8 月 31 日停用旧签名与 11 月 30 日才自动替换之间的时间差，是否会让接收方误以为可以等到自动替换而不必在停用前处理。\n\n最后先给出“短信是否需要修改”的明确结论：如需要，指出应改的具体文字或需补充/澄清的信息；如不需要，说明理由。未提供的配置、替换目标或发送结果不要编造。",
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

@@ -5,6 +5,7 @@ import type {
   ProjectIndexSummary,
   ProjectIndexPreparationProgress,
 } from './projectIndexer';
+import { isSourceCodePath } from './projectIndexer';
 import type { ProjectDirectorySource } from './projectDirectorySelection';
 import { referencedPathVariants } from './projectPathReferences';
 import {
@@ -183,6 +184,7 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
     projectId: string,
     searchTerms: string[],
     limit: number,
+    identifierTerms: readonly string[] = [],
   ): Promise<IndexedProjectChunk[]> {
     if (limit <= 0) return [];
     const unique = new Map<string, IndexedProjectChunk>();
@@ -193,17 +195,22 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
 
     // 均衡覆盖原始需求和末尾确认答案，避免前几个常见词耗尽候选名额。
     const distinctTerms = Array.from(new Set(searchTerms));
-    const terms = distinctTerms.length <= 64 ? distinctTerms
-      : [...distinctTerms.slice(0, 32), ...distinctTerms.slice(-32)];
+    const identifiers = new Set(identifierTerms.slice(0, 16));
+    const ordinaryTerms = distinctTerms.filter(term => !identifiers.has(term));
+    const ordinaryBudget = 64 - identifiers.size;
+    const terms = [...identifiers, ...(ordinaryTerms.length <= ordinaryBudget ? ordinaryTerms
+      : [...ordinaryTerms.slice(0, Math.ceil(ordinaryBudget / 2)), ...ordinaryTerms.slice(-Math.floor(ordinaryBudget / 2))])];
     const hits = new Map<string, number>();
+    const identifierHits = new Set<string>();
     const perTermLimit = Math.min(100, Math.max(8, Math.ceil(limit * 2 / Math.max(1, terms.length))));
     for (let start = 0; start < terms.length; start += 8) {
       const groups = await Promise.all(terms.slice(start, start + 8)
-        .map((term) => this.getChunksBySearchTerm(`${projectId}:${term}`, perTermLimit)));
-      for (const matches of groups) {
+        .map((term) => this.getChunksBySearchTerm(`${projectId}:${term}`, perTermLimit, identifiers.has(term))));
+      for (const [index, matches] of groups.entries()) {
         for (const chunk of matches) {
           unique.set(chunk.id, chunk);
           hits.set(chunk.id, (hits.get(chunk.id) ?? 0) + 1);
+          if (identifiers.has(terms[start + index] ?? '') && isSourceCodePath(chunk.path)) identifierHits.add(chunk.id);
         }
       }
     }
@@ -215,7 +222,8 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
       }
     }
     return Array.from(unique.values())
-      .sort((left, right) => (hits.get(right.id) ?? 0) - (hits.get(left.id) ?? 0)
+      .sort((left, right) => Number(identifierHits.has(right.id)) - Number(identifierHits.has(left.id))
+        || (hits.get(right.id) ?? 0) - (hits.get(left.id) ?? 0)
         || left.priority - right.priority || left.id.localeCompare(right.id))
       .slice(0, limit);
   }
@@ -376,14 +384,23 @@ export class IndexedDbProjectIndexRepository implements ProjectIndexRepository {
   private async getChunksBySearchTerm(
     searchTerm: string,
     limit: number,
+    identifierPrefix = false,
   ): Promise<IndexedProjectChunk[]> {
     const transaction = await this.createTransaction([CHUNK_STORE, SEARCH_STORE, SEARCH_KEY_STORE], 'readonly');
     const completion = transactionComplete(transaction);
     void completion.catch(() => undefined);
     // 独立库兼容旧前缀词和新版短词，合并后沿用原字符串顺序和候选限额。
     const terms = this.location?.projectId ? [searchTerm, searchTerm.slice(this.location.projectId.length + 1)] : [searchTerm];
-    const groups = await Promise.all(terms.map(term => lookupSearchChunkIds(transaction, term, limit)));
-    const ids = Array.from(new Set(groups.flat())).sort().slice(0, limit);
+    // SDK常在接口名后增加Request/WithOptions等后缀。仅对明确工程标识符查询前缀，
+    // 每个前缀最多读取4096个键；仍按原有限额读取正文，并优先保留源码路径。
+    // 扩展召回是有界候选，不能把未命中视为整个项目不存在该接口。
+    const compareIds = identifierPrefix ? (left: string, right: string): number =>
+      Number(isSourceCodePath(right.split('\u0000')[1] ?? '')) - Number(isSourceCodePath(left.split('\u0000')[1] ?? ''))
+      || left.localeCompare(right) : undefined;
+    const groups = await Promise.all(terms.map(term => lookupSearchChunkIds(transaction,
+      identifierPrefix ? IDBKeyRange.bound(term, `${term}\uffff`) : term, limit, compareIds,
+      identifierPrefix ? 4096 : undefined)));
+    const ids = Array.from(new Set(groups.flat())).sort(compareIds).slice(0, limit);
     const chunks = await Promise.all(ids.map((id) => requestResult<IndexedProjectChunk | undefined>(
       transaction.objectStore(CHUNK_STORE).get(id),
     )));
@@ -674,8 +691,8 @@ export class RoutedProjectIndexRepository implements ProjectIndexRepository {
   completeProject(summary: ProjectIndexSummary): Promise<void> { return this.repository(summary.id).completeProject(summary); }
   removeUnseenFiles(id: string, scanId: string): Promise<number> { return this.repository(id).removeUnseenFiles(id, scanId); }
   failProject(id: string, message: string): Promise<void> { return this.repository(id).failProject(id, message); }
-  findCandidateChunks(id: string, terms: string[], limit: number): Promise<IndexedProjectChunk[]> {
-    return this.repository(id).findCandidateChunks(id, terms, limit);
+  findCandidateChunks(id: string, terms: string[], limit: number, identifierTerms?: readonly string[]): Promise<IndexedProjectChunk[]> {
+    return this.repository(id).findCandidateChunks(id, terms, limit, identifierTerms);
   }
   findChunksByPaths(id: string, paths: string[], limit: number): Promise<IndexedProjectChunk[]> {
     return this.repository(id).findChunksByPaths(id, paths, limit);

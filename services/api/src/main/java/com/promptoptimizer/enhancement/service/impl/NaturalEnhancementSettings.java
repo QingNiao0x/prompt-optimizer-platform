@@ -4,6 +4,7 @@ import com.promptoptimizer.provider.domain.NaturalPromptCoreRepairInstructions;
 import com.promptoptimizer.provider.domain.NaturalPromptInstructions;
 import com.promptoptimizer.provider.domain.NaturalPromptInternalDesignInstructions;
 import com.promptoptimizer.provider.domain.NaturalPromptPlanContextInstructions;
+import com.promptoptimizer.provider.domain.NaturalPromptProjectTaskInstructions;
 import com.promptoptimizer.provider.domain.NaturalPromptSimplifiedInstructions;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -30,7 +31,8 @@ public class NaturalEnhancementSettings {
         /** 修复自然协议定位及明确限制的范围表达，复用v4来源与题答保护。 */ PROTOCOL_SCOPE_REPAIR,
         /** 正文指导与诊断减负候选，需同信息作品验证后采用。 */ BALANCED,
         /** 需求表达指导，按表达质量及受影响执行风险验证后采用。 */ EXPRESSION,
-        /** 独立采用跨阶段材料来源与固定首稿记录修复，正文和Plan逐字复用v5。 */ MATERIAL_HANDOFF_REPAIR
+        /** 独立采用跨阶段材料来源与固定首稿记录修复，正文和Plan逐字复用v5。 */ MATERIAL_HANDOFF_REPAIR,
+        /** 从委托和材料确定需核查的对象与执行条件，复用 v6 的来源传递与权限边界。 */ PROJECT_TASK
     }
 
     @NotNull
@@ -46,6 +48,7 @@ public class NaturalEnhancementSettings {
     public String strategyVersion() {
         return switch (profile) {
             case MATERIAL_HANDOFF_REPAIR -> com.promptoptimizer.provider.domain.NaturalPromptMaterialHandoffInstructions.VERSION;
+            case PROJECT_TASK -> NaturalPromptProjectTaskInstructions.VERSION;
             case EXPRESSION -> com.promptoptimizer.provider.domain.NaturalPromptExpressionInstructions.VERSION;
             case BALANCED -> com.promptoptimizer.provider.domain.NaturalPromptBalancedInstructions.VERSION;
             case STABLE -> NaturalPromptInstructions.CURRENT_VERSION;
