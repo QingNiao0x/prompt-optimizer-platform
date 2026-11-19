@@ -32,6 +32,7 @@ public final class TextPolishSkills {
      * 自动选择仅采用正文证据，中文界面、读者和要求不参与原文语言计数。
      */
     public static PreparedTextPolish prepare(Input input, String strategyVersion) {
+        if (TextPolishInstructions.PARAGRAPH_VERSION.equals(strategyVersion)) return prepareParagraph(input);
         if (!AUTO_VERSION.equals(strategyVersion)) {
             String instruction = TextPolishInstructions.system(input, strategyVersion);
             var resources = TextPolishInstructions.VERSION.equals(strategyVersion)
@@ -56,6 +57,55 @@ public final class TextPolishSkills {
         String reason = language == Language.UNKNOWN ? "INSUFFICIENT_OR_UNSUPPORTED_LANGUAGE" : "SOURCE_LANGUAGE_EVIDENCE";
         return new PreparedTextPolish(instruction, new Selection(SELECTOR_VERSION, language, "GENERAL", reason),
                 List.of(new Resource("common-v1", "common-v1", hash(common)), new Resource(id, id, hash(editing))));
+    }
+
+    /**
+     * 候选按正文语言和目标文体选一份示范。混合或未知语言使用通用指导，
+     * 避免单语示范改变原文语言分布。幅度只控制组织范围，完整显式要求优先。
+     */
+    private static PreparedTextPolish prepareParagraph(Input input) {
+        String version = TextPolishInstructions.PARAGRAPH_VERSION;
+        Language language = detectLanguage(input.sourceText());
+        String locale = switch (language) {
+            case ZH -> "zh";
+            case EN -> "en";
+            case MIXED, UNKNOWN -> null;
+        };
+        String style = switch (input.style()) {
+            case FORMAL -> "FORMAL. Lead with the relevant finding, action or condition when the source contains one. Use precise written language.";
+            case NATURAL -> "NATURAL. Follow the author's perspective and existing observations. Let sentence length and transitions follow the meaning.";
+            case CONVERSATIONAL -> "CONVERSATIONAL. Explain directly in accessible language. Keep necessary terms and the author's relationship to the reader.";
+        };
+        String depth = switch (input.depth()) {
+            case LIGHT -> "LIGHT. Keep paragraph order and format. Within each paragraph, rewrite whole sentences, split long sentences or merge genuine repetition.";
+            case RESTRUCTURE -> "RESTRUCTURE. Split or combine paragraphs and reorder independent information where helpful. Preserve chronology, causal direction and the action governed by each condition.";
+        };
+        String core = BODIES.get(version);
+        List<Resource> resources = new ArrayList<>();
+        resources.add(new Resource(version, version, hash(core)));
+        StringBuilder instruction = new StringBuilder(core);
+        if (locale != null) {
+            String id = paragraphExampleId(locale, input.style());
+            String example = BODIES.get(id);
+            instruction.append("\n").append(example);
+            resources.add(new Resource(id, version, hash(example)));
+        } else if (language == Language.MIXED) {
+            instruction.append("\nMixed-language source: preserve the language of each passage and meaningful language switches by default.\n");
+        }
+        instruction.append("\nTarget style: ").append(style).append("\nEditing depth: ").append(depth)
+                .append("\nExplicit requirements in the user JSON override style, depth and language defaults within the meaning and quotation safeguards.\n");
+        String reason = switch (language) {
+            case ZH, EN -> "SOURCE_LANGUAGE_EVIDENCE";
+            case MIXED -> "MIXED_LANGUAGE_GENERAL_GUIDANCE";
+            case UNKNOWN -> "INSUFFICIENT_OR_UNSUPPORTED_LANGUAGE";
+        };
+        return new PreparedTextPolish(instruction.toString(),
+                new Selection(SELECTOR_VERSION, language, "PARAGRAPH_EDITING", reason), resources);
+    }
+
+    /** 资源编号只由固定语言和文体组合生成，用户文本不参与路径拼接。 */
+    private static String paragraphExampleId(String locale, Style style) {
+        return TextPolishInstructions.PARAGRAPH_VERSION + "-" + locale + "-" + style.name().toLowerCase(Locale.ROOT);
     }
 
     /**
@@ -94,6 +144,10 @@ public final class TextPolishSkills {
         Map<String, String> bodies = new HashMap<>();
         Set<String> ids = new HashSet<>(IDS.values());
         ids.add("common-v1");
+        ids.add(TextPolishInstructions.PARAGRAPH_VERSION);
+        for (String locale : List.of("zh", "en")) {
+            for (Style style : Style.values()) ids.add(paragraphExampleId(locale, style));
+        }
         for (String id : ids) bodies.put(id, load(id));
         return Map.copyOf(bodies);
     }

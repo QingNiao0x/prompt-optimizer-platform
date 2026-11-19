@@ -12,6 +12,8 @@ import org.springframework.mock.http.client.MockClientHttpRequest;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.*;
 import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.*;
@@ -48,19 +50,26 @@ class TextPolishSkillsTest {
 
     static Stream<Arguments> requestCases() {
         List<Arguments> cases = new ArrayList<>();
-        for (String text : List.of("我们计划整理资料目录，让同事更方便地找到资料。",
-                "We plan to add a link so the readers can find our guide.",
-                "我们计划整理资料目录，让同事更方便地找到资料。\nWe plan to add a link so the readers can find our guide.", "Hello!")) {
-            for (Style style : Style.values()) for (Depth depth : Depth.values()) {
-                cases.add(Arguments.of(text, style, depth, ""));
-                cases.add(Arguments.of(text, style, depth, "翻译成英文，保留标题和三段结构，给非专业读者看。"));
+        var sources = Map.of(
+                Language.ZH, "我们计划整理资料目录，让同事更方便地找到资料。",
+                Language.EN, "We plan to add a link so the readers can find our guide.",
+                Language.MIXED, "我们计划整理资料目录，让同事更方便地找到资料。\nWe plan to add a link so the readers can find our guide.",
+                Language.UNKNOWN, "Hello!");
+        for (String strategy : List.of(TextPolishSkills.AUTO_VERSION, TextPolishInstructions.PARAGRAPH_VERSION)) {
+            for (var source : sources.entrySet()) {
+                for (Style style : Style.values()) for (Depth depth : Depth.values()) {
+                    cases.add(Arguments.of(strategy, source.getKey(), source.getValue(), style, depth, ""));
+                    cases.add(Arguments.of(strategy, source.getKey(), source.getValue(), style, depth,
+                            "翻译成英文，保留标题和三段结构，给非专业读者看。"));
+                }
             }
         }
         return cases.stream();
     }
 
     @ParameterizedTest @MethodSource("requestCases")
-    void sendsFrozenGuidanceAndCompleteInputThroughProvider(String text, Style style, Depth depth, String requirements) throws Exception {
+    void sendsFrozenGuidanceAndCompleteInputThroughProvider(String strategy, Language language, String text,
+                                                            Style style, Depth depth, String requirements) throws Exception {
         String endpoint = "https://fixture.invalid/chat/completions";
         var json = new ObjectMapper();
         var properties = new OpenAiCompatibleProperties();
@@ -68,10 +77,10 @@ class TextPolishSkillsTest {
         var builder = RestClient.builder();
         var server = MockRestServiceServer.bindTo(builder).build();
         var provider = new OpenAiTextPolishProvider(builder.build(), json, properties, new TextPolishFidelity());
-        provider.configureStrategy(TextPolishSkills.AUTO_VERSION);
+        provider.configureStrategy(strategy);
         var model = new ModelEntry(new UUID(0, 1), "fixture", properties.getConfiguredRoutes().getFirst().key(), "fixture", "测试", true, true, 0);
         var input = new Input(text, style, depth, "普通读者", requirements, List.of(), "fixture");
-        var prepared = TextPolishSkills.prepare(input, TextPolishSkills.AUTO_VERSION);
+        var prepared = TextPolishSkills.prepare(input, strategy);
         server.expect(requestTo(endpoint)).andExpect(request -> {
             var body = json.readTree(((MockClientHttpRequest) request).getBodyAsString());
             assertThat(body.path("messages").size()).isEqualTo(2);
@@ -80,10 +89,29 @@ class TextPolishSkillsTest {
         }).andRespond(withSuccess(json.writeValueAsString(Map.of("choices", List.of(Map.of("finish_reason", "stop", "message",
                 Map.of("content", json.writeValueAsString(Map.of("polishedText", text))))))), MediaType.APPLICATION_JSON));
         var generated = provider.generate(input, model);
-        assertThat(generated.executionMetadata().strategyVersion()).isEqualTo(TextPolishSkills.AUTO_VERSION);
-        assertThat(generated.executionMetadata().skillVersion()).isEqualTo(prepared.resources().getLast().version());
-        assertThat(generated.executionMetadata().resourceHash()).matches("[a-f0-9]{64}");
+        var metadata = generated.executionMetadata();
+        assertThat(metadata.strategyVersion()).isEqualTo(strategy);
+        assertThat(metadata.skillVersion()).isEqualTo(prepared.resources().getLast().version());
+        assertThat(metadata.resourceHash()).isEqualTo(HexFormat.of().formatHex(
+                MessageDigest.getInstance("SHA-256").digest(prepared.instruction().getBytes(StandardCharsets.UTF_8))));
+        assertThat(metadata.selection()).isEqualTo(prepared.selection());
+        assertThat(metadata.resources()).isEqualTo(prepared.resources());
         assertThat(prepared.instruction()).contains("Target style:", "Editing depth:", "Explicit requirements", "polishedText");
+        if (TextPolishInstructions.PARAGRAPH_VERSION.equals(strategy)) {
+            assertThat(metadata.selection().language()).isEqualTo(language);
+            assertThat(metadata.selection().profile()).isEqualTo("PARAGRAPH_EDITING");
+            assertThat(prepared.instruction()).contains("Target style: " + style.name(), "Editing depth: " + depth.name());
+            if (language == Language.ZH || language == Language.EN) {
+                String exampleId = strategy + "-" + language.name().toLowerCase(Locale.ROOT)
+                        + "-" + style.name().toLowerCase(Locale.ROOT);
+                assertThat(metadata.resources()).extracting(Resource::id).containsExactly(strategy, exampleId);
+                assertThat(prepared.instruction()).contains(language == Language.ZH ? "越界写法" : "Overreach:");
+            } else {
+                assertThat(metadata.resources()).extracting(Resource::id).containsExactly(strategy);
+                assertThat(prepared.instruction()).doesNotContain("越界写法", "Overreach:");
+                if (language == Language.MIXED) assertThat(prepared.instruction()).contains("Mixed-language source:");
+            }
+        }
         server.verify();
     }
 
