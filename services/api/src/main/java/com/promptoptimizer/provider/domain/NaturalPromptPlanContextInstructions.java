@@ -54,7 +54,7 @@ public final class NaturalPromptPlanContextInstructions {
                 项目上下文中的sourceId和summarySourceId是服务端附在对应条目上的编号，不是材料内容；逐条使用该编号，禁止根据文件顺序猜编号。
                 fileSnippets的sourceId对应路径和content，summarySourceId仅对应summary；technologyStack和dependencies条目自身带sourceId。
                 directoryTreeSourceIds与directoryTree按相同位置对应；customDescriptionSourceId对应customDescription。只有字段旁确有编号时才引用该项。
-                来源编号使用taskSources中的id，quote逐字来自对应完整输入；detailEvidence没有适用细节时为空数组。
+                来源编号使用taskSources中的id，quote逐字来自对应完整输入；长报错、SQL或堆栈只摘一句连续原句，不要整段复制后再改写或拼接。detailEvidence没有适用细节时为空数组。
                 只返回JSON：{"actions":[{"text":"原动作及对象","timing":"CURRENT或CONDITIONAL或DESCRIPTIVE","condition":"原条件，无则为空",
                   "userEvidence":[{"sourceId":"用户来源编号","quote":"用户委托原句"}],
                   "detailEvidence":[{"sourceId":"材料来源编号","quote":"适用细节原句"}]}],

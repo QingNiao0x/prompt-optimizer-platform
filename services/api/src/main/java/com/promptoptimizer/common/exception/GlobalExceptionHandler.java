@@ -246,12 +246,20 @@ public class GlobalExceptionHandler {
             return buildResponse(request, HttpStatus.BAD_REQUEST, "MODEL_CAPACITY_EXCEEDED",
                     exception.getMessage(), false, Map.of("upstreamCalled", false, "countMethod", "UTF8_BYTES_ESTIMATE_V1"));
         }
+        if (exception instanceof com.promptoptimizer.provider.domain.NaturalTaskScopeSources.InvalidEvidence evidence) {
+            String field = evidence.fields().isEmpty() ? "quote" : evidence.fields().getFirst();
+            return buildResponse(request, HttpStatus.BAD_GATEWAY, "RESULT_INVALID",
+                    "增强结果里的引用和你的原文不一致，这次没有完成。请再试一次。",
+                    false, Map.of("validationReason", "SOURCE_EVIDENCE_INVALID", "validationField", field));
+        }
         ProviderErrorMapping mapping = mapProviderError(exception.getFailureType());
         String message = mapping.message();
         Map<String, Object> details = Map.of();
         if (exception instanceof ProviderResponseValidationException invalid) {
             if (invalid.getReason() == ProviderResponseValidationException.Reason.ASSESSMENT_DECISION_CONFLICT) {
                 message = "模型响应中的补全判断与待确认事项不一致，本次增强未完成。";
+            } else if (invalid.getReason() == ProviderResponseValidationException.Reason.SOURCE_EVIDENCE_INVALID) {
+                message = "增强结果里的引用和你的原文不一致，这次没有完成。请再试一次。";
             }
             // 仅公开代码定义的枚举、固定字段路径与实际调用次数，便于定位 502；绝不回显失败模型正文或 cause。
             var diagnostics = new LinkedHashMap<String, Object>();

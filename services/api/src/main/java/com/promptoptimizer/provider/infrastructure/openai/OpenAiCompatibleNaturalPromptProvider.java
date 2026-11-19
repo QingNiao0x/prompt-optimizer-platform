@@ -1107,10 +1107,19 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
             ModelCallLogger.captureValidationFailure(
                     com.promptoptimizer.provider.domain.ProviderResponseValidationException.Reason.USER_AUTHORITY_REFERENCE_INVALID,
                     invalidSource.field());
-        } else if (failure instanceof NaturalTaskScopeSources.InvalidEvidence invalidEvidence) {
+        } else if (failure instanceof NaturalTaskScopeSources.InvalidEvidence invalidEvidence && !invalidEvidence.fields().isEmpty()) {
             ModelCallLogger.captureValidationFailure(
                     com.promptoptimizer.provider.domain.ProviderResponseValidationException.Reason.SOURCE_EVIDENCE_INVALID,
                     invalidEvidence.fields().getFirst());
+        } else if (failure.getFailureType() == ProviderFailureType.INVALID_RESPONSE) {
+            // 没有字段诊断的协议失败也留下固定原因，避免审计里只看到笼统的 INVALID_RESPONSE。
+            var reason = switch (failure.getMessage() == null ? "" : failure.getMessage()) {
+                case "自然链路响应JSON无效" -> com.promptoptimizer.provider.domain.ProviderResponseValidationException.Reason.RESPONSE_JSON_INVALID;
+                case "自然链路缺少必要字段", "自然链路缺少任务理解记录", "任务理解记录协议无效" ->
+                        com.promptoptimizer.provider.domain.ProviderResponseValidationException.Reason.NATURAL_FIELD_INVALID;
+                default -> null;
+            };
+            if (reason != null) ModelCallLogger.captureValidationFailure(reason, "response");
         }
         ModelCallLogger.failed(operation, model.route().key(), model.publicModelId(), "PLATFORM_CATALOG",
                 failure.getFailureType().name(), failure.isRetryable(), status, retry, attempt, 1, elapsed(started), null);
