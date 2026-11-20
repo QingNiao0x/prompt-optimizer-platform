@@ -1,0 +1,239 @@
+{
+  "maxActualCalls": 24,
+  "phaseCaps": {
+    "pilot": 24
+  },
+  "sourceSha256": {
+    "docs/testing/evidence/text-polish-zh-light-fidelity-2026-11-21/holdout/samples.json": "e59690d3b6823ae30b7249b61edbc25e9ecf85668f03523ca6dec67adbd886e4",
+    "docs/testing/evidence/text-polish-zh-light-fidelity-2026-11-21/holdout/metadata.json": "c3a43645f7cd798101b36fcc931c462a830704bd900e478753fb29a2dba9f61e",
+    "scripts/evaluation/text-polish-thinking/ThinkingComparison.java": "87425d1b43a9159ae7aeea98e34d37697158ef2c3bdcb55541900feee1e03ddc",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/OpenAiTextPolishProvider.java": "4e27d2c29944ee13311cd96d6332ab955df63c96c9dcfe5738eb62a4e970d035",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishInstructions.java": "99d24edc6b67060ad331c317db4f2baf0d857ae6280f24a69b98c5b898237bad",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishSkills.java": "0e133acb8165e418a166a7d76bfb6300722eed243b50ccc97f2a9fb846417401",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishChineseClauseReview.java": "4ed424e841d75ec86486e8e639fc4cc0ad2bf70af5513f8a7b5a8b97655f5d7f",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishFidelity.java": "6d5f27b6568ff0c5b19c8d7925b66f4bd513f0447c60cff90a6109e667dbe760",
+    "services/api/src/main/resources/textpolish/skills/text-polish-style-contract-v1-zh/SKILL.md": "24afb680ba282458a1bc2e222370854f429fbcc6747e82070d39ea663f4574be",
+    "services/api/src/main/resources/textpolish/skills/text-polish-v3/SKILL.md": "9f283575f5a6fc8b9ad06f9546955ef9026025759514a43923af86769df10f08",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-light-edit-v1/SKILL.md": "3ba1b0a4ef10e58bbfa3116cfdf2400ab76729ea92955c5a762ba82b6436c1fc",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-v1/SKILL.md": "3edbe89a14bd172969f2da3e8268a6f654443644e523089522d69317a2e91d6a",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-v1-service/SKILL.md": "d34f4767951b2f0bcb29c4eca14a5228177328958649461af91d93be1ea604c2"
+  },
+  "jobs": [
+    {
+      "id": "supplier-preview-baseline",
+      "sample": "supplier-preview",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "装配演示备货核对\n\n就下周装配演示之前还需完成的部分准备工作，现希望请各供应商对包装清单的最新情况提供必要协助，以便现场备货时可以按最新清单准备。请各供应商最迟于本周四16:00直接回复本邮件，附上最新包装清单。清单未改动的供应商只需回复“清单无变更”。\n\n这次核对的材料只用于装配演示的现场备货，不构成正式采购订单。报价不在本次核对范围内，请不要随清单补报。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留标题和两个正文段，让供应商尽早看到要做什么、怎么提交以及截止时间。",
+        "lockedTexts": [
+          "“清单无变更”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "supplier-preview-candidate",
+      "sample": "supplier-preview",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-light-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "装配演示备货核对\n\n就下周装配演示之前还需完成的部分准备工作，现希望请各供应商对包装清单的最新情况提供必要协助，以便现场备货时可以按最新清单准备。请各供应商最迟于本周四16:00直接回复本邮件，附上最新包装清单。清单未改动的供应商只需回复“清单无变更”。\n\n这次核对的材料只用于装配演示的现场备货，不构成正式采购订单。报价不在本次核对范围内，请不要随清单补报。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留标题和两个正文段，让供应商尽早看到要做什么、怎么提交以及截止时间。",
+        "lockedTexts": [
+          "“清单无变更”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "reading-room-notice-candidate",
+      "sample": "reading-room-notice",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-light-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "阅览室临时安排\n\n为了做好馆内空间使用管理，并让到馆读者能在出发前对临时安排有所了解，将有关情况作以下说明。本周六14:00至17:00，二楼阅览室因更换照明暂停开放，原定16:00的新书分享会改在一楼活动室，开始时间不变。\n\n已经报名的读者可以直接到一楼签到，无须重新报名。未报名的读者如果现场还有空位，可向工作人员申请旁听。当天还书箱照常使用。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留标题和两个正文段，面向到馆读者，方便快速判断到哪里以及是否还能参加。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "reading-room-notice-baseline",
+      "sample": "reading-room-notice",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "阅览室临时安排\n\n为了做好馆内空间使用管理，并让到馆读者能在出发前对临时安排有所了解，将有关情况作以下说明。本周六14:00至17:00，二楼阅览室因更换照明暂停开放，原定16:00的新书分享会改在一楼活动室，开始时间不变。\n\n已经报名的读者可以直接到一楼签到，无须重新报名。未报名的读者如果现场还有空位，可向工作人员申请旁听。当天还书箱照常使用。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留标题和两个正文段，面向到馆读者，方便快速判断到哪里以及是否还能参加。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "sweater-story-baseline",
+      "sample": "sweater-story",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "纸箱的一角\n\n在我关于搬家的诸多记忆里，有一个片段直到现在仍时不时被我想起，并且让我对此有很深的印象。入冬前，我和爷爷把两只纸箱搬到门口。装衣服的那只开了个角，露出一截浅蓝的毛衣袖。爷爷把袖口一点点塞回去。我伸手去找胶带，他对我说：“别把领口压皱了。”\n\n他以前只催我别落东西。这回我没接话。直到车开出巷子，我才想起来，那是他替我补过领口的毛衣。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留标题、两段和第一人称，不另加感想，保留引号内爷爷说的话。",
+        "lockedTexts": [
+          "“别把领口压皱了。”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "sweater-story-candidate",
+      "sample": "sweater-story",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-light-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "纸箱的一角\n\n在我关于搬家的诸多记忆里，有一个片段直到现在仍时不时被我想起，并且让我对此有很深的印象。入冬前，我和爷爷把两只纸箱搬到门口。装衣服的那只开了个角，露出一截浅蓝的毛衣袖。爷爷把袖口一点点塞回去。我伸手去找胶带，他对我说：“别把领口压皱了。”\n\n他以前只催我别落东西。这回我没接话。直到车开出巷子，我才想起来，那是他替我补过领口的毛衣。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留标题、两段和第一人称，不另加感想，保留引号内爷爷说的话。",
+        "lockedTexts": [
+          "“别把领口压皱了。”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "archive-receipt-candidate",
+      "sample": "archive-receipt",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-light-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "借阅补录和夜间归还\n\n为维持借阅登记的完整性并避免重复录入，借阅记录按下列方式补录。对于当日借出且原登记单仍可核对的资料，档案员可以当天补录，但应先核对借阅人与资料编号；原登记单无法核对的，档案员不得补录，须将情况记入值班记录，待负责人确认后再处理。\n\n夜间归还资料时，只有封签完整的资料才可以直接放入暂存柜。封签破损时由值班人员登记并通知档案员。本说明没有规定通知的具体时点。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留标题及两段，便于按情况查找，保留角色、许可和义务的区别。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "archive-receipt-baseline",
+      "sample": "archive-receipt",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "借阅补录和夜间归还\n\n为维持借阅登记的完整性并避免重复录入，借阅记录按下列方式补录。对于当日借出且原登记单仍可核对的资料，档案员可以当天补录，但应先核对借阅人与资料编号；原登记单无法核对的，档案员不得补录，须将情况记入值班记录，待负责人确认后再处理。\n\n夜间归还资料时，只有封签完整的资料才可以直接放入暂存柜。封签破损时由值班人员登记并通知档案员。本说明没有规定通知的具体时点。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留标题及两段，便于按情况查找，保留角色、许可和义务的区别。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "riverside-bus-baseline",
+      "sample": "riverside-bus",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "昨天下班早，我没坐地铁，沿河走到公交站。桥底有个人在练萨克斯，吹到第三遍才把那一小段吹顺。车到站时，我还想再听一遍，干脆等了下一班。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留随手记的口吻和一段结构。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "riverside-bus-candidate",
+      "sample": "riverside-bus",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-light-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "昨天下班早，我没坐地铁，沿河走到公交站。桥底有个人在练萨克斯，吹到第三遍才把那一小段吹顺。车到站时，我还想再听一遍，干脆等了下一班。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留随手记的口吻和一段结构。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "instrument-label-candidate",
+      "sample": "instrument-label",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-light-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "测量室借用提示\n\n只有完成入室培训并登记的人员才能借用测量尺。归还时，如果发现刻度磨损，请联系测量室管理员。管理员会登记磨损情况。\n\n测量台的标牌写着“未经核对不得移出测量室”。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留标题、两段和标牌原话。文字已经清楚时可以保留。",
+        "lockedTexts": [
+          "“未经核对不得移出测量室”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "instrument-label-baseline",
+      "sample": "instrument-label",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "测量室借用提示\n\n只有完成入室培训并登记的人员才能借用测量尺。归还时，如果发现刻度磨损，请联系测量室管理员。管理员会登记磨损情况。\n\n测量台的标牌写着“未经核对不得移出测量室”。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留标题、两段和标牌原话。文字已经清楚时可以保留。",
+        "lockedTexts": [
+          "“未经核对不得移出测量室”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    }
+  ]
+}

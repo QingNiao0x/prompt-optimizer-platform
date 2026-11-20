@@ -4,8 +4,8 @@ const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 
 const [, , dir, mode = 'pair', flag] = process.argv;
-assert.ok(dir && ['pair', 'matrix'].includes(mode) && (!flag || flag === '--validate-only'),
-  'Usage: node verify.cjs <evidence-directory> [pair|matrix] [--validate-only]');
+assert.ok(dir && ['pair', 'matrix', 'holdout'].includes(mode) && (!flag || flag === '--validate-only'),
+  'Usage: node verify.cjs <evidence-directory> [pair|matrix|holdout] [--validate-only]');
 const read=f=>JSON.parse(fs.readFileSync(dir+'/'+f+'.json','utf8'));
 const sha=x=>crypto.createHash('sha256').update(x).digest('hex');
 const {samples,comparison}=read('samples'),{jobs}=read('protocol'),ledger=read('ledger');
@@ -39,6 +39,22 @@ for(const sample of samples){
    assert.ok(c.systemInstruction.startsWith(b.systemInstruction+'\n'));
    assert.deepEqual(c.executionMetadata.resources.slice(0,-1),b.executionMetadata.resources);
    groups={pair:['baseline','candidate']};
+ } else if (mode === 'holdout') {
+   const {baseline, candidate} = out;
+   for (const result of [baseline, candidate]) {
+    assert.deepEqual(result.job.input, sample.input);
+    assert.equal(result.model.modelId, comparison.modelId);
+    assert.ok(Array.isArray(result.checks));
+    for (const call of result.observations) {
+     assert.equal(call.mock, false);
+     assert.equal(call.providerRoute, comparison.routeKey);
+     assert.equal(call.model, comparison.modelId);
+    }
+   }
+   assert.equal(baseline.executionMetadata.strategyVersion, comparison.baseline);
+   assert.equal(candidate.executionMetadata.strategyVersion, comparison.candidate);
+   assert.notEqual(candidate.executionMetadata.resourceHash, baseline.executionMetadata.resourceHash);
+   groups = {pair: ['baseline', 'candidate']};
  } else {
    const b=out.formal, n=out.natural, c=out.conversational, w=out.restructure;
    for(const r of [n,c,w])assert.equal(r.executionMetadata.strategyVersion,b.executionMetadata.strategyVersion);

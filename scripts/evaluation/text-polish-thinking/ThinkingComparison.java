@@ -13,7 +13,7 @@ import java.nio.file.*;
 import java.security.MessageDigest;
 import java.util.*;
 
-/** 在固定模型与参数下比较同一v3指导下的两种思考设置，复用正式Provider并记录真实尝试。 */
+/** 按冻结协议对照策略或思考设置，复用正式Provider并记录真实尝试。 */
 public final class ThinkingComparison {
     /** 公开可核对参数，排除模型密钥与端点。 */
     private static Map<String, Object> describe(ModelEntry model) {
@@ -84,6 +84,7 @@ public final class ThinkingComparison {
             var frozen = json.readTree(root.resolve("metadata.json").toFile());
             if (!frozen.equals(json.valueToTree(metadata))) throw new IllegalStateException("Model configuration drift");
             var provider = context.getBean(OpenAiTextPolishProvider.class);
+            var fidelity = context.getBean(TextPolishFidelity.class);
 
             var ledger = (ObjectNode) json.readTree(root.resolve("ledger.json").toFile());
             if (ledger.has("activeJob")) throw new IllegalStateException("Unsettled reservation");
@@ -106,7 +107,7 @@ public final class ThinkingComparison {
                 for (var entry : ledger.path("entries")) if (entry.path("phase").asText().equals(phase)) phaseUsed += entry.path("calls").asInt();
                 if (phaseUsed + 2 > protocol.path("phaseCaps").path(phase).asInt()) throw new IllegalStateException("Phase budget exhausted");
                 Input input = json.treeToValue(job.path("input"), Input.class);
-                new TextPolishFidelity().validateInput(input);
+                fidelity.validateInput(input);
                 ModelEntry selected = models.require(input.modelId());
                 ledger.put("reserved", 2).put("activeJob", id);
                 save(json, root.resolve("ledger.json"), ledger);
@@ -118,8 +119,10 @@ public final class ThinkingComparison {
                     var prepared = TextPolishSkills.prepare(input, job.path("strategy").asText());
                     result.put("systemInstruction", prepared.instruction());
                     var generation = provider.generate(input, selected);
+                    var checks = fidelity.checkGenerated(input, generation);
                     result.put("polishedText", generation.text());
                     result.put("executionMetadata", generation.executionMetadata());
+                    result.put("checks", checks);
                     result.put("status", "COMPLETED");
                 } catch (RuntimeException failure) {
                     result.put("failureClass", failure.getClass().getSimpleName());
