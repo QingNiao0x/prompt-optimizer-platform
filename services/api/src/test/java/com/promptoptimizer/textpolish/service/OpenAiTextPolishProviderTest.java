@@ -57,6 +57,31 @@ class OpenAiTextPolishProviderTest {
         assertThat(calls).extracting(ModelCallObservation::willRetry).containsExactly(true, false);
         assertThat(calls.get(0).usage()).isNull(); assertThat(calls.get(1).usage().totalTokens()).isEqualTo(15);
     }
+    @Test void scopedParagraphCandidateFreezesIndexAndReturnsWholeArticle() throws Exception {
+        provider.configureStrategy(TextPolishInstructions.PARAGRAPH_PATCH_VERSION);
+        var input = new Input("校对安排\r\n\r\n现就以下事项作说明，请同事周三核对附件。\r\n\r\n保护原句。",
+                Style.FORMAL, Depth.LIGHT, "校对同事", "保留标题、段落和保护原句。", List.of("保护原句。"), "fixture");
+        List<com.fasterxml.jackson.databind.JsonNode> submitted = new ArrayList<>();
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            var user = json.readTree(body.path("messages").get(1).path("content").asText());
+            submitted.add(user);
+            assertThat(user.path("sourceText").asText()).isEqualTo(input.sourceText());
+            assertThat(user.path("requirements").asText()).isEqualTo(input.requirements());
+            assertThat(user.path("paragraphs").size()).isEqualTo(3);
+            assertThat(user.path("paragraphs").get(1).path("id").asText()).isEqualTo("P2");
+            provider.configureStrategy(TextPolishInstructions.VERSION);
+        }).andRespond(withSuccess(envelope("{\"edits\":[{\"id\":\"P9\",\"text\":\"越界\"}]}", "stop"), MediaType.APPLICATION_JSON));
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            assertThat(json.readTree(body.path("messages").get(1).path("content").asText())).isEqualTo(submitted.getFirst());
+        }).andRespond(withSuccess(envelope("{\"edits\":[{\"id\":\"P2\",\"text\":\"请同事周三核对附件。\"}]}", "stop"), MediaType.APPLICATION_JSON));
+        var result = provider.generate(input, model);
+        assertThat(result.text()).isEqualTo("校对安排\r\n\r\n请同事周三核对附件。\r\n\r\n保护原句。");
+        assertThat(result.executionMetadata().strategyVersion()).isEqualTo(TextPolishInstructions.PARAGRAPH_PATCH_VERSION);
+        assertThat(result.executionMetadata().attemptCount()).isEqualTo(2);
+        server.verify();
+    }
     @org.junit.jupiter.params.ParameterizedTest
     @org.junit.jupiter.params.provider.ValueSource(strings = {
             TextPolishInstructions.VERSION, TextPolishSkills.AUTO_VERSION, TextPolishInstructions.PARAGRAPH_VERSION,

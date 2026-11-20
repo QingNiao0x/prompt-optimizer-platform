@@ -30,34 +30,26 @@ public final class SemanticCalibration {
         var root = Path.of(args[1]);
         var json = new ObjectMapper().findAndRegisterModules();
         var review = new TextPolishSemanticReview(new TextPolishFidelity(), json);
-        if (args[0].equals("freeze")) {
+        if (args[0].equals("freeze") || args[0].equals("freeze-drafts")) {
             Files.createDirectories(root);
             if (Files.exists(root.resolve("cases.json")) || Files.exists(root.resolve("started")))
                 throw new IllegalStateException("Calibration batch already exists");
-            var cases = new ArrayList<CalibrationCase>();
-            try (var arguments = TextPolishSemanticReviewTest.calibrationCases()) {
-                arguments.forEach(row -> {
-                    Object[] values = row.get();
-                    cases.add(new CalibrationCase("case-%02d".formatted(cases.size() + 1), (String) values[0],
-                            review.prepare(new Input((String) values[1], null, null, "", "", List.of(), MODEL),
-                                    (String) values[2]), (Outcome) values[4], values[3]));
-                });
-            }
-            if (cases.size() != 10) throw new IllegalStateException("Calibration case count changed");
+            var cases = args[0].equals("freeze") ? calibration(review) : drafts(json, review, Path.of(args[2]));
             var protocol = root.resolve("cases.json");
             save(json, protocol, new Batch(hash(TextPolishSemanticReview.INSTRUCTIONS), List.copyOf(cases)));
             Files.writeString(root.resolve("cases.sha256"), hash(Files.readString(protocol)) + "\n", StandardOpenOption.CREATE_NEW);
             return;
         }
-        if (!args[0].equals("review")) throw new IllegalArgumentException("Use freeze or review");
+        if (!args[0].equals("review")) throw new IllegalArgumentException("Use freeze, freeze-drafts or review");
         var raw = Files.readString(root.resolve("cases.json"));
         if (!hash(raw).equals(Files.readString(root.resolve("cases.sha256")).strip()))
             throw new IllegalStateException("Calibration cases drift");
         var batch = json.readValue(raw, Batch.class);
-        if (batch.cases().size() != 10 || !hash(TextPolishSemanticReview.INSTRUCTIONS).equals(batch.instructionHash()))
+        int count = batch.cases().size();
+        if ((count != 8 && count != 10) || !hash(TextPolishSemanticReview.INSTRUCTIONS).equals(batch.instructionHash()))
             throw new IllegalStateException("Calibration protocol drift");
         var authorization = json.readTree(root.resolve("authorization.json").toFile());
-        if (!"APPROVED".equals(authorization.path("status").asText()) || authorization.path("maxCalls").asInt() != 10)
+        if (!"APPROVED".equals(authorization.path("status").asText()) || authorization.path("maxCalls").asInt() != count)
             throw new IllegalStateException("Explicit batch authorization required");
         if (Files.exists(root.resolve("started"))) throw new IllegalStateException("Calibration batch already started");
         try (var context = new SpringApplication(PromptOptimizerApplication.class).run("--server.port=0",
@@ -80,7 +72,7 @@ public final class SemanticCalibration {
                     || !properties.isJsonResponseFormatEnabled() || properties.getTemperature() != 0.2 || properties.getMaxTokens() < 8000)
                 throw new IllegalStateException("Frozen model or parameters differ");
             var client = context.getBean("openAiCompatibleRestClient", RestClient.class);
-            Files.writeString(root.resolve("started"), "10\n", StandardOpenOption.CREATE_NEW);
+            Files.writeString(root.resolve("started"), count + "\n", StandardOpenOption.CREATE_NEW);
             var selected = new ArrayList<Map<String, Object>>();
             for (var item : batch.cases()) {
                 // 每份预扣落盘后才发起单次供应商调用；运行中断不得无记录地重放。
@@ -107,6 +99,7 @@ public final class SemanticCalibration {
                     var content = "stop".equals(choice.path("finish_reason").asText()) && !choice.path("message").hasNonNull("refusal")
                             ? choice.path("message").path("content").textValue() : null;
                     if (content != null) new TextPolishFidelity().safe(content);
+                    result.put("reviewResponse", content);
                     result.put("review", review.assess(item.request(), content));
                     var usage = envelope.path("usage");
                     ModelCallLogger.completed("text.polish", route.key(), model.publicId(), "PLATFORM_CATALOG",
@@ -124,6 +117,41 @@ public final class SemanticCalibration {
                     "routeKey", model.routeKey(), "model", model.upstreamModel(), "thinking", "disabled", "temperature", 0.2,
                     "maxTokens", 8000, "stream", false, "responseFormat", "json_object"));
         }
+    }
+
+    /** 提取既有离线校准夹具，发送时只投影 request。 */
+    private static List<CalibrationCase> calibration(TextPolishSemanticReview review) {
+        var cases = new ArrayList<CalibrationCase>();
+        try (var arguments = TextPolishSemanticReviewTest.calibrationCases()) {
+            arguments.forEach(row -> {
+                Object[] values = row.get();
+                cases.add(new CalibrationCase("case-%02d".formatted(cases.size() + 1), (String) values[0],
+                        review.prepare(new Input((String) values[1], null, null, "", "", List.of(), MODEL),
+                                (String) values[2]), (Outcome) values[4], values[3]));
+            });
+        }
+        if (cases.size() != 10) throw new IllegalStateException("Calibration case count changed");
+        return List.copyOf(cases);
+    }
+
+    /** 从已完成候选归档读取原始成稿，冻结同一成稿的影子核验输入。 */
+    private static List<CalibrationCase> drafts(ObjectMapper json, TextPolishSemanticReview review, Path evidence) throws Exception {
+        var corpus = json.readTree(evidence.resolve("samples.json").toFile());
+        var samples = corpus.path("samples");
+        if (!samples.isArray() || samples.size() != 8) throw new IllegalStateException("Draft case count changed");
+        var cases = new ArrayList<CalibrationCase>();
+        for (var sample : samples) {
+            String id = sample.path("id").asText();
+            if (!id.matches("[a-z][a-z-]{0,40}")) throw new IllegalStateException("Invalid draft case id");
+            var output = json.readTree(evidence.resolve(id + "-candidate.json").toFile());
+            if (!"COMPLETED".equals(output.path("status").asText()) || !sample.path("input").equals(output.path("job").path("input"))
+                    || !corpus.path("comparison").path("candidate").equals(output.path("executionMetadata").path("strategyVersion")))
+                throw new IllegalStateException("Frozen draft differs from candidate result");
+            cases.add(new CalibrationCase("case-%02d".formatted(cases.size() + 1), id,
+                    review.prepare(json.treeToValue(sample.path("input"), Input.class), output.path("polishedText").asText()),
+                    null, null));
+        }
+        return List.copyOf(cases);
     }
 
     private static long elapsed(long started) { return (System.nanoTime() - started) / 1_000_000; }

@@ -1,0 +1,301 @@
+{
+  "maxActualCalls": 32,
+  "phaseCaps": {
+    "pilot": 32
+  },
+  "jobs": [
+    {
+      "id": "inspection-baseline",
+      "sample": "inspection",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "夜班检测记录\n\n为进一步把夜班检测有关情况梳理清楚，现就两处工位的试用情况作以下说明。本周包装工位使用了新灯具。值班记录中，包装工位漏读标签的次数较上周少，但两周核对的箱数尚未对齐，复称工位没有更换灯具。\n\n现有材料不足以确认漏读减少与更换灯具有关。下一周拟记录两个工位的核对箱数，并查看漏读是否集中在交接班时段。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "夜班管理同事",
+        "requirements": "保留标题和两个正文段，便于查看试用结果及证据边界。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "inspection-candidate",
+      "sample": "inspection",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-paragraph-patch-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "夜班检测记录\n\n为进一步把夜班检测有关情况梳理清楚，现就两处工位的试用情况作以下说明。本周包装工位使用了新灯具。值班记录中，包装工位漏读标签的次数较上周少，但两周核对的箱数尚未对齐，复称工位没有更换灯具。\n\n现有材料不足以确认漏读减少与更换灯具有关。下一周拟记录两个工位的核对箱数，并查看漏读是否集中在交接班时段。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "夜班管理同事",
+        "requirements": "保留标题和两个正文段，便于查看试用结果及证据边界。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "pickup-candidate",
+      "sample": "pickup",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-paragraph-patch-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "展板领取\n\n为便于各组有序推进展板领取事宜，现将相关安排统一进行说明。领用人应在周五下午4点前到布展台签收。周五无法到场的组，可以委托本组已登记的同事代领。代领人须出示登记回执。缺少回执时，布展台保留展板，交还回执核对后再发。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "布展志愿者",
+        "requirements": "保留标题和一段，让领用人尽早看到时间与动作。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "pickup-baseline",
+      "sample": "pickup",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "展板领取\n\n为便于各组有序推进展板领取事宜，现将相关安排统一进行说明。领用人应在周五下午4点前到布展台签收。周五无法到场的组，可以委托本组已登记的同事代领。代领人须出示登记回执。缺少回执时，布展台保留展板，交还回执核对后再发。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "布展志愿者",
+        "requirements": "保留标题和一段，让领用人尽早看到时间与动作。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "shoebox-baseline",
+      "sample": "shoebox",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "鞋盒里的地图\n\n对于上次整理旧柜子的经历，我一直想把其中令我印象最深的一幕记录下来。柜门一打开，鞋盒盖掉到地上。我蹲下捡，看到里面放着一张父亲画的地图，背面还有一条他后来划掉的线。\n\n我问他是不是画错了。他说那条路以前能走。说完，他继续把鞋盒上的灰擦净。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "随笔读者",
+        "requirements": "保留第一人称、标题、两段及简短的结尾。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "shoebox-candidate",
+      "sample": "shoebox",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-paragraph-patch-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "鞋盒里的地图\n\n对于上次整理旧柜子的经历，我一直想把其中令我印象最深的一幕记录下来。柜门一打开，鞋盒盖掉到地上。我蹲下捡，看到里面放着一张父亲画的地图，背面还有一条他后来划掉的线。\n\n我问他是不是画错了。他说那条路以前能走。说完，他继续把鞋盒上的灰擦净。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "随笔读者",
+        "requirements": "保留第一人称、标题、两段及简短的结尾。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "coding-candidate",
+      "sample": "coding",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-paragraph-patch-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "观察记录的筛选\n\n为了更有序地开展后续分析，本文对观察材料进行了与研究需要相适应的筛选处理。记录只纳入能够确认观察日期的条目。两位研究者分别查看完整记录，先标出缺少日期的条目，再核对标记结果。有争议的条目暂不用于计算。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "论文评阅者",
+        "requirements": "保留标题及一段。保留原有筛选动作、步骤与限定。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "coding-baseline",
+      "sample": "coding",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "观察记录的筛选\n\n为了更有序地开展后续分析，本文对观察材料进行了与研究需要相适应的筛选处理。记录只纳入能够确认观察日期的条目。两位研究者分别查看完整记录，先标出缺少日期的条目，再核对标记结果。有争议的条目暂不用于计算。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "论文评阅者",
+        "requirements": "保留标题及一段。保留原有筛选动作、步骤与限定。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "field-baseline",
+      "sample": "field",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "旧操场旁的木尺\n\n管理员把木尺挪到我面前，说：“下雨以后先看这个刻度。”我看见尺子下面垫着两块砖，他搬完尺子又把砖摆回去。\n\n从此次整理的相关情况来看，本次只查了最近一周的雨后登记，晴天没有记录。表中列出的读数有两次只注明了时刻，尚未确认是否为同一把尺子。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "报道读者",
+        "requirements": "保留标题、两段和管理员原话。见闻与登记范围可有不同语气。",
+        "lockedTexts": [
+          "“下雨以后先看这个刻度。”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "field-candidate",
+      "sample": "field",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-paragraph-patch-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "旧操场旁的木尺\n\n管理员把木尺挪到我面前，说：“下雨以后先看这个刻度。”我看见尺子下面垫着两块砖，他搬完尺子又把砖摆回去。\n\n从此次整理的相关情况来看，本次只查了最近一周的雨后登记，晴天没有记录。表中列出的读数有两次只注明了时刻，尚未确认是否为同一把尺子。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "报道读者",
+        "requirements": "保留标题、两段和管理员原话。见闻与登记范围可有不同语气。",
+        "lockedTexts": [
+          "“下雨以后先看这个刻度。”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "foley-candidate",
+      "sample": "foley",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-paragraph-patch-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "拟音台的两种走法\n\n关于如何根据录制任务正确选择脚步声的处理方式，需要对两套操作作一个说明。录木地板脚步时可以穿硬底鞋，录旧楼梯的脚步需要沿原踏板从下往上走。若踏板上有松动的钉子，先停录并告诉录音员。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "首次协助录制的同事",
+        "requirements": "保留一段，读者需快速区分两种录法及何时停录。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "foley-baseline",
+      "sample": "foley",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "拟音台的两种走法\n\n关于如何根据录制任务正确选择脚步声的处理方式，需要对两套操作作一个说明。录木地板脚步时可以穿硬底鞋，录旧楼梯的脚步需要沿原踏板从下往上走。若踏板上有松动的钉子，先停录并告诉录音员。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "首次协助录制的同事",
+        "requirements": "保留一段，读者需快速区分两种录法及何时停录。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "lamp-baseline",
+      "sample": "lamp",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "厨房的灯是我进门时亮的。母亲背对着我切葱，刀落得很慢。她叫我把桌上的碗摆开，我摆到第三只，才发现她也把我的那只拿出来了。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "随笔读者",
+        "requirements": "保留叙事节奏和一段结构。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "lamp-candidate",
+      "sample": "lamp",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-paragraph-patch-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "厨房的灯是我进门时亮的。母亲背对着我切葱，刀落得很慢。她叫我把桌上的碗摆开，我摆到第三只，才发现她也把我的那只拿出来了。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "随笔读者",
+        "requirements": "保留叙事节奏和一段结构。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "invoice-candidate",
+      "sample": "invoice",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-paragraph-patch-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "凭证补交\n\n申请人可在周二12:00前补交扫描凭证。只有原件已经登记的申请才能补交。资料员只负责核对登记号，是否受理由值班主管决定。告示原文：“收到凭证并不代表已受理。”",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "补交申请人",
+        "requirements": "保留标题、一个正文段和告示原句。原文清楚可保留。",
+        "lockedTexts": [
+          "“收到凭证并不代表已受理。”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "invoice-baseline",
+      "sample": "invoice",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "凭证补交\n\n申请人可在周二12:00前补交扫描凭证。只有原件已经登记的申请才能补交。资料员只负责核对登记号，是否受理由值班主管决定。告示原文：“收到凭证并不代表已受理。”",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "补交申请人",
+        "requirements": "保留标题、一个正文段和告示原句。原文清楚可保留。",
+        "lockedTexts": [
+          "“收到凭证并不代表已受理。”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    }
+  ],
+  "sourceSha256": {
+    "docs/testing/evidence/text-polish-paragraph-patch-2026-11-21/samples.json": "bdf9e42a8736a239edc5059371c547f2e1aa4d77024ca3b96769fec0e441a46d",
+    "docs/testing/evidence/text-polish-paragraph-patch-2026-11-21/metadata.json": "b2b0a18f3122f43138ddf71a42f5d32a844443cde83b3066d8ea8832f7879724",
+    "docs/testing/evidence/text-polish-semantic-calibration-2026-11-21/ledger.json": "5cfb3a59c6016085c31e889a602f3a1ff5842ac77e1cb2dbf7e1414110a0a65f",
+    "scripts/evaluation/text-polish-thinking/ThinkingComparison.java": "87425d1b43a9159ae7aeea98e34d37697158ef2c3bdcb55541900feee1e03ddc",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/OpenAiTextPolishProvider.java": "731c647f8ec9d2ac546f032ad452dedbe00cd1ab72203c094c6eea8a3a69ffc8",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishSkills.java": "1ecdc4f334053a33a6d41c2603c6865e42c3be12f013e909ac59ae099c832a9e",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishInstructions.java": "4de8a9afe3eb83459220bbb9851c650591d2d50b56e437309c8c2fc71e4735d9",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishParagraphPatch.java": "6835b6282fe291951d60c0e36e802d9450dfbb34807e57cee3a533c78449d4f4",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishFidelity.java": "6d5f27b6568ff0c5b19c8d7925b66f4bd513f0447c60cff90a6109e667dbe760",
+    "services/api/src/main/resources/textpolish/skills/text-polish-v3/SKILL.md": "9f283575f5a6fc8b9ad06f9546955ef9026025759514a43923af86769df10f08",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-patch-v1/SKILL.md": "4403e35b402647af6f7c28a17ed32102cd823ee6b55ba2ef1c5f9baf269f0f7a"
+  }
+}

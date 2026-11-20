@@ -35,6 +35,8 @@ public final class TextPolishInstructions {
     public static final String CHINESE_REPORT_FIDELITY_VERSION = "text-polish-zh-report-fidelity-v1";
     /** 通用编辑候选，显式配置后按原稿阅读问题选择改法，支持所有语种和幅度。 */
     public static final String GENERAL_EDIT_VERSION = "text-polish-general-edit-v1";
+    /** 显式选用的中文轻度候选，按受控段号替换，外部仍交付完整正文。 */
+    public static final String PARAGRAPH_PATCH_VERSION = "text-polish-paragraph-patch-v1";
 
     /**
      * 单次完成按用途编辑，事实保护与表达自由分别说明。保留旧策略用于受控对照与配置回退。
@@ -70,7 +72,8 @@ public final class TextPolishInstructions {
         if (TextPolishSkills.AUTO_VERSION.equals(version) || STYLE_CONTRACT_VERSION.equals(version)
                 || CHINESE_LIGHT_EDIT_VERSION.equals(version) || TextPolishSkills.isRestructureFidelityVersion(version)
                 || TextPolishSkills.isChineseVersion(version)
-                || TextPolishSkills.isParagraphVersion(version) || GENERAL_EDIT_VERSION.equals(version))
+                || TextPolishSkills.isParagraphVersion(version) || GENERAL_EDIT_VERSION.equals(version)
+                || PARAGRAPH_PATCH_VERSION.equals(version))
             return TextPolishSkills.prepare(input, version).instruction();
         if (VERSION.equals(version)) return SYSTEM;
         if (DIRECT_VERSION.equals(version)) return direct(input);

@@ -84,6 +84,12 @@ public final class TextPolishSkills {
      * 自动选择仅采用正文证据，中文界面、读者和要求不参与原文语言计数。
      */
     public static PreparedTextPolish prepare(Input input, String strategyVersion) {
+        if (TextPolishInstructions.PARAGRAPH_PATCH_VERSION.equals(strategyVersion)) {
+            String guidance = BODIES.get(strategyVersion);
+            return new PreparedTextPolish(guidance + editingOptions(input),
+                    new Selection(SELECTOR_VERSION, detectLanguage(input.sourceText()), "GENERAL", "SOURCE_LANGUAGE_EVIDENCE"),
+                    List.of(new Resource(strategyVersion, strategyVersion, hash(guidance))));
+        }
         if (TextPolishInstructions.GENERAL_EDIT_VERSION.equals(strategyVersion)) return prepareGeneralEditing(input);
         if (isRestructureFidelityVersion(strategyVersion)) return prepareRestructureFidelity(input, strategyVersion);
         if (TextPolishInstructions.CHINESE_LIGHT_EDIT_VERSION.equals(strategyVersion))
@@ -278,6 +284,7 @@ public final class TextPolishSkills {
         Set<String> ids = new HashSet<>(IDS.values());
         ids.add("common-v1");
         ids.add(TextPolishInstructions.GENERAL_EDIT_VERSION);
+        ids.add(TextPolishInstructions.PARAGRAPH_PATCH_VERSION);
         ids.add(TextPolishInstructions.CHINESE_VERSION);
         ids.addAll(CHINESE_EXAMPLES.values());
         ids.add(TextPolishInstructions.STYLE_CONTRACT_VERSION + "-zh");

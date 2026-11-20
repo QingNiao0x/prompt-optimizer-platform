@@ -89,7 +89,9 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
         var prepared = TextPolishSkills.prepare(input, version);
         String instruction = prepared.instruction();
         String skillVersion = prepared.resources().isEmpty() ? null : prepared.resources().getLast().version();
-        Map<String, Object> frozen = request(input, model, instruction, requestedThinking);
+        // 段落索引和装配版本随请求冻结；协议修复不能改用当时的新配置。
+        var patch = TextPolishInstructions.PARAGRAPH_PATCH_VERSION.equals(version) ? new TextPolishParagraphPatch(input.sourceText()) : null;
+        Map<String, Object> frozen = request(input, model, instruction, requestedThinking, patch);
         var parameters = new ExecutionParameters((Integer) frozen.get("max_tokens"),
                 (Integer) frozen.get("max_completion_tokens"), (Double) frozen.get("temperature"), false,
                 frozen.containsKey("response_format") ? "json_object" : null,
@@ -129,8 +131,12 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
                         var content = choice.path("message").path("content");
                         if (!content.isTextual()) throw new IllegalArgumentException();
                         var parsed = json.readTree(unwrap(content.textValue()));
-                        if (parsed == null || !parsed.isObject() || parsed.size() != 1 || !parsed.path("polishedText").isTextual()) throw new IllegalArgumentException();
-                        output = parsed.path("polishedText").textValue();
+                        if (patch == null) {
+                            if (parsed == null || !parsed.isObject() || parsed.size() != 1 || !parsed.path("polishedText").isTextual()) throw new IllegalArgumentException();
+                            output = parsed.path("polishedText").textValue();
+                        } else {
+                            output = patch.apply(parsed);
+                        }
                     } catch (JsonProcessingException | IllegalArgumentException failure) { protocolFailure = true; throw invalid("润色正文JSON协议无效。"); }
                     fidelity.check(input, output);
                     ModelCallLogger.completed("text.polish", route.key(), model.publicId(), "PLATFORM_CATALOG", false, attempt, 1, elapsed(started), usage(envelope));
@@ -158,6 +164,10 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
      */
     private String selectStrategy(Input input, ModelEntry model, Thinking requestedThinking) {
         String configured = strategyVersion;
+        if (TextPolishInstructions.PARAGRAPH_PATCH_VERSION.equals(configured)
+                && (input.depth() != Depth.LIGHT || !TextPolishSkills.isChinese(input))) {
+            return TextPolishInstructions.VERSION;
+        }
         if (TextPolishSkills.isRestructureFidelityVersion(configured)
                 && !TextPolishSkills.supportsRestructureFidelity(configured, input)) {
             return TextPolishInstructions.VERSION;
@@ -187,10 +197,19 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
         return configured;
     }
 
-    /** 平台已有路由兼容规则仅影响传输参数，不增加文体专属提示词或模型阶段。 */
-    private Map<String, Object> request(Input input, ModelEntry model, String instruction, Thinking requested) {
+    /** 段落候选仅增加服务端生成的索引，完整用户输入与路由参数沿用原协议。 */
+    private Map<String, Object> request(Input input, ModelEntry model, String instruction, Thinking requested,
+                                        TextPolishParagraphPatch patch) {
         String user;
-        try { user = json.writeValueAsString(input); }
+        try {
+            if (patch == null) {
+                user = json.writeValueAsString(input);
+            } else {
+                com.fasterxml.jackson.databind.node.ObjectNode payload = json.valueToTree(input);
+                payload.set("paragraphs", json.valueToTree(patch.paragraphs()));
+                user = json.writeValueAsString(payload);
+            }
+        }
         catch (JsonProcessingException failure) { throw new IllegalStateException("润色输入无法编码", failure); }
         Map<String, Object> body = new LinkedHashMap<>(); body.put("model", model.upstreamModel()); body.put("stream", false);
         body.put("messages", List.of(Map.of("role", "system", "content", instruction), Map.of("role", "user", "content", user)));

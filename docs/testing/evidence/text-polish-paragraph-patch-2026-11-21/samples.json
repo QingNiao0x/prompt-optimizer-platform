@@ -1,0 +1,167 @@
+{
+  "comparison": {
+    "modelId": "deepseek:deepseek-flash",
+    "routeKey": "deepseek",
+    "upstreamModel": "deepseek-flash",
+    "baseline": "text-polish-v3",
+    "candidate": "text-polish-paragraph-patch-v1",
+    "parameters": {
+      "maxTokens": 8000,
+      "maxCompletionTokens": null,
+      "temperature": 0.2,
+      "stream": false,
+      "responseFormat": "json_object",
+      "thinking": "disabled"
+    }
+  },
+  "samples": [
+    {
+      "id": "inspection",
+      "language": "ZH",
+      "input": {
+        "sourceText": "夜班检测记录\n\n为进一步把夜班检测有关情况梳理清楚，现就两处工位的试用情况作以下说明。本周包装工位使用了新灯具。值班记录中，包装工位漏读标签的次数较上周少，但两周核对的箱数尚未对齐，复称工位没有更换灯具。\n\n现有材料不足以确认漏读减少与更换灯具有关。下一周拟记录两个工位的核对箱数，并查看漏读是否集中在交接班时段。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "夜班管理同事",
+        "requirements": "保留标题和两个正文段，便于查看试用结果及证据边界。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "purpose": "行业报告",
+        "problem": "观察埋在宣布要说明的开头后。",
+        "meaning": "包装工位本周换灯，漏读次数比上周少；箱数未对齐；复称工位没换灯；归因未知；拟记录两个工位箱数并查交接班分布。"
+      }
+    },
+    {
+      "id": "pickup",
+      "language": "ZH",
+      "input": {
+        "sourceText": "展板领取\n\n为便于各组有序推进展板领取事宜，现将相关安排统一进行说明。领用人应在周五下午4点前到布展台签收。周五无法到场的组，可以委托本组已登记的同事代领。代领人须出示登记回执。缺少回执时，布展台保留展板，交还回执核对后再发。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "布展志愿者",
+        "requirements": "保留标题和一段，让领用人尽早看到时间与动作。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "purpose": "工作材料",
+        "problem": "动作和期限被没有信息的开场遮住。",
+        "meaning": "周五下午4点前布展台签收义务；不能到场的组才可委托本组已登记同事代领；代领须出示回执；缺失则保留展板，交还回执核对再发。"
+      }
+    },
+    {
+      "id": "shoebox",
+      "language": "ZH",
+      "input": {
+        "sourceText": "鞋盒里的地图\n\n对于上次整理旧柜子的经历，我一直想把其中令我印象最深的一幕记录下来。柜门一打开，鞋盒盖掉到地上。我蹲下捡，看到里面放着一张父亲画的地图，背面还有一条他后来划掉的线。\n\n我问他是不是画错了。他说那条路以前能走。说完，他继续把鞋盒上的灰擦净。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "随笔读者",
+        "requirements": "保留第一人称、标题、两段及简短的结尾。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "purpose": "一般文章",
+        "problem": "抽象开场耽误读者看到动作，声音和结尾可保留。",
+        "meaning": "整理旧柜、盒盖掉落、蹲捡、父亲地图和划掉的线；作者发问，父亲说以前可走，随后继续擦灰。"
+      }
+    },
+    {
+      "id": "coding",
+      "language": "ZH",
+      "input": {
+        "sourceText": "观察记录的筛选\n\n为了更有序地开展后续分析，本文对观察材料进行了与研究需要相适应的筛选处理。记录只纳入能够确认观察日期的条目。两位研究者分别查看完整记录，先标出缺少日期的条目，再核对标记结果。有争议的条目暂不用于计算。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "论文评阅者",
+        "requirements": "保留标题及一段。保留原有筛选动作、步骤与限定。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "purpose": "学生论文",
+        "problem": "方法开头套话挡在真实纳入规则之前。",
+        "meaning": "仅用可确认日期的条目；两位分别查看完整记录；先标记，再核对；有争议的暂不计入。"
+      }
+    },
+    {
+      "id": "field",
+      "language": "ZH",
+      "input": {
+        "sourceText": "旧操场旁的木尺\n\n管理员把木尺挪到我面前，说：“下雨以后先看这个刻度。”我看见尺子下面垫着两块砖，他搬完尺子又把砖摆回去。\n\n从此次整理的相关情况来看，本次只查了最近一周的雨后登记，晴天没有记录。表中列出的读数有两次只注明了时刻，尚未确认是否为同一把尺子。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "报道读者",
+        "requirements": "保留标题、两段和管理员原话。见闻与登记范围可有不同语气。",
+        "lockedTexts": [
+          "“下雨以后先看这个刻度。”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "purpose": "混合文体",
+        "problem": "前段自然，后段空开场让查阅范围不直接。",
+        "meaning": "管理员原话、两块砖、摆回；只查最近一周雨后登记；晴天无记录；两次只注时刻；是否同尺未知。"
+      }
+    },
+    {
+      "id": "foley",
+      "language": "ZH",
+      "input": {
+        "sourceText": "拟音台的两种走法\n\n关于如何根据录制任务正确选择脚步声的处理方式，需要对两套操作作一个说明。录木地板脚步时可以穿硬底鞋，录旧楼梯的脚步需要沿原踏板从下往上走。若踏板上有松动的钉子，先停录并告诉录音员。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "首次协助录制的同事",
+        "requirements": "保留一段，读者需快速区分两种录法及何时停录。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "purpose": "陌生题材",
+        "problem": "真正的两种操作藏在套话后。",
+        "meaning": "木地板可以用硬底鞋；楼梯从下往上沿原踏板；松动钉子先停录并告知录音员。"
+      }
+    },
+    {
+      "id": "lamp",
+      "language": "ZH",
+      "input": {
+        "sourceText": "厨房的灯是我进门时亮的。母亲背对着我切葱，刀落得很慢。她叫我把桌上的碗摆开，我摆到第三只，才发现她也把我的那只拿出来了。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "随笔读者",
+        "requirements": "保留叙事节奏和一段结构。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "purpose": "自然稿",
+        "problem": "已自然，结尾的发现由动作承接。",
+        "meaning": "灯亮的时点、母亲背对切葱、刀落缓慢、叫摆碗、第三只才发现自己的碗也被取出。"
+      }
+    },
+    {
+      "id": "invoice",
+      "language": "ZH",
+      "input": {
+        "sourceText": "凭证补交\n\n申请人可在周二12:00前补交扫描凭证。只有原件已经登记的申请才能补交。资料员只负责核对登记号，是否受理由值班主管决定。告示原文：“收到凭证并不代表已受理。”",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "补交申请人",
+        "requirements": "保留标题、一个正文段和告示原句。原文清楚可保留。",
+        "lockedTexts": [
+          "“收到凭证并不代表已受理。”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "purpose": "严格限定稿",
+        "problem": "原文清楚，主要核对许可、前置条件及角色。",
+        "meaning": "周二12:00前可补交扫描凭证；原件已登记是唯一准入条件；资料员仅核对，主管决定受理；告示原样。"
+      }
+    }
+  ]
+}
