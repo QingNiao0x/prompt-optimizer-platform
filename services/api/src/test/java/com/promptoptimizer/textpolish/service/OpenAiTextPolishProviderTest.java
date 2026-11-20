@@ -5,6 +5,7 @@ import com.promptoptimizer.common.logging.ModelCallAuditContext;
 import com.promptoptimizer.common.logging.ModelCallObservation;
 import com.promptoptimizer.provider.domain.ProviderException;
 import com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleProperties;
+import com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleRouteProperties;
 import com.promptoptimizer.provider.service.PlatformModelCatalog.ModelEntry;
 import com.promptoptimizer.textpolish.domain.TextPolishModels.*;
 import org.junit.jupiter.api.*;
@@ -57,7 +58,9 @@ class OpenAiTextPolishProviderTest {
         assertThat(calls.get(0).usage()).isNull(); assertThat(calls.get(1).usage().totalTokens()).isEqualTo(15);
     }
     @org.junit.jupiter.params.ParameterizedTest
-    @org.junit.jupiter.params.provider.ValueSource(strings = {"text-polish-v3", "text-polish-auto-v1"})
+    @org.junit.jupiter.params.provider.ValueSource(strings = {
+            TextPolishInstructions.VERSION, TextPolishSkills.AUTO_VERSION, TextPolishInstructions.PARAGRAPH_VERSION,
+            TextPolishInstructions.PARAGRAPH_V2_VERSION})
     void repairFreezesStrategyAndParametersAndRecordsActualInstructionHashes(String version) throws Exception {
         var properties = new OpenAiCompatibleProperties();
         properties.setEndpoint(URI.create(ENDPOINT)); properties.setApiKey("fixture-key");
@@ -96,6 +99,8 @@ class OpenAiTextPolishProviderTest {
             assertThat(body.path("max_tokens").intValue()).isEqualTo(8000);
             assertThat(body.path("thinking").path("type").asText()).isEqualTo("enabled");
         }
+        assertThat(requests.get(1).path("messages").get(1)).isEqualTo(requests.get(0).path("messages").get(1));
+        assertThat(requests.get(1).path("messages").get(0).path("content").asText()).startsWith(prepared.instruction());
         var digest = java.security.MessageDigest.getInstance("SHA-256");
         assertThat(metadata.resourceHash()).isEqualTo(HexFormat.of().formatHex(digest.digest(
                 requests.get(0).path("messages").get(0).path("content").asText().getBytes(java.nio.charset.StandardCharsets.UTF_8))));
@@ -104,6 +109,60 @@ class OpenAiTextPolishProviderTest {
         assertThat(json.writeValueAsString(metadata)).doesNotContain("fixture-key", ENDPOINT, input().sourceText());
         server.verify();
     }
+    /** 用实际请求和快照核对试用开关，保护同模型下其他语言、幅度和显式策略。 */
+    @Test void paragraphV2TrialOnlyReplacesV3ForVerifiedEnglishRestructure() throws Exception {
+        var route = new OpenAiCompatibleRouteProperties();
+        route.setEndpoint(URI.create(ENDPOINT));
+        route.setApiKey("fixture-key");
+        route.setModel("deepseek-flash");
+        var properties = new OpenAiCompatibleProperties();
+        properties.setMultiProviderEnabled(true);
+        properties.setProviders(Map.of("deepseek", route));
+        properties.setTemperature(0.2);
+        properties.setMaxTokens(8000);
+        properties.setJsonResponseFormatEnabled(true);
+        var builder = RestClient.builder();
+        server = MockRestServiceServer.bindTo(builder).build();
+        provider = new OpenAiTextPolishProvider(builder.build(), json, properties, new TextPolishFidelity());
+        model = new ModelEntry(UUID.randomUUID(), "fixture", "deepseek", "deepseek-flash", "测试模型", true, true, 0);
+        String english = "We plan to send the revised guide to all members on Thursday.";
+        String chinese = "我们计划在周四把更新后的指南发送给所有会员。";
+        var englishRestructure = new Input(english, Style.FORMAL, Depth.RESTRUCTURE, "", "请保留期限。", List.of(), "fixture");
+
+        assertTrialRequest(englishRestructure, TextPolishInstructions.VERSION);
+        provider.configureParagraphV2EnglishRestructure(true);
+        assertTrialRequest(englishRestructure, TextPolishInstructions.PARAGRAPH_V2_VERSION);
+        assertTrialRequest(new Input(english, Style.FORMAL, Depth.LIGHT, "", "", List.of(), "fixture"),
+                TextPolishInstructions.VERSION);
+        for (String source : List.of(chinese, english + "\n" + chinese, "Hi!")) {
+            assertTrialRequest(new Input(source, Style.FORMAL, Depth.RESTRUCTURE, "", "", List.of(), "fixture"),
+                    TextPolishInstructions.VERSION);
+        }
+        properties.setTemperature(0.3);
+        assertTrialRequest(englishRestructure, TextPolishInstructions.VERSION);
+        properties.setTemperature(0.2);
+        provider.configureThinking(OpenAiTextPolishProvider.Thinking.ENABLED);
+        assertTrialRequest(englishRestructure, TextPolishInstructions.VERSION);
+        provider.configureThinking(OpenAiTextPolishProvider.Thinking.DISABLED);
+        provider.configureStrategy(TextPolishInstructions.DIRECT_VERSION);
+        assertTrialRequest(englishRestructure, TextPolishInstructions.DIRECT_VERSION);
+    }
+
+    /** 对比捕获的 system 消息和执行快照，避免只验证配置值。 */
+    private void assertTrialRequest(Input input, String expectedVersion) throws Exception {
+        server.reset();
+        server.expect(requestTo(ENDPOINT)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            var messages = body.path("messages");
+            assertThat(messages.get(0).path("content").asText())
+                    .isEqualTo(TextPolishInstructions.system(input, expectedVersion));
+            assertThat(json.readTree(messages.get(1).path("content").asText())).isEqualTo(json.valueToTree(input));
+        }).andRespond(withSuccess(envelope(json.writeValueAsString(Map.of("polishedText", input.sourceText())), "stop"),
+                MediaType.APPLICATION_JSON));
+        assertThat(provider.generate(input, model).executionMetadata().strategyVersion()).isEqualTo(expectedVersion);
+        server.verify();
+    }
+
     @Test void unsupportedThinkingFailsBeforeModelCall() {
         provider.configureThinking(OpenAiTextPolishProvider.Thinking.ENABLED);
         assertThatThrownBy(() -> provider.generate(input(), model)).isInstanceOf(ProviderException.class);

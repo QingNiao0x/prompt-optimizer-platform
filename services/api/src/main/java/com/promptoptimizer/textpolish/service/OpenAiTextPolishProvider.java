@@ -36,6 +36,7 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
     private volatile String strategyVersion = TextPolishInstructions.VERSION;
     /** 文章专属配置，默认关闭；每次生成时从实际请求冻结已发送状态。 */
     private volatile Thinking thinking = Thinking.DISABLED;
+    private boolean paragraphV2EnglishRestructureEnabled;
 
     /** ENABLED仅用于已支持thinking协议的DeepSeek型号；未知型号显式拒绝，避免静默忽略。 */
     enum Thinking { DISABLED, ENABLED }
@@ -44,6 +45,13 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
     @Autowired
     void configureThinking(@Value("${app.text-polish.thinking:DISABLED}") Thinking value) {
         thinking = java.util.Objects.requireNonNull(value);
+    }
+
+    /** 只在受控环境显式开启已评估的英文大幅重构范围。 */
+    @Autowired
+    void configureParagraphV2EnglishRestructure(
+            @Value("${app.text-polish.paragraph-v2-english-restructure-enabled:false}") boolean enabled) {
+        paragraphV2EnglishRestructureEnabled = enabled;
     }
 
     /** 只接受已冻结的内置版本；候选须显式配置，配置错误在启动时暴露。 */
@@ -69,11 +77,12 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
     public Generation generate(Input input, ModelEntry model) {
         var route = properties.getConfiguredRoutes().stream().filter(r -> r.key().equals(model.routeKey())).findFirst()
                 .orElseThrow(() -> new ProviderException(ProviderFailureType.CONFIGURATION, "润色模型路由不可用。", false));
-        String version = strategyVersion;
+        Thinking requestedThinking = thinking;
+        String version = selectStrategy(input, model, requestedThinking);
         var prepared = TextPolishSkills.prepare(input, version);
         String instruction = prepared.instruction();
         String skillVersion = prepared.resources().isEmpty() ? null : prepared.resources().getLast().version();
-        Map<String, Object> frozen = request(input, model, instruction);
+        Map<String, Object> frozen = request(input, model, instruction, requestedThinking);
         var parameters = new ExecutionParameters((Integer) frozen.get("max_tokens"),
                 (Integer) frozen.get("max_completion_tokens"), (Double) frozen.get("temperature"), false,
                 frozen.containsKey("response_format") ? "json_object" : null,
@@ -136,8 +145,24 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
         }
         throw invalid("润色响应协议修复失败。");
     }
+    /**
+     * 显式策略配置优先。默认策略仅在开关开启且匹配已评估模型、参数、正文语种与幅度时替换。
+     * 选择在首次请求前完成，后续修复沿用同一策略与发送参数。
+     */
+    private String selectStrategy(Input input, ModelEntry model, Thinking requestedThinking) {
+        String configured = strategyVersion;
+        if (paragraphV2EnglishRestructureEnabled && TextPolishInstructions.VERSION.equals(configured)
+                && "deepseek".equals(model.routeKey()) && "deepseek-flash".equals(model.upstreamModel())
+                && requestedThinking == Thinking.DISABLED && properties.isJsonResponseFormatEnabled()
+                && Double.compare(properties.getTemperature(), 0.2) == 0 && properties.getMaxTokens() >= 8000
+                && TextPolishSkills.isEnglishRestructure(input)) {
+            return TextPolishInstructions.PARAGRAPH_V2_VERSION;
+        }
+        return configured;
+    }
+
     /** 平台已有路由兼容规则仅影响传输参数，不增加文体专属提示词或模型阶段。 */
-    private Map<String, Object> request(Input input, ModelEntry model, String instruction) {
+    private Map<String, Object> request(Input input, ModelEntry model, String instruction, Thinking requested) {
         String user;
         try { user = json.writeValueAsString(input); }
         catch (JsonProcessingException failure) { throw new IllegalStateException("润色输入无法编码", failure); }
@@ -146,7 +171,6 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
         if ("tokenhub".equals(model.routeKey()) && "kimi-k3".equals(model.upstreamModel())) body.put("max_completion_tokens", Math.min(8000, properties.getMaxTokens()));
         else { body.put("max_tokens", Math.min(8000, properties.getMaxTokens())); body.put("temperature", properties.getTemperature()); }
         if (properties.isJsonResponseFormatEnabled()) body.put("response_format", Map.of("type", "json_object"));
-        Thinking requested = thinking;
         boolean deepSeek = model.upstreamModel().startsWith("deepseek-v4-") || "deepseek-flash".equals(model.upstreamModel());
         if (requested == Thinking.ENABLED && !deepSeek) {
             throw new ProviderException(ProviderFailureType.CONFIGURATION, "所选文章模型尚未支持开启思考，请调整文章推理配置或模型。", false);

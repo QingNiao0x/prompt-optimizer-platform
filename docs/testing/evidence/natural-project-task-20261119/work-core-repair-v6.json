@@ -1,0 +1,19 @@
+{
+  "case": "notice-project",
+  "arm": "core-repair-v6",
+  "requestSha256": "3ca0be46469a38a63dd5ac288fdb0233d4ead894567772923c54eb28d66d39af",
+  "status": 200,
+  "model": "deepseek-flash",
+  "text": "**结论：短信需要修改。**\n\n依据如下：\n\n1. **停用日期与自动替换日期之间的时间差会造成误导。** 短信称 8 月 31 日停用旧签名“青禾”“秋声”，但 11 月 30 日起才自动替换 SendDemoCode 的旧签名参数。两者相隔三个月，接收方容易理解为“8 月 31 日后旧签名虽停用，但服务端到 11 月 30 日才替换，期间可以不管”，从而错过在停用前自行处理。短信没有说明 8 月 31 日至 11 月 30 日之间旧签名调用会发生什么（失败、降级还是仍可用），这一关键信息缺失，需补充或澄清。\n\n2. **“如果已改过请忽略”的条件不够清楚。** 结合项目片段，`config/notify.properties` 中 `sender.label=${APP_SENDER_LABEL:青禾}` 默认值仍是旧签名“青禾”，而 `DemoGateway.java` 的签名参数直接取自该配置。接收方仅凭“已改过”无法判断是指配置默认值、环境变量 `APP_SENDER_LABEL`，还是调用方传参。短信应明确“已改过”指哪个配置项或参数已改为“晨钟”或“夜航”，否则接收方可能误判自己已满足条件。\n\n3. **停用与替换的对象范围表述不一致。** 短信前半句停用“青禾”“秋声”两款旧签名，后半句只提 SendDemoCode 的签名参数自动替换，未说明自动替换是否覆盖所有使用旧签名的调用，还是仅限 SendDemoCode。结合片段只能确认 SendDemoCode 取 `settings.senderLabel()`，其他调用路径未提供，不应编造，但短信本身应澄清替换范围。\n\n需修改或补充的具体文字/信息：\n- 明确 8 月 31 日停用后至 11 月 30 日自动替换前，旧签名调用的实际表现（如调用失败），避免“可以等到自动替换”的误解；\n- 明确“已改过”的判断标准，即哪个配置项/参数需改为“晨钟”或“夜航”；\n- 明确自动替换的适用范围是否仅限 SendDemoCode，还是所有旧签名调用。\n\n未提供的配置、替换目标或发送结果不作推断。",
+  "finishReason": "stop",
+  "usage": {
+    "prompt_tokens": 413,
+    "completion_tokens": 518,
+    "total_tokens": 931,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 413
+  }
+}

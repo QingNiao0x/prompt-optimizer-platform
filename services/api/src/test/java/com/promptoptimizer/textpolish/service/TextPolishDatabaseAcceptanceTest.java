@@ -1,18 +1,35 @@
 package com.promptoptimizer.textpolish.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.promptoptimizer.analytics.service.AnalyticsEventService;
 import com.promptoptimizer.identity.service.ActorIdentity;
+import com.promptoptimizer.identity.service.CurrentActor;
+import com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleProperties;
+import com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleRouteProperties;
+import com.promptoptimizer.provider.service.PlatformModelCatalog.ModelEntry;
+import com.promptoptimizer.textpolish.controller.TextPolishController;
 import com.promptoptimizer.textpolish.domain.TextPolishModels.*;
 import com.promptoptimizer.textpolish.mapper.TextPolishMapper;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClient;
+import java.net.URI;
 import java.nio.file.*;
 import java.time.Instant;
 import java.util.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /** 使用固定合成账号与真实PostgreSQL验证XML、CAS、分页、归属、逻辑删除和数据库注释；全部写入回滚。 */
 @SpringBootTest(properties = {"app.provider.mode=mock", "spring.flyway.enabled=false", "app.history.enabled=true",
@@ -24,6 +41,7 @@ class TextPolishDatabaseAcceptanceTest {
     @Autowired TextPolishMapper mapper;
     @Autowired ObjectMapper json;
     @Autowired JdbcTemplate jdbc;
+    @Autowired TextPolishStateStore states;
     private ActorIdentity actor;
     @BeforeEach void canonicalActor() throws Exception {
         var account = json.readTree(Files.readString(Path.of("../../tmp/local-acceptance/account.json")));
@@ -62,6 +80,58 @@ class TextPolishDatabaseAcceptanceTest {
         }
         assertThat(mapper.setPolicy("[]",null)).isEqualTo(1);
         assertThat(mapper.policy()).contains("enabledModelIds", "defaultModelId");
+    }
+
+    /** 从工作台使用的生成和历史接口验证试用策略，受控上游响应不产生模型费用。 */
+    @Test void workbenchRequestSavesScopedStrategyAndActualBody() throws Exception {
+        String endpoint = "https://fixture.invalid/chat/completions";
+        var route = new OpenAiCompatibleRouteProperties();
+        route.setEndpoint(URI.create(endpoint));
+        route.setApiKey("fixture-key");
+        route.setModel("deepseek-flash");
+        var properties = new OpenAiCompatibleProperties();
+        properties.setMultiProviderEnabled(true);
+        properties.setProviders(Map.of("deepseek", route));
+        properties.setTemperature(0.2);
+        properties.setMaxTokens(8000);
+        properties.setJsonResponseFormatEnabled(true);
+        var rest = RestClient.builder();
+        var upstream = MockRestServiceServer.bindTo(rest).build();
+        var fidelity = new TextPolishFidelity();
+        var provider = new OpenAiTextPolishProvider(rest.build(), json, properties, fidelity);
+        provider.configureParagraphV2EnglishRestructure(true);
+
+        var identity = mock(CurrentActor.class);
+        when(identity.require()).thenReturn(actor);
+        var models = mock(TextPolishModelService.class);
+        String modelId = "deepseek:deepseek-flash";
+        when(models.require(modelId)).thenReturn(new ModelEntry(UUID.randomUUID(), modelId, "deepseek",
+                "deepseek-flash", "受控文章模型", true, true, 0));
+        var service = new TextPolishService(identity, models, provider, history, states, fidelity, json,
+                mock(AnalyticsEventService.class));
+        var mvc = MockMvcBuilders.standaloneSetup(new TextPolishController(service, history, identity))
+                .setMessageConverters(new MappingJackson2HttpMessageConverter(json)).build();
+        var input = new Input("We plan to send the revised guide to all members on Thursday.", Style.FORMAL,
+                Depth.RESTRUCTURE, "", "Put the schedule up front.", List.of(), modelId);
+        String output = "On Thursday, we plan to send the revised guide to all members.";
+        var content = json.writeValueAsString(Map.of("polishedText", output));
+        var envelope = json.writeValueAsString(Map.of("choices",
+                List.of(Map.of("finish_reason", "stop", "message", Map.of("content", content)))));
+        upstream.expect(requestTo(endpoint)).andRespond(withSuccess(envelope, MediaType.APPLICATION_JSON));
+
+        UUID id = UUID.randomUUID();
+        var sent = mvc.perform(post("/api/v1/text-polish").contentType(MediaType.APPLICATION_JSON)
+                .content(json.writeValueAsString(new Generate(id, input, null, null, SourceMode.RAW))))
+                .andExpect(status().isOk()).andReturn();
+        var loaded = mvc.perform(get("/api/v1/text-polish/history/{id}", id))
+                .andExpect(status().isOk()).andReturn();
+        var result = json.readTree(sent.getResponse().getContentAsByteArray()).path("data");
+        var persisted = json.readTree(loaded.getResponse().getContentAsByteArray()).path("data");
+        assertThat(result.path("executionMetadata").path("strategyVersion").asText())
+                .isEqualTo(TextPolishInstructions.PARAGRAPH_V2_VERSION);
+        assertThat(persisted.path("executionMetadata")).isEqualTo(result.path("executionMetadata"));
+        assertThat(persisted.path("polishedText").asText()).isEqualTo(output);
+        upstream.verify();
     }
     @Test void allPersistentColumnsAndTablesHaveDatabaseComments() {
         // 检查新模块两张表的实际数据库注释；不使用历史文档冒充已应用迁移证据。

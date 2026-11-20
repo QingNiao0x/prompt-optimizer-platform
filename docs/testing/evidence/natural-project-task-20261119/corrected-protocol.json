@@ -1,0 +1,34 @@
+{
+  "phase": "corrected-evidence-check",
+  "case": "notice-project",
+  "arms": [
+    "core-repair-v8"
+  ],
+  "model": "deepseek-flash",
+  "temperature": 0.2,
+  "max_tokens": 10000,
+  "thinking": {
+    "type": "disabled"
+  },
+  "requestsPerArm": 1,
+  "totalTaskRequestLimit": 24,
+  "system": "根据用户给出的提示词和项目资料完成任务。",
+  "context": "使用 cases.json 中同一条 notice-project 的三份合成文件。各组唯一变化为提示词。未提供任何部署环境的实际取值。",
+  "checks": [
+    "针对现行项目和签名作条件性判断，而非着重编辑短信。",
+    "解释 SendDemoCode 调用与 sender.label 默认值、APP_SENDER_LABEL 覆盖之间的证据关系。",
+    "部署覆盖状态未知。对历史演练和当前生效值作区分。",
+    "按是否命中旧签名给出必要的配置建议或验证方法，不声称已经修改或未经授权执行。",
+    "不推定逐项映射、年份、8月31日至11月30日之间的实际请求结果或其他通道的处理行为。"
+  ],
+  "assessment": "每组只执行一次。保留首次回答及失败，按以上规则人工逐句检查目标、事实、建议归属及可用性。",
+  "enhancementCases": [
+    "notice-project",
+    "notice-explain-only",
+    "attachment-change"
+  ],
+  "candidate": "core-repair-v8",
+  "sharedRequestsAtStart": 15,
+  "comparisonBase": "e5156788",
+  "sharedCasesSha256": "604bd7058816b3113770f81437b8d04564be299aeb9a4bcb74307e5adbdfd85c"
+}

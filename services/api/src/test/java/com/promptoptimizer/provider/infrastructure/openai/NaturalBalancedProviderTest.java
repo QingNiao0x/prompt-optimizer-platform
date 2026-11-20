@@ -80,7 +80,7 @@ class NaturalBalancedProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"core-balanced-v1", "core-expression-v1", "core-repair-v6", "core-repair-v7"})
+    @ValueSource(strings = {"core-balanced-v1", "core-expression-v1", "core-repair-v6", "core-repair-v7", "core-repair-v8"})
     void historicalMetadataFailuresReplayThroughCandidateWithoutChangingFirstDraft(String version) throws Exception {
         var mapper = new ObjectMapper().findAndRegisterModules().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         try (var stream = getClass().getResourceAsStream("/natural-metadata-repair/real-first-drafts-and-patches.json")) {

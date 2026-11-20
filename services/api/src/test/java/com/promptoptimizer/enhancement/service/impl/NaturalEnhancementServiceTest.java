@@ -53,7 +53,7 @@ class NaturalEnhancementServiceTest {
     }
 
     @ParameterizedTest
-    @org.junit.jupiter.params.provider.CsvSource({"PROJECT_TASK,core-repair-v7", "MATERIAL_HANDOFF_REPAIR,core-repair-v6", "PROTOCOL_SCOPE_REPAIR,core-repair-v5", "CORE_REPAIR,core-repair-v1", "ACTION_BOUNDARY_REPAIR,core-repair-v2", "COMPLETION_BASIS_REPAIR,core-repair-v3", "PLAN_CONTEXT_REPAIR,core-repair-v4", "SIMPLIFIED,core-simplified-v1", "INTERNAL_DESIGN,internal-design-v1"})
+    @org.junit.jupiter.params.provider.CsvSource({"PROJECT_TASK,core-repair-v8", "MATERIAL_HANDOFF_REPAIR,core-repair-v6", "PROTOCOL_SCOPE_REPAIR,core-repair-v5", "CORE_REPAIR,core-repair-v1", "ACTION_BOUNDARY_REPAIR,core-repair-v2", "COMPLETION_BASIS_REPAIR,core-repair-v3", "PLAN_CONTEXT_REPAIR,core-repair-v4", "SIMPLIFIED,core-simplified-v1", "INTERNAL_DESIGN,internal-design-v1"})
     void coreRepairAppliesToNewDirectTrialAndPlanRequestsButExplicitHistoryKeepsItsVersion(String profile, String version) {
         settings.setProfile(NaturalEnhancementSettings.Profile.valueOf(profile));
         var direct = service.optimize(request("写一封邮件", null, List.of(), "fixture:model"));

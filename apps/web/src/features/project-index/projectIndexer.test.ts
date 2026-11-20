@@ -627,6 +627,11 @@ describe('retrieveProjectContext', () => {
       projectId: 'notice-and-code', query: `请解释 SendSmsVerifyCode 的迁移文档。${notice}`, maxChunks: 1,
     });
     expect(explanation.selections.map(item => item.path)).toEqual(['docs/testing/evidence/previous.md']);
+    const explanationOnly = await retrieveProjectContextWithReport(repository, {
+      projectId: 'notice-and-code', maxChunks: 1,
+      query: `下面通知只需用两句大白话解释给同事，不用检查项目或提出修改建议。\n${notice}`,
+    });
+    expect(explanationOnly.selections.map(item => item.path)).toEqual(['docs/testing/evidence/previous.md']);
   });
 
   it('should not expand an explicit directory from file names repeated in the delivery scope', async () => {

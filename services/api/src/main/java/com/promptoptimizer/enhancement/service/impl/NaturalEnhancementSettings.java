@@ -48,7 +48,7 @@ public class NaturalEnhancementSettings {
     public String strategyVersion() {
         return switch (profile) {
             case MATERIAL_HANDOFF_REPAIR -> com.promptoptimizer.provider.domain.NaturalPromptMaterialHandoffInstructions.VERSION;
-            case PROJECT_TASK -> NaturalPromptProjectTaskInstructions.VERSION;
+            case PROJECT_TASK -> NaturalPromptProjectTaskInstructions.EVIDENCE_VERSION;
             case EXPRESSION -> com.promptoptimizer.provider.domain.NaturalPromptExpressionInstructions.VERSION;
             case BALANCED -> com.promptoptimizer.provider.domain.NaturalPromptBalancedInstructions.VERSION;
             case STABLE -> NaturalPromptInstructions.CURRENT_VERSION;

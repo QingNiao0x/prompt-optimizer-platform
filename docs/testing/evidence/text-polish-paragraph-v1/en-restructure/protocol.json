@@ -1,0 +1,230 @@
+{
+  "maxActualCalls": 188,
+  "phaseCaps": {
+    "pilot": 0,
+    "expand": 24
+  },
+  "jobs": [
+    {
+      "id": "incident-notice-candidate",
+      "phase": "expand",
+      "sample": "incident-notice",
+      "language": "EN",
+      "strategy": "text-polish-paragraph-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "In connection with the completion of our initial assessment, we are providing an update regarding problems affecting the building access system. The east entrance was unavailable from 8:10 to 8:35 this morning. The other entrances stayed open. The access logs reviewed so far do not show any unauthorized entry, but the review is ongoing. Staff may continue to use their usual entrances. If a badge is still rejected, call the front desk before trying again.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "State the visible effects first. Keep the certainty and scope of all findings.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "incident-notice-baseline",
+      "phase": "expand",
+      "sample": "incident-notice",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "In connection with the completion of our initial assessment, we are providing an update regarding problems affecting the building access system. The east entrance was unavailable from 8:10 to 8:35 this morning. The other entrances stayed open. The access logs reviewed so far do not show any unauthorized entry, but the review is ongoing. Staff may continue to use their usual entrances. If a badge is still rejected, call the front desk before trying again.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "State the visible effects first. Keep the certainty and scope of all findings.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "repair-blog-baseline",
+      "phase": "expand",
+      "sample": "repair-blog",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "The thing I found myself reflecting on after the attempt to repair my aunt's radio was not really the outcome of the repair itself. The dial still wouldn't move when I put the cover back on. My aunt took the radio from me and showed me the notch in the handle where she used to tuck the station list. I had never noticed it. I put the screwdriver down and asked her to show me what else I had missed.",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the first person and the understated ending.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "repair-blog-candidate",
+      "phase": "expand",
+      "sample": "repair-blog",
+      "language": "EN",
+      "strategy": "text-polish-paragraph-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "The thing I found myself reflecting on after the attempt to repair my aunt's radio was not really the outcome of the repair itself. The dial still wouldn't move when I put the cover back on. My aunt took the radio from me and showed me the notch in the handle where she used to tuck the station list. I had never noticed it. I put the screwdriver down and asked her to show me what else I had missed.",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the first person and the understated ending.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "freight-brief-candidate",
+      "phase": "expand",
+      "sample": "freight-brief",
+      "language": "EN",
+      "strategy": "text-polish-paragraph-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "For the purpose of ensuring consistency in the handling of the forthcoming shipment, it is important to note that, subject to confirmation from the carrier by noon Wednesday, the receiving team should reserve the west loading bay for Thursday morning. The storage team will clear the marked shelves on Wednesday afternoon. If the carrier has not confirmed by noon, the receiving team should leave the bay available and wait for a revised time. Refrigerated goods still go straight to cold storage in either case.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Write a short briefing for the receiving team. Preserve the exception and each team's responsibilities.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "freight-brief-baseline",
+      "phase": "expand",
+      "sample": "freight-brief",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "For the purpose of ensuring consistency in the handling of the forthcoming shipment, it is important to note that, subject to confirmation from the carrier by noon Wednesday, the receiving team should reserve the west loading bay for Thursday morning. The storage team will clear the marked shelves on Wednesday afternoon. If the carrier has not confirmed by noon, the receiving team should leave the bay available and wait for a revised time. Refrigerated goods still go straight to cold storage in either case.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Write a short briefing for the receiving team. Preserve the exception and each team's responsibilities.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "workshop-explainer-baseline",
+      "phase": "expand",
+      "sample": "workshop-explainer",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "In order to facilitate appropriate utilization of the shared workshop facilities, consideration should be given to the difference between the dust extractor and the room ventilation system. The dust extractor collects sawdust at the tool. The room ventilation brings in outdoor air. Because the two systems serve different purposes, turn on the extractor before cutting even if the ventilation is already running. If the extractor stops during a cut, stop the tool and tell the workshop supervisor.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Explain this to someone who has never used the studio. Keep the equipment names and safety limits.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "workshop-explainer-candidate",
+      "phase": "expand",
+      "sample": "workshop-explainer",
+      "language": "EN",
+      "strategy": "text-polish-paragraph-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "In order to facilitate appropriate utilization of the shared workshop facilities, consideration should be given to the difference between the dust extractor and the room ventilation system. The dust extractor collects sawdust at the tool. The room ventilation brings in outdoor air. Because the two systems serve different purposes, turn on the extractor before cutting even if the ventilation is already running. If the extractor stops during a cut, stop the tool and tell the workshop supervisor.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Explain this to someone who has never used the studio. Keep the equipment names and safety limits.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "quiet-morning-candidate",
+      "phase": "expand",
+      "sample": "quiet-morning",
+      "language": "EN",
+      "strategy": "text-polish-paragraph-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "The shop was still dark when I got there. I set the bread down outside and waited by the window. A few minutes later, Mara turned on the light at the back and waved me in.",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the order of events and the narrator's voice.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "quiet-morning-baseline",
+      "phase": "expand",
+      "sample": "quiet-morning",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "The shop was still dark when I got there. I set the bread down outside and waited by the window. A few minutes later, Mara turned on the light at the back and waved me in.",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the order of events and the narrator's voice.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "dues-policy-baseline",
+      "phase": "expand",
+      "sample": "dues-policy",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "Payments submitted by 17:00 on 12 May count as on time. A bank transfer may take two business days to appear in the portal. If you send your transfer before the deadline and it does not yet appear, email the receipt to the membership desk. Members who already have an approved instalment plan follow the dates on that plan. We will confirm receipt of a submitted receipt; confirmation does not by itself approve a renewal.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the difference between the posting delay and the deadline. Preserve the date/time form used in the original.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "dues-policy-candidate",
+      "phase": "expand",
+      "sample": "dues-policy",
+      "language": "EN",
+      "strategy": "text-polish-paragraph-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "Payments submitted by 17:00 on 12 May count as on time. A bank transfer may take two business days to appear in the portal. If you send your transfer before the deadline and it does not yet appear, email the receipt to the membership desk. Members who already have an approved instalment plan follow the dates on that plan. We will confirm receipt of a submitted receipt; confirmation does not by itself approve a renewal.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the difference between the posting delay and the deadline. Preserve the date/time form used in the original.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    }
+  ],
+  "sourceSha256": {
+    "docs/testing/evidence/text-polish-paragraph-v1/pilot-protocol.json": "7219b3f908215011221679f37319ce46d0e551dd4909da95f746b352cdf4ff50",
+    "scripts/evaluation/text-polish-thinking/ThinkingComparison.java": "2f6f904e160cc131531c1085b68c5af38a21e79cc937d90c5cd8a945f6b16459",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishSkills.java": "3496b75a7127c9175f001ae939049dbead15d02fe1ff52a06468298345c1c3c3",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishInstructions.java": "b4e752d412b8ca9ae3e43eec04d868b5606db1429c3a25353ddf165ecffe78ce",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/OpenAiTextPolishProvider.java": "231b3b8e8b76af3ec266881a990fc732739eaffb79968564f11c7eafd9c526d3",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishFidelity.java": "dbf60cb64d9fdf890924113bdb4cebb637686ef9cf2e1a370a31e2c712ad4ed4",
+    "services/api/src/main/resources/textpolish/skills/text-polish-v3/SKILL.md": "9f283575f5a6fc8b9ad06f9546955ef9026025759514a43923af86769df10f08",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v1/SKILL.md": "4476a6141df26ecc19eb787ce09c1605862d1031d920736adabbca294854ef45",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v1-zh-formal/SKILL.md": "c45221828316a7480f3e34892b7f685a01601fa3d614175b1c4654764d04aa2f",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v1-zh-natural/SKILL.md": "6b6b954ee68f889beceb4a6c6e319d66b85a061c45f2811e812ae9db28029503",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v1-zh-conversational/SKILL.md": "ad6f639a653d3c98b909a34507af656a9c47405bbe92db5bf8b546c8e226aa6f",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v1-en-formal/SKILL.md": "9c4c29721dcd42e419a426cbfc7aac4f30f34f6a4c8fec92787e4a7180fd1b51",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v1-en-natural/SKILL.md": "38673adb2afb2f9137def6813c0781a4aeab2679bd6130cbfe6389b4e4d1aabb",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v1-en-conversational/SKILL.md": "652a63c9e2072e3f086665373c01fb8d2adde5d60815b16e8c14b810bc68fbba",
+    "docs/testing/evidence/text-polish-paragraph-v1/en-restructure/holdout.json": "f24bd21066c45669489dd898317ad836ec8c2f1236a4f2eb9bdc5735a4440710"
+  }
+}

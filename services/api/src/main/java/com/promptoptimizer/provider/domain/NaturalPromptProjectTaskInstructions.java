@@ -6,6 +6,12 @@ package com.promptoptimizer.provider.domain;
  */
 public final class NaturalPromptProjectTaskInstructions {
     public static final String VERSION = "core-repair-v7";
+    public static final String EVIDENCE_VERSION = "core-repair-v8";
+
+    /** 两版共享对象识别和来源协议，正文指导按保存版本单独选择。 */
+    public static boolean supports(String version) {
+        return VERSION.equals(version) || EVIDENCE_VERSION.equals(version);
+    }
 
     public static final String PREPARE = """
             先读用户自己的委托，再区分引用材料、要核查的对象和用户想得到的结果。
@@ -24,6 +30,18 @@ public final class NaturalPromptProjectTaskInstructions {
             用户仅要求解读材料时，围绕材料本身回答。对界面、写作等开放任务，把笼统目标落实到实际使用场景和可观察的结果。
             只补对该任务有用的约束，保留原单位、限定对象和例外。简单要求可用一句话，复杂要求可按目标、依据、步骤与交付分段。
             """ + NaturalPromptMaterialHandoffInstructions.ENHANCE;
+
+    /**
+     * v7 在识别核查对象后仍可能自行解释时间间隔或其他对象的行为。
+     * v8 将这些推论留给有证据的执行阶段，调用和历史回放继续使用原协议。
+     */
+    public static final String EVIDENCE_ENHANCE = """
+            写出可以独立交接的请求。转述外部变更时保留原文的生效条件和具体措辞。
+            两个时间点只分别说明各自事件。期间请求成功、失败、被拒绝或自动切换，都需要材料明确支持；
+            一个接口有某项规则，也不能推断其他接口有或没有同样的规则。回读正文，删去无依据的断言，必要时改为局部核查步骤。
+            让执行者在已知默认值和实际配置之间作条件判断，证据不足时允许“需核实某个值后才能判定”。
+            只保留能改变本次判断的依据，避免在正文另行点评通知措辞或增加外围任务。
+            """ + ENHANCE;
 
     private NaturalPromptProjectTaskInstructions() { }
 }

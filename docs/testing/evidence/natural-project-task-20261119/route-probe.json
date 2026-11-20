@@ -1,0 +1,13 @@
+{
+  "input": "cases.json#notice-project",
+  "version": "core-repair-v8",
+  "model": "deepseek-flash",
+  "route": "deepseek",
+  "thinking": "disabled",
+  "caseRuns": 1,
+  "beforeRequests": 22,
+  "batchTotalCap": 24,
+  "why": "兼容路由未发送显式 thinking 参数，主案例两次正文达到输出上限。单独检查产品多供应商 DeepSeek 路由，保留兼容路由失败。",
+  "checksSource": "work-protocol.json#checks",
+  "comparison": "路由参数不同，单列诊断，不能替代原同参结果。"
+}

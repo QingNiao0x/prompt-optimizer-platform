@@ -1547,6 +1547,8 @@ export const isSourceCodePath = (path: string): boolean =>
 const requestsDocumentExplanation = (query: string): boolean =>
   /(?:解释|解读|总结|概括|翻译|阅读|查阅|查找|查看|分析)[^。！？\n]{0,80}(?:文档|手册|指南|教程|说明书)/.test(query)
   || /(?:解释|解读|总结|概括|翻译)[^。！？\n]{0,80}(?:通知|短信)/.test(query)
+  // “这份通知只需简单解释”先给对象再说明用途，粘贴的通知正文仍可能包含接口名与迁移指令。
+  || /(?:通知|短信|文档|手册|指南|教程|说明书)[^，,。！？\n]{0,24}(?:只需|只要|仅需|只用)[^，,。！？\n]{0,32}(?:解释|解读|总结|概括|翻译)/.test(query)
   || /\b(?:explain|summari[sz]e|translate|read|find)\b[^.!?\n]{0,100}\b(?:documentation|docs|manual|guide|notice)\b/i.test(query);
 
 const hasTaskRelevance = (reasons: readonly string[]): boolean => reasons.some((reason) =>

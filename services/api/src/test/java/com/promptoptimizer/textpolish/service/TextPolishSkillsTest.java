@@ -55,7 +55,8 @@ class TextPolishSkillsTest {
                 Language.EN, "We plan to add a link so the readers can find our guide.",
                 Language.MIXED, "我们计划整理资料目录，让同事更方便地找到资料。\nWe plan to add a link so the readers can find our guide.",
                 Language.UNKNOWN, "Hello!");
-        for (String strategy : List.of(TextPolishSkills.AUTO_VERSION, TextPolishInstructions.PARAGRAPH_VERSION)) {
+        for (String strategy : List.of(TextPolishSkills.AUTO_VERSION, TextPolishInstructions.PARAGRAPH_VERSION,
+                TextPolishInstructions.PARAGRAPH_V2_VERSION)) {
             for (var source : sources.entrySet()) {
                 for (Style style : Style.values()) for (Depth depth : Depth.values()) {
                     cases.add(Arguments.of(strategy, source.getKey(), source.getValue(), style, depth, ""));
@@ -97,7 +98,11 @@ class TextPolishSkillsTest {
         assertThat(metadata.selection()).isEqualTo(prepared.selection());
         assertThat(metadata.resources()).isEqualTo(prepared.resources());
         assertThat(prepared.instruction()).contains("Target style:", "Editing depth:", "Explicit requirements", "polishedText");
-        if (TextPolishInstructions.PARAGRAPH_VERSION.equals(strategy)) {
+        if (TextPolishSkills.isParagraphVersion(strategy)) {
+            boolean v2 = TextPolishInstructions.PARAGRAPH_V2_VERSION.equals(strategy);
+            String exampleMarker = language == Language.ZH
+                    ? (v2 ? "含义核对" : "越界写法")
+                    : (v2 ? "Meaning check" : "Overreach:");
             assertThat(metadata.selection().language()).isEqualTo(language);
             assertThat(metadata.selection().profile()).isEqualTo("PARAGRAPH_EDITING");
             assertThat(prepared.instruction()).contains("Target style: " + style.name(), "Editing depth: " + depth.name());
@@ -105,10 +110,10 @@ class TextPolishSkillsTest {
                 String exampleId = strategy + "-" + language.name().toLowerCase(Locale.ROOT)
                         + "-" + style.name().toLowerCase(Locale.ROOT);
                 assertThat(metadata.resources()).extracting(Resource::id).containsExactly(strategy, exampleId);
-                assertThat(prepared.instruction()).contains(language == Language.ZH ? "越界写法" : "Overreach:");
+                assertThat(prepared.instruction()).contains(exampleMarker);
             } else {
                 assertThat(metadata.resources()).extracting(Resource::id).containsExactly(strategy);
-                assertThat(prepared.instruction()).doesNotContain("越界写法", "Overreach:");
+                assertThat(prepared.instruction()).doesNotContain("含义核对", "Meaning check", "越界写法", "Overreach:");
                 if (language == Language.MIXED) assertThat(prepared.instruction()).contains("Mixed-language source:");
             }
         }

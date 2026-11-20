@@ -1,0 +1,7 @@
+{
+  "case" : "notice-project",
+  "version" : "core-repair-v8",
+  "success" : true,
+  "body" : "请核查当前通知配置是否受旧签名停用影响，并判断这条短信通知是否需要修改。\n\n短信原文为：“通知：8月31日停用两款旧签名“青禾”和“秋声”。11月30日起 SendDemoCode 的签名参数若仍为旧值，服务端会自动替换。可用签名为“晨钟”和“夜航”。如果已改过请忽略。”\n\n请结合当前实现核查：SendDemoCode 实际使用的签名参数值及其来源。现有材料显示，src/notify/DemoGateway.java 中调用 gateway.SendDemoCode(settings.senderLabel())；config/notify.properties 中配置为 sender.label=${APP_SENDER_LABEL:青禾}。请追踪实际生效的值：若 APP_SENDER_LABEL 已设置，需核实其值；若未设置，则默认值为“青禾”。再对照短信中的时间点和规则，判断当前配置是否属于旧值、是否会在 11 月 30 日起被自动替换，以及是否需要修改。\n\n注意：docs/testing/evidence/legacy/demo.txt 只是历史演练样例，曾以“夜航”调用 SendDemoCode，不能据此推断当前线上配置。一个接口的规则也不能推断其他接口是否相同。缺少当前实现或实际配置时，请给出可搜索的标识（如 APP_SENDER_LABEL、sender.label、SendDemoCode）及应核查的位置类型，不要编造路径或断言线上状态。\n\n请给出结论：是否受影响、判断依据，以及还依赖哪个值才能最终确定；如有差异，请说明应如何修改。",
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

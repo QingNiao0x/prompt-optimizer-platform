@@ -41,6 +41,7 @@ test('结果按服务端快照显示编辑匹配和执行信息，复制仅含�
   await page.getByText('本次执行信息', { exact: true }).click();
   await expect(page.getByText('source-language-v1', { exact: true })).toBeVisible();
   await expect(page.getByText('a'.repeat(64), { exact: true })).toBeVisible();
+  await expect(page.getByText(executionFixture.strategyVersion, { exact: true }).first()).toBeVisible();
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.getByRole('button', { name: '复制正文', exact: true }).click();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(document().polishedText);

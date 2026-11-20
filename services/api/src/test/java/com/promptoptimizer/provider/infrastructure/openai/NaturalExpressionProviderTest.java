@@ -87,15 +87,16 @@ class NaturalExpressionProviderTest {
         server.verify();
     }
 
-    @Test
-    void noticeReviewPassesTheCallSiteAndCheckedScopeToTheWriter() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"core-repair-v7", "core-repair-v8"})
+    void noticeReviewPassesTheCallSiteAndCheckedScopeToTheWriter(String version) throws Exception {
         var callSite = new FileSnippet("src/MessageClient.java", "java", "request.setSignName(settings.getSignName());",
                 "调用使用配置传入的签名", false, MaterialPurpose.TASK_TARGET);
         var reference = new FileSnippet("fixtures/migration.md", "text", "历史测试使用旧签名。", "",
                 false, MaterialPurpose.DIAGNOSTIC_REFERENCE);
         var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(reference, callSite), List.of(), List.of(), "fixture");
         var input = new NaturalPromptInput("请查看下面的短信，我是否需要修改？通知称旧签名停用。", context,
-                List.of(), List.of(), List.of(), null).withStrategyVersion(NaturalPromptProjectTaskInstructions.VERSION);
+                List.of(), List.of(), List.of(), null).withStrategyVersion(version);
         var scope = scope(input);
         ((ObjectNode) scope.at("/actions/0")).putArray("detailEvidence").addObject()
                 .put("sourceId", "context.fileSnippets.1").put("quote", "request.setSignName");
@@ -103,7 +104,7 @@ class NaturalExpressionProviderTest {
         var server = MockRestServiceServer.bindTo(builder).build();
         expect(server, scope, input, NaturalPromptProjectTaskInstructions.PREPARE);
         String body = "沿 src/MessageClient.java 的签名传参追踪生效配置。对照通知判断是否需要修改并说明依据。";
-        expect(server, enhancement(input, body), input, NaturalPromptProjectTaskInstructions.ENHANCE, payload -> {
+        expect(server, enhancement(input, body), input, NaturalPromptInstructions.enhancementInstruction(version), payload -> {
             var links = payload.at("/taskScope/actions/0/evidence");
             assertThat(links).hasSize(2);
             assertThat(links.get(0).path("sourceId").asText()).isEqualTo("rawPrompt");
@@ -155,13 +156,14 @@ class NaturalExpressionProviderTest {
 
     @ParameterizedTest
     @CsvSource({"core-expression-v1,日期稍后确认，不承诺额外赔偿。", "core-expression-v1,''",
-            "core-repair-v7,日期稍后确认，不承诺额外赔偿。", "core-repair-v7,''"})
+            "core-repair-v7,日期稍后确认，不承诺额外赔偿。", "core-repair-v7,''",
+            "core-repair-v8,日期稍后确认，不承诺额外赔偿。", "core-repair-v8,''"})
     void planSupportsNoQuestionAndAnImportantUserDecision(String version, String answer) throws Exception {
         var input = (answer.isEmpty() ? input("附件可多选，最大10MB，请先确认大小限制的含义。") : materialInput(answer))
                 .withStrategyVersion(version);
         var builder = RestClient.builder();
         var server = MockRestServiceServer.bindTo(builder).build();
-        expect(server, scope(input), input, NaturalPromptProjectTaskInstructions.VERSION.equals(version)
+        expect(server, scope(input), input, NaturalPromptProjectTaskInstructions.supports(version)
                 ? NaturalPromptProjectTaskInstructions.PREPARE : NaturalPromptExpressionInstructions.PREPARE);
         ObjectNode plan = enhancement(input, input.rawPrompt());
         plan.remove(List.of("optimizedPrompt", "framework"));
@@ -290,7 +292,7 @@ class NaturalExpressionProviderTest {
             if (payload.has("rawPrompt")) {
                 assertThat(payload.path("rawPrompt").asText()).isEqualTo(input.rawPrompt());
                 assertThat(payload.path("actualAnswers")).isEqualTo(json.valueToTree(input.actualAnswers()));
-                if (NaturalPromptProjectTaskInstructions.VERSION.equals(input.strategyVersion())) {
+                if (NaturalPromptProjectTaskInstructions.supports(input.strategyVersion())) {
                     for (int i = 0; i < input.context().fileSnippets().size(); i++) {
                         var snippet = input.context().fileSnippets().get(i);
                         var sentFile = payload.at("/context/fileSnippets/" + i);

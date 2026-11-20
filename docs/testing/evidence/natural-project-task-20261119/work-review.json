@@ -1,0 +1,28 @@
+{
+  "protocol": "work-protocol.json",
+  "case": "notice-project",
+  "reviewer": "开发助手对照合成输入逐句核查，非独立盲评",
+  "samplesPerArm": 1,
+  "priorEnhancementCalls": 12,
+  "downstreamCalls": 3,
+  "requestsThroughThisPhase": 15,
+  "allResponses": "HTTP 200，finish_reason=stop",
+  "observations": {
+    "raw": {
+      "object": "以“这条短信需要修改”开头并交付新版短信，目标偏移。",
+      "facts": "提及网关及默认青禾，但把停用改成停止推荐，加入日志表现等无依据陈述。",
+      "actions": "未修改业务代码。"
+    },
+    "core-repair-v6": {
+      "object": "给出短信文案需要修改的三项理由，延续增强正文的目标偏移。",
+      "facts": "提到默认值和环境变量，指出过渡期请求行为未说明。配置与调用用于评价通知清晰程度，未据此完成部署条件判断。",
+      "actions": "建议修改通知，未修改业务代码。"
+    },
+    "core-repair-v7": {
+      "object": "正确把当前项目签名配置作为核查对象，引用网关调用和配置文件，给出两个可执行的配置建议。",
+      "facts": "区分环境变量和回落值，明确历史演练无法证明部署状态。但开头断言当前项目会失败。作品复述了增强正文无依据的时间段调用必败和其他通道不适用，并把这些陈述用于风险和验证结论。",
+      "actions": "由用户选择可用签名，未擅改代码，未推断签名字典映射。"
+    }
+  },
+  "decision": "本题观察到目标识别改善，但仍有会影响工程判断的事实失真。v7未达到本项质量要求。单次同模型抽查无法估计跨模型或多轮效果。"
+}

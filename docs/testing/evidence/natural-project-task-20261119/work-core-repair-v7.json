@@ -1,0 +1,19 @@
+{
+  "case": "notice-project",
+  "arm": "core-repair-v7",
+  "requestSha256": "80db5bb48ea890f42fdfd33fe27475ee7fdc208d55cfcf30317124517a4b6b96",
+  "status": 200,
+  "model": "deepseek-flash",
+  "text": "**结论：需要修改。** 当前项目在 8 月 31 日旧签名停用后就会失败，不能依赖 11 月 30 日的自动替换来兜底。\n\n**依据（以当前实现为准）**\n\n1. `config/notify.properties` 中 `sender.label=${APP_SENDER_LABEL:青禾}`：默认值是旧签名“青禾”。也就是说，只要运行时没有显式设置 `APP_SENDER_LABEL`，生效的就是旧值。\n2. `src/notify/DemoGateway.java` 中 `void send() { gateway.SendDemoCode(settings.senderLabel()); }`：签名参数直接取自 `settings.senderLabel()`，而该方法的值链路最终落到上面的 `sender.label`，即 `${APP_SENDER_LABEL:青禾}`。因此真实生效的签名来源是“环境变量 `APP_SENDER_LABEL`，缺省回落到‘青禾’”。\n3. `APP_SENDER_LABEL` 的运行时实际值无法从仓库内确认。如果线上/部署环境已把它设为“晨钟”或“夜航”，则实际调用不是旧值；如果未设置或仍设为“青禾”，则实际调用就是旧值。这一点不能臆断，需要到部署环境核实。\n4. `docs/testing/evidence/legacy/demo.txt` 只是历史演练样例（曾以“夜航”调用），不能作为“当前已改过”的证据，不能据此判定已合规。\n\n**时间线要点（影响执行）**\n\n- 8 月 31 日旧签名“青禾”“秋声”停用后**立即不可用**，这期间用旧值调用会直接失败。\n- 11 月 30 日起的自动替换**只覆盖 `SendDemoCode` 的签名参数旧值**，且要等到该日才生效；8 月 31 日至 11 月 30 日之间旧签名仍会失败。因此不能把自动替换当作过渡期的保障。\n- 自动替换范围仅限 `SendDemoCode`。若还存在其他发送通道或签名配置项，它们不在自动替换范围内，需单独核对（本次提供的文件中未见其他通道，建议在代码库中再全局搜索 `sender.label`、`SendDemoCode`、`青禾`、`秋声` 等关键字确认）。\n\n**建议改法（二选一，具体选“晨钟”还是“夜航”由你定，未经确认不实际改动）**\n\n- 方案 A：把 `config/notify.properties` 的默认值改为 `sender.label=${APP_SENDER_LABEL:晨钟}`（或 `夜航`），消除缺省回落到旧值的风险。\n- 方案 B：不改默认值，在部署环境显式设置环境变量 `APP_SENDER_LABEL=晨钟`（或 `夜航`）。但默认值仍是旧值，任何未设置该变量的环境都会失败，风险更高，建议至少配合方案 A。\n\n**改后验证检查项**\n\n1. 确认目标环境 `APP_SENDER_LABEL` 的实际值（或确认已改默认值），确保解析结果为“晨钟”或“夜航”，不含“青禾”“秋声”。\n2. 在 `DemoGateway.send()` 处打点/日志，确认传入 `SendDemoCode` 的签名参数为“晨钟”或“夜航”。\n3. 用一次真实或沙箱调用 `SendDemoCode` 验证不再返回旧签名停用类错误。\n4. 全局搜索确认没有其他发送通道或签名配置项仍引用“青禾”“秋声”，且这些通道不在自动替换范围内、需单独处理。\n5. 若保留环境变量方案，检查所有部署环境（含测试、预发、生产）均已设置，避免某环境回落默认旧值。",
+  "finishReason": "stop",
+  "usage": {
+    "prompt_tokens": 538,
+    "completion_tokens": 830,
+    "total_tokens": 1368,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 538
+  }
+}

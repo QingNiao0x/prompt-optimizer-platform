@@ -26,6 +26,7 @@ test('历史展示已存执行快照，旧记录保持未知并可载入', async
   await dialog.getByText('本次执行信息', { exact: true }).click();
   await expect(dialog.getByText('source-language-v1', { exact: true })).toBeVisible();
   await expect(dialog.getByText('a'.repeat(64), { exact: true })).toBeVisible();
+  await expect(dialog.getByText(executionFixture.strategyVersion, { exact: true }).first()).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
   await dialog.getByRole('button', { name: '关闭此对话框' }).click();
   await rows(page).nth(1).getByRole('button', { name: '查看', exact: true }).click();

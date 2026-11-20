@@ -1,0 +1,234 @@
+{
+  "maxActualCalls": 24,
+  "phaseCaps": {
+    "pilot": 0,
+    "expand": 24
+  },
+  "jobs": [
+    {
+      "id": "garden-email-candidate",
+      "phase": "expand",
+      "sample": "garden-email",
+      "language": "EN",
+      "strategy": "text-polish-paragraph-v2",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "I am reaching out in relation to the various arrangements that are currently being made for the September garden sessions, with a view to making sure that our use of volunteer time is as effective as possible and that people who want to keep working together can do so. Could you send me the dates you can cover by 6 p.m. on Monday? If you cannot cover any sessions, please reply by the same deadline so I know you received this message. I plan to share a draft rota on Thursday. The rota is provisional until the caretaker confirms when the gate can open. People who want to work with a particular volunteer may say so, but I can't promise to keep every pair together.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Write for volunteers. Make the request and deadline easy to find. Keep the first-person voice.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "garden-email-baseline",
+      "phase": "expand",
+      "sample": "garden-email",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "I am reaching out in relation to the various arrangements that are currently being made for the September garden sessions, with a view to making sure that our use of volunteer time is as effective as possible and that people who want to keep working together can do so. Could you send me the dates you can cover by 6 p.m. on Monday? If you cannot cover any sessions, please reply by the same deadline so I know you received this message. I plan to share a draft rota on Thursday. The rota is provisional until the caretaker confirms when the gate can open. People who want to work with a particular volunteer may say so, but I can't promise to keep every pair together.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Write for volunteers. Make the request and deadline easy to find. Keep the first-person voice.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "meter-report-baseline",
+      "phase": "expand",
+      "sample": "meter-report",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "In the context of our wider effort to improve the reliability of the data available for monitoring electricity use, the outcome of last month's meter pilot provided an indication that the figures emerging from our two reporting systems are not always in alignment. The workshop meter recorded total use directly. The facilities dashboard estimated use by adding readings from devices connected to the internal network. On three mornings, the dashboard showed a lower total than the meter. We have not established whether the discrepancy was caused by devices being disconnected from the network or by a delay in importing their readings. We propose keeping the meter in place for another month, both to test whether the gap recurs and to give the facilities team time to inspect the import logs. This is a proposal for the workshop building only. The pilot did not cover the offices.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Write for colleagues who were not part of the pilot. Preserve the evidentiary limits and all proposed follow-up.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "meter-report-candidate",
+      "phase": "expand",
+      "sample": "meter-report",
+      "language": "EN",
+      "strategy": "text-polish-paragraph-v2",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "In the context of our wider effort to improve the reliability of the data available for monitoring electricity use, the outcome of last month's meter pilot provided an indication that the figures emerging from our two reporting systems are not always in alignment. The workshop meter recorded total use directly. The facilities dashboard estimated use by adding readings from devices connected to the internal network. On three mornings, the dashboard showed a lower total than the meter. We have not established whether the discrepancy was caused by devices being disconnected from the network or by a delay in importing their readings. We propose keeping the meter in place for another month, both to test whether the gap recurs and to give the facilities team time to inspect the import logs. This is a proposal for the workshop building only. The pilot did not cover the offices.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Write for colleagues who were not part of the pilot. Preserve the evidentiary limits and all proposed follow-up.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "tray-guide-candidate",
+      "phase": "expand",
+      "sample": "tray-guide",
+      "language": "EN",
+      "strategy": "text-polish-paragraph-v2",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "For the purposes of supporting the successful return of shared trays in a way that ensures their availability, there are a number of factors to take into consideration in determining the appropriate course of action following use. Once a tray has been washed and the desk attendant has checked it, you can put it on the open shelf. If the attendant is away, leave the washed tray on the drying rack with your name on a slip. A chipped tray goes in the marked tub even if the attendant has checked it. The attendant records chips so the next user is not blamed for damage they did not cause.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Explain the steps to new members of the print studio. Keep the two approval conditions and exception.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "tray-guide-baseline",
+      "phase": "expand",
+      "sample": "tray-guide",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "For the purposes of supporting the successful return of shared trays in a way that ensures their availability, there are a number of factors to take into consideration in determining the appropriate course of action following use. Once a tray has been washed and the desk attendant has checked it, you can put it on the open shelf. If the attendant is away, leave the washed tray on the drying rack with your name on a slip. A chipped tray goes in the marked tub even if the attendant has checked it. The attendant records chips so the next user is not blamed for damage they did not cause.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Explain the steps to new members of the print studio. Keep the two approval conditions and exception.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "postcard-essay-baseline",
+      "phase": "expand",
+      "sample": "postcard-essay",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "When I consider the memories associated with the last day at our old address, there is one object that for me seemed to assume a greater significance than the other things I was engaged in packing. It was a postcard with a sketch of our street on the front. I'd put it in a box with the rest of my papers. At the door, I realised I was going to pass the postbox for the last time. I went back for the card and wrote our new address on it. Until then, I had thought I'd keep it. I posted it to myself on the way to the bus. Two days later it was in the hall at the new place, face down on the mat.",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the change of mind in the story and the quiet ending.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "postcard-essay-candidate",
+      "phase": "expand",
+      "sample": "postcard-essay",
+      "language": "EN",
+      "strategy": "text-polish-paragraph-v2",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "When I consider the memories associated with the last day at our old address, there is one object that for me seemed to assume a greater significance than the other things I was engaged in packing. It was a postcard with a sketch of our street on the front. I'd put it in a box with the rest of my papers. At the door, I realised I was going to pass the postbox for the last time. I went back for the card and wrote our new address on it. Until then, I had thought I'd keep it. I posted it to myself on the way to the bus. Two days later it was in the hall at the new place, face down on the mat.",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the change of mind in the story and the quiet ending.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "market-natural-candidate",
+      "phase": "expand",
+      "sample": "market-natural",
+      "language": "EN",
+      "strategy": "text-polish-paragraph-v2",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "The stallholder counted the plums into a paper bag. I asked for one more. He picked up the one that had rolled towards the edge, set it beside my hand, and went on counting change.",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Retain the narrator's voice and the order of events.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "market-natural-baseline",
+      "phase": "expand",
+      "sample": "market-natural",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "The stallholder counted the plums into a paper bag. I asked for one more. He picked up the one that had rolled towards the edge, set it beside my hand, and went on counting change.",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Retain the narrator's voice and the order of events.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "hall-policy-baseline",
+      "phase": "expand",
+      "sample": "hall-policy",
+      "language": "EN",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "A hall booking ends at 21:00 unless the duty manager agrees to an extension before 20:30. If the manager agrees, the group may stay until 21:30. A late arrival does not change either time. Groups that need step-free access should contact reception in advance. The notice on the door reads, “Please return the key to reception.”",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the written notice exactly as quoted and preserve the distinction between a booking and an extension.",
+        "lockedTexts": [
+          "“Please return the key to reception.”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "hall-policy-candidate",
+      "phase": "expand",
+      "sample": "hall-policy",
+      "language": "EN",
+      "strategy": "text-polish-paragraph-v2",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "A hall booking ends at 21:00 unless the duty manager agrees to an extension before 20:30. If the manager agrees, the group may stay until 21:30. A late arrival does not change either time. Groups that need step-free access should contact reception in advance. The notice on the door reads, “Please return the key to reception.”",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the written notice exactly as quoted and preserve the distinction between a booking and an extension.",
+        "lockedTexts": [
+          "“Please return the key to reception.”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    }
+  ],
+  "sourceSha256": {
+    "docs/testing/evidence/text-polish-paragraph-v1/pilot-protocol.json": "7219b3f908215011221679f37319ce46d0e551dd4909da95f746b352cdf4ff50",
+    "scripts/evaluation/text-polish-thinking/ThinkingComparison.java": "2f6f904e160cc131531c1085b68c5af38a21e79cc937d90c5cd8a945f6b16459",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishSkills.java": "63df8c2fbd6101fddf1b229d23cc366863d37c5895b006285e53e764ac3b9ab1",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishInstructions.java": "274340307c4c15d261ccdf69c72c36c87b0d8cba29864c0fb2434dccff17177d",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/OpenAiTextPolishProvider.java": "231b3b8e8b76af3ec266881a990fc732739eaffb79968564f11c7eafd9c526d3",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishFidelity.java": "dbf60cb64d9fdf890924113bdb4cebb637686ef9cf2e1a370a31e2c712ad4ed4",
+    "services/api/src/main/resources/textpolish/skills/text-polish-v3/SKILL.md": "9f283575f5a6fc8b9ad06f9546955ef9026025759514a43923af86769df10f08",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v2/SKILL.md": "3a41aabf77e0d8a0a7b610a3092154ed5c86a16009da51ffc7417fb4c97358ac",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v2-zh-formal/SKILL.md": "1bd12c664d9a5096cbb4f6c0e2a9832824371ff54c405d0ec4f9c33d724941ef",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v2-zh-natural/SKILL.md": "6157adfbfb4c92c520e2ca346f0dd2bd7be93692718182c0def9587e8e6e00a4",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v2-zh-conversational/SKILL.md": "ca78520737a4e5814dbccc8136719b5810168c2ff0ee4d8d323ae53870d348d6",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v2-en-formal/SKILL.md": "cf7067ac85ba9e721951872e8c45018584acfe943749d04768d4e6c915f86e54",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v2-en-natural/SKILL.md": "c4f910eeaab26326af5132aa7ad56390df911e39caa3dc9d41a47b03fbe04d06",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v2-en-conversational/SKILL.md": "a740f72960c324f7f3dfb47037e527b29272f8cd80095e3bf247752a316250e5",
+    "docs/testing/evidence/text-polish-paragraph-v2/en-restructure/holdout.json": "9d439a5d246bc8d959b8fe6e7d0c50d31728bbfe47410630710d593acc801bf3"
+  }
+}

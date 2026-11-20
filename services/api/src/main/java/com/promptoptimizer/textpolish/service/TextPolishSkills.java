@@ -25,14 +25,26 @@ public final class TextPolishSkills {
     private static final Map<Language, String> IDS = Map.of(
             Language.ZH, "humanizer-zh-adapted-v1", Language.EN, "humanizer-en-adapted-v1",
             Language.MIXED, "humanizer-mixed-v1", Language.UNKNOWN, "general-v1");
+    private static final List<String> PARAGRAPH_VERSIONS = List.of(
+            TextPolishInstructions.PARAGRAPH_VERSION, TextPolishInstructions.PARAGRAPH_V2_VERSION);
     private static final Map<String, String> BODIES = loadResources();
+
+    /** 只有登记的段落编辑版本使用按语种和文体装配的资源。 */
+    static boolean isParagraphVersion(String version) {
+        return version != null && PARAGRAPH_VERSIONS.contains(version);
+    }
+
+    /** 用正文语种限定试用范围，判定为混合或证据不足时仍使用默认策略。 */
+    static boolean isEnglishRestructure(Input input) {
+        return input.depth() == Depth.RESTRUCTURE && detectLanguage(input.sourceText()) == Language.EN;
+    }
 
     /**
      * 冻结最终指导和资源身份。旧策略继续经过原装配入口，不改变其字符串。
      * 自动选择仅采用正文证据，中文界面、读者和要求不参与原文语言计数。
      */
     public static PreparedTextPolish prepare(Input input, String strategyVersion) {
-        if (TextPolishInstructions.PARAGRAPH_VERSION.equals(strategyVersion)) return prepareParagraph(input);
+        if (isParagraphVersion(strategyVersion)) return prepareParagraph(input, strategyVersion);
         if (!AUTO_VERSION.equals(strategyVersion)) {
             String instruction = TextPolishInstructions.system(input, strategyVersion);
             var resources = TextPolishInstructions.VERSION.equals(strategyVersion)
@@ -63,8 +75,7 @@ public final class TextPolishSkills {
      * 候选按正文语言和目标文体选一份示范。混合或未知语言使用通用指导，
      * 避免单语示范改变原文语言分布。幅度只控制组织范围，完整显式要求优先。
      */
-    private static PreparedTextPolish prepareParagraph(Input input) {
-        String version = TextPolishInstructions.PARAGRAPH_VERSION;
+    private static PreparedTextPolish prepareParagraph(Input input, String version) {
         Language language = detectLanguage(input.sourceText());
         String locale = switch (language) {
             case ZH -> "zh";
@@ -85,7 +96,7 @@ public final class TextPolishSkills {
         resources.add(new Resource(version, version, hash(core)));
         StringBuilder instruction = new StringBuilder(core);
         if (locale != null) {
-            String id = paragraphExampleId(locale, input.style());
+            String id = paragraphExampleId(version, locale, input.style());
             String example = BODIES.get(id);
             instruction.append("\n").append(example);
             resources.add(new Resource(id, version, hash(example)));
@@ -104,8 +115,8 @@ public final class TextPolishSkills {
     }
 
     /** 资源编号只由固定语言和文体组合生成，用户文本不参与路径拼接。 */
-    private static String paragraphExampleId(String locale, Style style) {
-        return TextPolishInstructions.PARAGRAPH_VERSION + "-" + locale + "-" + style.name().toLowerCase(Locale.ROOT);
+    private static String paragraphExampleId(String version, String locale, Style style) {
+        return version + "-" + locale + "-" + style.name().toLowerCase(Locale.ROOT);
     }
 
     /**
@@ -144,9 +155,11 @@ public final class TextPolishSkills {
         Map<String, String> bodies = new HashMap<>();
         Set<String> ids = new HashSet<>(IDS.values());
         ids.add("common-v1");
-        ids.add(TextPolishInstructions.PARAGRAPH_VERSION);
-        for (String locale : List.of("zh", "en")) {
-            for (Style style : Style.values()) ids.add(paragraphExampleId(locale, style));
+        for (String version : PARAGRAPH_VERSIONS) {
+            ids.add(version);
+            for (String locale : List.of("zh", "en")) {
+                for (Style style : Style.values()) ids.add(paragraphExampleId(version, locale, style));
+            }
         }
         for (String id : ids) bodies.put(id, load(id));
         return Map.copyOf(bodies);

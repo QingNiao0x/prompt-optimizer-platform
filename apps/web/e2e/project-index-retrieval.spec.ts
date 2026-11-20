@@ -1,5 +1,43 @@
 import { expect, test } from '@playwright/test';
 
+test('长通知中的 API 能找到 SDK 调用，解释通知时保留文档，在旧库与独立库中均可检索', async ({ page }) => {
+  await page.route('**/__notice_lookup', route => route.fulfill({ contentType: 'text/html', body: '<!doctype html>' }));
+  await page.goto('/__notice_lookup');
+  const results = await page.evaluate(async () => {
+    const repositoryModule = '/src/features/project-index/indexedDbProjectIndexRepository.ts';
+    const indexerModule = '/src/features/project-index/projectIndexer.ts';
+    const { RoutedProjectIndexRepository } = await import(repositoryModule) as typeof import('../src/features/project-index/indexedDbProjectIndexRepository');
+    const { indexProject, retrieveProjectContextWithReport } = await import(indexerModule) as typeof import('../src/features/project-index/projectIndexer');
+    const repository = new RoutedProjectIndexRepository();
+    const notice = '通知：服务端将在约定日期停用旧入参。请核对业务调用 SendSmsVerifyCode 使用的签名，已经迁移的可忽略。';
+    async function* files() {
+      // 文档含原样接口名，实际 SDK 则使用小写开头与后缀。按精确词召回会丢失唯一的业务调用。
+      for (let index = 0; index < 40; index++) {
+        const path = `docs/archive/${index}.md`;
+        yield { kind: 'file' as const, path, file: new File([notice], path) };
+      }
+      const path = 'app/SmsGateway.java';
+      yield { kind: 'file' as const, path, file: new File(['client.sendSmsVerifyCodeWithOptions(request, options);'], path) };
+    }
+    const hits = [];
+    for (const projectId of ['legacy-notice', 'pi-d1-notice']) {
+      try {
+        await indexProject({ projectId, rootName: 'demo', entries: files(), repository });
+        for (const query of [`请看以下短信，我是否需要修改？\n${notice}`,
+          `下面通知只需用两句大白话解释给同事。\n${notice}`, '请阅读 @docs/archive/6.md 中的 SendSmsVerifyCode 通知']) {
+          const result = await retrieveProjectContextWithReport(repository, { projectId, query, maxChunks: 1 });
+          hits.push(result.selections.map(selection => selection.path));
+        }
+      } finally {
+        await repository.deleteProject(projectId);
+      }
+    }
+    return hits;
+  });
+  const expected = [['app/SmsGateway.java'], [expect.stringMatching(/^docs\/archive\//)], ['docs/archive/6.md']];
+  expect(results).toEqual([...expected, ...expected]);
+});
+
 test('根目录文件名在大量同名正文中仍精确召回，未知文件不收紧普通检索', async ({ page }) => {
   await page.route('**/__root_reference', route => route.fulfill({ contentType: 'text/html', body: '<!doctype html>' }));
   await page.goto('/__root_reference');

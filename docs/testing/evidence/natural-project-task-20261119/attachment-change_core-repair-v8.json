@@ -1,0 +1,7 @@
+{
+  "case" : "attachment-change",
+  "version" : "core-repair-v8",
+  "success" : true,
+  "body" : "请修改文档维护页 `web/pages/DocumentEdit.vue` 的附件选择：将现有 `<AttachmentPicker :multiple=\"false\" @pick=\"addFile\" />` 改为支持多选，并按单文件 10MB 在选择时校验——超过 10MB 的文件当场提示并拒绝该文件，其他合法文件继续保留或加入。只改文档维护页，不要改 `web/pages/Profile.vue` 或其他页面。修改前先核查 `AttachmentPicker` 是否通过 `multiple` 属性支持多选，以及 `addFile` 对 `@pick` 参数、附件列表追加、提交和已保存附件打开/回显链路的实际处理；若组件支持多选则改 `DocumentEdit.vue` 的绑定，若不支持则在组件内实现但不得改变 `Profile.vue` 的单选行为。修改后验证：一次选择多个文件且其中一个超过 10MB 时，超限文件立即提示、其余合法文件仍加入；提交表单后，新附件可正常保存，已有附件仍能打开；`Profile.vue` 的附件选择行为未变。",
+  "stages" : [ "SCOPE_ANALYSIS", "BODY_GENERATION" ]
+}

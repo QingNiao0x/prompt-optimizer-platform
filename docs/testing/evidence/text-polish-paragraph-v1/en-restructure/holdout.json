@@ -1,0 +1,157 @@
+{
+  "scope": "EN/RESTRUCTURE",
+  "provenance": "Synthetic articles authored after the candidate was frozen. None appeared in the pilot or in model guidance.",
+  "samples": [
+    {
+      "id": "incident-notice",
+      "purpose": "Public incident notice",
+      "language": "EN",
+      "input": {
+        "sourceText": "In connection with the completion of our initial assessment, we are providing an update regarding problems affecting the building access system. The east entrance was unavailable from 8:10 to 8:35 this morning. The other entrances stayed open. The access logs reviewed so far do not show any unauthorized entry, but the review is ongoing. Staff may continue to use their usual entrances. If a badge is still rejected, call the front desk before trying again.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "State the visible effects first. Keep the certainty and scope of all findings.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "needSubstantiveEdit": true,
+        "independentMeanings": [
+          "East entrance 8:10 to 8:35 this morning",
+          "others open",
+          "logs reviewed so far show no unauthorized entry",
+          "review ongoing",
+          "may use usual entrances",
+          "if badge still rejected call front desk before retrying"
+        ],
+        "readingReview": "Find the affected entrance and time immediately, then clearly distinguish what the review has found from the remaining uncertainty."
+      }
+    },
+    {
+      "id": "repair-blog",
+      "purpose": "Personal blog",
+      "language": "EN",
+      "input": {
+        "sourceText": "The thing I found myself reflecting on after the attempt to repair my aunt's radio was not really the outcome of the repair itself. The dial still wouldn't move when I put the cover back on. My aunt took the radio from me and showed me the notch in the handle where she used to tuck the station list. I had never noticed it. I put the screwdriver down and asked her to show me what else I had missed.",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the first person and the understated ending.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "needSubstantiveEdit": true,
+        "independentMeanings": [
+          "tried to repair aunt's radio",
+          "dial still would not move after cover reattached",
+          "aunt took radio and showed notch in handle",
+          "she used to tuck station list there",
+          "narrator had never noticed",
+          "put screwdriver down and asked what else missed"
+        ],
+        "readingReview": "Let the scene carry the shift in attention from the failed repair to what the aunt shows him or her."
+      }
+    },
+    {
+      "id": "freight-brief",
+      "purpose": "Operations briefing",
+      "language": "EN",
+      "input": {
+        "sourceText": "For the purpose of ensuring consistency in the handling of the forthcoming shipment, it is important to note that, subject to confirmation from the carrier by noon Wednesday, the receiving team should reserve the west loading bay for Thursday morning. The storage team will clear the marked shelves on Wednesday afternoon. If the carrier has not confirmed by noon, the receiving team should leave the bay available and wait for a revised time. Refrigerated goods still go straight to cold storage in either case.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Write a short briefing for the receiving team. Preserve the exception and each team's responsibilities.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "needSubstantiveEdit": true,
+        "independentMeanings": [
+          "carrier confirmation by noon Wednesday conditions reserving bay",
+          "receiving team should reserve west bay Thursday morning if confirmed",
+          "storage team will clear marked shelves Wednesday afternoon",
+          "if no confirmation leave bay available and wait revised time",
+          "refrigerated goods straight to cold storage either case"
+        ],
+        "readingReview": "Make it clear which action depends on the noon decision and which team handles each action."
+      }
+    },
+    {
+      "id": "workshop-explainer",
+      "purpose": "Public-facing technical explanation",
+      "language": "EN",
+      "input": {
+        "sourceText": "In order to facilitate appropriate utilization of the shared workshop facilities, consideration should be given to the difference between the dust extractor and the room ventilation system. The dust extractor collects sawdust at the tool. The room ventilation brings in outdoor air. Because the two systems serve different purposes, turn on the extractor before cutting even if the ventilation is already running. If the extractor stops during a cut, stop the tool and tell the workshop supervisor.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Explain this to someone who has never used the studio. Keep the equipment names and safety limits.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "needSubstantiveEdit": true,
+        "independentMeanings": [
+          "distinguish dust extractor and room ventilation",
+          "extractor collects sawdust at tool",
+          "ventilation brings outdoor air",
+          "extractor on before cutting even if ventilation running",
+          "if extractor stops during cut stop tool then tell supervisor"
+        ],
+        "readingReview": "Put each system's role next to the instruction it explains and make the stop condition easy to find."
+      }
+    },
+    {
+      "id": "quiet-morning",
+      "purpose": "Natural narrative control",
+      "language": "EN",
+      "input": {
+        "sourceText": "The shop was still dark when I got there. I set the bread down outside and waited by the window. A few minutes later, Mara turned on the light at the back and waved me in.",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the order of events and the narrator's voice.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "needSubstantiveEdit": false,
+        "independentMeanings": [
+          "shop dark upon arrival",
+          "set bread outside and waited at window",
+          "a few minutes later Mara turned on light at back and waved narrator in"
+        ],
+        "readingReview": "Original is clear; preserve the location, mood and sequence."
+      }
+    },
+    {
+      "id": "dues-policy",
+      "purpose": "Condition-heavy notice",
+      "language": "EN",
+      "input": {
+        "sourceText": "Payments submitted by 17:00 on 12 May count as on time. A bank transfer may take two business days to appear in the portal. If you send your transfer before the deadline and it does not yet appear, email the receipt to the membership desk. Members who already have an approved instalment plan follow the dates on that plan. We will confirm receipt of a submitted receipt; confirmation does not by itself approve a renewal.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the difference between the posting delay and the deadline. Preserve the date/time form used in the original.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "needSubstantiveEdit": false,
+        "independentMeanings": [
+          "submitted by 17:00 on 12 May on time",
+          "transfer may take two business days to appear",
+          "if sent before deadline and not appeared email receipt to membership desk",
+          "approved instalment plan follows its dates",
+          "will confirm receipt of submitted receipt",
+          "confirmation alone does not approve renewal"
+        ],
+        "readingReview": "Make the difference between sending money and portal posting easy to follow. Preserve each condition."
+      }
+    }
+  ]
+}

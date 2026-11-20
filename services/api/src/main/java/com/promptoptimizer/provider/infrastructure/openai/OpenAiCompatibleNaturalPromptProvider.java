@@ -450,7 +450,7 @@ public class OpenAiCompatibleNaturalPromptProvider implements NaturalPromptProvi
 
     /** 先选择各版本独有的准备指导，再复用协议族的通用指导，确保历史按原版本重放。 */
     private static String scopeInstruction(String version) {
-        if (NaturalPromptProjectTaskInstructions.VERSION.equals(version)) return NaturalPromptProjectTaskInstructions.PREPARE;
+        if (NaturalPromptProjectTaskInstructions.supports(version)) return NaturalPromptProjectTaskInstructions.PREPARE;
         if (NaturalPromptExpressionInstructions.VERSION.equals(version)) return NaturalPromptExpressionInstructions.PREPARE;
         if (NaturalPromptPlanContextInstructions.usesProtocol(version)) return NaturalPromptPlanContextInstructions.PREPARE;
         if (NaturalPromptSimplifiedInstructions.VERSION.equals(version)) return NaturalPromptSimplifiedInstructions.PREPARE;

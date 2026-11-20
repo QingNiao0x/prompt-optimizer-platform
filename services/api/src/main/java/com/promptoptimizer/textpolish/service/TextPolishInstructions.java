@@ -18,6 +18,8 @@ public final class TextPolishInstructions {
     public static final String DIRECT_VERSION = "text-polish-direct-v1";
     /** 段落编辑候选，须由文章模块显式配置启用。 */
     public static final String PARAGRAPH_VERSION = "text-polish-paragraph-v1";
+    /** 增强整段重写示范和主问题编辑要求，须显式启用。 */
+    public static final String PARAGRAPH_V2_VERSION = "text-polish-paragraph-v2";
 
     /**
      * 单次完成按用途编辑，事实保护与表达自由分别说明。保留旧策略用于受控对照与配置回退。
@@ -50,7 +52,7 @@ public final class TextPolishInstructions {
      * 文体只控制表达，幅度控制组织调整范围，两者均服从语义和用户锁定要求。
      */
     public static String system(Input input, String version) {
-        if (TextPolishSkills.AUTO_VERSION.equals(version) || PARAGRAPH_VERSION.equals(version))
+        if (TextPolishSkills.AUTO_VERSION.equals(version) || TextPolishSkills.isParagraphVersion(version))
             return TextPolishSkills.prepare(input, version).instruction();
         if (VERSION.equals(version)) return SYSTEM;
         if (DIRECT_VERSION.equals(version)) return direct(input);
