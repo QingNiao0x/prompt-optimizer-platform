@@ -29,6 +29,10 @@ public final class TextPolishInstructions {
     public static final String STYLE_CONTRACT_VERSION = "text-polish-style-contract-v1";
     /** 在同素材文体方案上追加中文段内改句指令。 */
     public static final String CHINESE_LIGHT_EDIT_VERSION = "text-polish-zh-light-edit-v1";
+    /** 为已有中文和英文大幅重构候选追加保真提示。 */
+    public static final String RESTRUCTURE_FIDELITY_VERSION = "text-polish-restructure-fidelity-v1";
+    /** 在中文报告示范上验证同一份保真提示。 */
+    public static final String CHINESE_REPORT_FIDELITY_VERSION = "text-polish-zh-report-fidelity-v1";
 
     /**
      * 单次完成按用途编辑，事实保护与表达自由分别说明。保留旧策略用于受控对照与配置回退。
@@ -62,7 +66,7 @@ public final class TextPolishInstructions {
      */
     public static String system(Input input, String version) {
         if (TextPolishSkills.AUTO_VERSION.equals(version) || STYLE_CONTRACT_VERSION.equals(version)
-                || CHINESE_LIGHT_EDIT_VERSION.equals(version)
+                || CHINESE_LIGHT_EDIT_VERSION.equals(version) || TextPolishSkills.isRestructureFidelityVersion(version)
                 || TextPolishSkills.isChineseVersion(version)
                 || TextPolishSkills.isParagraphVersion(version))
             return TextPolishSkills.prepare(input, version).instruction();

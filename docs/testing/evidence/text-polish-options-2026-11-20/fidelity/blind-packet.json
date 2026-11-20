@@ -1,0 +1,181 @@
+[
+  {
+    "id": "locked-report",
+    "language": "ZH",
+    "input": {
+      "sourceText": "报告仅记录周一和周二的测温结果。两天均超过设定温度，设备记录为“等待人工复查”。如果维护组确认传感器异常，拟在周五前更换。复查前，报告不认定货物受损。",
+      "style": "FORMAL",
+      "depth": "RESTRUCTURE",
+      "audience": "",
+      "requirements": "保持引文和数值，保留待审批语气。",
+      "lockedTexts": [
+        "“等待人工复查”"
+      ],
+      "modelId": "deepseek:deepseek-flash"
+    },
+    "reviewOnly": {
+      "needSubstantiveEdit": false,
+      "independentMeanings": [
+        "仅周一周二两天",
+        "两天超设温",
+        "引文保持",
+        "确认传感器异常才拟周五前更换",
+        "复查前不认定货物受损"
+      ],
+      "readingReview": "保护确认条件, 拟定日期和原样引文。"
+    },
+    "pair": {
+      "A": "报告只记录了周一和周二的测温结果，两天的温度都超过设定值，设备记录为“等待人工复查”。如果维护组确认传感器异常，拟在周五前更换。复查完成前，报告不认定货物受损。",
+      "B": "报告只记录了周一和周二的测温结果，两天的温度都超过设定值，设备记录为“等待人工复查”。如果维护组确认传感器异常，计划在周五前更换。复查完成前，报告不认定货物受损。"
+    }
+  },
+  {
+    "id": "wide-guide",
+    "language": "ZH",
+    "input": {
+      "sourceText": "为便于对共享储物柜开展较为有序的使用和管理工作，使用人员在离开场地前应当结合实际情况完成相应操作。如已清空储物柜，应在前台归还钥匙；如登记了过夜使用，可以把钥匙带走，但必须在次日12点前归还。即使登记了过夜使用，生鲜食品也必须当天取走。前台会把未归还钥匙记入交接单，方便第二天值班人员跟进，并提醒有物品留在柜中的使用者尽快取件。",
+      "style": "CONVERSATIONAL",
+      "depth": "RESTRUCTURE",
+      "audience": "",
+      "requirements": "写给第一次使用储物柜的人，可以调整段落。",
+      "lockedTexts": [],
+      "modelId": "deepseek:deepseek-flash"
+    },
+    "reviewOnly": {
+      "needSubstantiveEdit": true,
+      "independentMeanings": [
+        "已清空离场前前台应归还钥匙",
+        "登记过夜可带走但须次日12点前归还",
+        "生鲜无论过夜都须当天取",
+        "前台记交接单",
+        "便于次日跟进且提醒遗留物取件两个目的"
+      ],
+      "readingReview": "读者能按是否过夜找到归还步骤，并马上看到生鲜例外。"
+    },
+    "pair": {
+      "A": "第一次用共享储物柜，离开前请按自己的情况把该做的事做完，这样柜子用起来会更有秩序。\n\n如果柜子已经清空，请到前台还钥匙。如果登记了过夜使用，可以把钥匙带走，但必须在次日12点前归还。\n\n有一点要注意：即使登记了过夜使用，生鲜食品也必须当天取走。\n\n前台会把没归还的钥匙记进交接单，方便第二天值班人员跟进，也会提醒柜里还有东西的人尽快来取。",
+      "B": "第一次用共享储物柜，离开前按自己的情况把钥匙处理好。\n\n如果柜子已经清空，把钥匙还到前台。\n\n如果登记了过夜使用，可以把钥匙带走，但第二天12点前要还回来。\n\n有一点要注意：就算登记了过夜使用，生鲜食品也必须当天取走。\n\n钥匙没还的话，前台会记进交接单，第二天值班的人会跟进；柜里还留着东西的，也会被提醒尽快来取。"
+    }
+  },
+  {
+    "id": "meter-report",
+    "language": "EN",
+    "input": {
+      "sourceText": "In the context of our wider effort to improve the reliability of the data available for monitoring electricity use, the outcome of last month's meter pilot provided an indication that the figures emerging from our two reporting systems are not always in alignment. The workshop meter recorded total use directly. The facilities dashboard estimated use by adding readings from devices connected to the internal network. On three mornings, the dashboard showed a lower total than the meter. We have not established whether the discrepancy was caused by devices being disconnected from the network or by a delay in importing their readings. We propose keeping the meter in place for another month, both to test whether the gap recurs and to give the facilities team time to inspect the import logs. This is a proposal for the workshop building only. The pilot did not cover the offices.",
+      "style": "FORMAL",
+      "depth": "RESTRUCTURE",
+      "audience": "",
+      "requirements": "Write for colleagues who were not part of the pilot. Preserve the evidentiary limits and all proposed follow-up.",
+      "lockedTexts": [],
+      "modelId": "deepseek:deepseek-flash"
+    },
+    "reviewOnly": {
+      "needSubstantiveEdit": true,
+      "independentMeanings": [
+        "ongoing aim improve reliability of electricity monitoring data",
+        "last month pilot",
+        "workshop meter directly recorded total usage",
+        "dashboard estimates sum from connected devices",
+        "three mornings dashboard lower than meter",
+        "uncertain cause disconnected devices or import delay",
+        "proposal keep meter another month",
+        "purposes test recurrence and allow inspection of import logs",
+        "workshop-only proposal and offices not covered"
+      ],
+      "readingReview": "Bring the specific finding and its limits into view and explain how the two measurement methods differed."
+    },
+    "pair": {
+      "A": "Last month's meter pilot suggests that the figures from our two reporting systems are not always in alignment. This bears on our wider effort to improve the reliability of the data available for monitoring electricity use.\n\nThe workshop meter recorded total use directly. The facilities dashboard estimated use by adding readings from devices connected to the internal network. On three mornings, the dashboard showed a lower total than the meter. We have not established whether the discrepancy was caused by devices being disconnected from the network or by a delay in importing their readings.\n\nWe propose keeping the meter in place for another month. This would both test whether the gap recurs and give the facilities team time to inspect the import logs. The proposal applies to the workshop building only; the pilot did not cover the offices.",
+      "B": "Last month's meter pilot indicated that the figures from our two reporting systems are not always in alignment. This bears on our wider effort to improve the reliability of the data available for monitoring electricity use.\n\nThe workshop meter recorded total use directly. The facilities dashboard estimated use by adding readings from devices connected to the internal network. On three mornings, the dashboard showed a lower total than the meter. We have not established whether the discrepancy was caused by devices being disconnected from the network or by a delay in importing their readings.\n\nWe propose keeping the meter in place for another month, both to test whether the gap recurs and to give the facilities team time to inspect the import logs. This is a proposal for the workshop building only. The pilot did not cover the offices."
+    }
+  },
+  {
+    "id": "tray-guide",
+    "language": "EN",
+    "input": {
+      "sourceText": "For the purposes of supporting the successful return of shared trays in a way that ensures their availability, there are a number of factors to take into consideration in determining the appropriate course of action following use. Once a tray has been washed and the desk attendant has checked it, you can put it on the open shelf. If the attendant is away, leave the washed tray on the drying rack with your name on a slip. A chipped tray goes in the marked tub even if the attendant has checked it. The attendant records chips so the next user is not blamed for damage they did not cause.",
+      "style": "CONVERSATIONAL",
+      "depth": "RESTRUCTURE",
+      "audience": "",
+      "requirements": "Explain the steps to new members of the print studio. Keep the two approval conditions and exception.",
+      "lockedTexts": [],
+      "modelId": "deepseek:deepseek-flash"
+    },
+    "reviewOnly": {
+      "needSubstantiveEdit": true,
+      "independentMeanings": [
+        "both washed and checked before open shelf",
+        "attendant away leave washed tray on drying rack with name slip",
+        "chipped tray goes to marked tub even if checked",
+        "attendant records chips to avoid blaming next user",
+        "shared availability purpose"
+      ],
+      "readingReview": "A newcomer should be able to find where to put the tray in each situation without reading a procedural preamble."
+    },
+    "pair": {
+      "A": "Here's how to return a shared tray so it's ready for the next person to use.\n\nOnce you've washed the tray, the desk attendant needs to check it. After the attendant has checked it, you can put it on the open shelf.\n\nIf the attendant is away, leave the washed tray on the drying rack with your name on a slip.\n\nA chipped tray goes in the marked tub, even if the attendant has checked it. The attendant records chips so the next user isn't blamed for damage they didn't cause.",
+      "B": "Here's how to return a shared tray so it's ready for the next person.\n\nOnce you've washed the tray, the desk attendant needs to check it. After the attendant has checked it, put the tray on the open shelf.\n\nIf the attendant is away, leave the washed tray on the drying rack with your name on a slip.\n\nA chipped tray goes in the marked tub, even if the attendant has checked it. The attendant records chips so the next user isn't blamed for damage they didn't cause."
+    }
+  },
+  {
+    "id": "hall-policy",
+    "language": "EN",
+    "input": {
+      "sourceText": "A hall booking ends at 21:00 unless the duty manager agrees to an extension before 20:30. If the manager agrees, the group may stay until 21:30. A late arrival does not change either time. Groups that need step-free access should contact reception in advance. The notice on the door reads, “Please return the key to reception.”",
+      "style": "FORMAL",
+      "depth": "RESTRUCTURE",
+      "audience": "",
+      "requirements": "Keep the written notice exactly as quoted and preserve the distinction between a booking and an extension.",
+      "lockedTexts": [
+        "“Please return the key to reception.”"
+      ],
+      "modelId": "deepseek:deepseek-flash"
+    },
+    "reviewOnly": {
+      "needSubstantiveEdit": false,
+      "independentMeanings": [
+        "booking ends 21:00 by default",
+        "extension requires manager agreement before 20:30",
+        "if agreed may stay until 21:30",
+        "late arrivals do not change either time",
+        "groups needing step-free access should contact reception in advance",
+        "notice quote verbatim"
+      ],
+      "readingReview": "The policy is already direct. Protect each time, the condition for the exception, and the quoted notice."
+    },
+    "pair": {
+      "A": "A hall booking ends at 21:00. The duty manager may agree to an extension before 20:30; if the manager agrees, the group may stay until 21:30. A late arrival does not change either time. Groups that need step-free access should contact reception in advance. The notice on the door reads, “Please return the key to reception.”",
+      "B": "A hall booking ends at 21:00. The duty manager may agree to an extension before 20:30; if the manager agrees, the group may stay until 21:30. A late arrival does not change either time. Groups that need step-free access should contact reception in advance. The notice on the door reads, “Please return the key to reception.”"
+    }
+  },
+  {
+    "id": "wide-policy",
+    "language": "ZH",
+    "input": {
+      "sourceText": "门票未核验且活动尚未开始，购票人可以申请改签。改签须等待客服确认，确认前原票仍有效。遇场地临时关闭，客服将通知购票人；本说明未约定通知发出时点。订单页提示为“请保留原订单号”。",
+      "style": "FORMAL",
+      "depth": "RESTRUCTURE",
+      "audience": "",
+      "requirements": "保持引文、权限和起算解释准确。",
+      "lockedTexts": [
+        "“请保留原订单号”"
+      ],
+      "modelId": "deepseek:deepseek-flash"
+    },
+    "reviewOnly": {
+      "needSubstantiveEdit": false,
+      "independentMeanings": [
+        "未核验且未开始可申请",
+        "须等客服确认",
+        "确认前原票有效",
+        "临时关闭客服会通知但无发出时点承诺",
+        "原样保留引文"
+      ],
+      "readingReview": "内容已直白，重点防止重排时新增确认或通知时点。"
+    },
+    "pair": {
+      "A": "购票人申请改签，须同时满足两个条件：门票未核验，且活动尚未开始。改签须经客服确认；确认前，原票仍然有效。遇场地临时关闭，客服将通知购票人；本说明未约定通知发出的时点。订单页提示为“请保留原订单号”。",
+      "B": "购票人申请改签，须同时满足两个条件：门票未核验，且活动尚未开始。改签须经客服确认；确认前，原票仍然有效。遇场地临时关闭，客服将通知购票人；本说明未约定通知发出的时点。订单页提示为“请保留原订单号”。"
+    }
+  }
+]

@@ -39,6 +39,19 @@ public final class TextPolishSkills {
         return language == Language.ZH || language == Language.EN;
     }
 
+    /** 两个独立版本共用一份保真资源，避免两组对照的规则不一致。 */
+    static boolean isRestructureFidelityVersion(String version) {
+        return TextPolishInstructions.RESTRUCTURE_FIDELITY_VERSION.equals(version)
+                || TextPolishInstructions.CHINESE_REPORT_FIDELITY_VERSION.equals(version);
+    }
+
+    /** 报告版只供中文大幅重构对照，通用版只为已有对应基线的中英文启用。 */
+    static boolean supportsRestructureFidelity(String version, Input input) {
+        return input.depth() == Depth.RESTRUCTURE
+                && (TextPolishInstructions.CHINESE_REPORT_FIDELITY_VERSION.equals(version)
+                ? isChinese(input) : supportsStyleContract(input));
+    }
+
     /** 只有登记的段落编辑版本使用按语种和文体装配的资源。 */
     static boolean isParagraphVersion(String version) {
         return version != null && PARAGRAPH_VERSIONS.contains(version);
@@ -71,6 +84,7 @@ public final class TextPolishSkills {
      * 自动选择仅采用正文证据，中文界面、读者和要求不参与原文语言计数。
      */
     public static PreparedTextPolish prepare(Input input, String strategyVersion) {
+        if (isRestructureFidelityVersion(strategyVersion)) return prepareRestructureFidelity(input, strategyVersion);
         if (TextPolishInstructions.CHINESE_LIGHT_EDIT_VERSION.equals(strategyVersion))
             return appendGuidance(prepareStyleContract(input), strategyVersion);
         if (TextPolishInstructions.STYLE_CONTRACT_VERSION.equals(strategyVersion)) return prepareStyleContract(input);
@@ -103,11 +117,22 @@ public final class TextPolishSkills {
     }
 
     /** 附加资源记录自己的版本和哈希，保留对照基线已装配的指导与资源。 */
-    private static PreparedTextPolish appendGuidance(PreparedTextPolish base, String version) {
-        String guidance = BODIES.get(version);
+    private static PreparedTextPolish appendGuidance(PreparedTextPolish base, String id) {
+        String guidance = BODIES.get(id);
         var resources = new ArrayList<>(base.resources());
-        resources.add(new Resource(version, version, hash(guidance)));
+        resources.add(new Resource(id, id, hash(guidance)));
         return new PreparedTextPolish(base.instruction() + "\n" + guidance, base.selection(), resources);
+    }
+
+    /** 选择研究中已使用的原基线。附加规则只限定语义，完整保留其重构和读者指导。 */
+    private static PreparedTextPolish prepareRestructureFidelity(Input input, String version) {
+        String baseline = TextPolishInstructions.CHINESE_VERSION;
+        if (TextPolishInstructions.CHINESE_REPORT_FIDELITY_VERSION.equals(version)) {
+            baseline = TextPolishInstructions.CHINESE_REPORT_EXAMPLE_VERSION;
+        } else if (!isChinese(input)) {
+            baseline = TextPolishInstructions.PARAGRAPH_V2_VERSION;
+        }
+        return appendGuidance(prepare(input, baseline), TextPolishInstructions.RESTRUCTURE_FIDELITY_VERSION);
     }
 
     /**
@@ -239,6 +264,7 @@ public final class TextPolishSkills {
         ids.add(TextPolishInstructions.STYLE_CONTRACT_VERSION + "-zh");
         ids.add(TextPolishInstructions.STYLE_CONTRACT_VERSION + "-en");
         ids.add(TextPolishInstructions.CHINESE_LIGHT_EDIT_VERSION);
+        ids.add(TextPolishInstructions.RESTRUCTURE_FIDELITY_VERSION);
         for (String version : PARAGRAPH_VERSIONS) {
             ids.add(version);
             for (String locale : List.of("zh", "en")) {

@@ -58,7 +58,8 @@ class TextPolishSkillsTest {
         for (String strategy : List.of(TextPolishSkills.AUTO_VERSION, TextPolishInstructions.PARAGRAPH_VERSION,
                 TextPolishInstructions.PARAGRAPH_V2_VERSION, TextPolishInstructions.CHINESE_VERSION,
                 TextPolishInstructions.CHINESE_LIGHT_EXAMPLE_VERSION, TextPolishInstructions.CHINESE_REPORT_EXAMPLE_VERSION,
-                TextPolishInstructions.STYLE_CONTRACT_VERSION, TextPolishInstructions.CHINESE_LIGHT_EDIT_VERSION)) {
+                TextPolishInstructions.STYLE_CONTRACT_VERSION, TextPolishInstructions.CHINESE_LIGHT_EDIT_VERSION,
+                TextPolishInstructions.RESTRUCTURE_FIDELITY_VERSION, TextPolishInstructions.CHINESE_REPORT_FIDELITY_VERSION)) {
             for (var source : sources.entrySet()) {
                 for (Style style : Style.values()) for (Depth depth : Depth.values()) {
                     cases.add(Arguments.of(strategy, source.getKey(), source.getValue(), style, depth, ""));
@@ -90,7 +91,11 @@ class TextPolishSkillsTest {
         boolean wrongStyleLanguage = styleContract && language != Language.ZH && language != Language.EN;
         boolean chineseLight = TextPolishInstructions.CHINESE_LIGHT_EDIT_VERSION.equals(strategy);
         boolean wrongLightScope = chineseLight && (language != Language.ZH || depth != Depth.LIGHT);
-        String expectedVersion = wrongChineseScope || wrongStyleLanguage || wrongLightScope
+        boolean fidelity = TextPolishSkills.isRestructureFidelityVersion(strategy);
+        boolean reportFidelity = TextPolishInstructions.CHINESE_REPORT_FIDELITY_VERSION.equals(strategy);
+        boolean wrongFidelityScope = fidelity && (depth != Depth.RESTRUCTURE
+                || (language != Language.ZH && (reportFidelity || language != Language.EN)));
+        String expectedVersion = wrongChineseScope || wrongStyleLanguage || wrongLightScope || wrongFidelityScope
                 ? TextPolishInstructions.VERSION : strategy;
         var prepared = TextPolishSkills.prepare(input, expectedVersion);
         server.expect(requestTo(endpoint)).andExpect(request -> {
@@ -132,6 +137,13 @@ class TextPolishSkillsTest {
             assertThat(prepared.instruction()).startsWith(base.instruction()).contains("条件及例外靠近它对应的动作");
             assertThat(metadata.resources()).containsAll(base.resources()).hasSize(base.resources().size() + 1);
             assertThat(metadata.resources().getLast().id()).isEqualTo(expectedVersion);
+        } else if (TextPolishSkills.isRestructureFidelityVersion(expectedVersion)) {
+            String baseline = reportFidelity ? TextPolishInstructions.CHINESE_REPORT_EXAMPLE_VERSION
+                    : (language == Language.EN ? TextPolishInstructions.PARAGRAPH_V2_VERSION : TextPolishInstructions.CHINESE_VERSION);
+            var base = TextPolishSkills.prepare(input, baseline);
+            assertThat(prepared.instruction()).startsWith(base.instruction()).contains("保持这个目的或不确定性");
+            assertThat(metadata.resources()).containsAll(base.resources()).hasSize(base.resources().size() + 1);
+            assertThat(metadata.resources().getLast().id()).isEqualTo(TextPolishInstructions.RESTRUCTURE_FIDELITY_VERSION);
         } else if (!TextPolishInstructions.VERSION.equals(expectedVersion)) {
             assertThat(prepared.instruction()).contains("Target style:", "Editing depth:", "Explicit requirements", "polishedText");
         }

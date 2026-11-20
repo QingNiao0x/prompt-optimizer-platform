@@ -158,6 +158,10 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
      */
     private String selectStrategy(Input input, ModelEntry model, Thinking requestedThinking) {
         String configured = strategyVersion;
+        if (TextPolishSkills.isRestructureFidelityVersion(configured)
+                && !TextPolishSkills.supportsRestructureFidelity(configured, input)) {
+            return TextPolishInstructions.VERSION;
+        }
         if (TextPolishInstructions.CHINESE_LIGHT_EDIT_VERSION.equals(configured)
                 && (input.depth() != Depth.LIGHT || !TextPolishSkills.isChinese(input))) {
             return TextPolishInstructions.VERSION;

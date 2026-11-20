@@ -1,0 +1,240 @@
+{
+  "maxActualCalls": 24,
+  "phaseCaps": {
+    "pilot": 24,
+    "expand": 0
+  },
+  "jobs": [
+    {
+      "id": "locked-report-baseline",
+      "sample": "locked-report",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-report-example-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "报告仅记录周一和周二的测温结果。两天均超过设定温度，设备记录为“等待人工复查”。如果维护组确认传感器异常，拟在周五前更换。复查前，报告不认定货物受损。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保持引文和数值，保留待审批语气。",
+        "lockedTexts": [
+          "“等待人工复查”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "locked-report-candidate",
+      "sample": "locked-report",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-report-fidelity-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "报告仅记录周一和周二的测温结果。两天均超过设定温度，设备记录为“等待人工复查”。如果维护组确认传感器异常，拟在周五前更换。复查前，报告不认定货物受损。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保持引文和数值，保留待审批语气。",
+        "lockedTexts": [
+          "“等待人工复查”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-guide-candidate",
+      "sample": "wide-guide",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-restructure-fidelity-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "为便于对共享储物柜开展较为有序的使用和管理工作，使用人员在离开场地前应当结合实际情况完成相应操作。如已清空储物柜，应在前台归还钥匙；如登记了过夜使用，可以把钥匙带走，但必须在次日12点前归还。即使登记了过夜使用，生鲜食品也必须当天取走。前台会把未归还钥匙记入交接单，方便第二天值班人员跟进，并提醒有物品留在柜中的使用者尽快取件。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "写给第一次使用储物柜的人，可以调整段落。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-guide-baseline",
+      "sample": "wide-guide",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "为便于对共享储物柜开展较为有序的使用和管理工作，使用人员在离开场地前应当结合实际情况完成相应操作。如已清空储物柜，应在前台归还钥匙；如登记了过夜使用，可以把钥匙带走，但必须在次日12点前归还。即使登记了过夜使用，生鲜食品也必须当天取走。前台会把未归还钥匙记入交接单，方便第二天值班人员跟进，并提醒有物品留在柜中的使用者尽快取件。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "写给第一次使用储物柜的人，可以调整段落。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "meter-report-baseline",
+      "sample": "meter-report",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-paragraph-v2",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "In the context of our wider effort to improve the reliability of the data available for monitoring electricity use, the outcome of last month's meter pilot provided an indication that the figures emerging from our two reporting systems are not always in alignment. The workshop meter recorded total use directly. The facilities dashboard estimated use by adding readings from devices connected to the internal network. On three mornings, the dashboard showed a lower total than the meter. We have not established whether the discrepancy was caused by devices being disconnected from the network or by a delay in importing their readings. We propose keeping the meter in place for another month, both to test whether the gap recurs and to give the facilities team time to inspect the import logs. This is a proposal for the workshop building only. The pilot did not cover the offices.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Write for colleagues who were not part of the pilot. Preserve the evidentiary limits and all proposed follow-up.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "meter-report-candidate",
+      "sample": "meter-report",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-restructure-fidelity-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "In the context of our wider effort to improve the reliability of the data available for monitoring electricity use, the outcome of last month's meter pilot provided an indication that the figures emerging from our two reporting systems are not always in alignment. The workshop meter recorded total use directly. The facilities dashboard estimated use by adding readings from devices connected to the internal network. On three mornings, the dashboard showed a lower total than the meter. We have not established whether the discrepancy was caused by devices being disconnected from the network or by a delay in importing their readings. We propose keeping the meter in place for another month, both to test whether the gap recurs and to give the facilities team time to inspect the import logs. This is a proposal for the workshop building only. The pilot did not cover the offices.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Write for colleagues who were not part of the pilot. Preserve the evidentiary limits and all proposed follow-up.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "tray-guide-candidate",
+      "sample": "tray-guide",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-restructure-fidelity-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "For the purposes of supporting the successful return of shared trays in a way that ensures their availability, there are a number of factors to take into consideration in determining the appropriate course of action following use. Once a tray has been washed and the desk attendant has checked it, you can put it on the open shelf. If the attendant is away, leave the washed tray on the drying rack with your name on a slip. A chipped tray goes in the marked tub even if the attendant has checked it. The attendant records chips so the next user is not blamed for damage they did not cause.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Explain the steps to new members of the print studio. Keep the two approval conditions and exception.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "tray-guide-baseline",
+      "sample": "tray-guide",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-paragraph-v2",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "For the purposes of supporting the successful return of shared trays in a way that ensures their availability, there are a number of factors to take into consideration in determining the appropriate course of action following use. Once a tray has been washed and the desk attendant has checked it, you can put it on the open shelf. If the attendant is away, leave the washed tray on the drying rack with your name on a slip. A chipped tray goes in the marked tub even if the attendant has checked it. The attendant records chips so the next user is not blamed for damage they did not cause.",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Explain the steps to new members of the print studio. Keep the two approval conditions and exception.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "hall-policy-baseline",
+      "sample": "hall-policy",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-paragraph-v2",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "A hall booking ends at 21:00 unless the duty manager agrees to an extension before 20:30. If the manager agrees, the group may stay until 21:30. A late arrival does not change either time. Groups that need step-free access should contact reception in advance. The notice on the door reads, “Please return the key to reception.”",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the written notice exactly as quoted and preserve the distinction between a booking and an extension.",
+        "lockedTexts": [
+          "“Please return the key to reception.”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "hall-policy-candidate",
+      "sample": "hall-policy",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-restructure-fidelity-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "A hall booking ends at 21:00 unless the duty manager agrees to an extension before 20:30. If the manager agrees, the group may stay until 21:30. A late arrival does not change either time. Groups that need step-free access should contact reception in advance. The notice on the door reads, “Please return the key to reception.”",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the written notice exactly as quoted and preserve the distinction between a booking and an extension.",
+        "lockedTexts": [
+          "“Please return the key to reception.”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-policy-candidate",
+      "sample": "wide-policy",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-restructure-fidelity-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "门票未核验且活动尚未开始，购票人可以申请改签。改签须等待客服确认，确认前原票仍有效。遇场地临时关闭，客服将通知购票人；本说明未约定通知发出时点。订单页提示为“请保留原订单号”。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保持引文、权限和起算解释准确。",
+        "lockedTexts": [
+          "“请保留原订单号”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-policy-baseline",
+      "sample": "wide-policy",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "门票未核验且活动尚未开始，购票人可以申请改签。改签须等待客服确认，确认前原票仍有效。遇场地临时关闭，客服将通知购票人；本说明未约定通知发出时点。订单页提示为“请保留原订单号”。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保持引文、权限和起算解释准确。",
+        "lockedTexts": [
+          "“请保留原订单号”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    }
+  ],
+  "sourceSha256": {
+    "scripts/evaluation/text-polish-thinking/ThinkingComparison.java": "2f6f904e160cc131531c1085b68c5af38a21e79cc937d90c5cd8a945f6b16459",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishInstructions.java": "99d24edc6b67060ad331c317db4f2baf0d857ae6280f24a69b98c5b898237bad",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishSkills.java": "0e133acb8165e418a166a7d76bfb6300722eed243b50ccc97f2a9fb846417401",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/OpenAiTextPolishProvider.java": "4e27d2c29944ee13311cd96d6332ab955df63c96c9dcfe5738eb62a4e970d035",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishFidelity.java": "dbf60cb64d9fdf890924113bdb4cebb637686ef9cf2e1a370a31e2c712ad4ed4",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-v1/SKILL.md": "3edbe89a14bd172969f2da3e8268a6f654443644e523089522d69317a2e91d6a",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-v1-service/SKILL.md": "d34f4767951b2f0bcb29c4eca14a5228177328958649461af91d93be1ea604c2",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-report-example-v1/SKILL.md": "58cea4a393c839a050931db757a7bc271a14367ac1a0b5b56ada9a267f0cb617",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v2/SKILL.md": "3a41aabf77e0d8a0a7b610a3092154ed5c86a16009da51ffc7417fb4c97358ac",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v2-en-formal/SKILL.md": "cf7067ac85ba9e721951872e8c45018584acfe943749d04768d4e6c915f86e54",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v2-en-conversational/SKILL.md": "a740f72960c324f7f3dfb47037e527b29272f8cd80095e3bf247752a316250e5",
+    "services/api/src/main/resources/textpolish/skills/text-polish-restructure-fidelity-v1/SKILL.md": "14da913a73ea5bcd6a840c2cd4433a0a513319752dbc4f4cfb0082d335077e82",
+    "docs/testing/evidence/text-polish-options-2026-11-20/fidelity/samples.json": "b62041471c8312ddd4479182fb3b8fc5f4558ac03ade1c39a36b459c65e3ed06"
+  }
+}
