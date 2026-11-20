@@ -59,7 +59,8 @@ class TextPolishSkillsTest {
                 TextPolishInstructions.PARAGRAPH_V2_VERSION, TextPolishInstructions.CHINESE_VERSION,
                 TextPolishInstructions.CHINESE_LIGHT_EXAMPLE_VERSION, TextPolishInstructions.CHINESE_REPORT_EXAMPLE_VERSION,
                 TextPolishInstructions.STYLE_CONTRACT_VERSION, TextPolishInstructions.CHINESE_LIGHT_EDIT_VERSION,
-                TextPolishInstructions.RESTRUCTURE_FIDELITY_VERSION, TextPolishInstructions.CHINESE_REPORT_FIDELITY_VERSION)) {
+                TextPolishInstructions.RESTRUCTURE_FIDELITY_VERSION, TextPolishInstructions.CHINESE_REPORT_FIDELITY_VERSION,
+                TextPolishInstructions.GENERAL_EDIT_VERSION)) {
             for (var source : sources.entrySet()) {
                 for (Style style : Style.values()) for (Depth depth : Depth.values()) {
                     cases.add(Arguments.of(strategy, source.getKey(), source.getValue(), style, depth, ""));
@@ -144,6 +145,13 @@ class TextPolishSkillsTest {
             assertThat(prepared.instruction()).startsWith(base.instruction()).contains("保持这个目的或不确定性");
             assertThat(metadata.resources()).containsAll(base.resources()).hasSize(base.resources().size() + 1);
             assertThat(metadata.resources().getLast().id()).isEqualTo(TextPolishInstructions.RESTRUCTURE_FIDELITY_VERSION);
+        } else if (TextPolishInstructions.GENERAL_EDIT_VERSION.equals(expectedVersion)) {
+            assertThat(metadata.selection().language()).isEqualTo(language);
+            assertThat(metadata.resources()).extracting(Resource::id).containsExactly("common-v1", expectedVersion);
+            assertThat(prepared.instruction()).contains("根据每段在全文中的作用选择改法", "Target style:",
+                    "Editing depth:", "Explicit requirements", "polishedText").doesNotContain(text);
+            var shortInput = new Input("短稿。", style, depth, "", "", List.of(), "fixture");
+            assertThat(prepared.instruction()).isEqualTo(TextPolishInstructions.system(shortInput, expectedVersion));
         } else if (!TextPolishInstructions.VERSION.equals(expectedVersion)) {
             assertThat(prepared.instruction()).contains("Target style:", "Editing depth:", "Explicit requirements", "polishedText");
         }

@@ -84,6 +84,7 @@ public final class TextPolishSkills {
      * 自动选择仅采用正文证据，中文界面、读者和要求不参与原文语言计数。
      */
     public static PreparedTextPolish prepare(Input input, String strategyVersion) {
+        if (TextPolishInstructions.GENERAL_EDIT_VERSION.equals(strategyVersion)) return prepareGeneralEditing(input);
         if (isRestructureFidelityVersion(strategyVersion)) return prepareRestructureFidelity(input, strategyVersion);
         if (TextPolishInstructions.CHINESE_LIGHT_EDIT_VERSION.equals(strategyVersion))
             return appendGuidance(prepareStyleContract(input), strategyVersion);
@@ -100,6 +101,26 @@ public final class TextPolishSkills {
         String id = IDS.get(language);
         String common = BODIES.get("common-v1");
         String editing = BODIES.get(id);
+        String instruction = common + "\n" + editing + editingOptions(input);
+        String reason = language == Language.UNKNOWN ? "INSUFFICIENT_OR_UNSUPPORTED_LANGUAGE" : "SOURCE_LANGUAGE_EVIDENCE";
+        return new PreparedTextPolish(instruction, new Selection(SELECTOR_VERSION, language, "GENERAL", reason),
+                List.of(new Resource("common-v1", "common-v1", hash(common)), new Resource(id, id, hash(editing))));
+    }
+
+    /** 通用候选共用一份编辑指导，语言识别仅记入快照，短文和混合文本同样可用。 */
+    private static PreparedTextPolish prepareGeneralEditing(Input input) {
+        String id = TextPolishInstructions.GENERAL_EDIT_VERSION;
+        String common = BODIES.get("common-v1");
+        String guidance = BODIES.get(id);
+        Language language = detectLanguage(input.sourceText());
+        String reason = language == Language.UNKNOWN ? "INSUFFICIENT_OR_UNSUPPORTED_LANGUAGE" : "SOURCE_LANGUAGE_EVIDENCE";
+        return new PreparedTextPolish(common + "\n" + guidance + editingOptions(input),
+                new Selection(SELECTOR_VERSION, language, "GENERAL", reason),
+                List.of(new Resource("common-v1", "common-v1", hash(common)), new Resource(id, id, hash(guidance))));
+    }
+
+    /** 在共同保真要求内应用本次选项，用户明确的编辑要求优先于默认文体与幅度。 */
+    private static String editingOptions(Input input) {
         String style = switch (input.style()) {
             case FORMAL -> "正式清晰 / formal and clear. Use precise, readable written language appropriate to the purpose.";
             case NATURAL -> "自然流畅 / natural and fluent. Preserve the author's voice and use smooth, varied sentences.";
@@ -109,11 +130,8 @@ public final class TextPolishSkills {
             case LIGHT -> "轻度润色 / light editing. Preserve paragraph order and format. Rewrite full sentences, split long sentences and merge genuine repetition within paragraphs.";
             case RESTRUCTURE -> "允许调整句式和段落 / restructure. Reorganize sentences and paragraphs around their meaning, preserving logical relationships and all independent content.";
         };
-        String instruction = common + "\n" + editing + "\nTarget style: " + style + "\nEditing depth: " + depth
+        return "\nTarget style: " + style + "\nEditing depth: " + depth
                 + "\nExplicit requirements in the user JSON override these defaults, including language, title, order and paragraph count.\n";
-        String reason = language == Language.UNKNOWN ? "INSUFFICIENT_OR_UNSUPPORTED_LANGUAGE" : "SOURCE_LANGUAGE_EVIDENCE";
-        return new PreparedTextPolish(instruction, new Selection(SELECTOR_VERSION, language, "GENERAL", reason),
-                List.of(new Resource("common-v1", "common-v1", hash(common)), new Resource(id, id, hash(editing))));
     }
 
     /** 附加资源记录自己的版本和哈希，保留对照基线已装配的指导与资源。 */
@@ -259,6 +277,7 @@ public final class TextPolishSkills {
         Map<String, String> bodies = new HashMap<>();
         Set<String> ids = new HashSet<>(IDS.values());
         ids.add("common-v1");
+        ids.add(TextPolishInstructions.GENERAL_EDIT_VERSION);
         ids.add(TextPolishInstructions.CHINESE_VERSION);
         ids.addAll(CHINESE_EXAMPLES.values());
         ids.add(TextPolishInstructions.STYLE_CONTRACT_VERSION + "-zh");
