@@ -71,6 +71,8 @@ public final class TextPolishSkills {
      * 自动选择仅采用正文证据，中文界面、读者和要求不参与原文语言计数。
      */
     public static PreparedTextPolish prepare(Input input, String strategyVersion) {
+        if (TextPolishInstructions.CHINESE_LIGHT_EDIT_VERSION.equals(strategyVersion))
+            return appendGuidance(prepareStyleContract(input), strategyVersion);
         if (TextPolishInstructions.STYLE_CONTRACT_VERSION.equals(strategyVersion)) return prepareStyleContract(input);
         if (isChineseVersion(strategyVersion)) return prepareChinese(input, strategyVersion);
         if (isParagraphVersion(strategyVersion)) return prepareParagraph(input, strategyVersion);
@@ -98,6 +100,14 @@ public final class TextPolishSkills {
         String reason = language == Language.UNKNOWN ? "INSUFFICIENT_OR_UNSUPPORTED_LANGUAGE" : "SOURCE_LANGUAGE_EVIDENCE";
         return new PreparedTextPolish(instruction, new Selection(SELECTOR_VERSION, language, "GENERAL", reason),
                 List.of(new Resource("common-v1", "common-v1", hash(common)), new Resource(id, id, hash(editing))));
+    }
+
+    /** 附加资源记录自己的版本和哈希，保留对照基线已装配的指导与资源。 */
+    private static PreparedTextPolish appendGuidance(PreparedTextPolish base, String version) {
+        String guidance = BODIES.get(version);
+        var resources = new ArrayList<>(base.resources());
+        resources.add(new Resource(version, version, hash(guidance)));
+        return new PreparedTextPolish(base.instruction() + "\n" + guidance, base.selection(), resources);
     }
 
     /**
@@ -228,6 +238,7 @@ public final class TextPolishSkills {
         ids.addAll(CHINESE_EXAMPLES.values());
         ids.add(TextPolishInstructions.STYLE_CONTRACT_VERSION + "-zh");
         ids.add(TextPolishInstructions.STYLE_CONTRACT_VERSION + "-en");
+        ids.add(TextPolishInstructions.CHINESE_LIGHT_EDIT_VERSION);
         for (String version : PARAGRAPH_VERSIONS) {
             ids.add(version);
             for (String locale : List.of("zh", "en")) {

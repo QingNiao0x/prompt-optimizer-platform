@@ -58,7 +58,7 @@ class TextPolishSkillsTest {
         for (String strategy : List.of(TextPolishSkills.AUTO_VERSION, TextPolishInstructions.PARAGRAPH_VERSION,
                 TextPolishInstructions.PARAGRAPH_V2_VERSION, TextPolishInstructions.CHINESE_VERSION,
                 TextPolishInstructions.CHINESE_LIGHT_EXAMPLE_VERSION, TextPolishInstructions.CHINESE_REPORT_EXAMPLE_VERSION,
-                TextPolishInstructions.STYLE_CONTRACT_VERSION)) {
+                TextPolishInstructions.STYLE_CONTRACT_VERSION, TextPolishInstructions.CHINESE_LIGHT_EDIT_VERSION)) {
             for (var source : sources.entrySet()) {
                 for (Style style : Style.values()) for (Depth depth : Depth.values()) {
                     cases.add(Arguments.of(strategy, source.getKey(), source.getValue(), style, depth, ""));
@@ -88,7 +88,10 @@ class TextPolishSkillsTest {
                 || (TextPolishInstructions.CHINESE_REPORT_EXAMPLE_VERSION.equals(strategy) && depth != Depth.RESTRUCTURE));
         boolean styleContract = TextPolishInstructions.STYLE_CONTRACT_VERSION.equals(strategy);
         boolean wrongStyleLanguage = styleContract && language != Language.ZH && language != Language.EN;
-        String expectedVersion = wrongChineseScope || wrongStyleLanguage ? TextPolishInstructions.VERSION : strategy;
+        boolean chineseLight = TextPolishInstructions.CHINESE_LIGHT_EDIT_VERSION.equals(strategy);
+        boolean wrongLightScope = chineseLight && (language != Language.ZH || depth != Depth.LIGHT);
+        String expectedVersion = wrongChineseScope || wrongStyleLanguage || wrongLightScope
+                ? TextPolishInstructions.VERSION : strategy;
         var prepared = TextPolishSkills.prepare(input, expectedVersion);
         server.expect(requestTo(endpoint)).andExpect(request -> {
             var body = json.readTree(((MockClientHttpRequest) request).getBodyAsString());
@@ -124,6 +127,11 @@ class TextPolishSkillsTest {
             assertThat(metadata.resources().getLast().id()).isEqualTo(expectedVersion + (language == Language.ZH ? "-zh" : "-en"));
             assertThat(prepared.instruction()).contains("FORMAL", "NATURAL", "CONVERSATIONAL", "polishedText")
                     .contains("Use the specified register, " + style + ". Editing depth: " + depth);
+        } else if (TextPolishInstructions.CHINESE_LIGHT_EDIT_VERSION.equals(expectedVersion)) {
+            var base = TextPolishSkills.prepare(input, TextPolishInstructions.STYLE_CONTRACT_VERSION);
+            assertThat(prepared.instruction()).startsWith(base.instruction()).contains("条件及例外靠近它对应的动作");
+            assertThat(metadata.resources()).containsAll(base.resources()).hasSize(base.resources().size() + 1);
+            assertThat(metadata.resources().getLast().id()).isEqualTo(expectedVersion);
         } else if (!TextPolishInstructions.VERSION.equals(expectedVersion)) {
             assertThat(prepared.instruction()).contains("Target style:", "Editing depth:", "Explicit requirements", "polishedText");
         }

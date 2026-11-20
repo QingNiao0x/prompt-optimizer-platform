@@ -1,0 +1,228 @@
+{
+  "maxActualCalls": 24,
+  "phaseCaps": {
+    "pilot": 24,
+    "expand": 0
+  },
+  "jobs": [
+    {
+      "id": "light-mail-baseline",
+      "sample": "light-mail",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "关于四月宣传材料的交付沟通，我想就这项工作的有关情况与各位进行一次联系。请各组在周二17点前回邮件，告知是否能按周五的原计划交付。若预计延期，只需在回复里给一个新的日期，无需提交解释。我们汇总后会更新共享排期表，让设计组能继续安排版面，也便于印刷组判断是否要调整预约。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "写给合作部门，保留回复期限和礼貌。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-mail-candidate",
+      "sample": "light-mail",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-light-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "关于四月宣传材料的交付沟通，我想就这项工作的有关情况与各位进行一次联系。请各组在周二17点前回邮件，告知是否能按周五的原计划交付。若预计延期，只需在回复里给一个新的日期，无需提交解释。我们汇总后会更新共享排期表，让设计组能继续安排版面，也便于印刷组判断是否要调整预约。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "写给合作部门，保留回复期限和礼貌。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-notice-candidate",
+      "sample": "light-notice",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-light-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "西门维修通知\n\n为进一步做好小区通行管理工作，现将需要住户知悉的安排告知如下。西门预计于下周三上午8点至11点维修，期间行人可从南门进出。施工范围仅限西门门禁，车辆入口照常开放。\n\n若下雨，维修顺延，具体日期另行通知。行动不便的住户如需协助，可先打物业电话。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "面向住户，标题和两段保留。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-notice-baseline",
+      "sample": "light-notice",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "西门维修通知\n\n为进一步做好小区通行管理工作，现将需要住户知悉的安排告知如下。西门预计于下周三上午8点至11点维修，期间行人可从南门进出。施工范围仅限西门门禁，车辆入口照常开放。\n\n若下雨，维修顺延，具体日期另行通知。行动不便的住户如需协助，可先打物业电话。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "面向住户，标题和两段保留。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-review-baseline",
+      "sample": "light-review",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "在加强内部交接材料质量管理工作方面，本月对两个项目组共20份交接单开展了抽查。通过核对发现，其中5份的附件编号与共享目录的编号不一致。此次抽查只对照了编号，暂未核实附件内容。\n\n为减少接手同事重复查找，也让后续抽查能追溯到提交版本，建议先给交接单提供统一的编号示例，下一轮抽查时再检查执行情况。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留两段、样本边界与建议语气。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-review-candidate",
+      "sample": "light-review",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-light-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "在加强内部交接材料质量管理工作方面，本月对两个项目组共20份交接单开展了抽查。通过核对发现，其中5份的附件编号与共享目录的编号不一致。此次抽查只对照了编号，暂未核实附件内容。\n\n为减少接手同事重复查找，也让后续抽查能追溯到提交版本，建议先给交接单提供统一的编号示例，下一轮抽查时再检查执行情况。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留两段、样本边界与建议语气。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-story-candidate",
+      "sample": "light-story",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-light-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "就那次回中学拿毕业照的体验而言，有一个细节让我至今还有相当深刻的印象。办公室里换了新柜子，老师却还是用旧的饼干盒收着底片。他低头找我的班级，把一张边角已经卷起来的照片抽了出来。我接过照片，先看了看站在最边上的自己，就把它收进书里。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留第一人称和结尾，语气平实。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-story-baseline",
+      "sample": "light-story",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "就那次回中学拿毕业照的体验而言，有一个细节让我至今还有相当深刻的印象。办公室里换了新柜子，老师却还是用旧的饼干盒收着底片。他低头找我的班级，把一张边角已经卷起来的照片抽了出来。我接过照片，先看了看站在最边上的自己，就把它收进书里。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留第一人称和结尾，语气平实。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-natural-baseline",
+      "sample": "light-natural",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "外婆把钥匙压在碗底。我出门前才看见，碗里还有两颗荔枝。门已经拉开，我退回去拿了钥匙，没动荔枝。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留作者口吻。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-natural-candidate",
+      "sample": "light-natural",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-light-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "外婆把钥匙压在碗底。我出门前才看见，碗里还有两颗荔枝。门已经拉开，我退回去拿了钥匙，没动荔枝。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留作者口吻。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-policy-candidate",
+      "sample": "light-policy",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-light-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "仅在原借期结束前提交申请，且该书未被其他读者预约时，读者才可续借7天。原借期结束后，读者可以提交重新借阅申请，但本说明不承诺该书届时在馆。系统提示为“请核对本次借阅状态”。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "引文原样保留，核对每项条件。",
+        "lockedTexts": [
+          "“请核对本次借阅状态”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-policy-baseline",
+      "sample": "light-policy",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "仅在原借期结束前提交申请，且该书未被其他读者预约时，读者才可续借7天。原借期结束后，读者可以提交重新借阅申请，但本说明不承诺该书届时在馆。系统提示为“请核对本次借阅状态”。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "引文原样保留，核对每项条件。",
+        "lockedTexts": [
+          "“请核对本次借阅状态”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    }
+  ],
+  "sourceSha256": {
+    "scripts/evaluation/text-polish-thinking/ThinkingComparison.java": "2f6f904e160cc131531c1085b68c5af38a21e79cc937d90c5cd8a945f6b16459",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishInstructions.java": "2790599a4c96522581a4ca4433a5767095049e700ad49a0bfc9822c616113f5d",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishSkills.java": "ea02aaf8f39432a8c745035edd126232dafa07473decd228d95b922472198102",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/OpenAiTextPolishProvider.java": "6a5eae2549d999c637c56c0eb1daae7ca6e18027f7ca853662d62b9cb60662c5",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishFidelity.java": "dbf60cb64d9fdf890924113bdb4cebb637686ef9cf2e1a370a31e2c712ad4ed4",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-v1/SKILL.md": "3edbe89a14bd172969f2da3e8268a6f654443644e523089522d69317a2e91d6a",
+    "services/api/src/main/resources/textpolish/skills/text-polish-style-contract-v1-zh/SKILL.md": "24afb680ba282458a1bc2e222370854f429fbcc6747e82070d39ea663f4574be",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-light-edit-v1/SKILL.md": "3ba1b0a4ef10e58bbfa3116cfdf2400ab76729ea92955c5a762ba82b6436c1fc",
+    "docs/testing/evidence/text-polish-options-2026-11-20/light/samples.json": "4db07867e3e3fd586fb05720e42a262504a13c7ee5259649d29fd3fddf027062"
+  }
+}

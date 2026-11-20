@@ -1,0 +1,175 @@
+{
+  "comparison": {
+    "baseline": "text-polish-v3",
+    "candidate": "text-polish-zh-v1",
+    "parameters": {
+      "maxTokens": 8000,
+      "maxCompletionTokens": null,
+      "temperature": 0.2,
+      "stream": false,
+      "responseFormat": "json_object",
+      "thinking": "disabled"
+    },
+    "routeKey": "deepseek",
+    "upstreamModel": "deepseek-flash",
+    "baselineSystemSha256": "3022e7ba9bc102a8f853a4353283e6f9995d9bdc71ae41270f6048e1bf62de98"
+  },
+  "rules": {
+    "scope": "Chinese light paragraph editing",
+    "onlyChange": "Append targeted guidance for the same three style targets and examples.",
+    "advance": "At least 3 of the 4 articles needing editing improve over original; at least 2 different purposes clearly beat the style-only baseline; wins exceed losses; no confirmed important errors. A pass is mechanism evidence. Adoption requires new articles versus v3.",
+    "provenance": "Previously archived Chinese evaluation articles."
+  },
+  "samples": [
+    {
+      "id": "light-mail",
+      "purpose": "商务邮件",
+      "language": "ZH",
+      "input": {
+        "sourceText": "关于四月宣传材料的交付沟通，我想就这项工作的有关情况与各位进行一次联系。请各组在周二17点前回邮件，告知是否能按周五的原计划交付。若预计延期，只需在回复里给一个新的日期，无需提交解释。我们汇总后会更新共享排期表，让设计组能继续安排版面，也便于印刷组判断是否要调整预约。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "写给合作部门，保留回复期限和礼貌。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "needSubstantiveEdit": true,
+        "independentMeanings": [
+          "各组周二17点前回邮件说明能否如期周五交付",
+          "预计延期给新日期无需解释",
+          "会更新共享排期表",
+          "设计组安排版面和印刷组判断是否调整预约两个目的"
+        ],
+        "readingReview": "让两个回复分支和共同期限容易看到，减少宣布要沟通的铺垫。"
+      }
+    },
+    {
+      "id": "light-notice",
+      "purpose": "维修通知",
+      "language": "ZH",
+      "input": {
+        "sourceText": "西门维修通知\n\n为进一步做好小区通行管理工作，现将需要住户知悉的安排告知如下。西门预计于下周三上午8点至11点维修，期间行人可从南门进出。施工范围仅限西门门禁，车辆入口照常开放。\n\n若下雨，维修顺延，具体日期另行通知。行动不便的住户如需协助，可先打物业电话。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "面向住户，标题和两段保留。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "needSubstantiveEdit": true,
+        "independentMeanings": [
+          "标题与两段",
+          "预计下周三8至11点维修",
+          "行人期间可用南门",
+          "仅西门门禁且车辆入口正常",
+          "下雨顺延且日期另行通知",
+          "行动不便住户需要协助时可打电话"
+        ],
+        "readingReview": "压缩行政开场，让预计安排、通行方式和雨天顺延各自清楚。"
+      }
+    },
+    {
+      "id": "light-review",
+      "purpose": "检查报告",
+      "language": "ZH",
+      "input": {
+        "sourceText": "在加强内部交接材料质量管理工作方面，本月对两个项目组共20份交接单开展了抽查。通过核对发现，其中5份的附件编号与共享目录的编号不一致。此次抽查只对照了编号，暂未核实附件内容。\n\n为减少接手同事重复查找，也让后续抽查能追溯到提交版本，建议先给交接单提供统一的编号示例，下一轮抽查时再检查执行情况。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留两段、样本边界与建议语气。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "needSubstantiveEdit": true,
+        "independentMeanings": [
+          "本月两个项目组20份抽查",
+          "5份编号不一致",
+          "只核对编号内容未核实",
+          "减少重复查找和追溯提交版本",
+          "建议先提供统一示例后抽查执行"
+        ],
+        "readingReview": "明确抽查发现和结论边界，降低第一段的名词堆叠。"
+      }
+    },
+    {
+      "id": "light-story",
+      "purpose": "个人叙事",
+      "language": "ZH",
+      "input": {
+        "sourceText": "就那次回中学拿毕业照的体验而言，有一个细节让我至今还有相当深刻的印象。办公室里换了新柜子，老师却还是用旧的饼干盒收着底片。他低头找我的班级，把一张边角已经卷起来的照片抽了出来。我接过照片，先看了看站在最边上的自己，就把它收进书里。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留第一人称和结尾，语气平实。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "needSubstantiveEdit": true,
+        "independentMeanings": [
+          "回中学拿毕业照",
+          "旧饼干盒放底片与新柜子反差",
+          "老师找班级抽出卷边照片",
+          "看站最边上的自己",
+          "收进书里"
+        ],
+        "readingReview": "缩短陈述感受的套话，保留作者记住的是办公室里的细节。"
+      }
+    },
+    {
+      "id": "light-natural",
+      "purpose": "自然叙事",
+      "language": "ZH",
+      "input": {
+        "sourceText": "外婆把钥匙压在碗底。我出门前才看见，碗里还有两颗荔枝。门已经拉开，我退回去拿了钥匙，没动荔枝。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留作者口吻。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "needSubstantiveEdit": false,
+        "independentMeanings": [
+          "外婆钥匙在碗底",
+          "出门前看到还有两颗荔枝",
+          "门已拉开后返回",
+          "取钥匙没动荔枝"
+        ],
+        "readingReview": "原文自然，保护空间、时序和作者口吻。"
+      }
+    },
+    {
+      "id": "light-policy",
+      "purpose": "条件说明",
+      "language": "ZH",
+      "input": {
+        "sourceText": "仅在原借期结束前提交申请，且该书未被其他读者预约时，读者才可续借7天。原借期结束后，读者可以提交重新借阅申请，但本说明不承诺该书届时在馆。系统提示为“请核对本次借阅状态”。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "引文原样保留，核对每项条件。",
+        "lockedTexts": [
+          "“请核对本次借阅状态”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "needSubstantiveEdit": false,
+        "independentMeanings": [
+          "借期结束前提交且无人预约方可续7天",
+          "过期仍可申请重新借阅",
+          "不承诺届时在馆",
+          "引文原样"
+        ],
+        "readingReview": "自然条款对照，保护双条件、许可与不承诺。"
+      }
+    }
+  ]
+}
