@@ -1,0 +1,230 @@
+{
+  "maxActualCalls": 24,
+  "phaseCaps": {
+    "pilot": 0,
+    "expand": 24
+  },
+  "jobs": [
+    {
+      "id": "supply-decision-candidate",
+      "sample": "supply-decision",
+      "phase": "expand",
+      "language": "ZH",
+      "strategy": "text-polish-zh-report-example-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "基于对后续采购保障水平及资源统筹效率的综合考虑，我们建议下季度先在东侧门店试行统一申报。过去每个班组各发一份领用单，采购员要逐份核对。同规格物料在合并表中只出现一次，班组仍可在备注中写明用途。先试一处，是为了看采购员能否少做重复核对，也为了确认班组在急用时仍能看见自己的申报进度。试行期内，紧急采购的审批规则不变。是否扩大到西侧门店，须等试行记录齐全后再决定。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "写给审批同事，第一段说明建议及试点原因，保留限制。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "supply-decision-baseline",
+      "sample": "supply-decision",
+      "phase": "expand",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "基于对后续采购保障水平及资源统筹效率的综合考虑，我们建议下季度先在东侧门店试行统一申报。过去每个班组各发一份领用单，采购员要逐份核对。同规格物料在合并表中只出现一次，班组仍可在备注中写明用途。先试一处，是为了看采购员能否少做重复核对，也为了确认班组在急用时仍能看见自己的申报进度。试行期内，紧急采购的审批规则不变。是否扩大到西侧门店，须等试行记录齐全后再决定。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "写给审批同事，第一段说明建议及试点原因，保留限制。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "ticket-retro-baseline",
+      "sample": "ticket-retro",
+      "phase": "expand",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "在推进工单转派链路持续提质增效的过程中，上月我们在两家门店试行了新的交接方式。以前报修照片发到群里，服务台要根据聊天记录找工单号；试行期间，门店把照片直接上传到同一张工单，服务台凭工单上的地址转给维修组。维修组只在接单前查看照片，接单权限没有调整。本次共观察到12张试行工单，服务台少问了几次工单号，但没有记录维修员到场时间。下月计划增加一处门店，并核对缺少地址的工单如何转派。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "给没参与试点的同事看，保留观察和未验证的事项。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "ticket-retro-candidate",
+      "sample": "ticket-retro",
+      "phase": "expand",
+      "language": "ZH",
+      "strategy": "text-polish-zh-report-example-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "在推进工单转派链路持续提质增效的过程中，上月我们在两家门店试行了新的交接方式。以前报修照片发到群里，服务台要根据聊天记录找工单号；试行期间，门店把照片直接上传到同一张工单，服务台凭工单上的地址转给维修组。维修组只在接单前查看照片，接单权限没有调整。本次共观察到12张试行工单，服务台少问了几次工单号，但没有记录维修员到场时间。下月计划增加一处门店，并核对缺少地址的工单如何转派。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "给没参与试点的同事看，保留观察和未验证的事项。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "usage-brief-candidate",
+      "sample": "usage-brief",
+      "phase": "expand",
+      "language": "ZH",
+      "strategy": "text-polish-zh-report-example-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "针对校外活动登记的相关信息衔接问题，服务站为了减少重复填写和让没有手机的家长也能完成登记，计划下个月增加一种现场办理方式。线上登记仍由家长填写孩子姓名，工作人员到场时核对；现场办理则由工作人员填写，家长在场确认姓名。工作人员只能按手头已有报名名单核验，不能现场新增名额。若两个渠道都已登记，以第一次确认的记录为准。试行仅覆盖周末上午的活动。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "面向第一次办理的家长，请讲清楚线上线下的区别。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "usage-brief-baseline",
+      "sample": "usage-brief",
+      "phase": "expand",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "针对校外活动登记的相关信息衔接问题，服务站为了减少重复填写和让没有手机的家长也能完成登记，计划下个月增加一种现场办理方式。线上登记仍由家长填写孩子姓名，工作人员到场时核对；现场办理则由工作人员填写，家长在场确认姓名。工作人员只能按手头已有报名名单核验，不能现场新增名额。若两个渠道都已登记，以第一次确认的记录为准。试行仅覆盖周末上午的活动。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "面向第一次办理的家长，请讲清楚线上线下的区别。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "reliability-report-baseline",
+      "sample": "reliability-report",
+      "phase": "expand",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "在落实仓储扫描异常的闭环治理方面，技术组的阶段性排查对现有读码故障进行了进一步归因分析。三次失败均发生在更换外包装后。原有扫描器能识别印有条码的纸标签，但未能读出同一条码印在透明膜上的两份样件。还有一次失败的样品未保存，所以尚不能认定所有故障都与透明膜有关。技术组建议先在两个库区比较纸标签和透明膜各100次扫描，希望找出重现条件，并估算更换标签的频率。本周的发货安排暂不调整。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "面向跨部门读者。把发现和推断分开，保持原有证据强度。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "reliability-report-candidate",
+      "sample": "reliability-report",
+      "phase": "expand",
+      "language": "ZH",
+      "strategy": "text-polish-zh-report-example-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "在落实仓储扫描异常的闭环治理方面，技术组的阶段性排查对现有读码故障进行了进一步归因分析。三次失败均发生在更换外包装后。原有扫描器能识别印有条码的纸标签，但未能读出同一条码印在透明膜上的两份样件。还有一次失败的样品未保存，所以尚不能认定所有故障都与透明膜有关。技术组建议先在两个库区比较纸标签和透明膜各100次扫描，希望找出重现条件，并估算更换标签的频率。本周的发货安排暂不调整。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "面向跨部门读者。把发现和推断分开，保持原有证据强度。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "clear-report-candidate",
+      "sample": "clear-report",
+      "phase": "expand",
+      "language": "ZH",
+      "strategy": "text-polish-zh-report-example-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "今天下午我们核对了东库的六个货架，发现两个标签脱落。标签已换好。我们没有检查西库，也没有核对货架上的货物数量。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保留第一人称记录和未核实项。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "clear-report-baseline",
+      "sample": "clear-report",
+      "phase": "expand",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "今天下午我们核对了东库的六个货架，发现两个标签脱落。标签已换好。我们没有检查西库，也没有核对货架上的货物数量。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保留第一人称记录和未核实项。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "locked-report-baseline",
+      "sample": "locked-report",
+      "phase": "expand",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "报告仅记录周一和周二的测温结果。两天均超过设定温度，设备记录为“等待人工复查”。如果维护组确认传感器异常，拟在周五前更换。复查前，报告不认定货物受损。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保持引文和数值，保留待审批语气。",
+        "lockedTexts": [
+          "“等待人工复查”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "locked-report-candidate",
+      "sample": "locked-report",
+      "phase": "expand",
+      "language": "ZH",
+      "strategy": "text-polish-zh-report-example-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "报告仅记录周一和周二的测温结果。两天均超过设定温度，设备记录为“等待人工复查”。如果维护组确认传感器异常，拟在周五前更换。复查前，报告不认定货物受损。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保持引文和数值，保留待审批语气。",
+        "lockedTexts": [
+          "“等待人工复查”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    }
+  ],
+  "sourceSha256": {
+    "scripts/evaluation/text-polish-thinking/ThinkingComparison.java": "2f6f904e160cc131531c1085b68c5af38a21e79cc937d90c5cd8a945f6b16459",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishInstructions.java": "f6abc37bfc137add37b31d97adbaa0904ca251841ea594a61d305a7c97f23002",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishSkills.java": "f8621fd1f5b1bba625de13019f5e5dcb1f42673b3273cc1468a9e12e57f6a371",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/OpenAiTextPolishProvider.java": "cf9a1ad0835637a57a9ca9fbd5f9633ba75d091765ea31bc37aca3631630f0d4",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishFidelity.java": "dbf60cb64d9fdf890924113bdb4cebb637686ef9cf2e1a370a31e2c712ad4ed4",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-v1/SKILL.md": "3edbe89a14bd172969f2da3e8268a6f654443644e523089522d69317a2e91d6a",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-v1-service/SKILL.md": "d34f4767951b2f0bcb29c4eca14a5228177328958649461af91d93be1ea604c2",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-light-example-v1/SKILL.md": "6a58c62c4ec2d0d04cd041070336e9a16e40c8db1f7ecc463bad50418b05c7f0",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-report-example-v1/SKILL.md": "58cea4a393c839a050931db757a7bc271a14367ac1a0b5b56ada9a267f0cb617",
+    "services/api/src/main/resources/textpolish/skills/text-polish-v3/SKILL.md": "9f283575f5a6fc8b9ad06f9546955ef9026025759514a43923af86769df10f08",
+    "docs/testing/evidence/text-polish-zh-example-comparison/report-holdout/samples.json": "c20358bf060488c10695a2accfb0551cd7cd14b4e749877d12c4079e13cedb3d"
+  }
+}

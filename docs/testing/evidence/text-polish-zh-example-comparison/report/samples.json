@@ -1,0 +1,111 @@
+{
+  "comparison": {
+    "baseline": "text-polish-zh-v1",
+    "candidate": "text-polish-zh-report-example-v1",
+    "parameters": {
+      "maxTokens": 8000,
+      "maxCompletionTokens": null,
+      "temperature": 0.2,
+      "stream": false,
+      "responseFormat": "json_object",
+      "thinking": "disabled"
+    },
+    "routeKey": "deepseek",
+    "upstreamModel": "deepseek-flash",
+    "baselineSystemSha256": "3022e7ba9bc102a8f853a4353283e6f9995d9bdc71ae41270f6048e1bf62de98",
+    "changedFactor": "Example resource only"
+  },
+  "scope": "report",
+  "advanceCriterion": "At least two of three reports clearly unfold relationships or bring evidence and conclusions into view versus Chinese v1, preserving evidence and conditions.",
+  "samples": [
+    {
+      "id": "p-zh-digital",
+      "language": "ZH",
+      "input": {
+        "sourceText": "以数字化赋能高质量发展：新时代背景下的实践路径与价值意蕴\n\n在当今快速发展的数字化时代，数字化转型已成为推动组织高质量发展的重要引擎。首先，要坚持需求导向，以用户价值为中心，持续优化业务流程，构建从感知、分析到决策、执行的闭环体系。其次，要强化数据要素赋能，打通信息孤岛，推动多维度、全链条、深层次的协同融合，不断提升资源配置效率和精细化治理水平。再次，要完善长效机制，明确目标抓手，压实主体责任，形成上下联动、内外协同、持续迭代的良好生态。\n\n与此同时，还应注重技术能力与组织能力的双向提升，既要以创新驱动增强发展动能，也要以规范治理守住安全底线，在开放合作中拓展应用场景，在实践探索中沉淀可复制、可推广的经验做法。通过场景化落地、项目化推进、清单化管理，进一步把数字化优势转化为发展优势、竞争优势和服务优势。\n\n综上所述，数字化转型不是一蹴而就的短期任务，而是一项系统性、长期性、基础性工程。唯有坚持问题导向、目标导向和结果导向相统一，持续发力、久久为功，才能不断释放数字动能，为高质量发展提供坚实支撑和有力保障。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "面向非专业读者，减少套话，保留标题、三段结构、全部核心观点及逻辑顺序。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "readingReview": "仍需读者自行拆解协同和三种导向，保留标题、三段及逻辑顺序。",
+        "independentMeanings": [
+          "数字化推动组织高质量发展",
+          "需求导向与用户价值",
+          "持续优化流程",
+          "感知分析决策执行闭环",
+          "强化数据要素作用及打通孤岛",
+          "多维全链深层协同",
+          "配置效率与精细治理",
+          "长效机制及明确目标抓手责任",
+          "上下内外协同并持续迭代",
+          "技术和组织能力同步提升",
+          "创新动力",
+          "规范治理及安全底线",
+          "开放合作拓展场景",
+          "实践沉淀可复制可推广经验",
+          "场景落地项目推进清单管理",
+          "发展竞争服务三种优势",
+          "系统长期基础工程而非短期完成",
+          "问题目标结果统一",
+          "持续投入释放数字动能支撑高质量发展"
+        ],
+        "naturalControl": false
+      }
+    },
+    {
+      "id": "wide-report",
+      "purpose": "复盘报告",
+      "language": "ZH",
+      "input": {
+        "sourceText": "基于进一步推动馆际协作运行水平提升的考虑，我们上月选取城北馆的两个阅览区试行了归还登记合并。原来两个区域分别登记，同一批书常要核对两次。试行后，两个区域共用一张清单，归还时只需登记一次。我们观察到晚班的重复登记少了，但没有测量高峰时段的排队时间。因为没有记录未合并区域的数据，暂时无法判断登记差异是否完全来自合并。我们建议再试一个月，一方面核对不同班次是否都能减少重复登记，另一方面看看能否在不延长轮班时间的情况下完成清单复核；试行仍只限这两个区域。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "写给未参与项目的同事。保留数据范围、假设和两个目的。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "needSubstantiveEdit": true,
+        "independentMeanings": [
+          "上月城北馆两个区域试行合并",
+          "过去分登记且同批常核对两次",
+          "共用清单归还登记一次",
+          "晚班重复少但未测高峰排队",
+          "无未合并数据因果未定",
+          "建议再试一个月仍限两区域",
+          "核对不同班次及不延长轮班能否复核两个目的"
+        ],
+        "readingReview": "解释前后流程的实际变化，把观察、未知和下一步分开。"
+      }
+    },
+    {
+      "id": "archive-report",
+      "purpose": "工程资料复盘",
+      "language": "ZH",
+      "input": {
+        "sourceText": "为了进一步推动工程档案的利用水平提升，试点阶段对目录与移交方式实施了协同优化。过去各组分别用自己的工程简称，归档人员得开两张表才能认出同一项目。现在各组保留自己的简称，在提交时另外填入相同的项目编号。归档人员用编号核对两张表，再把确认后的目录交给查阅人员。试点只覆盖两个在建项目，归档人员说核对更容易了，尚未记录单次处理时间。建议先按查阅人员找不到的材料梳理缺口，明确下月要补齐的条目，月末再用实际可查阅的目录复核完成情况。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "不熟悉归档流程的同事",
+        "requirements": "改写成清楚的工作说明，保留试点范围、未测时长和后续建议。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "readingReview": "清楚说出简称、编号和两张表如何协同，再展开缺口、目标及月末结果的关系。原文未测处理时间。",
+        "independentMeanings": [
+          "各组原用自己的简称，两张表才能识别同一项目",
+          "保留简称另填共同项目编号",
+          "归档人员用编号核对后交查阅",
+          "试点两个在建项目，人员反馈较容易、未记录时长",
+          "建议先找缺口、定下月要补的条目、月末看目录确认完成"
+        ]
+      }
+    }
+  ]
+}

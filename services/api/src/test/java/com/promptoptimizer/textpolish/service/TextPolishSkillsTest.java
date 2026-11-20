@@ -56,7 +56,8 @@ class TextPolishSkillsTest {
                 Language.MIXED, "我们计划整理资料目录，让同事更方便地找到资料。\nWe plan to add a link so the readers can find our guide.",
                 Language.UNKNOWN, "Hello!");
         for (String strategy : List.of(TextPolishSkills.AUTO_VERSION, TextPolishInstructions.PARAGRAPH_VERSION,
-                TextPolishInstructions.PARAGRAPH_V2_VERSION, TextPolishInstructions.CHINESE_VERSION)) {
+                TextPolishInstructions.PARAGRAPH_V2_VERSION, TextPolishInstructions.CHINESE_VERSION,
+                TextPolishInstructions.CHINESE_LIGHT_EXAMPLE_VERSION, TextPolishInstructions.CHINESE_REPORT_EXAMPLE_VERSION)) {
             for (var source : sources.entrySet()) {
                 for (Style style : Style.values()) for (Depth depth : Depth.values()) {
                     cases.add(Arguments.of(strategy, source.getKey(), source.getValue(), style, depth, ""));
@@ -81,8 +82,10 @@ class TextPolishSkillsTest {
         provider.configureStrategy(strategy);
         var model = new ModelEntry(new UUID(0, 1), "fixture", properties.getConfiguredRoutes().getFirst().key(), "fixture", "测试", true, true, 0);
         var input = new Input(text, style, depth, "普通读者", requirements, List.of(), "fixture");
-        boolean chineseCandidate = TextPolishInstructions.CHINESE_VERSION.equals(strategy);
-        String expectedVersion = chineseCandidate && language != Language.ZH ? TextPolishInstructions.VERSION : strategy;
+        boolean wrongChineseScope = TextPolishSkills.isChineseVersion(strategy) && (language != Language.ZH
+                || (TextPolishInstructions.CHINESE_LIGHT_EXAMPLE_VERSION.equals(strategy) && depth != Depth.LIGHT)
+                || (TextPolishInstructions.CHINESE_REPORT_EXAMPLE_VERSION.equals(strategy) && depth != Depth.RESTRUCTURE));
+        String expectedVersion = wrongChineseScope ? TextPolishInstructions.VERSION : strategy;
         var prepared = TextPolishSkills.prepare(input, expectedVersion);
         server.expect(requestTo(endpoint)).andExpect(request -> {
             var body = json.readTree(((MockClientHttpRequest) request).getBodyAsString());
@@ -105,6 +108,14 @@ class TextPolishSkillsTest {
             assertThat(metadata.selection().language()).isEqualTo(Language.ZH);
             assertThat(metadata.resources()).extracting(Resource::id)
                     .containsExactly(expectedVersion, expectedVersion + "-service");
+        } else if (TextPolishSkills.isChineseVersion(expectedVersion)) {
+            var original = TextPolishSkills.prepare(input, TextPolishInstructions.CHINESE_VERSION);
+            assertThat(metadata.resources().getFirst()).isEqualTo(original.resources().getFirst());
+            assertThat(metadata.resources().getLast().id()).isEqualTo(expectedVersion);
+            String expectedExample = depth == Depth.LIGHT ? "邮件原稿" : "报告编辑示范";
+            assertThat(prepared.instruction()).contains(expectedExample).doesNotContain("服务说明示范");
+            assertThat(prepared.instruction().substring(prepared.instruction().lastIndexOf("\n目标文体：")))
+                    .isEqualTo(original.instruction().substring(original.instruction().lastIndexOf("\n目标文体：")));
         } else if (!TextPolishInstructions.VERSION.equals(expectedVersion)) {
             assertThat(prepared.instruction()).contains("Target style:", "Editing depth:", "Explicit requirements", "polishedText");
         }

@@ -1,0 +1,157 @@
+{
+  "maxActualCalls": 16,
+  "phaseCaps": {
+    "pilot": 16,
+    "expand": 0
+  },
+  "jobs": [
+    {
+      "id": "light-mail-baseline",
+      "sample": "light-mail",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "关于四月宣传材料的交付沟通，我想就这项工作的有关情况与各位进行一次联系。请各组在周二17点前回邮件，告知是否能按周五的原计划交付。若预计延期，只需在回复里给一个新的日期，无需提交解释。我们汇总后会更新共享排期表，让设计组能继续安排版面，也便于印刷组判断是否要调整预约。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "写给合作部门，保留回复期限和礼貌。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-mail-candidate",
+      "sample": "light-mail",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-light-example-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "关于四月宣传材料的交付沟通，我想就这项工作的有关情况与各位进行一次联系。请各组在周二17点前回邮件，告知是否能按周五的原计划交付。若预计延期，只需在回复里给一个新的日期，无需提交解释。我们汇总后会更新共享排期表，让设计组能继续安排版面，也便于印刷组判断是否要调整预约。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "写给合作部门，保留回复期限和礼貌。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-notice-candidate",
+      "sample": "light-notice",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-light-example-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "西门维修通知\n\n为进一步做好小区通行管理工作，现将需要住户知悉的安排告知如下。西门预计于下周三上午8点至11点维修，期间行人可从南门进出。施工范围仅限西门门禁，车辆入口照常开放。\n\n若下雨，维修顺延，具体日期另行通知。行动不便的住户如需协助，可先打物业电话。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "面向住户，标题和两段保留。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-notice-baseline",
+      "sample": "light-notice",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "西门维修通知\n\n为进一步做好小区通行管理工作，现将需要住户知悉的安排告知如下。西门预计于下周三上午8点至11点维修，期间行人可从南门进出。施工范围仅限西门门禁，车辆入口照常开放。\n\n若下雨，维修顺延，具体日期另行通知。行动不便的住户如需协助，可先打物业电话。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "面向住户，标题和两段保留。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-story-baseline",
+      "sample": "light-story",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "就那次回中学拿毕业照的体验而言，有一个细节让我至今还有相当深刻的印象。办公室里换了新柜子，老师却还是用旧的饼干盒收着底片。他低头找我的班级，把一张边角已经卷起来的照片抽了出来。我接过照片，先看了看站在最边上的自己，就把它收进书里。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留第一人称和结尾，语气平实。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-story-candidate",
+      "sample": "light-story",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-light-example-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "就那次回中学拿毕业照的体验而言，有一个细节让我至今还有相当深刻的印象。办公室里换了新柜子，老师却还是用旧的饼干盒收着底片。他低头找我的班级，把一张边角已经卷起来的照片抽了出来。我接过照片，先看了看站在最边上的自己，就把它收进书里。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留第一人称和结尾，语气平实。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-natural-candidate",
+      "sample": "light-natural",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-light-example-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "外婆把钥匙压在碗底。我出门前才看见，碗里还有两颗荔枝。门已经拉开，我退回去拿了钥匙，没动荔枝。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留作者口吻。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-natural-baseline",
+      "sample": "light-natural",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-zh-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "外婆把钥匙压在碗底。我出门前才看见，碗里还有两颗荔枝。门已经拉开，我退回去拿了钥匙，没动荔枝。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留作者口吻。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    }
+  ],
+  "sourceSha256": {
+    "scripts/evaluation/text-polish-thinking/ThinkingComparison.java": "2f6f904e160cc131531c1085b68c5af38a21e79cc937d90c5cd8a945f6b16459",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishInstructions.java": "f6abc37bfc137add37b31d97adbaa0904ca251841ea594a61d305a7c97f23002",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishSkills.java": "f8621fd1f5b1bba625de13019f5e5dcb1f42673b3273cc1468a9e12e57f6a371",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/OpenAiTextPolishProvider.java": "cf9a1ad0835637a57a9ca9fbd5f9633ba75d091765ea31bc37aca3631630f0d4",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishFidelity.java": "dbf60cb64d9fdf890924113bdb4cebb637686ef9cf2e1a370a31e2c712ad4ed4",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-v1/SKILL.md": "3edbe89a14bd172969f2da3e8268a6f654443644e523089522d69317a2e91d6a",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-v1-service/SKILL.md": "d34f4767951b2f0bcb29c4eca14a5228177328958649461af91d93be1ea604c2",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-light-example-v1/SKILL.md": "6a58c62c4ec2d0d04cd041070336e9a16e40c8db1f7ecc463bad50418b05c7f0",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-report-example-v1/SKILL.md": "58cea4a393c839a050931db757a7bc271a14367ac1a0b5b56ada9a267f0cb617",
+    "docs/testing/evidence/text-polish-zh-example-comparison/light/samples.json": "d6ac30ab4cffbd09f81599fffe75a5813b42e44878f07daf9ac44b7ce1b552b4"
+  }
+}

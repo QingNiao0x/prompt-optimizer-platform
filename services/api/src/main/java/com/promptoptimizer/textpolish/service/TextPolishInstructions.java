@@ -22,6 +22,9 @@ public final class TextPolishInstructions {
     public static final String PARAGRAPH_V2_VERSION = "text-polish-paragraph-v2";
     /** 中文编辑候选，按中文报告、条款和叙事的实际问题指导重写。 */
     public static final String CHINESE_VERSION = "text-polish-zh-v1";
+    /** 仅替换中文示范，分别用于轻度邮件通知和大幅重构报告的对照。 */
+    public static final String CHINESE_LIGHT_EXAMPLE_VERSION = "text-polish-zh-light-example-v1";
+    public static final String CHINESE_REPORT_EXAMPLE_VERSION = "text-polish-zh-report-example-v1";
 
     /**
      * 单次完成按用途编辑，事实保护与表达自由分别说明。保留旧策略用于受控对照与配置回退。
@@ -54,7 +57,7 @@ public final class TextPolishInstructions {
      * 文体只控制表达，幅度控制组织调整范围，两者均服从语义和用户锁定要求。
      */
     public static String system(Input input, String version) {
-        if (TextPolishSkills.AUTO_VERSION.equals(version) || CHINESE_VERSION.equals(version)
+        if (TextPolishSkills.AUTO_VERSION.equals(version) || TextPolishSkills.isChineseVersion(version)
                 || TextPolishSkills.isParagraphVersion(version))
             return TextPolishSkills.prepare(input, version).instruction();
         if (VERSION.equals(version)) return SYSTEM;

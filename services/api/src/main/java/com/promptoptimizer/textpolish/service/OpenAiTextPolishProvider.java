@@ -158,7 +158,7 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
      */
     private String selectStrategy(Input input, ModelEntry model, Thinking requestedThinking) {
         String configured = strategyVersion;
-        if (TextPolishInstructions.CHINESE_VERSION.equals(configured) && !TextPolishSkills.isChinese(input)) {
+        if (TextPolishSkills.isChineseVersion(configured) && !TextPolishSkills.supportsChineseVersion(configured, input)) {
             return TextPolishInstructions.VERSION;
         }
         if ((paragraphV2EnglishRestructureEnabled || chineseRestructureEnabled)

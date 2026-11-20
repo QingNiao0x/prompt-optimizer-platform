@@ -27,6 +27,10 @@ public final class TextPolishSkills {
             Language.MIXED, "humanizer-mixed-v1", Language.UNKNOWN, "general-v1");
     private static final List<String> PARAGRAPH_VERSIONS = List.of(
             TextPolishInstructions.PARAGRAPH_VERSION, TextPolishInstructions.PARAGRAPH_V2_VERSION);
+    private static final Map<String, String> CHINESE_EXAMPLES = Map.of(
+            TextPolishInstructions.CHINESE_VERSION, TextPolishInstructions.CHINESE_VERSION + "-service",
+            TextPolishInstructions.CHINESE_LIGHT_EXAMPLE_VERSION, TextPolishInstructions.CHINESE_LIGHT_EXAMPLE_VERSION,
+            TextPolishInstructions.CHINESE_REPORT_EXAMPLE_VERSION, TextPolishInstructions.CHINESE_REPORT_EXAMPLE_VERSION);
     private static final Map<String, String> BODIES = loadResources();
 
     /** 只有登记的段落编辑版本使用按语种和文体装配的资源。 */
@@ -44,12 +48,24 @@ public final class TextPolishSkills {
         return detectLanguage(input.sourceText()) == Language.ZH;
     }
 
+    /** 仅识别登记的中文版本。实验只替换相应幅度的示范。 */
+    static boolean isChineseVersion(String version) {
+        return version != null && CHINESE_EXAMPLES.containsKey(version);
+    }
+
+    /** 超出实验语种或幅度的显式请求使用默认策略。 */
+    static boolean supportsChineseVersion(String version, Input input) {
+        if (TextPolishInstructions.CHINESE_LIGHT_EXAMPLE_VERSION.equals(version) && input.depth() != Depth.LIGHT) return false;
+        if (TextPolishInstructions.CHINESE_REPORT_EXAMPLE_VERSION.equals(version) && input.depth() != Depth.RESTRUCTURE) return false;
+        return isChinese(input);
+    }
+
     /**
      * 冻结最终指导和资源身份。旧策略继续经过原装配入口，不改变其字符串。
      * 自动选择仅采用正文证据，中文界面、读者和要求不参与原文语言计数。
      */
     public static PreparedTextPolish prepare(Input input, String strategyVersion) {
-        if (TextPolishInstructions.CHINESE_VERSION.equals(strategyVersion)) return prepareChinese(input);
+        if (isChineseVersion(strategyVersion)) return prepareChinese(input, strategyVersion);
         if (isParagraphVersion(strategyVersion)) return prepareParagraph(input, strategyVersion);
         if (!AUTO_VERSION.equals(strategyVersion)) {
             String instruction = TextPolishInstructions.system(input, strategyVersion);
@@ -77,11 +93,11 @@ public final class TextPolishSkills {
                 List.of(new Resource("common-v1", "common-v1", hash(common)), new Resource(id, id, hash(editing))));
     }
 
-    /** 中文候选使用同一份条款示范，文体只调整表达，用户明确要求优先于幅度默认。 */
-    private static PreparedTextPolish prepareChinese(Input input) {
-        String version = TextPolishInstructions.CHINESE_VERSION;
-        String exampleId = version + "-service";
-        String core = BODIES.get(version);
+    /** 不同中文版本共用基础指令与文体、幅度规则，仅装配各自登记的示范。 */
+    private static PreparedTextPolish prepareChinese(Input input, String version) {
+        String coreId = TextPolishInstructions.CHINESE_VERSION;
+        String exampleId = CHINESE_EXAMPLES.get(version);
+        String core = BODIES.get(coreId);
         String example = BODIES.get(exampleId);
         String style = switch (input.style()) {
             case FORMAL -> "正式清晰。用准确的书面语交代判断、安排和依据，保留必要术语。";
@@ -96,7 +112,7 @@ public final class TextPolishSkills {
                 + "\n用户明确的语言、标题、段数、顺序及其他编辑要求优先，仍遵守信息保真和原样保护。\n";
         return new PreparedTextPolish(instruction,
                 new Selection(SELECTOR_VERSION, detectLanguage(input.sourceText()), "CHINESE_EDITING", "SOURCE_LANGUAGE_EVIDENCE"),
-                List.of(new Resource(version, version, hash(core)), new Resource(exampleId, version, hash(example))));
+                List.of(new Resource(coreId, coreId, hash(core)), new Resource(exampleId, version, hash(example))));
     }
 
     /**
@@ -184,7 +200,7 @@ public final class TextPolishSkills {
         Set<String> ids = new HashSet<>(IDS.values());
         ids.add("common-v1");
         ids.add(TextPolishInstructions.CHINESE_VERSION);
-        ids.add(TextPolishInstructions.CHINESE_VERSION + "-service");
+        ids.addAll(CHINESE_EXAMPLES.values());
         for (String version : PARAGRAPH_VERSIONS) {
             ids.add(version);
             for (String locale : List.of("zh", "en")) {
