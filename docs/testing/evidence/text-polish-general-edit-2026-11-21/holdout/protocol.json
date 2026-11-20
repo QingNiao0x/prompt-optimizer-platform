@@ -1,0 +1,583 @@
+{
+  "maxActualCalls": 64,
+  "phaseCaps": {
+    "pilot": 64
+  },
+  "jobs": [
+    {
+      "id": "light-transit-baseline",
+      "sample": "light-transit",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "公交场站标线试点\n\n围绕进一步提升夜间归场秩序的有关工作，本周在东场站试用了新的地面引导线。值班记录显示，试用期间进场车辆问路的次数比上周少。两周的进场车次没有核齐，其他场站也没有参与试点。\n\n后续拟再观察一周，既要核对进场车次，也要看高峰时段的问路次数有没有同样的变化。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "场站运营同事",
+        "requirements": "保留标题和两个正文段，方便快速找到试点结果。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-transit-candidate",
+      "sample": "light-transit",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-general-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "公交场站标线试点\n\n围绕进一步提升夜间归场秩序的有关工作，本周在东场站试用了新的地面引导线。值班记录显示，试用期间进场车辆问路的次数比上周少。两周的进场车次没有核齐，其他场站也没有参与试点。\n\n后续拟再观察一周，既要核对进场车次，也要看高峰时段的问路次数有没有同样的变化。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "场站运营同事",
+        "requirements": "保留标题和两个正文段，方便快速找到试点结果。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-tools-candidate",
+      "sample": "light-tools",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-general-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "工具借出登记\n\n为进一步做好工具流转的相关登记工作，有关办理事项说明如下。借用人应在领出当天填登记单；临时借用且当天归还的，可以在还回时补填。值班员只核对工具编号，损坏情况由维修组记录。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "要借工具的同事",
+        "requirements": "保留标题和一个正文段。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-tools-baseline",
+      "sample": "light-tools",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "工具借出登记\n\n为进一步做好工具流转的相关登记工作，有关办理事项说明如下。借用人应在领出当天填登记单；临时借用且当天归还的，可以在还回时补填。值班员只核对工具编号，损坏情况由维修组记录。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "要借工具的同事",
+        "requirements": "保留标题和一个正文段。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-tape-baseline",
+      "sample": "light-tape",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "旧磁带\n\n在回想小时候的许多场景时，有一件小事总会清晰地浮现出来。停电那晚，我坐在凉席上，把卷出的磁带一点点绕回盒里。窗外有人搬凳子，腿在水泥地上拖得很响。\n\n我姑姑回来时没开口，先摸了摸磁带盒。后来我才知道，那盒带子是她自己录的。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "随笔读者",
+        "requirements": "保留第一人称、标题和两段，语气平实。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-tape-candidate",
+      "sample": "light-tape",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-general-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "旧磁带\n\n在回想小时候的许多场景时，有一件小事总会清晰地浮现出来。停电那晚，我坐在凉席上，把卷出的磁带一点点绕回盒里。窗外有人搬凳子，腿在水泥地上拖得很响。\n\n我姑姑回来时没开口，先摸了摸磁带盒。后来我才知道，那盒带子是她自己录的。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "随笔读者",
+        "requirements": "保留第一人称、标题和两段，语气平实。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-method-candidate",
+      "sample": "light-method",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-general-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "访谈材料的处理\n\n为了更好地开展研究，本文对有关访谈材料进行了相应的整理和分析。分析仅采用已获同意引用的访谈。两名编码者先独立标记，再对有分歧的条目共同复核。少数无法达成一致的条目不纳入主题汇总。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "论文评阅者",
+        "requirements": "保留标题和一个正文段，保持论文方法节的口吻。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-method-baseline",
+      "sample": "light-method",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "访谈材料的处理\n\n为了更好地开展研究，本文对有关访谈材料进行了相应的整理和分析。分析仅采用已获同意引用的访谈。两名编码者先独立标记，再对有分歧的条目共同复核。少数无法达成一致的条目不纳入主题汇总。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "论文评阅者",
+        "requirements": "保留标题和一个正文段，保持论文方法节的口吻。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-market-baseline",
+      "sample": "light-market",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "早市的纸牌\n\n摊主把手写纸牌摆在秤旁，对我说：“下雨也照常开。”我在入口又站了一会儿，看到不少人先找摊号再问去向。\n\n就本次观察所涉及的范围来看，上述现象主要出现在东入口。西入口未记录，暂不能判断整座市场的情况。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "社区读者",
+        "requirements": "保留两段及引文，让见闻自然，观察范围清楚。",
+        "lockedTexts": [
+          "“下雨也照常开。”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-market-candidate",
+      "sample": "light-market",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-general-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "早市的纸牌\n\n摊主把手写纸牌摆在秤旁，对我说：“下雨也照常开。”我在入口又站了一会儿，看到不少人先找摊号再问去向。\n\n就本次观察所涉及的范围来看，上述现象主要出现在东入口。西入口未记录，暂不能判断整座市场的情况。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "社区读者",
+        "requirements": "保留两段及引文，让见闻自然，观察范围清楚。",
+        "lockedTexts": [
+          "“下雨也照常开。”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-surtitles-candidate",
+      "sample": "light-surtitles",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-general-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "试场字幕\n\n围绕字幕能否跟上演出节奏的问题，需要对两种切换方式作进一步说明。演员在台上停顿时，操作员可以按提示手动切页；自动切页只在排练已确认的两个片段中使用。如果演员临时加词，继续使用手动切换。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "首次协助剧场字幕的同事",
+        "requirements": "保持标题和一段。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-surtitles-baseline",
+      "sample": "light-surtitles",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "试场字幕\n\n围绕字幕能否跟上演出节奏的问题，需要对两种切换方式作进一步说明。演员在台上停顿时，操作员可以按提示手动切页；自动切页只在排练已确认的两个片段中使用。如果演员临时加词，继续使用手动切换。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "首次协助剧场字幕的同事",
+        "requirements": "保持标题和一段。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-natural-baseline",
+      "sample": "light-natural",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "昨晚收摊后，我陪外婆走回家。那条路新装了灯，她还是习惯走在我左边。快到楼下时，她问我明天想吃什么。我说还没想好，她点点头，也没再问。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "随笔读者",
+        "requirements": "保持随手记的口吻和单段。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-natural-candidate",
+      "sample": "light-natural",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-general-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "昨晚收摊后，我陪外婆走回家。那条路新装了灯，她还是习惯走在我左边。快到楼下时，她问我明天想吃什么。我说还没想好，她点点头，也没再问。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "随笔读者",
+        "requirements": "保持随手记的口吻和单段。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-limits-candidate",
+      "sample": "light-limits",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-general-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "学员须在周五17:00前交作品。只有已登记的设备故障可以申请延期，申请由教学秘书受理、任课教师决定。通知写明：“申请受理前，原截止时间仍有效。”",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "课程学员",
+        "requirements": "保留一个正文段及引文。",
+        "lockedTexts": [
+          "“申请受理前，原截止时间仍有效。”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "light-limits-baseline",
+      "sample": "light-limits",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "学员须在周五17:00前交作品。只有已登记的设备故障可以申请延期，申请由教学秘书受理、任课教师决定。通知写明：“申请受理前，原截止时间仍有效。”",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "课程学员",
+        "requirements": "保留一个正文段及引文。",
+        "lockedTexts": [
+          "“申请受理前，原截止时间仍有效。”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-irrigation-baseline",
+      "sample": "wide-irrigation",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "节水改造观察\n\n为更好地体现用水管理工作的推进情况，现对已掌握的观察结果作说明。北片区更换滴灌管后，试用周的表计用水量低于对照周。该周有一次降雨。\n\n南片区没有更换滴灌管，但未做同期表计统计。此前各地块的灌溉时长也未记全。现有材料无法判断两周差异是否由更换滴灌管造成。\n\n下一轮拟补齐灌溉时长并同步记录降雨，用于分辨两者对表计读数的影响。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "灌区项目人员",
+        "requirements": "可调整段落，先让读者看清观察和判断的边界。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-irrigation-candidate",
+      "sample": "wide-irrigation",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-general-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "节水改造观察\n\n为更好地体现用水管理工作的推进情况，现对已掌握的观察结果作说明。北片区更换滴灌管后，试用周的表计用水量低于对照周。该周有一次降雨。\n\n南片区没有更换滴灌管，但未做同期表计统计。此前各地块的灌溉时长也未记全。现有材料无法判断两周差异是否由更换滴灌管造成。\n\n下一轮拟补齐灌溉时长并同步记录降雨，用于分辨两者对表计读数的影响。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "灌区项目人员",
+        "requirements": "可调整段落，先让读者看清观察和判断的边界。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-archive-candidate",
+      "sample": "wide-archive",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-general-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "图纸交接\n\n为做好本次图纸交接，需要各组按照要求有序完成有关事项。纸质图由设计组周三送到资料室，电子图由现场组周三上传。资料员在两套都收到后核对版本。\n\n如电子图缺页，仍接收纸质图，但缺页补齐前不能办理归档。现场组应补传缺页。归档结束后资料员会通知两组。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "参加交接的同事",
+        "requirements": "允许重排，方便各组查找自己的事项。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-archive-baseline",
+      "sample": "wide-archive",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "图纸交接\n\n为做好本次图纸交接，需要各组按照要求有序完成有关事项。纸质图由设计组周三送到资料室，电子图由现场组周三上传。资料员在两套都收到后核对版本。\n\n如电子图缺页，仍接收纸质图，但缺页补齐前不能办理归档。现场组应补传缺页。归档结束后资料员会通知两组。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "参加交接的同事",
+        "requirements": "允许重排，方便各组查找自己的事项。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-transit-baseline",
+      "sample": "wide-transit",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "灯下的新线\n\n关于夜间场站最近发生的变化，我一直想把那晚的所见记录下来。那天我在东场站等朋友下班，看见一辆公交车沿着新画的线慢慢拐进去。司机摇下窗，只问了声这个口能不能掉头。\n\n我朋友以前下班时总说门口有人问路。那晚，他一路只顾着把雨衣往袋里塞。我没问他新线究竟有用没用。走出门口，车灯照过来，我才看清线是黄色的。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "随笔读者",
+        "requirements": "保留第一人称和冷静的收尾，不替作者解释心情。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-transit-candidate",
+      "sample": "wide-transit",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-general-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "灯下的新线\n\n关于夜间场站最近发生的变化，我一直想把那晚的所见记录下来。那天我在东场站等朋友下班，看见一辆公交车沿着新画的线慢慢拐进去。司机摇下窗，只问了声这个口能不能掉头。\n\n我朋友以前下班时总说门口有人问路。那晚，他一路只顾着把雨衣往袋里塞。我没问他新线究竟有用没用。走出门口，车灯照过来，我才看清线是黄色的。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "随笔读者",
+        "requirements": "保留第一人称和冷静的收尾，不替作者解释心情。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-simulation-candidate",
+      "sample": "wide-simulation",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-general-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "遮阳方案的讨论\n\n从分析所得结果来看，可以对不同的遮阳方案形成初步认识。按本文的模型设定，方案甲的模拟室内峰值温度低于方案乙。两种方案采用同一组天气输入。\n\n模拟没有纳入窗户开启行为。本文尚未进行现场测量。这一比较用于确定后续实测的优先顺序。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "工程专业论文评阅者",
+        "requirements": "可以调整段落。保持比较对象、证据类型及研究目的。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-simulation-baseline",
+      "sample": "wide-simulation",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "遮阳方案的讨论\n\n从分析所得结果来看，可以对不同的遮阳方案形成初步认识。按本文的模型设定，方案甲的模拟室内峰值温度低于方案乙。两种方案采用同一组天气输入。\n\n模拟没有纳入窗户开启行为。本文尚未进行现场测量。这一比较用于确定后续实测的优先顺序。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "工程专业论文评阅者",
+        "requirements": "可以调整段落。保持比较对象、证据类型及研究目的。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-radio-baseline",
+      "sample": "wide-radio",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "一间仍开着的值班室\n\n推门时，桌上的收音机还在响。值班员指着一本旧册子说：“夜里来的人我都先记在这儿。”\n\n从现有材料情况看，本次查阅的是最近一个月的夜班纸质记录，白班记录未纳入。纸册里有几条只写了到达时间。暂不能确定这些记录最后有没有补到电子表里。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "报道读者",
+        "requirements": "引文原样保留，报道允许重排，但区分现场见闻、采访与记录核查。",
+        "lockedTexts": [
+          "“夜里来的人我都先记在这儿。”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-radio-candidate",
+      "sample": "wide-radio",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-general-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "一间仍开着的值班室\n\n推门时，桌上的收音机还在响。值班员指着一本旧册子说：“夜里来的人我都先记在这儿。”\n\n从现有材料情况看，本次查阅的是最近一个月的夜班纸质记录，白班记录未纳入。纸册里有几条只写了到达时间。暂不能确定这些记录最后有没有补到电子表里。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "报道读者",
+        "requirements": "引文原样保留，报道允许重排，但区分现场见闻、采访与记录核查。",
+        "lockedTexts": [
+          "“夜里来的人我都先记在这儿。”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-kiln-candidate",
+      "sample": "wide-kiln",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-general-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "试烧记录怎么看\n\n在学习试烧记录阅读方法时，有必要全面认识各部分内容。窑门附近摆的是用于比较的同批试片。此次记录包含两次试烧，第一次窑门附近的试片颜色偏浅，第二次没有观察到这一差异。\n\n两次装窑的位置不完全相同，不能用这份记录判断颜色变化由炉温造成。想判断温度影响，还需要另做对照。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "工坊初学者",
+        "requirements": "允许重排，说明试片的位置、用途和能得出的结论。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-kiln-baseline",
+      "sample": "wide-kiln",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "试烧记录怎么看\n\n在学习试烧记录阅读方法时，有必要全面认识各部分内容。窑门附近摆的是用于比较的同批试片。此次记录包含两次试烧，第一次窑门附近的试片颜色偏浅，第二次没有观察到这一差异。\n\n两次装窑的位置不完全相同，不能用这份记录判断颜色变化由炉温造成。想判断温度影响，还需要另做对照。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "工坊初学者",
+        "requirements": "允许重排，说明试片的位置、用途和能得出的结论。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-natural-baseline",
+      "sample": "wide-natural",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "天亮得早。我把窗开了一条缝，听见楼下扫帚扫过石板的声音。\n\n那天我没急着把闹钟关掉。它响完一遍，屋里又安静了。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "随笔读者",
+        "requirements": "保留平淡的语气，清楚的地方可以保留。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-natural-candidate",
+      "sample": "wide-natural",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-general-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "天亮得早。我把窗开了一条缝，听见楼下扫帚扫过石板的声音。\n\n那天我没急着把闹钟关掉。它响完一遍，屋里又安静了。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "随笔读者",
+        "requirements": "保留平淡的语气，清楚的地方可以保留。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-limits-candidate",
+      "sample": "wide-limits",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-general-edit-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "取件安排\n\n如冷柜停电，值班员须先登记受影响的储物格，再通知已留联系方式的使用人。未留联系方式的使用人可主动到服务台核对。\n\n通知时间依停电处置进度确定。本安排只适用于已登记使用的储物格。现场告示为：“取件前请出示领取凭据。”",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "冷柜使用人",
+        "requirements": "标题和告示原文保留，可以调整段落。",
+        "lockedTexts": [
+          "“取件前请出示领取凭据。”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "wide-limits-baseline",
+      "sample": "wide-limits",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-v3",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "取件安排\n\n如冷柜停电，值班员须先登记受影响的储物格，再通知已留联系方式的使用人。未留联系方式的使用人可主动到服务台核对。\n\n通知时间依停电处置进度确定。本安排只适用于已登记使用的储物格。现场告示为：“取件前请出示领取凭据。”",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "冷柜使用人",
+        "requirements": "标题和告示原文保留，可以调整段落。",
+        "lockedTexts": [
+          "“取件前请出示领取凭据。”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    }
+  ],
+  "sourceSha256": {
+    "docs/testing/evidence/text-polish-general-edit-2026-11-21/baseline.json": "d1a2f0d640b63bc0c2a9727571d04a7cde1f4d75bf20595eb08a6c0dea65bb80",
+    "docs/testing/evidence/text-polish-general-edit-2026-11-21/samples.json": "8393a4692e3053ca066dde10989de5bf8f8ec259b5aeb7c70e015ba0f5368a6d",
+    "docs/testing/evidence/text-polish-general-edit-2026-11-21/holdout/samples.json": "8610910f4a2216f3b53c66aa60f2fb47505039c2817ff590f8f1daf2b07f0699",
+    "docs/testing/evidence/text-polish-general-edit-2026-11-21/holdout/metadata.json": "c3a43645f7cd798101b36fcc931c462a830704bd900e478753fb29a2dba9f61e",
+    "scripts/evaluation/text-polish-thinking/ThinkingComparison.java": "87425d1b43a9159ae7aeea98e34d37697158ef2c3bdcb55541900feee1e03ddc",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishSkills.java": "02bc136b08efad41591f995d88261d894932b5090575421a0b61035dcbae19be",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishInstructions.java": "6165be2f6c34c851c94d855a6c971e03044e01389e2c493dd07353002a5e5f12",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/OpenAiTextPolishProvider.java": "4e27d2c29944ee13311cd96d6332ab955df63c96c9dcfe5738eb62a4e970d035",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishFidelity.java": "6d5f27b6568ff0c5b19c8d7925b66f4bd513f0447c60cff90a6109e667dbe760",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishChineseClauseReview.java": "4ed424e841d75ec86486e8e639fc4cc0ad2bf70af5513f8a7b5a8b97655f5d7f",
+    "services/api/src/main/resources/textpolish/skills/common-v1/SKILL.md": "31bcc927ea673eb6ab60a0a8ea2941ff5fbfd7d8e58a1ca4a91183b5c288ecaa",
+    "services/api/src/main/resources/textpolish/skills/text-polish-v3/SKILL.md": "9f283575f5a6fc8b9ad06f9546955ef9026025759514a43923af86769df10f08",
+    "services/api/src/main/resources/textpolish/skills/text-polish-general-edit-v1/SKILL.md": "3d70580546c676a900e3b2a7dad854474e426f90d0dbb43b36893d50cce165c5"
+  }
+}
