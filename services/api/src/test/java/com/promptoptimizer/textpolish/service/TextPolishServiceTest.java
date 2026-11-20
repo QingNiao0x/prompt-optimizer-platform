@@ -6,9 +6,11 @@ import static com.promptoptimizer.analytics.domain.AnalyticsEventType.*;
 import com.promptoptimizer.identity.service.*;
 import com.promptoptimizer.provider.service.PlatformModelCatalog.ModelEntry;
 import com.promptoptimizer.textpolish.domain.TextPolishModels.*;
+import com.promptoptimizer.textpolish.domain.TextPolishRecordRow;
 import com.promptoptimizer.textpolish.mapper.TextPolishMapper;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.ObjectProvider;
+import java.time.ZoneOffset;
 import java.util.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -89,6 +91,34 @@ class TextPolishServiceTest {
         var legacy = json.valueToTree(edited);
         ((com.fasterxml.jackson.databind.node.ObjectNode)legacy).remove("executionMetadata");
         assertThat(json.treeToValue(legacy, Document.class).executionMetadata()).isNull();
+    }
+    @Test void chineseLightReviewFollowsActualGenerationAndIsFrozenWithTheDraft() throws Exception {
+        String draft = "这期间行人请从南门进出。";
+        var metadata = new ExecutionMetadata(TextPolishInstructions.CHINESE_LIGHT_EDIT_VERSION, null, "hash", null,
+                "fixture-route", "fixture-model", null, 1);
+        doReturn(new Generation(draft, metadata)).when(provider).generate(any(), any());
+        var request = first("期间行人可从南门进出。");
+        var result = service.generate(request);
+        assertThat(result.polishedText()).isEqualTo(draft);
+        assertThat(result.checks()).extracting(Check::code).containsExactly("ZH_LIGHT_MODALITY_CHANGED");
+        assertThat(service.generate(request)).isEqualTo(result);
+        verify(provider, times(1)).generate(any(), any());
+        assertThat(service.generateTrial(request).checks()).isEqualTo(result.checks());
+
+        var mapper = mock(TextPolishMapper.class);
+        @SuppressWarnings("unchecked") ObjectProvider<TextPolishMapper> mapperProvider = mock(ObjectProvider.class);
+        when(mapperProvider.getIfAvailable()).thenReturn(mapper);
+        var persistent = new TextPolishHistoryService(mapperProvider, json, fidelity, true);
+        var readRow = new TextPolishRecordRow(result.id(), a.tenantId(), a.workspaceId(),
+                a.userId(), null, json.writeValueAsString(result), draft, 0,
+                result.createdAt().atOffset(ZoneOffset.UTC));
+        when(mapper.find(result.id(), a)).thenReturn(readRow);
+        assertThat(persistent.find(a, result.id()).checks()).isEqualTo(result.checks());
+        assertThat(history.edit(a, result.id(), "维修期间，行人可以从南门进出。", 0).checks()).isEmpty();
+        assertThat(fidelity.checkGenerated(request.input(), new Generation(draft, null))).isEmpty();
+        var baseline = new ExecutionMetadata(TextPolishInstructions.VERSION, null, "hash", null,
+                "fixture-route", "fixture-model", null, 1);
+        assertThat(fidelity.checkGenerated(request.input(), new Generation(draft, baseline))).isEmpty();
     }
     @Test void continuationSelectsFromSavedCurrentTextAndPreservesPreviousSnapshot() {
         doAnswer(call -> {

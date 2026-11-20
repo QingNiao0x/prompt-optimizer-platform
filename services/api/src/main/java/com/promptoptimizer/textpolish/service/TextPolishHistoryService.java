@@ -85,8 +85,15 @@ public class TextPolishHistoryService {
                 || !row.actor().workspaceId().equals(actor.workspaceId())) throw TextPolishException.missing();
     }
     private String encode(Document value) { try { return json.writeValueAsString(value); } catch (JsonProcessingException failure) { throw new IllegalStateException("润色记录无法编码", failure); } }
+    /** 原始生成稿使用当时保存的提示；手动编辑和缺少提示的旧记录仍按当前正文检查。 */
     private Document decode(TextPolishRecordRow row) {
-        try { var doc = json.readValue(row.payload(), Document.class); return doc.edited(row.polishedText(), row.editRevision(), fidelity.check(doc.input(), row.polishedText())); }
+        try {
+            var doc = json.readValue(row.payload(), Document.class);
+            var currentChecks = fidelity.check(doc.input(), row.polishedText());
+            if (row.editRevision() == doc.editRevision() && Objects.equals(row.polishedText(), doc.polishedText())
+                    && doc.checks() != null) return doc;
+            return doc.edited(row.polishedText(), row.editRevision(), currentChecks);
+        }
         catch (JsonProcessingException failure) { throw new IllegalStateException("润色记录无法读取", failure); }
     }
     private record MemoryRecord(ActorIdentity actor, Document document, boolean deleted) { }

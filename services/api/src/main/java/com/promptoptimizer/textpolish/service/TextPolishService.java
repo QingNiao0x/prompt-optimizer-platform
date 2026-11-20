@@ -56,7 +56,7 @@ public class TextPolishService {
         var generation = provider.generate(input, model);
         String text = generation.text();
         return new Document(request.requestId(), input, text, text, null, SourceMode.RAW, model.publicId(), model.displayName(),
-                model.routeKey().equals("mock"), 0, fidelity.check(input, text), false, false, Instant.now(), generation.executionMetadata());
+                model.routeKey().equals("mock"), 0, fidelity.checkGenerated(input, generation), false, false, Instant.now(), generation.executionMetadata());
     }
 
     /** 提交前冻结来源；并发编辑或删除发生在模型期间时拒绝把迟到响应关联到旧版本。 */
@@ -91,7 +91,7 @@ public class TextPolishService {
             analytics.recordToolOperation(AnalyticsEventType.TEXT_POLISH_SUBMITTED, request.requestId());
             var generation = provider.generate(input, model);
             String text = generation.text();
-            var checks = fidelity.check(input, text);
+            var checks = fidelity.checkGenerated(input, generation);
             if (source != null && history.find(actor, source.id()).editRevision() != source.editRevision())
                 throw TextPolishException.conflict("来源稿在生成期间已修改，已保留当前稿，请重新核对后生成。");
             var doc = new Document(request.requestId(), input, text, text, request.sourceRecordId(), request.sourceMode(),

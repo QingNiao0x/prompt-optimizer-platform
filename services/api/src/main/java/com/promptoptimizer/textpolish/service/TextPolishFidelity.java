@@ -42,6 +42,19 @@ public class TextPolishFidelity {
         if (!before.equals(after)) checks.add(new Check("NUMBERS_CHANGED", "数字片段或出现顺序发生变化，请结合对象、单位和条件核对。", preview(before.toString()), preview(after.toString())));
         return List.copyOf(checks);
     }
+
+    /** 仅对实际走中文轻度候选的成稿补充局部核对提示；不干预生成、协议修复或用户手动编辑。 */
+    public List<Check> checkGenerated(Input input, Generation generation) {
+        String output = generation.text();
+        var checks = check(input, output);
+        var metadata = generation.executionMetadata();
+        if (metadata == null || input.depth() != Depth.LIGHT || input.sourceText().equals(output)
+                || !TextPolishInstructions.CHINESE_LIGHT_EDIT_VERSION.equals(metadata.strategyVersion())) return checks;
+        var findings = new ArrayList<>(checks);
+        findings.addAll(TextPolishChineseClauseReview.find(input.sourceText(), output));
+        return List.copyOf(findings);
+    }
+
     /** 凭据不得进入上游、持久化或可复制正文；文章命令仍只是待处理材料。 */
     public void safe(String text) {
         if (scanner.containsCredential(text)) throw TextPolishException.invalid("文本包含疑似敏感凭据，请脱敏后重试。");
