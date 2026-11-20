@@ -60,7 +60,8 @@ class OpenAiTextPolishProviderTest {
     @org.junit.jupiter.params.ParameterizedTest
     @org.junit.jupiter.params.provider.ValueSource(strings = {
             TextPolishInstructions.VERSION, TextPolishSkills.AUTO_VERSION, TextPolishInstructions.PARAGRAPH_VERSION,
-            TextPolishInstructions.PARAGRAPH_V2_VERSION, TextPolishInstructions.CHINESE_VERSION})
+            TextPolishInstructions.PARAGRAPH_V2_VERSION, TextPolishInstructions.CHINESE_VERSION,
+            TextPolishInstructions.GENERAL_EDIT_VERSION})
     void repairFreezesStrategyAndParametersAndRecordsActualInstructionHashes(String version) throws Exception {
         var properties = new OpenAiCompatibleProperties();
         properties.setEndpoint(URI.create(ENDPOINT)); properties.setApiKey("fixture-key");

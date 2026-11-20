@@ -84,8 +84,9 @@ class TextPolishDatabaseAcceptanceTest {
 
     /** 从工作台使用的生成和历史接口验证试用策略，受控上游响应不产生模型费用。 */
     @org.junit.jupiter.params.ParameterizedTest
-    @org.junit.jupiter.params.provider.ValueSource(booleans = {true, false})
-    void workbenchRequestSavesScopedStrategyAndActualBody(boolean chinese) throws Exception {
+    @org.junit.jupiter.params.provider.ValueSource(strings = {TextPolishInstructions.CHINESE_VERSION,
+            TextPolishInstructions.PARAGRAPH_V2_VERSION, TextPolishInstructions.GENERAL_EDIT_VERSION})
+    void workbenchRequestSavesScopedStrategyAndActualBody(String strategy) throws Exception {
         String endpoint = "https://fixture.invalid/chat/completions";
         var route = new OpenAiCompatibleRouteProperties();
         route.setEndpoint(URI.create(endpoint));
@@ -101,8 +102,11 @@ class TextPolishDatabaseAcceptanceTest {
         var upstream = MockRestServiceServer.bindTo(rest).build();
         var fidelity = new TextPolishFidelity();
         var provider = new OpenAiTextPolishProvider(rest.build(), json, properties, fidelity);
-        provider.configureParagraphV2EnglishRestructure(!chinese);
+        boolean chinese = TextPolishInstructions.CHINESE_VERSION.equals(strategy);
+        boolean general = TextPolishInstructions.GENERAL_EDIT_VERSION.equals(strategy);
+        provider.configureParagraphV2EnglishRestructure(TextPolishInstructions.PARAGRAPH_V2_VERSION.equals(strategy));
         provider.configureChineseRestructure(chinese);
+        if (general) provider.configureStrategy(strategy);
 
         var identity = mock(CurrentActor.class);
         when(identity.require()).thenReturn(actor);
@@ -114,16 +118,16 @@ class TextPolishDatabaseAcceptanceTest {
                 mock(AnalyticsEventService.class));
         var mvc = MockMvcBuilders.standaloneSetup(new TextPolishController(service, history, identity))
                 .setMessageConverters(new MappingJackson2HttpMessageConverter(json)).build();
-        String source = chinese ? "我们计划把更新后的展馆指引在周四发给所有会员。"
+        String source = chinese || general ? "我们计划把更新后的展馆指引在周四发给所有会员。"
                 : "We plan to send the revised guide to all members on Thursday.";
-        String requirements = chinese ? "先交代时间。" : "Put the schedule up front.";
-        var input = new Input(source, Style.FORMAL, Depth.RESTRUCTURE, "", requirements, List.of(), modelId);
-        String output = chinese ? "周四，我们计划向所有会员发送更新后的展馆指引。"
+        String requirements = chinese || general ? "先交代时间。" : "Put the schedule up front.";
+        var input = new Input(source, Style.FORMAL, general ? Depth.LIGHT : Depth.RESTRUCTURE, "", requirements, List.of(), modelId);
+        String output = chinese || general ? "周四，我们计划向所有会员发送更新后的展馆指引。"
                 : "On Thursday, we plan to send the revised guide to all members.";
-        var content = json.writeValueAsString(Map.of("polishedText", output));
-        var envelope = json.writeValueAsString(Map.of("choices",
-                List.of(Map.of("finish_reason", "stop", "message", Map.of("content", content)))));
-        upstream.expect(requestTo(endpoint)).andRespond(withSuccess(envelope, MediaType.APPLICATION_JSON));
+        expectArticle(upstream, endpoint, input, strategy, output);
+        var current = new Input("我们计划在下周补发无障碍版本。", input.style(), input.depth(), input.audience(),
+                input.requirements(), input.lockedTexts(), modelId);
+        if (general) expectArticle(upstream, endpoint, current, strategy, "下周，我们计划补发无障碍版本。");
 
         UUID id = UUID.randomUUID();
         var sent = mvc.perform(post("/api/v1/text-polish").contentType(MediaType.APPLICATION_JSON)
@@ -134,10 +138,35 @@ class TextPolishDatabaseAcceptanceTest {
         var result = json.readTree(sent.getResponse().getContentAsByteArray()).path("data");
         var persisted = json.readTree(loaded.getResponse().getContentAsByteArray()).path("data");
         assertThat(result.path("executionMetadata").path("strategyVersion").asText())
-                .isEqualTo(chinese ? TextPolishInstructions.CHINESE_VERSION : TextPolishInstructions.PARAGRAPH_V2_VERSION);
+                .isEqualTo(strategy);
         assertThat(persisted.path("executionMetadata")).isEqualTo(result.path("executionMetadata"));
         assertThat(persisted.path("polishedText").asText()).isEqualTo(output);
+        if (general) {
+            history.edit(actor, id, current.sourceText(), 0);
+            UUID nextId = UUID.randomUUID();
+            var continued = mvc.perform(post("/api/v1/text-polish").contentType(MediaType.APPLICATION_JSON)
+                    .content(json.writeValueAsString(new Generate(nextId, input, id, 1L, SourceMode.CURRENT))))
+                    .andExpect(status().isOk()).andReturn();
+            var next = json.readTree(continued.getResponse().getContentAsByteArray()).path("data");
+            assertThat(next.path("input")).isEqualTo(json.valueToTree(current));
+            assertThat(next.path("executionMetadata")).isEqualTo(result.path("executionMetadata"));
+            assertThat(history.find(actor, nextId).sourceRecordId()).isEqualTo(id);
+            assertThat(history.find(actor, id).executionMetadata().strategyVersion()).isEqualTo(strategy);
+        }
         upstream.verify();
+    }
+
+    /** 在上游请求处核对完整材料和装配版本，夹具结果仅用于验证正文及历史链路。 */
+    private void expectArticle(MockRestServiceServer upstream, String endpoint, Input input, String strategy,
+                               String output) throws Exception {
+        var content = json.writeValueAsString(Map.of("polishedText", output));
+        var envelope = json.writeValueAsString(Map.of("choices",
+                List.of(Map.of("finish_reason", "stop", "message", Map.of("content", content)))));
+        upstream.expect(requestTo(endpoint)).andExpect(request -> {
+            var body = json.readTree(((org.springframework.mock.http.client.MockClientHttpRequest) request).getBodyAsString());
+            assertThat(body.path("messages").get(0).path("content").asText()).isEqualTo(TextPolishInstructions.system(input, strategy));
+            assertThat(json.readTree(body.path("messages").get(1).path("content").asText())).isEqualTo(json.valueToTree(input));
+        }).andRespond(withSuccess(envelope, MediaType.APPLICATION_JSON));
     }
     @Test void allPersistentColumnsAndTablesHaveDatabaseComments() {
         // 检查新模块两张表的实际数据库注释；不使用历史文档冒充已应用迁移证据。

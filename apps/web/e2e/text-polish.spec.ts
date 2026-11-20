@@ -28,8 +28,19 @@ async function setup(page: Page) {
 
 test('结果按服务端快照显示编辑匹配和执行信息，复制仅含正文', async ({ page, context }) => {
   const state = await setup(page);
+  const candidateVersion = 'text-polish-general-edit-v1';
+  const candidateExecution: typeof executionFixture = {
+    ...executionFixture,
+    strategyVersion: candidateVersion,
+    skillVersion: candidateVersion,
+    selection: { selectorVersion: 'source-language-v1', language: 'EN', profile: 'GENERAL', reason: 'SOURCE_LANGUAGE_EVIDENCE' },
+    resources: [
+      { id: 'common-v1', version: 'common-v1', sha256: 'b'.repeat(64) },
+      { id: candidateVersion, version: candidateVersion, sha256: 'c'.repeat(64) },
+    ],
+  };
   await page.route('**/api/v1/text-polish', route => route.fulfill({ json: { data: {
-    ...document(route.request().postDataJSON().input), executionMetadata: executionFixture,
+    ...document(route.request().postDataJSON().input), executionMetadata: candidateExecution,
   } } }));
   await pane(page, '原文');
   await expect(page.getByText(/支持中文、英文和中英混合文章/)).toBeVisible();
@@ -41,7 +52,7 @@ test('结果按服务端快照显示编辑匹配和执行信息，复制仅含�
   await page.getByText('本次执行信息', { exact: true }).click();
   await expect(page.getByText('source-language-v1', { exact: true })).toBeVisible();
   await expect(page.getByText('a'.repeat(64), { exact: true })).toBeVisible();
-  await expect(page.getByText(executionFixture.strategyVersion, { exact: true }).first()).toBeVisible();
+  await expect(page.getByText(candidateVersion, { exact: true }).first()).toBeVisible();
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.getByRole('button', { name: '复制正文', exact: true }).click();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(document().polishedText);
