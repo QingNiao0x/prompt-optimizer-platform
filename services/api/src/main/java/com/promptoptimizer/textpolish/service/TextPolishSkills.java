@@ -33,6 +33,12 @@ public final class TextPolishSkills {
             TextPolishInstructions.CHINESE_REPORT_EXAMPLE_VERSION, TextPolishInstructions.CHINESE_REPORT_EXAMPLE_VERSION);
     private static final Map<String, String> BODIES = loadResources();
 
+    /** 仅为已有成对文体示范的正文语言启用实验策略。 */
+    static boolean supportsStyleContract(Input input) {
+        Language language = detectLanguage(input.sourceText());
+        return language == Language.ZH || language == Language.EN;
+    }
+
     /** 只有登记的段落编辑版本使用按语种和文体装配的资源。 */
     static boolean isParagraphVersion(String version) {
         return version != null && PARAGRAPH_VERSIONS.contains(version);
@@ -65,6 +71,7 @@ public final class TextPolishSkills {
      * 自动选择仅采用正文证据，中文界面、读者和要求不参与原文语言计数。
      */
     public static PreparedTextPolish prepare(Input input, String strategyVersion) {
+        if (TextPolishInstructions.STYLE_CONTRACT_VERSION.equals(strategyVersion)) return prepareStyleContract(input);
         if (isChineseVersion(strategyVersion)) return prepareChinese(input, strategyVersion);
         if (isParagraphVersion(strategyVersion)) return prepareParagraph(input, strategyVersion);
         if (!AUTO_VERSION.equals(strategyVersion)) {
@@ -91,6 +98,24 @@ public final class TextPolishSkills {
         String reason = language == Language.UNKNOWN ? "INSUFFICIENT_OR_UNSUPPORTED_LANGUAGE" : "SOURCE_LANGUAGE_EVIDENCE";
         return new PreparedTextPolish(instruction, new Selection(SELECTOR_VERSION, language, "GENERAL", reason),
                 List.of(new Resource("common-v1", "common-v1", hash(common)), new Resource(id, id, hash(editing))));
+    }
+
+    /**
+     * 同一素材的三种成稿共享事实，末尾仅指定本次文体与幅度。
+     * 独立版本用于对照，已有资源及执行快照可按原版本复现。
+     */
+    private static PreparedTextPolish prepareStyleContract(Input input) {
+        String version = TextPolishInstructions.STYLE_CONTRACT_VERSION;
+        Language language = detectLanguage(input.sourceText());
+        String coreId = language == Language.EN ? TextPolishInstructions.PARAGRAPH_V2_VERSION : TextPolishInstructions.CHINESE_VERSION;
+        String exampleId = version + (language == Language.EN ? "-en" : "-zh");
+        String core = BODIES.get(coreId);
+        String example = BODIES.get(exampleId);
+        String directive = "\nUse the specified register, " + input.style() + ". Editing depth: " + input.depth()
+                + ". Explicit output requirements take precedence within the meaning and exact-text safeguards.\n";
+        return new PreparedTextPolish(core + "\n" + example + directive,
+                new Selection(SELECTOR_VERSION, language, "STYLE_CONTRACT", "SOURCE_LANGUAGE_EVIDENCE"),
+                List.of(new Resource(coreId, coreId, hash(core)), new Resource(exampleId, version, hash(example))));
     }
 
     /** 不同中文版本共用基础指令与文体、幅度规则，仅装配各自登记的示范。 */
@@ -201,6 +226,8 @@ public final class TextPolishSkills {
         ids.add("common-v1");
         ids.add(TextPolishInstructions.CHINESE_VERSION);
         ids.addAll(CHINESE_EXAMPLES.values());
+        ids.add(TextPolishInstructions.STYLE_CONTRACT_VERSION + "-zh");
+        ids.add(TextPolishInstructions.STYLE_CONTRACT_VERSION + "-en");
         for (String version : PARAGRAPH_VERSIONS) {
             ids.add(version);
             for (String locale : List.of("zh", "en")) {
