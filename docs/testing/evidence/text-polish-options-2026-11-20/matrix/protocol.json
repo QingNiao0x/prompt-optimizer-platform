@@ -1,0 +1,853 @@
+{
+  "maxActualCalls": 96,
+  "phaseCaps": {
+    "pilot": 96,
+    "expand": 0
+  },
+  "jobs": [
+    {
+      "id": "zh-observation-formal",
+      "sample": "zh-observation",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "为了进一步提升夜间巡查工作开展的有效性，我们在上月围绕两个停车区的入口照明开展了测试工作。两处入口都能从岗亭看见，但在调低照明亮度后的三个晚上，岗亭人员数不清车辆上的随行人数。测试没有记录天气和车辆玻璃的差异，不能把这一现象完全归因于灯光。建议保留东区当前亮度，在西区用相同车辆再对照一次。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "面向没参与检查的同事。保留数据、因果边界和建议。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-observation-natural",
+      "sample": "zh-observation",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "为了进一步提升夜间巡查工作开展的有效性，我们在上月围绕两个停车区的入口照明开展了测试工作。两处入口都能从岗亭看见，但在调低照明亮度后的三个晚上，岗亭人员数不清车辆上的随行人数。测试没有记录天气和车辆玻璃的差异，不能把这一现象完全归因于灯光。建议保留东区当前亮度，在西区用相同车辆再对照一次。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "面向没参与检查的同事。保留数据、因果边界和建议。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-observation-conversational",
+      "sample": "zh-observation",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "为了进一步提升夜间巡查工作开展的有效性，我们在上月围绕两个停车区的入口照明开展了测试工作。两处入口都能从岗亭看见，但在调低照明亮度后的三个晚上，岗亭人员数不清车辆上的随行人数。测试没有记录天气和车辆玻璃的差异，不能把这一现象完全归因于灯光。建议保留东区当前亮度，在西区用相同车辆再对照一次。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "面向没参与检查的同事。保留数据、因果边界和建议。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-observation-restructure",
+      "sample": "zh-observation",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "为了进一步提升夜间巡查工作开展的有效性，我们在上月围绕两个停车区的入口照明开展了测试工作。两处入口都能从岗亭看见，但在调低照明亮度后的三个晚上，岗亭人员数不清车辆上的随行人数。测试没有记录天气和车辆玻璃的差异，不能把这一现象完全归因于灯光。建议保留东区当前亮度，在西区用相同车辆再对照一次。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "面向没参与检查的同事。保留数据、因果边界和建议。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-rota-natural",
+      "sample": "zh-rota",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "在此就本周布展值守安排同步一下有关信息。请于周三中午前回信，告诉我周五下午是否能来。若不能来，可以给一个周六上午的时段；如果两天都不行，也请回信确认收到。排班还要等场馆核实布展入口，我暂定周四发初稿。此安排只涉及布展，撤展另行通知。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "写给一起布展的同事，保留第一人称和回信要求。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-rota-conversational",
+      "sample": "zh-rota",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "在此就本周布展值守安排同步一下有关信息。请于周三中午前回信，告诉我周五下午是否能来。若不能来，可以给一个周六上午的时段；如果两天都不行，也请回信确认收到。排班还要等场馆核实布展入口，我暂定周四发初稿。此安排只涉及布展，撤展另行通知。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "写给一起布展的同事，保留第一人称和回信要求。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-rota-restructure",
+      "sample": "zh-rota",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "在此就本周布展值守安排同步一下有关信息。请于周三中午前回信，告诉我周五下午是否能来。若不能来，可以给一个周六上午的时段；如果两天都不行，也请回信确认收到。排班还要等场馆核实布展入口，我暂定周四发初稿。此安排只涉及布展，撤展另行通知。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "写给一起布展的同事，保留第一人称和回信要求。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-rota-formal",
+      "sample": "zh-rota",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "在此就本周布展值守安排同步一下有关信息。请于周三中午前回信，告诉我周五下午是否能来。若不能来，可以给一个周六上午的时段；如果两天都不行，也请回信确认收到。排班还要等场馆核实布展入口，我暂定周四发初稿。此安排只涉及布展，撤展另行通知。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "写给一起布展的同事，保留第一人称和回信要求。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-returns-conversational",
+      "sample": "zh-returns",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "为切实推进档案借阅归还工作的规范有序落实，借阅者应留意以下要求。工作日下午，封条完整且借阅编号清楚的资料可放在自助柜。若封条破损或编号不清，请交给窗口人员；周六任何资料都只收在窗口。工作人员会记录已收件数，但登记不代表附件完整。柜门上写着“请取走回执”。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "面向第一次办理的人。保留引号内文字，保留两项独立条件。",
+        "lockedTexts": [
+          "“请取走回执”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-returns-restructure",
+      "sample": "zh-returns",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "为切实推进档案借阅归还工作的规范有序落实，借阅者应留意以下要求。工作日下午，封条完整且借阅编号清楚的资料可放在自助柜。若封条破损或编号不清，请交给窗口人员；周六任何资料都只收在窗口。工作人员会记录已收件数，但登记不代表附件完整。柜门上写着“请取走回执”。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "面向第一次办理的人。保留引号内文字，保留两项独立条件。",
+        "lockedTexts": [
+          "“请取走回执”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-returns-formal",
+      "sample": "zh-returns",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "为切实推进档案借阅归还工作的规范有序落实，借阅者应留意以下要求。工作日下午，封条完整且借阅编号清楚的资料可放在自助柜。若封条破损或编号不清，请交给窗口人员；周六任何资料都只收在窗口。工作人员会记录已收件数，但登记不代表附件完整。柜门上写着“请取走回执”。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "面向第一次办理的人。保留引号内文字，保留两项独立条件。",
+        "lockedTexts": [
+          "“请取走回执”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-returns-natural",
+      "sample": "zh-returns",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "为切实推进档案借阅归还工作的规范有序落实，借阅者应留意以下要求。工作日下午，封条完整且借阅编号清楚的资料可放在自助柜。若封条破损或编号不清，请交给窗口人员；周六任何资料都只收在窗口。工作人员会记录已收件数，但登记不代表附件完整。柜门上写着“请取走回执”。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "面向第一次办理的人。保留引号内文字，保留两项独立条件。",
+        "lockedTexts": [
+          "“请取走回执”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-bench-restructure",
+      "sample": "zh-bench",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "在回顾上周回老家那段经历的时候，我的注意力总会被某一个描述起来很小的片段所吸引。父亲在院子里给长凳换木条，我原先只打算帮他递工具。他发现旧螺钉还能用，就用衣袖把它们擦干净。我蹲在旁边数出八颗，等他把最后一块木条拧紧，才和他一起坐了下来。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保留第一人称和结尾的语气。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-bench-formal",
+      "sample": "zh-bench",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "在回顾上周回老家那段经历的时候，我的注意力总会被某一个描述起来很小的片段所吸引。父亲在院子里给长凳换木条，我原先只打算帮他递工具。他发现旧螺钉还能用，就用衣袖把它们擦干净。我蹲在旁边数出八颗，等他把最后一块木条拧紧，才和他一起坐了下来。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留第一人称和结尾的语气。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-bench-natural",
+      "sample": "zh-bench",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "在回顾上周回老家那段经历的时候，我的注意力总会被某一个描述起来很小的片段所吸引。父亲在院子里给长凳换木条，我原先只打算帮他递工具。他发现旧螺钉还能用，就用衣袖把它们擦干净。我蹲在旁边数出八颗，等他把最后一块木条拧紧，才和他一起坐了下来。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留第一人称和结尾的语气。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-bench-conversational",
+      "sample": "zh-bench",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "在回顾上周回老家那段经历的时候，我的注意力总会被某一个描述起来很小的片段所吸引。父亲在院子里给长凳换木条，我原先只打算帮他递工具。他发现旧螺钉还能用，就用衣袖把它们擦干净。我蹲在旁边数出八颗，等他把最后一块木条拧紧，才和他一起坐了下来。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留第一人称和结尾的语气。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-rain-formal",
+      "sample": "zh-rain",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "我推开窗时，送报纸的人刚把车停稳。他抖了抖雨衣，甩下几滴水，又把报纸从车筐里拿出来。我等他走了才下楼。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留作者口吻和空间细节。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-rain-natural",
+      "sample": "zh-rain",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "我推开窗时，送报纸的人刚把车停稳。他抖了抖雨衣，甩下几滴水，又把报纸从车筐里拿出来。我等他走了才下楼。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留作者口吻和空间细节。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-rain-conversational",
+      "sample": "zh-rain",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "我推开窗时，送报纸的人刚把车停稳。他抖了抖雨衣，甩下几滴水，又把报纸从车筐里拿出来。我等他走了才下楼。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留作者口吻和空间细节。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-rain-restructure",
+      "sample": "zh-rain",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "我推开窗时，送报纸的人刚把车停稳。他抖了抖雨衣，甩下几滴水，又把报纸从车筐里拿出来。我等他走了才下楼。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保留作者口吻和空间细节。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-rules-natural",
+      "sample": "zh-rules",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "补交申请须在初审结束前提交。申请人可在周五12点前撤回补交申请。资料已经归档的，须经档案员确认才可撤回；本流程未指定确认时限。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留许可、日期口径和例外。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-rules-conversational",
+      "sample": "zh-rules",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "补交申请须在初审结束前提交。申请人可在周五12点前撤回补交申请。资料已经归档的，须经档案员确认才可撤回；本流程未指定确认时限。",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留许可、日期口径和例外。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-rules-restructure",
+      "sample": "zh-rules",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "补交申请须在初审结束前提交。申请人可在周五12点前撤回补交申请。资料已经归档的，须经档案员确认才可撤回；本流程未指定确认时限。",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保留许可、日期口径和例外。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "zh-rules-formal",
+      "sample": "zh-rules",
+      "phase": "pilot",
+      "language": "ZH",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "补交申请须在初审结束前提交。申请人可在周五12点前撤回补交申请。资料已经归档的，须经档案员确认才可撤回；本流程未指定确认时限。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留许可、日期口径和例外。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-finding-conversational",
+      "sample": "en-finding",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "In relation to our ongoing efforts to improve the consistency of the loading process, we carried out a small trial at two bays in May. Staff used a printed checklist to record the load before the gate opened. On two of the five shifts, this let staff spot a missing parcel earlier than they usually would. Staff did not record how long loading took, and the other shifts did not use a comparable reporting method. I recommend keeping the checklist for a week at the two trial bays and recording times before we consider wider use.",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Write for colleagues outside the pilot. Keep all evidence limits and the recommendation.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-finding-restructure",
+      "sample": "en-finding",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "In relation to our ongoing efforts to improve the consistency of the loading process, we carried out a small trial at two bays in May. Staff used a printed checklist to record the load before the gate opened. On two of the five shifts, this let staff spot a missing parcel earlier than they usually would. Staff did not record how long loading took, and the other shifts did not use a comparable reporting method. I recommend keeping the checklist for a week at the two trial bays and recording times before we consider wider use.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Write for colleagues outside the pilot. Keep all evidence limits and the recommendation.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-finding-formal",
+      "sample": "en-finding",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "In relation to our ongoing efforts to improve the consistency of the loading process, we carried out a small trial at two bays in May. Staff used a printed checklist to record the load before the gate opened. On two of the five shifts, this let staff spot a missing parcel earlier than they usually would. Staff did not record how long loading took, and the other shifts did not use a comparable reporting method. I recommend keeping the checklist for a week at the two trial bays and recording times before we consider wider use.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Write for colleagues outside the pilot. Keep all evidence limits and the recommendation.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-finding-natural",
+      "sample": "en-finding",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "In relation to our ongoing efforts to improve the consistency of the loading process, we carried out a small trial at two bays in May. Staff used a printed checklist to record the load before the gate opened. On two of the five shifts, this let staff spot a missing parcel earlier than they usually would. Staff did not record how long loading took, and the other shifts did not use a comparable reporting method. I recommend keeping the checklist for a week at the two trial bays and recording times before we consider wider use.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Write for colleagues outside the pilot. Keep all evidence limits and the recommendation.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-handover-restructure",
+      "sample": "en-handover",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "I'm getting in touch about the various arrangements associated with next week's room changes. Could you send me a list of the equipment you will need by Monday at 4 p.m.? If you are still waiting for a supplier, send a provisional list by the same deadline and mark the uncertain items. I plan to post the room allocations on Wednesday, provided the caretaker has checked availability. The request covers the Monday sessions only.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the first person and all deadlines. Make the request easy to locate.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-handover-formal",
+      "sample": "en-handover",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "I'm getting in touch about the various arrangements associated with next week's room changes. Could you send me a list of the equipment you will need by Monday at 4 p.m.? If you are still waiting for a supplier, send a provisional list by the same deadline and mark the uncertain items. I plan to post the room allocations on Wednesday, provided the caretaker has checked availability. The request covers the Monday sessions only.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Keep the first person and all deadlines. Make the request easy to locate.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-handover-natural",
+      "sample": "en-handover",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "I'm getting in touch about the various arrangements associated with next week's room changes. Could you send me a list of the equipment you will need by Monday at 4 p.m.? If you are still waiting for a supplier, send a provisional list by the same deadline and mark the uncertain items. I plan to post the room allocations on Wednesday, provided the caretaker has checked availability. The request covers the Monday sessions only.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Keep the first person and all deadlines. Make the request easy to locate.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-handover-conversational",
+      "sample": "en-handover",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "I'm getting in touch about the various arrangements associated with next week's room changes. Could you send me a list of the equipment you will need by Monday at 4 p.m.? If you are still waiting for a supplier, send a provisional list by the same deadline and mark the uncertain items. I plan to post the room allocations on Wednesday, provided the caretaker has checked availability. The request covers the Monday sessions only.",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Keep the first person and all deadlines. Make the request easy to locate.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-trays-formal",
+      "sample": "en-trays",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "With the intention of promoting effective handling of shared brushes, visitors are reminded that there are arrangements in place for their return. A clean brush may go on the drying shelf after a volunteer checks its name tag. If no volunteer is available, leave it at the desk in its labelled tray. Brushes with loose bristles must go in the repair box, even if they are clean. Staff record damage to help the next visitor choose a brush they can use.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Explain this to a first-time visitor. Keep the permission and exception.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-trays-natural",
+      "sample": "en-trays",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "With the intention of promoting effective handling of shared brushes, visitors are reminded that there are arrangements in place for their return. A clean brush may go on the drying shelf after a volunteer checks its name tag. If no volunteer is available, leave it at the desk in its labelled tray. Brushes with loose bristles must go in the repair box, even if they are clean. Staff record damage to help the next visitor choose a brush they can use.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Explain this to a first-time visitor. Keep the permission and exception.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-trays-conversational",
+      "sample": "en-trays",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "With the intention of promoting effective handling of shared brushes, visitors are reminded that there are arrangements in place for their return. A clean brush may go on the drying shelf after a volunteer checks its name tag. If no volunteer is available, leave it at the desk in its labelled tray. Brushes with loose bristles must go in the repair box, even if they are clean. Staff record damage to help the next visitor choose a brush they can use.",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Explain this to a first-time visitor. Keep the permission and exception.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-trays-restructure",
+      "sample": "en-trays",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "With the intention of promoting effective handling of shared brushes, visitors are reminded that there are arrangements in place for their return. A clean brush may go on the drying shelf after a volunteer checks its name tag. If no volunteer is available, leave it at the desk in its labelled tray. Brushes with loose bristles must go in the repair box, even if they are clean. Staff record damage to help the next visitor choose a brush they can use.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Explain this to a first-time visitor. Keep the permission and exception.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-map-natural",
+      "sample": "en-map",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "When thinking about what stood out to me on the occasion I went to pick up the old map from my uncle, I keep coming back to one detail in the hallway. The corner of the map had been folded around a pencil. My uncle pulled it out, handed me the map and kept the pencil. I meant to ask him where he'd bought it, but by then he was looking for his glasses. I took the map home and hung it above my desk.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Keep the first-person account and understated ending.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-map-conversational",
+      "sample": "en-map",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "When thinking about what stood out to me on the occasion I went to pick up the old map from my uncle, I keep coming back to one detail in the hallway. The corner of the map had been folded around a pencil. My uncle pulled it out, handed me the map and kept the pencil. I meant to ask him where he'd bought it, but by then he was looking for his glasses. I took the map home and hung it above my desk.",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Keep the first-person account and understated ending.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-map-restructure",
+      "sample": "en-map",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "When thinking about what stood out to me on the occasion I went to pick up the old map from my uncle, I keep coming back to one detail in the hallway. The corner of the map had been folded around a pencil. My uncle pulled it out, handed me the map and kept the pencil. I meant to ask him where he'd bought it, but by then he was looking for his glasses. I took the map home and hung it above my desk.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Keep the first-person account and understated ending.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-map-formal",
+      "sample": "en-map",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "When thinking about what stood out to me on the occasion I went to pick up the old map from my uncle, I keep coming back to one detail in the hallway. The corner of the map had been folded around a pencil. My uncle pulled it out, handed me the map and kept the pencil. I meant to ask him where he'd bought it, but by then he was looking for his glasses. I took the map home and hung it above my desk.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Keep the first-person account and understated ending.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-tea-conversational",
+      "sample": "en-tea",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "I found the tea tin behind the bread bin. There was just enough left for two cups. I put one cup by the chair and waited for my brother to come in.",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Retain voice and order.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-tea-restructure",
+      "sample": "en-tea",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "I found the tea tin behind the bread bin. There was just enough left for two cups. I put one cup by the chair and waited for my brother to come in.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Retain voice and order.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-tea-formal",
+      "sample": "en-tea",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "I found the tea tin behind the bread bin. There was just enough left for two cups. I put one cup by the chair and waited for my brother to come in.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Retain voice and order.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-tea-natural",
+      "sample": "en-tea",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "I found the tea tin behind the bread bin. There was just enough left for two cups. I put one cup by the chair and waited for my brother to come in.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Retain voice and order.",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-notice-restructure",
+      "sample": "en-notice",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "A visitor may request a replacement pass only if the original pass has not been used. Staff should check the register before issuing another pass. The sign reads, “Keep this receipt until you leave.” No issue time is guaranteed.",
+        "style": "FORMAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "Preserve the quote, permission, and evidence boundary.",
+        "lockedTexts": [
+          "“Keep this receipt until you leave.”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-notice-formal",
+      "sample": "en-notice",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "A visitor may request a replacement pass only if the original pass has not been used. Staff should check the register before issuing another pass. The sign reads, “Keep this receipt until you leave.” No issue time is guaranteed.",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Preserve the quote, permission, and evidence boundary.",
+        "lockedTexts": [
+          "“Keep this receipt until you leave.”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-notice-natural",
+      "sample": "en-notice",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "A visitor may request a replacement pass only if the original pass has not been used. Staff should check the register before issuing another pass. The sign reads, “Keep this receipt until you leave.” No issue time is guaranteed.",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Preserve the quote, permission, and evidence boundary.",
+        "lockedTexts": [
+          "“Keep this receipt until you leave.”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    },
+    {
+      "id": "en-notice-conversational",
+      "sample": "en-notice",
+      "phase": "pilot",
+      "language": "EN",
+      "strategy": "text-polish-style-contract-v1",
+      "thinking": "DISABLED",
+      "input": {
+        "sourceText": "A visitor may request a replacement pass only if the original pass has not been used. Staff should check the register before issuing another pass. The sign reads, “Keep this receipt until you leave.” No issue time is guaranteed.",
+        "style": "CONVERSATIONAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "Preserve the quote, permission, and evidence boundary.",
+        "lockedTexts": [
+          "“Keep this receipt until you leave.”"
+        ],
+        "modelId": "deepseek:deepseek-flash"
+      }
+    }
+  ],
+  "sourceSha256": {
+    "scripts/evaluation/text-polish-thinking/ThinkingComparison.java": "2f6f904e160cc131531c1085b68c5af38a21e79cc937d90c5cd8a945f6b16459",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishInstructions.java": "99d24edc6b67060ad331c317db4f2baf0d857ae6280f24a69b98c5b898237bad",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishSkills.java": "0e133acb8165e418a166a7d76bfb6300722eed243b50ccc97f2a9fb846417401",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/OpenAiTextPolishProvider.java": "4e27d2c29944ee13311cd96d6332ab955df63c96c9dcfe5738eb62a4e970d035",
+    "services/api/src/main/java/com/promptoptimizer/textpolish/service/TextPolishFidelity.java": "dbf60cb64d9fdf890924113bdb4cebb637686ef9cf2e1a370a31e2c712ad4ed4",
+    "services/api/src/main/resources/textpolish/skills/text-polish-zh-v1/SKILL.md": "3edbe89a14bd172969f2da3e8268a6f654443644e523089522d69317a2e91d6a",
+    "services/api/src/main/resources/textpolish/skills/text-polish-paragraph-v2/SKILL.md": "3a41aabf77e0d8a0a7b610a3092154ed5c86a16009da51ffc7417fb4c97358ac",
+    "services/api/src/main/resources/textpolish/skills/text-polish-style-contract-v1-zh/SKILL.md": "24afb680ba282458a1bc2e222370854f429fbcc6747e82070d39ea663f4574be",
+    "services/api/src/main/resources/textpolish/skills/text-polish-style-contract-v1-en/SKILL.md": "2cbb26ddf68730f5e356c0ad18f152a8991c27e5ca3a15ff1b888b64c17b071b",
+    "docs/testing/evidence/text-polish-options-2026-11-20/matrix/samples.json": "bc76609d60808dd9bd0a3f97180a91f481eb354560899051d9dd688e4bdc2557"
+  }
+}
