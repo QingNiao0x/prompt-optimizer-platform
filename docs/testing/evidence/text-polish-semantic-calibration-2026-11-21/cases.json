@@ -1,0 +1,368 @@
+{
+  "instructionHash" : "cf425ea03638629b4b30b7e1c6c84a26e97fa4e97a7520a1725bccc360f49f63",
+  "cases" : [ {
+    "id" : "case-01",
+    "title" : "服务说明遗漏体验目标",
+    "request" : {
+      "version" : "text-polish-semantic-review-v1",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "我们还会继续优化服务流程，更好地保障用户权益。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : [ {
+      "kind" : "PURPOSE",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "保障用户权益"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "保障用户权益"
+      } ]
+    }, {
+      "kind" : "COMMITMENT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "我们将持续不断地优化服务流程"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "我们还会继续优化服务流程"
+      } ]
+    }, {
+      "kind" : "PURPOSE",
+      "status" : "OMITTED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "为用户提供更加优质的服务体验"
+      } ],
+      "draft" : [ ]
+    } ]
+  }, {
+    "id" : "case-02",
+    "title" : "客服期限相同但义务口径发生变化",
+    "request" : {
+      "version" : "text-polish-semantic-review-v1",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "客服收到申请后，应在3个工作日内确认材料是否齐全。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "客服收到申请后，会在3个工作日内确认材料是否齐全。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : [ {
+      "kind" : "OBLIGATION",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "应在3个工作日内确认"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "会在3个工作日内确认"
+      } ]
+    } ]
+  }, {
+    "id" : "case-03",
+    "title" : "擅自指定期限起算事件",
+    "request" : {
+      "version" : "text-polish-semantic-review-v1",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "只有材料齐全时，才开始计算后续5个工作日的处理期限。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "材料齐全的，自确认之日起计算后续5个工作日的处理期限。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : [ {
+      "kind" : "CONDITION",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "只有材料齐全时"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "材料齐全的"
+      } ]
+    }, {
+      "kind" : "CONDITION",
+      "status" : "ADDED",
+      "source" : [ ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "自确认之日起"
+      } ]
+    } ]
+  }, {
+    "id" : "case-04",
+    "title" : "自然稿时序倒置",
+    "request" : {
+      "version" : "text-polish-semantic-review-v1",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "那天我没急着把闹钟关掉。它响完一遍，屋里又安静了。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "那天闹钟响完一遍，我没急着关掉。屋里又安静了。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : [ {
+      "kind" : "CHRONOLOGY",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "我没急着把闹钟关掉。它响完一遍"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "闹钟响完一遍，我没急着关掉"
+      } ]
+    } ]
+  }, {
+    "id" : "case-05",
+    "title" : "数字照旧但期限被绑到错误动作",
+    "request" : {
+      "version" : "text-polish-semantic-review-v1",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "收到申请后3日内确认材料。"
+      }, {
+        "id" : "S2",
+        "text" : "确认齐全后5日内处理。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "收到申请后5日内确认材料。"
+      }, {
+        "id" : "D2",
+        "text" : "确认齐全后3日内处理。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : [ {
+      "kind" : "CONDITION",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "3日内确认材料"
+      }, {
+        "id" : "S2",
+        "quote" : "5日内处理"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "5日内确认材料"
+      }, {
+        "id" : "D2",
+        "quote" : "3日内处理"
+      } ]
+    } ]
+  }, {
+    "id" : "case-06",
+    "title" : "未确认的原因变成已确认的因果",
+    "request" : {
+      "version" : "text-polish-semantic-review-v1",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "试点期间排队减少，尚不能确定是否由新系统引起。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "试点期间排队减少，这是新系统带来的结果。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : [ {
+      "kind" : "ATTRIBUTION",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "尚不能确定是否由新系统引起"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "这是新系统带来的结果"
+      } ]
+    } ]
+  }, {
+    "id" : "case-07",
+    "title" : "合并表达但两个目的分别有据",
+    "request" : {
+      "version" : "text-polish-semantic-review-v1",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "为保障用户权益，我们将持续优化服务流程，为用户提供更好的服务体验。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "我们将持续优化服务流程，保障用户权益并改善服务体验。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "NO_DISCREPANCY_FOUND",
+    "answerCard" : [ {
+      "kind" : "PURPOSE",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "保障用户权益"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "保障用户权益"
+      } ]
+    }, {
+      "kind" : "COMMITMENT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "我们将持续优化服务流程"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "我们将持续优化服务流程"
+      } ]
+    }, {
+      "kind" : "PURPOSE",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "提供更好的服务体验"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "改善服务体验"
+      } ]
+    } ]
+  }, {
+    "id" : "case-08",
+    "title" : "跨段合并，条件和期限保持相连",
+    "request" : {
+      "version" : "text-polish-semantic-review-v1",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "只有材料齐全才能计时。"
+      }, {
+        "id" : "S2",
+        "text" : "处理期限为5个工作日。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "材料齐全后才开始计算5个工作日的处理期限。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "NO_DISCREPANCY_FOUND",
+    "answerCard" : [ {
+      "kind" : "CONDITION",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "只有材料齐全才能计时"
+      }, {
+        "id" : "S2",
+        "quote" : "处理期限为5个工作日"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "材料齐全后才开始计算5个工作日的处理期限"
+      } ]
+    } ]
+  }, {
+    "id" : "case-09",
+    "title" : "不同段落出现相同文字",
+    "request" : {
+      "version" : "text-polish-semantic-review-v1",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "资料员核对版本。"
+      }, {
+        "id" : "S2",
+        "text" : "资料员核对版本。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "资料员检查版本。"
+      }, {
+        "id" : "D2",
+        "text" : "资料员检查版本。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "NO_DISCREPANCY_FOUND",
+    "answerCard" : [ {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "资料员核对版本"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "资料员检查版本"
+      } ]
+    }, {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S2",
+        "quote" : "资料员核对版本"
+      } ],
+      "draft" : [ {
+        "id" : "D2",
+        "quote" : "资料员检查版本"
+      } ]
+    } ]
+  }, {
+    "id" : "case-10",
+    "title" : "无法确认接收及归档责任归属",
+    "request" : {
+      "version" : "text-polish-semantic-review-v1",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "资料员核对版本。如电子图缺页，仍接收纸质图，但缺页补齐前不能办理归档。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "资料员：核对版本。电子图缺页时，仍接收纸质图，补齐前不办理归档。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "INCONCLUSIVE",
+    "answerCard" : [ {
+      "kind" : "ATTRIBUTION",
+      "status" : "UNCERTAIN",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "仍接收纸质图"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "资料员：核对版本。电子图缺页时，仍接收纸质图"
+      } ]
+    } ]
+  } ]
+}

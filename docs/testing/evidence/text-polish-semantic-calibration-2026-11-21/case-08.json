@@ -1,0 +1,57 @@
+{
+  "id" : "case-08",
+  "review" : {
+    "outcome" : "NO_DISCREPANCY_FOUND",
+    "reason" : "CHECKED",
+    "units" : [ {
+      "kind" : "CONDITION",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "只有材料齐全才能计时。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "材料齐全后才开始计算5个工作日的处理期限。"
+      } ]
+    }, {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S2",
+        "quote" : "处理期限为5个工作日。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "5个工作日的处理期限"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 1163,
+  "observations" : [ {
+    "eventId" : "03960c4e-e68a-478d-9192-5505b1b52155",
+    "startedAt" : 1795202302.968774600,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1162,
+    "usage" : {
+      "inputTokens" : 461,
+      "outputTokens" : 123,
+      "totalTokens" : 584,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

@@ -1,0 +1,57 @@
+{
+  "id" : "case-06",
+  "review" : {
+    "outcome" : "DISCREPANCY",
+    "reason" : "MEANING_CHANGED",
+    "units" : [ {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "试点期间排队减少"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "试点期间排队减少"
+      } ]
+    }, {
+      "kind" : "VIEW",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "尚不能确定是否由新系统引起"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "这是新系统带来的结果"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 754,
+  "observations" : [ {
+    "eventId" : "3b876fe4-4018-4e69-a1c1-afb0ff69905d",
+    "startedAt" : 1795202301.257802200,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 754,
+    "usage" : {
+      "inputTokens" : 454,
+      "outputTokens" : 113,
+      "totalTokens" : 567,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

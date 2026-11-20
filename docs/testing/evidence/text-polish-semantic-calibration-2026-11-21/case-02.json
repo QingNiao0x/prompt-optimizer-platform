@@ -1,0 +1,46 @@
+{
+  "id" : "case-02",
+  "review" : {
+    "outcome" : "DISCREPANCY",
+    "reason" : "MEANING_CHANGED",
+    "units" : [ {
+      "kind" : "OBLIGATION",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "客服收到申请后，应在3个工作日内确认材料是否齐全。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "客服收到申请后，会在3个工作日内确认材料是否齐全。"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 680,
+  "observations" : [ {
+    "eventId" : "bdda060d-7778-4e65-aaff-56a0d2d0cd9b",
+    "startedAt" : 1795202296.654566700,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 679,
+    "usage" : {
+      "inputTokens" : 457,
+      "outputTokens" : 84,
+      "totalTokens" : 541,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

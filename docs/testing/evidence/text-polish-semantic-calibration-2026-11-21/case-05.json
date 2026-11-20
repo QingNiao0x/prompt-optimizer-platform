@@ -1,0 +1,57 @@
+{
+  "id" : "case-05",
+  "review" : {
+    "outcome" : "DISCREPANCY",
+    "reason" : "MEANING_CHANGED",
+    "units" : [ {
+      "kind" : "CHRONOLOGY",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "收到申请后3日内确认材料。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "收到申请后5日内确认材料。"
+      } ]
+    }, {
+      "kind" : "CHRONOLOGY",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S2",
+        "quote" : "确认齐全后5日内处理。"
+      } ],
+      "draft" : [ {
+        "id" : "D2",
+        "quote" : "确认齐全后3日内处理。"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 1790,
+  "observations" : [ {
+    "eventId" : "95999a98-047c-48f3-b751-709ef17ba7a2",
+    "startedAt" : 1795202299.460845100,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1790,
+    "usage" : {
+      "inputTokens" : 475,
+      "outputTokens" : 122,
+      "totalTokens" : 597,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}
