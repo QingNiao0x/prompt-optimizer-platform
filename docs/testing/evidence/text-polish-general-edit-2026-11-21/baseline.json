@@ -1,0 +1,37 @@
+{
+  "capture" : "LOCAL_WORKBENCH_APPLICATION_SERVICE",
+  "input" : {
+    "sourceText" : "校样安排\n\n为便于核对本次改动，样张将在周二发送。两份附件都应核对，反馈汇总后再决定是否印制。",
+    "style" : "NATURAL",
+    "depth" : "LIGHT",
+    "audience" : "参与校对的同事",
+    "requirements" : "保留标题及正文段落。",
+    "lockedTexts" : [ ],
+    "modelId" : "deepseek:deepseek-flash"
+  },
+  "modelName" : "DeepSeek-V4.1-Flash",
+  "executionMetadata" : {
+    "strategyVersion" : "text-polish-v3",
+    "skillVersion" : "text-polish-v3",
+    "resourceHash" : "3022e7ba9bc102a8f853a4353283e6f9995d9bdc71ae41270f6048e1bf62de98",
+    "repairInstructionHash" : null,
+    "routeKey" : "deepseek",
+    "upstreamModel" : "deepseek-flash",
+    "parameters" : {
+      "maxTokens" : 8000,
+      "maxCompletionTokens" : null,
+      "temperature" : 0.2,
+      "stream" : false,
+      "responseFormat" : "json_object",
+      "thinking" : "disabled"
+    },
+    "attemptCount" : 1,
+    "selection" : null,
+    "resources" : [ {
+      "id" : "text-polish-v3",
+      "version" : "text-polish-v3",
+      "sha256" : "3022e7ba9bc102a8f853a4353283e6f9995d9bdc71ae41270f6048e1bf62de98"
+    } ]
+  },
+  "actualCalls" : 1
+}
