@@ -83,7 +83,9 @@ class TextPolishDatabaseAcceptanceTest {
     }
 
     /** 从工作台使用的生成和历史接口验证试用策略，受控上游响应不产生模型费用。 */
-    @Test void workbenchRequestSavesScopedStrategyAndActualBody() throws Exception {
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(booleans = {true, false})
+    void workbenchRequestSavesScopedStrategyAndActualBody(boolean chinese) throws Exception {
         String endpoint = "https://fixture.invalid/chat/completions";
         var route = new OpenAiCompatibleRouteProperties();
         route.setEndpoint(URI.create(endpoint));
@@ -99,7 +101,8 @@ class TextPolishDatabaseAcceptanceTest {
         var upstream = MockRestServiceServer.bindTo(rest).build();
         var fidelity = new TextPolishFidelity();
         var provider = new OpenAiTextPolishProvider(rest.build(), json, properties, fidelity);
-        provider.configureParagraphV2EnglishRestructure(true);
+        provider.configureParagraphV2EnglishRestructure(!chinese);
+        provider.configureChineseRestructure(chinese);
 
         var identity = mock(CurrentActor.class);
         when(identity.require()).thenReturn(actor);
@@ -111,9 +114,12 @@ class TextPolishDatabaseAcceptanceTest {
                 mock(AnalyticsEventService.class));
         var mvc = MockMvcBuilders.standaloneSetup(new TextPolishController(service, history, identity))
                 .setMessageConverters(new MappingJackson2HttpMessageConverter(json)).build();
-        var input = new Input("We plan to send the revised guide to all members on Thursday.", Style.FORMAL,
-                Depth.RESTRUCTURE, "", "Put the schedule up front.", List.of(), modelId);
-        String output = "On Thursday, we plan to send the revised guide to all members.";
+        String source = chinese ? "我们计划把更新后的展馆指引在周四发给所有会员。"
+                : "We plan to send the revised guide to all members on Thursday.";
+        String requirements = chinese ? "先交代时间。" : "Put the schedule up front.";
+        var input = new Input(source, Style.FORMAL, Depth.RESTRUCTURE, "", requirements, List.of(), modelId);
+        String output = chinese ? "周四，我们计划向所有会员发送更新后的展馆指引。"
+                : "On Thursday, we plan to send the revised guide to all members.";
         var content = json.writeValueAsString(Map.of("polishedText", output));
         var envelope = json.writeValueAsString(Map.of("choices",
                 List.of(Map.of("finish_reason", "stop", "message", Map.of("content", content)))));
@@ -128,7 +134,7 @@ class TextPolishDatabaseAcceptanceTest {
         var result = json.readTree(sent.getResponse().getContentAsByteArray()).path("data");
         var persisted = json.readTree(loaded.getResponse().getContentAsByteArray()).path("data");
         assertThat(result.path("executionMetadata").path("strategyVersion").asText())
-                .isEqualTo(TextPolishInstructions.PARAGRAPH_V2_VERSION);
+                .isEqualTo(chinese ? TextPolishInstructions.CHINESE_VERSION : TextPolishInstructions.PARAGRAPH_V2_VERSION);
         assertThat(persisted.path("executionMetadata")).isEqualTo(result.path("executionMetadata"));
         assertThat(persisted.path("polishedText").asText()).isEqualTo(output);
         upstream.verify();

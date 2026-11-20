@@ -56,7 +56,7 @@ class TextPolishSkillsTest {
                 Language.MIXED, "我们计划整理资料目录，让同事更方便地找到资料。\nWe plan to add a link so the readers can find our guide.",
                 Language.UNKNOWN, "Hello!");
         for (String strategy : List.of(TextPolishSkills.AUTO_VERSION, TextPolishInstructions.PARAGRAPH_VERSION,
-                TextPolishInstructions.PARAGRAPH_V2_VERSION)) {
+                TextPolishInstructions.PARAGRAPH_V2_VERSION, TextPolishInstructions.CHINESE_VERSION)) {
             for (var source : sources.entrySet()) {
                 for (Style style : Style.values()) for (Depth depth : Depth.values()) {
                     cases.add(Arguments.of(strategy, source.getKey(), source.getValue(), style, depth, ""));
@@ -81,7 +81,9 @@ class TextPolishSkillsTest {
         provider.configureStrategy(strategy);
         var model = new ModelEntry(new UUID(0, 1), "fixture", properties.getConfiguredRoutes().getFirst().key(), "fixture", "测试", true, true, 0);
         var input = new Input(text, style, depth, "普通读者", requirements, List.of(), "fixture");
-        var prepared = TextPolishSkills.prepare(input, strategy);
+        boolean chineseCandidate = TextPolishInstructions.CHINESE_VERSION.equals(strategy);
+        String expectedVersion = chineseCandidate && language != Language.ZH ? TextPolishInstructions.VERSION : strategy;
+        var prepared = TextPolishSkills.prepare(input, expectedVersion);
         server.expect(requestTo(endpoint)).andExpect(request -> {
             var body = json.readTree(((MockClientHttpRequest) request).getBodyAsString());
             assertThat(body.path("messages").size()).isEqualTo(2);
@@ -91,13 +93,21 @@ class TextPolishSkillsTest {
                 Map.of("content", json.writeValueAsString(Map.of("polishedText", text))))))), MediaType.APPLICATION_JSON));
         var generated = provider.generate(input, model);
         var metadata = generated.executionMetadata();
-        assertThat(metadata.strategyVersion()).isEqualTo(strategy);
+        assertThat(metadata.strategyVersion()).isEqualTo(expectedVersion);
         assertThat(metadata.skillVersion()).isEqualTo(prepared.resources().getLast().version());
         assertThat(metadata.resourceHash()).isEqualTo(HexFormat.of().formatHex(
                 MessageDigest.getInstance("SHA-256").digest(prepared.instruction().getBytes(StandardCharsets.UTF_8))));
         assertThat(metadata.selection()).isEqualTo(prepared.selection());
         assertThat(metadata.resources()).isEqualTo(prepared.resources());
-        assertThat(prepared.instruction()).contains("Target style:", "Editing depth:", "Explicit requirements", "polishedText");
+        if (TextPolishInstructions.CHINESE_VERSION.equals(expectedVersion)) {
+            assertThat(prepared.instruction()).contains("目标文体：", "改写幅度：", "场次分配", "polishedText")
+                    .contains(depth == Depth.LIGHT ? "轻度润色" : "大幅重构");
+            assertThat(metadata.selection().language()).isEqualTo(Language.ZH);
+            assertThat(metadata.resources()).extracting(Resource::id)
+                    .containsExactly(expectedVersion, expectedVersion + "-service");
+        } else if (!TextPolishInstructions.VERSION.equals(expectedVersion)) {
+            assertThat(prepared.instruction()).contains("Target style:", "Editing depth:", "Explicit requirements", "polishedText");
+        }
         if (TextPolishSkills.isParagraphVersion(strategy)) {
             boolean v2 = TextPolishInstructions.PARAGRAPH_V2_VERSION.equals(strategy);
             String exampleMarker = language == Language.ZH

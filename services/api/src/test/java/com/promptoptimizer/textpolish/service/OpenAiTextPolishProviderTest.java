@@ -60,7 +60,7 @@ class OpenAiTextPolishProviderTest {
     @org.junit.jupiter.params.ParameterizedTest
     @org.junit.jupiter.params.provider.ValueSource(strings = {
             TextPolishInstructions.VERSION, TextPolishSkills.AUTO_VERSION, TextPolishInstructions.PARAGRAPH_VERSION,
-            TextPolishInstructions.PARAGRAPH_V2_VERSION})
+            TextPolishInstructions.PARAGRAPH_V2_VERSION, TextPolishInstructions.CHINESE_VERSION})
     void repairFreezesStrategyAndParametersAndRecordsActualInstructionHashes(String version) throws Exception {
         var properties = new OpenAiCompatibleProperties();
         properties.setEndpoint(URI.create(ENDPOINT)); properties.setApiKey("fixture-key");
@@ -110,7 +110,7 @@ class OpenAiTextPolishProviderTest {
         server.verify();
     }
     /** 用实际请求和快照核对试用开关，保护同模型下其他语言、幅度和显式策略。 */
-    @Test void paragraphV2TrialOnlyReplacesV3ForVerifiedEnglishRestructure() throws Exception {
+    @Test void restructureTrialsOnlyReplaceV3ForEachEnabledLanguage() throws Exception {
         var route = new OpenAiCompatibleRouteProperties();
         route.setEndpoint(URI.create(ENDPOINT));
         route.setApiKey("fixture-key");
@@ -128,18 +128,26 @@ class OpenAiTextPolishProviderTest {
         String english = "We plan to send the revised guide to all members on Thursday.";
         String chinese = "我们计划在周四把更新后的指南发送给所有会员。";
         var englishRestructure = new Input(english, Style.FORMAL, Depth.RESTRUCTURE, "", "请保留期限。", List.of(), "fixture");
+        var chineseRestructure = new Input(chinese, Style.FORMAL, Depth.RESTRUCTURE, "", "请保留期限。", List.of(), "fixture");
 
         assertTrialRequest(englishRestructure, TextPolishInstructions.VERSION);
+        assertTrialRequest(chineseRestructure, TextPolishInstructions.VERSION);
+        provider.configureChineseRestructure(true);
+        assertTrialRequest(chineseRestructure, TextPolishInstructions.CHINESE_VERSION);
+        assertTrialRequest(englishRestructure, TextPolishInstructions.VERSION);
+        assertTrialRequest(new Input(chinese, Style.FORMAL, Depth.LIGHT, "", "", List.of(), "fixture"),
+                TextPolishInstructions.VERSION);
         provider.configureParagraphV2EnglishRestructure(true);
         assertTrialRequest(englishRestructure, TextPolishInstructions.PARAGRAPH_V2_VERSION);
         assertTrialRequest(new Input(english, Style.FORMAL, Depth.LIGHT, "", "", List.of(), "fixture"),
                 TextPolishInstructions.VERSION);
-        for (String source : List.of(chinese, english + "\n" + chinese, "Hi!")) {
+        for (String source : List.of(english + "\n" + chinese, "Hi!")) {
             assertTrialRequest(new Input(source, Style.FORMAL, Depth.RESTRUCTURE, "", "", List.of(), "fixture"),
                     TextPolishInstructions.VERSION);
         }
         properties.setTemperature(0.3);
         assertTrialRequest(englishRestructure, TextPolishInstructions.VERSION);
+        assertTrialRequest(chineseRestructure, TextPolishInstructions.VERSION);
         properties.setTemperature(0.2);
         provider.configureThinking(OpenAiTextPolishProvider.Thinking.ENABLED);
         assertTrialRequest(englishRestructure, TextPolishInstructions.VERSION);

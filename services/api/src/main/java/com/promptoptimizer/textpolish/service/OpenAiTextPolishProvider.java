@@ -37,6 +37,7 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
     /** 文章专属配置，默认关闭；每次生成时从实际请求冻结已发送状态。 */
     private volatile Thinking thinking = Thinking.DISABLED;
     private boolean paragraphV2EnglishRestructureEnabled;
+    private boolean chineseRestructureEnabled;
 
     /** ENABLED仅用于已支持thinking协议的DeepSeek型号；未知型号显式拒绝，避免静默忽略。 */
     enum Thinking { DISABLED, ENABLED }
@@ -52,6 +53,12 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
     void configureParagraphV2EnglishRestructure(
             @Value("${app.text-polish.paragraph-v2-english-restructure-enabled:false}") boolean enabled) {
         paragraphV2EnglishRestructureEnabled = enabled;
+    }
+
+    /** 中文大幅重构独立试用，配置关闭时继续按原策略处理。 */
+    @Autowired
+    void configureChineseRestructure(@Value("${app.text-polish.zh-v1-restructure-enabled:false}") boolean enabled) {
+        chineseRestructureEnabled = enabled;
     }
 
     /** 只接受已冻结的内置版本；候选须显式配置，配置错误在启动时暴露。 */
@@ -151,12 +158,20 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
      */
     private String selectStrategy(Input input, ModelEntry model, Thinking requestedThinking) {
         String configured = strategyVersion;
-        if (paragraphV2EnglishRestructureEnabled && TextPolishInstructions.VERSION.equals(configured)
+        if (TextPolishInstructions.CHINESE_VERSION.equals(configured) && !TextPolishSkills.isChinese(input)) {
+            return TextPolishInstructions.VERSION;
+        }
+        if ((paragraphV2EnglishRestructureEnabled || chineseRestructureEnabled)
+                && TextPolishInstructions.VERSION.equals(configured)
                 && "deepseek".equals(model.routeKey()) && "deepseek-flash".equals(model.upstreamModel())
                 && requestedThinking == Thinking.DISABLED && properties.isJsonResponseFormatEnabled()
-                && Double.compare(properties.getTemperature(), 0.2) == 0 && properties.getMaxTokens() >= 8000
-                && TextPolishSkills.isEnglishRestructure(input)) {
-            return TextPolishInstructions.PARAGRAPH_V2_VERSION;
+                && Double.compare(properties.getTemperature(), 0.2) == 0 && properties.getMaxTokens() >= 8000) {
+            if (paragraphV2EnglishRestructureEnabled && TextPolishSkills.isEnglishRestructure(input)) {
+                return TextPolishInstructions.PARAGRAPH_V2_VERSION;
+            }
+            if (chineseRestructureEnabled && input.depth() == Depth.RESTRUCTURE && TextPolishSkills.isChinese(input)) {
+                return TextPolishInstructions.CHINESE_VERSION;
+            }
         }
         return configured;
     }

@@ -1,0 +1,185 @@
+{
+  "comparison": {
+    "baseline": "text-polish-v3",
+    "candidate": "text-polish-zh-v1",
+    "parameters": {
+      "maxTokens": 8000,
+      "maxCompletionTokens": null,
+      "temperature": 0.2,
+      "stream": false,
+      "responseFormat": "json_object",
+      "thinking": "disabled"
+    },
+    "routeKey": "deepseek",
+    "upstreamModel": "deepseek-flash",
+    "baselineSystemSha256": "3022e7ba9bc102a8f853a4353283e6f9995d9bdc71ae41270f6048e1bf62de98"
+  },
+  "provenance": "Five archived Chinese source articles. The natural control is evaluated in both depths.",
+  "samples": [
+    {
+      "id": "p-zh-digital",
+      "language": "ZH",
+      "input": {
+        "sourceText": "以数字化赋能高质量发展：新时代背景下的实践路径与价值意蕴\n\n在当今快速发展的数字化时代，数字化转型已成为推动组织高质量发展的重要引擎。首先，要坚持需求导向，以用户价值为中心，持续优化业务流程，构建从感知、分析到决策、执行的闭环体系。其次，要强化数据要素赋能，打通信息孤岛，推动多维度、全链条、深层次的协同融合，不断提升资源配置效率和精细化治理水平。再次，要完善长效机制，明确目标抓手，压实主体责任，形成上下联动、内外协同、持续迭代的良好生态。\n\n与此同时，还应注重技术能力与组织能力的双向提升，既要以创新驱动增强发展动能，也要以规范治理守住安全底线，在开放合作中拓展应用场景，在实践探索中沉淀可复制、可推广的经验做法。通过场景化落地、项目化推进、清单化管理，进一步把数字化优势转化为发展优势、竞争优势和服务优势。\n\n综上所述，数字化转型不是一蹴而就的短期任务，而是一项系统性、长期性、基础性工程。唯有坚持问题导向、目标导向和结果导向相统一，持续发力、久久为功，才能不断释放数字动能，为高质量发展提供坚实支撑和有力保障。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "面向非专业读者，减少套话，保留标题、三段结构、全部核心观点及逻辑顺序。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "readingReview": "仍需读者自行拆解协同和三种导向，保留标题、三段及逻辑顺序。",
+        "independentMeanings": [
+          "数字化推动组织高质量发展",
+          "需求导向与用户价值",
+          "持续优化流程",
+          "感知分析决策执行闭环",
+          "强化数据要素作用及打通孤岛",
+          "多维全链深层协同",
+          "配置效率与精细治理",
+          "长效机制及明确目标抓手责任",
+          "上下内外协同并持续迭代",
+          "技术和组织能力同步提升",
+          "创新动力",
+          "规范治理及安全底线",
+          "开放合作拓展场景",
+          "实践沉淀可复制可推广经验",
+          "场景落地项目推进清单管理",
+          "发展竞争服务三种优势",
+          "系统长期基础工程而非短期完成",
+          "问题目标结果统一",
+          "持续投入释放数字动能支撑高质量发展"
+        ],
+        "naturalControl": false
+      }
+    },
+    {
+      "id": "p-zh-service",
+      "language": "ZH",
+      "input": {
+        "sourceText": "服务说明\n用户在订单完成后7日内可以提出复核申请，但已使用的数字内容不适用无理由退款。客服收到申请后，应在3个工作日内确认材料是否齐全；只有材料齐全时，才开始计算后续5个工作日的处理期限。本说明不限制法律另行规定的权利，也不代表每次申请都能够获得退款。为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "readingReview": "区分资格、两个时限和计时前置条件。保障权益目的与改善体验目标作为两项内容核对。",
+        "independentMeanings": [
+          "订单完成后7日内可申请",
+          "已使用数字内容不无理由退款",
+          "客服收到申请应在3工作日内确认材料完整性",
+          "仅完整后开始5工作日处理期",
+          "不限制法律权利",
+          "不承诺每次退款",
+          "保障权益目的",
+          "持续优化流程承诺",
+          "改善服务体验目标"
+        ],
+        "naturalControl": false
+      }
+    },
+    {
+      "id": "zh-library",
+      "language": "ZH",
+      "input": {
+        "sourceText": "为进一步提升资料利用效率，我馆拟于12月试行预约取书服务。读者可提前选择书目，工作人员核对馆藏后通知取书。只有收到确认短信，预约才算成功；未收到短信请勿直接到馆。试行期间每人最多预约3册，周一闭馆日不办理取书。我们希望通过这一安排减少排队，也让行动不便的读者更方便地借书。",
+        "style": "CONVERSATIONAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "写给普通读者，减少行政腔，保留计划状态及全部条件。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "readingReview": "先说拟试行什么，并让读者容易发现预约何时算成功、何时不能去。",
+        "independentMeanings": [
+          "12月拟试行",
+          "读者先选书工作人员核对馆藏后通知",
+          "短信确认才成功未收到不直接来馆",
+          "最多3册",
+          "周一不办理取书",
+          "减少排队和方便行动不便者两项目的"
+        ],
+        "naturalControl": false
+      }
+    },
+    {
+      "id": "zh-team",
+      "language": "ZH",
+      "input": {
+        "sourceText": "关于测试环境资源申请事宜，现作如下说明。为保障关键测试的连续开展，同时降低闲置资源占用，我们计划在下月实施按周确认机制。负责人应于每周四18点前确认下一周需求，未确认的资源可能在周一释放。紧急故障排查不受此确认时限限制，但使用后须补登记。本机制不意味着资源一定能够获批。",
+        "style": "FORMAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "让说明简洁好读，保留所有目的、条件及承诺强度。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "readingReview": "让负责人能快速找到确认时间、未确认的结果与紧急排障例外。",
+        "independentMeanings": [
+          "连续测试目的",
+          "减少闲置目的",
+          "下月计划",
+          "负责人应周四18点前确认",
+          "未确认可能周一释放",
+          "紧急排障例外但须补登记",
+          "不保证获批"
+        ],
+        "naturalControl": false
+      }
+    },
+    {
+      "id": "zh-natural",
+      "language": "ZH",
+      "input": {
+        "sourceText": "我把伞放在门边，才发现袖口湿了一截。厨房里还有半壶温水。我倒了一杯，坐着听楼下的车经过，暂时不想开灯。",
+        "style": "NATURAL",
+        "depth": "LIGHT",
+        "audience": "",
+        "requirements": "保留个人叙述口吻。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "readingReview": "保留叙述顺序、具体感受和口吻，少改即可通过。",
+        "independentMeanings": [
+          "伞门边",
+          "袖口湿",
+          "半壶温水倒杯",
+          "听楼下车",
+          "暂时不想开灯"
+        ],
+        "naturalControl": true
+      }
+    },
+    {
+      "id": "zh-natural-restructure",
+      "language": "ZH",
+      "input": {
+        "sourceText": "我把伞放在门边，才发现袖口湿了一截。厨房里还有半壶温水。我倒了一杯，坐着听楼下的车经过，暂时不想开灯。",
+        "style": "NATURAL",
+        "depth": "RESTRUCTURE",
+        "audience": "",
+        "requirements": "保留个人叙述口吻。",
+        "lockedTexts": [],
+        "modelId": "deepseek:deepseek-flash"
+      },
+      "reviewOnly": {
+        "readingReview": "保留叙述顺序、具体感受和口吻，少改即可通过。",
+        "independentMeanings": [
+          "伞门边",
+          "袖口湿",
+          "半壶温水倒杯",
+          "听楼下车",
+          "暂时不想开灯"
+        ],
+        "naturalControl": true
+      }
+    }
+  ]
+}

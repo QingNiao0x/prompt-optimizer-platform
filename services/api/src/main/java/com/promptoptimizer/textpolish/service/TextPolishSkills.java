@@ -39,11 +39,17 @@ public final class TextPolishSkills {
         return input.depth() == Depth.RESTRUCTURE && detectLanguage(input.sourceText()) == Language.EN;
     }
 
+    /** 中文试用仅覆盖按正文识别为中文的请求。 */
+    static boolean isChinese(Input input) {
+        return detectLanguage(input.sourceText()) == Language.ZH;
+    }
+
     /**
      * 冻结最终指导和资源身份。旧策略继续经过原装配入口，不改变其字符串。
      * 自动选择仅采用正文证据，中文界面、读者和要求不参与原文语言计数。
      */
     public static PreparedTextPolish prepare(Input input, String strategyVersion) {
+        if (TextPolishInstructions.CHINESE_VERSION.equals(strategyVersion)) return prepareChinese(input);
         if (isParagraphVersion(strategyVersion)) return prepareParagraph(input, strategyVersion);
         if (!AUTO_VERSION.equals(strategyVersion)) {
             String instruction = TextPolishInstructions.system(input, strategyVersion);
@@ -69,6 +75,28 @@ public final class TextPolishSkills {
         String reason = language == Language.UNKNOWN ? "INSUFFICIENT_OR_UNSUPPORTED_LANGUAGE" : "SOURCE_LANGUAGE_EVIDENCE";
         return new PreparedTextPolish(instruction, new Selection(SELECTOR_VERSION, language, "GENERAL", reason),
                 List.of(new Resource("common-v1", "common-v1", hash(common)), new Resource(id, id, hash(editing))));
+    }
+
+    /** 中文候选使用同一份条款示范，文体只调整表达，用户明确要求优先于幅度默认。 */
+    private static PreparedTextPolish prepareChinese(Input input) {
+        String version = TextPolishInstructions.CHINESE_VERSION;
+        String exampleId = version + "-service";
+        String core = BODIES.get(version);
+        String example = BODIES.get(exampleId);
+        String style = switch (input.style()) {
+            case FORMAL -> "正式清晰。用准确的书面语交代判断、安排和依据，保留必要术语。";
+            case NATURAL -> "自然流畅。保留作者的判断和叙述声音，调整难读的句段及衔接。";
+            case CONVERSATIONAL -> "轻松交流。用目标读者能理解的词讲清原有关系，避免强加称呼或经历。";
+        };
+        String depth = switch (input.depth()) {
+            case LIGHT -> "轻度润色。在原段落内完整重写费力的句子，保持段落顺序和原格式。";
+            case RESTRUCTURE -> "大幅重构。若顺序遮蔽重点，可按用途重新安排独立信息，拆合段落；保持因果、时间和条件归属。";
+        };
+        String instruction = core + "\n" + example + "\n目标文体：" + style + "\n改写幅度：" + depth
+                + "\n用户明确的语言、标题、段数、顺序及其他编辑要求优先，仍遵守信息保真和原样保护。\n";
+        return new PreparedTextPolish(instruction,
+                new Selection(SELECTOR_VERSION, detectLanguage(input.sourceText()), "CHINESE_EDITING", "SOURCE_LANGUAGE_EVIDENCE"),
+                List.of(new Resource(version, version, hash(core)), new Resource(exampleId, version, hash(example))));
     }
 
     /**
@@ -155,6 +183,8 @@ public final class TextPolishSkills {
         Map<String, String> bodies = new HashMap<>();
         Set<String> ids = new HashSet<>(IDS.values());
         ids.add("common-v1");
+        ids.add(TextPolishInstructions.CHINESE_VERSION);
+        ids.add(TextPolishInstructions.CHINESE_VERSION + "-service");
         for (String version : PARAGRAPH_VERSIONS) {
             ids.add(version);
             for (String locale : List.of("zh", "en")) {
