@@ -97,6 +97,8 @@ app:
   text-polish:
     # 文章独立推理开关，ENABLED仅支持已核实thinking协议的DeepSeek型号。
     thinking: ${TEXT_POLISH_THINKING:DISABLED}
+    # 首段试用只对指定的认证用户 ID 开放，留空关闭。
+    directed-preview-user-id: ${TEXT_POLISH_DIRECTED_PREVIEW_USER_ID:}
   enhancement:
     natural:
       # 默认使用 v6 材料传递，PROJECT_TASK 可选择新的任务理解指导，历史增强沿用记录版本。

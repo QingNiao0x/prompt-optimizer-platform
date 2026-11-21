@@ -16,4 +16,11 @@ public interface TextPolishProvider {
     default Generation generate(Input input, ModelEntry model) {
         return new Generation(polish(input, model), null);
     }
+    /** 当前参数下可参加定向试用的模型 ID；空值表示适配器或参数未获验证。 */
+    default String directedPreviewModelId() { return null; }
+
+    /** 使用已验证的段落初稿与一次受限追加修订。应用服务负责确认当前账号可试用。 */
+    default Generation generateDirected(Input input, ModelEntry model, String openingObjective) {
+        throw TextPolishException.invalid("当前模型配置不可进行首段试用。");
+    }
 }

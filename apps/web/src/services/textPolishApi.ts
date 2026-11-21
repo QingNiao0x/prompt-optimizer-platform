@@ -8,8 +8,8 @@ const base = '/api/v1/text-polish';
 const data = async <T>(request: Promise<{ data: ApiResponse<T> }>): Promise<T> => (await request).data.data;
 export const textPolishApi = {
   capabilities: (): Promise<PolishCapabilities> => data(httpClient.get(trialEndpoint(base + '/capabilities', '/text-polish/capabilities'))),
-  generate: (requestId: string, input: PolishInput, sourceMode: PolishSource = 'RAW', sourceRecordId?: string, expectedRevision?: number): Promise<PolishDocument> =>
-    data(httpClient.post(trialEndpoint(base, '/text-polish'), { requestId, input, sourceMode, sourceRecordId, expectedRevision }, { timeout: 180_000 })),
+  generate: (requestId: string, input: PolishInput, sourceMode: PolishSource = 'RAW', sourceRecordId?: string, expectedRevision?: number, openingObjective?: string): Promise<PolishDocument> =>
+    data(httpClient.post(trialEndpoint(base, '/text-polish'), { requestId, input, sourceMode, sourceRecordId, expectedRevision, openingObjective }, { timeout: 180_000 })),
   operation: (id: string): Promise<PolishOperation> => data(httpClient.get(trialEndpoint(base + '/operations/' + encodeURIComponent(id), '/text-polish/operations/' + encodeURIComponent(id)))),
   retrySave: (id: string): Promise<PolishDocument> => data(httpClient.post(base + '/operations/' + encodeURIComponent(id) + '/save')),
   history: (current = 1, size = 10): Promise<PolishHistory> => data(httpClient.get(base + '/history', { params: { current, size } })),

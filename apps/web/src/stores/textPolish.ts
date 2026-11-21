@@ -13,6 +13,7 @@ export const useTextPolishStore = defineStore('text-polish', () => {
   const trial = useTrialStore();
   const sourceText = ref(''), style = ref<PolishStyle>('NATURAL'), depth = ref<PolishDepth>('LIGHT');
   const audience = ref(''), requirements = ref(''), lockedText = ref(''), modelId = ref('');
+  const openingObjective = ref('');
   const capabilities = ref<PolishCapabilities>();
   const result = ref<PolishDocument>(), pendingResult = ref<PolishDocument>(), previousResult = ref<PolishDocument>();
   const editDraft = ref(''), isEditing = ref(false), busy = ref(false), saving = ref(false), loading = ref(false);
@@ -28,11 +29,15 @@ export const useTextPolishStore = defineStore('text-polish', () => {
     && (auth.isAuthenticated || trial.initialized && trial.canUse('TEXT_POLISH')));
   const input = (): PolishInput => ({ sourceText: sourceText.value, style: style.value, depth: depth.value, audience: audience.value,
     requirements: requirements.value, lockedTexts: lockedText.value.split('\n').filter(t => t.trim()), modelId: modelId.value });
-  const viewSignature = (): string => JSON.stringify([input(), result.value?.id, currentText.value, isEditing.value]);
+  const canUseDirectedPreview = computed(() => auth.isAuthenticated && depth.value === 'LIGHT'
+    && !!selectedModel.value && capabilities.value?.directedPreviewModelId === selectedModel.value.id);
+  const selectedObjective = (): string | undefined => canUseDirectedPreview.value ? openingObjective.value.trim() || undefined : undefined;
+  const viewSignature = (): string => JSON.stringify([input(), selectedObjective(), result.value?.id, currentText.value, isEditing.value]);
   /** 打开历史或返回上一稿时，同时恢复该稿的实际原文和设置，避免继续生成时混用不同版本。 */
   const restoreInput = (document: PolishDocument): void => {
     sourceText.value = document.input.sourceText; style.value = document.input.style; depth.value = document.input.depth;
     audience.value = document.input.audience; requirements.value = document.input.requirements;
+    openingObjective.value = '';
     lockedText.value = document.input.lockedTexts.join('\n'); modelId.value = document.modelId;
   };
   const install = (document: PolishDocument): void => {
@@ -41,6 +46,7 @@ export const useTextPolishStore = defineStore('text-polish', () => {
   };
   const reset = (): void => {
     sourceText.value = ''; style.value = 'NATURAL'; depth.value = 'LIGHT'; audience.value = ''; requirements.value = ''; lockedText.value = '';
+    openingObjective.value = '';
     result.value = undefined; pendingResult.value = undefined; previousResult.value = undefined; editDraft.value = ''; isEditing.value = false;
     error.value = ''; recoveryId.value = ''; recoveryPending.value = false;
   };
@@ -77,8 +83,10 @@ export const useTextPolishStore = defineStore('text-polish', () => {
     if (guestRequest && fromCurrent) requestInput.sourceText = source!.polishedText;
     busy.value = true; error.value = ''; recoveryId.value = requestId;
     try {
-      const value = await api.generate(requestId, requestInput, linked ? fromCurrent ? 'CURRENT' : 'ORIGINAL' : 'RAW',
-        linked ? source!.id : undefined, linked ? source!.editRevision : undefined);
+      const args = [requestId, requestInput, linked ? fromCurrent ? 'CURRENT' : 'ORIGINAL' : 'RAW',
+        linked ? source!.id : undefined, linked ? source!.editRevision : undefined] as const;
+      const objective = selectedObjective();
+      const value = objective ? await api.generate(...args, objective) : await api.generate(...args);
       if (epoch !== identityEpoch) return;
       // 生成期间原文、设置或编辑稿变动时，结果作为候选保留，由用户主动查看，不能自动覆盖。
       if (viewSignature() !== signature) pendingResult.value = value;
@@ -169,7 +177,7 @@ export const useTextPolishStore = defineStore('text-polish', () => {
   };
   /** 返回上一稿只恢复本页快照，不改变数据库；已删除快照由删除操作同步移除。 */
   const undo = (): void => { if (previousResult.value) { const previous = previousResult.value; previousResult.value = result.value; result.value = previous; restoreInput(previous); editDraft.value = previous.polishedText; isEditing.value = false; } };
-  return { sourceText, style, depth, audience, requirements, lockedText, modelId, capabilities, selectedModel, result,
+  return { sourceText, style, depth, audience, requirements, lockedText, modelId, capabilities, selectedModel, openingObjective, canUseDirectedPreview, result,
     pendingResult, previousResult, editDraft, isEditing, busy, saving, loading, error, recoveryId, recoveryPending,
     history, historyLoading, dirty, currentText, canGenerate, load, reset, generate, recover, save, loadHistory, restore, restoreRecord, remove, forgetRecord, install, undo };
 });

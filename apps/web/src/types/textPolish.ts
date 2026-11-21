@@ -16,6 +16,7 @@ export interface PolishExecutionMetadata {
     maxTokens: number | null; maxCompletionTokens: number | null; temperature: number | null;
     stream: boolean; responseFormat: string | null; thinking: string | null;
   } | null;
+  directedRevision?: { strategyVersion: string; instructionHash: string; outcome: 'APPLIED' | 'UNCHANGED' | 'FALLBACK' } | null;
 }
 /** 仅使用本次服务端快照显示匹配，不从原文或当前设置反推旧记录。 */
 export const polishEditingLabel = (metadata?: PolishExecutionMetadata | null): string => {
@@ -29,7 +30,12 @@ export interface PolishDocument {
   checks: PolishCheck[]; historySaved: boolean; persistentHistory: boolean; createdAt: string;
 }
 export interface PolishModel { id: string; displayName: string; defaultModel: boolean; mock: boolean }
-export interface PolishCapabilities { models: PolishModel[]; maxInputCharacters: number; maxOutputCharacters: number; persistentHistory: boolean }
+export const polishDirectedLabel = (result: NonNullable<PolishExecutionMetadata['directedRevision']>): string =>
+  ({ APPLIED: '首段试用 · 已追加修订', UNCHANGED: '首段试用 · 保留初稿', FALLBACK: '首段修订未完成，已保留初稿' })[result.outcome];
+export interface PolishCapabilities {
+  models: PolishModel[]; maxInputCharacters: number; maxOutputCharacters: number; persistentHistory: boolean;
+  directedPreviewModelId?: string | null;
+}
 export interface PolishPolicy { enabledModelIds: string[]; defaultModelId: string | null }
 export interface PolishHistory { records: PolishDocument[]; current: number; size: number; total: number; pages: number }
 export interface PolishOperation { status: 'RUNNING' | 'COMPLETED' | 'FAILED' | 'UNKNOWN'; document: PolishDocument | null }

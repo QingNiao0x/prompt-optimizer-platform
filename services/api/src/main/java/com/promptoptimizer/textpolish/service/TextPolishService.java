@@ -8,6 +8,8 @@ import com.promptoptimizer.common.logging.LogCorrelation;
 import com.promptoptimizer.identity.service.*;
 import com.promptoptimizer.textpolish.domain.TextPolishModels.*;
 import org.springframework.dao.DataAccessException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
@@ -30,6 +32,7 @@ public class TextPolishService {
     private final TextPolishFidelity fidelity;
     private final ObjectMapper json;
     private final AnalyticsEventService analytics;
+    private UUID directedPreviewUserId;
     /** 装配文章独立生成与审计；不把模型重试、状态恢复或补存当作新提交。 */
     public TextPolishService(CurrentActor current, TextPolishModelService models, TextPolishProvider provider,
             TextPolishHistoryService history, TextPolishStateStore states, TextPolishFidelity fidelity, ObjectMapper json,
@@ -37,10 +40,24 @@ public class TextPolishService {
         this.current = current; this.models = models; this.provider = provider; this.history = history;
         this.states = states; this.fidelity = fidelity; this.json = json; this.analytics = analytics;
     }
-    /** 页面限制和可用模型来自服务端当前策略。 */
-    public Capabilities capabilities() { current.require(); return new Capabilities(models.models(), 12000, 24000, history.persistent()); }
+    /** 仅服务器配置的一个账号可参加个人试用，空配置关闭入口。 */
+    @Autowired
+    void configureDirectedPreview(@Value("${app.text-polish.directed-preview-user-id:}") String configured) {
+        directedPreviewUserId = configured.isBlank() ? null : UUID.fromString(configured.strip());
+    }
+
+    /** 页面限制和可用模型来自服务端当前策略。试用能力只返回给其所属账号。 */
+    public Capabilities capabilities() {
+        var actor = current.require();
+        var available = models.models();
+        String eligible = actor.userId().equals(directedPreviewUserId) ? provider.directedPreviewModelId() : null;
+        String preview = available.stream().anyMatch(model -> model.id().equals(eligible)) ? eligible : null;
+        return new Capabilities(available, 12000, 24000, history.persistent(), preview);
+    }
     /** 访客只能提交主动输入的原文，禁止借来源编号读取或继续正式历史。 */
     public void validateTrial(Generate request) {
+        if (!request.openingObjective().isEmpty())
+            throw new com.promptoptimizer.trial.TrialException(401, "AUTHENTICATION_REQUIRED", "首段试用仅对指定的登录账号开放。");
         if (request.sourceMode() != SourceMode.RAW || request.sourceRecordId() != null || request.expectedRevision() != null)
             throw new com.promptoptimizer.trial.TrialException(401, "AUTHENTICATION_REQUIRED", "请注册登录后使用历史稿件。");
         fidelity.validateInput(request.input());
@@ -78,6 +95,7 @@ public class TextPolishService {
         }
         var model = models.require(in.modelId());
         Input input = new Input(in.sourceText(), in.style(), in.depth(), in.audience(), in.requirements(), in.lockedTexts(), model.publicId());
+        Input actualInput = directedInput(actor, input, request.openingObjective());
         String fingerprint = requestFingerprint(input, request);
         Operation pending = new Operation("RUNNING", fingerprint, null, Instant.now());
         if (!states.claim(actor, request.requestId().toString(), pending, TTL)) {
@@ -89,12 +107,13 @@ public class TextPolishService {
         try (var correlation = LogCorrelation.bindWorkflow("text-polish", request.requestId().toString())) {
             // 幂等预留和服务端来源/模型校验通过后才计提交；模型失败保留尝试，不记成功结果。
             analytics.recordToolOperation(AnalyticsEventType.TEXT_POLISH_SUBMITTED, request.requestId());
-            var generation = provider.generate(input, model);
+            var generation = request.openingObjective().isEmpty() ? provider.generate(actualInput, model)
+                    : provider.generateDirected(actualInput, model, request.openingObjective());
             String text = generation.text();
-            var checks = fidelity.checkGenerated(input, generation);
+            var checks = fidelity.checkGenerated(actualInput, generation);
             if (source != null && history.find(actor, source.id()).editRevision() != source.editRevision())
                 throw TextPolishException.conflict("来源稿在生成期间已修改，已保留当前稿，请重新核对后生成。");
-            var doc = new Document(request.requestId(), input, text, text, request.sourceRecordId(), request.sourceMode(),
+            var doc = new Document(request.requestId(), actualInput, text, text, request.sourceRecordId(), request.sourceMode(),
                     model.publicId(), model.displayName(), model.routeKey().equals("mock"), 0, checks, false, history.persistent(), Instant.now(), generation.executionMetadata());
             // 已经生成的结果落库失败时留在私有短期状态中，重试保存不触发新模型调用。
             try { doc = history.save(actor, doc); }
@@ -106,6 +125,19 @@ public class TextPolishService {
             states.put(actor, request.requestId().toString(), new Operation("FAILED", fingerprint, null, pending.startedAt()), TTL);
             throw failure;
         }
+    }
+    /** 将显式首段目标交给两个编辑阶段，并随实际输入保存在私有历史中。 */
+    private Input directedInput(ActorIdentity actor, Input input, String objective) {
+        if (objective.isEmpty()) return input;
+        if (!actor.userId().equals(directedPreviewUserId))
+            throw new TextPolishException(403, "TEXT_POLISH_PREVIEW_NOT_ALLOWED", "当前账号未开启首段试用。");
+        String requirements = (input.requirements().isBlank() ? "" : input.requirements() + "\n")
+                + "保留标题和原段数。" + objective;
+        if (objective.length() > 200 || requirements.length() > 1500)
+            throw TextPolishException.invalid("首段目标最多200字，和补充要求合计最多1500字符。");
+        fidelity.safe(requirements);
+        return new Input(input.sourceText(), input.style(), input.depth(), input.audience(), requirements,
+                input.lockedTexts(), input.modelId());
     }
     /** 恢复查询不调用模型；已落库结果始终重新读取删除状态和当前编辑稿。 */
     public Operation operation(UUID id) {
@@ -141,8 +173,10 @@ public class TextPolishService {
     }
     /** 幂等指纹只绑定用户请求及首次解析模型，不绑定后来变化的执行配置。 */
     private String requestFingerprint(Input input, Generate request) {
-        return fingerprint(List.of(input, request.sourceRecordId() == null ? "" : request.sourceRecordId(),
+        var parts = new ArrayList<>(List.of(input, request.sourceRecordId() == null ? "" : request.sourceRecordId(),
                 request.expectedRevision() == null ? -1 : request.expectedRevision(), request.sourceMode()));
+        if (!request.openingObjective().isEmpty()) parts.add(request.openingObjective());
+        return fingerprint(parts);
     }
     /** 指纹只用于等价判断，不写入技术日志，不接受模型自报身份或确认状态。 */
     private String fingerprint(Object input) {

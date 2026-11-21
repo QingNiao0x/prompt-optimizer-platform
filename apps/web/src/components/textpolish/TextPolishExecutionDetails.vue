@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ElCollapse, ElCollapseItem, ElDescriptions, ElDescriptionsItem } from 'element-plus';
-import { polishEditingLabel, type PolishExecutionMetadata } from '@/types/textPolish';
+import { polishDirectedLabel, polishEditingLabel, type PolishExecutionMetadata } from '@/types/textPolish';
 
 // 工作台与历史详情共享同一展示；缺失值保留未知，不将上游默认推测为有效参数。
 defineProps<{ metadata?: PolishExecutionMetadata | null }>();
@@ -26,6 +26,11 @@ const reasons: Record<string, string> = {
           <ElDescriptionsItem label="修复指令哈希">{{ metadata.repairInstructionHash ?? '未记录' }}</ElDescriptionsItem>
           <ElDescriptionsItem label="模型路由">{{ metadata.routeKey }} / {{ metadata.upstreamModel }}</ElDescriptionsItem>
           <ElDescriptionsItem label="调用尝试">{{ metadata.attemptCount }}</ElDescriptionsItem>
+          <template v-if="metadata.directedRevision">
+            <ElDescriptionsItem label="首段修订">{{ polishDirectedLabel(metadata.directedRevision) }}</ElDescriptionsItem>
+            <ElDescriptionsItem label="首段修订版本">{{ metadata.directedRevision.strategyVersion }}</ElDescriptionsItem>
+            <ElDescriptionsItem label="首段指令哈希">{{ metadata.directedRevision.instructionHash }}</ElDescriptionsItem>
+          </template>
           <ElDescriptionsItem label="实际发送参数"><pre>{{ JSON.stringify(metadata.parameters, null, 2) ?? '未知' }}</pre></ElDescriptionsItem>
         </ElDescriptions>
         <p v-if="metadata.resources == null">资源清单未知</p>

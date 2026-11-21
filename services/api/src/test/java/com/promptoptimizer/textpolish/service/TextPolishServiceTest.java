@@ -33,6 +33,33 @@ class TextPolishServiceTest {
     }
     private Input input(String text) { return new Input(text, null, null, "", "", List.of(), "fixture"); }
     private Generate first(String text) { return new Generate(UUID.randomUUID(), input(text), null, null, null); }
+    @Test void directedPreviewIsPrivateAndCompletedReplaySurvivesTurningItOff() {
+        service.configureDirectedPreview(a.userId().toString());
+        when(provider.directedPreviewModelId()).thenReturn(model.publicId());
+        when(models.models()).thenReturn(List.of(new Model(model.publicId(), "测试模型", true, false)));
+        var request = new Generate(UUID.randomUUID(), input("交回说明\n\n请在周二交回。"), null, null, null, "时间提前。");
+        assertThat(service.capabilities().directedPreviewModelId()).isEqualTo(model.publicId());
+        var other = new ActorIdentity(UUID.randomUUID(), a.tenantId(), a.workspaceId(), "other@local", "other");
+        when(current.require()).thenReturn(other);
+        assertThat(service.capabilities().directedPreviewModelId()).isNull();
+        assertThatThrownBy(() -> service.generate(request)).isInstanceOfSatisfying(TextPolishException.class,
+                error -> assertThat(error.code()).isEqualTo("TEXT_POLISH_PREVIEW_NOT_ALLOWED"));
+        assertThatThrownBy(() -> service.validateTrial(request)).isInstanceOf(com.promptoptimizer.trial.TrialException.class);
+        verify(provider, never()).generateDirected(any(), any(), anyString());
+
+        when(current.require()).thenReturn(a);
+        when(provider.generateDirected(any(), eq(model), eq("时间提前。")))
+                .thenReturn(new Generation("交回说明\n\n周二是交回期限。", null));
+        var result = service.generate(request);
+        assertThat(result.input().requirements()).isEqualTo("保留标题和原段数。时间提前。");
+        assertThat(history.find(a, result.id())).isEqualTo(result);
+        service.configureDirectedPreview("");
+        assertThat(service.capabilities().directedPreviewModelId()).isNull();
+        assertThat(service.generate(request)).isEqualTo(result);
+        assertThatThrownBy(() -> service.generate(new Generate(request.requestId(), request.input(), null, null, null, "地点提前。")))
+                .isInstanceOf(TextPolishException.class);
+        verify(provider, times(1)).generateDirected(any(), eq(model), eq("时间提前。"));
+    }
     @Test void trialUsesSameProviderWithoutFormalIdentityOrHistoryAndRejectsHistorySources() {
         var result = service.generateTrial(first("访客主动输入的文章。"));
         assertThat(result.polishedText()).isEqualTo("访客主动输入的文章。");
