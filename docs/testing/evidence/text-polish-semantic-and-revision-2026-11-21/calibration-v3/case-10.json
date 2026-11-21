@@ -1,0 +1,80 @@
+{
+  "id" : "case-10",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"资料员核对版本。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"资料员：核对版本。\"}]},{\"kind\":\"CONDITION\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"如电子图缺页\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"电子图缺页时\"}]},{\"kind\":\"PERMISSION\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"仍接收纸质图\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"仍接收纸质图\"}]},{\"kind\":\"OBLIGATION\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"缺页补齐前不能办理归档\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"补齐前不办理归档\"}]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "NO_DISCREPANCY_FOUND",
+    "reason" : "CHECKED",
+    "units" : [ {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "资料员核对版本。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "资料员：核对版本。"
+      } ]
+    }, {
+      "kind" : "CONDITION",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "如电子图缺页"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "电子图缺页时"
+      } ]
+    }, {
+      "kind" : "PERMISSION",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "仍接收纸质图"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "仍接收纸质图"
+      } ]
+    }, {
+      "kind" : "OBLIGATION",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "缺页补齐前不能办理归档"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "补齐前不办理归档"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 1323,
+  "observations" : [ {
+    "eventId" : "0de7c6e7-5080-4df3-924d-123819eb8b6e",
+    "startedAt" : 1795236469.390488000,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1323,
+    "usage" : {
+      "inputTokens" : 682,
+      "outputTokens" : 214,
+      "totalTokens" : 896,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

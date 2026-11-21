@@ -1,0 +1,58 @@
+{
+  "id" : "new-08",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"维修单由值班员接收。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"值班员接到维修单后\"}]},{\"kind\":\"OBLIGATION\",\"status\":\"CHANGED\",\"source\":[{\"id\":\"S1\",\"quote\":\"材料补齐后，处理期限为两日。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"两日内处理，期间可以补齐材料。\"}]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "DISCREPANCY",
+    "reason" : "MEANING_CHANGED",
+    "units" : [ {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "维修单由值班员接收。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "值班员接到维修单后"
+      } ]
+    }, {
+      "kind" : "OBLIGATION",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "材料补齐后，处理期限为两日。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "两日内处理，期间可以补齐材料。"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 1103,
+  "observations" : [ {
+    "eventId" : "b07a4ff9-4fde-4b16-8239-319851bd17f2",
+    "startedAt" : 1795236479.748376200,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1102,
+    "usage" : {
+      "inputTokens" : 667,
+      "outputTokens" : 126,
+      "totalTokens" : 793,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

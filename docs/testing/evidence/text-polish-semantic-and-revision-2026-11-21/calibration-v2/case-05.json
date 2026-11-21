@@ -1,0 +1,92 @@
+{
+  "id" : "case-05",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"OBLIGATION\",\"status\":\"CHANGED\",\"source\":[{\"id\":\"S1\",\"quote\":\"收到申请后3日内确认材料。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"收到申请后5日内确认材料。\"}]},{\"kind\":\"OBLIGATION\",\"status\":\"CHANGED\",\"source\":[{\"id\":\"S2\",\"quote\":\"确认齐全后5日内处理。\"}],\"draft\":[{\"id\":\"D2\",\"quote\":\"确认齐全后3日内处理。\"}]},{\"kind\":\"CONDITION\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"收到申请后\"},{\"id\":\"S2\",\"quote\":\"确认齐全后\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"收到申请后\"},{\"id\":\"D2\",\"quote\":\"确认齐全后\"}]},{\"kind\":\"CHRONOLOGY\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"收到申请后3日内确认材料。\"},{\"id\":\"S2\",\"quote\":\"确认齐全后5日内处理。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"收到申请后5日内确认材料。\"},{\"id\":\"D2\",\"quote\":\"确认齐全后3日内处理。\"}]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "DISCREPANCY",
+    "reason" : "MEANING_CHANGED",
+    "units" : [ {
+      "kind" : "OBLIGATION",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "收到申请后3日内确认材料。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "收到申请后5日内确认材料。"
+      } ]
+    }, {
+      "kind" : "OBLIGATION",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S2",
+        "quote" : "确认齐全后5日内处理。"
+      } ],
+      "draft" : [ {
+        "id" : "D2",
+        "quote" : "确认齐全后3日内处理。"
+      } ]
+    }, {
+      "kind" : "CONDITION",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "收到申请后"
+      }, {
+        "id" : "S2",
+        "quote" : "确认齐全后"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "收到申请后"
+      }, {
+        "id" : "D2",
+        "quote" : "确认齐全后"
+      } ]
+    }, {
+      "kind" : "CHRONOLOGY",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "收到申请后3日内确认材料。"
+      }, {
+        "id" : "S2",
+        "quote" : "确认齐全后5日内处理。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "收到申请后5日内确认材料。"
+      }, {
+        "id" : "D2",
+        "quote" : "确认齐全后3日内处理。"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 1554,
+  "observations" : [ {
+    "eventId" : "c2b69982-a1fb-486e-9ac4-ed0f78613282",
+    "startedAt" : 1795236209.802813900,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1553,
+    "usage" : {
+      "inputTokens" : 553,
+      "outputTokens" : 277,
+      "totalTokens" : 830,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

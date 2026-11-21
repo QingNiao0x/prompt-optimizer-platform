@@ -1,0 +1,53 @@
+{
+  "id" : "case-09",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"资料员核对版本。\"},{\"id\":\"S2\",\"quote\":\"资料员核对版本。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"资料员检查版本。\"},{\"id\":\"D2\",\"quote\":\"资料员检查版本。\"}]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "NO_DISCREPANCY_FOUND",
+    "reason" : "CHECKED",
+    "units" : [ {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "资料员核对版本。"
+      }, {
+        "id" : "S2",
+        "quote" : "资料员核对版本。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "资料员检查版本。"
+      }, {
+        "id" : "D2",
+        "quote" : "资料员检查版本。"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 714,
+  "observations" : [ {
+    "eventId" : "a178fa2f-850a-4ddd-8537-dbea03e82aad",
+    "startedAt" : 1795236468.673844300,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 714,
+    "usage" : {
+      "inputTokens" : 670,
+      "outputTokens" : 91,
+      "totalTokens" : 761,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

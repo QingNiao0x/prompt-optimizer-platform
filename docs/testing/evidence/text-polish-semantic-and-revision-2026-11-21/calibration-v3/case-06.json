@@ -1,0 +1,58 @@
+{
+  "id" : "case-06",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"试点期间排队减少\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"试点期间排队减少\"}]},{\"kind\":\"VIEW\",\"status\":\"CHANGED\",\"source\":[{\"id\":\"S1\",\"quote\":\"尚不能确定是否由新系统引起\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"这是新系统带来的结果\"}]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "DISCREPANCY",
+    "reason" : "MEANING_CHANGED",
+    "units" : [ {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "试点期间排队减少"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "试点期间排队减少"
+      } ]
+    }, {
+      "kind" : "VIEW",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "尚不能确定是否由新系统引起"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "这是新系统带来的结果"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 949,
+  "observations" : [ {
+    "eventId" : "c1d57f9c-ede4-4062-b7de-1b79a86247db",
+    "startedAt" : 1795236465.572407900,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 948,
+    "usage" : {
+      "inputTokens" : 659,
+      "outputTokens" : 113,
+      "totalTokens" : 772,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

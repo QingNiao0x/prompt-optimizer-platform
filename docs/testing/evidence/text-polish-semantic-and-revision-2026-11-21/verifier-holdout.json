@@ -1,0 +1,8 @@
+[
+  {"id":"hold-01","title":"搬运与清点的时序误换","source":"我把箱子搬上车时还没发现清单掉了。车开到路口，我才发觉。","draft":"装车前我发现清单掉了，把箱子搬上车后又开到了路口。","expected":"DISCREPANCY","answer":"发现时间从已到路口提前至装车之前"},
+  {"id":"hold-02","title":"两个目的剩下一个","source":"延长窗口开放时间，希望方便晚班人员办理，也希望减少白天窗口的拥挤。","draft":"延长窗口开放时间是为了方便晚班人员办理。","expected":"DISCREPANCY","answer":"遗漏减少白天拥挤的独立目的"},
+  {"id":"hold-03","title":"计划与已完成混淆","source":"下周拟用新表登记。是否同步修改旧表，暂未决定。","draft":"下周已确定使用新表登记，旧表暂时不改。","expected":"DISCREPANCY","answer":"拟改成已确定，旧表未决改成决定暂时不改"},
+  {"id":"hold-04","title":"改用动词但主体和义务不变","source":"经办人员须对附件清单进行逐项核对。","draft":"经办人员须逐项检查附件清单。","expected":"NO_DISCREPANCY_FOUND","answer":"同一主体、必须、逐项及附件清单"},
+  {"id":"hold-05","title":"调换表达顺序但保留例外","source":"雨停后方可开放侧门。地面仍积水时除外。","draft":"地面仍积水时侧门不可开放；没有积水也须等到雨停才能开放。","expected":"NO_DISCREPANCY_FOUND","answer":"保留雨停和没有积水两项必要条件，未保证必然开放"},
+  {"id":"hold-06","title":"同段改变语序但时序不变","source":"河边起雾之后，我才把相机收进包里。","draft":"我把相机收进包里，是河边起雾之后的事。","expected":"NO_DISCREPANCY_FOUND","answer":"事件语序反过来，实际时间仍是雾起在前、收相机在后"}
+]

@@ -1,0 +1,58 @@
+{
+  "id" : "hold-05",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"CONDITION\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"雨停后方可开放侧门。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"没有积水也须等到雨停才能开放。\"}]},{\"kind\":\"EXCLUSION\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"地面仍积水时除外。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"地面仍积水时侧门不可开放；\"}]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "NO_DISCREPANCY_FOUND",
+    "reason" : "CHECKED",
+    "units" : [ {
+      "kind" : "CONDITION",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "雨停后方可开放侧门。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "没有积水也须等到雨停才能开放。"
+      } ]
+    }, {
+      "kind" : "EXCLUSION",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "地面仍积水时除外。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "地面仍积水时侧门不可开放；"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 866,
+  "observations" : [ {
+    "eventId" : "48f1c15f-589b-4480-bf4a-694350805d9b",
+    "startedAt" : 1795236486.033388700,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 866,
+    "usage" : {
+      "inputTokens" : 667,
+      "outputTokens" : 128,
+      "totalTokens" : 795,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

@@ -1,0 +1,69 @@
+{
+  "id" : "new-02",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"我先把收据塞进信封\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"把收据塞进去并封了口\"}]},{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"封口后，我才发现信封上没有写地址\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"我发现信封上没有写地址\"}]},{\"kind\":\"CHRONOLOGY\",\"status\":\"CHANGED\",\"source\":[{\"id\":\"S1\",\"quote\":\"我先把收据塞进信封。封口后，我才发现信封上没有写地址。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"我发现信封上没有写地址，随后把收据塞进去并封了口。\"}]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "DISCREPANCY",
+    "reason" : "MEANING_CHANGED",
+    "units" : [ {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "我先把收据塞进信封"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "把收据塞进去并封了口"
+      } ]
+    }, {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "封口后，我才发现信封上没有写地址"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "我发现信封上没有写地址"
+      } ]
+    }, {
+      "kind" : "CHRONOLOGY",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "我先把收据塞进信封。封口后，我才发现信封上没有写地址。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "我发现信封上没有写地址，随后把收据塞进去并封了口。"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 1267,
+  "observations" : [ {
+    "eventId" : "6cacde37-ac3c-4365-9bb0-d7dd8c7584c0",
+    "startedAt" : 1795236218.105389700,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1267,
+    "usage" : {
+      "inputTokens" : 542,
+      "outputTokens" : 196,
+      "totalTokens" : 738,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

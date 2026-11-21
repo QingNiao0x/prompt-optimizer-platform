@@ -1,0 +1,36 @@
+{
+  "id" : "case-04",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"那天我没急着把闹钟关掉\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"那天闹钟响完一遍，我没急着关掉\"}]},{\"kind\":\"CHRONOLOGY\",\"status\":\"CHANGED\",\"source\":[{\"id\":\"S1\",\"quote\":\"那天我没急着把闹钟关掉。它响完一遍，屋里又安静了。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"那天闹钟响完一遍，我没急着关掉。屋里又安静了。\"}]},{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"它响完一遍，屋里又安静了\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"闹钟响完一遍\",\"D2\":\"屋里又安静了\"}]}]}",
+  "review" : {
+    "outcome" : "INCONCLUSIVE",
+    "reason" : "INVALID_RESPONSE",
+    "units" : [ ]
+  },
+  "elapsedMs" : 1416,
+  "observations" : [ {
+    "eventId" : "b4dabbc3-4deb-4d79-8755-7ba4c5f7c302",
+    "startedAt" : 1795236463.097200700,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1416,
+    "usage" : {
+      "inputTokens" : 670,
+      "outputTokens" : 195,
+      "totalTokens" : 865,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

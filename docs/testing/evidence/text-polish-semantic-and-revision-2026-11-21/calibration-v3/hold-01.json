@@ -1,0 +1,80 @@
+{
+  "id" : "hold-01",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"我把箱子搬上车\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"把箱子搬上车\"}]},{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"清单掉了\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"清单掉了\"}]},{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"车开到路口\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"开到了路口\"}]},{\"kind\":\"CHRONOLOGY\",\"status\":\"CHANGED\",\"source\":[{\"id\":\"S1\",\"quote\":\"我把箱子搬上车时还没发现清单掉了。车开到路口，我才发觉。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"装车前我发现清单掉了，把箱子搬上车后又开到了路口。\"}]}] ,\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "DISCREPANCY",
+    "reason" : "MEANING_CHANGED",
+    "units" : [ {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "我把箱子搬上车"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "把箱子搬上车"
+      } ]
+    }, {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "清单掉了"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "清单掉了"
+      } ]
+    }, {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "车开到路口"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "开到了路口"
+      } ]
+    }, {
+      "kind" : "CHRONOLOGY",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "我把箱子搬上车时还没发现清单掉了。车开到路口，我才发觉。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "装车前我发现清单掉了，把箱子搬上车后又开到了路口。"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 1792,
+  "observations" : [ {
+    "eventId" : "6d608984-11c1-4e93-be00-22ddec1a7cd7",
+    "startedAt" : 1795236480.854252600,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1791,
+    "usage" : {
+      "inputTokens" : 666,
+      "outputTokens" : 220,
+      "totalTokens" : 886,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

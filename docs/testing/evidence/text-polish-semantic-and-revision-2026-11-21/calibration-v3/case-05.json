@@ -1,0 +1,58 @@
+{
+  "id" : "case-05",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"OBLIGATION\",\"status\":\"CHANGED\",\"source\":[{\"id\":\"S1\",\"quote\":\"收到申请后3日内确认材料。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"收到申请后5日内确认材料。\"}]},{\"kind\":\"OBLIGATION\",\"status\":\"CHANGED\",\"source\":[{\"id\":\"S2\",\"quote\":\"确认齐全后5日内处理。\"}],\"draft\":[{\"id\":\"D2\",\"quote\":\"确认齐全后3日内处理。\"}]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "DISCREPANCY",
+    "reason" : "MEANING_CHANGED",
+    "units" : [ {
+      "kind" : "OBLIGATION",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "收到申请后3日内确认材料。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "收到申请后5日内确认材料。"
+      } ]
+    }, {
+      "kind" : "OBLIGATION",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S2",
+        "quote" : "确认齐全后5日内处理。"
+      } ],
+      "draft" : [ {
+        "id" : "D2",
+        "quote" : "确认齐全后3日内处理。"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 1054,
+  "observations" : [ {
+    "eventId" : "856fae29-19f6-4193-a45b-1ec36a0bd8ff",
+    "startedAt" : 1795236464.515486400,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1053,
+    "usage" : {
+      "inputTokens" : 680,
+      "outputTokens" : 124,
+      "totalTokens" : 804,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

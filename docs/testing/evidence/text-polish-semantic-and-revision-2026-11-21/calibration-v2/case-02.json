@@ -1,0 +1,47 @@
+{
+  "id" : "case-02",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"OBLIGATION\",\"status\":\"CHANGED\",\"source\":[{\"id\":\"S1\",\"quote\":\"客服收到申请后，应在3个工作日内确认材料是否齐全。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"客服收到申请后，会在3个工作日内确认材料是否齐全。\"}]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "DISCREPANCY",
+    "reason" : "MEANING_CHANGED",
+    "units" : [ {
+      "kind" : "OBLIGATION",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "客服收到申请后，应在3个工作日内确认材料是否齐全。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "客服收到申请后，会在3个工作日内确认材料是否齐全。"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 837,
+  "observations" : [ {
+    "eventId" : "3fa197d0-0269-404e-964d-d74580eee0b0",
+    "startedAt" : 1795236207.039875200,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 837,
+    "usage" : {
+      "inputTokens" : 535,
+      "outputTokens" : 84,
+      "totalTokens" : 619,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

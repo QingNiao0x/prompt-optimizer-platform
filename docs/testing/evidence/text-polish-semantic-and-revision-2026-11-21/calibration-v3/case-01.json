@@ -1,0 +1,66 @@
+{
+  "id" : "case-01",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"PURPOSE\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"为了进一步保障用户权益\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"更好地保障用户权益\"}]},{\"kind\":\"COMMITMENT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"我们将持续不断地优化服务流程\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"我们还会继续优化服务流程\"}]},{\"kind\":\"COMMITMENT\",\"status\":\"OMITTED\",\"source\":[{\"id\":\"S1\",\"quote\":\"为用户提供更加优质的服务体验\"}],\"draft\":[]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "DISCREPANCY",
+    "reason" : "MEANING_CHANGED",
+    "units" : [ {
+      "kind" : "PURPOSE",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "为了进一步保障用户权益"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "更好地保障用户权益"
+      } ]
+    }, {
+      "kind" : "COMMITMENT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "我们将持续不断地优化服务流程"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "我们还会继续优化服务流程"
+      } ]
+    }, {
+      "kind" : "COMMITMENT",
+      "status" : "OMITTED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "为用户提供更加优质的服务体验"
+      } ],
+      "draft" : [ ]
+    } ]
+  },
+  "elapsedMs" : 1482,
+  "observations" : [ {
+    "eventId" : "a62af87f-e121-4ffc-862d-a094b21b08a5",
+    "startedAt" : 1795236459.419789900,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1481,
+    "usage" : {
+      "inputTokens" : 666,
+      "outputTokens" : 152,
+      "totalTokens" : 818,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

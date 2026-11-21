@@ -1,0 +1,55 @@
+{
+  "id" : "hold-02",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"PURPOSE\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"延长窗口开放时间，希望方便晚班人员办理\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"延长窗口开放时间是为了方便晚班人员办理\"}]},{\"kind\":\"PURPOSE\",\"status\":\"OMITTED\",\"source\":[{\"id\":\"S1\",\"quote\":\"也希望减少白天窗口的拥挤\"}],\"draft\":[]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "DISCREPANCY",
+    "reason" : "MEANING_CHANGED",
+    "units" : [ {
+      "kind" : "PURPOSE",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "延长窗口开放时间，希望方便晚班人员办理"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "延长窗口开放时间是为了方便晚班人员办理"
+      } ]
+    }, {
+      "kind" : "PURPOSE",
+      "status" : "OMITTED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "也希望减少白天窗口的拥挤"
+      } ],
+      "draft" : [ ]
+    } ]
+  },
+  "elapsedMs" : 1194,
+  "observations" : [ {
+    "eventId" : "c42b6579-c30c-49fe-8a00-7996c93ce5f6",
+    "startedAt" : 1795236482.649398400,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1193,
+    "usage" : {
+      "inputTokens" : 664,
+      "outputTokens" : 113,
+      "totalTokens" : 777,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

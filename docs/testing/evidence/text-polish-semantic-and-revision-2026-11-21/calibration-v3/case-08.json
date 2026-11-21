@@ -1,0 +1,58 @@
+{
+  "id" : "case-08",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"CONDITION\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"只有材料齐全才能计时\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"材料齐全后才开始计算\"}]},{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S2\",\"quote\":\"处理期限为5个工作日\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"5个工作日的处理期限\"}]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "NO_DISCREPANCY_FOUND",
+    "reason" : "CHECKED",
+    "units" : [ {
+      "kind" : "CONDITION",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "只有材料齐全才能计时"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "材料齐全后才开始计算"
+      } ]
+    }, {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S2",
+        "quote" : "处理期限为5个工作日"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "5个工作日的处理期限"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 1050,
+  "observations" : [ {
+    "eventId" : "06235943-aea2-469e-9c2c-aade6ce7c060",
+    "startedAt" : 1795236467.620417400,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1050,
+    "usage" : {
+      "inputTokens" : 666,
+      "outputTokens" : 116,
+      "totalTokens" : 782,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

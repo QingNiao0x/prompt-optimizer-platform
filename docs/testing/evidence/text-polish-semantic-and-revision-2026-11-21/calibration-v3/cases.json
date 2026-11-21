@@ -1,0 +1,606 @@
+{
+  "instructionHash" : "905363fe5d6a01ba3d54e4157c7e61f4ba893a47e55d452eff2dfd07b9d0c11b",
+  "cases" : [ {
+    "id" : "case-01",
+    "title" : "服务说明遗漏体验目标",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "为了进一步保障用户权益，我们将持续不断地优化服务流程，为用户提供更加优质的服务体验。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "我们还会继续优化服务流程，更好地保障用户权益。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : [ {
+      "kind" : "PURPOSE",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "保障用户权益"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "保障用户权益"
+      } ]
+    }, {
+      "kind" : "COMMITMENT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "我们将持续不断地优化服务流程"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "我们还会继续优化服务流程"
+      } ]
+    }, {
+      "kind" : "PURPOSE",
+      "status" : "OMITTED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "为用户提供更加优质的服务体验"
+      } ],
+      "draft" : [ ]
+    } ]
+  }, {
+    "id" : "case-02",
+    "title" : "客服期限相同但义务口径发生变化",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "客服收到申请后，应在3个工作日内确认材料是否齐全。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "客服收到申请后，会在3个工作日内确认材料是否齐全。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : [ {
+      "kind" : "OBLIGATION",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "应在3个工作日内确认"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "会在3个工作日内确认"
+      } ]
+    } ]
+  }, {
+    "id" : "case-03",
+    "title" : "擅自指定期限起算事件",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "只有材料齐全时，才开始计算后续5个工作日的处理期限。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "材料齐全的，自确认之日起计算后续5个工作日的处理期限。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : [ {
+      "kind" : "CONDITION",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "只有材料齐全时"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "材料齐全的"
+      } ]
+    }, {
+      "kind" : "CONDITION",
+      "status" : "ADDED",
+      "source" : [ ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "自确认之日起"
+      } ]
+    } ]
+  }, {
+    "id" : "case-04",
+    "title" : "自然稿时序倒置",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "那天我没急着把闹钟关掉。它响完一遍，屋里又安静了。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "那天闹钟响完一遍，我没急着关掉。屋里又安静了。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : [ {
+      "kind" : "CHRONOLOGY",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "我没急着把闹钟关掉。它响完一遍"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "闹钟响完一遍，我没急着关掉"
+      } ]
+    } ]
+  }, {
+    "id" : "case-05",
+    "title" : "数字照旧但期限被绑到错误动作",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "收到申请后3日内确认材料。"
+      }, {
+        "id" : "S2",
+        "text" : "确认齐全后5日内处理。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "收到申请后5日内确认材料。"
+      }, {
+        "id" : "D2",
+        "text" : "确认齐全后3日内处理。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : [ {
+      "kind" : "CONDITION",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "3日内确认材料"
+      }, {
+        "id" : "S2",
+        "quote" : "5日内处理"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "5日内确认材料"
+      }, {
+        "id" : "D2",
+        "quote" : "3日内处理"
+      } ]
+    } ]
+  }, {
+    "id" : "case-06",
+    "title" : "未确认的原因变成已确认的因果",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "试点期间排队减少，尚不能确定是否由新系统引起。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "试点期间排队减少，这是新系统带来的结果。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : [ {
+      "kind" : "ATTRIBUTION",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "尚不能确定是否由新系统引起"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "这是新系统带来的结果"
+      } ]
+    } ]
+  }, {
+    "id" : "case-07",
+    "title" : "合并表达但两个目的分别有据",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "为保障用户权益，我们将持续优化服务流程，为用户提供更好的服务体验。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "我们将持续优化服务流程，保障用户权益并改善服务体验。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "NO_DISCREPANCY_FOUND",
+    "answerCard" : [ {
+      "kind" : "PURPOSE",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "保障用户权益"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "保障用户权益"
+      } ]
+    }, {
+      "kind" : "COMMITMENT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "我们将持续优化服务流程"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "我们将持续优化服务流程"
+      } ]
+    }, {
+      "kind" : "PURPOSE",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "提供更好的服务体验"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "改善服务体验"
+      } ]
+    } ]
+  }, {
+    "id" : "case-08",
+    "title" : "跨段合并，条件和期限保持相连",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "只有材料齐全才能计时。"
+      }, {
+        "id" : "S2",
+        "text" : "处理期限为5个工作日。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "材料齐全后才开始计算5个工作日的处理期限。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "NO_DISCREPANCY_FOUND",
+    "answerCard" : [ {
+      "kind" : "CONDITION",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "只有材料齐全才能计时"
+      }, {
+        "id" : "S2",
+        "quote" : "处理期限为5个工作日"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "材料齐全后才开始计算5个工作日的处理期限"
+      } ]
+    } ]
+  }, {
+    "id" : "case-09",
+    "title" : "不同段落出现相同文字",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "资料员核对版本。"
+      }, {
+        "id" : "S2",
+        "text" : "资料员核对版本。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "资料员检查版本。"
+      }, {
+        "id" : "D2",
+        "text" : "资料员检查版本。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "NO_DISCREPANCY_FOUND",
+    "answerCard" : [ {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "资料员核对版本"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "资料员检查版本"
+      } ]
+    }, {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S2",
+        "quote" : "资料员核对版本"
+      } ],
+      "draft" : [ {
+        "id" : "D2",
+        "quote" : "资料员检查版本"
+      } ]
+    } ]
+  }, {
+    "id" : "case-10",
+    "title" : "无法确认接收及归档责任归属",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "资料员核对版本。如电子图缺页，仍接收纸质图，但缺页补齐前不能办理归档。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "资料员：核对版本。电子图缺页时，仍接收纸质图，补齐前不办理归档。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "INCONCLUSIVE",
+    "answerCard" : [ {
+      "kind" : "ATTRIBUTION",
+      "status" : "UNCERTAIN",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "仍接收纸质图"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "资料员：核对版本。电子图缺页时，仍接收纸质图"
+      } ]
+    } ]
+  }, {
+    "id" : "new-01",
+    "title" : "时序转为等义的条件表达",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "告警一直响到值班员确认。确认后，设备自动进入待机。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "值班员确认时告警停止，随后设备自动进入待机。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "NO_DISCREPANCY_FOUND",
+    "answerCard" : "确认对应告警结束，待机在确认之后，动作和责任均相同"
+  }, {
+    "id" : "new-02",
+    "title" : "叙事时序倒置",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "我先把收据塞进信封。封口后，我才发现信封上没有写地址。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "我发现信封上没有写地址，随后把收据塞进去并封了口。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : "发现没写地址由封口后改到塞收据和封口之前"
+  }, {
+    "id" : "new-03",
+    "title" : "两个目的合并表达",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "改用分时预约是为了缩短等待时间，也为了减少门口聚集。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "分时预约既能减少门口聚集，也旨在缩短等待时间。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : "减少聚集原为目的，既能减少变成能力或效果断言，等义重排本身没有问题"
+  }, {
+    "id" : "new-04",
+    "title" : "保留两个目的，改变列举顺序",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "设置补录窗口，是为了减少往返，也为了方便未及时收到通知的人补交材料。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "开设补录窗口有两个目的：让没能及时收到通知的人更方便地补交材料，同时减少往返。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "NO_DISCREPANCY_FOUND",
+    "answerCard" : "两个目的及适用主体都保留，列举顺序改变"
+  }, {
+    "id" : "new-05",
+    "title" : "等义调整报告来源所在位置",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "从本周值班记录的汇总结果来看，西侧入口的登记次数少于东侧。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "本周值班记录显示，西侧入口的登记次数比东侧少。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "NO_DISCREPANCY_FOUND",
+    "answerCard" : "来源仍为本周值班记录，统计范围和结论未变"
+  }, {
+    "id" : "new-06",
+    "title" : "责任归属仍然不明",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "班长签收回执。材料不全的须通知申请人补交。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "班长负责签收回执并通知材料不全的申请人补交。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "INCONCLUSIVE",
+    "answerCard" : "原文只明确班长签收，通知者可能是班长也可能不是，确认为班长属于未有明示的归属"
+  }, {
+    "id" : "new-07",
+    "title" : "程度不变的动作释义",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "保管员每周核查封条编号。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "保管员每周检查封条编号。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "NO_DISCREPANCY_FOUND",
+    "answerCard" : "同一责任人、频率、对象及核查内容"
+  }, {
+    "id" : "new-08",
+    "title" : "计时起点变化",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "维修单由值班员接收。材料补齐后，处理期限为两日。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "值班员接到维修单后，两日内处理，期间可以补齐材料。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : "两日从材料补齐起算被改为从接单起算"
+  }, {
+    "id" : "hold-01",
+    "title" : "搬运与清点的时序误换",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "我把箱子搬上车时还没发现清单掉了。车开到路口，我才发觉。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "装车前我发现清单掉了，把箱子搬上车后又开到了路口。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : "发现时间从已到路口提前至装车之前"
+  }, {
+    "id" : "hold-02",
+    "title" : "两个目的剩下一个",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "延长窗口开放时间，希望方便晚班人员办理，也希望减少白天窗口的拥挤。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "延长窗口开放时间是为了方便晚班人员办理。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : "遗漏减少白天拥挤的独立目的"
+  }, {
+    "id" : "hold-03",
+    "title" : "计划与已完成混淆",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "下周拟用新表登记。是否同步修改旧表，暂未决定。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "下周已确定使用新表登记，旧表暂时不改。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "DISCREPANCY",
+    "answerCard" : "拟改成已确定，旧表未决改成决定暂时不改"
+  }, {
+    "id" : "hold-04",
+    "title" : "改用动词但主体和义务不变",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "经办人员须对附件清单进行逐项核对。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "经办人员须逐项检查附件清单。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "NO_DISCREPANCY_FOUND",
+    "answerCard" : "同一主体、必须、逐项及附件清单"
+  }, {
+    "id" : "hold-05",
+    "title" : "调换表达顺序但保留例外",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "雨停后方可开放侧门。地面仍积水时除外。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "地面仍积水时侧门不可开放；没有积水也须等到雨停才能开放。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "NO_DISCREPANCY_FOUND",
+    "answerCard" : "保留雨停和没有积水两项必要条件，未保证必然开放"
+  }, {
+    "id" : "hold-06",
+    "title" : "同段改变语序但时序不变",
+    "request" : {
+      "version" : "text-polish-semantic-review-v3",
+      "source" : [ {
+        "id" : "S1",
+        "text" : "河边起雾之后，我才把相机收进包里。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "text" : "我把相机收进包里，是河边起雾之后的事。"
+      } ],
+      "requirements" : ""
+    },
+    "expected" : "NO_DISCREPANCY_FOUND",
+    "answerCard" : "事件语序反过来，实际时间仍是雾起在前、收相机在后"
+  } ]
+}

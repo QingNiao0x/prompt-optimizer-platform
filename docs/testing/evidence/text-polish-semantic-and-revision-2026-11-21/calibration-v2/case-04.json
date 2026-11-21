@@ -1,0 +1,69 @@
+{
+  "id" : "case-04",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"那天我没急着把闹钟关掉\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"那天闹钟响完一遍，我没急着关掉\"}]},{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"它响完一遍，屋里又安静了\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"那天闹钟响完一遍，我没急着关掉。屋里又安静了\"}]},{\"kind\":\"CHRONOLOGY\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"它响完一遍，屋里又安静了\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"那天闹钟响完一遍，我没急着关掉。屋里又安静了\"}]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "NO_DISCREPANCY_FOUND",
+    "reason" : "CHECKED",
+    "units" : [ {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "那天我没急着把闹钟关掉"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "那天闹钟响完一遍，我没急着关掉"
+      } ]
+    }, {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "它响完一遍，屋里又安静了"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "那天闹钟响完一遍，我没急着关掉。屋里又安静了"
+      } ]
+    }, {
+      "kind" : "CHRONOLOGY",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "它响完一遍，屋里又安静了"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "那天闹钟响完一遍，我没急着关掉。屋里又安静了"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 1023,
+  "observations" : [ {
+    "eventId" : "591f154c-67c5-4566-a233-cd1ffff407b1",
+    "startedAt" : 1795236208.778207100,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1022,
+    "usage" : {
+      "inputTokens" : 543,
+      "outputTokens" : 202,
+      "totalTokens" : 745,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

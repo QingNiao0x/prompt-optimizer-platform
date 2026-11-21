@@ -1,0 +1,58 @@
+{
+  "id" : "new-06",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"班长签收回执。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"班长负责签收回执\"}]},{\"kind\":\"OBLIGATION\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"材料不全的须通知申请人补交。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"通知材料不全的申请人补交\"}]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "NO_DISCREPANCY_FOUND",
+    "reason" : "CHECKED",
+    "units" : [ {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "班长签收回执。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "班长负责签收回执"
+      } ]
+    }, {
+      "kind" : "OBLIGATION",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "材料不全的须通知申请人补交。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "通知材料不全的申请人补交"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 835,
+  "observations" : [ {
+    "eventId" : "5a025869-6172-49a0-99ea-0d6a6680175a",
+    "startedAt" : 1795236477.569966700,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 834,
+    "usage" : {
+      "inputTokens" : 662,
+      "outputTokens" : 122,
+      "totalTokens" : 784,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

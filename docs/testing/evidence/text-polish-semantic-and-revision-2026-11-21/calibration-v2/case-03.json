@@ -1,0 +1,36 @@
+{
+  "id" : "case-03",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"CONDITION\",\"status\":\"CHANGED\",\"source\":[{\"id\":\"S1\",\"quote\":\"只有材料齐全时，才开始计算后续5个工作日的处理期限。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"材料齐全的，自确认之日起计算后续5个工作日的处理期限。\"}]},{\"kind\":\"CHRONOLOGY\",\"status\":\"CHANGED\",\"source\":[{\"id\":\"S1\",\"quote\":\"只有材料齐全时，才开始计算后续5个工作日的处理期限。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"自确认之日起计算后续5个工作日的处理期限。\"}]},{\"kind\":\"FACT\",\"status\":\"ADDED\",\"draft\":[{\"id\":\"D1\",\"quote\":\"自确认之日起\"}]}]}",
+  "review" : {
+    "outcome" : "INCONCLUSIVE",
+    "reason" : "INVALID_RESPONSE",
+    "units" : [ ]
+  },
+  "elapsedMs" : 895,
+  "observations" : [ {
+    "eventId" : "23bc9324-1749-417e-b752-c89e32bbe486",
+    "startedAt" : 1795236207.880370300,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 894,
+    "usage" : {
+      "inputTokens" : 536,
+      "outputTokens" : 160,
+      "totalTokens" : 696,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

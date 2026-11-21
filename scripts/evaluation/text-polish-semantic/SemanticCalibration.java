@@ -30,23 +30,29 @@ public final class SemanticCalibration {
         var root = Path.of(args[1]);
         var json = new ObjectMapper().findAndRegisterModules();
         var review = new TextPolishSemanticReview(new TextPolishFidelity(), json);
-        if (args[0].equals("freeze") || args[0].equals("freeze-drafts")) {
+        if (args[0].equals("freeze") || args[0].equals("freeze-drafts") || args[0].equals("freeze-suite")) {
             Files.createDirectories(root);
             if (Files.exists(root.resolve("cases.json")) || Files.exists(root.resolve("started")))
                 throw new IllegalStateException("Calibration batch already exists");
-            var cases = args[0].equals("freeze") ? calibration(review) : drafts(json, review, Path.of(args[2]));
+            var cases = switch (args[0]) {
+                case "freeze" -> calibration(review);
+                case "freeze-suite" -> suite(json, review, Arrays.copyOfRange(args, 2, args.length));
+                default -> drafts(json, review, Path.of(args[2]));
+            };
             var protocol = root.resolve("cases.json");
             save(json, protocol, new Batch(hash(TextPolishSemanticReview.INSTRUCTIONS), List.copyOf(cases)));
             Files.writeString(root.resolve("cases.sha256"), hash(Files.readString(protocol)) + "\n", StandardOpenOption.CREATE_NEW);
             return;
         }
-        if (!args[0].equals("review")) throw new IllegalArgumentException("Use freeze, freeze-drafts or review");
+        if (!args[0].equals("review")) throw new IllegalArgumentException("Use freeze, freeze-drafts, freeze-suite or review");
         var raw = Files.readString(root.resolve("cases.json"));
         if (!hash(raw).equals(Files.readString(root.resolve("cases.sha256")).strip()))
             throw new IllegalStateException("Calibration cases drift");
         var batch = json.readValue(raw, Batch.class);
         int count = batch.cases().size();
-        if ((count != 8 && count != 10) || !hash(TextPolishSemanticReview.INSTRUCTIONS).equals(batch.instructionHash()))
+        if (count < 1 || count > 40 || !hash(TextPolishSemanticReview.INSTRUCTIONS).equals(batch.instructionHash())
+                || batch.cases().stream().map(CalibrationCase::id).distinct().count() != count
+                || batch.cases().stream().anyMatch(item -> !item.id().matches("[a-z][a-z0-9-]{0,40}")))
             throw new IllegalStateException("Calibration protocol drift");
         var authorization = json.readTree(root.resolve("authorization.json").toFile());
         if (!"APPROVED".equals(authorization.path("status").asText()) || authorization.path("maxCalls").asInt() != count)
@@ -117,6 +123,20 @@ public final class SemanticCalibration {
                     "routeKey", model.routeKey(), "model", model.upstreamModel(), "thinking", "disabled", "temperature", 0.2,
                     "maxTokens", 8000, "stream", false, "responseFormat", "json_object"));
         }
+    }
+
+    /** 从显式题集冻结合成对照。人工判据随本地归档保存，供应商只收到 request。 */
+    private static List<CalibrationCase> suite(ObjectMapper json, TextPolishSemanticReview review, String[] files) throws IOException {
+        var cases = new ArrayList<CalibrationCase>(calibration(review));
+        for (String file : files) {
+            for (var item : json.readTree(Path.of(file).toFile())) {
+                var input = new Input(item.path("source").asText(), null, null, "", "", List.of(), MODEL);
+                cases.add(new CalibrationCase(item.path("id").asText(), item.path("title").asText(),
+                        review.prepare(input, item.path("draft").asText()),
+                        Outcome.valueOf(item.path("expected").asText()), item.path("answer")));
+            }
+        }
+        return List.copyOf(cases);
     }
 
     /** 提取既有离线校准夹具，发送时只投影 request。 */

@@ -1,0 +1,58 @@
+{
+  "id" : "new-01",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"FACT\",\"status\":\"CHANGED\",\"source\":[{\"id\":\"S1\",\"quote\":\"告警一直响到值班员确认\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"值班员确认时告警停止\"}]},{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"确认后，设备自动进入待机\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"随后设备自动进入待机\"}]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "DISCREPANCY",
+    "reason" : "MEANING_CHANGED",
+    "units" : [ {
+      "kind" : "FACT",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "告警一直响到值班员确认"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "值班员确认时告警停止"
+      } ]
+    }, {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "确认后，设备自动进入待机"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "随后设备自动进入待机"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 882,
+  "observations" : [ {
+    "eventId" : "3e508d4f-3404-4734-8721-e34d15c1ad48",
+    "startedAt" : 1795236217.220696600,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 881,
+    "usage" : {
+      "inputTokens" : 540,
+      "outputTokens" : 122,
+      "totalTokens" : 662,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

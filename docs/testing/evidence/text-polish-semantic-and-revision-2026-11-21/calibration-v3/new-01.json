@@ -1,0 +1,69 @@
+{
+  "id" : "new-01",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"FACT\",\"status\":\"CHANGED\",\"source\":[{\"id\":\"S1\",\"quote\":\"告警一直响到值班员确认。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"值班员确认时告警停止\"}]},{\"kind\":\"FACT\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"确认后，设备自动进入待机。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"随后设备自动进入待机\"}]},{\"kind\":\"CHRONOLOGY\",\"status\":\"PRESERVED\",\"source\":[{\"id\":\"S1\",\"quote\":\"确认后，设备自动进入待机。\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"值班员确认时告警停止，随后设备自动进入待机\"}]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "DISCREPANCY",
+    "reason" : "MEANING_CHANGED",
+    "units" : [ {
+      "kind" : "FACT",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "告警一直响到值班员确认。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "值班员确认时告警停止"
+      } ]
+    }, {
+      "kind" : "FACT",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "确认后，设备自动进入待机。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "随后设备自动进入待机"
+      } ]
+    }, {
+      "kind" : "CHRONOLOGY",
+      "status" : "PRESERVED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "确认后，设备自动进入待机。"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "值班员确认时告警停止，随后设备自动进入待机"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 1386,
+  "observations" : [ {
+    "eventId" : "690b3bff-35d7-40ef-a997-527a9e36675a",
+    "startedAt" : 1795236470.717089800,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1385,
+    "usage" : {
+      "inputTokens" : 667,
+      "outputTokens" : 186,
+      "totalTokens" : 853,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}

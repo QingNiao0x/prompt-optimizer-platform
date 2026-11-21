@@ -1,0 +1,58 @@
+{
+  "id" : "hold-03",
+  "reviewResponse" : "{\"units\":[{\"kind\":\"PURPOSE\",\"status\":\"CHANGED\",\"source\":[{\"id\":\"S1\",\"quote\":\"下周拟用新表登记\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"下周已确定使用新表登记\"}]},{\"kind\":\"FACT\",\"status\":\"CHANGED\",\"source\":[{\"id\":\"S1\",\"quote\":\"是否同步修改旧表，暂未决定\"}],\"draft\":[{\"id\":\"D1\",\"quote\":\"旧表暂时不改\"}]}],\"sourceWithoutUnits\":[],\"draftWithoutUnits\":[]}",
+  "review" : {
+    "outcome" : "DISCREPANCY",
+    "reason" : "MEANING_CHANGED",
+    "units" : [ {
+      "kind" : "PURPOSE",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "下周拟用新表登记"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "下周已确定使用新表登记"
+      } ]
+    }, {
+      "kind" : "FACT",
+      "status" : "CHANGED",
+      "source" : [ {
+        "id" : "S1",
+        "quote" : "是否同步修改旧表，暂未决定"
+      } ],
+      "draft" : [ {
+        "id" : "D1",
+        "quote" : "旧表暂时不改"
+      } ]
+    } ]
+  },
+  "elapsedMs" : 1312,
+  "observations" : [ {
+    "eventId" : "17379e3c-78d6-4743-9c58-0c82a005f6dd",
+    "startedAt" : 1795236483.845338700,
+    "requestId" : null,
+    "workflowId" : null,
+    "operation" : "text.polish",
+    "providerRoute" : "deepseek",
+    "model" : "deepseek:deepseek-flash",
+    "attempt" : 1,
+    "mock" : false,
+    "successful" : true,
+    "failureType" : null,
+    "upstreamStatus" : 200,
+    "willRetry" : false,
+    "transportState" : "RESPONSE_RECEIVED",
+    "durationMs" : 1312,
+    "usage" : {
+      "inputTokens" : 664,
+      "outputTokens" : 119,
+      "totalTokens" : 783,
+      "cacheHitTokens" : null,
+      "cacheMissTokens" : null
+    },
+    "validationReason" : null,
+    "validationField" : null
+  } ]
+}
