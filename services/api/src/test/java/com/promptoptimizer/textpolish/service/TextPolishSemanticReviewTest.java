@@ -134,11 +134,50 @@ class TextPolishSemanticReviewTest {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"[\"S1\"]", "[{\"id\":\"S1\",\"quote\":\"取件通知\"}]"})
+    void acceptsCanonicalIdsAndReplaysObservedTitleObjects(String sourceWithoutUnits) {
+        var result = assessTitleCoverage(sourceWithoutUnits, "[{\"id\":\"D1\",\"quote\":\"取件通知\"}]");
+        assertThat(result.outcome()).isEqualTo(Outcome.NO_DISCREPANCY_FOUND);
+        assertThat(result.units()).singleElement().satisfies(unit -> {
+            assertThat(unit.source()).containsExactly(new Evidence("S2", "用户须先登记"));
+            assertThat(unit.draft()).containsExactly(new Evidence("D2", "请用户先登记"));
+        });
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"null", "\"S1\"", "[1]", "[null]", "[{\"id\":\"D1\",\"quote\":\"取件通知\"}]",
+            "[{\"id\":\"S1\",\"quote\":\"通知\"}]", "[{\"id\":\"S1\"}]",
+            "[{\"id\":\"S1\",\"quote\":\"取件通知\",\"status\":\"PRESERVED\"}]"})
+    void rejectsUnknownCoverageShapesWithoutClaimingMeaningChanged(String sourceWithoutUnits) {
+        var result = assessTitleCoverage(sourceWithoutUnits, "[\"D1\"]");
+        assertThat(result.outcome()).isEqualTo(Outcome.INCONCLUSIVE);
+        assertThat(result.reason()).isEqualTo("INVALID_RESPONSE");
+        assertThat(result.units()).isEmpty();
+    }
+
+    @Test
+    void normalizedTitleObjectsCannotBypassCoverageRules() {
+        assertThat(assessTitleCoverage("[\"S1\",{\"id\":\"S1\",\"quote\":\"取件通知\"}]", "[\"D1\"]").reason())
+                .isEqualTo("INCOMPLETE_COVERAGE");
+        assertThat(assessTitleCoverage("[\"S1\",{\"id\":\"S2\",\"quote\":\"用户须先登记。\"}]", "[\"D1\"]").reason())
+                .isEqualTo("INCOMPLETE_COVERAGE");
+    }
+
+    @ParameterizedTest
     @NullSource
     @ValueSource(strings = {"null", "{\"units\":[],\"units\":[]}", "[]", "{\"units\":[]} {}"})
     void malformedReviewCannotPass(String response) {
         var request = review.prepare(input("原稿。"), "成稿。");
         assertThat(review.assess(request, response).outcome()).isEqualTo(Outcome.INCONCLUSIVE);
+    }
+
+    /** 其他证据固定，仅替换两侧无独立含义的段号字段。 */
+    private Result assessTitleCoverage(String sourceWithoutUnits, String draftWithoutUnits) {
+        return review.assess(review.prepare(input("取件通知\n\n用户须先登记。"), "取件通知\n\n请用户先登记。"), """
+                {"units":[{"kind":"OBLIGATION","status":"PRESERVED",
+                "source":[{"id":"S2","quote":"用户须先登记"}],"draft":[{"id":"D2","quote":"请用户先登记"}]}],
+                "sourceWithoutUnits":%s,"draftWithoutUnits":%s}
+                """.formatted(sourceWithoutUnits, draftWithoutUnits));
     }
 
     private Result assess(String source, String draft, List<Assessment> units, List<String> sourceTitles,
