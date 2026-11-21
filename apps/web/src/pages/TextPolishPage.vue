@@ -8,7 +8,7 @@ import { useTextPolishStore } from '@/stores/textPolish';
 import { useAuthStore } from '@/stores/auth';
 import { useTrialStore } from '@/stores/trial';
 import GuestTrialBanner from '@/components/auth/GuestTrialBanner.vue';
-import { polishStyles, polishEditingLabel } from '@/types/textPolish';
+import { polishStyles, polishEditingLabel, polishDirectedLabel } from '@/types/textPolish';
 import TextPolishExecutionDetails from '@/components/textpolish/TextPolishExecutionDetails.vue';
 import { comparePolish } from '@/features/textpolish/diff';
 import { formatModelVersion } from '@/features/models/modelVersion';
@@ -17,7 +17,7 @@ const store = useTextPolishStore(), auth = useAuthStore(), route = useRoute(), r
 const trial = useTrialStore();
 const { sourceText, style, depth, audience, requirements, lockedText, modelId, capabilities, selectedModel,
   result, pendingResult, previousResult, editDraft, isEditing, busy, saving, loading, error, dirty, currentText,
-  canGenerate, recoveryPending } = storeToRefs(store);
+  canGenerate, canUseDirectedPreview, openingObjective, recoveryPending } = storeToRefs(store);
 const pane = ref('source'), showDiff = ref(false), manualCopy = ref(false);
 const diff = computed(() => result.value ? comparePolish(result.value.input.sourceText, currentText.value) : []);
 // 账号历史可能保存在数据库或服务内存；是否开放历史操作由身份而非存储介质决定。
@@ -111,6 +111,11 @@ onMounted(async () => {
         </ElSelect></label>
         <ElAlert v-if="capabilities && !capabilities.models.length" title="暂无可用润色模型，请由管理员在模型管理中配置。" type="warning" :closable="false" />
         <ElButton text type="primary" :loading="loading" @click="store.load">刷新模型列表</ElButton>
+        <template v-if="canUseDirectedPreview">
+          <label class="field"><span>首段重点（个人试用）</span><ElInput v-model="openingObjective" type="textarea" :rows="2"
+            :maxlength="200" aria-label="首段编辑目标" placeholder="例如：第一句先写什么时候交、交到哪里。" /></label>
+          <p class="hint">中文标题与正文请空一行。填写后会追加一次首段修订，通常耗时更长。留空使用常规润色。</p>
+        </template>
         <ElCollapse class="advanced"><ElCollapseItem title="高级设置" name="advanced">
           <label class="field"><span>读者（选填）</span><ElInput v-model="audience" :maxlength="300" aria-label="文章读者" placeholder="例如：团队同事、普通读者" /></label>
         </ElCollapseItem></ElCollapse>
@@ -124,6 +129,7 @@ onMounted(async () => {
         <template v-else>
           <p class="hint">{{ styleLabel(result.input.style) }} · {{ depthLabel(result.input.depth) }} · {{ formatModelVersion(result.modelName) }} · {{ result.sourceMode === 'CURRENT' ? '基于已保存的当前稿' : '基于原文' }}</p>
           <p class="hint">{{ polishEditingLabel(result.executionMetadata) }}</p>
+          <p v-if="result.executionMetadata?.directedRevision" class="hint">{{ polishDirectedLabel(result.executionMetadata.directedRevision) }}</p>
           <ElAlert v-if="accountResult && !result.historySaved" title="正文已生成，历史尚未保存。请重试保存或复制正文。" type="warning" :closable="false" />
           <ElButton v-if="accountResult && !result.historySaved" :loading="saving" @click="store.save">重试保存历史</ElButton>
           <p v-if="!accountResult" class="hint">本次结果不保存到账号历史。可在当前页面编辑和复制，请及时保留正文。</p>

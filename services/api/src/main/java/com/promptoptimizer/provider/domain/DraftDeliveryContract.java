@@ -24,6 +24,12 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired, Strin
                     + "[^。；;，,\\r\\n]{0,80}提示词"
                     + "|\\b(?:write|create|prepare|provide|generate|deliver|output|improve|enhance)\\b"
                     + "[^.;,\\r\\n]{0,100}\\bprompt\\b", Pattern.CASE_INSENSITIVE);
+    /** 模型正文里的「优化提示词」常是产品或比较对象；只有明确写出提示词作品才算改了交付层级。 */
+    private static final Pattern PROMPT_ARTIFACT = Pattern.compile(
+            "(?:准备|提供|生成|编写|改写|撰写|设计|拟定|交付|输出|整理|转写|写(?:出|一份|一个)?)"
+                    + "[^。；;，,\\r\\n]{0,80}提示词"
+                    + "|\\b(?:write|create|prepare|provide|generate|deliver|output)\\b"
+                    + "[^.;,\\r\\n]{0,100}\\bprompt\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern PREPARATION_ONLY = Pattern.compile(
             "(?:仅|只)(?:需要|要求|提供|交付|输出|给出|写|要).{0,16}(?:方案|提纲|大纲|目录|问题清单|空表|模板)"
                     + "|\\boutline only\\b",
@@ -157,7 +163,8 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired, Strin
             return;
         }
         // 平台产物是提示词，不代表执行者也应产出提示词；非写作任务和角色指令同样保护这一层级。
-        if (!promptDeliveryTarget(instructionText(content)).isBlank()) {
+        if (!promptArtifactTarget(instructionText(content)).isBlank()
+                && !promptMentionKeepsOriginalWork(content)) {
             throw new ProviderResponseValidationException(
                     ProviderResponseValidationException.Reason.DELIVERY_LEVEL_CONFLICT, field);
         }
@@ -177,24 +184,60 @@ public record DraftDeliveryContract(boolean active, boolean proseRequired, Strin
 
     /** 从肯定的当前交付动作提取目标，忽略否定、候选、引用和未来请求。 */
     static String promptDeliveryTarget(String instructions) {
+        return deliveryTarget(instructions, PROMPT_DELIVERY);
+    }
+
+    /** 只认明确的提示词作品。讨论「优化提示词」本身不算把任务改成再写一份提示词。 */
+    static String promptArtifactTarget(String instructions) {
+        return deliveryTarget(instructions, PROMPT_ARTIFACT);
+    }
+
+    private static String deliveryTarget(String instructions, Pattern delivery) {
         // 研究方案可合法描述被比较的提示词生成步骤；只有明确以提示词为最终交付才跨层级。
         boolean studyWorkflow = instructions.matches("(?is).*(?:撰写|写(?:一(?:个|份))?|设计|交付|编写|生成|一份).{0,25}研究(?:设计|方案)(?!的?(?:写作)?提示词).*" );
         for (String clause : instructions.split("[。；;，,\\r\\n]")) {
-            var target = PROMPT_DELIVERY.matcher(clause);
+            var target = delivery.matcher(clause);
             while (target.find()) {
                 String prefix = clause.substring(0, target.start());
                 if (studyWorkflow && !clause.strip().matches("(?is)^(?:[-*0-9.、\\s]*)(?:最终|仅|只)?(?:交付|输出|返回).{0,30}提示词(?:文本|文档)?[。.!！\\s]*$")) continue;
                 if (prefix.lastIndexOf('“') > prefix.lastIndexOf('”') || prefix.lastIndexOf('‘') > prefix.lastIndexOf('’')) continue;
                 // 研究一种增强流程时，提示词是研究对象；不是本次要求交付的作品。
-                if (prefix.matches("(?is).*(?:研究(?!生)|比较|评估|检验|study|compare|evaluate).*")
+                // “相比直接优化提示词”是在比较产品，不是要求本次交付一份提示词。
+                if (prefix.matches("(?is).*(?:研究(?!生)|比较|相比|对比|评估|检验|study|compare|evaluate).*")
                         && !prefix.matches("(?is).*(?:为|用于).{0,30}(?:研究|比较|评估).{0,30}(?:请|帮我|需要|要求|交付|输出|准备|编写)\\s*$")) continue;
                 if (prefix.matches("(?is).*(?:不需要|不要求|不要|不得|不应|无需|禁止|暂不|不|未)(?:再|只|仅|直接|改成|改为|转为)?\\s*$")
                         || prefix.matches("(?is).*(?:如果|假如|以后|将来|例如|示例|原文|引用).{0,30}")
                         || prefix.matches("(?is).*(?:翻译|translate)[^。；;\\r\\n]*[:：‘“\"].*")) continue;
+                if (delivery == PROMPT_ARTIFACT && !isPromptArtifact(clause, target.start(), target.end())) continue;
                 return clause.strip();
             }
         }
         return "";
+    }
+
+    /**
+     * 「提示词优化工具」和文案、讲解、PPT 中的讨论不是提示词作品。
+     * 只有动词直接指向提示词文本，才算把任务改成再写一份提示词。
+     */
+    private static boolean isPromptArtifact(String clause, int matchStart, int matchEnd) {
+        String after = clause.substring(matchEnd);
+        if (after.matches("(?is)^(优化|工具|产品|平台|系统|项目|质量|能力|对比|优势).*")) return false;
+        String span = clause.substring(matchStart, matchEnd);
+        return !span.matches("(?is).*(文案|讲解|宣传|幻灯片|答疑|问答|PPT|ppt).*");
+    }
+
+    /**
+     * 结构化模式会把结果分成任务、输出等节。节名不是新任务。
+     * 任务段同时保留文案、讲解、PPT 或答疑时，提到结构化提示词或提示词产品不算改交付。
+     * 单独要求生成一份可直接使用的提示词，仍然是层级冲突。
+     */
+    private static boolean promptMentionKeepsOriginalWork(String content) {
+        if (content == null || !content.matches("(?is).*(文案|讲解|宣传|幻灯片|PPT|ppt|答疑|回答).*")) return false;
+        String artifact = promptArtifactTarget(content);
+        if (artifact.isBlank()) return true;
+        boolean explicitPromptWork = artifact.matches("(?is).*(?:一份|写作|可直接使用).{0,16}提示词.*")
+                && !artifact.matches("(?is).*提示词优化.*");
+        return !explicitPromptWork || content.matches("(?is).*结构化提示词.*");
     }
 
     /** 只把肯定交付指令的准备材料宾语视为降级；正文附方案或方法中讨论方案仍属原目标。 */

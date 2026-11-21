@@ -16,6 +16,14 @@
 
 浏览器草稿只在内存中；刷新、关闭标签页会丢失未保存输入和编辑稿。页面内离开时对未保存编辑提供确认，身份切换清空旧身份私有状态。输入超过上限仍完整保留，提示精简后再生成，不静默截断。
 
+## 本机个人试用
+
+在本机后端的 `.env.local` 设置 `TEXT_POLISH_DIRECTED_PREVIEW_USER_ID` 为指定登录账号的用户 UUID，并重启后端。留空后重启即可关闭。试用只对配置的认证账号开放，访客和其他账号即使主动提交试用字段也不能调用。
+
+选择「轻度润色」和模型 DeepSeek Flash 后，可填写「首段重点（个人试用）」，例如「第一句先写归还时间和地点」。中文标题与正文之间空一行。留空走常规润色。试用沿用评测时的模型与参数，先生成段落初稿，再尝试一次只替换首个正文段的修订。追加返回无效或不符合锁定要求时保留初稿。结果及历史详情显示实际采用的首段修订及累计尝试次数。首段目标和补充要求合计不超过 1500 字符。
+
+该入口用于个人验证自然度和时间成本，正式采用仍以[独立评阅决定](../testing/evidence/text-polish-semantic-and-revision-2026-11-21/adoption.md)为准。
+
 ## 统一模型管理
 
 管理员进入现有“模型管理”，点击“文章润色模型”，勾选模块可用模型并设置本模块默认模型。模型名称、供应商路由、端点、密钥、排序和全局启停仍来自同一个平台目录；此处只管理模块准入和独立默认项，不产生另一份模型注册表，不改变提示词增强或图像模块的默认模型。
@@ -32,8 +40,8 @@
 
 | 接口（前缀 `/api/v1`） | 用途 |
 | --- | --- |
-| `GET /text-polish/capabilities` | 可用模型、长度限制及历史持久化状态 |
-| `POST /text-polish` | 生成；携带 UUID `requestId`、`input`、`sourceMode`，可选 `sourceRecordId`、`expectedRevision` |
+| `GET /text-polish/capabilities` | 可用模型、长度限制、历史持久化状态及当前账号的首段试用模型 |
+| `POST /text-polish` | 生成；携带 UUID `requestId`、`input`、`sourceMode`，可选 `sourceRecordId`、`expectedRevision`；试用另传 `openingObjective` |
 | `GET /text-polish/operations/{id}` | 查询已提交请求的处理状态与当前正文 |
 | `POST /text-polish/operations/{id}/save` | 单独重试保存已生成正文，不再调用模型 |
 | `GET /text-polish/history` | 独立历史分页，`current`、`size=10/20/50` |

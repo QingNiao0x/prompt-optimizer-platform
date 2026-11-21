@@ -5,6 +5,7 @@ import com.promptoptimizer.template.domain.PromptTemplate;
 import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -41,6 +42,22 @@ class PromptDeliverableBoundaryTest {
     void referenceNegationAndFutureInstructionsDoNotChangeTheDeliverable(String raw) {
         assertThatCode(() -> DraftDeliveryContract.from(raw, template, List.of())
                 .validateDelivery("撰写研究报告正文。", "sections.TASK")).doesNotThrowAnyException();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "请撰写宣传文案并制作 PPT，回答：您的产品相比直接让 Claude 优化提示词，核心优势是什么？",
+            "后续要讲解产品。例如：现在模型优化能力已经很强, 相比直接优化提示词有什么优势？"})
+    void aComparisonQuestionDoesNotTurnMarketingCopyIntoPromptDelivery(String raw) {
+        var contract = DraftDeliveryContract.from(raw, template, List.of());
+        assertThat(contract.promptTarget()).isEmpty();
+        assertThatCode(() -> contract.validateDelivery(
+                "输出结构化提示词。撰写提示词优化工具的宣传文案、讲解稿和 PPT，并回答相比直接优化提示词的优势。",
+                "sections.TASK")).doesNotThrowAnyException();
+        assertThatThrownBy(() -> contract.validateDelivery("生成一份可直接使用的提示词。", "sections.TASK"))
+                .isInstanceOf(ProviderResponseValidationException.class)
+                .extracting(error -> ((ProviderResponseValidationException) error).getReason())
+                .isEqualTo(ProviderResponseValidationException.Reason.DELIVERY_LEVEL_CONFLICT);
     }
 
     @ParameterizedTest

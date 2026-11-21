@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
 import com.promptoptimizer.common.logging.ModelCallLogger;
 import com.promptoptimizer.provider.domain.*;
+import com.promptoptimizer.provider.infrastructure.concurrency.ModelConcurrencyException;
 import com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleProperties;
+import com.promptoptimizer.provider.infrastructure.openai.OpenAiCompatibleRoute;
 import com.promptoptimizer.provider.service.PlatformModelCatalog.ModelEntry;
 import com.promptoptimizer.textpolish.domain.TextPolishModels.*;
 import java.security.MessageDigest;
@@ -33,6 +35,7 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
     private final OpenAiCompatibleProperties properties;
     private final TextPolishFidelity fidelity;
     private static final String REPAIR_INSTRUCTION = "\n上次响应JSON协议不合法，仅修复输出协议，完整保留原文要求。";
+    private static final String DIRECTED_MODEL_ID = "deepseek:deepseek-flash";
     private volatile String strategyVersion = TextPolishInstructions.VERSION;
     /** 文章专属配置，默认关闭；每次生成时从实际请求冻结已发送状态。 */
     private volatile Thinking thinking = Thinking.DISABLED;
@@ -82,10 +85,34 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
     /** 首次请求前冻结指令、路由与参数；协议修复只追加固定协议提示，不重读可变配置。 */
     @Override
     public Generation generate(Input input, ModelEntry model) {
+        return generate(input, model, null);
+    }
+
+    /** 试用限已验证的模型和推理参数，不隐式变更用户选中的模型。 */
+    @Override
+    public String directedPreviewModelId() {
+        return supportedDirectedParameters(thinking) ? DIRECTED_MODEL_ID : null;
+    }
+
+    /** 仅已确认入口调用。正文不满足试用范围时，发送任何请求前提示用户。 */
+    @Override
+    public Generation generateDirected(Input input, ModelEntry model, String openingObjective) {
+        if (input.depth() != Depth.LIGHT || !TextPolishSkills.isChinese(input)
+                || !TextPolishDirectedRevision.hasTitleAndBody(input.sourceText()))
+            throw TextPolishException.invalid("首段试用需要中文轻度润色，且标题与正文之间空一行。留空首段目标可按常规方式润色。");
+        return generate(input, model, openingObjective);
+    }
+
+    /** 冻结两阶段共用的路由和传输配置；首稿协议修复仍遵循已有规则。 */
+    private Generation generate(Input input, ModelEntry model, String objective) {
         var route = properties.getConfiguredRoutes().stream().filter(r -> r.key().equals(model.routeKey())).findFirst()
                 .orElseThrow(() -> new ProviderException(ProviderFailureType.CONFIGURATION, "润色模型路由不可用。", false));
         Thinking requestedThinking = thinking;
-        String version = selectStrategy(input, model, requestedThinking);
+        if (objective != null && (!DIRECTED_MODEL_ID.equals(model.publicId()) || !"deepseek".equals(model.routeKey())
+                || !"deepseek-flash".equals(model.upstreamModel()) || !supportedDirectedParameters(requestedThinking)))
+            throw TextPolishException.invalid("当前模型配置不可进行首段试用。");
+        String version = objective == null ? selectStrategy(input, model, requestedThinking)
+                : TextPolishInstructions.PARAGRAPH_PATCH_VERSION;
         var prepared = TextPolishSkills.prepare(input, version);
         String instruction = prepared.instruction();
         String skillVersion = prepared.resources().isEmpty() ? null : prepared.resources().getLast().version();
@@ -107,12 +134,7 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
                         body.put("messages", List.of(Map.of("role", "system", "content", instruction + REPAIR_INSTRUCTION),
                                 ((List<?>) frozen.get("messages")).get(1)));
                     }
-                    Raw response = client.post().uri(route.endpoint()).header(HttpHeaders.AUTHORIZATION, "Bearer " + route.apiKey())
-                            .contentType(MediaType.APPLICATION_JSON).body(body).exchange((req, upstream) -> {
-                                byte[] bytes = upstream.getBody().readNBytes(256 * 1024 + 1);
-                                if (bytes.length > 256 * 1024) throw invalid("润色响应超过安全长度。");
-                                return new Raw(upstream.getStatusCode().value(), new String(bytes, StandardCharsets.UTF_8));
-                            });
+                    Raw response = exchange(route, body);
                     if (response == null) throw invalid("润色响应为空。");
                     status = response.status();
                     if (status >= 400) throw new ProviderException(status == 401 || status == 403 ? ProviderFailureType.AUTHENTICATION
@@ -140,9 +162,10 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
                     } catch (JsonProcessingException | IllegalArgumentException failure) { protocolFailure = true; throw invalid("润色正文JSON协议无效。"); }
                     fidelity.check(input, output);
                     ModelCallLogger.completed("text.polish", route.key(), model.publicId(), "PLATFORM_CATALOG", false, attempt, 1, elapsed(started), usage(envelope));
-                    return new Generation(output, new ExecutionMetadata(version, skillVersion, resourceHash,
+                    var initial = new Generation(output, new ExecutionMetadata(version, skillVersion, resourceHash,
                             attempt > 1 ? hash(instruction + REPAIR_INSTRUCTION) : null,
                             route.key(), model.upstreamModel(), parameters, attempt, prepared.selection(), prepared.resources()));
+                    return objective == null ? initial : reviseOpening(initial, input, model, route, frozen, objective);
                 } catch (TextPolishException failure) {
                     ModelCallLogger.failed("text.polish", route.key(), model.publicId(), "PLATFORM_CATALOG", "INVALID_RESPONSE", false, status, false, attempt, 1, elapsed(started));
                     throw failure;
@@ -157,6 +180,71 @@ public class OpenAiTextPolishProvider implements TextPolishProvider {
             }
         }
         throw invalid("润色响应协议修复失败。");
+    }
+
+    /** 试用追加阶段最多一次。协议、上游或保真失败保留通过硬检查的初稿，并记录实际结果。 */
+    private Generation reviseOpening(Generation initial, Input input, ModelEntry model, OpenAiCompatibleRoute route,
+                                      Map<String, Object> frozen, String objective) {
+        var revision = new TextPolishDirectedRevision(initial.text());
+        String instruction = TextPolishDirectedRevision.INSTRUCTIONS;
+        var body = new LinkedHashMap<>(frozen);
+        int attempt = initial.executionMetadata().attemptCount() + 1;
+        long started = System.nanoTime();
+        Integer status = null;
+        try (var audit = ModelCallLogger.beginAttempt()) {
+            try {
+                body.put("messages", List.of(Map.of("role", "system", "content", instruction), Map.of("role", "user", "content",
+                        json.writeValueAsString(revision.payload(input, initial.text(), objective)))));
+                Raw response = exchange(route, body);
+                if (response == null) throw invalid("首段修订响应为空。");
+                status = response.status();
+                if (status >= 400) throw invalid("首段修订未取得有效回复。");
+                var envelope = json.readTree(response.body());
+                if (envelope == null || !envelope.isObject()) throw invalid("首段修订响应协议无效。");
+                ModelCallLogger.captureTokenUsage(usage(envelope));
+                var choice = envelope.path("choices").path(0);
+                var content = choice.path("message").path("content");
+                if (!"stop".equals(choice.path("finish_reason").asText()) || choice.path("message").hasNonNull("refusal")
+                        || !content.isTextual()) throw invalid("首段修订输出未完成。");
+                String output = revision.apply(json.readTree(unwrap(content.textValue())));
+                fidelity.check(input, output);
+                ModelCallLogger.completed("text.polish", route.key(), model.publicId(), "PLATFORM_CATALOG", false, attempt, 1, elapsed(started), usage(envelope));
+                return withRevision(initial, output, output.equals(initial.text()) ? RevisionOutcome.UNCHANGED : RevisionOutcome.APPLIED, attempt);
+            } catch (ModelConcurrencyException rejected) {
+                // 未取得发送许可，已有初稿可交付。没有把阻止发送计为模型调用。
+                return initial;
+            } catch (JsonProcessingException | TextPolishException | ProviderException | RestClientException | IllegalArgumentException failure) {
+                ModelCallLogger.failed("text.polish", route.key(), model.publicId(), "PLATFORM_CATALOG",
+                        failure instanceof RestClientException ? "UPSTREAM_UNAVAILABLE" : "INVALID_RESPONSE",
+                        false, status, false, attempt, 1, elapsed(started));
+                return withRevision(initial, initial.text(), RevisionOutcome.FALLBACK, attempt);
+            }
+        }
+    }
+
+    /** 首稿指令快照原样保存，追加阶段另记版本及哈希，统一展示累计尝试数。 */
+    private Generation withRevision(Generation initial, String output, RevisionOutcome outcome, int attempt) {
+        var meta = initial.executionMetadata();
+        var revision = new DirectedRevision(TextPolishDirectedRevision.VERSION, hash(TextPolishDirectedRevision.INSTRUCTIONS), outcome);
+        return new Generation(output, new ExecutionMetadata(meta.strategyVersion(), meta.skillVersion(), meta.resourceHash(),
+                meta.repairInstructionHash(), meta.routeKey(), meta.upstreamModel(), meta.parameters(), attempt,
+                meta.selection(), meta.resources(), revision));
+    }
+
+    /** 参数不同的模型回复不属于本次试用的验证范围。 */
+    private boolean supportedDirectedParameters(Thinking requestedThinking) {
+        return requestedThinking == Thinking.DISABLED && properties.isJsonResponseFormatEnabled()
+                && Double.compare(properties.getTemperature(), 0.2) == 0 && properties.getMaxTokens() >= 8000;
+    }
+
+    /** 两阶段共享限长客户端及同一路由，不在历史或日志记录认证信息。 */
+    private Raw exchange(OpenAiCompatibleRoute route, Map<String, Object> body) {
+        return client.post().uri(route.endpoint()).header(HttpHeaders.AUTHORIZATION, "Bearer " + route.apiKey())
+                .contentType(MediaType.APPLICATION_JSON).body(body).exchange((req, upstream) -> {
+                    byte[] bytes = upstream.getBody().readNBytes(256 * 1024 + 1);
+                    if (bytes.length > 256 * 1024) throw invalid("润色响应超过安全长度。");
+                    return new Raw(upstream.getStatusCode().value(), new String(bytes, StandardCharsets.UTF_8));
+                });
     }
     /**
      * 显式策略配置优先。默认策略仅在开关开启且匹配已评估模型、参数、正文语种与幅度时替换。

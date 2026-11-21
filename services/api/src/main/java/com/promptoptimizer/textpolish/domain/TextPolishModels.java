@@ -47,8 +47,16 @@ public final class TextPolishModels {
     }
     /** requestId只标识幂等操作；所有者由CurrentActor决定，来源版本由服务端读取。 */
     public record Generate(@NotNull UUID requestId, @NotNull @Valid Input input,
-                           UUID sourceRecordId, @PositiveOrZero Long expectedRevision, SourceMode sourceMode) {
-        public Generate { sourceMode = sourceMode == null ? SourceMode.RAW : sourceMode; }
+                           UUID sourceRecordId, @PositiveOrZero Long expectedRevision, SourceMode sourceMode,
+                           @Size(max = 200) String openingObjective) {
+        public Generate {
+            sourceMode = sourceMode == null ? SourceMode.RAW : sourceMode;
+            openingObjective = openingObjective == null ? "" : openingObjective.strip();
+        }
+        /** 常规润色和旧调用方不提交首段目标。 */
+        public Generate(UUID requestId, Input input, UUID sourceRecordId, Long expectedRevision, SourceMode sourceMode) {
+            this(requestId, input, sourceRecordId, expectedRevision, sourceMode, "");
+        }
     }
     /** 保存编辑稿的乐观锁请求，失败不能覆盖客户端草稿。 */
     public record Edit(@NotBlank @Size(max = 24000) String polishedText, @Min(0) long expectedRevision) { }
@@ -73,7 +81,7 @@ public final class TextPolishModels {
     public record ExecutionMetadata(String strategyVersion, String skillVersion, String resourceHash,
                                     String repairInstructionHash, String routeKey, String upstreamModel,
                                     ExecutionParameters parameters, int attemptCount,
-                                    Selection selection, List<Resource> resources) {
+                                    Selection selection, List<Resource> resources, DirectedRevision directedRevision) {
         /** 资源清单冻结为不可变副本；null保留旧记录的未知状态。 */
         public ExecutionMetadata { resources = resources == null ? null : List.copyOf(resources); }
         /** 兼容旧适配器及历史夹具，未采集的选择信息保持未知。 */
@@ -81,9 +89,20 @@ public final class TextPolishModels {
                                  String repairInstructionHash, String routeKey, String upstreamModel,
                                  ExecutionParameters parameters, int attemptCount) {
             this(strategyVersion, skillVersion, resourceHash, repairInstructionHash, routeKey, upstreamModel,
-                    parameters, attemptCount, null, null);
+                    parameters, attemptCount, null, null, null);
+        }
+        /** 第一阶段的现有记录没有追加修订快照。 */
+        public ExecutionMetadata(String strategyVersion, String skillVersion, String resourceHash,
+                                 String repairInstructionHash, String routeKey, String upstreamModel,
+                                 ExecutionParameters parameters, int attemptCount, Selection selection, List<Resource> resources) {
+            this(strategyVersion, skillVersion, resourceHash, repairInstructionHash, routeKey, upstreamModel,
+                    parameters, attemptCount, selection, resources, null);
         }
     }
+    /** 仅记录实际发出的追加修订及其处理结果；正常润色与旧记录不产生该快照。 */
+    public record DirectedRevision(String strategyVersion, String instructionHash, RevisionOutcome outcome) { }
+    /** 未改表示模型保留初稿，回退表示修订失败或未通过硬检查。 */
+    public enum RevisionOutcome { APPLIED, UNCHANGED, FALLBACK }
     /** Provider返回正文及与该次实际请求绑定的元数据；兼容适配器的元数据可以未知。 */
     public record Generation(String text, ExecutionMetadata executionMetadata) { }
     /** text_polish_record.payload的不可变生成快照；正文和修订读取时由独立列覆盖。 */
@@ -116,5 +135,11 @@ public final class TextPolishModels {
     public record ModelPolicy(@NotNull @Size(max = 200) List<@NotBlank @Size(max = 160) String> enabledModelIds,
                               @Size(max = 160) String defaultModelId) { }
     /** 服务端资源上限及历史能力，前端不自行猜测。 */
-    public record Capabilities(List<Model> models, int maxInputCharacters, int maxOutputCharacters, boolean persistentHistory) { }
+    public record Capabilities(List<Model> models, int maxInputCharacters, int maxOutputCharacters, boolean persistentHistory,
+                               String directedPreviewModelId) {
+        /** 兼容访客和常规工作台能力，空值表示此账号没有首段试用入口。 */
+        public Capabilities(List<Model> models, int maxInputCharacters, int maxOutputCharacters, boolean persistentHistory) {
+            this(models, maxInputCharacters, maxOutputCharacters, persistentHistory, null);
+        }
+    }
 }

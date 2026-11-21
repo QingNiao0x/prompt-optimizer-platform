@@ -25,6 +25,23 @@ beforeEach(() => {
   vi.mocked(api.capabilities).mockResolvedValue({ models: [{ id: 'fixture', displayName: '测试模型', defaultModel: true, mock: false }], maxInputCharacters: 12000, maxOutputCharacters: 24000, persistentHistory: true });
 });
 describe('文章润色状态', () => {
+  it('仅在登录、模型获准且轻度润色时发送明确的首段目标', async () => {
+    const s = useTextPolishStore();
+    const limits = await api.capabilities();
+    vi.mocked(api.capabilities).mockResolvedValue({ ...limits, directedPreviewModelId: 'fixture' });
+    await s.load();
+    s.sourceText = '交回通知\n\n材料周二交回。';
+    s.openingObjective = '先说期限。';
+    vi.mocked(api.generate).mockResolvedValue(doc());
+    expect(s.canUseDirectedPreview).toBe(true);
+    await s.generate();
+    expect(vi.mocked(api.generate).mock.calls[0][5]).toBe('先说期限。');
+    s.depth = 'RESTRUCTURE';
+    await s.generate();
+    expect(vi.mocked(api.generate).mock.calls[1][5]).toBeUndefined();
+    s.reset();
+    expect(s.openingObjective).toBe('');
+  });
   it('默认自然流畅且切换文体不调用模型', async () => { const s = useTextPolishStore(); await s.load(); expect(s.style).toBe('NATURAL'); s.style = 'FORMAL'; s.depth = 'RESTRUCTURE'; expect(api.generate).not.toHaveBeenCalled(); });
   it('来源清晰：原文重生与当前稿继续分别传递绑定', async () => {
     const s = useTextPolishStore(); await s.load(); s.sourceText = '原文'; vi.mocked(api.generate).mockResolvedValue(doc());
