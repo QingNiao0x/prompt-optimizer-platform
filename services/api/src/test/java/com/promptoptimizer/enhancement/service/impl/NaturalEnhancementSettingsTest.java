@@ -25,6 +25,12 @@ class NaturalEnhancementSettingsTest {
     }
 
     @Test
+    void executionDetailsBindsThroughTheNormalServiceSetting() {
+        runner.withPropertyValues("app.enhancement.natural.profile=EXECUTION_DETAILS").run(context ->
+                assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("execution-details-v1"));
+    }
+
+    @Test
     void newRequestsDefaultToTheValidatedEngineeringRepair() {
         runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v6"));
     }

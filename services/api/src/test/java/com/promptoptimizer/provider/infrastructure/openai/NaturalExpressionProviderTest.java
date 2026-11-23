@@ -42,6 +42,51 @@ class NaturalExpressionProviderTest {
     }
 
     @Test
+    void executionDetailsReplacesConflictingGuidanceAndKeepsTheV6Protocol() {
+        String version = NaturalPromptExecutionDetailsInstructions.VERSION;
+        String baseline = NaturalPromptInstructions.enhancementInstruction(NaturalPromptMaterialHandoffInstructions.VERSION);
+        String instruction = NaturalPromptInstructions.enhancementInstruction(version);
+        String protocol = "只返回以下完整JSON对象";
+        int start = baseline.indexOf(protocol);
+        assertThat(start).isPositive();
+        assertThat(instruction.substring(instruction.indexOf(protocol))).isEqualTo(baseline.substring(start));
+        assertThat(instruction).contains("先写执行者需要完成的工作", "环节之间的关系", "可观察的完成条件",
+                        "新增独立任务、成果或交付义务须有用户依据", "篇幅随所需信息调整", "信息已充分可少改或保留")
+                .doesNotContain("不能另设要向用户展示或交付的内容", "自然、紧凑、可直接交给执行者");
+        assertThat(NaturalPromptInstructions.planningInstruction(version)).isEqualTo(NaturalPromptMaterialHandoffInstructions.PLAN);
+        assertThat(NaturalPromptInstructions.requiresTaskReview(version)).isTrue();
+    }
+
+    /** 各类模拟正文走相同的Provider入口。这里验证传输、协议和正文保留，模型补全质量由真实采样验证。 */
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', textBlock = """
+            在专家档案表单的性别后添加民族字段，复用已有民族字典并新增对应数据库字段。 | 在性别后新增民族字段，复用已有民族字典，沿现有提交和存储约定补齐数据库字段。核对选项、保存和重新打开后的回显。
+            把统计表中已作废订单排除在净收入之外，退款仍按原规则处理。 | 仅调整净收入计算，排除已作废订单并沿用退款规则。用正常、作废和退款订单各核对一次结果。
+            按现有模板整理会议纪要，区分已决定事项和待讨论事项，只输出纪要。 | 按现有模板整理会议纪要，将已决定事项与待讨论事项放在各自对应的位置。只输出纪要，不将待讨论事项写成决定。
+            只改前端显示，把性别后的民族代码显示为字典标签。 | 只改前端显示，在性别后的民族位置沿用已有字典解析方式显示标签，保持接口、存储和表结构原样。
+            民族字段已存在，只修改编辑表单以支持回显，禁止迁移。 | 在编辑表单中用已有民族字段回显选择，并核对打开已有记录时的显示。字段已存在，禁止迁移。
+            写一则不超过20字的通知，提醒周五提前保存工作，只输出正文。 | 写一则不超过20字的通知，提醒周五提前保存工作，只输出正文。
+            只读附件并理解，完成后等待。 | 只读附件并理解，完成后等待。
+            写一份复核报告，不修改原文。 | 写一份复核报告，列出发现及对应原文位置，不修改原文。
+            """)
+    void executionDetailsUsesTheSameContractAcrossTasks(String raw, String body) throws Exception {
+        var input = input(raw).withStrategyVersion(NaturalPromptExecutionDetailsInstructions.VERSION);
+        var builder = RestClient.builder();
+        var server = MockRestServiceServer.bindTo(builder).build();
+        expect(server, scope(input), input, NaturalPromptMaterialHandoffInstructions.PREPARE);
+        expect(server, enhancement(input, body), input, NaturalPromptExecutionDetailsInstructions.ENHANCE);
+
+        var result = provider(builder.build()).enhance(input, draft -> {
+            draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
+            return draft;
+        });
+        assertThat(result.optimizedPrompt()).isEqualTo(body);
+        assertThat(result.completedStages()).containsExactly(
+                NaturalProcessing.Stage.SCOPE_ANALYSIS, NaturalProcessing.Stage.BODY_GENERATION);
+        server.verify();
+    }
+
+    @Test
     void replacesWritingGuidanceWhileKeepingTheV5WireContract() {
         String marker = "只返回以下完整JSON对象";
         String previous = NaturalPromptProtocolRepairInstructions.ENHANCE;
@@ -157,14 +202,19 @@ class NaturalExpressionProviderTest {
     @ParameterizedTest
     @CsvSource({"core-expression-v1,日期稍后确认，不承诺额外赔偿。", "core-expression-v1,''",
             "core-repair-v7,日期稍后确认，不承诺额外赔偿。", "core-repair-v7,''",
-            "core-repair-v8,日期稍后确认，不承诺额外赔偿。", "core-repair-v8,''"})
+            "core-repair-v8,日期稍后确认，不承诺额外赔偿。", "core-repair-v8,''",
+            "execution-details-v1,日期稍后确认，不承诺额外赔偿。", "execution-details-v1,''"})
     void planSupportsNoQuestionAndAnImportantUserDecision(String version, String answer) throws Exception {
         var input = (answer.isEmpty() ? input("附件可多选，最大10MB，请先确认大小限制的含义。") : materialInput(answer))
                 .withStrategyVersion(version);
         var builder = RestClient.builder();
         var server = MockRestServiceServer.bindTo(builder).build();
-        expect(server, scope(input), input, NaturalPromptProjectTaskInstructions.supports(version)
-                ? NaturalPromptProjectTaskInstructions.PREPARE : NaturalPromptExpressionInstructions.PREPARE);
+        String preparation = switch (version) {
+            case NaturalPromptExecutionDetailsInstructions.VERSION -> NaturalPromptMaterialHandoffInstructions.PREPARE;
+            case NaturalPromptExpressionInstructions.VERSION -> NaturalPromptExpressionInstructions.PREPARE;
+            default -> NaturalPromptProjectTaskInstructions.PREPARE;
+        };
+        expect(server, scope(input), input, preparation);
         ObjectNode plan = enhancement(input, input.rawPrompt());
         plan.remove(List.of("optimizedPrompt", "framework"));
         plan.put("summary", "整理原任务及需要用户决定的边界");

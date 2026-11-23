@@ -33,6 +33,16 @@ public final class NaturalPromptCoreRepairInstructions {
     /** 只替换引发成果推定的表达，仍复用同一来源、题答、补全及正文覆盖协议。 */
     public static final String ENHANCE = enhancement();
 
+    /** v3的补全原则，给后续正文版本整体替换，避免把不同边界叠加发给模型。 */
+    static final String COMPLETION_GUIDANCE = """
+            先从完整原始要求与实际题答确定要完成的动作、原定回应及边界，再判断哪些表达缺口会妨碍它们。
+            有效补充应解决原任务内部的执行问题：处理对象不清、材料用途不明、关键步骤或适用边界遗漏、原定结果无法核对。
+            补充可细化这些内容，不能另设要向用户展示或交付的内容；“方便确认、体现理解、结果更完整”本身不是执行缺口。
+            完成标准用于判断原有动作或成果是否达成，不要求另做一项成果来证明完成。普通完成确认不扩展成内容说明。
+            用户已要求的解释、复述、报告或验证证据属于原有要求，完整保留并可在其范围内完善，不作为多余反馈删除。
+            可能原因、方案和检查项是开展工作的线索；需要结论或行动时，不能仅列出线索就作为完成。
+            """;
+
     /** 补全必须作用于原任务内部，不因可检查或便于展示就建立新的用户义务。 */
     public static final String COMPLETION_ENHANCE = completionEnhancement();
 
@@ -95,24 +105,17 @@ public final class NaturalPromptCoreRepairInstructions {
         String source = replaceOnce(ENHANCE, """
                 补充直接服务原动作：处理什么、材料怎样用于判断或操作、哪些步骤有必要、用什么结果检查完成。
                 可能原因、方案和检查项是开展工作的线索；需要结论或行动时，不能仅列出线索就作为完成。
-                """, """
-                先从完整原始要求与实际题答确定要完成的动作、原定回应及边界，再判断哪些表达缺口会妨碍它们。
-                有效补充应解决原任务内部的执行问题：处理对象不清、材料用途不明、关键步骤或适用边界遗漏、原定结果无法核对。
-                补充可细化这些内容，不能另设要向用户展示或交付的内容；“方便确认、体现理解、结果更完整”本身不是执行缺口。
-                完成标准用于判断原有动作或成果是否达成，不要求另做一项成果来证明完成。普通完成确认不扩展成内容说明。
-                用户已要求的解释、复述、报告或验证证据属于原有要求，完整保留并可在其范围内完善，不作为多余反馈删除。
-                可能原因、方案和检查项是开展工作的线索；需要结论或行动时，不能仅列出线索就作为完成。
-                """);
+                """, COMPLETION_GUIDANCE);
         return replaceOnce(source,
                 "\"gap\":\"现有表达缺少什么且为何影响交付\",\"benefit\":\"对原定交付的直接帮助\"",
                 "\"gap\":\"原有哪项动作或回应的执行缺口及其影响\",\"benefit\":\"在不新增交付义务的前提下如何帮助完成该项要求\"");
     }
 
     /** 冻结指导的替换目标必须唯一，防止上游文字变动后局部修复静默失效。 */
-    private static String replaceOnce(String source, String original, String replacement) {
+    static String replaceOnce(String source, String original, String replacement) {
         int first = source.indexOf(original);
         if (first < 0 || first != source.lastIndexOf(original)) {
-            throw new IllegalStateException("动作边界指导的冻结段缺失或不唯一");
+            throw new IllegalStateException("自然增强指导的冻结段缺失或不唯一");
         }
         return source.replace(original, replacement);
     }
