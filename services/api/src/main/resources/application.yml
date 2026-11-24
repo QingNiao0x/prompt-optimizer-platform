@@ -101,7 +101,7 @@ app:
     directed-preview-user-id: ${TEXT_POLISH_DIRECTED_PREVIEW_USER_ID:}
   enhancement:
     natural:
-      # 默认使用 v6 材料传递，PROJECT_TASK 可选择新的任务理解指导，历史增强沿用记录版本。
+      # 默认使用 v6 材料传递。PROJECT_TASK、EXECUTION_DETAILS、CURRENT_TASK 只能显式选择；历史增强沿用记录版本。
       profile: ${NATURAL_ENHANCEMENT_PROFILE:MATERIAL_HANDOFF_REPAIR}
   context:
     vision:

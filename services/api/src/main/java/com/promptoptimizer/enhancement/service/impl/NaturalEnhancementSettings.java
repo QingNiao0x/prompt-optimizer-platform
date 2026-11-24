@@ -34,7 +34,12 @@ public class NaturalEnhancementSettings {
         /** 需求表达指导，按表达质量及受影响执行风险验证后采用。 */ EXPRESSION,
         /** 独立采用跨阶段材料来源与固定首稿记录修复，正文和Plan逐字复用v5。 */ MATERIAL_HANDOFF_REPAIR,
         /** 从委托和材料确定需核查的对象与执行条件，复用 v6 的来源传递与权限边界。 */ PROJECT_TASK,
-        /** 显式验证正文的必要执行细节与篇幅调节，范围准备与Plan继续使用v6。 */ EXECUTION_DETAILS
+        /** 显式验证正文的必要执行细节与篇幅调节，范围准备与Plan继续使用v6。 */ EXECUTION_DETAILS,
+        /**
+         * 直接增强先写本轮任务、交付和授权，并限制无依据的表名或设计结论。
+         * 复用 v6 的准备、Plan 和响应协议。作品对照完成前不替换默认的材料传递版本。
+         */
+        CURRENT_TASK
     }
 
     @NotNull
@@ -51,6 +56,7 @@ public class NaturalEnhancementSettings {
         return switch (profile) {
             case MATERIAL_HANDOFF_REPAIR -> com.promptoptimizer.provider.domain.NaturalPromptMaterialHandoffInstructions.VERSION;
             case EXECUTION_DETAILS -> NaturalPromptExecutionDetailsInstructions.VERSION;
+            case CURRENT_TASK -> NaturalPromptExecutionDetailsInstructions.CURRENT_TASK_VERSION;
             case PROJECT_TASK -> NaturalPromptProjectTaskInstructions.EVIDENCE_VERSION;
             case EXPRESSION -> com.promptoptimizer.provider.domain.NaturalPromptExpressionInstructions.VERSION;
             case BALANCED -> com.promptoptimizer.provider.domain.NaturalPromptBalancedInstructions.VERSION;

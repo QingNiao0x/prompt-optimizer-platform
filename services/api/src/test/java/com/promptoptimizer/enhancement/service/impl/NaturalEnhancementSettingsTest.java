@@ -31,6 +31,13 @@ class NaturalEnhancementSettingsTest {
     }
 
     @Test
+    void currentTaskBindsOnlyWhenSelectedAndLeavesTheDefaultUntouched() {
+        runner.withPropertyValues("app.enhancement.natural.profile=CURRENT_TASK").run(context ->
+                assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("execution-details-v2"));
+        runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v6"));
+    }
+
+    @Test
     void newRequestsDefaultToTheValidatedEngineeringRepair() {
         runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v6"));
     }

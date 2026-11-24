@@ -20,6 +20,9 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
+      // Windows 上 localhost 同时解析到 127.0.0.1 和 ::1。不指定 host 时 Node 只监听 ::1，
+      // Edge 走 IPv4 会得到「localhost 拒绝连接」。固定环回 IPv4，页面地址仍是 localhost:5173。
+      host: '127.0.0.1',
       port: 5173,
       proxy: {
         '/api': {

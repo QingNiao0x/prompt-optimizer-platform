@@ -18,6 +18,7 @@ public final class NaturalPromptMaterialHandoffInstructions {
     public static boolean usesMaterialHandoff(String version) {
         return VERSION.equals(version) || NaturalPromptExpressionInstructions.VERSION.equals(version)
                 || NaturalPromptExecutionDetailsInstructions.VERSION.equals(version)
+                || NaturalPromptExecutionDetailsInstructions.CURRENT_TASK_VERSION.equals(version)
                 || NaturalPromptProjectTaskInstructions.supports(version);
     }
 

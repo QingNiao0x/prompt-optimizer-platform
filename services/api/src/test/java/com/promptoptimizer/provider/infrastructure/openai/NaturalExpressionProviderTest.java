@@ -57,6 +57,51 @@ class NaturalExpressionProviderTest {
         assertThat(NaturalPromptInstructions.requiresTaskReview(version)).isTrue();
     }
 
+    @Test
+    void currentTaskReplacesOnlyTheDirectWritingGuidance() {
+        String version = NaturalPromptExecutionDetailsInstructions.CURRENT_TASK_VERSION;
+        String baseline = NaturalPromptInstructions.enhancementInstruction(NaturalPromptMaterialHandoffInstructions.VERSION);
+        String instruction = NaturalPromptInstructions.enhancementInstruction(version);
+        String protocol = "只返回以下完整JSON对象";
+        assertThat(instruction.substring(instruction.indexOf(protocol))).isEqualTo(baseline.substring(baseline.indexOf(protocol)));
+        assertThat(instruction).contains("正文先写本轮要做什么", "后续打算与本轮授权分开", "先给结论",
+                        "其他任务不要套用这组检查", "不预设必须新增", "独立物理表", "需求已经充分时少改或保留原句")
+                .doesNotContain("常备流调", "ieis_", "ExpertActivityConst", "对口指导");
+        assertThat(NaturalPromptInstructions.enhancementInstruction(NaturalPromptExecutionDetailsInstructions.VERSION))
+                .contains("先明确处理对象、当前动作及原定结果")
+                .doesNotContain("其他任务不要套用这组检查");
+        assertThat(NaturalPromptInstructions.planningInstruction(version)).isEqualTo(NaturalPromptMaterialHandoffInstructions.PLAN);
+        assertThat(NaturalPromptInstructions.supports(version)).isTrue();
+        assertThat(NaturalPromptInstructions.requiresTaskReview(version)).isTrue();
+    }
+
+    @Test
+    void currentTaskDirectCallKeepsTheRequestAndSendsOnlyApplicableContext() throws Exception {
+        String raw = "我需要做一个常备流调队功能模块, 代码放在E:\\CompanyProject\\中科软\\二期项目\\智能流调\\btew-iefs-vue3\\src\\views\\ieis\\epidemiological-investigation-team\\epidemic-investigation目录中, 请先评估是否可以使用同一张数据库表，先给出结论，先不要修改代码。";
+        String body = "本轮只评估能否共用数据库表，先查证再给出结论，不修改代码。";
+        var withoutSchema = input(raw).withStrategyVersion(NaturalPromptExecutionDetailsInstructions.CURRENT_TASK_VERSION);
+        assertDirectContext(withoutSchema, body, payload -> assertThat(payload.at("/context/fileSnippets")).isEmpty());
+        var mapping = "专家流调队人员主表为 ieis_expert_member。活动记录表为 ieis_expert_activity，活动类型是字段而不是物理子表。";
+        var withSchema = new NaturalPromptInput(raw, new ContextSnapshot("模块资料", List.of(), List.of(), List.of(), List.of(new FileSnippet(
+                "team-schema.md", "markdown", mapping, "已核对的表映射", false, MaterialPurpose.FACT_REFERENCE)),
+                List.of(), List.of(), "fixture"), List.of(), List.of(), List.of(), null)
+                .withStrategyVersion(NaturalPromptExecutionDetailsInstructions.CURRENT_TASK_VERSION);
+        assertDirectContext(withSchema, body, payload -> assertThat(payload.at("/context/fileSnippets/0/content").asText()).isEqualTo(mapping));
+    }
+
+    private void assertDirectContext(NaturalPromptInput input, String body, Consumer<JsonNode> verifyPayload) throws Exception {
+        var builder = RestClient.builder();
+        var server = MockRestServiceServer.bindTo(builder).build();
+        expect(server, scope(input), input, NaturalPromptMaterialHandoffInstructions.PREPARE);
+        expect(server, enhancement(input, body), input, NaturalPromptExecutionDetailsInstructions.CURRENT_TASK_ENHANCE, verifyPayload);
+        var result = provider(builder.build()).enhance(input, draft -> {
+            draft.taskUnderstanding().review().validateEnhancement(draft.taskUnderstanding(), draft.optimizedPrompt());
+            return draft;
+        });
+        assertThat(result.optimizedPrompt()).isEqualTo(body);
+        server.verify();
+    }
+
     /** 各类模拟正文走相同的Provider入口。这里验证传输、协议和正文保留，模型补全质量由真实采样验证。 */
     @ParameterizedTest
     @CsvSource(delimiter = '|', textBlock = """
@@ -203,14 +248,16 @@ class NaturalExpressionProviderTest {
     @CsvSource({"core-expression-v1,日期稍后确认，不承诺额外赔偿。", "core-expression-v1,''",
             "core-repair-v7,日期稍后确认，不承诺额外赔偿。", "core-repair-v7,''",
             "core-repair-v8,日期稍后确认，不承诺额外赔偿。", "core-repair-v8,''",
-            "execution-details-v1,日期稍后确认，不承诺额外赔偿。", "execution-details-v1,''"})
+            "execution-details-v1,日期稍后确认，不承诺额外赔偿。", "execution-details-v1,''",
+            "execution-details-v2,日期稍后确认，不承诺额外赔偿。", "execution-details-v2,''"})
     void planSupportsNoQuestionAndAnImportantUserDecision(String version, String answer) throws Exception {
         var input = (answer.isEmpty() ? input("附件可多选，最大10MB，请先确认大小限制的含义。") : materialInput(answer))
                 .withStrategyVersion(version);
         var builder = RestClient.builder();
         var server = MockRestServiceServer.bindTo(builder).build();
         String preparation = switch (version) {
-            case NaturalPromptExecutionDetailsInstructions.VERSION -> NaturalPromptMaterialHandoffInstructions.PREPARE;
+            case NaturalPromptExecutionDetailsInstructions.VERSION, NaturalPromptExecutionDetailsInstructions.CURRENT_TASK_VERSION
+                    -> NaturalPromptMaterialHandoffInstructions.PREPARE;
             case NaturalPromptExpressionInstructions.VERSION -> NaturalPromptExpressionInstructions.PREPARE;
             default -> NaturalPromptProjectTaskInstructions.PREPARE;
         };
