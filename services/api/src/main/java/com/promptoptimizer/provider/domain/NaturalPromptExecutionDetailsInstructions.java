@@ -13,7 +13,7 @@ public final class NaturalPromptExecutionDetailsInstructions {
     public static final String VERSION = "execution-details-v1";
     /**
      * 只收紧直接增强正文的任务主次、核查动作和名称依据。
-     * v1 保持冻结；Plan、准备和响应协议仍复用 v6。未完成同条件作品对照前，不作为新请求默认。
+     * v1 保持冻结。v2 是新请求默认；准备、Plan 和响应协议仍复用 v6。
      */
     public static final String CURRENT_TASK_VERSION = "execution-details-v2";
     public static final String ENHANCE = enhancement();

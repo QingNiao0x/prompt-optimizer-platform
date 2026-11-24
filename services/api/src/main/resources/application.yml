@@ -101,8 +101,8 @@ app:
     directed-preview-user-id: ${TEXT_POLISH_DIRECTED_PREVIEW_USER_ID:}
   enhancement:
     natural:
-      # 默认使用 v6 材料传递。PROJECT_TASK、EXECUTION_DETAILS、CURRENT_TASK 只能显式选择；历史增强沿用记录版本。
-      profile: ${NATURAL_ENHANCEMENT_PROFILE:MATERIAL_HANDOFF_REPAIR}
+      # 新请求默认使用 execution-details-v2。MATERIAL_HANDOFF_REPAIR 可显式回到 v6；历史增强沿用记录版本。
+      profile: ${NATURAL_ENHANCEMENT_PROFILE:CURRENT_TASK}
   context:
     vision:
       # 资料先在本机解析；只有用户确认模型、页码与隐私后才外发，每页一次尝试，不自动重试。

@@ -31,15 +31,15 @@ class NaturalEnhancementSettingsTest {
     }
 
     @Test
-    void currentTaskBindsOnlyWhenSelectedAndLeavesTheDefaultUntouched() {
-        runner.withPropertyValues("app.enhancement.natural.profile=CURRENT_TASK").run(context ->
-                assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("execution-details-v2"));
-        runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v6"));
+    void currentTaskIsTheDefaultAndV6RemainsAnExplicitRollback() {
+        runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("execution-details-v2"));
+        runner.withPropertyValues("app.enhancement.natural.profile=MATERIAL_HANDOFF_REPAIR").run(context ->
+                assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v6"));
     }
 
     @Test
-    void newRequestsDefaultToTheValidatedEngineeringRepair() {
-        runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v6"));
+    void newRequestsDefaultToTheCurrentTaskGuidance() {
+        runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("execution-details-v2"));
     }
 
     @Test
@@ -88,7 +88,7 @@ class NaturalEnhancementSettingsTest {
         try (var input = getClass().getResourceAsStream("/application.yml")) {
             assertThat(input).isNotNull();
             assertThat(new String(input.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8))
-                    .contains("profile: ${NATURAL_ENHANCEMENT_PROFILE:MATERIAL_HANDOFF_REPAIR}");
+                    .contains("profile: ${NATURAL_ENHANCEMENT_PROFILE:CURRENT_TASK}");
         }
         runner.withPropertyValues("app.enhancement.natural.profile=PLAN_CONTEXT_REPAIR").run(context ->
                 assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v4"));

@@ -36,14 +36,14 @@ public class NaturalEnhancementSettings {
         /** 从委托和材料确定需核查的对象与执行条件，复用 v6 的来源传递与权限边界。 */ PROJECT_TASK,
         /** 显式验证正文的必要执行细节与篇幅调节，范围准备与Plan继续使用v6。 */ EXECUTION_DETAILS,
         /**
-         * 直接增强先写本轮任务、交付和授权，并限制无依据的表名或设计结论。
-         * 复用 v6 的准备、Plan 和响应协议。作品对照完成前不替换默认的材料传递版本。
+         * 新请求默认。直接增强先写本轮任务、交付和授权，并限制无依据的表名或设计结论。
+         * 准备、Plan 和响应协议仍复用 v6。显式 MATERIAL_HANDOFF_REPAIR 可回到 v6；历史记录按保存版本重放。
          */
         CURRENT_TASK
     }
 
     @NotNull
-    private Profile profile = Profile.MATERIAL_HANDOFF_REPAIR;
+    private Profile profile = Profile.CURRENT_TASK;
 
     /** 读取服务端配置，不从模型输出或用户任务文本推断采用策略。 */
     public Profile getProfile() { return profile; }
