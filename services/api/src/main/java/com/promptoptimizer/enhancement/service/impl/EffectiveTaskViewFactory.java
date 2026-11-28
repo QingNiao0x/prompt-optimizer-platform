@@ -8,6 +8,7 @@ import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
+import com.promptoptimizer.provider.domain.PromptDeliverable;
 import com.promptoptimizer.template.domain.TaskIntentResolver;
 import java.util.List;
 
@@ -40,8 +41,9 @@ public final class EffectiveTaskViewFactory {
         var known = decisions.knownDecisions();
         var requirements = decisions.decisions().stream().flatMap(decision -> requirements(decision, known).stream()).toList();
         return new EffectiveTaskView(original, current,
-                TaskIntentResolver.resolve(template, original, decisions.knownDecisions()), decisions.decisions(),
-                requirements, decisions.pendingDecisions(), facts == null ? List.of() : facts);
+                TaskIntentResolver.resolve(template, original, known), decisions.decisions(),
+                requirements, decisions.pendingDecisions(), facts == null ? List.of() : facts,
+                PromptDeliverable.from(current, known));
     }
 
     /** 独立事实、委托和未确认边界按原句投影；真正裸短答仍绑定服务端问题的完整对象。 */

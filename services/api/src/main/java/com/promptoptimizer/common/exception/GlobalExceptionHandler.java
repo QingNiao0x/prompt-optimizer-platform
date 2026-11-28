@@ -263,7 +263,9 @@ public class GlobalExceptionHandler {
             } else if (invalid.getReason() == ProviderResponseValidationException.Reason.RULE_CONFLICT) {
                 message = "增强结果的任务要求和你的原话不一致，这次没有完成。请再试一次。";
             } else if (invalid.getReason() == ProviderResponseValidationException.Reason.DELIVERY_LEVEL_CONFLICT) {
-                message = "增强结果把任务改成了再写一份提示词，和你的原任务不一致，这次没有完成。请再试一次。";
+                message = "增强结果增加了你未要求的提示词交付，这次没有完成。请再试一次。";
+            } else if (invalid.getReason() == ProviderResponseValidationException.Reason.PROMPT_DELIVERY_MISSING) {
+                message = "增强结果遗漏了你要求的提示词交付，这次没有完成。请再试一次。";
             }
             // 仅公开代码定义的枚举、固定字段路径与实际调用次数，便于定位 502；绝不回显失败模型正文或 cause。
             var diagnostics = new LinkedHashMap<String, Object>();

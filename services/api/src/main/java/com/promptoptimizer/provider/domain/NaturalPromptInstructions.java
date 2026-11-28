@@ -62,6 +62,7 @@ public final class NaturalPromptInstructions {
             case NaturalPromptMaterialHandoffInstructions.VERSION -> NaturalPromptMaterialHandoffInstructions.ENHANCE;
             case NaturalPromptExecutionDetailsInstructions.VERSION -> NaturalPromptExecutionDetailsInstructions.ENHANCE;
             case NaturalPromptExecutionDetailsInstructions.CURRENT_TASK_VERSION -> NaturalPromptExecutionDetailsInstructions.CURRENT_TASK_ENHANCE;
+            case NaturalPromptExecutionDetailsInstructions.DELIVERY_BOUNDARY_VERSION -> NaturalPromptExecutionDetailsInstructions.DELIVERY_BOUNDARY_ENHANCE;
             case NaturalPromptProjectTaskInstructions.VERSION -> NaturalPromptProjectTaskInstructions.ENHANCE;
             case NaturalPromptProjectTaskInstructions.EVIDENCE_VERSION -> NaturalPromptProjectTaskInstructions.EVIDENCE_ENHANCE;
             case NaturalPromptInternalDesignInstructions.VERSION -> NaturalPromptInternalDesignInstructions.ENHANCE;
@@ -140,7 +141,8 @@ public final class NaturalPromptInstructions {
             case NaturalPromptExpressionInstructions.VERSION -> NaturalPromptExpressionInstructions.PLAN;
             case NaturalPromptMaterialHandoffInstructions.VERSION, NaturalPromptProjectTaskInstructions.VERSION,
                     NaturalPromptProjectTaskInstructions.EVIDENCE_VERSION, NaturalPromptExecutionDetailsInstructions.VERSION,
-                    NaturalPromptExecutionDetailsInstructions.CURRENT_TASK_VERSION
+                    NaturalPromptExecutionDetailsInstructions.CURRENT_TASK_VERSION,
+                    NaturalPromptExecutionDetailsInstructions.DELIVERY_BOUNDARY_VERSION
                     -> NaturalPromptMaterialHandoffInstructions.PLAN;
             case NaturalPromptInternalDesignInstructions.VERSION -> NaturalPromptPlanContextInstructions.PLAN;
             case NaturalPromptSimplifiedInstructions.VERSION -> NaturalPromptSimplifiedInstructions.PLAN;

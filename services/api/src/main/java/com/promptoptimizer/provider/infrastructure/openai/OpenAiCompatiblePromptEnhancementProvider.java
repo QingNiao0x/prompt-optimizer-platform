@@ -387,6 +387,7 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
     ) {
         Objects.requireNonNull(validation, "validation must not be null");
         ChatCompletionRequest currentRequest = initialRequest;
+        ProviderResponseValidationException previousDeliveryFailure = null;
         for (int attempt = 1; attempt <= MAX_INVALID_RESPONSE_ATTEMPTS; attempt++) {
             long startedAt = System.nanoTime();
             OpenAiCompatibleRoute route = currentRequest.route();
@@ -421,7 +422,16 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                             LogFields.value(MDC.get("requestId")), LogFields.value(operation),
                             invalid.getReason().name(), invalid.getField(), attempt);
                 }
-                boolean willRetry = exception.getFailureType() == ProviderFailureType.INVALID_RESPONSE
+                var deliveryFailure = exception instanceof ProviderResponseValidationException invalid
+                        && (invalid.getReason() == ProviderResponseValidationException.Reason.DELIVERY_LEVEL_CONFLICT
+                            || invalid.getReason() == ProviderResponseValidationException.Reason.PROMPT_DELIVERY_MISSING)
+                        ? invalid : null;
+                // 同一字段已收到针对同一交付错误的修复指令，重复发送无法提供新的修复信息。
+                boolean repeatedDeliveryFailure = previousDeliveryFailure != null && deliveryFailure != null
+                        && previousDeliveryFailure.getReason() == deliveryFailure.getReason()
+                        && previousDeliveryFailure.getField().equals(deliveryFailure.getField());
+                previousDeliveryFailure = deliveryFailure;
+                boolean willRetry = !repeatedDeliveryFailure && exception.getFailureType() == ProviderFailureType.INVALID_RESPONSE
                         && (!(exception instanceof ProviderResponseValidationException invalid)
                             || invalid.isModelRepairable())
                         && attempt < MAX_INVALID_RESPONSE_ATTEMPTS;
@@ -642,8 +652,9 @@ public class OpenAiCompatiblePromptEnhancementProvider implements PromptEnhancem
                                 + com.promptoptimizer.provider.domain.EvidenceInferenceContract.from(taskView, request.context()).guidance()
                                 + "\n若上面列出了本次收入推断边界，平台会在约束中完整组装一次；生成时遵守它，不在各段复述整份边界。"
                                 + JavaCodeDeliveryContract.guidance(request.rawPrompt())
-                                + DraftDeliveryContract.from(request.rawPrompt(), request.template(),
-                                request.planConfirmed() ? request.confirmedDecisions() : List.of()).modelGuidance()),
+                                + DraftDeliveryContract.from(taskView.effectivePrompt(), request.template(),
+                                request.planConfirmed() ? request.confirmedDecisions() : List.of(),
+                                taskView.promptDeliverable()).modelGuidance()),
                         new ChatMessage("user", userMessage)
                 ),
                 requestOptions.temperature(),

@@ -65,7 +65,7 @@ class NaturalSimplifiedProviderTest {
     @Test
     void simplifiedProfileIsExplicitAndUsesSeparatePhaseGuidance() {
         var settings = new NaturalEnhancementSettings();
-        assertThat(settings.strategyVersion()).isEqualTo("execution-details-v2");
+        assertThat(settings.strategyVersion()).isEqualTo("execution-details-v3");
         settings.setProfile(NaturalEnhancementSettings.Profile.SIMPLIFIED);
         assertThat(settings.strategyVersion()).isEqualTo(VERSION);
         assertThat(NaturalPromptInstructions.enhancementInstruction(VERSION))

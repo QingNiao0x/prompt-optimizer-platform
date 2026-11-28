@@ -1,5 +1,6 @@
 package com.promptoptimizer.enhancement.domain;
 
+import com.promptoptimizer.provider.domain.PromptDeliverable;
 import com.promptoptimizer.provider.domain.RequirementBoundaryContract;
 import com.promptoptimizer.template.domain.TaskIntent;
 import java.util.LinkedHashMap;
@@ -16,12 +17,13 @@ import java.util.List;
  * @param executionRequirements 已确认子项的执行表述，不能复制未选候选或整份答卷
  * @param pendingDecisions 真正未定的子项，不被相似主题的确认覆盖
  * @param facts 安全且与本次任务相关的事实卡，来源用途仍须核对
+ * @param promptDeliverable 从用户任务与有效题答取得的提示词交付依据，供生成和组装复用
  * @author QingNiao
  * @since 0.1.0
  */
 public record EffectiveTaskView(String originalPrompt, String effectivePrompt, TaskIntent intent,
         List<ConfirmedPlanDecision> confirmedDecisions, List<ExecutionRequirement> executionRequirements,
-        List<ConfirmedPlanDecision> pendingDecisions, List<PlanningFactCard> facts) {
+        List<ConfirmedPlanDecision> pendingDecisions, List<PlanningFactCard> facts, PromptDeliverable promptDeliverable) {
     /** 防御性复制；视图只存在于一次服务端请求，不跨任务缓存。 */
     public EffectiveTaskView {
         confirmedDecisions = List.copyOf(confirmedDecisions);

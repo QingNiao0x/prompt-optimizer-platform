@@ -76,6 +76,18 @@ class NaturalExpressionProviderTest {
     }
 
     @Test
+    void deliverableGuidanceChangesTheCurrentBodyButKeepsPlanAndResponseProtocol() {
+        String version = NaturalPromptExecutionDetailsInstructions.DELIVERY_BOUNDARY_VERSION;
+        String previous = NaturalPromptInstructions.enhancementInstruction(NaturalPromptExecutionDetailsInstructions.CURRENT_TASK_VERSION);
+        String current = NaturalPromptInstructions.enhancementInstruction(version);
+        String guideline = com.promptoptimizer.provider.domain.PromptDeliverable.GUIDANCE;
+        assertThat(current).contains(guideline);
+        assertThat(current.replace(guideline, "")).isEqualTo(previous);
+        assertThat(NaturalPromptInstructions.planningInstruction(version)).isEqualTo(NaturalPromptMaterialHandoffInstructions.PLAN);
+        assertThat(NaturalPromptInstructions.requiresTaskReview(version)).isTrue();
+    }
+
+    @Test
     void currentTaskDirectCallKeepsTheRequestAndSendsOnlyApplicableContext() throws Exception {
         String raw = "我需要做一个常备流调队功能模块, 代码放在E:\\CompanyProject\\中科软\\二期项目\\智能流调\\btew-iefs-vue3\\src\\views\\ieis\\epidemiological-investigation-team\\epidemic-investigation目录中, 请先评估是否可以使用同一张数据库表，先给出结论，先不要修改代码。";
         String body = "本轮只评估能否共用数据库表，先查证再给出结论，不修改代码。";

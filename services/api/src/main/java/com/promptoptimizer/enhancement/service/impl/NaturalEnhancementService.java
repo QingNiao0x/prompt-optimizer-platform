@@ -143,6 +143,7 @@ public class NaturalEnhancementService {
         var groups = new ConstraintBundle(List.of(), List.of(), permissions);
         var input = new NaturalPromptInput(request.rawPrompt(), context, confirmed.answers(), conversation, groups.visibleConstraints(),
                 model.publicId(), planningContext).withStrategyVersion(strategyVersion).withRevision(revision);
+        var promptDeliverable = resolvePromptDeliverable(input);
         String workflowId = request.planConfirmation() == null ? null : request.planConfirmation().planId();
         try (var scope = LogCorrelation.bindWorkflow("planning-plan", workflowId)) {
             return provider.enhance(input, draft -> {
@@ -152,6 +153,10 @@ public class NaturalEnhancementService {
                     task = draft.taskUnderstanding().resolve(input);
                 }
                 String body = validateBody(draft, groups.visibleConstraints(), strategyVersion);
+                if (promptDeliverable != null) {
+                    // 检查模型实际撰写的任务，组装追加的权限说明不能作为原交付已经覆盖的证据。
+                    promptDeliverable.validate(draft.optimizedPrompt(), "", "optimizedPrompt", "optimizedPrompt");
+                }
                 if (NaturalPromptInstructions.requiresTaskReview(strategyVersion)) {
                     // 只核对真实模型正文与最终组装正文的引用，不用追加原文掩盖模型漏写。
                     task.review().validateEnhancement(task, draft.optimizedPrompt().strip());
@@ -171,6 +176,14 @@ public class NaturalEnhancementService {
                                 : NaturalProcessing.completed(draft.completedStages(), request.rawPrompt(), body));
             });
         }
+    }
+
+    /** 历史版本保留原校验；当前版本仅从原始需求、绑定题答和显式修改意见取得交付依据。 */
+    private PromptDeliverable resolvePromptDeliverable(NaturalPromptInput input) {
+        if (!NaturalPromptExecutionDetailsInstructions.DELIVERY_BOUNDARY_VERSION.equals(input.strategyVersion())) return null;
+        var deliverable = PromptDeliverable.from(input.rawPrompt(),
+                ConfirmedDecisionSet.from(input.actualAnswers()).knownDecisions());
+        return input.revision() == null ? deliverable : deliverable.revise(input.revision().feedback());
     }
 
     /** 第四版指导最多八题，协议容量仍为64且不截断；注册后最终回答受服务端所有权和TTL约束。 */

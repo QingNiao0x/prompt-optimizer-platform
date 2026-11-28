@@ -13,11 +13,15 @@ public final class NaturalPromptExecutionDetailsInstructions {
     public static final String VERSION = "execution-details-v1";
     /**
      * 只收紧直接增强正文的任务主次、核查动作和名称依据。
-     * v1 保持冻结。v2 是新请求默认；准备、Plan 和响应协议仍复用 v6。
+     * v1、v2 按历史版本继续重放，准备、Plan 和响应协议均复用 v6。
      */
     public static final String CURRENT_TASK_VERSION = "execution-details-v2";
+    /** 新请求默认增加交付对象指导与校验，继续复用 v2 的正文组织。 */
+    public static final String DELIVERY_BOUNDARY_VERSION = "execution-details-v3";
     public static final String ENHANCE = enhancement();
     public static final String CURRENT_TASK_ENHANCE = currentTaskEnhancement();
+    public static final String DELIVERY_BOUNDARY_ENHANCE = replaceOnce(CURRENT_TASK_ENHANCE,
+            "后续打算与本轮授权分开。", PromptDeliverable.GUIDANCE + "后续打算与本轮授权分开。");
 
     /** 替换v6对应的正文指导，响应协议、来源引文和范围校验继续复用。 */
     private static String enhancement() {

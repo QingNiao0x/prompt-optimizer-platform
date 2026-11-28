@@ -53,7 +53,7 @@ class NaturalEnhancementServiceTest {
     }
 
     @ParameterizedTest
-    @org.junit.jupiter.params.provider.CsvSource({"CURRENT_TASK,execution-details-v2", "PROJECT_TASK,core-repair-v8", "MATERIAL_HANDOFF_REPAIR,core-repair-v6", "PROTOCOL_SCOPE_REPAIR,core-repair-v5", "CORE_REPAIR,core-repair-v1", "ACTION_BOUNDARY_REPAIR,core-repair-v2", "COMPLETION_BASIS_REPAIR,core-repair-v3", "PLAN_CONTEXT_REPAIR,core-repair-v4", "SIMPLIFIED,core-simplified-v1", "INTERNAL_DESIGN,internal-design-v1"})
+    @org.junit.jupiter.params.provider.CsvSource({"CURRENT_TASK,execution-details-v3", "PROJECT_TASK,core-repair-v8", "MATERIAL_HANDOFF_REPAIR,core-repair-v6", "PROTOCOL_SCOPE_REPAIR,core-repair-v5", "CORE_REPAIR,core-repair-v1", "ACTION_BOUNDARY_REPAIR,core-repair-v2", "COMPLETION_BASIS_REPAIR,core-repair-v3", "PLAN_CONTEXT_REPAIR,core-repair-v4", "SIMPLIFIED,core-simplified-v1", "INTERNAL_DESIGN,internal-design-v1"})
     void coreRepairAppliesToNewDirectTrialAndPlanRequestsButExplicitHistoryKeepsItsVersion(String profile, String version) {
         settings.setProfile(NaturalEnhancementSettings.Profile.valueOf(profile));
         var direct = service.optimize(request("写一封邮件", null, List.of(), "fixture:model"));
@@ -84,6 +84,43 @@ class NaturalEnhancementServiceTest {
         assertThat(provider.last.mandatoryRules()).isEmpty();
         assertThat(provider.planCalls).isZero();
         assertThat(provider.last.rawPrompt()).isEqualTo(raw);
+    }
+
+    @Test
+    void currentNaturalModePreservesComparisonAndChecksExplicitPromptDelivery() {
+        var comparison = request("直接让Claude优化提示词，与平台有何区别？", null, List.of(), "fixture:model");
+        provider.body = "比较这两种方式的优势和适用情况。";
+        assertThat(service.optimize(comparison).optimizedPrompt()).isEqualTo(provider.body);
+        provider.body = "提供一份可直接使用的结构化提示词。";
+        assertThatThrownBy(() -> service.optimize(comparison))
+                .isInstanceOfSatisfying(ProviderResponseValidationException.class, error ->
+                        assertThat(error.getReason()).isEqualTo(ProviderResponseValidationException.Reason.DELIVERY_LEVEL_CONFLICT));
+
+        var prompt = request("请写一份用于比较两个平台的提示词。", null, List.of(), "fixture:model");
+        assertThat(service.optimize(prompt).optimizedPrompt()).isEqualTo(provider.body);
+        provider.body = "请实际比较两个平台的优势。";
+        assertThatThrownBy(() -> service.optimize(prompt))
+                .isInstanceOfSatisfying(ProviderResponseValidationException.class, error ->
+                        assertThat(error.getReason()).isEqualTo(ProviderResponseValidationException.Reason.PROMPT_DELIVERY_MISSING));
+    }
+
+    @Test
+    void currentNaturalModeHonorsTheBoundDeliverableChoice() {
+        String raw = "为产品宣讲准备一份提示词，也可以改为讲解稿。";
+        provider.questions = List.of(new PlanQuestion("delivery", "本轮交付物是提示词还是讲解稿？",
+                "明确作品", PlanQuestionType.FREE_TEXT, List.of(), List.of(), true));
+        var plan = service.plan(new OptimizationPlanRequest(raw, "", List.of(), null, "fixture:model"));
+        var confirmed = request(raw, new PlanConfirmation(plan.planId(), null,
+                List.of(new PlanAnswer("delivery", "客户端题干", "只要讲解稿"))), List.of(), "fixture:model");
+        provider.body = "撰写一份产品讲解稿，说明适用场景。";
+        var result = service.optimize(confirmed);
+        assertThat(result.optimizedPrompt()).isEqualTo(provider.body);
+        assertThat(result.confirmedPlanAnswers()).containsExactly(
+                new PlanAnswer("delivery", "本轮交付物是提示词还是讲解稿？", "只要讲解稿"));
+        provider.body = "撰写讲解稿。另生成一份提示词。";
+        assertThatThrownBy(() -> service.optimize(confirmed))
+                .isInstanceOfSatisfying(ProviderResponseValidationException.class, error ->
+                        assertThat(error.getReason()).isEqualTo(ProviderResponseValidationException.Reason.DELIVERY_LEVEL_CONFLICT));
     }
 
     @Test

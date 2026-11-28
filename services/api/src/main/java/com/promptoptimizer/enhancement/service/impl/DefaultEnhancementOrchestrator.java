@@ -263,7 +263,8 @@ public class DefaultEnhancementOrchestrator implements EnhancementOrchestrator {
         );
         var taskView = new com.promptoptimizer.enhancement.domain.EffectiveTaskView(initialTaskView.originalPrompt(),
                 initialTaskView.effectivePrompt(), initialTaskView.intent(), initialTaskView.confirmedDecisions(),
-                initialTaskView.executionRequirements(), initialTaskView.pendingDecisions(), planningFacts);
+                initialTaskView.executionRequirements(), initialTaskView.pendingDecisions(), planningFacts,
+                initialTaskView.promptDeliverable());
         var taskIntent = taskView.intent();
         // 只有肯定交付目标包含辅助代码才加代码检查，材料中的技术栈不改变报告的职责。
         var constraints = constraintCompleter.completeForTask(context, request.permissionPolicy(),

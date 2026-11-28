@@ -213,17 +213,14 @@ public class OptimizationResultAssembler {
         sections.forEach((type, section) -> conditionalGuard.validate(section.content(), "sections." + type));
         var unresolvedContract = UnresolvedDecisionContract.from(resolvedRawPrompt, decisions, conditionalEvidence);
         String effectiveRawPrompt = unresolvedContract.reconcileCurrentText(resolvedRawPrompt);
-        var draftDelivery = DraftDeliveryContract.from(effectiveRawPrompt, template, actualConfirmations);
+        var draftDelivery = DraftDeliveryContract.from(effectiveRawPrompt, template, actualConfirmations, taskView.promptDeliverable());
         sections.replaceAll((type, section) -> new PromptSection(type, section.title(),
                 unresolvedContract.reconcileCurrentText(section.content())));
         sections.forEach((type, section) -> unresolvedContract.validate(section.content(), "sections." + type));
         sections.forEach((type, section) -> validateUserFacingProtocol(section.content(), rawPrompt, "sections." + type));
-        // 在追加平台交付条款前校验模型的主目标；正确尾注不能掩盖前文把正文改成方案的矛盾。
-        for (PromptSectionType type : List.of(PromptSectionType.TASK, PromptSectionType.OUTPUT)) {
-            // 辅助槽可为空，表示交付已在 TASK 完整说明；非空 OUTPUT 仍不能与主任务冲突。
-            String content = sections.get(type).content();
-            if (!content.isBlank()) draftDelivery.validateDelivery(content, "sections." + type);
-        }
+        // TASK 与 OUTPUT 共担覆盖，任何一段新增的交付仍独立定位。平台尾注不参与模型正文验收。
+        draftDelivery.validateSections(sections.get(PromptSectionType.TASK).content(),
+                sections.get(PromptSectionType.OUTPUT).content());
         if (providerResponse.ambiguities() != null) {
             for (int index = 0; index < providerResponse.ambiguities().size(); index++) {
                 conditionalGuard.validate(providerResponse.ambiguities().get(index), "ambiguities[" + index + "]");
@@ -264,7 +261,7 @@ public class OptimizationResultAssembler {
             appendPlanningFacts(sections, currentFacts, currentDocumentFacts, planConfirmed, updatedFactIds);
         }
         appendConstraints(sections, constraintBundle, rawPrompt, sourceProjection);
-        String roleExecution = DraftDeliveryContract.roleExecutionGuidance(effectiveRawPrompt, template);
+        String roleExecution = draftDelivery.roleExecutionGuidance(effectiveRawPrompt, template);
         if (!roleExecution.isBlank()) {
             PromptSection output = sections.get(PromptSectionType.OUTPUT);
             // 启动条件放在格式要求之前；它与最终复制正文一致，不仅停留在优化模型的 system 指导中。

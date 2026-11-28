@@ -2,12 +2,15 @@ package com.promptoptimizer.provider.infrastructure.openai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.promptoptimizer.context.domain.ContextSnapshot;
+import com.promptoptimizer.enhancement.domain.PromptFormat;
 import com.promptoptimizer.enhancement.domain.PromptSection;
 import com.promptoptimizer.enhancement.domain.PromptSectionType;
 import com.promptoptimizer.enhancement.domain.TemplateCode;
 import com.promptoptimizer.enhancement.dto.EnhancementOptions;
+import com.promptoptimizer.enhancement.dto.PlanAnswer;
 import com.promptoptimizer.enhancement.service.impl.OptimizationResultAssembler;
 import com.promptoptimizer.provider.domain.EnhancementProviderRequest;
+import com.promptoptimizer.provider.domain.ProviderResponseValidationException;
 import com.promptoptimizer.template.domain.PromptTemplate;
 import java.net.URI;
 import java.util.List;
@@ -20,6 +23,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -119,6 +123,77 @@ class ExecutableIntentProviderTest {
                 context, request.template(), List.of(), List.of(), false, List.of(), 1, request.rawPrompt()));
         assertThat(result.optimizedPrompt()).contains("输出结论、数据支撑和风险").doesNotContain("编写股票分析助手提示词");
         server.verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void structuredValidTaskAndNonRepeatingOutputPassWithOneModelResponse(boolean explicitPrompt) throws Exception {
+        var builder = RestClient.builder();
+        var server = MockRestServiceServer.bindTo(builder).build();
+        String raw = explicitPrompt ? "编写一份用于比较两个平台的提示词。"
+                : "直接让Claude优化提示词，与本平台有何区别？";
+        String task = explicitPrompt ? "提供一份可复用的对比提示词。" : "比较两种方式并说明各自适用场景。";
+        server.expect(jsonPath("$.messages[0].content").value(containsString("区分当前动作、动作对象、讨论主题和交付物")))
+                .andRespond(withSuccess(completion(task, "使用中文。"), MediaType.APPLICATION_JSON));
+        var provider = new OpenAiCompatiblePromptEnhancementProvider(builder.build(), mapper, properties());
+        var request = structuredRequest(raw);
+        assertThat(provider.enhanceValidated(request, response -> new OptimizationResultAssembler().assemble(response,
+                request.context(), request.template(), List.of(), List.of(), false, List.of(), 1, raw)).optimizedPrompt())
+                .contains(task, "使用中文");
+        server.verify();
+    }
+
+    @Test
+    void doesNotSendTheSameTargetedDeliveryRepairTwice() throws Exception {
+        var builder = RestClient.builder();
+        var server = MockRestServiceServer.bindTo(builder).build();
+        String bad = completion("比较两种方式。", "另外交付一份结构化提示词。");
+        server.expect(jsonPath("$.messages[0].content").exists()).andRespond(withSuccess(bad, MediaType.APPLICATION_JSON));
+        server.expect(jsonPath("$.messages[2].content").value(containsString("DELIVERY_LEVEL_CONFLICT")))
+                .andRespond(withSuccess(bad, MediaType.APPLICATION_JSON));
+        var provider = new OpenAiCompatiblePromptEnhancementProvider(builder.build(), mapper, properties());
+        var request = structuredRequest("解释直接让Claude优化提示词与本平台有什么区别。");
+        assertThatThrownBy(() -> provider.enhanceValidated(request, response -> new OptimizationResultAssembler().assemble(
+                response, request.context(), request.template(), List.of(), List.of(), false, List.of(), 1, request.rawPrompt())))
+                .isInstanceOfSatisfying(ProviderResponseValidationException.class, error -> {
+                    assertThat(error.getField()).isEqualTo("sections.OUTPUT");
+                    assertThat(error.getModelAttempts()).isEqualTo(2);
+                });
+        server.verify();
+    }
+
+    @Test
+    void structuredAssemblyKeepsOnlyTheBoundLectureDeliverable() throws Exception {
+        var builder = RestClient.builder();
+        var server = MockRestServiceServer.bindTo(builder).build();
+        var base = structuredRequest("为产品宣讲准备一份提示词，也可以改为讲解稿。");
+        var answers = List.of(new PlanAnswer("delivery", "本轮交付物是提示词还是讲解稿？", "只要讲解稿"));
+        var request = new EnhancementProviderRequest(base.rawPrompt(), base.context(), base.template(), List.of(), answers, true,
+                List.of(), List.of(), base.options(), base.model());
+        server.expect(jsonPath("$.messages[0].content").value(containsString("讨论主题和交付物")))
+                .andExpect(jsonPath("$.messages[0].content").value(org.hamcrest.Matchers.not(containsString("【本次提示词交付】"))))
+                .andRespond(withSuccess(completion("撰写一份产品讲解稿。", "只交付讲解稿。"), MediaType.APPLICATION_JSON));
+        var provider = new OpenAiCompatiblePromptEnhancementProvider(builder.build(), mapper, properties());
+        var result = provider.enhanceValidated(request, response -> new OptimizationResultAssembler().assemble(response,
+                request.context(), request.template(), List.of(), answers, true, List.of(), 1, request.rawPrompt()));
+        assertThat(result.optimizedPrompt()).contains("撰写一份产品讲解稿", "只交付讲解稿");
+        server.verify();
+    }
+
+    private EnhancementProviderRequest structuredRequest(String raw) {
+        var context = new ContextSnapshot("", List.of(), List.of(), List.of(), List.of(), List.of(), List.of(), "test");
+        return new EnhancementProviderRequest(raw, context,
+                new PromptTemplate(TemplateCode.GENERAL, "按原定目标交付。", "保留事实。"), List.of(), List.of(),
+                List.of(), new EnhancementOptions(TemplateCode.AUTO, false, false, PromptFormat.STRUCTURED), "test-model");
+    }
+
+    private OpenAiCompatibleProperties properties() {
+        var properties = new OpenAiCompatibleProperties();
+        properties.setEndpoint(URI.create("https://execution-intent.example.test/v1/chat/completions"));
+        properties.setApiKey("test-key");
+        properties.setModel("test-model");
+        properties.setModels(List.of("test-model"));
+        return properties;
     }
 
     private String completion(String task, String output) throws Exception {

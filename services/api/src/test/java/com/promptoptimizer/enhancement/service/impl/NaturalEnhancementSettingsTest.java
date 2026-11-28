@@ -32,14 +32,14 @@ class NaturalEnhancementSettingsTest {
 
     @Test
     void currentTaskIsTheDefaultAndV6RemainsAnExplicitRollback() {
-        runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("execution-details-v2"));
+        runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("execution-details-v3"));
         runner.withPropertyValues("app.enhancement.natural.profile=MATERIAL_HANDOFF_REPAIR").run(context ->
                 assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("core-repair-v6"));
     }
 
     @Test
     void newRequestsDefaultToTheCurrentTaskGuidance() {
-        runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("execution-details-v2"));
+        runner.run(context -> assertThat(context.getBean(NaturalEnhancementSettings.class).strategyVersion()).isEqualTo("execution-details-v3"));
     }
 
     @Test

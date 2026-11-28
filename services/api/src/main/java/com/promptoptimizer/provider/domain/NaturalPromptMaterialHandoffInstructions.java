@@ -19,6 +19,7 @@ public final class NaturalPromptMaterialHandoffInstructions {
         return VERSION.equals(version) || NaturalPromptExpressionInstructions.VERSION.equals(version)
                 || NaturalPromptExecutionDetailsInstructions.VERSION.equals(version)
                 || NaturalPromptExecutionDetailsInstructions.CURRENT_TASK_VERSION.equals(version)
+                || NaturalPromptExecutionDetailsInstructions.DELIVERY_BOUNDARY_VERSION.equals(version)
                 || NaturalPromptProjectTaskInstructions.supports(version);
     }
 

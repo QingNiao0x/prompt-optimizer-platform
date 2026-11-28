@@ -33,7 +33,8 @@ public class MockPromptEnhancementProvider implements PromptEnhancementProvider 
     @Override
     public EnhancementProviderResponse enhance(EnhancementProviderRequest request) {
         var task = com.promptoptimizer.enhancement.service.impl.EffectiveTaskViewFactory.forProvider(request);
-        var delivery = DraftDeliveryContract.from(task.effectivePrompt(), request.template(), task.confirmedDecisions());
+        var delivery = DraftDeliveryContract.from(task.effectivePrompt(), request.template(), task.confirmedDecisions(),
+                task.promptDeliverable());
         var findings = new com.promptoptimizer.enhancement.service.impl.PlanQuestionFilter().unresolvedFindings(
                 request.ambiguities(), task.effectivePrompt(), request.context(), task.facts());
         List<PromptSection> sections = new ArrayList<>();
